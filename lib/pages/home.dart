@@ -9,6 +9,8 @@ class Home extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Islami Jindegi'),
+        backgroundColor: Color(0xFF0a676a),
+        centerTitle: true,
       ),
       body: Container(
         decoration: BoxDecoration(
