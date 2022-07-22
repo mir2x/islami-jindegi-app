@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'resource.dart';
 
 class Home extends StatelessWidget {
@@ -10,7 +9,7 @@ class Home extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Islami Jindegi'),
-        backgroundColor: Color(0xFF0a676a),
+        backgroundColor: const Color(0xFF0a676a),
         centerTitle: true,
       ),
       body: Container(
