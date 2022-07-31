@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'resource.dart';
 
 class Home extends StatelessWidget {
@@ -8,6 +9,15 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 15),
+          child: SvgPicture.asset(
+            'assets/images/logos/logo.svg',
+            fit: BoxFit.scaleDown,
+            width: 40,
+            height: 35,
+          ),
+        ),
         title: const Text('Islami Jindegi'),
         backgroundColor: const Color(0xFF0a676a),
         centerTitle: true,
@@ -41,7 +51,6 @@ class Home extends StatelessWidget {
           ],
         ),
       ),
-      drawer: const Drawer(),
     );
   }
 }
