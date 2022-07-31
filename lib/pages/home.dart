@@ -21,6 +21,17 @@ class Home extends StatelessWidget {
         title: const Text('Islami Jindegi'),
         backgroundColor: const Color(0xFF0a676a),
         centerTitle: true,
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: SvgPicture.asset(
+              'assets/images/icons/settings-icon.svg',
+              fit: BoxFit.scaleDown,
+              width: 40,
+              height: 40,
+            ),
+          ),
+        ],
       ),
       body: Container(
         decoration: const BoxDecoration(
