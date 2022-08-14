@@ -14,6 +14,8 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   flutter_svg: ^1.1.1+1
+  qlevar_router: ^1.6.2
+  flutter_data: ^1.4.7
 
 dev_dependencies:
   flutter_test:
