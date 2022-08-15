@@ -3,15 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class Resource extends StatelessWidget {
-  const Resource({super.key, required this.icon, required this.title});
+  const Resource({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.route
+  });
 
   final String icon;
   final String title;
+  final String route;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => QR.to('news'),
       child: Column(
         children: [
           SvgPicture.asset(
@@ -33,6 +38,7 @@ class Resource extends StatelessWidget {
           ),
         ],
       ),
+      onTap: () => QR.to(route),
     );
   }
 }

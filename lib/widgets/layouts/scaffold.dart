@@ -34,11 +34,14 @@ class MyScaffold extends StatelessWidget {
         actions: <Widget>[
           Padding(
             padding: const EdgeInsets.only(right: 10),
-            child: SvgPicture.asset(
-              'assets/images/icons/settings-icon.svg',
-              fit: BoxFit.scaleDown,
-              width: 40,
-              height: 40,
+            child: GestureDetector(
+              child: SvgPicture.asset(
+                'assets/images/icons/settings-icon.svg',
+                fit: BoxFit.scaleDown,
+                width: 40,
+                height: 40,
+              ),
+              onTap: () => QR.to('settings'),
             ),
           ),
         ],
