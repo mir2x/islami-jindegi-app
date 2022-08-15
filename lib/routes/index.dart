@@ -1,5 +1,5 @@
 import 'package:qlevar_router/qlevar_router.dart';
-import '../pages/home.dart';
+import '../screens/home/index.dart';
 
 class AppRoutes {
   final routes = [
