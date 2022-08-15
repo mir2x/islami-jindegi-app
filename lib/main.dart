@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'pages/home.dart';
+import 'package:qlevar_router/qlevar_router.dart';
+import 'routes/index.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,11 +11,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      routes: {
-        '/': (context) => const Home(),
-      },
+      routeInformationParser: const QRouteInformationParser(),
+      routerDelegate: QRouterDelegate(AppRoutes().routes),
     );
   }
 }
