@@ -1,11 +1,18 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'routes/index.dart';
+import 'main.data.dart';
 
 Future main() async {
   await dotenv.load(fileName: '.env');
-  runApp(const MyApp());
+  runApp(
+    ProviderScope(
+      child: const MyApp(),
+      overrides: [configureRepositoryLocalStorage()],
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

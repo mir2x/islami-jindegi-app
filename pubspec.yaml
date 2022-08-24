@@ -14,9 +14,9 @@ dependencies:
 
   # application
   flutter_dotenv: ^5.0.2
-  flutter_riverpod: ^1.0.4
 
-  # providers
+  # state management
+  flutter_riverpod: ^1.0.4
   path_provider: ^2.0.11
 
   # routing
@@ -24,6 +24,7 @@ dependencies:
 
   # data
   flutter_data: ^1.4.7
+  flutter_data_json_api_adapter: ^0.7.1
   json_annotation: ^4.6.0
 
   # icons

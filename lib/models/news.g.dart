@@ -1,0 +1,67 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'news.dart';
+
+// **************************************************************************
+// RepositoryGenerator
+// **************************************************************************
+
+// ignore_for_file: non_constant_identifier_names, duplicate_ignore
+
+mixin $NewsLocalAdapter on LocalAdapter<News> {
+  static final Map<String, RelationshipMeta> _kNewsRelationshipMetas = {};
+
+  @override
+  Map<String, RelationshipMeta> get relationshipMetas =>
+      _kNewsRelationshipMetas;
+
+  @override
+  News deserialize(map) {
+    map = transformDeserialize(map);
+    return _$NewsFromJson(map);
+  }
+
+  @override
+  Map<String, dynamic> serialize(model, {bool withRelationships = true}) {
+    final map = _$NewsToJson(model);
+    return transformSerialize(map, withRelationships: withRelationships);
+  }
+}
+
+final _newsFinders = <String, dynamic>{};
+
+// ignore: must_be_immutable
+class $NewsHiveLocalAdapter = HiveLocalAdapter<News> with $NewsLocalAdapter;
+
+class $NewsRemoteAdapter = RemoteAdapter<News>
+    with JSONAPIAdapter<News>, MyJSONAPIAdapter<News>;
+
+final internalNewsRemoteAdapterProvider = Provider<RemoteAdapter<News>>((ref) =>
+    $NewsRemoteAdapter($NewsHiveLocalAdapter(ref.read, typeId: null),
+        InternalHolder(_newsFinders)));
+
+final newsRepositoryProvider =
+    Provider<Repository<News>>((ref) => Repository<News>(ref.read));
+
+extension NewsDataRepositoryX on Repository<News> {
+  JSONAPIAdapter<News> get jSONAPIAdapter =>
+      remoteAdapter as JSONAPIAdapter<News>;
+  MyJSONAPIAdapter<News> get myJSONAPIAdapter =>
+      remoteAdapter as MyJSONAPIAdapter<News>;
+}
+
+extension NewsRelationshipGraphNodeX on RelationshipGraphNode<News> {}
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+News _$NewsFromJson(Map<String, dynamic> json) => News(
+      id: json['id'] as String?,
+      title: json['title'] as String,
+    );
+
+Map<String, dynamic> _$NewsToJson(News instance) => <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+    };
