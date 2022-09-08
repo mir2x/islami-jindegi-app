@@ -16,7 +16,7 @@ class News extends ConsumerWidget {
           error: (error, _) => Text(error.toString()),
           loading: () => const CircularProgressIndicator(),
           data: (_) {
-            final state = ref.news.watchAll();
+            final state = ref.news.watchAll(syncLocal: true);
             if (state.isLoading) {
               return const CircularProgressIndicator();
             }
