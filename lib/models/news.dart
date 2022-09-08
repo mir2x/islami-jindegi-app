@@ -10,7 +10,16 @@ part 'news.g.dart';
 class News extends DataModel<News> {
   @override
   final String? id;
+  final String? excerpt;
   final String title;
+  final String slug;
+  final String body;
 
-  News({this.id, required this.title});
+  News({
+    this.id,
+    this.excerpt,
+    required this.title,
+    required this.slug,
+    required this.body,
+  });
 }

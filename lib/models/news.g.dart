@@ -58,10 +58,16 @@ extension NewsRelationshipGraphNodeX on RelationshipGraphNode<News> {}
 
 News _$NewsFromJson(Map<String, dynamic> json) => News(
       id: json['id'] as String?,
+      excerpt: json['excerpt'] as String?,
       title: json['title'] as String,
+      slug: json['slug'] as String,
+      body: json['body'] as String,
     );
 
 Map<String, dynamic> _$NewsToJson(News instance) => <String, dynamic>{
       'id': instance.id,
+      'excerpt': instance.excerpt,
       'title': instance.title,
+      'slug': instance.slug,
+      'body': instance.body,
     };

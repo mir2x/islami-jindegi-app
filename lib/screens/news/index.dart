@@ -3,6 +3,7 @@ import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/styles/settings/theme_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/main.data.dart';
+import 'package:qlevar_router/qlevar_router.dart';
 
 class News extends ConsumerWidget {
   const News({super.key});
@@ -27,17 +28,20 @@ class News extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
               itemCount: resources.length,
               itemBuilder: (context, index) {
-                return Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: ThemeColors().themeColor7,
+                return InkWell(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: ThemeColors().themeColor7,
+                    ),
+                    padding: const EdgeInsets.all(15),
+                    margin: const EdgeInsets.only(bottom: 15),
+                    child: Text(
+                      resources[index].title,
+                      style: TextStyle(color: ThemeColors().themeColor4),
+                    ),
                   ),
-                  padding: const EdgeInsets.all(15),
-                  margin: const EdgeInsets.only(bottom: 15),
-                  child: Text(
-                    resources[index].title,
-                    style: TextStyle(color: ThemeColors().themeColor4),
-                  ),
+                  onTap: () => QR.to('news/${resources[index].slug}'),
                 );
               },
             );
