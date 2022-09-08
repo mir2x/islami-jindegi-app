@@ -21,9 +21,11 @@ class News extends ConsumerWidget {
               return const CircularProgressIndicator();
             }
 
+            List resources = state.model ?? [];
+
             return ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
-              itemCount: state.model?.length,
+              itemCount: resources.length,
               itemBuilder: (context, index) {
                 return Container(
                   decoration: BoxDecoration(
@@ -33,7 +35,7 @@ class News extends ConsumerWidget {
                   padding: const EdgeInsets.all(15),
                   margin: const EdgeInsets.only(bottom: 15),
                   child: Text(
-                    state.model![index].title,
+                    resources[index].title,
                     style: TextStyle(color: ThemeColors().themeColor4),
                   ),
                 );
