@@ -5,21 +5,29 @@ import 'package:native_app/adapters/application.dart';
 
 part 'news.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.kebab)
 @DataRepository([JSONAPIAdapter, ApplicationAdapter])
 class News extends DataModel<News> {
   @override
   final String? id;
-  final String? excerpt;
   final String title;
   final String slug;
   final String body;
+  final String? excerpt;
+  final String language;
+  final String? publishedAt;
+  final String? createdAt;
+  final String? updatedAt;
 
   News({
     this.id,
-    this.excerpt,
     required this.title,
     required this.slug,
     required this.body,
+    this.excerpt,
+    required this.language,
+    this.publishedAt,
+    this.createdAt,
+    this.updatedAt,
   });
 }

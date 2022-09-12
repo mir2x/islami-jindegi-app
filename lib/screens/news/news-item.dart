@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:intl/intl.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/styles/settings/theme_colors.dart';
 import 'package:native_app/widgets/utils/html-text.dart';
+import 'package:native_app/helpers/format-date.dart';
 
 class NewsItem extends ConsumerWidget {
   const NewsItem({super.key});
@@ -51,18 +53,16 @@ class NewsItem extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    if (resource.excerpt?.isNotEmpty ?? false) ...[
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 30),
-                        child: Text(
-                          resource.excerpt,
-                          style: TextStyle(
-                            color: ThemeColors().themeColor3,
-                            fontSize: 16,
-                          ),
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 30),
+                      child: Text(
+                        formatDate(resource.createdAt),
+                        style: TextStyle(
+                          color: ThemeColors().themeColor3,
+                          fontSize: 16,
                         ),
-                      )
-                    ],
+                      ),
+                    ),
                     Container(
                       margin: const EdgeInsets.only(bottom: 30),
                       child: HtmlText(

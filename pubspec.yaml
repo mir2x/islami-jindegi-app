@@ -26,7 +26,10 @@ dependencies:
   flutter_data: ^1.4.7
   flutter_data_json_api_adapter: ^0.7.1
   json_annotation: ^4.6.0
+
+  # text
   flutter_html: ^3.0.0-alpha.5
+  intl: ^0.17.0
 
   # icons
   cupertino_icons: ^1.0.2
