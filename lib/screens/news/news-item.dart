@@ -54,7 +54,7 @@ class NewsItem extends ConsumerWidget {
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(bottom: 30),
+                      margin: const EdgeInsets.only(bottom: 15),
                       child: Text(
                         formatDate(resource.createdAt),
                         style: TextStyle(

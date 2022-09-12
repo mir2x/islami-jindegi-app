@@ -20,6 +20,7 @@ class HtmlText extends StatelessWidget {
           fontSize: const FontSize(16),
           lineHeight: const LineHeight(1.4),
           margin: EdgeInsets.zero,
+          padding: EdgeInsets.zero,
         ),
       },
     );
