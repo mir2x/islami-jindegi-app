@@ -29,6 +29,7 @@ class NewsItem extends ConsumerWidget {
             }
 
             List resources = state.model ?? [];
+            var resource = resources.first;
 
             return SingleChildScrollView(
               child: Container(
@@ -44,27 +45,29 @@ class NewsItem extends ConsumerWidget {
                     Container(
                       margin: const EdgeInsets.only(bottom: 15),
                       child: Text(
-                        resources[0].title,
+                        resource.title,
                         style: TextStyle(
                           color: ThemeColors().themeColor3,
                           fontSize: 20,
                         ),
                       ),
                     ),
-                    /* Container( */
-                    /*   margin: const EdgeInsets.only(bottom: 30), */
-                    /*   child: Text( */
-                    /*     resources[0].excerpt, */
-                    /*     style: TextStyle( */
-                    /*       color: ThemeColors().themeColor3, */
-                    /*       fontSize: 16, */
-                    /*     ), */
-                    /*   ), */
-                    /* ), */
+                    if (resource.excerpt?.isNotEmpty ?? false) ...[
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 30),
+                        child: Text(
+                          resource.excerpt,
+                          style: TextStyle(
+                            color: ThemeColors().themeColor3,
+                            fontSize: 16,
+                          ),
+                        ),
+                      )
+                    ],
                     Container(
                       margin: const EdgeInsets.only(bottom: 30),
                       child: Html(
-                        data: resources[0].body,
+                        data: resource.body,
                         style: {
                           'body': Style(
                             color: ThemeColors().themeColor3,
