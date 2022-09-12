@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:qlevar_router/qlevar_router.dart';
+import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/styles/settings/theme_colors.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:native_app/main.data.dart';
-import 'package:qlevar_router/qlevar_router.dart';
-import 'package:flutter_html/flutter_html.dart';
-
+import 'package:native_app/widgets/utils/html-text.dart';
 
 class NewsItem extends ConsumerWidget {
   const NewsItem({super.key});
@@ -66,16 +65,8 @@ class NewsItem extends ConsumerWidget {
                     ],
                     Container(
                       margin: const EdgeInsets.only(bottom: 30),
-                      child: Html(
-                        data: resource.body,
-                        style: {
-                          'body': Style(
-                            color: ThemeColors().themeColor3,
-                            fontSize: const FontSize(16),
-                            lineHeight: const LineHeight(1.4),
-                            margin: EdgeInsets.zero,
-                          ),
-                        },
+                      child: HtmlText(
+                        text: resource.body,
                       ),
                     ),
                   ],
