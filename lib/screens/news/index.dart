@@ -4,7 +4,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/styles/settings/theme_colors.dart';
-import 'package:native_app/helpers/format-date.dart';
+import 'package:native_app/helpers/format_date.dart';
 
 class News extends ConsumerWidget {
   const News({super.key});

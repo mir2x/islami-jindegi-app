@@ -1,4 +1,5 @@
 import 'package:qlevar_router/qlevar_router.dart';
+
 import '../screens/home/index.dart';
 import '../screens/quran/index.dart';
 import '../screens/books/index.dart';
@@ -9,7 +10,7 @@ import '../screens/dua/index.dart';
 import '../screens/articles/index.dart';
 
 import '../screens/news/index.dart';
-import '../screens/news/news-item.dart';
+import '../screens/news/news_item.dart';
 
 import '../screens/madrasahs/index.dart';
 import '../screens/namaz_time/index.dart';
