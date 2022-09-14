@@ -30,6 +30,7 @@ class News extends ConsumerWidget {
               itemCount: resources.length,
               itemBuilder: (context, index) {
                 return InkWell(
+                  onTap: () => QR.to('news/${resources[index].slug}'),
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
@@ -54,7 +55,6 @@ class News extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  onTap: () => QR.to('news/${resources[index].slug}'),
                 );
               },
             );

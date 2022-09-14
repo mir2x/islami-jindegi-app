@@ -17,6 +17,7 @@ class Resource extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: () => QR.to(route),
       child: Column(
         children: [
           SvgPicture.asset(
@@ -38,7 +39,6 @@ class Resource extends StatelessWidget {
           ),
         ],
       ),
-      onTap: () => QR.to(route),
     );
   }
 }
