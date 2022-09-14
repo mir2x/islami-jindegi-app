@@ -7,6 +7,9 @@ import 'main.data.dart';
 
 Future main() async {
   await dotenv.load(fileName: '.env');
+
+  QR.settings.pagesType = const QSlidePage();
+
   runApp(
     ProviderScope(
       child: const MyApp(),
