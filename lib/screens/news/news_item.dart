@@ -12,26 +12,31 @@ class NewsItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MyScaffold(
-      title: const Text('News'),
-      body: Center(
-        child: ref.watch(repositoryInitializerProvider).when(
-          error: (error, _) => Text(error.toString()),
-          loading: () => const CircularProgressIndicator(),
-          data: (_) {
-            final state = ref.news.watchAll(
-              params: { 'slug': QR.params['slug'], 'quantity': 1 },
-              syncLocal: true
-            );
+    return ref.watch(repositoryInitializerProvider).when(
+      error: (error, _) => Text(error.toString()),
+      loading: () => const CircularProgressIndicator(),
+      data: (_) {
+        final state = ref.news.watchAll(
+          params: { 'slug': QR.params['slug'], 'quantity': 1 },
+          syncLocal: true
+        );
 
-            if (state.isLoading) {
-              return const CircularProgressIndicator();
-            }
+        if (state.isLoading) {
+          return const CircularProgressIndicator();
+        }
 
-            List resources = state.model ?? [];
-            var resource = resources.first;
+        List resources = state.model ?? [];
 
-            return SingleChildScrollView(
+        if (resources.isEmpty) {
+          QR.to('error-pages/404');
+        }
+
+        var resource = resources.first;
+
+        return MyScaffold(
+          title: Text(resource.title),
+          body: Center(
+            child: SingleChildScrollView(
               child: Container(
                 margin: const EdgeInsets.only(
                   top: 20,
@@ -71,10 +76,10 @@ class NewsItem extends ConsumerWidget {
                   ],
                 )
               ),
-            );
-          },
-        ),
-      ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
