@@ -26,6 +26,7 @@ dependencies:
   flutter_data: ^1.4.7
   flutter_data_json_api_adapter: ^0.7.1
   json_annotation: ^4.6.0
+  equatable: ^2.0.5
 
   # text
   flutter_html: ^3.0.0-alpha.5

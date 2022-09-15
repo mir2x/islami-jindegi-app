@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
-import 'package:native_app/main.data.dart';
-import 'package:native_app/widgets/repository/init_repository.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/providers/models.dart';
+import 'package:native_app/objects/models_query.dart';
 import 'package:native_app/styles/settings/theme_colors.dart';
 import 'package:native_app/helpers/format_date.dart';
 
@@ -12,20 +12,15 @@ class News extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ModelsQuery query = const ModelsQuery(model: 'news');
+
     return MyScaffold(
       title: const Text('News'),
       body: Center(
-        child: InitRepository(
-          initializer: ref.watch(repositoryInitializerProvider),
-          data: (_) {
-            final state = ref.news.watchAll(syncLocal: true);
-
-            if (state.isLoading) {
-              return const CircularProgressIndicator();
-            }
-
-            List resources = state.model ?? [];
-
+        child: ref.watch(modelsProvider(query)).when(
+          loading: () => const CircularProgressIndicator(),
+          error: (error, _) => Text(error.toString()),
+          data: (resources) {
             return ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
               itemCount: resources.length,

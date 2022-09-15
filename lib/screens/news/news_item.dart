@@ -2,26 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/providers/model.dart';
+import 'package:native_app/objects/model_query.dart';
+import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/styles/settings/theme_colors.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/helpers/format_date.dart';
-import 'package:native_app/screens/error_pages/page_404.dart';
 
 class NewsItem extends ConsumerWidget {
   const NewsItem({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(modelProvider(QR.params['id'])).when(
-      loading: () { return const FullScreenLoader(); },
-      error: (error, _) => Text(error.toString()),
-      data: (resource) {
-        if (resource == null) {
-          return const Page404();
-        }
+    ModelQuery query = ModelQuery(
+      model: 'news',
+      id: QR.params['id'].toString(),
+    );
 
+    return ref.watch(modelProvider(query)).when(
+      loading: () => const FullScreenLoader(),
+      error: (error, _) => ModelExeptionHandler(error: error),
+      data: (resource) {
         return MyScaffold(
           title: Text(resource.title),
           body: Center(

@@ -1,34 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
-import 'package:native_app/main.data.dart';
-import 'package:native_app/widgets/repository/init_repository.dart';
+import 'package:native_app/providers/model.dart';
+import 'package:native_app/objects/model_query.dart';
+import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/styles/settings/theme_colors.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/helpers/format_date.dart';
-import 'package:native_app/screens/error_pages/page_404.dart';
 
 class Article extends ConsumerWidget {
   const Article({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return InitRepository(
-      initializer: ref.watch(repositoryInitializerProvider),
-      data: (_) {
-        var state = ref.articles.watchOne(QR.params['id']!);
+    ModelQuery query = ModelQuery(
+      model: 'articles',
+      id: QR.params['id'].toString()
+    );
 
-        if (state.isLoading) {
-          return const CircularProgressIndicator();
-        }
-
-        var resource = state.model;
-
-        if (resource == null) {
-          return const Page404();
-        }
-
+    return ref.watch(modelProvider(query)).when(
+      loading: () => const FullScreenLoader(),
+      error: (error, _) => ModelExeptionHandler(error: error),
+      data: (resource) {
         return MyScaffold(
           title: Text(resource.title),
           body: Center(
