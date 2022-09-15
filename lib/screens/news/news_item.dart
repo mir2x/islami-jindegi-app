@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
-import 'package:native_app/main.data.dart';
-import 'package:native_app/widgets/repository/init_repository.dart';
+import 'package:native_app/providers/model.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/styles/settings/theme_colors.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/helpers/format_date.dart';
@@ -14,17 +14,10 @@ class NewsItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return InitRepository(
-      initializer: ref.watch(repositoryInitializerProvider),
-      data: (_) {
-        var state = ref.news.watchOne(QR.params['id']!);
-
-        if (state.isLoading) {
-          return const CircularProgressIndicator();
-        }
-
-        var resource = state.model;
-
+    return ref.watch(modelProvider(QR.params['id'])).when(
+      loading: () { return const FullScreenLoader(); },
+      error: (error, _) => Text(error.toString()),
+      data: (resource) {
         if (resource == null) {
           return const Page404();
         }
