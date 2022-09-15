@@ -1,20 +1,65 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:qlevar_router/qlevar_router.dart';
+import 'package:native_app/main.data.dart';
+import 'package:native_app/widgets/repository/init_repository.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/styles/settings/theme_colors.dart';
+import 'package:native_app/helpers/format_date.dart';
 
-class Articles extends StatelessWidget {
+class Articles extends ConsumerWidget {
   const Articles({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const MyScaffold(
-      title: Text('Articles'),
+  Widget build(BuildContext context, WidgetRef ref) {
+    return MyScaffold(
+      title: const Text('Articles'),
       body: Center(
-        child: Text(
-          'List of Articles',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-          ),
+        child: InitRepository(
+          initializer: ref.watch(repositoryInitializerProvider),
+          data: (_) {
+            final state = ref.articles.watchAll(syncLocal: true);
+
+            if (state.isLoading) {
+              return const CircularProgressIndicator();
+            }
+
+            List resources = state.model ?? [];
+
+            return ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
+              itemCount: resources.length,
+              itemBuilder: (context, index) {
+                return InkWell(
+                  onTap: () => QR.to('articles/${resources[index].id}'),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: ThemeColors().themeColor7,
+                    ),
+                    padding: const EdgeInsets.all(15),
+                    margin: const EdgeInsets.only(bottom: 15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          resources[index].title,
+                          style: TextStyle(color: ThemeColors().themeColor4),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(top: 10),
+                          child: Text(
+                            formatDate(resources[index].createdAt),
+                            style: TextStyle(color: ThemeColors().themeColor3),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          }
         ),
       ),
     );
