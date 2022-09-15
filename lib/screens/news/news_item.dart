@@ -2,21 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
+import 'package:native_app/widgets/repository/init_repository.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/styles/settings/theme_colors.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/helpers/format_date.dart';
+import 'package:native_app/screens/error_pages/page_404.dart';
 
 class NewsItem extends ConsumerWidget {
   const NewsItem({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(repositoryInitializerProvider).when(
-      error: (error, _) => Text(error.toString()),
-      loading: () => const CircularProgressIndicator(),
+    return InitRepository(
+      initializer: ref.watch(repositoryInitializerProvider),
       data: (_) {
-        final state = ref.news.watchAll(
+        var state = ref.news.watchAll(
           params: { 'slug': QR.params['slug'], 'quantity': 1 },
           syncLocal: true
         );
@@ -28,7 +29,7 @@ class NewsItem extends ConsumerWidget {
         List resources = state.model ?? [];
 
         if (resources.isEmpty) {
-          QR.to('error-pages/404');
+          return const Page404();
         }
 
         var resource = resources.first;
@@ -79,7 +80,7 @@ class NewsItem extends ConsumerWidget {
             ),
           ),
         );
-      },
+      }
     );
   }
 }

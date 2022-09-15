@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
-import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/main.data.dart';
+import 'package:native_app/widgets/repository/init_repository.dart';
+import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/styles/settings/theme_colors.dart';
 import 'package:native_app/helpers/format_date.dart';
 
@@ -14,9 +15,8 @@ class News extends ConsumerWidget {
     return MyScaffold(
       title: const Text('News'),
       body: Center(
-        child: ref.watch(repositoryInitializerProvider).when(
-          error: (error, _) => Text(error.toString()),
-          loading: () => const CircularProgressIndicator(),
+        child: InitRepository(
+          initializer: ref.watch(repositoryInitializerProvider),
           data: (_) {
             final state = ref.news.watchAll(syncLocal: true);
             if (state.isLoading) {
@@ -58,7 +58,7 @@ class News extends ConsumerWidget {
                 );
               },
             );
-          },
+          }
         ),
       ),
     );
