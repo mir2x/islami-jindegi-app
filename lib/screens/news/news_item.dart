@@ -17,22 +17,17 @@ class NewsItem extends ConsumerWidget {
     return InitRepository(
       initializer: ref.watch(repositoryInitializerProvider),
       data: (_) {
-        var state = ref.news.watchAll(
-          params: { 'slug': QR.params['slug'], 'quantity': 1 },
-          syncLocal: true
-        );
+        var state = ref.news.watchOne(QR.params['id']!);
 
         if (state.isLoading) {
           return const CircularProgressIndicator();
         }
 
-        List resources = state.model ?? [];
+        var resource = state.model;
 
-        if (resources.isEmpty) {
+        if (resource == null) {
           return const Page404();
         }
-
-        var resource = resources.first;
 
         return MyScaffold(
           title: Text(resource.title),
@@ -61,7 +56,7 @@ class NewsItem extends ConsumerWidget {
                     Container(
                       margin: const EdgeInsets.only(bottom: 15),
                       child: Text(
-                        formatDate(resource.createdAt),
+                        formatDate(resource.createdAt!),
                         style: TextStyle(
                           color: ThemeColors().themeColor3,
                           fontSize: 16,

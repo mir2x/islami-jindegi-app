@@ -19,6 +19,7 @@ class News extends ConsumerWidget {
           initializer: ref.watch(repositoryInitializerProvider),
           data: (_) {
             final state = ref.news.watchAll(syncLocal: true);
+
             if (state.isLoading) {
               return const CircularProgressIndicator();
             }
@@ -30,7 +31,7 @@ class News extends ConsumerWidget {
               itemCount: resources.length,
               itemBuilder: (context, index) {
                 return InkWell(
-                  onTap: () => QR.to('news/${resources[index].slug}'),
+                  onTap: () => QR.to('news/${resources[index].id}'),
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),

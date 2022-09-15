@@ -31,7 +31,7 @@ class AppRoutes {
       path: '/news',
       builder: () => const News(),
       children: [
-        QRoute(path: '/:slug', builder: () => const NewsItem()),
+        QRoute(path: '/:id', builder: () => const NewsItem()),
       ]
     ),
     QRoute(path: '/madrasahs', builder: () => const Madrasahs()),
