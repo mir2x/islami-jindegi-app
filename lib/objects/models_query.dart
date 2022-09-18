@@ -4,7 +4,7 @@ class ModelsQuery extends Equatable {
   const ModelsQuery({
     required this.model,
     this.params = const {},
-    this.syncLocal = true,
+    this.syncLocal = false,
   });
 
   final String model;
