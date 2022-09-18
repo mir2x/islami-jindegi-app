@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
-import 'package:native_app/providers/models.dart';
-import 'package:native_app/objects/models_query.dart';
+import 'package:native_app/providers/all_models.dart';
+import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/styles/settings/theme_colors.dart';
 import 'package:native_app/helpers/format_date.dart';
 
@@ -12,12 +12,12 @@ class News extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ModelsQuery query = const ModelsQuery(model: 'news');
+    AllModelsQuery query = const AllModelsQuery(repository: 'news');
 
     return MyScaffold(
       title: const Text('News'),
       body: Center(
-        child: ref.watch(modelsProvider(query)).when(
+        child: ref.watch(allModelsProvider(query)).when(
           loading: () => const CircularProgressIndicator(),
           error: (error, _) => Text(error.toString()),
           data: (resources) {
