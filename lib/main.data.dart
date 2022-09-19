@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/models/article.dart';
 import 'package:native_app/models/bayan.dart';
 import 'package:native_app/models/malfuzat.dart';
+import 'package:native_app/models/masail.dart';
 import 'package:native_app/models/news.dart';
 
 // ignore: prefer_function_declarations_over_variables
@@ -34,6 +35,7 @@ final repositoryProviders = <String, Provider<Repository<DataModel>>>{
   'articles': articlesRepositoryProvider,
 'bayans': bayansRepositoryProvider,
 'malfuzats': malfuzatsRepositoryProvider,
+'masails': masailsRepositoryProvider,
 'news': newsRepositoryProvider
 };
 
@@ -42,9 +44,10 @@ final repositoryInitializerProvider =
     DataHelpers.setInternalType<Article>('articles');
     DataHelpers.setInternalType<Bayan>('bayans');
     DataHelpers.setInternalType<Malfuzat>('malfuzats');
+    DataHelpers.setInternalType<Masail>('masails');
     DataHelpers.setInternalType<News>('news');
-    final adapters = <String, RemoteAdapter>{'articles': ref.watch(internalArticlesRemoteAdapterProvider), 'bayans': ref.watch(internalBayansRemoteAdapterProvider), 'malfuzats': ref.watch(internalMalfuzatsRemoteAdapterProvider), 'news': ref.watch(internalNewsRemoteAdapterProvider)};
-    final remotes = <String, bool>{'articles': true, 'bayans': true, 'malfuzats': true, 'news': true};
+    final adapters = <String, RemoteAdapter>{'articles': ref.watch(internalArticlesRemoteAdapterProvider), 'bayans': ref.watch(internalBayansRemoteAdapterProvider), 'malfuzats': ref.watch(internalMalfuzatsRemoteAdapterProvider), 'masails': ref.watch(internalMasailsRemoteAdapterProvider), 'news': ref.watch(internalNewsRemoteAdapterProvider)};
+    final remotes = <String, bool>{'articles': true, 'bayans': true, 'malfuzats': true, 'masails': true, 'news': true};
 
     await ref.watch(graphNotifierProvider).initialize();
 
@@ -65,6 +68,7 @@ extension RepositoryWidgetRefX on WidgetRef {
   Repository<Article> get articles => watch(articlesRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Bayan> get bayans => watch(bayansRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Malfuzat> get malfuzats => watch(malfuzatsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Masail> get masails => watch(masailsRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<News> get news => watch(newsRepositoryProvider)..remoteAdapter.internalWatch = watch;
 }
 
@@ -73,5 +77,6 @@ extension RepositoryRefX on Ref {
   Repository<Article> get articles => watch(articlesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Bayan> get bayans => watch(bayansRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Malfuzat> get malfuzats => watch(malfuzatsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Masail> get masails => watch(masailsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
   Repository<News> get news => watch(newsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
 }

@@ -9,7 +9,7 @@ final singleModelProvider = FutureProvider.family((ref, SingleModelQuery query) 
     /* 'books': ref.books, */
     'bayans': ref.bayans,
     'malfuzats': ref.malfuzats,
-    /* 'masails': ref.masails, */
+    'masails': ref.masails,
     /* 'duas': ref.duas, */
     'articles': ref.articles,
     'news': ref.news,
