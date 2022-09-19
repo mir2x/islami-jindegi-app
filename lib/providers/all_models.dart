@@ -13,7 +13,7 @@ final allModelsProvider = FutureProvider.family((ref, AllModelsQuery query) asyn
     'duas': ref.duas,
     'articles': ref.articles,
     'news': ref.news,
-    /* 'madrasahs': ref.madrasahs, */
+    'madrasahs': ref.madrasahs,
   };
 
   var resources = await repositories[query.repository].findAll(

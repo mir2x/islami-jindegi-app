@@ -13,7 +13,7 @@ final singleModelProvider = FutureProvider.family((ref, SingleModelQuery query) 
     'duas': ref.duas,
     'articles': ref.articles,
     'news': ref.news,
-    /* 'madrasahs': ref.madrasahs, */
+    'madrasahs': ref.madrasahs,
   };
 
   var resource = await repositories[query.repository].findOne(
