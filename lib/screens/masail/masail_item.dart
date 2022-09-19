@@ -55,7 +55,7 @@ class MasailItem extends ConsumerWidget {
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.only(bottom: 30),
+                    margin: const EdgeInsets.only(top: 10, bottom: 30),
                     child: HtmlText(
                       text: resource.question,
                     ),
@@ -69,7 +69,7 @@ class MasailItem extends ConsumerWidget {
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.only(bottom: 30),
+                    margin: const EdgeInsets.only(top: 10, bottom: 30),
                     child: HtmlText(
                       text: resource.answer,
                     ),
