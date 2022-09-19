@@ -7,17 +7,16 @@ import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/styles/settings/theme_colors.dart';
-import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/helpers/format_date.dart';
 
-class NewsItem extends ConsumerWidget {
-  const NewsItem({super.key});
+class Bayan extends ConsumerWidget {
+  const Bayan({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     SingleModelQuery query = SingleModelQuery(
-      repository: 'news',
-      id: QR.params['id'].toString(),
+      repository: 'bayans',
+      id: QR.params['id'].toString()
     );
 
     return ref.watch(singleModelProvider(query)).when(
@@ -50,17 +49,11 @@ class NewsItem extends ConsumerWidget {
                   Container(
                     margin: const EdgeInsets.only(bottom: 15),
                     child: Text(
-                      formatDate(resource.createdAt!),
+                      formatDate(resource.publishedAt),
                       style: TextStyle(
                         color: ThemeColors().themeColor3,
                         fontSize: 16,
                       ),
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 30),
-                    child: HtmlText(
-                      text: resource.body,
                     ),
                   ),
                 ],

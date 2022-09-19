@@ -6,8 +6,14 @@ final allModelsProvider = FutureProvider.family((ref, AllModelsQuery query) asyn
   await ref.watch(repositoryInitializerProvider.future);
 
   Map repositories = {
-    'news': ref.news,
+    /* 'books': ref.books, */
+    'bayans': ref.bayans,
+    /* 'malfuzats': ref.malfuzats, */
+    /* 'masails': ref.masails, */
+    /* 'duas': ref.duas, */
     'articles': ref.articles,
+    'news': ref.news,
+    /* 'madrasahs': ref.madrasahs, */
   };
 
   var resources = await repositories[query.repository].findAll(

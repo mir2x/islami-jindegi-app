@@ -48,6 +48,10 @@ class MyScaffold extends StatelessWidget {
         ],
       ),
       body: Container(
+        constraints: const BoxConstraints(
+          minWidth: double.infinity,
+          minHeight: double.infinity,
+        ),
         decoration: const BoxDecoration(
           image: DecorationImage(
             image:

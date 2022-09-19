@@ -3,34 +3,30 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter_data_json_api_adapter/flutter_data_json_api_adapter.dart';
 import 'package:native_app/adapters/application.dart';
 
-part 'article.g.dart';
+part 'bayan.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.kebab)
 @DataRepository([JSONAPIAdapter, ApplicationAdapter])
-class Article extends DataModel<Article> {
+class Bayan extends DataModel<Bayan> {
   @override
   final String? id;
   final String title;
-  final String slug;
-  final String body;
   final String? excerpt;
   final String language;
-  /* final Map<dynamic, dynamic>? document; */
-  final int? position;
-  final String? publishedAt;
+  final String? location;
+  /* final Map<dynamic, dynamic>? audio; */
+  final String publishedAt;
   final String? createdAt;
   final String? updatedAt;
 
-  Article({
+  Bayan({
     this.id,
     required this.title,
-    required this.slug,
-    required this.body,
     this.excerpt,
     required this.language,
-    /* this.document, */
-    this.position,
-    this.publishedAt,
+    this.location,
+    /* this.audio, */
+    required this.publishedAt,
     this.createdAt,
     this.updatedAt,
   });

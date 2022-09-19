@@ -6,8 +6,14 @@ final singleModelProvider = FutureProvider.family((ref, SingleModelQuery query) 
   await ref.watch(repositoryInitializerProvider.future);
 
   Map repositories = {
-    'news': ref.news,
+    /* 'books': ref.books, */
+    'bayans': ref.bayans,
+    /* 'malfuzats': ref.malfuzats, */
+    /* 'masails': ref.masails, */
+    /* 'duas': ref.duas, */
     'articles': ref.articles,
+    'news': ref.news,
+    /* 'madrasahs': ref.madrasahs, */
   };
 
   var resource = await repositories[query.repository].findOne(

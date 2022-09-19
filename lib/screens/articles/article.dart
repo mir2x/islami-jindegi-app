@@ -26,47 +26,45 @@ class Article extends ConsumerWidget {
       data: (resource) {
         return MyScaffold(
           title: Text(resource.title),
-          body: Center(
-            child: SingleChildScrollView(
-              child: Container(
-                margin: const EdgeInsets.only(
-                  top: 20,
-                  left: 20,
-                  right: 20,
-                  bottom: 50
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 15),
-                      child: Text(
-                        resource.title,
-                        style: TextStyle(
-                          color: ThemeColors().themeColor3,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 15),
-                      child: Text(
-                        formatDate(resource.createdAt!),
-                        style: TextStyle(
-                          color: ThemeColors().themeColor3,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 30),
-                      child: HtmlText(
-                        text: resource.body,
-                      ),
-                    ),
-                  ],
-                )
+          body: SingleChildScrollView(
+            child: Container(
+              margin: const EdgeInsets.only(
+                top: 20,
+                left: 20,
+                right: 20,
+                bottom: 50
               ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 15),
+                    child: Text(
+                      resource.title,
+                      style: TextStyle(
+                        color: ThemeColors().themeColor3,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 15),
+                    child: Text(
+                      formatDate(resource.createdAt!),
+                      style: TextStyle(
+                        color: ThemeColors().themeColor3,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 30),
+                    child: HtmlText(
+                      text: resource.body,
+                    ),
+                  ),
+                ],
+              )
             ),
           ),
         );
