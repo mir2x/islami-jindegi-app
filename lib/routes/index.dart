@@ -8,6 +8,8 @@ import '../screens/bayans/index.dart';
 import '../screens/bayans/bayan.dart';
 
 import '../screens/malfuzat/index.dart';
+import '../screens/malfuzat/malfuzat_item.dart';
+
 import '../screens/masail/index.dart';
 import '../screens/dua/index.dart';
 
@@ -36,7 +38,14 @@ class AppRoutes {
       ]
     ),
 
-    QRoute(path: '/malfuzat', builder: () => const Malfuzat()),
+    QRoute(
+      path: '/malfuzat',
+      builder: () => const Malfuzat(),
+      children: [
+        QRoute(path: '/:id', builder: () => const MalfuzatItem()),
+      ]
+    ),
+
     QRoute(path: '/masail', builder: () => const Masail()),
     QRoute(path: '/dua', builder: () => const Dua()),
 

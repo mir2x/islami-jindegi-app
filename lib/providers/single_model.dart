@@ -8,7 +8,7 @@ final singleModelProvider = FutureProvider.family((ref, SingleModelQuery query) 
   Map repositories = {
     /* 'books': ref.books, */
     'bayans': ref.bayans,
-    /* 'malfuzats': ref.malfuzats, */
+    'malfuzats': ref.malfuzats,
     /* 'masails': ref.masails, */
     /* 'duas': ref.duas, */
     'articles': ref.articles,
