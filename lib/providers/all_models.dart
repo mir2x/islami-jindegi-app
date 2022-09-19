@@ -10,7 +10,7 @@ final allModelsProvider = FutureProvider.family((ref, AllModelsQuery query) asyn
     'bayans': ref.bayans,
     'malfuzats': ref.malfuzats,
     'masails': ref.masails,
-    /* 'duas': ref.duas, */
+    'duas': ref.duas,
     'articles': ref.articles,
     'news': ref.news,
     /* 'madrasahs': ref.madrasahs, */

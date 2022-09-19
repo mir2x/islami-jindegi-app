@@ -20,7 +20,7 @@ class Home extends StatelessWidget {
           Resource(route: 'bayans', title: 'Bayans', icon: 'bayan'),
           Resource(route: 'malfuzat', title: 'Malfuzat', icon: 'malfuzat'),
           Resource(route: 'masail', title: 'Masail', icon: 'masail'),
-          Resource(route: 'dua', title: 'Dua & Durud', icon: 'dua'),
+          Resource(route: 'duas', title: 'Dua & Durud', icon: 'dua'),
           Resource(route: 'articles', title: 'Articles', icon: 'article'),
           Resource(route: 'news', title: 'News', icon: 'news'),
           Resource(route: 'madrasahs', title: 'Madrasah', icon: 'madrasah'),
