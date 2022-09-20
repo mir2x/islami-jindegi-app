@@ -28,6 +28,9 @@ dependencies:
   json_annotation: ^4.6.0
   equatable: ^2.0.5
 
+  # widgets
+  carousel_slider: ^4.1.1
+
   # text
   flutter_html: ^3.0.0-alpha.5
   intl: ^0.17.0
