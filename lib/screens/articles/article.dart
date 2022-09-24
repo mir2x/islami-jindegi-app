@@ -6,6 +6,7 @@ import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
+import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/styles/settings/theme_colors.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/helpers/format_date.dart';
@@ -26,46 +27,35 @@ class Article extends ConsumerWidget {
       data: (resource) {
         return MyScaffold(
           title: Text(resource.title),
-          body: SingleChildScrollView(
-            child: Container(
-              margin: const EdgeInsets.only(
-                top: 20,
-                left: 20,
-                right: 20,
-                bottom: 50
+          body: ItemContent(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(bottom: 15),
+                child: Text(
+                  resource.title,
+                  style: TextStyle(
+                    color: ThemeColors().themeColor3,
+                    fontSize: 20,
+                  ),
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 15),
-                    child: Text(
-                      resource.title,
-                      style: TextStyle(
-                        color: ThemeColors().themeColor3,
-                        fontSize: 20,
-                      ),
-                    ),
+              Container(
+                margin: const EdgeInsets.only(bottom: 15),
+                child: Text(
+                  formatDate(resource.createdAt!),
+                  style: TextStyle(
+                    color: ThemeColors().themeColor3,
+                    fontSize: 16,
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 15),
-                    child: Text(
-                      formatDate(resource.createdAt!),
-                      style: TextStyle(
-                        color: ThemeColors().themeColor3,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 30),
-                    child: HtmlText(
-                      text: resource.body,
-                    ),
-                  ),
-                ],
-              )
-            ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(bottom: 30),
+                child: HtmlText(
+                  text: resource.body,
+                ),
+              ),
+            ],
           ),
         );
       }
