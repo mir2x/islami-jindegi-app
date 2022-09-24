@@ -4,6 +4,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
+import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/styles/settings/theme_colors.dart';
 import 'package:native_app/helpers/format_date.dart';
 
@@ -27,14 +28,8 @@ class Bayans extends ConsumerWidget {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () => QR.to('bayans/${resources[index].id}'),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: ThemeColors().themeColor7,
-                    ),
-                    padding: const EdgeInsets.all(15),
-                    margin: const EdgeInsets.only(bottom: 15),
-                    child: Column(
+                  child: ListItem(
+                    item: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
