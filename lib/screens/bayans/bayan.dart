@@ -116,10 +116,13 @@ class Bayan extends ConsumerWidget {
                     if (resource.audio != null) ...[
                       DescriptionItem(
                         title: 'Download:',
-                        description: Icon(
-                          Icons.download,
-                          color: ThemeColors().themeColor4,
-                          size: 24,
+                        description: Align(
+                          alignment: Alignment.topLeft,
+                          child: Icon(
+                            Icons.download,
+                            color: ThemeColors().themeColor3,
+                            size: 24,
+                          ),
                         ),
                       ),
                     ] else ...[],
