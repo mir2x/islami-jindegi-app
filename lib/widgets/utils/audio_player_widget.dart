@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:native_app/styles/settings/theme_colors.dart';
+import 'package:native_app/helpers/play_time.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
   AudioPlayerWidget({
@@ -93,11 +94,11 @@ class _AudioPlayerState extends State<AudioPlayerWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                position.toString().split('.').first.padLeft(8, '0'),
+                playTime(position.inSeconds),
                 style: TextStyle(color: ThemeColors().themeColor4),
               ),
               Text(
-                duration.toString().split('.').first.padLeft(8, '0'),
+                playTime(duration.inSeconds),
                 style: TextStyle(color: ThemeColors().themeColor4),
               ),
             ]

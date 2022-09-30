@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/helpers/file_size.dart';
+import 'package:native_app/helpers/play_duration.dart';
+import 'package:native_app/widgets/presentation/description_item.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/objects/single_model_query.dart';
@@ -39,16 +42,6 @@ class Bayan extends ConsumerWidget {
                   ),
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 15),
-                child: Text(
-                  formatDate(resource.publishedAt),
-                  style: TextStyle(
-                    color: ThemeColors().themeColor3,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
               if (resource.audio != null) ...[
                 Container(
                   margin: const EdgeInsets.only(top: 30),
@@ -57,6 +50,81 @@ class Bayan extends ConsumerWidget {
                   ),
                 ),
               ] else ...[],
+              Container(
+                margin: const EdgeInsets.only(top: 40),
+                child: Column(
+                  children: [
+                    if (resource.location != null) ...[
+                      DescriptionItem(
+                        title: 'Location:',
+                        description: Text(
+                          resource.location,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: ThemeColors().themeColor3
+                          ),
+                        ),
+                      ),
+                    ] else ...[],
+                    DescriptionItem(
+                      title: 'Date:',
+                      description: Text(
+                        formatDate(resource.publishedAt),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: ThemeColors().themeColor3
+                        ),
+                      ),
+                    ),
+                    if (resource.excerpt != null) ...[
+                      DescriptionItem(
+                        title: 'Topic:',
+                        description: Text(
+                          resource.excerpt,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: ThemeColors().themeColor3
+                          ),
+                        ),
+                      ),
+                    ] else ...[],
+                    if (resource.audio != null) ...[
+                      DescriptionItem(
+                        title: 'Audio Duration:',
+                        description: Text(
+                          playDuration(resource.audio['metadata']['duration']),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: ThemeColors().themeColor3
+                          ),
+                        ),
+                      ),
+                    ] else ...[],
+                    if (resource.audio != null) ...[
+                      DescriptionItem(
+                        title: 'Audio Size:',
+                        description: Text(
+                          fileSize(resource.audio['metadata']['size']),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: ThemeColors().themeColor3
+                          ),
+                        ),
+                      ),
+                    ] else ...[],
+                    if (resource.audio != null) ...[
+                      DescriptionItem(
+                        title: 'Download:',
+                        description: Icon(
+                          Icons.download,
+                          color: ThemeColors().themeColor4,
+                          size: 24,
+                        ),
+                      ),
+                    ] else ...[],
+                  ],
+                )
+              )
             ],
           ),
         );
