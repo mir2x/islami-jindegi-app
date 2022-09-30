@@ -10,9 +10,10 @@ import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/styles/settings/theme_colors.dart';
+import 'package:native_app/widgets/audio/player.dart';
 import 'package:native_app/helpers/format_date.dart';
-import 'package:native_app/widgets/utils/audio_player_widget.dart';
+import 'package:native_app/helpers/audio_utils.dart';
+import 'package:native_app/styles/settings/theme_colors.dart';
 
 class Bayan extends ConsumerWidget {
   const Bayan({super.key});
@@ -46,7 +47,7 @@ class Bayan extends ConsumerWidget {
                 Container(
                   margin: const EdgeInsets.only(top: 30),
                   child: AudioPlayerWidget(
-                    audio: resource.audio,
+                    audioSrc: audioSrc(resource.audio),
                   ),
                 ),
               ] else ...[],

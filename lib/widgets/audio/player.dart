@@ -1,26 +1,47 @@
 import 'dart:async';
-import 'dart:collection';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:native_app/styles/settings/theme_colors.dart';
+import 'package:native_app/providers/audio_player.dart';
 import 'package:native_app/helpers/play_time.dart';
+import 'package:native_app/styles/settings/theme_colors.dart';
 
-class AudioPlayerWidget extends StatefulWidget {
-  AudioPlayerWidget({
+class AudioPlayerWidget extends ConsumerWidget {
+  const AudioPlayerWidget({
     super.key,
-    required this.audio,
+    required this.audioSrc,
   });
 
-  final LinkedHashMap audio;
-  final AudioPlayer player = AudioPlayer(playerId: 'unique_player_id');
+  final String audioSrc;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref.watch(audioPlayerProvider(audioSrc)).when(
+      loading: () => const Center(
+        child: CircularProgressIndicator()
+      ),
+      error: (error, _) => Text(error.toString()),
+      data: (player) {
+        return StatefulAudioPlayer(player: player);
+      }
+    );
+  }
+}
+
+class StatefulAudioPlayer extends StatefulWidget {
+  const StatefulAudioPlayer({
+    super.key,
+    required this.player,
+  });
+
+  final AudioPlayer player;
 
   @override
   State<StatefulWidget> createState() => _AudioPlayerState();
 }
 
-class _AudioPlayerState extends State<AudioPlayerWidget> {
+class _AudioPlayerState extends State<StatefulAudioPlayer> {
   PlayerState _playerState = PlayerState.stopped;
 
   StreamSubscription? _durationSubscription;
@@ -66,8 +87,6 @@ class _AudioPlayerState extends State<AudioPlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    UrlSource source = UrlSource("${dotenv.env['STATIC_HOST_NAME']}/uploads/${widget.audio['storage']}/${widget.audio['id']}");
-
     return Column(
       children: [
         GestureDetector(
@@ -75,7 +94,7 @@ class _AudioPlayerState extends State<AudioPlayerWidget> {
             if (isPlaying) {
               await widget.player.pause();
             } else {
-              await widget.player.play(source);
+              await widget.player.resume();
             }
           },
           child: isPlaying ? SvgPicture.asset(
