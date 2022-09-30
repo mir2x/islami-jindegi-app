@@ -9,6 +9,7 @@ import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/styles/settings/theme_colors.dart';
 import 'package:native_app/helpers/format_date.dart';
+import 'package:native_app/widgets/utils/audio_player_widget.dart';
 
 class Bayan extends ConsumerWidget {
   const Bayan({super.key});
@@ -48,6 +49,14 @@ class Bayan extends ConsumerWidget {
                   ),
                 ),
               ),
+              if (resource.audio != null) ...[
+                Container(
+                  margin: const EdgeInsets.only(top: 30),
+                  child: AudioPlayerWidget(
+                    audio: resource.audio,
+                  ),
+                ),
+              ] else ...[],
             ],
           ),
         );
