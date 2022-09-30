@@ -1,29 +1,36 @@
+import 'dart:collection';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:native_app/providers/audio_player.dart';
+import 'package:native_app/helpers/audio_utils.dart';
 import 'package:native_app/helpers/play_time.dart';
 import 'package:native_app/styles/settings/theme_colors.dart';
 
 class AudioPlayerWidget extends ConsumerWidget {
   const AudioPlayerWidget({
     super.key,
-    required this.audioSrc,
+    required this.audio,
   });
 
-  final String audioSrc;
+  final LinkedHashMap audio;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(audioPlayerProvider(audioSrc)).when(
+    String url = audioSrc(audio);
+
+    return ref.watch(audioPlayerProvider(url)).when(
       loading: () => const Center(
         child: CircularProgressIndicator()
       ),
       error: (error, _) => Text(error.toString()),
       data: (player) {
-        return StatefulAudioPlayer(player: player);
+        return StatefulAudioPlayer(
+          player: player,
+          audio: audio,
+        );
       }
     );
   }
@@ -33,9 +40,11 @@ class StatefulAudioPlayer extends StatefulWidget {
   const StatefulAudioPlayer({
     super.key,
     required this.player,
+    required this.audio,
   });
 
   final AudioPlayer player;
+  final LinkedHashMap audio;
 
   @override
   State<StatefulWidget> createState() => _AudioPlayerState();
@@ -57,6 +66,10 @@ class _AudioPlayerState extends State<StatefulAudioPlayer> {
   @override
   void initState() {
     super.initState();
+
+    if (widget.audio['metadata']['duration'] != null) {
+      duration = Duration(seconds: widget.audio['metadata']['duration']);
+    }
 
     _durationSubscription = widget.player.onDurationChanged.listen((Duration d) {
       setState(() => duration = d);
