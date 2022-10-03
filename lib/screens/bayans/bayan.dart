@@ -88,7 +88,7 @@ class Bayan extends ConsumerWidget {
                         ),
                       ),
                     ] else ...[],
-                    if (resource.audio['metadata']['duration'] != null) ...[
+                    if (resource.audio?['metadata']?['duration'] != null) ...[
                       DescriptionItem(
                         title: 'Audio Duration:',
                         description: Text(
@@ -100,7 +100,7 @@ class Bayan extends ConsumerWidget {
                         ),
                       ),
                     ] else ...[],
-                    if (resource.audio['metadata']['size'] != null) ...[
+                    if (resource.audio?['metadata']?['size'] != null) ...[
                       DescriptionItem(
                         title: 'Audio Size:',
                         description: Text(

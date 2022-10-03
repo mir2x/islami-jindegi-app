@@ -67,7 +67,7 @@ class _AudioPlayerState extends State<StatefulAudioPlayer> {
   void initState() {
     super.initState();
 
-    if (widget.audio['metadata']['duration'] != null) {
+    if (widget.audio['metadata']?['duration'] != null) {
       duration = Duration(seconds: widget.audio['metadata']['duration']);
     }
 
