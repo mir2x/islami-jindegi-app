@@ -14,10 +14,12 @@ class Duas extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     AllModelsQuery query = const AllModelsQuery(repository: 'duas');
 
+    var modelQuery = ref.watch(allModelsProvider(query));
+
     return MyScaffold(
       title: const Text('Dua & Durud'),
       body: Center(
-        child: ref.watch(allModelsProvider(query)).when(
+        child: modelQuery.when(
           loading: () => const CircularProgressIndicator(),
           error: (error, _) => Text(error.toString()),
           data: (resources) {
@@ -36,7 +38,7 @@ class Duas extends ConsumerWidget {
                 );
               },
             );
-          }
+          },
         ),
       ),
     );

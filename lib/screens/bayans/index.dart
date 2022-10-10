@@ -15,10 +15,12 @@ class Bayans extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     AllModelsQuery query = const AllModelsQuery(repository: 'bayans');
 
+    var modelQuery = ref.watch(allModelsProvider(query));
+
     return MyScaffold(
       title: const Text('Bayans'),
       body: Center(
-        child: ref.watch(allModelsProvider(query)).when(
+        child: modelQuery.when(
           loading: () => const CircularProgressIndicator(),
           error: (error, _) => Text(error.toString()),
           data: (resources) {
@@ -49,7 +51,7 @@ class Bayans extends ConsumerWidget {
                 );
               },
             );
-          }
+          },
         ),
       ),
     );

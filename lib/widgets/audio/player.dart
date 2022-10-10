@@ -21,9 +21,11 @@ class AudioPlayerWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     String url = audioSrc(audio);
 
-    return ref.watch(audioPlayerProvider(url)).when(
+    var audioPlayer = ref.watch(audioPlayerProvider(url));
+
+    return audioPlayer.when(
       loading: () => const Center(
-        child: CircularProgressIndicator()
+        child: CircularProgressIndicator(),
       ),
       error: (error, _) => Text(error.toString()),
       data: (player) {
@@ -31,7 +33,7 @@ class AudioPlayerWidget extends ConsumerWidget {
           player: player,
           audio: audio,
         );
-      }
+      },
     );
   }
 }
@@ -71,19 +73,23 @@ class _AudioPlayerState extends State<StatefulAudioPlayer> {
       duration = Duration(seconds: widget.audio['metadata']['duration']);
     }
 
-    _durationSubscription = widget.player.onDurationChanged.listen((Duration d) {
+    _durationSubscription =
+        widget.player.onDurationChanged.listen((Duration d) {
       setState(() => duration = d);
     });
 
-    _positionSubscription = widget.player.onPositionChanged.listen((Duration p) {
+    _positionSubscription =
+        widget.player.onPositionChanged.listen((Duration p) {
       setState(() => position = p);
     });
 
-    _playerStateSubscription = widget.player.onPlayerStateChanged.listen((PlayerState s) {
+    _playerStateSubscription =
+        widget.player.onPlayerStateChanged.listen((PlayerState s) {
       setState(() => _playerState = s);
     });
 
-    _playerCompleteSubscription = widget.player.onPlayerComplete.listen((event) {
+    _playerCompleteSubscription =
+        widget.player.onPlayerComplete.listen((event) {
       setState(() => position = Duration.zero);
     });
   }
@@ -110,15 +116,17 @@ class _AudioPlayerState extends State<StatefulAudioPlayer> {
               await widget.player.resume();
             }
           },
-          child: isPlaying ? SvgPicture.asset(
-            'assets/images/icons/pause.svg',
-            width: 80,
-            height: 80,
-          ) : SvgPicture.asset(
-            'assets/images/icons/play.svg',
-            width: 80,
-            height: 80,
-          ),
+          child: isPlaying
+              ? SvgPicture.asset(
+                  'assets/images/icons/pause.svg',
+                  width: 80,
+                  height: 80,
+                )
+              : SvgPicture.asset(
+                  'assets/images/icons/play.svg',
+                  width: 80,
+                  height: 80,
+                ),
         ),
         Container(
           margin: const EdgeInsets.only(top: 15, bottom: 8),
@@ -133,7 +141,7 @@ class _AudioPlayerState extends State<StatefulAudioPlayer> {
                 playTime(duration.inSeconds),
                 style: TextStyle(color: ThemeColors().themeColor4),
               ),
-            ]
+            ],
           ),
         ),
         SliderTheme(
@@ -152,7 +160,7 @@ class _AudioPlayerState extends State<StatefulAudioPlayer> {
             },
           ),
         ),
-      ]
+      ],
     );
   }
 }

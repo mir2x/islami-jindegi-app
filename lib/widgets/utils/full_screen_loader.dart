@@ -8,8 +8,7 @@ class FullScreenLoader extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image:
-              AssetImage('assets/images/icons/background-pattern-dark.png'),
+          image: AssetImage('assets/images/icons/background-pattern-dark.png'),
           repeat: ImageRepeat.repeat,
         ),
       ),

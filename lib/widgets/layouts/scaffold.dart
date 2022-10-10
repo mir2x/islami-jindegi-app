@@ -7,7 +7,7 @@ class MyScaffold extends StatelessWidget {
   const MyScaffold({
     super.key,
     required this.title,
-    required this.body
+    required this.body,
   });
 
   final Text title;
@@ -19,15 +19,17 @@ class MyScaffold extends StatelessWidget {
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.only(left: 15),
-          child: QR.navigator.currentRoute.path == '/' ? SvgPicture.asset(
-            'assets/images/logos/logo.svg',
-            fit: BoxFit.scaleDown,
-            width: 40,
-            height: 35,
-          ) : IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: QR.back,
-          ),
+          child: QR.navigator.currentRoute.path == '/'
+              ? SvgPicture.asset(
+                  'assets/images/logos/logo.svg',
+                  fit: BoxFit.scaleDown,
+                  width: 40,
+                  height: 35,
+                )
+              : IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: QR.back,
+                ),
         ),
         title: title,
         backgroundColor: ThemeColors().themeColor5,

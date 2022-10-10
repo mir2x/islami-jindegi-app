@@ -7,7 +7,7 @@ class Resource extends StatelessWidget {
     super.key,
     required this.icon,
     required this.title,
-    required this.route
+    required this.route,
   });
 
   final String icon;

@@ -1,5 +1,3 @@
-
-
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: directives_ordering, top_level_function_literal_block
 
@@ -17,76 +15,111 @@ import 'package:native_app/models/masail.dart';
 import 'package:native_app/models/news.dart';
 
 // ignore: prefer_function_declarations_over_variables
-ConfigureRepositoryLocalStorage configureRepositoryLocalStorage = ({FutureFn<String>? baseDirFn, List<int>? encryptionKey, bool? clear}) {
+ConfigureRepositoryLocalStorage configureRepositoryLocalStorage =
+    ({FutureFn<String>? baseDirFn, List<int>? encryptionKey, bool? clear}) {
   if (!kIsWeb) {
-    baseDirFn ??= () => getApplicationDocumentsDirectory().then((dir) => dir.path);
+    baseDirFn ??=
+        () => getApplicationDocumentsDirectory().then((dir) => dir.path);
   } else {
     baseDirFn ??= () => '';
   }
-  
-  return hiveLocalStorageProvider
-    .overrideWithProvider(Provider((ref) => HiveLocalStorage(
-            hive: ref.read(hiveProvider),
-            baseDirFn: baseDirFn,
-            encryptionKey: encryptionKey,
-            clear: clear,
-          )));
+
+  return hiveLocalStorageProvider.overrideWithProvider(
+    Provider(
+      (ref) => HiveLocalStorage(
+        hive: ref.read(hiveProvider),
+        baseDirFn: baseDirFn,
+        encryptionKey: encryptionKey,
+        clear: clear,
+      ),
+    ),
+  );
 };
 
 final repositoryProviders = <String, Provider<Repository<DataModel>>>{
   'articles': articlesRepositoryProvider,
-'bayans': bayansRepositoryProvider,
-'duas': duasRepositoryProvider,
-'madrasahs': madrasahsRepositoryProvider,
-'malfuzats': malfuzatsRepositoryProvider,
-'masails': masailsRepositoryProvider,
-'news': newsRepositoryProvider
+  'bayans': bayansRepositoryProvider,
+  'duas': duasRepositoryProvider,
+  'madrasahs': madrasahsRepositoryProvider,
+  'malfuzats': malfuzatsRepositoryProvider,
+  'masails': masailsRepositoryProvider,
+  'news': newsRepositoryProvider
 };
 
 final repositoryInitializerProvider =
-  FutureProvider<RepositoryInitializer>((ref) async {
-    DataHelpers.setInternalType<Article>('articles');
-    DataHelpers.setInternalType<Bayan>('bayans');
-    DataHelpers.setInternalType<Dua>('duas');
-    DataHelpers.setInternalType<Madrasah>('madrasahs');
-    DataHelpers.setInternalType<Malfuzat>('malfuzats');
-    DataHelpers.setInternalType<Masail>('masails');
-    DataHelpers.setInternalType<News>('news');
-    final adapters = <String, RemoteAdapter>{'articles': ref.watch(internalArticlesRemoteAdapterProvider), 'bayans': ref.watch(internalBayansRemoteAdapterProvider), 'duas': ref.watch(internalDuasRemoteAdapterProvider), 'madrasahs': ref.watch(internalMadrasahsRemoteAdapterProvider), 'malfuzats': ref.watch(internalMalfuzatsRemoteAdapterProvider), 'masails': ref.watch(internalMasailsRemoteAdapterProvider), 'news': ref.watch(internalNewsRemoteAdapterProvider)};
-    final remotes = <String, bool>{'articles': true, 'bayans': true, 'duas': true, 'madrasahs': true, 'malfuzats': true, 'masails': true, 'news': true};
+    FutureProvider<RepositoryInitializer>((ref) async {
+  DataHelpers.setInternalType<Article>('articles');
+  DataHelpers.setInternalType<Bayan>('bayans');
+  DataHelpers.setInternalType<Dua>('duas');
+  DataHelpers.setInternalType<Madrasah>('madrasahs');
+  DataHelpers.setInternalType<Malfuzat>('malfuzats');
+  DataHelpers.setInternalType<Masail>('masails');
+  DataHelpers.setInternalType<News>('news');
+  final adapters = <String, RemoteAdapter>{
+    'articles': ref.watch(internalArticlesRemoteAdapterProvider),
+    'bayans': ref.watch(internalBayansRemoteAdapterProvider),
+    'duas': ref.watch(internalDuasRemoteAdapterProvider),
+    'madrasahs': ref.watch(internalMadrasahsRemoteAdapterProvider),
+    'malfuzats': ref.watch(internalMalfuzatsRemoteAdapterProvider),
+    'masails': ref.watch(internalMasailsRemoteAdapterProvider),
+    'news': ref.watch(internalNewsRemoteAdapterProvider)
+  };
+  final remotes = <String, bool>{
+    'articles': true,
+    'bayans': true,
+    'duas': true,
+    'madrasahs': true,
+    'malfuzats': true,
+    'masails': true,
+    'news': true
+  };
 
-    await ref.watch(graphNotifierProvider).initialize();
+  await ref.watch(graphNotifierProvider).initialize();
 
-    // initialize and register
-    for (final type in repositoryProviders.keys) {
-      final repository = ref.read(repositoryProviders[type]!);
-      repository.dispose();
-      await repository.initialize(
-        remote: remotes[type],
-        adapters: adapters,
-      );
-      internalRepositories[type] = repository;
-    }
+  // initialize and register
+  for (final type in repositoryProviders.keys) {
+    final repository = ref.read(repositoryProviders[type]!);
+    repository.dispose();
+    await repository.initialize(
+      remote: remotes[type],
+      adapters: adapters,
+    );
+    internalRepositories[type] = repository;
+  }
 
-    return RepositoryInitializer();
+  return RepositoryInitializer();
 });
+
 extension RepositoryWidgetRefX on WidgetRef {
-  Repository<Article> get articles => watch(articlesRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<Bayan> get bayans => watch(bayansRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<Dua> get duas => watch(duasRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<Madrasah> get madrasahs => watch(madrasahsRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<Malfuzat> get malfuzats => watch(malfuzatsRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<Masail> get masails => watch(masailsRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<News> get news => watch(newsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Article> get articles =>
+      watch(articlesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Bayan> get bayans =>
+      watch(bayansRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Dua> get duas =>
+      watch(duasRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Madrasah> get madrasahs =>
+      watch(madrasahsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Malfuzat> get malfuzats =>
+      watch(malfuzatsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Masail> get masails =>
+      watch(masailsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<News> get news =>
+      watch(newsRepositoryProvider)..remoteAdapter.internalWatch = watch;
 }
 
 extension RepositoryRefX on Ref {
-
-  Repository<Article> get articles => watch(articlesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Bayan> get bayans => watch(bayansRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Dua> get duas => watch(duasRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Madrasah> get madrasahs => watch(madrasahsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Malfuzat> get malfuzats => watch(malfuzatsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Masail> get masails => watch(masailsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<News> get news => watch(newsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Article> get articles => watch(articlesRepositoryProvider)
+    ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Bayan> get bayans => watch(bayansRepositoryProvider)
+    ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Dua> get duas => watch(duasRepositoryProvider)
+    ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Madrasah> get madrasahs => watch(madrasahsRepositoryProvider)
+    ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Malfuzat> get malfuzats => watch(malfuzatsRepositoryProvider)
+    ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Masail> get masails => watch(masailsRepositoryProvider)
+    ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<News> get news => watch(newsRepositoryProvider)
+    ..remoteAdapter.internalWatch = watch as Watcher;
 }

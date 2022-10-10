@@ -34,63 +34,55 @@ class AppRoutes {
     QRoute(path: '/', builder: () => const Home()),
     QRoute(path: '/quran', builder: () => const Quran()),
     QRoute(path: '/books', builder: () => const Books()),
-
     QRoute(
       path: '/bayans',
       builder: () => const Bayans(),
       children: [
         QRoute(path: '/:id', builder: () => const Bayan()),
-      ]
+      ],
     ),
-
     QRoute(
       path: '/malfuzat',
       builder: () => const Malfuzat(),
       children: [
         QRoute(path: '/:id', builder: () => const MalfuzatItem()),
-      ]
+      ],
     ),
-
     QRoute(
       path: '/masail',
       builder: () => const Masail(),
       children: [
         QRoute(path: '/:id', builder: () => const MasailItem()),
-      ]
+      ],
     ),
-
     QRoute(
       path: '/duas',
       builder: () => const Duas(),
       children: [
         QRoute(path: '/:id', builder: () => const Dua()),
-      ]
+      ],
     ),
-
     QRoute(
       path: '/articles',
       builder: () => const Articles(),
       children: [
         QRoute(path: '/:id', builder: () => const Article()),
-      ]
+      ],
     ),
-
     QRoute(
       path: '/news',
       builder: () => const News(),
       children: [
         QRoute(path: '/:id', builder: () => const NewsItem()),
-      ]
+      ],
     ),
-
     QRoute(
       path: '/madrasahs',
       builder: () => const Madrasahs(),
       children: [
         QRoute(path: '/:id', builder: () => const Madrasah()),
-      ]
+      ],
     ),
-
     QRoute(path: '/namaz-time', builder: () => const NamazTime()),
     QRoute(path: '/donation', builder: () => const Donation()),
     QRoute(path: '/settings', builder: () => const Settings()),

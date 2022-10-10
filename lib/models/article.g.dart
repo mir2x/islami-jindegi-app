@@ -38,9 +38,11 @@ class $ArticleRemoteAdapter = RemoteAdapter<Article>
     with JSONAPIAdapter<Article>, ApplicationAdapter<Article>;
 
 final internalArticlesRemoteAdapterProvider = Provider<RemoteAdapter<Article>>(
-    (ref) => $ArticleRemoteAdapter(
-        $ArticleHiveLocalAdapter(ref.read, typeId: null),
-        InternalHolder(_articlesFinders)));
+  (ref) => $ArticleRemoteAdapter(
+    $ArticleHiveLocalAdapter(ref.read, typeId: null),
+    InternalHolder(_articlesFinders),
+  ),
+);
 
 final articlesRepositoryProvider =
     Provider<Repository<Article>>((ref) => Repository<Article>(ref.read));

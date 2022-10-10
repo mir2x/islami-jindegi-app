@@ -21,10 +21,12 @@ class Bayan extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     SingleModelQuery query = SingleModelQuery(
       repository: 'bayans',
-      id: QR.params['id'].toString()
+      id: QR.params['id'].toString(),
     );
 
-    return ref.watch(singleModelProvider(query)).when(
+    var modelQuery = ref.watch(singleModelProvider(query));
+
+    return modelQuery.when(
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
@@ -49,7 +51,8 @@ class Bayan extends ConsumerWidget {
                     audio: resource.audio,
                   ),
                 ),
-              ] else ...[],
+              ] else
+                ...[],
               Container(
                 margin: const EdgeInsets.only(top: 40),
                 child: Column(
@@ -61,18 +64,19 @@ class Bayan extends ConsumerWidget {
                           resource.location,
                           style: TextStyle(
                             fontSize: 16,
-                            color: ThemeColors().themeColor3
+                            color: ThemeColors().themeColor3,
                           ),
                         ),
                       ),
-                    ] else ...[],
+                    ] else
+                      ...[],
                     DescriptionItem(
                       title: 'Date:',
                       description: Text(
                         formatDate(resource.publishedAt),
                         style: TextStyle(
                           fontSize: 16,
-                          color: ThemeColors().themeColor3
+                          color: ThemeColors().themeColor3,
                         ),
                       ),
                     ),
@@ -83,11 +87,12 @@ class Bayan extends ConsumerWidget {
                           resource.excerpt,
                           style: TextStyle(
                             fontSize: 16,
-                            color: ThemeColors().themeColor3
+                            color: ThemeColors().themeColor3,
                           ),
                         ),
                       ),
-                    ] else ...[],
+                    ] else
+                      ...[],
                     if (resource.audio?['metadata']?['duration'] != null) ...[
                       DescriptionItem(
                         title: 'Audio Duration:',
@@ -95,11 +100,12 @@ class Bayan extends ConsumerWidget {
                           playDuration(resource.audio['metadata']['duration']),
                           style: TextStyle(
                             fontSize: 16,
-                            color: ThemeColors().themeColor3
+                            color: ThemeColors().themeColor3,
                           ),
                         ),
                       ),
-                    ] else ...[],
+                    ] else
+                      ...[],
                     if (resource.audio?['metadata']?['size'] != null) ...[
                       DescriptionItem(
                         title: 'Audio Size:',
@@ -107,11 +113,12 @@ class Bayan extends ConsumerWidget {
                           fileSize(resource.audio['metadata']['size']),
                           style: TextStyle(
                             fontSize: 16,
-                            color: ThemeColors().themeColor3
+                            color: ThemeColors().themeColor3,
                           ),
                         ),
                       ),
-                    ] else ...[],
+                    ] else
+                      ...[],
                     if (resource.audio != null) ...[
                       DescriptionItem(
                         title: 'Download:',
@@ -124,14 +131,15 @@ class Bayan extends ConsumerWidget {
                           ),
                         ),
                       ),
-                    ] else ...[],
+                    ] else
+                      ...[],
                   ],
-                )
+                ),
               )
             ],
           ),
         );
-      }
+      },
     );
   }
 }

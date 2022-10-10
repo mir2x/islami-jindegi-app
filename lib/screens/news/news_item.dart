@@ -21,7 +21,9 @@ class NewsItem extends ConsumerWidget {
       id: QR.params['id'].toString(),
     );
 
-    return ref.watch(singleModelProvider(query)).when(
+    var modelQuery = ref.watch(singleModelProvider(query));
+
+    return modelQuery.when(
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
@@ -58,7 +60,7 @@ class NewsItem extends ConsumerWidget {
             ],
           ),
         );
-      }
+      },
     );
   }
 }

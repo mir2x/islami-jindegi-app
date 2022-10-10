@@ -12,7 +12,7 @@ Future main() async {
   QR.settings.pagesType = const QSlidePage();
   QR.settings.notFoundPage = QRoute(
     path: '/error-pages/404',
-    builder: () => const Page404()
+    builder: () => const Page404(),
   );
 
   runApp(

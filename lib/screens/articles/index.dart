@@ -12,12 +12,17 @@ class Articles extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    AllModelsQuery query = const AllModelsQuery(repository: 'articles');
+    AllModelsQuery query = const AllModelsQuery(
+      repository: 'articles',
+      params: {'page': 1, 'per_page': 12},
+    );
+
+    var modelQuery = ref.watch(allModelsProvider(query));
 
     return MyScaffold(
       title: const Text('Articles'),
       body: Center(
-        child: ref.watch(allModelsProvider(query)).when(
+        child: modelQuery.when(
           loading: () => const CircularProgressIndicator(),
           error: (error, _) => Text(error.toString()),
           data: (resources) {
@@ -36,7 +41,7 @@ class Articles extends ConsumerWidget {
                 );
               },
             );
-          }
+          },
         ),
       ),
     );

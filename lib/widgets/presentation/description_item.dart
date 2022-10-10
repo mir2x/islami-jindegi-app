@@ -25,8 +25,8 @@ class DescriptionItem extends StatelessWidget {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: ThemeColors().themeColor3
-              )
+                color: ThemeColors().themeColor3,
+              ),
             ),
           ),
           Expanded(

@@ -17,10 +17,12 @@ class MalfuzatItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     SingleModelQuery query = SingleModelQuery(
       repository: 'malfuzats',
-      id: QR.params['id'].toString()
+      id: QR.params['id'].toString(),
     );
 
-    return ref.watch(singleModelProvider(query)).when(
+    var modelQuery = ref.watch(singleModelProvider(query));
+
+    return modelQuery.when(
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
@@ -47,7 +49,7 @@ class MalfuzatItem extends ConsumerWidget {
             ],
           ),
         );
-      }
+      },
     );
   }
 }

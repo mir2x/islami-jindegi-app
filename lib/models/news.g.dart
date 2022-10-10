@@ -36,9 +36,12 @@ class $NewsHiveLocalAdapter = HiveLocalAdapter<News> with $NewsLocalAdapter;
 class $NewsRemoteAdapter = RemoteAdapter<News>
     with JSONAPIAdapter<News>, ApplicationAdapter<News>;
 
-final internalNewsRemoteAdapterProvider = Provider<RemoteAdapter<News>>((ref) =>
-    $NewsRemoteAdapter($NewsHiveLocalAdapter(ref.read, typeId: null),
-        InternalHolder(_newsFinders)));
+final internalNewsRemoteAdapterProvider = Provider<RemoteAdapter<News>>(
+  (ref) => $NewsRemoteAdapter(
+    $NewsHiveLocalAdapter(ref.read, typeId: null),
+    InternalHolder(_newsFinders),
+  ),
+);
 
 final newsRepositoryProvider =
     Provider<Repository<News>>((ref) => Repository<News>(ref.read));

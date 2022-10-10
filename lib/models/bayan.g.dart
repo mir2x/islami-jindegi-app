@@ -37,8 +37,11 @@ class $BayanRemoteAdapter = RemoteAdapter<Bayan>
     with JSONAPIAdapter<Bayan>, ApplicationAdapter<Bayan>;
 
 final internalBayansRemoteAdapterProvider = Provider<RemoteAdapter<Bayan>>(
-    (ref) => $BayanRemoteAdapter($BayanHiveLocalAdapter(ref.read, typeId: null),
-        InternalHolder(_bayansFinders)));
+  (ref) => $BayanRemoteAdapter(
+    $BayanHiveLocalAdapter(ref.read, typeId: null),
+    InternalHolder(_bayansFinders),
+  ),
+);
 
 final bayansRepositoryProvider =
     Provider<Repository<Bayan>>((ref) => Repository<Bayan>(ref.read));

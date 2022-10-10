@@ -13,8 +13,10 @@ class News extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     AllModelsQuery query = const AllModelsQuery(
       repository: 'news',
-      params: { 'quantity': 5 }
+      params: {'quantity': 5},
     );
+
+    var modelQuery = ref.watch(allModelsProvider(query));
 
     return Container(
       decoration: BoxDecoration(
@@ -47,7 +49,7 @@ class News extends ConsumerWidget {
                 color: ThemeColors().themeColor4,
               ),
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              child: ref.watch(allModelsProvider(query)).when(
+              child: modelQuery.when(
                 loading: () {
                   return const Center(
                     child: CircularProgressIndicator(),
@@ -76,14 +78,14 @@ class News extends ConsumerWidget {
                           ),
                         ),
                       );
-                    }
+                    },
                   );
-                }
+                },
               ),
             ),
           ),
         ],
-      )
+      ),
     );
   }
 }
