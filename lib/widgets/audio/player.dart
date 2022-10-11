@@ -49,7 +49,7 @@ class StatefulAudioPlayer extends StatefulWidget {
   final LinkedHashMap audio;
 
   @override
-  State<StatefulWidget> createState() => _AudioPlayerState();
+  State<StatefulAudioPlayer> createState() => _AudioPlayerState();
 }
 
 class _AudioPlayerState extends State<StatefulAudioPlayer> {

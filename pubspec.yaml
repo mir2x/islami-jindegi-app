@@ -31,6 +31,7 @@ dependencies:
   # widgets
   carousel_slider: ^4.1.1
   audioplayers: ^1.1.0
+  infinite_scroll_pagination: ^3.2.0
 
   # text
   flutter_html: ^3.0.0-alpha.5
