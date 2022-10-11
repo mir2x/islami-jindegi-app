@@ -3,8 +3,8 @@ import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/main.data.dart';
 
 final allModelsProvider =
-    FutureProvider.autoDispose.family((ref, AllModelsQuery query) async {
-  await ref.read(repositoryInitializerProvider.future);
+    FutureProvider.family((ref, AllModelsQuery query) async {
+  await ref.watch(repositoryInitializerProvider.future);
 
   Map repositories = {
     /* 'books': ref.books, */
