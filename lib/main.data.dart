@@ -13,6 +13,7 @@ import 'package:native_app/models/madrasah.dart';
 import 'package:native_app/models/malfuzat.dart';
 import 'package:native_app/models/masail.dart';
 import 'package:native_app/models/news.dart';
+import 'package:native_app/models/speaker.dart';
 
 // ignore: prefer_function_declarations_over_variables
 ConfigureRepositoryLocalStorage configureRepositoryLocalStorage =
@@ -43,7 +44,8 @@ final repositoryProviders = <String, Provider<Repository<DataModel>>>{
   'madrasahs': madrasahsRepositoryProvider,
   'malfuzats': malfuzatsRepositoryProvider,
   'masails': masailsRepositoryProvider,
-  'news': newsRepositoryProvider
+  'news': newsRepositoryProvider,
+  'speakers': speakersRepositoryProvider
 };
 
 final repositoryInitializerProvider =
@@ -55,6 +57,7 @@ final repositoryInitializerProvider =
   DataHelpers.setInternalType<Malfuzat>('malfuzats');
   DataHelpers.setInternalType<Masail>('masails');
   DataHelpers.setInternalType<News>('news');
+  DataHelpers.setInternalType<Speaker>('speakers');
   final adapters = <String, RemoteAdapter>{
     'articles': ref.watch(internalArticlesRemoteAdapterProvider),
     'bayans': ref.watch(internalBayansRemoteAdapterProvider),
@@ -62,7 +65,8 @@ final repositoryInitializerProvider =
     'madrasahs': ref.watch(internalMadrasahsRemoteAdapterProvider),
     'malfuzats': ref.watch(internalMalfuzatsRemoteAdapterProvider),
     'masails': ref.watch(internalMasailsRemoteAdapterProvider),
-    'news': ref.watch(internalNewsRemoteAdapterProvider)
+    'news': ref.watch(internalNewsRemoteAdapterProvider),
+    'speakers': ref.watch(internalSpeakersRemoteAdapterProvider)
   };
   final remotes = <String, bool>{
     'articles': true,
@@ -71,7 +75,8 @@ final repositoryInitializerProvider =
     'madrasahs': true,
     'malfuzats': true,
     'masails': true,
-    'news': true
+    'news': true,
+    'speakers': true
   };
 
   await ref.watch(graphNotifierProvider).initialize();
@@ -105,6 +110,8 @@ extension RepositoryWidgetRefX on WidgetRef {
       watch(masailsRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<News> get news =>
       watch(newsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Speaker> get speakers =>
+      watch(speakersRepositoryProvider)..remoteAdapter.internalWatch = watch;
 }
 
 extension RepositoryRefX on Ref {
@@ -121,5 +128,7 @@ extension RepositoryRefX on Ref {
   Repository<Masail> get masails => watch(masailsRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<News> get news => watch(newsRepositoryProvider)
+    ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Speaker> get speakers => watch(speakersRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
 }

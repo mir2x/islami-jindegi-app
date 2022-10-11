@@ -4,7 +4,7 @@ class AllModelsQuery extends Equatable {
   const AllModelsQuery({
     required this.repository,
     this.params = const {},
-    this.syncLocal = true,
+    this.syncLocal = false,
   });
 
   final String repository;
