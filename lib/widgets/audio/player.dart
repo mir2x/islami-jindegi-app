@@ -97,11 +97,11 @@ class _AudioPlayerState extends State<StatefulAudioPlayer> {
   @override
   Future<void> dispose() async {
     super.dispose();
+    await _durationSubscription?.cancel();
+    await _positionSubscription?.cancel();
+    await _playerStateSubscription?.cancel();
+    await _playerCompleteSubscription?.cancel();
     await widget.player.stop();
-    _durationSubscription?.cancel();
-    _positionSubscription?.cancel();
-    _playerStateSubscription?.cancel();
-    _playerCompleteSubscription?.cancel();
   }
 
   @override
