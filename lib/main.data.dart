@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:native_app/models/article.dart';
 import 'package:native_app/models/bayan.dart';
+import 'package:native_app/models/book.dart';
 import 'package:native_app/models/dua.dart';
 import 'package:native_app/models/madrasah.dart';
 import 'package:native_app/models/malfuzat.dart';
@@ -40,6 +41,7 @@ ConfigureRepositoryLocalStorage configureRepositoryLocalStorage =
 final repositoryProviders = <String, Provider<Repository<DataModel>>>{
   'articles': articlesRepositoryProvider,
   'bayans': bayansRepositoryProvider,
+  'books': booksRepositoryProvider,
   'duas': duasRepositoryProvider,
   'madrasahs': madrasahsRepositoryProvider,
   'malfuzats': malfuzatsRepositoryProvider,
@@ -52,6 +54,7 @@ final repositoryInitializerProvider =
     FutureProvider<RepositoryInitializer>((ref) async {
   DataHelpers.setInternalType<Article>('articles');
   DataHelpers.setInternalType<Bayan>('bayans');
+  DataHelpers.setInternalType<Book>('books');
   DataHelpers.setInternalType<Dua>('duas');
   DataHelpers.setInternalType<Madrasah>('madrasahs');
   DataHelpers.setInternalType<Malfuzat>('malfuzats');
@@ -61,6 +64,7 @@ final repositoryInitializerProvider =
   final adapters = <String, RemoteAdapter>{
     'articles': ref.watch(internalArticlesRemoteAdapterProvider),
     'bayans': ref.watch(internalBayansRemoteAdapterProvider),
+    'books': ref.watch(internalBooksRemoteAdapterProvider),
     'duas': ref.watch(internalDuasRemoteAdapterProvider),
     'madrasahs': ref.watch(internalMadrasahsRemoteAdapterProvider),
     'malfuzats': ref.watch(internalMalfuzatsRemoteAdapterProvider),
@@ -71,6 +75,7 @@ final repositoryInitializerProvider =
   final remotes = <String, bool>{
     'articles': true,
     'bayans': true,
+    'books': true,
     'duas': true,
     'madrasahs': true,
     'malfuzats': true,
@@ -100,6 +105,8 @@ extension RepositoryWidgetRefX on WidgetRef {
       watch(articlesRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Bayan> get bayans =>
       watch(bayansRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Book> get books =>
+      watch(booksRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Dua> get duas =>
       watch(duasRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Madrasah> get madrasahs =>
@@ -118,6 +125,8 @@ extension RepositoryRefX on Ref {
   Repository<Article> get articles => watch(articlesRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Bayan> get bayans => watch(bayansRepositoryProvider)
+    ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Book> get books => watch(booksRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Dua> get duas => watch(duasRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;

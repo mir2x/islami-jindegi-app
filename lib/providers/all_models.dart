@@ -7,7 +7,7 @@ final allModelsProvider =
   await ref.watch(repositoryInitializerProvider.future);
 
   Map repositories = {
-    /* 'books': ref.books, */
+    'books': ref.books,
     'bayans': ref.bayans,
     'malfuzats': ref.malfuzats,
     'masails': ref.masails,
