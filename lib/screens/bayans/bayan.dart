@@ -44,6 +44,19 @@ class Bayan extends ConsumerWidget {
                   ),
                 ),
               ),
+              if (resource.speaker.value != null) ...[
+                Container(
+                  margin: const EdgeInsets.only(bottom: 15),
+                  child: Text(
+                    resource.speaker.value.name,
+                    style: TextStyle(
+                      color: ThemeColors().themeColor3,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+              ] else
+                ...[],
               if (resource.audio != null) ...[
                 Container(
                   margin: const EdgeInsets.only(top: 30),

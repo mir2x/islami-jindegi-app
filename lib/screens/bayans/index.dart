@@ -24,7 +24,11 @@ class Bayans extends ConsumerWidget {
             resourceFetcher: (int pageKey, int pageSize) async {
               AllModelsQuery query = AllModelsQuery(
                 repository: 'bayans',
-                params: {'page': pageKey, 'per_page': pageSize},
+                params: {
+                  'page': pageKey,
+                  'per_page': pageSize,
+                  'include': 'speaker',
+                },
               );
 
               return await ref.read(allModelsProvider(query).future);

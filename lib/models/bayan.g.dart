@@ -9,7 +9,14 @@ part of 'bayan.dart';
 // ignore_for_file: non_constant_identifier_names, duplicate_ignore
 
 mixin $BayanLocalAdapter on LocalAdapter<Bayan> {
-  static final Map<String, RelationshipMeta> _kBayanRelationshipMetas = {};
+  static final Map<String, RelationshipMeta> _kBayanRelationshipMetas = {
+    'speaker': RelationshipMeta<Speaker>(
+      name: 'speaker',
+      type: 'speakers',
+      kind: 'BelongsTo',
+      instance: (_) => (_ as Bayan).speaker,
+    )
+  };
 
   @override
   Map<String, RelationshipMeta> get relationshipMetas =>
@@ -53,7 +60,15 @@ extension BayanDataRepositoryX on Repository<Bayan> {
       remoteAdapter as ApplicationAdapter<Bayan>;
 }
 
-extension BayanRelationshipGraphNodeX on RelationshipGraphNode<Bayan> {}
+extension BayanRelationshipGraphNodeX on RelationshipGraphNode<Bayan> {
+  RelationshipGraphNode<Speaker> get speaker {
+    final meta = $BayanLocalAdapter._kBayanRelationshipMetas['speaker']
+        as RelationshipMeta<Speaker>;
+    return meta.clone(
+      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
+    );
+  }
+}
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -69,6 +84,11 @@ Bayan _$BayanFromJson(Map<String, dynamic> json) => Bayan(
       publishedAt: json['published-at'] as String,
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
+      speaker: json['speaker'] == null
+          ? null
+          : BelongsTo<Speaker>.fromJson(
+              json['speaker'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$BayanToJson(Bayan instance) => <String, dynamic>{
@@ -81,4 +101,5 @@ Map<String, dynamic> _$BayanToJson(Bayan instance) => <String, dynamic>{
       'published-at': instance.publishedAt,
       'created-at': instance.createdAt,
       'updated-at': instance.updatedAt,
+      'speaker': instance.speaker,
     };
