@@ -25,10 +25,11 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
 
   @override
   void initState() {
+    super.initState();
+
     pController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
-    super.initState();
   }
 
   @override
