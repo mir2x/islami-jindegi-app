@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:native_app/styles/settings/theme_colors.dart';
 
 class DescriptionItem extends StatelessWidget {
   const DescriptionItem({
@@ -13,6 +12,8 @@ class DescriptionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
       child: Row(
@@ -22,10 +23,8 @@ class DescriptionItem extends StatelessWidget {
             flex: 2,
             child: Text(
               title,
-              style: TextStyle(
-                fontSize: 18,
+              style: textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: ThemeColors().themeColor3,
               ),
             ),
           ),

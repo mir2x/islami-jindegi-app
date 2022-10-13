@@ -7,7 +7,6 @@ import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/styles/settings/theme_colors.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
 
 class Dua extends ConsumerWidget {
@@ -15,7 +14,9 @@ class Dua extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    SingleModelQuery query = SingleModelQuery(
+    var textTheme = Theme.of(context).textTheme;
+
+    var query = SingleModelQuery(
       repository: 'duas',
       id: QR.params['id'].toString(),
     );
@@ -34,10 +35,7 @@ class Dua extends ConsumerWidget {
                 margin: const EdgeInsets.only(bottom: 15),
                 child: Text(
                   resource.title,
-                  style: TextStyle(
-                    color: ThemeColors().themeColor3,
-                    fontSize: 20,
-                  ),
+                  style: textTheme.headlineMedium,
                 ),
               ),
               Container(

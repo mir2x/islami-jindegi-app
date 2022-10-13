@@ -7,7 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:native_app/providers/audio_player.dart';
 import 'package:native_app/helpers/audio_utils.dart';
 import 'package:native_app/helpers/play_time.dart';
-import 'package:native_app/styles/settings/theme_colors.dart';
+import 'package:native_app/theme/colors.dart';
 
 class AudioPlayerWidget extends ConsumerWidget {
   const AudioPlayerWidget({
@@ -106,6 +106,8 @@ class _AudioPlayerState extends State<StatefulAudioPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
+
     return Column(
       children: [
         GestureDetector(
@@ -135,11 +137,15 @@ class _AudioPlayerState extends State<StatefulAudioPlayer> {
             children: [
               Text(
                 playTime(position.inSeconds),
-                style: TextStyle(color: ThemeColors().themeColor4),
+                style: textTheme.labelMedium?.copyWith(
+                  color: ThemeColors().themeColor4,
+                ),
               ),
               Text(
                 playTime(duration.inSeconds),
-                style: TextStyle(color: ThemeColors().themeColor4),
+                style: textTheme.labelMedium?.copyWith(
+                  color: ThemeColors().themeColor4,
+                ),
               ),
             ],
           ),

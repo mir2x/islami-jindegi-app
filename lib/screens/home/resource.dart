@@ -16,6 +16,8 @@ class Resource extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
+
     return GestureDetector(
       onTap: () => QR.to(route),
       child: Column(
@@ -30,10 +32,7 @@ class Resource extends StatelessWidget {
             margin: const EdgeInsets.only(top: 10),
             child: Text(
               title.toUpperCase(),
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-              ),
+              style: textTheme.labelMedium,
               textAlign: TextAlign.center,
             ),
           ),

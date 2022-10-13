@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:native_app/styles/settings/theme_colors.dart';
 
 class HtmlText extends StatelessWidget {
   const HtmlText({
@@ -12,15 +11,16 @@ class HtmlText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
+
     return Html(
       data: text,
       style: {
-        'body': Style(
-          color: ThemeColors().themeColor3,
-          fontSize: const FontSize(16),
+        'body': Style.fromTextStyle(
+          textTheme.bodyMedium!,
+        ).copyWith(
           lineHeight: const LineHeight(1.4),
-          margin: EdgeInsets.zero,
-          padding: EdgeInsets.zero,
+          margin: Margins.zero,
         ),
       },
     );

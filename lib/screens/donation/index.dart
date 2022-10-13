@@ -6,15 +6,14 @@ class Donation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MyScaffold(
-      title: Text('Donation'),
+    var textTheme = Theme.of(context).textTheme;
+
+    return MyScaffold(
+      title: const Text('Donation'),
       body: Center(
         child: Text(
           'Info about Donation',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-          ),
+          style: textTheme.labelMedium,
         ),
       ),
     );

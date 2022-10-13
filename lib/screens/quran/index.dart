@@ -6,15 +6,14 @@ class Quran extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MyScaffold(
-      title: Text('Quran'),
+    var textTheme = Theme.of(context).textTheme;
+
+    return MyScaffold(
+      title: const Text('Quran'),
       body: Center(
         child: Text(
           'List of Surahs',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-          ),
+          style: textTheme.labelMedium,
         ),
       ),
     );

@@ -6,7 +6,6 @@ import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
-import 'package:native_app/styles/settings/theme_colors.dart';
 import 'package:native_app/helpers/format_date.dart';
 
 class News extends ConsumerWidget {
@@ -14,6 +13,8 @@ class News extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var textTheme = Theme.of(context).textTheme;
+
     return MyScaffold(
       title: const Text('News'),
       body: Center(
@@ -37,13 +38,13 @@ class News extends ConsumerWidget {
                     children: [
                       Text(
                         item.title,
-                        style: TextStyle(color: ThemeColors().themeColor4),
+                        style: textTheme.titleMedium,
                       ),
                       Container(
                         margin: const EdgeInsets.only(top: 10),
                         child: Text(
                           formatDate(item.createdAt),
-                          style: TextStyle(color: ThemeColors().themeColor3),
+                          style: textTheme.labelSmall,
                         ),
                       ),
                     ],

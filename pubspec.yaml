@@ -34,7 +34,7 @@ dependencies:
   infinite_scroll_pagination: ^3.2.0
 
   # text
-  flutter_html: ^3.0.0-alpha.5
+  flutter_html: ^3.0.0-alpha.6
   intl: ^0.17.0
 
   # assets

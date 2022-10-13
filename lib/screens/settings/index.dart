@@ -6,15 +6,14 @@ class Settings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MyScaffold(
-      title: Text('Settings'),
+    var textTheme = Theme.of(context).textTheme;
+
+    return MyScaffold(
+      title: const Text('Settings'),
       body: Center(
         child: Text(
           'List of Settings',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-          ),
+          style: textTheme.labelMedium,
         ),
       ),
     );

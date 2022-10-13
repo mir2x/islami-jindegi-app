@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:native_app/styles/settings/theme_colors.dart';
+import 'package:native_app/theme/colors.dart';
 
 class ListItem extends StatelessWidget {
   const ListItem({

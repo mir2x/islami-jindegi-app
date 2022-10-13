@@ -12,14 +12,15 @@ import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/helpers/format_date.dart';
 import 'package:native_app/helpers/file_size.dart';
 import 'package:native_app/helpers/play_duration.dart';
-import 'package:native_app/styles/settings/theme_colors.dart';
 
 class Bayan extends ConsumerWidget {
   const Bayan({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    SingleModelQuery query = SingleModelQuery(
+    var textTheme = Theme.of(context).textTheme;
+
+    var query = SingleModelQuery(
       repository: 'bayans',
       id: QR.params['id'].toString(),
     );
@@ -38,10 +39,7 @@ class Bayan extends ConsumerWidget {
                 margin: const EdgeInsets.only(bottom: 15),
                 child: Text(
                   resource.title,
-                  style: TextStyle(
-                    color: ThemeColors().themeColor3,
-                    fontSize: 20,
-                  ),
+                  style: textTheme.headlineMedium,
                 ),
               ),
               if (resource.speaker.value != null) ...[
@@ -49,10 +47,7 @@ class Bayan extends ConsumerWidget {
                   margin: const EdgeInsets.only(bottom: 15),
                   child: Text(
                     resource.speaker.value.name,
-                    style: TextStyle(
-                      color: ThemeColors().themeColor3,
-                      fontSize: 18,
-                    ),
+                    style: textTheme.labelMedium,
                   ),
                 ),
               ] else
@@ -75,10 +70,7 @@ class Bayan extends ConsumerWidget {
                         title: 'Location:',
                         description: Text(
                           resource.location,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: ThemeColors().themeColor3,
-                          ),
+                          style: textTheme.labelMedium,
                         ),
                       ),
                     ] else
@@ -87,10 +79,7 @@ class Bayan extends ConsumerWidget {
                       title: 'Date:',
                       description: Text(
                         formatDate(resource.publishedAt),
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: ThemeColors().themeColor3,
-                        ),
+                        style: textTheme.labelMedium,
                       ),
                     ),
                     if (resource.excerpt != null) ...[
@@ -98,10 +87,7 @@ class Bayan extends ConsumerWidget {
                         title: 'Topic:',
                         description: Text(
                           resource.excerpt,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: ThemeColors().themeColor3,
-                          ),
+                          style: textTheme.labelMedium,
                         ),
                       ),
                     ] else
@@ -111,10 +97,7 @@ class Bayan extends ConsumerWidget {
                         title: 'Audio Duration:',
                         description: Text(
                           playDuration(resource.audio['metadata']['duration']),
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: ThemeColors().themeColor3,
-                          ),
+                          style: textTheme.labelMedium,
                         ),
                       ),
                     ] else
@@ -124,22 +107,18 @@ class Bayan extends ConsumerWidget {
                         title: 'Audio Size:',
                         description: Text(
                           fileSize(resource.audio['metadata']['size']),
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: ThemeColors().themeColor3,
-                          ),
+                          style: textTheme.labelMedium,
                         ),
                       ),
                     ] else
                       ...[],
                     if (resource.audio != null) ...[
-                      DescriptionItem(
+                      const DescriptionItem(
                         title: 'Download:',
                         description: Align(
                           alignment: Alignment.topLeft,
                           child: Icon(
                             Icons.download,
-                            color: ThemeColors().themeColor3,
                             size: 24,
                           ),
                         ),

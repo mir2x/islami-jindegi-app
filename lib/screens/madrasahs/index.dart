@@ -6,13 +6,14 @@ import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
-import 'package:native_app/styles/settings/theme_colors.dart';
 
 class Madrasahs extends ConsumerWidget {
   const Madrasahs({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var textTheme = Theme.of(context).textTheme;
+
     return MyScaffold(
       title: const Text('Madrasahs'),
       body: Center(
@@ -33,7 +34,7 @@ class Madrasahs extends ConsumerWidget {
                 child: ListItem(
                   item: Text(
                     item.title,
-                    style: TextStyle(color: ThemeColors().themeColor4),
+                    style: textTheme.titleMedium,
                   ),
                 ),
               );

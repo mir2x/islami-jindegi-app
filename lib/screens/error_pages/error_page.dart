@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
-import 'package:native_app/styles/settings/theme_colors.dart';
 
 class ErrorPage extends StatelessWidget {
   const ErrorPage({
@@ -15,6 +14,8 @@ class ErrorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
+
     return MyScaffold(
       title: Text(title),
       body: Container(
@@ -24,20 +25,13 @@ class ErrorPage extends StatelessWidget {
           children: [
             Text(
               title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
+              style: textTheme.headlineLarge,
             ),
             Container(
               margin: const EdgeInsets.only(top: 30, bottom: 60),
               child: Text(
                 subtitle,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  height: 1.4,
-                ),
+                style: textTheme.bodyMedium?.copyWith(height: 1.4),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -52,10 +46,7 @@ class ErrorPage extends StatelessWidget {
                     margin: const EdgeInsets.only(right: 15),
                     child: Text(
                       'Go Back',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: ThemeColors().themeColor4,
-                      ),
+                      style: textTheme.titleLarge,
                     ),
                   ),
                 ),
@@ -66,10 +57,7 @@ class ErrorPage extends StatelessWidget {
                     padding: const EdgeInsets.all(15),
                     child: Text(
                       'Home',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: ThemeColors().themeColor4,
-                      ),
+                      style: textTheme.titleLarge,
                     ),
                   ),
                 ),

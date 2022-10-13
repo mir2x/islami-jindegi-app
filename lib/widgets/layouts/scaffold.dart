@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:native_app/styles/settings/theme_colors.dart';
 
 class MyScaffold extends StatelessWidget {
   const MyScaffold({
@@ -32,7 +31,6 @@ class MyScaffold extends StatelessWidget {
                 ),
         ),
         title: title,
-        backgroundColor: ThemeColors().themeColor5,
         centerTitle: true,
         actions: <Widget>[
           Padding(

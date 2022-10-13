@@ -4,14 +4,16 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
-import 'package:native_app/styles/settings/theme_colors.dart';
+import 'package:native_app/theme/colors.dart';
 
 class News extends ConsumerWidget {
   const News({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    AllModelsQuery query = const AllModelsQuery(
+    var textTheme = Theme.of(context).textTheme;
+
+    var query = const AllModelsQuery(
       repository: 'news',
       params: {'quantity': 5},
     );
@@ -31,8 +33,7 @@ class News extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             child: Text(
               'News & Updates',
-              style: TextStyle(
-                fontSize: 16,
+              style: textTheme.labelMedium?.copyWith(
                 color: ThemeColors().themeColor2,
               ),
             ),
@@ -69,8 +70,7 @@ class News extends ConsumerWidget {
                         child: Center(
                           child: Text(
                             resources[index].title,
-                            style: TextStyle(
-                              fontSize: 16,
+                            style: textTheme.titleMedium?.copyWith(
                               color: ThemeColors().themeColor2,
                             ),
                             maxLines: 2,

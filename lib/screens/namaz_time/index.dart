@@ -6,15 +6,14 @@ class NamazTime extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MyScaffold(
-      title: Text('Namaz Time'),
+    var textTheme = Theme.of(context).textTheme;
+
+    return MyScaffold(
+      title: const Text('Namaz Time'),
       body: Center(
         child: Text(
           'List of Times',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-          ),
+          style: textTheme.labelMedium,
         ),
       ),
     );
