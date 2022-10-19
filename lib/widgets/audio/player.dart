@@ -138,13 +138,13 @@ class _AudioPlayerState extends State<StatefulAudioPlayer> {
               Text(
                 playTime(position.inSeconds),
                 style: textTheme.labelMedium?.copyWith(
-                  color: ThemeColors().themeColor4,
+                  color: ThemeColors.color4,
                 ),
               ),
               Text(
                 playTime(duration.inSeconds),
                 style: textTheme.labelMedium?.copyWith(
-                  color: ThemeColors().themeColor4,
+                  color: ThemeColors.color4,
                 ),
               ),
             ],
@@ -155,8 +155,8 @@ class _AudioPlayerState extends State<StatefulAudioPlayer> {
             overlayShape: SliderComponentShape.noThumb,
           ),
           child: Slider(
-            activeColor: ThemeColors().themeColor4,
-            inactiveColor: ThemeColors().themeColor3,
+            activeColor: ThemeColors.color4,
+            inactiveColor: ThemeColors.color3,
             value: position.inSeconds.toDouble(),
             min: 0,
             max: duration.inSeconds.toDouble(),

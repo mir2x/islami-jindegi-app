@@ -23,7 +23,7 @@ class News extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: ThemeColors().themeColor3,
+        color: ThemeColors.color3,
       ),
       margin: const EdgeInsets.only(top: 30, bottom: 50, left: 30, right: 30),
       child: Row(
@@ -34,7 +34,7 @@ class News extends ConsumerWidget {
             child: Text(
               'News & Updates',
               style: textTheme.labelMedium?.copyWith(
-                color: ThemeColors().themeColor2,
+                color: ThemeColors.color2,
               ),
             ),
           ),
@@ -47,7 +47,7 @@ class News extends ConsumerWidget {
                   color: Colors.white,
                   width: 2,
                 ),
-                color: ThemeColors().themeColor4,
+                color: ThemeColors.color4,
               ),
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               child: modelQuery.when(
@@ -71,7 +71,7 @@ class News extends ConsumerWidget {
                           child: Text(
                             resources[index].title,
                             style: textTheme.titleMedium?.copyWith(
-                              color: ThemeColors().themeColor2,
+                              color: ThemeColors.color2,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,

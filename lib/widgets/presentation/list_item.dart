@@ -14,7 +14,7 @@ class ListItem extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: ThemeColors().themeColor7,
+        color: ThemeColors.color7,
       ),
       padding: const EdgeInsets.all(15),
       margin: const EdgeInsets.only(bottom: 15),
