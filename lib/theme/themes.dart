@@ -34,7 +34,7 @@ ThemeData darkTheme = ThemeData(
     labelSmall: TextStyle(
       color: ThemeColors.color3,
       fontSize: 13,
-      letterSpacing: 1,
+      letterSpacing: 0.9,
     ),
   ),
   appBarTheme: const AppBarTheme(
