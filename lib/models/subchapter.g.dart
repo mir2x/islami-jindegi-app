@@ -12,6 +12,7 @@ mixin $SubchapterLocalAdapter on LocalAdapter<Subchapter> {
   static final Map<String, RelationshipMeta> _kSubchapterRelationshipMetas = {
     'chapter': RelationshipMeta<Chapter>(
       name: 'chapter',
+      inverseName: 'subchapters',
       type: 'chapters',
       kind: 'BelongsTo',
       instance: (_) => (_ as Subchapter).chapter,

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/single_model.dart';
+import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/single_model_query.dart';
+import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
-import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/helpers/format_date.dart';
 
 class Book extends ConsumerWidget {
   const Book({super.key});
@@ -26,26 +27,78 @@ class Book extends ConsumerWidget {
     return modelQuery.when(
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
-      data: (resource) {
+      data: (book) {
         return MyScaffold(
-          title: Text(resource.title),
-          body: ItemContent(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 15),
-                child: Text(
-                  resource.title,
-                  style: textTheme.headlineMedium,
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 15),
-                child: Text(
-                  formatDate(resource.createdAt!),
-                  style: textTheme.labelMedium,
-                ),
-              ),
-            ],
+          title: Text(book.title),
+          body: Container(
+            padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
+            child: InfiniteList(
+              resourceFetcher: (int pageKey, int pageSize) async {
+                AllModelsQuery query = AllModelsQuery(
+                  repository: 'chapters',
+                  params: {
+                    'page': pageKey,
+                    'per_page': pageSize,
+                    'book_id': book.id,
+                    'include': 'subchapters',
+                  },
+                );
+
+                return await ref.read(allModelsProvider(query).future);
+              },
+              itemBuilder: (_, chapter, __) {
+                if (chapter.subchapters.length > 0) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        chapter.title,
+                        style: textTheme.titleMedium,
+                      ),
+                      Container(
+                        padding: const EdgeInsets.only(
+                          left: 30,
+                          top: 15,
+                          bottom: 15,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ...chapter.subchapters.map((subchapter) {
+                              return InkWell(
+                                onTap: () => QR.to(
+                                  'books/${book.id}/subchapters/${subchapter.id}',
+                                ),
+                                child: Container(
+                                  padding: const EdgeInsets.only(bottom: 15),
+                                  child: Text(
+                                    subchapter.title,
+                                    style: textTheme.titleMedium,
+                                  ),
+                                ),
+                              );
+                            }),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return InkWell(
+                    onTap: () => QR.to(
+                      'books/${book.id}/chapters/${chapter.id}',
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      child: Text(
+                        chapter.title,
+                        style: textTheme.titleMedium,
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
           ),
         );
       },

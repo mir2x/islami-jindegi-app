@@ -5,6 +5,8 @@ import '../screens/quran/index.dart';
 
 import '../screens/books/index.dart';
 import '../screens/books/book.dart';
+import '../screens/books/chapter.dart';
+import '../screens/books/subchapter.dart';
 
 import '../screens/bayans/index.dart';
 import '../screens/bayans/bayan.dart';
@@ -39,7 +41,20 @@ class AppRoutes {
       path: '/books',
       builder: () => const Books(),
       children: [
-        QRoute(path: '/:id', builder: () => const Book()),
+        QRoute(
+          path: '/:id',
+          builder: () => const Book(),
+          children: [
+            QRoute(
+              path: 'chapters/:chapter_id',
+              builder: () => const Chapter(),
+            ),
+            QRoute(
+              path: 'subchapters/:subchapter_id',
+              builder: () => const Subchapter(),
+            ),
+          ],
+        ),
       ],
     ),
     QRoute(

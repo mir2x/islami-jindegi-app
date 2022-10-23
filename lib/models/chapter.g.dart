@@ -15,6 +15,13 @@ mixin $ChapterLocalAdapter on LocalAdapter<Chapter> {
       type: 'books',
       kind: 'BelongsTo',
       instance: (_) => (_ as Chapter).book,
+    ),
+    'subchapters': RelationshipMeta<Subchapter>(
+      name: 'subchapters',
+      inverseName: 'chapter',
+      type: 'subchapters',
+      kind: 'HasMany',
+      instance: (_) => (_ as Chapter).subchapters,
     )
   };
 
@@ -69,6 +76,14 @@ extension ChapterRelationshipGraphNodeX on RelationshipGraphNode<Chapter> {
       parent: this is RelationshipMeta ? this as RelationshipMeta : null,
     );
   }
+
+  RelationshipGraphNode<Subchapter> get subchapters {
+    final meta = $ChapterLocalAdapter._kChapterRelationshipMetas['subchapters']
+        as RelationshipMeta<Subchapter>;
+    return meta.clone(
+      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
+    );
+  }
 }
 
 // **************************************************************************
@@ -85,6 +100,11 @@ Chapter _$ChapterFromJson(Map<String, dynamic> json) => Chapter(
       book: json['book'] == null
           ? null
           : BelongsTo<Book>.fromJson(json['book'] as Map<String, dynamic>),
+      subchapters: json['subchapters'] == null
+          ? null
+          : HasMany<Subchapter>.fromJson(
+              json['subchapters'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$ChapterToJson(Chapter instance) => <String, dynamic>{
@@ -95,4 +115,5 @@ Map<String, dynamic> _$ChapterToJson(Chapter instance) => <String, dynamic>{
       'created-at': instance.createdAt,
       'updated-at': instance.updatedAt,
       'book': instance.book,
+      'subchapters': instance.subchapters,
     };

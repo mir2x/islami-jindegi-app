@@ -3,6 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter_data_json_api_adapter/flutter_data_json_api_adapter.dart';
 import 'package:native_app/adapters/application.dart';
 import 'book.dart';
+import 'subchapter.dart';
 
 part 'chapter.g.dart';
 
@@ -18,6 +19,7 @@ class Chapter extends DataModel<Chapter> {
   final String? updatedAt;
 
   final BelongsTo<Book>? book;
+  final HasMany<Subchapter>? subchapters;
 
   Chapter({
     this.id,
@@ -27,5 +29,6 @@ class Chapter extends DataModel<Chapter> {
     this.createdAt,
     this.updatedAt,
     this.book,
+    this.subchapters,
   });
 }
