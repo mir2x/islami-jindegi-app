@@ -1,0 +1,98 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'chapter.dart';
+
+// **************************************************************************
+// RepositoryGenerator
+// **************************************************************************
+
+// ignore_for_file: non_constant_identifier_names, duplicate_ignore
+
+mixin $ChapterLocalAdapter on LocalAdapter<Chapter> {
+  static final Map<String, RelationshipMeta> _kChapterRelationshipMetas = {
+    'book': RelationshipMeta<Book>(
+      name: 'book',
+      type: 'books',
+      kind: 'BelongsTo',
+      instance: (_) => (_ as Chapter).book,
+    )
+  };
+
+  @override
+  Map<String, RelationshipMeta> get relationshipMetas =>
+      _kChapterRelationshipMetas;
+
+  @override
+  Chapter deserialize(map) {
+    map = transformDeserialize(map);
+    return _$ChapterFromJson(map);
+  }
+
+  @override
+  Map<String, dynamic> serialize(model, {bool withRelationships = true}) {
+    final map = _$ChapterToJson(model);
+    return transformSerialize(map, withRelationships: withRelationships);
+  }
+}
+
+final _chaptersFinders = <String, dynamic>{};
+
+// ignore: must_be_immutable
+class $ChapterHiveLocalAdapter = HiveLocalAdapter<Chapter>
+    with $ChapterLocalAdapter;
+
+class $ChapterRemoteAdapter = RemoteAdapter<Chapter>
+    with JSONAPIAdapter<Chapter>, ApplicationAdapter<Chapter>;
+
+final internalChaptersRemoteAdapterProvider = Provider<RemoteAdapter<Chapter>>(
+  (ref) => $ChapterRemoteAdapter(
+    $ChapterHiveLocalAdapter(ref.read, typeId: null),
+    InternalHolder(_chaptersFinders),
+  ),
+);
+
+final chaptersRepositoryProvider =
+    Provider<Repository<Chapter>>((ref) => Repository<Chapter>(ref.read));
+
+extension ChapterDataRepositoryX on Repository<Chapter> {
+  JSONAPIAdapter<Chapter> get jSONAPIAdapter =>
+      remoteAdapter as JSONAPIAdapter<Chapter>;
+  ApplicationAdapter<Chapter> get applicationAdapter =>
+      remoteAdapter as ApplicationAdapter<Chapter>;
+}
+
+extension ChapterRelationshipGraphNodeX on RelationshipGraphNode<Chapter> {
+  RelationshipGraphNode<Book> get book {
+    final meta = $ChapterLocalAdapter._kChapterRelationshipMetas['book']
+        as RelationshipMeta<Book>;
+    return meta.clone(
+      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
+    );
+  }
+}
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+Chapter _$ChapterFromJson(Map<String, dynamic> json) => Chapter(
+      id: json['id'] as String?,
+      title: json['title'] as String,
+      body: json['body'] as String?,
+      position: json['position'] as int?,
+      createdAt: json['created-at'] as String?,
+      updatedAt: json['updated-at'] as String?,
+      book: json['book'] == null
+          ? null
+          : BelongsTo<Book>.fromJson(json['book'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$ChapterToJson(Chapter instance) => <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'body': instance.body,
+      'position': instance.position,
+      'created-at': instance.createdAt,
+      'updated-at': instance.updatedAt,
+      'book': instance.book,
+    };

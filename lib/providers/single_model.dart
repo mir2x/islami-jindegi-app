@@ -8,6 +8,8 @@ final singleModelProvider =
 
   Map repositories = {
     'books': ref.books,
+    'chapters': ref.chapters,
+    'subchapters': ref.subchapters,
     'bayans': ref.bayans,
     'malfuzats': ref.malfuzats,
     'masails': ref.masails,

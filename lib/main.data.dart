@@ -9,12 +9,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/models/article.dart';
 import 'package:native_app/models/bayan.dart';
 import 'package:native_app/models/book.dart';
+import 'package:native_app/models/chapter.dart';
 import 'package:native_app/models/dua.dart';
 import 'package:native_app/models/madrasah.dart';
 import 'package:native_app/models/malfuzat.dart';
 import 'package:native_app/models/masail.dart';
 import 'package:native_app/models/news.dart';
 import 'package:native_app/models/speaker.dart';
+import 'package:native_app/models/subchapter.dart';
 
 // ignore: prefer_function_declarations_over_variables
 ConfigureRepositoryLocalStorage configureRepositoryLocalStorage =
@@ -42,12 +44,14 @@ final repositoryProviders = <String, Provider<Repository<DataModel>>>{
   'articles': articlesRepositoryProvider,
   'bayans': bayansRepositoryProvider,
   'books': booksRepositoryProvider,
+  'chapters': chaptersRepositoryProvider,
   'duas': duasRepositoryProvider,
   'madrasahs': madrasahsRepositoryProvider,
   'malfuzats': malfuzatsRepositoryProvider,
   'masails': masailsRepositoryProvider,
   'news': newsRepositoryProvider,
-  'speakers': speakersRepositoryProvider
+  'speakers': speakersRepositoryProvider,
+  'subchapters': subchaptersRepositoryProvider
 };
 
 final repositoryInitializerProvider =
@@ -55,33 +59,39 @@ final repositoryInitializerProvider =
   DataHelpers.setInternalType<Article>('articles');
   DataHelpers.setInternalType<Bayan>('bayans');
   DataHelpers.setInternalType<Book>('books');
+  DataHelpers.setInternalType<Chapter>('chapters');
   DataHelpers.setInternalType<Dua>('duas');
   DataHelpers.setInternalType<Madrasah>('madrasahs');
   DataHelpers.setInternalType<Malfuzat>('malfuzats');
   DataHelpers.setInternalType<Masail>('masails');
   DataHelpers.setInternalType<News>('news');
   DataHelpers.setInternalType<Speaker>('speakers');
+  DataHelpers.setInternalType<Subchapter>('subchapters');
   final adapters = <String, RemoteAdapter>{
     'articles': ref.watch(internalArticlesRemoteAdapterProvider),
     'bayans': ref.watch(internalBayansRemoteAdapterProvider),
     'books': ref.watch(internalBooksRemoteAdapterProvider),
+    'chapters': ref.watch(internalChaptersRemoteAdapterProvider),
     'duas': ref.watch(internalDuasRemoteAdapterProvider),
     'madrasahs': ref.watch(internalMadrasahsRemoteAdapterProvider),
     'malfuzats': ref.watch(internalMalfuzatsRemoteAdapterProvider),
     'masails': ref.watch(internalMasailsRemoteAdapterProvider),
     'news': ref.watch(internalNewsRemoteAdapterProvider),
-    'speakers': ref.watch(internalSpeakersRemoteAdapterProvider)
+    'speakers': ref.watch(internalSpeakersRemoteAdapterProvider),
+    'subchapters': ref.watch(internalSubchaptersRemoteAdapterProvider)
   };
   final remotes = <String, bool>{
     'articles': true,
     'bayans': true,
     'books': true,
+    'chapters': true,
     'duas': true,
     'madrasahs': true,
     'malfuzats': true,
     'masails': true,
     'news': true,
-    'speakers': true
+    'speakers': true,
+    'subchapters': true
   };
 
   await ref.watch(graphNotifierProvider).initialize();
@@ -107,6 +117,8 @@ extension RepositoryWidgetRefX on WidgetRef {
       watch(bayansRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Book> get books =>
       watch(booksRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Chapter> get chapters =>
+      watch(chaptersRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Dua> get duas =>
       watch(duasRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Madrasah> get madrasahs =>
@@ -119,6 +131,8 @@ extension RepositoryWidgetRefX on WidgetRef {
       watch(newsRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Speaker> get speakers =>
       watch(speakersRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Subchapter> get subchapters =>
+      watch(subchaptersRepositoryProvider)..remoteAdapter.internalWatch = watch;
 }
 
 extension RepositoryRefX on Ref {
@@ -127,6 +141,8 @@ extension RepositoryRefX on Ref {
   Repository<Bayan> get bayans => watch(bayansRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Book> get books => watch(booksRepositoryProvider)
+    ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Chapter> get chapters => watch(chaptersRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Dua> get duas => watch(duasRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
@@ -139,5 +155,7 @@ extension RepositoryRefX on Ref {
   Repository<News> get news => watch(newsRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Speaker> get speakers => watch(speakersRepositoryProvider)
+    ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Subchapter> get subchapters => watch(subchaptersRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
 }
