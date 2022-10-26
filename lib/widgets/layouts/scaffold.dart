@@ -7,10 +7,12 @@ class MyScaffold extends StatelessWidget {
     super.key,
     required this.title,
     required this.body,
+    this.isHome = false,
   });
 
   final Text title;
   final Widget body;
+  final bool isHome;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,7 @@ class MyScaffold extends StatelessWidget {
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.only(left: 15),
-          child: QR.navigator.currentRoute.path == '/'
+          child: isHome
               ? SvgPicture.asset(
                   'assets/images/logos/logo.svg',
                   fit: BoxFit.scaleDown,

@@ -9,6 +9,7 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MyScaffold(
+      isHome: true,
       title: const Text('Islami Jindegi'),
       body: Column(
         children: [
