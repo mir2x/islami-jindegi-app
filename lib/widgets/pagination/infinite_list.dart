@@ -6,11 +6,13 @@ class InfiniteList<ItemType> extends StatefulWidget {
     super.key,
     required this.resourceFetcher,
     required this.itemBuilder,
+    this.gridDelegate,
     this.pageSize = 12,
   });
 
   final Function resourceFetcher;
   final ItemWidgetBuilder itemBuilder;
+  final SliverGridDelegate? gridDelegate;
   final int pageSize;
 
   @override
@@ -58,11 +60,21 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
 
   @override
   Widget build(BuildContext context) {
-    return PagedListView<int, ItemType>(
-      pagingController: pController,
-      builderDelegate: PagedChildBuilderDelegate<ItemType>(
-        itemBuilder: widget.itemBuilder,
-      ),
-    );
+    if (widget.gridDelegate != null) {
+      return PagedGridView(
+        pagingController: pController,
+        builderDelegate: PagedChildBuilderDelegate(
+          itemBuilder: widget.itemBuilder,
+        ),
+        gridDelegate: widget.gridDelegate!,
+      );
+    } else {
+      return PagedListView<int, ItemType>(
+        pagingController: pController,
+        builderDelegate: PagedChildBuilderDelegate<ItemType>(
+          itemBuilder: widget.itemBuilder,
+        ),
+      );
+    }
   }
 }

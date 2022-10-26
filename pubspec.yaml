@@ -37,8 +37,12 @@ dependencies:
   flutter_html: ^3.0.0-alpha.6
   intl: ^0.17.0
 
+  # extensions
+  collection: ^1.16.0
+
   # assets
   flutter_svg: ^1.1.1+1
+  transparent_image: ^2.0.0
 
 dev_dependencies:
   flutter_test:

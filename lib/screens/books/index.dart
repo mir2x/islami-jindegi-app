@@ -5,7 +5,7 @@ import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/providers/all_models.dart';
-import 'package:native_app/widgets/presentation/list_item.dart';
+import 'package:native_app/widgets/responsive/image.dart';
 
 class Books extends ConsumerWidget {
   const Books({super.key});
@@ -28,14 +28,37 @@ class Books extends ConsumerWidget {
 
               return await ref.read(allModelsProvider(query).future);
             },
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 15,
+              mainAxisSpacing: 15,
+              childAspectRatio: 0.42,
+            ),
             itemBuilder: (_, item, __) {
-              return InkWell(
-                onTap: () => QR.to('books/${item.id}'),
-                child: ListItem(
-                  item: Text(
-                    item.title,
-                    style: textTheme.titleMedium,
-                  ),
+              return Container(
+                padding: const EdgeInsets.only(bottom: 40),
+                child: Column(
+                  children: [
+                    InkWell(
+                      onTap: () => QR.to('books/${item.id}'),
+                      child: ResponsiveImage(
+                        image: item.image,
+                        model: 'book',
+                        vwset: const {'xs': 50},
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      child: InkWell(
+                        onTap: () => QR.to('books/${item.id}'),
+                        child: Text(
+                          item.title,
+                          style: textTheme.titleMedium,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               );
             },
