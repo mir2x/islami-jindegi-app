@@ -43,15 +43,17 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
   Future<void> _fetchPage(int pageKey) async {
     try {
       var items = await widget.resourceFetcher(pageKey, widget.pageSize);
-      var newItems = items as List<ItemType>;
+      if (mounted) {
+        var newItems = items as List<ItemType>;
 
-      final isLastPage = newItems.length < widget.pageSize;
+        final isLastPage = newItems.length < widget.pageSize;
 
-      if (isLastPage) {
-        pController.appendLastPage(newItems);
-      } else {
-        final nextPageKey = pageKey + 1;
-        pController.appendPage(newItems, nextPageKey);
+        if (isLastPage) {
+          pController.appendLastPage(newItems);
+        } else {
+          final nextPageKey = pageKey + 1;
+          pController.appendPage(newItems, nextPageKey);
+        }
       }
     } catch (error) {
       pController.error = error;
