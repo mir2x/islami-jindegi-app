@@ -17,42 +17,40 @@ class News extends ConsumerWidget {
 
     return MyScaffold(
       title: const Text('News'),
-      body: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
-          child: InfiniteList(
-            resourceFetcher: (int pageKey, int pageSize) async {
-              AllModelsQuery query = AllModelsQuery(
-                repository: 'news',
-                params: {'page': pageKey, 'per_page': pageSize},
-              );
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: InfiniteList(
+          resourceFetcher: (int pageKey, int pageSize) async {
+            AllModelsQuery query = AllModelsQuery(
+              repository: 'news',
+              params: {'page': pageKey, 'per_page': pageSize},
+            );
 
-              return await ref.read(allModelsProvider(query).future);
-            },
-            itemBuilder: (_, item, __) {
-              return InkWell(
-                onTap: () => QR.to('news/${item.id}'),
-                child: ListItem(
-                  item: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.title,
-                        style: textTheme.titleMedium,
+            return await ref.read(allModelsProvider(query).future);
+          },
+          itemBuilder: (_, item, __) {
+            return InkWell(
+              onTap: () => QR.to('news/${item.id}'),
+              child: ListItem(
+                item: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.title,
+                      style: textTheme.titleMedium,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      child: Text(
+                        formatDate(item.createdAt),
+                        style: textTheme.labelSmall,
                       ),
-                      Container(
-                        margin: const EdgeInsets.only(top: 10),
-                        child: Text(
-                          formatDate(item.createdAt),
-                          style: textTheme.labelSmall,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

@@ -69,6 +69,7 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
           itemBuilder: widget.itemBuilder,
         ),
         gridDelegate: widget.gridDelegate!,
+        padding: const EdgeInsets.symmetric(vertical: 25),
       );
     } else {
       return PagedListView<int, ItemType>(
@@ -76,6 +77,7 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
         builderDelegate: PagedChildBuilderDelegate<ItemType>(
           itemBuilder: widget.itemBuilder,
         ),
+        padding: const EdgeInsets.symmetric(vertical: 25),
       );
     }
   }

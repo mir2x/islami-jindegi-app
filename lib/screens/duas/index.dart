@@ -16,30 +16,28 @@ class Duas extends ConsumerWidget {
 
     return MyScaffold(
       title: const Text('Dua & Durud'),
-      body: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
-          child: InfiniteList(
-            resourceFetcher: (int pageKey, int pageSize) async {
-              AllModelsQuery query = AllModelsQuery(
-                repository: 'duas',
-                params: {'page': pageKey, 'per_page': pageSize},
-              );
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: InfiniteList(
+          resourceFetcher: (int pageKey, int pageSize) async {
+            AllModelsQuery query = AllModelsQuery(
+              repository: 'duas',
+              params: {'page': pageKey, 'per_page': pageSize},
+            );
 
-              return await ref.read(allModelsProvider(query).future);
-            },
-            itemBuilder: (_, item, __) {
-              return InkWell(
-                onTap: () => QR.to('duas/${item.id}'),
-                child: ListItem(
-                  item: Text(
-                    item.title,
-                    style: textTheme.titleMedium,
-                  ),
+            return await ref.read(allModelsProvider(query).future);
+          },
+          itemBuilder: (_, item, __) {
+            return InkWell(
+              onTap: () => QR.to('duas/${item.id}'),
+              child: ListItem(
+                item: Text(
+                  item.title,
+                  style: textTheme.titleMedium,
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
