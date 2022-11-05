@@ -65,7 +65,7 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
     if (widget.gridDelegate != null) {
       return PagedGridView(
         pagingController: pController,
-        builderDelegate: PagedChildBuilderDelegate(
+        builderDelegate: PagedChildBuilderDelegate<ItemType>(
           itemBuilder: widget.itemBuilder,
         ),
         gridDelegate: widget.gridDelegate!,

@@ -35,9 +35,10 @@ class Book extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 30,
-                  horizontal: 15,
+                padding: const EdgeInsets.only(
+                  top: 30,
+                  left: 15,
+                  right: 15,
                 ),
                 child: Text('Contents', style: textTheme.labelLarge),
               ),

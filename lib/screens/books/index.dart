@@ -30,8 +30,7 @@ class Books extends ConsumerWidget {
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 15,
-            mainAxisSpacing: 15,
-            childAspectRatio: 0.42,
+            mainAxisExtent: 390,
           ),
           itemBuilder: (_, item, __) {
             return Container(
