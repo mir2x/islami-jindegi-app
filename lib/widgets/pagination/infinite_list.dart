@@ -8,12 +8,14 @@ class InfiniteList<ItemType> extends StatefulWidget {
     required this.itemBuilder,
     this.gridDelegate,
     this.pageSize = 12,
+    this.qParams = const {},
   });
 
   final Function resourceFetcher;
   final ItemWidgetBuilder itemBuilder;
   final SliverGridDelegate? gridDelegate;
   final int pageSize;
+  final Map<String, dynamic> qParams;
 
   @override
   State createState() => InfiniteListState();
@@ -42,7 +44,13 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      var items = await widget.resourceFetcher(pageKey, widget.pageSize);
+      Map<String, dynamic> params = {
+        'page': pageKey,
+        'per_page': widget.pageSize,
+        ...widget.qParams,
+      };
+
+      var items = await widget.resourceFetcher(params);
       if (mounted) {
         var newItems = items as List<ItemType>;
 
@@ -62,6 +70,8 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
 
   @override
   Widget build(BuildContext context) {
+    pController.refresh();
+
     if (widget.gridDelegate != null) {
       return PagedGridView(
         pagingController: pController,
