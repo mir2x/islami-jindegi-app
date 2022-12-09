@@ -50,12 +50,11 @@ class Book extends ConsumerWidget {
                     bottom: 30,
                   ),
                   child: InfiniteList(
-                    resourceFetcher: (int pageKey, int pageSize) async {
+                    resourceFetcher: (Map<String, dynamic> params) async {
                       AllModelsQuery query = AllModelsQuery(
                         repository: 'chapters',
                         params: {
-                          'page': pageKey,
-                          'per_page': pageSize,
+                          ...params,
                           'book_id': book.id,
                           'include': 'subchapters',
                         },
