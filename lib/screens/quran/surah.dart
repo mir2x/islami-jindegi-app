@@ -42,7 +42,9 @@ class Surah extends ConsumerWidget {
                     'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ',
                     textAlign: TextAlign.right,
                     softWrap: false,
-                    style: textTheme.labelLarge,
+                    style: textTheme.headlineLarge?.copyWith(
+                      fontFamily: 'arabic/al-qalam',
+                    ),
                   ),
                 ),
               ] else
@@ -77,7 +79,9 @@ class Surah extends ConsumerWidget {
                               child: Text(
                                 ayah.title,
                                 textAlign: TextAlign.right,
-                                style: textTheme.labelLarge,
+                                style: textTheme.headlineMedium?.copyWith(
+                                  fontFamily: 'arabic/al-qalam',
+                                ),
                               ),
                             ),
                             Container(

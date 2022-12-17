@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class QueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
-  QueryParamsNotifier(): super({});
+  QueryParamsNotifier() : super({});
 
   void updateParams(String key, String value) {
     if (value.isNotEmpty) {
@@ -11,12 +11,13 @@ class QueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
       };
     } else {
       state.remove(key);
-      state = { ...state };
+      state = {...state};
     }
   }
 }
 
-final queryParamsProvider = StateNotifierProvider<QueryParamsNotifier, Map<String, dynamic>>(
+final queryParamsProvider =
+    StateNotifierProvider<QueryParamsNotifier, Map<String, dynamic>>(
   (ref) {
     return QueryParamsNotifier();
   },

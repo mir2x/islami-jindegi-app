@@ -39,12 +39,16 @@ class $BayanCategoryRemoteAdapter = RemoteAdapter<BayanCategory>
     with JSONAPIAdapter<BayanCategory>, ApplicationAdapter<BayanCategory>;
 
 final internalBayanCategoriesRemoteAdapterProvider =
-    Provider<RemoteAdapter<BayanCategory>>((ref) => $BayanCategoryRemoteAdapter(
-        $BayanCategoryHiveLocalAdapter(ref.read, typeId: null),
-        InternalHolder(_bayanCategoriesFinders),),);
+    Provider<RemoteAdapter<BayanCategory>>(
+  (ref) => $BayanCategoryRemoteAdapter(
+    $BayanCategoryHiveLocalAdapter(ref.read, typeId: null),
+    InternalHolder(_bayanCategoriesFinders),
+  ),
+);
 
 final bayanCategoriesRepositoryProvider = Provider<Repository<BayanCategory>>(
-    (ref) => Repository<BayanCategory>(ref.read),);
+  (ref) => Repository<BayanCategory>(ref.read),
+);
 
 extension BayanCategoryDataRepositoryX on Repository<BayanCategory> {
   JSONAPIAdapter<BayanCategory> get jSONAPIAdapter =>

@@ -51,8 +51,11 @@ class $AyahRemoteAdapter = RemoteAdapter<Ayah>
     with JSONAPIAdapter<Ayah>, ApplicationAdapter<Ayah>;
 
 final internalAyahsRemoteAdapterProvider = Provider<RemoteAdapter<Ayah>>(
-    (ref) => $AyahRemoteAdapter($AyahHiveLocalAdapter(ref.read, typeId: null),
-        InternalHolder(_ayahsFinders),),);
+  (ref) => $AyahRemoteAdapter(
+    $AyahHiveLocalAdapter(ref.read, typeId: null),
+    InternalHolder(_ayahsFinders),
+  ),
+);
 
 final ayahsRepositoryProvider =
     Provider<Repository<Ayah>>((ref) => Repository<Ayah>(ref.read));
@@ -69,14 +72,16 @@ extension AyahRelationshipGraphNodeX on RelationshipGraphNode<Ayah> {
     final meta = $AyahLocalAdapter._kAyahRelationshipMetas['surah']
         as RelationshipMeta<Surah>;
     return meta.clone(
-        parent: this is RelationshipMeta ? this as RelationshipMeta : null,);
+      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
+    );
   }
 
   RelationshipGraphNode<Para> get para {
     final meta = $AyahLocalAdapter._kAyahRelationshipMetas['para']
         as RelationshipMeta<Para>;
     return meta.clone(
-        parent: this is RelationshipMeta ? this as RelationshipMeta : null,);
+      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
+    );
   }
 }
 

@@ -37,8 +37,11 @@ class $ParaRemoteAdapter = RemoteAdapter<Para>
     with JSONAPIAdapter<Para>, ApplicationAdapter<Para>;
 
 final internalParasRemoteAdapterProvider = Provider<RemoteAdapter<Para>>(
-    (ref) => $ParaRemoteAdapter($ParaHiveLocalAdapter(ref.read, typeId: null),
-        InternalHolder(_parasFinders),),);
+  (ref) => $ParaRemoteAdapter(
+    $ParaHiveLocalAdapter(ref.read, typeId: null),
+    InternalHolder(_parasFinders),
+  ),
+);
 
 final parasRepositoryProvider =
     Provider<Repository<Para>>((ref) => Repository<Para>(ref.read));

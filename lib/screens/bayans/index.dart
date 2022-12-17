@@ -26,8 +26,9 @@ class Bayans extends ConsumerWidget {
             padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
             child: SearchField(
               onUpdate: (value) {
-                ref.read(queryParamsProvider.notifier)
-                   .updateParams('search', value);
+                ref
+                    .read(queryParamsProvider.notifier)
+                    .updateParams('search', value);
               },
             ),
           ),
