@@ -1,7 +1,9 @@
 import 'package:qlevar_router/qlevar_router.dart';
 
 import '../screens/home/index.dart';
+
 import '../screens/quran/index.dart';
+import '../screens/quran/surah.dart';
 
 import '../screens/books/index.dart';
 import '../screens/books/book.dart';
@@ -36,7 +38,16 @@ import '../screens/settings/index.dart';
 class AppRoutes {
   final routes = [
     QRoute(path: '/', builder: () => const Home()),
-    QRoute(path: '/quran', builder: () => const Quran()),
+    QRoute(
+      path: '/quran',
+      builder: () => const Quran(),
+      children: [
+        QRoute(
+          path: 'surah/:id',
+          builder: () => const Surah(),
+        ),
+      ],
+    ),
     QRoute(
       path: '/books',
       builder: () => const Books(),
