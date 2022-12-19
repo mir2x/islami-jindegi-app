@@ -9,6 +9,7 @@ class InfiniteList<ItemType> extends StatefulWidget {
     this.gridDelegate,
     this.pageSize = 12,
     this.qParams = const {},
+    this.padding = 25,
   });
 
   final Function resourceFetcher;
@@ -16,6 +17,7 @@ class InfiniteList<ItemType> extends StatefulWidget {
   final SliverGridDelegate? gridDelegate;
   final int pageSize;
   final Map<String, dynamic> qParams;
+  final double padding;
 
   @override
   State createState() => InfiniteListState();
@@ -79,7 +81,7 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
           itemBuilder: widget.itemBuilder,
         ),
         gridDelegate: widget.gridDelegate!,
-        padding: const EdgeInsets.symmetric(vertical: 25),
+        padding: EdgeInsets.symmetric(vertical: widget.padding),
       );
     } else {
       return PagedListView<int, ItemType>(
@@ -87,7 +89,7 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
         builderDelegate: PagedChildBuilderDelegate<ItemType>(
           itemBuilder: widget.itemBuilder,
         ),
-        padding: const EdgeInsets.symmetric(vertical: 25),
+        padding: EdgeInsets.symmetric(vertical: widget.padding),
       );
     }
   }
