@@ -8,7 +8,7 @@ import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
-import 'package:native_app/widgets/presentation/filter_list_item.dart';
+import 'package:native_app/widgets/presentation/filter_list.dart';
 import 'package:native_app/helpers/format_date.dart';
 import 'package:native_app/theme/colors.dart';
 
@@ -51,77 +51,9 @@ class Bayans extends ConsumerWidget {
                                 left: 15,
                                 right: 15,
                               ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      const Text('Speakers'),
-                                      if (qParams.containsKey('speakerId') &&
-                                          qParams['speakerId'].isNotEmpty) ...[
-                                        IconButton(
-                                          onPressed: () {
-                                            ref
-                                                .read(
-                                                  queryParamsProvider.notifier,
-                                                )
-                                                .updateParams('speakerId', '');
-                                            Navigator.of(context).pop();
-                                          },
-                                          constraints: const BoxConstraints(
-                                            maxHeight: 40,
-                                          ),
-                                          splashRadius: 24,
-                                          icon: const Icon(
-                                            Icons.close,
-                                          ),
-                                        )
-                                      ] else
-                                        ...[],
-                                    ],
-                                  ),
-                                  Expanded(
-                                    child: InfiniteList(
-                                      pageSize: 8,
-                                      padding: 5,
-                                      resourceFetcher:
-                                          (Map<String, dynamic> params) async {
-                                        AllModelsQuery query = AllModelsQuery(
-                                          repository: 'speakers',
-                                          params: params,
-                                        );
-
-                                        return await ref.read(
-                                          allModelsProvider(query).future,
-                                        );
-                                      },
-                                      itemBuilder: (_, item, __) {
-                                        return InkWell(
-                                          onTap: () {
-                                            ref
-                                                .read(
-                                                  queryParamsProvider.notifier,
-                                                )
-                                                .updateParams(
-                                                  'speakerId',
-                                                  item.id,
-                                                );
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: FilterListItem(
-                                            item: Text(
-                                              item.name,
-                                              style: textTheme.titleMedium,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
+                              child: FilterList(
+                                resource: 'speaker',
+                                qParams: qParams,
                               ),
                             ),
                           );

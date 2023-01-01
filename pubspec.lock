@@ -423,7 +423,7 @@ packages:
     source: hosted
     version: "3.2.0"
   inflection3:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: inflection3
       url: "https://pub.dartlang.org"
@@ -654,12 +654,12 @@ packages:
     source: hosted
     version: "1.6.4"
   recase:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: recase
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.0"
+    version: "4.1.0"
   riverpod:
     dependency: transitive
     description:
