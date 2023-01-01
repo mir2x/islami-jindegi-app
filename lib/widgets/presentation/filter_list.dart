@@ -13,52 +13,60 @@ class FilterList extends ConsumerWidget {
     super.key,
     required this.resource,
     required this.qParams,
+    this.resourceTitle = 'title',
+    this.listTitle,
   });
 
   final String resource;
   final Map qParams;
+  final String resourceTitle;
+  final String? listTitle;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
     String resourceId = '${resource}Id';
     String respository = pluralize(resource);
-    String title = ReCase(pluralize(resource)).titleCase;
+    String title =
+        listTitle != null ? listTitle! : ReCase(pluralize(resource)).titleCase;
 
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(title),
-            if (qParams.containsKey(resourceId) &&
-                qParams[resourceId].isNotEmpty) ...[
-              IconButton(
-                onPressed: () {
-                  ref
-                      .read(
-                        queryParamsProvider.notifier,
-                      )
-                      .updateParams(resourceId, '');
-                  Navigator.of(context).pop();
-                },
-                constraints: const BoxConstraints(
-                  maxHeight: 40,
-                ),
-                splashRadius: 24,
-                icon: const Icon(
-                  Icons.close,
-                ),
-              )
-            ] else
-              ...[],
-          ],
+        Container(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(title),
+              if (qParams.containsKey(resourceId) &&
+                  qParams[resourceId].isNotEmpty) ...[
+                IconButton(
+                  onPressed: () {
+                    ref
+                        .read(
+                          queryParamsProvider.notifier,
+                        )
+                        .updateParams(resourceId, '');
+                    Navigator.of(context).pop();
+                  },
+                  constraints: const BoxConstraints(
+                    maxHeight: 40,
+                  ),
+                  splashRadius: 24,
+                  icon: const Icon(
+                    Icons.close,
+                  ),
+                )
+              ] else
+                ...[],
+            ],
+          ),
         ),
         Expanded(
           child: InfiniteList(
             pageSize: 8,
-            padding: 5,
+            padding: 2,
             resourceFetcher: (Map<String, dynamic> params) async {
               AllModelsQuery query = AllModelsQuery(
                 repository: respository,
@@ -84,7 +92,7 @@ class FilterList extends ConsumerWidget {
                 },
                 child: FilterListItem(
                   item: Text(
-                    item.name,
+                    resourceTitle == 'name' ? item.name : item.title,
                     style: (qParams.containsKey(resourceId) &&
                             qParams[resourceId] == item.id)
                         ? textTheme.labelMedium

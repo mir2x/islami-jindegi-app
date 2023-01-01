@@ -51,9 +51,24 @@ class Bayans extends ConsumerWidget {
                                 left: 15,
                                 right: 15,
                               ),
-                              child: FilterList(
-                                resource: 'speaker',
-                                qParams: qParams,
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: FilterList(
+                                      resource: 'bayanCategory',
+                                      qParams: qParams,
+                                      listTitle: 'Categories',
+                                    ),
+                                  ),
+                                  const SizedBox(height: 40),
+                                  Expanded(
+                                    child: FilterList(
+                                      resource: 'speaker',
+                                      qParams: qParams,
+                                      resourceTitle: 'name',
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           );
