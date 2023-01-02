@@ -7,6 +7,8 @@ import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/query_params.dart';
+import 'package:native_app/widgets/filter/button.dart';
+import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/responsive/image.dart';
 
 class Books extends ConsumerWidget {
@@ -22,13 +24,39 @@ class Books extends ConsumerWidget {
       body: Column(
         children: [
           Container(
+            width: double.infinity,
             padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
-            child: SearchField(
-              onUpdate: (value) {
-                ref
-                    .read(queryParamsProvider.notifier)
-                    .updateParams('search', value);
-              },
+            child: Row(
+              children: [
+                Expanded(
+                  child: FilterButton(
+                    active: qParams.keys.any(
+                      (k) => ['authorId'].contains(k),
+                    ),
+                    children: [
+                      Expanded(
+                        child: FilterList(
+                          resource: 'author',
+                          qParams: qParams,
+                          resourceTitle: 'name',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  width: 15,
+                ),
+                Expanded(
+                  child: SearchField(
+                    onUpdate: (value) {
+                      ref
+                          .read(queryParamsProvider.notifier)
+                          .updateParams('search', value);
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(
