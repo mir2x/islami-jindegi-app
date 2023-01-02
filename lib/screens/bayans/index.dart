@@ -7,10 +7,10 @@ import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/objects/all_models_query.dart';
+import 'package:native_app/widgets/filter/button.dart';
+import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
-import 'package:native_app/widgets/presentation/filter_list.dart';
 import 'package:native_app/helpers/format_date.dart';
-import 'package:native_app/theme/colors.dart';
 
 class Bayans extends ConsumerWidget {
   const Bayans({super.key});
@@ -30,62 +30,27 @@ class Bayans extends ConsumerWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          double screenWidth =
-                              MediaQuery.of(context).size.width;
-                          double screenHeight =
-                              MediaQuery.of(context).size.height;
-
-                          return Dialog(
-                            backgroundColor: ThemeColors.color1,
-                            child: Container(
-                              width: screenWidth,
-                              height: screenHeight * 0.8,
-                              padding: const EdgeInsets.only(
-                                top: 15,
-                                bottom: 25,
-                                left: 15,
-                                right: 15,
-                              ),
-                              child: Column(
-                                children: [
-                                  Expanded(
-                                    child: FilterList(
-                                      resource: 'bayanCategory',
-                                      qParams: qParams,
-                                      listTitle: 'Categories',
-                                    ),
-                                  ),
-                                  const SizedBox(height: 40),
-                                  Expanded(
-                                    child: FilterList(
-                                      resource: 'speaker',
-                                      qParams: qParams,
-                                      resourceTitle: 'name',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: ThemeColors.color3),
-                      minimumSize: const Size.fromHeight(45),
+                  child: FilterButton(
+                    active: qParams.keys.any(
+                      (k) => ['bayanCategoryId', 'speakerId'].contains(k),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Filter', style: textTheme.labelMedium),
-                        const Icon(Icons.arrow_drop_down),
-                      ],
-                    ),
+                    children: [
+                      Expanded(
+                        child: FilterList(
+                          resource: 'bayanCategory',
+                          qParams: qParams,
+                          listTitle: 'Categories',
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                      Expanded(
+                        child: FilterList(
+                          resource: 'speaker',
+                          qParams: qParams,
+                          resourceTitle: 'name',
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(

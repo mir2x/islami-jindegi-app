@@ -6,7 +6,7 @@ import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
-import 'package:native_app/widgets/presentation/filter_list_item.dart';
+import 'item.dart';
 
 class FilterList extends ConsumerWidget {
   const FilterList({
@@ -90,7 +90,7 @@ class FilterList extends ConsumerWidget {
                       );
                   Navigator.of(context).pop();
                 },
-                child: FilterListItem(
+                child: FilterItem(
                   item: Text(
                     resourceTitle == 'name' ? item.name : item.title,
                     style: (qParams.containsKey(resourceId) &&

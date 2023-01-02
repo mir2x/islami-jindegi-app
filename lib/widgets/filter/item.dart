@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:native_app/theme/colors.dart';
 
-class FilterListItem extends StatelessWidget {
-  const FilterListItem({
+class FilterItem extends StatelessWidget {
+  const FilterItem({
     super.key,
     required this.item,
   });
