@@ -10,7 +10,14 @@ part of 'bayan_category.dart';
 
 mixin $BayanCategoryLocalAdapter on LocalAdapter<BayanCategory> {
   static final Map<String, RelationshipMeta> _kBayanCategoryRelationshipMetas =
-      {};
+      {
+    'book-subcategories': RelationshipMeta<BookSubcategory>(
+      name: 'bookSubcategories',
+      type: 'bookSubcategories',
+      kind: 'HasMany',
+      instance: (_) => (_ as BayanCategory).bookSubcategories,
+    )
+  };
 
   @override
   Map<String, RelationshipMeta> get relationshipMetas =>
@@ -58,7 +65,16 @@ extension BayanCategoryDataRepositoryX on Repository<BayanCategory> {
 }
 
 extension BayanCategoryRelationshipGraphNodeX
-    on RelationshipGraphNode<BayanCategory> {}
+    on RelationshipGraphNode<BayanCategory> {
+  RelationshipGraphNode<BookSubcategory> get bookSubcategories {
+    final meta = $BayanCategoryLocalAdapter
+            ._kBayanCategoryRelationshipMetas['book-subcategories']
+        as RelationshipMeta<BookSubcategory>;
+    return meta.clone(
+      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
+    );
+  }
+}
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -72,6 +88,11 @@ BayanCategory _$BayanCategoryFromJson(Map<String, dynamic> json) =>
       position: json['position'] as int?,
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
+      bookSubcategories: json['book-subcategories'] == null
+          ? null
+          : HasMany<BookSubcategory>.fromJson(
+              json['book-subcategories'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$BayanCategoryToJson(BayanCategory instance) =>
@@ -82,4 +103,5 @@ Map<String, dynamic> _$BayanCategoryToJson(BayanCategory instance) =>
       'position': instance.position,
       'created-at': instance.createdAt,
       'updated-at': instance.updatedAt,
+      'book-subcategories': instance.bookSubcategories,
     };

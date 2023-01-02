@@ -9,6 +9,7 @@ import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/list.dart';
+import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/responsive/image.dart';
 
 class Books extends ConsumerWidget {
@@ -37,16 +38,27 @@ class Books extends ConsumerWidget {
                       Expanded(
                         child: FilterList(
                           resource: 'bookCategory',
-                          qParams: qParams,
-                          listTitle: 'Categories',
+                          title: 'Categories',
+                          itemBuilder: (_, item, __) {
+                            return FilterItem(
+                              itemId: item.id,
+                              itemTitle: item.title,
+                              paramKey: 'bookCategoryId',
+                            );
+                          },
                         ),
                       ),
                       const SizedBox(height: 40),
                       Expanded(
                         child: FilterList(
                           resource: 'author',
-                          qParams: qParams,
-                          resourceTitle: 'name',
+                          itemBuilder: (_, item, __) {
+                            return FilterItem(
+                              itemId: item.id,
+                              itemTitle: item.name,
+                              paramKey: 'authorId',
+                            );
+                          },
                         ),
                       ),
                     ],

@@ -39,12 +39,16 @@ class $BookCategoryRemoteAdapter = RemoteAdapter<BookCategory>
     with JSONAPIAdapter<BookCategory>, ApplicationAdapter<BookCategory>;
 
 final internalBookCategoriesRemoteAdapterProvider =
-    Provider<RemoteAdapter<BookCategory>>((ref) => $BookCategoryRemoteAdapter(
-        $BookCategoryHiveLocalAdapter(ref.read, typeId: null),
-        InternalHolder(_bookCategoriesFinders)));
+    Provider<RemoteAdapter<BookCategory>>(
+  (ref) => $BookCategoryRemoteAdapter(
+    $BookCategoryHiveLocalAdapter(ref.read, typeId: null),
+    InternalHolder(_bookCategoriesFinders),
+  ),
+);
 
 final bookCategoriesRepositoryProvider = Provider<Repository<BookCategory>>(
-    (ref) => Repository<BookCategory>(ref.read));
+  (ref) => Repository<BookCategory>(ref.read),
+);
 
 extension BookCategoryDataRepositoryX on Repository<BookCategory> {
   JSONAPIAdapter<BookCategory> get jSONAPIAdapter =>

@@ -9,6 +9,7 @@ import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/list.dart';
+import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/helpers/format_date.dart';
 
@@ -38,16 +39,27 @@ class Bayans extends ConsumerWidget {
                       Expanded(
                         child: FilterList(
                           resource: 'bayanCategory',
-                          qParams: qParams,
-                          listTitle: 'Categories',
+                          title: 'Categories',
+                          itemBuilder: (_, item, __) {
+                            return FilterItem(
+                              itemId: item.id,
+                              itemTitle: item.title,
+                              paramKey: 'bayanCategoryId',
+                            );
+                          },
                         ),
                       ),
                       const SizedBox(height: 40),
                       Expanded(
                         child: FilterList(
                           resource: 'speaker',
-                          qParams: qParams,
-                          resourceTitle: 'name',
+                          itemBuilder: (_, item, __) {
+                            return FilterItem(
+                              itemId: item.id,
+                              itemTitle: item.name,
+                              paramKey: 'speakerId',
+                            );
+                          },
                         ),
                       ),
                     ],
