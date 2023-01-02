@@ -14,6 +14,7 @@ final singleModelProvider =
     'chapters': ref.chapters,
     'subchapters': ref.subchapters,
     'authors': ref.authors,
+    'bookCategories': ref.bookCategories,
     'bayans': ref.bayans,
     'bayanCategories': ref.bayanCategories,
     'speakers': ref.speakers,

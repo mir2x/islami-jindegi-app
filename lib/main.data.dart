@@ -13,6 +13,7 @@ import 'package:native_app/models/author.dart';
 import 'package:native_app/models/ayah.dart';
 import 'package:native_app/models/bayan_category.dart';
 import 'package:native_app/models/bayan.dart';
+import 'package:native_app/models/book_category.dart';
 import 'package:native_app/models/book.dart';
 import 'package:native_app/models/chapter.dart';
 import 'package:native_app/models/dua.dart';
@@ -48,6 +49,7 @@ final repositoryProviders = <String, Provider<Repository<DataModel>>>{
 'ayahs': ayahsRepositoryProvider,
 'bayanCategories': bayanCategoriesRepositoryProvider,
 'bayans': bayansRepositoryProvider,
+'bookCategories': bookCategoriesRepositoryProvider,
 'books': booksRepositoryProvider,
 'chapters': chaptersRepositoryProvider,
 'duas': duasRepositoryProvider,
@@ -68,6 +70,7 @@ final repositoryInitializerProvider =
     DataHelpers.setInternalType<Ayah>('ayahs');
     DataHelpers.setInternalType<BayanCategory>('bayanCategories');
     DataHelpers.setInternalType<Bayan>('bayans');
+    DataHelpers.setInternalType<BookCategory>('bookCategories');
     DataHelpers.setInternalType<Book>('books');
     DataHelpers.setInternalType<Chapter>('chapters');
     DataHelpers.setInternalType<Dua>('duas');
@@ -79,8 +82,8 @@ final repositoryInitializerProvider =
     DataHelpers.setInternalType<Speaker>('speakers');
     DataHelpers.setInternalType<Subchapter>('subchapters');
     DataHelpers.setInternalType<Surah>('surahs');
-    final adapters = <String, RemoteAdapter>{'articles': ref.watch(internalArticlesRemoteAdapterProvider), 'authors': ref.watch(internalAuthorsRemoteAdapterProvider), 'ayahs': ref.watch(internalAyahsRemoteAdapterProvider), 'bayanCategories': ref.watch(internalBayanCategoriesRemoteAdapterProvider), 'bayans': ref.watch(internalBayansRemoteAdapterProvider), 'books': ref.watch(internalBooksRemoteAdapterProvider), 'chapters': ref.watch(internalChaptersRemoteAdapterProvider), 'duas': ref.watch(internalDuasRemoteAdapterProvider), 'madrasahs': ref.watch(internalMadrasahsRemoteAdapterProvider), 'malfuzats': ref.watch(internalMalfuzatsRemoteAdapterProvider), 'masails': ref.watch(internalMasailsRemoteAdapterProvider), 'news': ref.watch(internalNewsRemoteAdapterProvider), 'paras': ref.watch(internalParasRemoteAdapterProvider), 'speakers': ref.watch(internalSpeakersRemoteAdapterProvider), 'subchapters': ref.watch(internalSubchaptersRemoteAdapterProvider), 'surahs': ref.watch(internalSurahsRemoteAdapterProvider)};
-    final remotes = <String, bool>{'articles': true, 'authors': true, 'ayahs': true, 'bayanCategories': true, 'bayans': true, 'books': true, 'chapters': true, 'duas': true, 'madrasahs': true, 'malfuzats': true, 'masails': true, 'news': true, 'paras': true, 'speakers': true, 'subchapters': true, 'surahs': true};
+    final adapters = <String, RemoteAdapter>{'articles': ref.watch(internalArticlesRemoteAdapterProvider), 'authors': ref.watch(internalAuthorsRemoteAdapterProvider), 'ayahs': ref.watch(internalAyahsRemoteAdapterProvider), 'bayanCategories': ref.watch(internalBayanCategoriesRemoteAdapterProvider), 'bayans': ref.watch(internalBayansRemoteAdapterProvider), 'bookCategories': ref.watch(internalBookCategoriesRemoteAdapterProvider), 'books': ref.watch(internalBooksRemoteAdapterProvider), 'chapters': ref.watch(internalChaptersRemoteAdapterProvider), 'duas': ref.watch(internalDuasRemoteAdapterProvider), 'madrasahs': ref.watch(internalMadrasahsRemoteAdapterProvider), 'malfuzats': ref.watch(internalMalfuzatsRemoteAdapterProvider), 'masails': ref.watch(internalMasailsRemoteAdapterProvider), 'news': ref.watch(internalNewsRemoteAdapterProvider), 'paras': ref.watch(internalParasRemoteAdapterProvider), 'speakers': ref.watch(internalSpeakersRemoteAdapterProvider), 'subchapters': ref.watch(internalSubchaptersRemoteAdapterProvider), 'surahs': ref.watch(internalSurahsRemoteAdapterProvider)};
+    final remotes = <String, bool>{'articles': true, 'authors': true, 'ayahs': true, 'bayanCategories': true, 'bayans': true, 'bookCategories': true, 'books': true, 'chapters': true, 'duas': true, 'madrasahs': true, 'malfuzats': true, 'masails': true, 'news': true, 'paras': true, 'speakers': true, 'subchapters': true, 'surahs': true};
 
     await ref.watch(graphNotifierProvider).initialize();
 
@@ -103,6 +106,7 @@ extension RepositoryWidgetRefX on WidgetRef {
   Repository<Ayah> get ayahs => watch(ayahsRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<BayanCategory> get bayanCategories => watch(bayanCategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Bayan> get bayans => watch(bayansRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<BookCategory> get bookCategories => watch(bookCategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Book> get books => watch(booksRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Chapter> get chapters => watch(chaptersRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Dua> get duas => watch(duasRepositoryProvider)..remoteAdapter.internalWatch = watch;
@@ -123,6 +127,7 @@ extension RepositoryRefX on Ref {
   Repository<Ayah> get ayahs => watch(ayahsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
   Repository<BayanCategory> get bayanCategories => watch(bayanCategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Bayan> get bayans => watch(bayansRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<BookCategory> get bookCategories => watch(bookCategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Book> get books => watch(booksRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Chapter> get chapters => watch(chaptersRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Dua> get duas => watch(duasRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
