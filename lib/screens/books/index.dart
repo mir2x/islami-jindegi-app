@@ -37,8 +37,18 @@ class Books extends ConsumerWidget {
                     children: [
                       Expanded(
                         child: FilterList(
-                          resource: 'bookCategory',
                           title: 'Categories',
+                          paramKeys: const ['bookCategoryId'],
+                          resourceFetcher: (Map<String, dynamic> params) async {
+                            AllModelsQuery query = AllModelsQuery(
+                              repository: 'bookCategories',
+                              params: params,
+                            );
+
+                            return await ref.read(
+                              allModelsProvider(query).future,
+                            );
+                          },
                           itemBuilder: (_, item, __) {
                             return FilterItem(
                               itemId: item.id,
@@ -51,7 +61,18 @@ class Books extends ConsumerWidget {
                       const SizedBox(height: 40),
                       Expanded(
                         child: FilterList(
-                          resource: 'author',
+                          title: 'Authors',
+                          paramKeys: const ['authorId'],
+                          resourceFetcher: (Map<String, dynamic> params) async {
+                            AllModelsQuery query = AllModelsQuery(
+                              repository: 'authors',
+                              params: params,
+                            );
+
+                            return await ref.read(
+                              allModelsProvider(query).future,
+                            );
+                          },
                           itemBuilder: (_, item, __) {
                             return FilterItem(
                               itemId: item.id,

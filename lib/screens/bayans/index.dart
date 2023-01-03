@@ -38,8 +38,18 @@ class Bayans extends ConsumerWidget {
                     children: [
                       Expanded(
                         child: FilterList(
-                          resource: 'bayanCategory',
                           title: 'Categories',
+                          paramKeys: const ['bayanCategoryId'],
+                          resourceFetcher: (Map<String, dynamic> params) async {
+                            AllModelsQuery query = AllModelsQuery(
+                              repository: 'bayanCategories',
+                              params: params,
+                            );
+
+                            return await ref.read(
+                              allModelsProvider(query).future,
+                            );
+                          },
                           itemBuilder: (_, item, __) {
                             return FilterItem(
                               itemId: item.id,
@@ -52,7 +62,18 @@ class Bayans extends ConsumerWidget {
                       const SizedBox(height: 40),
                       Expanded(
                         child: FilterList(
-                          resource: 'speaker',
+                          title: 'Speakers',
+                          paramKeys: const ['speakerId'],
+                          resourceFetcher: (Map<String, dynamic> params) async {
+                            AllModelsQuery query = AllModelsQuery(
+                              repository: 'speakers',
+                              params: params,
+                            );
+
+                            return await ref.read(
+                              allModelsProvider(query).future,
+                            );
+                          },
                           itemBuilder: (_, item, __) {
                             return FilterItem(
                               itemId: item.id,
