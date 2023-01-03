@@ -48,13 +48,13 @@ class $SubchapterRemoteAdapter = RemoteAdapter<Subchapter>
 final internalSubchaptersRemoteAdapterProvider =
     Provider<RemoteAdapter<Subchapter>>(
   (ref) => $SubchapterRemoteAdapter(
-    $SubchapterHiveLocalAdapter(ref.read, typeId: null),
+    $SubchapterHiveLocalAdapter(ref),
     InternalHolder(_subchaptersFinders),
   ),
 );
 
 final subchaptersRepositoryProvider =
-    Provider<Repository<Subchapter>>((ref) => Repository<Subchapter>(ref.read));
+    Provider<Repository<Subchapter>>((ref) => Repository<Subchapter>(ref));
 
 extension SubchapterDataRepositoryX on Repository<Subchapter> {
   JSONAPIAdapter<Subchapter> get jSONAPIAdapter =>

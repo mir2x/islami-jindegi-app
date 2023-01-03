@@ -46,13 +46,13 @@ class $SurahRemoteAdapter = RemoteAdapter<Surah>
 
 final internalSurahsRemoteAdapterProvider = Provider<RemoteAdapter<Surah>>(
   (ref) => $SurahRemoteAdapter(
-    $SurahHiveLocalAdapter(ref.read, typeId: null),
+    $SurahHiveLocalAdapter(ref),
     InternalHolder(_surahsFinders),
   ),
 );
 
 final surahsRepositoryProvider =
-    Provider<Repository<Surah>>((ref) => Repository<Surah>(ref.read));
+    Provider<Repository<Surah>>((ref) => Repository<Surah>(ref));
 
 extension SurahDataRepositoryX on Repository<Surah> {
   JSONAPIAdapter<Surah> get jSONAPIAdapter =>

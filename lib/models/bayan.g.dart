@@ -45,13 +45,13 @@ class $BayanRemoteAdapter = RemoteAdapter<Bayan>
 
 final internalBayansRemoteAdapterProvider = Provider<RemoteAdapter<Bayan>>(
   (ref) => $BayanRemoteAdapter(
-    $BayanHiveLocalAdapter(ref.read, typeId: null),
+    $BayanHiveLocalAdapter(ref),
     InternalHolder(_bayansFinders),
   ),
 );
 
 final bayansRepositoryProvider =
-    Provider<Repository<Bayan>>((ref) => Repository<Bayan>(ref.read));
+    Provider<Repository<Bayan>>((ref) => Repository<Bayan>(ref));
 
 extension BayanDataRepositoryX on Repository<Bayan> {
   JSONAPIAdapter<Bayan> get jSONAPIAdapter =>

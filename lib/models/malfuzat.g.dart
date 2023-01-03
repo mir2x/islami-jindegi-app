@@ -40,13 +40,13 @@ class $MalfuzatRemoteAdapter = RemoteAdapter<Malfuzat>
 final internalMalfuzatsRemoteAdapterProvider =
     Provider<RemoteAdapter<Malfuzat>>(
   (ref) => $MalfuzatRemoteAdapter(
-    $MalfuzatHiveLocalAdapter(ref.read, typeId: null),
+    $MalfuzatHiveLocalAdapter(ref),
     InternalHolder(_malfuzatsFinders),
   ),
 );
 
 final malfuzatsRepositoryProvider =
-    Provider<Repository<Malfuzat>>((ref) => Repository<Malfuzat>(ref.read));
+    Provider<Repository<Malfuzat>>((ref) => Repository<Malfuzat>(ref));
 
 extension MalfuzatDataRepositoryX on Repository<Malfuzat> {
   JSONAPIAdapter<Malfuzat> get jSONAPIAdapter =>

@@ -38,13 +38,13 @@ class $ParaRemoteAdapter = RemoteAdapter<Para>
 
 final internalParasRemoteAdapterProvider = Provider<RemoteAdapter<Para>>(
   (ref) => $ParaRemoteAdapter(
-    $ParaHiveLocalAdapter(ref.read, typeId: null),
+    $ParaHiveLocalAdapter(ref),
     InternalHolder(_parasFinders),
   ),
 );
 
 final parasRepositoryProvider =
-    Provider<Repository<Para>>((ref) => Repository<Para>(ref.read));
+    Provider<Repository<Para>>((ref) => Repository<Para>(ref));
 
 extension ParaDataRepositoryX on Repository<Para> {
   JSONAPIAdapter<Para> get jSONAPIAdapter =>

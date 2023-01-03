@@ -52,13 +52,13 @@ class $AyahRemoteAdapter = RemoteAdapter<Ayah>
 
 final internalAyahsRemoteAdapterProvider = Provider<RemoteAdapter<Ayah>>(
   (ref) => $AyahRemoteAdapter(
-    $AyahHiveLocalAdapter(ref.read, typeId: null),
+    $AyahHiveLocalAdapter(ref),
     InternalHolder(_ayahsFinders),
   ),
 );
 
 final ayahsRepositoryProvider =
-    Provider<Repository<Ayah>>((ref) => Repository<Ayah>(ref.read));
+    Provider<Repository<Ayah>>((ref) => Repository<Ayah>(ref));
 
 extension AyahDataRepositoryX on Repository<Ayah> {
   JSONAPIAdapter<Ayah> get jSONAPIAdapter =>

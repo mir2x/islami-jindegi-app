@@ -40,13 +40,13 @@ class $MadrasahRemoteAdapter = RemoteAdapter<Madrasah>
 final internalMadrasahsRemoteAdapterProvider =
     Provider<RemoteAdapter<Madrasah>>(
   (ref) => $MadrasahRemoteAdapter(
-    $MadrasahHiveLocalAdapter(ref.read, typeId: null),
+    $MadrasahHiveLocalAdapter(ref),
     InternalHolder(_madrasahsFinders),
   ),
 );
 
 final madrasahsRepositoryProvider =
-    Provider<Repository<Madrasah>>((ref) => Repository<Madrasah>(ref.read));
+    Provider<Repository<Madrasah>>((ref) => Repository<Madrasah>(ref));
 
 extension MadrasahDataRepositoryX on Repository<Madrasah> {
   JSONAPIAdapter<Madrasah> get jSONAPIAdapter =>

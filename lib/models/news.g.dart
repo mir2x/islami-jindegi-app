@@ -38,13 +38,13 @@ class $NewsRemoteAdapter = RemoteAdapter<News>
 
 final internalNewsRemoteAdapterProvider = Provider<RemoteAdapter<News>>(
   (ref) => $NewsRemoteAdapter(
-    $NewsHiveLocalAdapter(ref.read, typeId: null),
+    $NewsHiveLocalAdapter(ref),
     InternalHolder(_newsFinders),
   ),
 );
 
 final newsRepositoryProvider =
-    Provider<Repository<News>>((ref) => Repository<News>(ref.read));
+    Provider<Repository<News>>((ref) => Repository<News>(ref));
 
 extension NewsDataRepositoryX on Repository<News> {
   JSONAPIAdapter<News> get jSONAPIAdapter =>

@@ -37,13 +37,13 @@ class $DuaRemoteAdapter = RemoteAdapter<Dua>
 
 final internalDuasRemoteAdapterProvider = Provider<RemoteAdapter<Dua>>(
   (ref) => $DuaRemoteAdapter(
-    $DuaHiveLocalAdapter(ref.read, typeId: null),
+    $DuaHiveLocalAdapter(ref),
     InternalHolder(_duasFinders),
   ),
 );
 
 final duasRepositoryProvider =
-    Provider<Repository<Dua>>((ref) => Repository<Dua>(ref.read));
+    Provider<Repository<Dua>>((ref) => Repository<Dua>(ref));
 
 extension DuaDataRepositoryX on Repository<Dua> {
   JSONAPIAdapter<Dua> get jSONAPIAdapter =>

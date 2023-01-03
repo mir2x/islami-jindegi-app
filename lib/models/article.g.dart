@@ -39,13 +39,13 @@ class $ArticleRemoteAdapter = RemoteAdapter<Article>
 
 final internalArticlesRemoteAdapterProvider = Provider<RemoteAdapter<Article>>(
   (ref) => $ArticleRemoteAdapter(
-    $ArticleHiveLocalAdapter(ref.read, typeId: null),
+    $ArticleHiveLocalAdapter(ref),
     InternalHolder(_articlesFinders),
   ),
 );
 
 final articlesRepositoryProvider =
-    Provider<Repository<Article>>((ref) => Repository<Article>(ref.read));
+    Provider<Repository<Article>>((ref) => Repository<Article>(ref));
 
 extension ArticleDataRepositoryX on Repository<Article> {
   JSONAPIAdapter<Article> get jSONAPIAdapter =>

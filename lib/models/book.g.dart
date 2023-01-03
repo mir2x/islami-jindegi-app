@@ -38,13 +38,13 @@ class $BookRemoteAdapter = RemoteAdapter<Book>
 
 final internalBooksRemoteAdapterProvider = Provider<RemoteAdapter<Book>>(
   (ref) => $BookRemoteAdapter(
-    $BookHiveLocalAdapter(ref.read, typeId: null),
+    $BookHiveLocalAdapter(ref),
     InternalHolder(_booksFinders),
   ),
 );
 
 final booksRepositoryProvider =
-    Provider<Repository<Book>>((ref) => Repository<Book>(ref.read));
+    Provider<Repository<Book>>((ref) => Repository<Book>(ref));
 
 extension BookDataRepositoryX on Repository<Book> {
   JSONAPIAdapter<Book> get jSONAPIAdapter =>

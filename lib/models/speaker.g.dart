@@ -39,13 +39,13 @@ class $SpeakerRemoteAdapter = RemoteAdapter<Speaker>
 
 final internalSpeakersRemoteAdapterProvider = Provider<RemoteAdapter<Speaker>>(
   (ref) => $SpeakerRemoteAdapter(
-    $SpeakerHiveLocalAdapter(ref.read, typeId: null),
+    $SpeakerHiveLocalAdapter(ref),
     InternalHolder(_speakersFinders),
   ),
 );
 
 final speakersRepositoryProvider =
-    Provider<Repository<Speaker>>((ref) => Repository<Speaker>(ref.read));
+    Provider<Repository<Speaker>>((ref) => Repository<Speaker>(ref));
 
 extension SpeakerDataRepositoryX on Repository<Speaker> {
   JSONAPIAdapter<Speaker> get jSONAPIAdapter =>

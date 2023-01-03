@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: directives_ordering, top_level_function_literal_block
+// ignore_for_file: directives_ordering, top_level_function_literal_block, depend_on_referenced_packages
 
 import 'package:flutter_data/flutter_data.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -26,8 +26,11 @@ import 'package:native_app/models/subchapter.dart';
 import 'package:native_app/models/surah.dart';
 
 // ignore: prefer_function_declarations_over_variables
-ConfigureRepositoryLocalStorage configureRepositoryLocalStorage =
-    ({FutureFn<String>? baseDirFn, List<int>? encryptionKey, bool? clear}) {
+ConfigureRepositoryLocalStorage configureRepositoryLocalStorage = ({
+  FutureFn<String>? baseDirFn,
+  List<int>? encryptionKey,
+  LocalStorageClearStrategy? clear,
+}) {
   if (!kIsWeb) {
     baseDirFn ??=
         () => getApplicationDocumentsDirectory().then((dir) => dir.path);
@@ -35,14 +38,12 @@ ConfigureRepositoryLocalStorage configureRepositoryLocalStorage =
     baseDirFn ??= () => '';
   }
 
-  return hiveLocalStorageProvider.overrideWithProvider(
-    Provider(
-      (ref) => HiveLocalStorage(
-        hive: ref.read(hiveProvider),
-        baseDirFn: baseDirFn,
-        encryptionKey: encryptionKey,
-        clear: clear,
-      ),
+  return hiveLocalStorageProvider.overrideWith(
+    (ref) => HiveLocalStorage(
+      hive: ref.read(hiveProvider),
+      baseDirFn: baseDirFn,
+      encryptionKey: encryptionKey,
+      clear: clear,
     ),
   );
 };

@@ -48,14 +48,14 @@ class $BookSubcategoryRemoteAdapter = RemoteAdapter<BookSubcategory>
 final internalBookSubcategoriesRemoteAdapterProvider =
     Provider<RemoteAdapter<BookSubcategory>>(
   (ref) => $BookSubcategoryRemoteAdapter(
-    $BookSubcategoryHiveLocalAdapter(ref.read, typeId: null),
+    $BookSubcategoryHiveLocalAdapter(ref),
     InternalHolder(_bookSubcategoriesFinders),
   ),
 );
 
 final bookSubcategoriesRepositoryProvider =
     Provider<Repository<BookSubcategory>>(
-  (ref) => Repository<BookSubcategory>(ref.read),
+  (ref) => Repository<BookSubcategory>(ref),
 );
 
 extension BookSubcategoryDataRepositoryX on Repository<BookSubcategory> {
