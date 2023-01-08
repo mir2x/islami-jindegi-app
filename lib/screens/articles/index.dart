@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
@@ -38,7 +39,7 @@ class Articles extends ConsumerWidget {
                 qParams: qParams,
                 resourceFetcher: (Map<String, dynamic> params) async {
                   AllModelsQuery query = AllModelsQuery(
-                    repository: 'articles',
+                    repository: ref.articles,
                     params: params,
                   );
 

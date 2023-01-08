@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/theme/colors.dart';
@@ -13,9 +14,9 @@ class News extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
 
-    var query = const AllModelsQuery(
-      repository: 'news',
-      params: {'quantity': 5},
+    var query = AllModelsQuery(
+      repository: ref.news,
+      params: const {'quantity': 5},
     );
 
     var modelQuery = ref.watch(allModelsProvider(query));

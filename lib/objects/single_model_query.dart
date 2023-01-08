@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_data/flutter_data.dart';
 
 class SingleModelQuery extends Equatable {
   const SingleModelQuery({
@@ -7,7 +8,7 @@ class SingleModelQuery extends Equatable {
     this.remote = false,
   });
 
-  final String repository;
+  final Repository repository;
   final String id;
   final bool remote;
 

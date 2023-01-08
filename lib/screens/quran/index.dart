@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
@@ -21,7 +22,7 @@ class Quran extends ConsumerWidget {
         child: InfiniteList(
           resourceFetcher: (Map<String, dynamic> params) async {
             AllModelsQuery query = AllModelsQuery(
-              repository: 'surahs',
+              repository: ref.surahs,
               params: params,
             );
 

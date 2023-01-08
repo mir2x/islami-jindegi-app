@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
@@ -41,7 +42,7 @@ class Books extends ConsumerWidget {
                           paramKeys: const ['bookCategoryId'],
                           resourceFetcher: (Map<String, dynamic> params) async {
                             AllModelsQuery query = AllModelsQuery(
-                              repository: 'bookCategories',
+                              repository: ref.bookCategories,
                               params: params,
                             );
 
@@ -65,7 +66,7 @@ class Books extends ConsumerWidget {
                           paramKeys: const ['authorId'],
                           resourceFetcher: (Map<String, dynamic> params) async {
                             AllModelsQuery query = AllModelsQuery(
-                              repository: 'authors',
+                              repository: ref.authors,
                               params: params,
                             );
 
@@ -107,7 +108,7 @@ class Books extends ConsumerWidget {
                 qParams: qParams,
                 resourceFetcher: (Map<String, dynamic> params) async {
                   AllModelsQuery query = AllModelsQuery(
-                    repository: 'books',
+                    repository: ref.books,
                     params: params,
                   );
 

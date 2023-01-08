@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
@@ -42,7 +43,7 @@ class Bayans extends ConsumerWidget {
                           paramKeys: const ['bayanCategoryId'],
                           resourceFetcher: (Map<String, dynamic> params) async {
                             AllModelsQuery query = AllModelsQuery(
-                              repository: 'bayanCategories',
+                              repository: ref.bayanCategories,
                               params: params,
                             );
 
@@ -66,7 +67,7 @@ class Bayans extends ConsumerWidget {
                           paramKeys: const ['speakerId'],
                           resourceFetcher: (Map<String, dynamic> params) async {
                             AllModelsQuery query = AllModelsQuery(
-                              repository: 'speakers',
+                              repository: ref.speakers,
                               params: params,
                             );
 
@@ -109,7 +110,7 @@ class Bayans extends ConsumerWidget {
                 qParams: qParams,
                 resourceFetcher: (Map<String, dynamic> params) async {
                   AllModelsQuery query = AllModelsQuery(
-                    repository: 'bayans',
+                    repository: ref.bayans,
                     params: {
                       ...params,
                       'include': 'speaker',

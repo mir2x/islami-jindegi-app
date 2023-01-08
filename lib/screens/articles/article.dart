@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
@@ -18,7 +19,7 @@ class Article extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
 
     var query = SingleModelQuery(
-      repository: 'articles',
+      repository: ref.articles,
       id: QR.params['id'].toString(),
     );
 

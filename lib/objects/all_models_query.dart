@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_data/flutter_data.dart';
 
 class AllModelsQuery extends Equatable {
   const AllModelsQuery({
@@ -7,7 +8,7 @@ class AllModelsQuery extends Equatable {
     this.syncLocal = false,
   });
 
-  final String repository;
+  final Repository repository;
   final Map<String, dynamic> params;
   final bool syncLocal;
 

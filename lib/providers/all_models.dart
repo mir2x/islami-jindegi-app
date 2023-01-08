@@ -2,31 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/main.data.dart';
 
-final allModelsProvider =
-    FutureProvider.family((ref, AllModelsQuery query) async {
+final allModelsProvider = FutureProvider.family<List, AllModelsQuery>(
+    (ref, AllModelsQuery query) async {
   await ref.watch(repositoryInitializerProvider.future);
 
-  Map repositories = {
-    'surahs': ref.surahs,
-    'paras': ref.paras,
-    'ayahs': ref.ayahs,
-    'books': ref.books,
-    'chapters': ref.chapters,
-    'subchapters': ref.subchapters,
-    'authors': ref.authors,
-    'bookCategories': ref.bookCategories,
-    'bayans': ref.bayans,
-    'bayanCategories': ref.bayanCategories,
-    'speakers': ref.speakers,
-    'malfuzats': ref.malfuzats,
-    'masails': ref.masails,
-    'duas': ref.duas,
-    'articles': ref.articles,
-    'news': ref.news,
-    'madrasahs': ref.madrasahs,
-  };
-
-  var resources = await repositories[query.repository].findAll(
+  var resources = await query.repository.findAll(
     params: query.params,
     syncLocal: query.syncLocal,
   );

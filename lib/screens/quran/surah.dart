@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/providers/all_models.dart';
@@ -19,7 +20,7 @@ class Surah extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
 
     var query = SingleModelQuery(
-      repository: 'surahs',
+      repository: ref.surahs,
       id: QR.params['id'].toString(),
     );
 
@@ -59,7 +60,7 @@ class Surah extends ConsumerWidget {
                   child: InfiniteList(
                     resourceFetcher: (Map<String, dynamic> params) async {
                       AllModelsQuery query = AllModelsQuery(
-                        repository: 'ayahs',
+                        repository: ref.ayahs,
                         params: {
                           ...params,
                           'surah_id': surah.id,
