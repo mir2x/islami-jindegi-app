@@ -20,7 +20,7 @@ dependencies:
   path_provider: ^2.0.11
 
   # routing
-  qlevar_router: ^1.6.4
+  qlevar_router: ^1.7.1
 
   # data
   flutter_data: ^1.5.4
