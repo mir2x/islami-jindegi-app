@@ -8,6 +8,7 @@ final singleModelProvider = FutureProvider.family<dynamic, SingleModelQuery>(
 
   var resource = await query.repository.findOne(
     query.id,
+    params: query.params,
     remote: query.remote,
   );
 

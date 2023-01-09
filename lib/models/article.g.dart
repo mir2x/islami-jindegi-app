@@ -9,7 +9,14 @@ part of 'article.dart';
 // ignore_for_file: non_constant_identifier_names, duplicate_ignore
 
 mixin $ArticleLocalAdapter on LocalAdapter<Article> {
-  static final Map<String, RelationshipMeta> _kArticleRelationshipMetas = {};
+  static final Map<String, RelationshipMeta> _kArticleRelationshipMetas = {
+    'article-author': RelationshipMeta<ArticleAuthor>(
+      name: 'articleAuthor',
+      type: 'articleAuthors',
+      kind: 'BelongsTo',
+      instance: (_) => (_ as Article).articleAuthor,
+    )
+  };
 
   @override
   Map<String, RelationshipMeta> get relationshipMetas =>
@@ -54,7 +61,16 @@ extension ArticleDataRepositoryX on Repository<Article> {
       remoteAdapter as ApplicationAdapter<Article>;
 }
 
-extension ArticleRelationshipGraphNodeX on RelationshipGraphNode<Article> {}
+extension ArticleRelationshipGraphNodeX on RelationshipGraphNode<Article> {
+  RelationshipGraphNode<ArticleAuthor> get articleAuthor {
+    final meta =
+        $ArticleLocalAdapter._kArticleRelationshipMetas['article-author']
+            as RelationshipMeta<ArticleAuthor>;
+    return meta.clone(
+      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
+    );
+  }
+}
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -67,10 +83,16 @@ Article _$ArticleFromJson(Map<String, dynamic> json) => Article(
       body: json['body'] as String,
       excerpt: json['excerpt'] as String?,
       language: json['language'] as String,
+      document: json['document'] as Map<dynamic, dynamic>?,
       position: json['position'] as int?,
       publishedAt: json['published-at'] as String?,
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
+      articleAuthor: json['article-author'] == null
+          ? null
+          : BelongsTo<ArticleAuthor>.fromJson(
+              json['article-author'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$ArticleToJson(Article instance) => <String, dynamic>{
@@ -80,8 +102,10 @@ Map<String, dynamic> _$ArticleToJson(Article instance) => <String, dynamic>{
       'body': instance.body,
       'excerpt': instance.excerpt,
       'language': instance.language,
+      'document': instance.document,
       'position': instance.position,
       'published-at': instance.publishedAt,
       'created-at': instance.createdAt,
       'updated-at': instance.updatedAt,
+      'article-author': instance.articleAuthor,
     };

@@ -2,6 +2,7 @@ import 'package:flutter_data/flutter_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter_data_json_api_adapter/flutter_data_json_api_adapter.dart';
 import 'package:native_app/adapters/application.dart';
+import 'malfuzat_author.dart';
 
 part 'malfuzat.g.dart';
 
@@ -15,12 +16,14 @@ class Malfuzat extends DataModel<Malfuzat> {
   final String? excerpt;
   final String language;
   final bool? hasAudio;
-  /* final Map<dynamic, dynamic>? audio; */
-  /* final Map<dynamic, dynamic>? document; */
+  final Map<dynamic, dynamic>? audio;
+  final Map<dynamic, dynamic>? document;
   final int? position;
   final String? publishedAt;
   final String? createdAt;
   final String? updatedAt;
+
+  final BelongsTo<MalfuzatAuthor>? malfuzatAuthor;
 
   Malfuzat({
     this.id,
@@ -29,11 +32,12 @@ class Malfuzat extends DataModel<Malfuzat> {
     this.excerpt,
     required this.language,
     this.hasAudio,
-    /* this.audio, */
-    /* this.document, */
+    this.audio,
+    this.document,
     this.position,
     this.publishedAt,
     this.createdAt,
     this.updatedAt,
+    this.malfuzatAuthor,
   });
 }

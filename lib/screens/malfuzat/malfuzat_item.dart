@@ -20,6 +20,8 @@ class MalfuzatItem extends ConsumerWidget {
     var query = SingleModelQuery(
       repository: ref.malfuzats,
       id: QR.params['id'].toString(),
+      params: const {'include': 'malfuzat-author'},
+      remote: true,
     );
 
     var modelQuery = ref.watch(singleModelProvider(query));
@@ -39,6 +41,16 @@ class MalfuzatItem extends ConsumerWidget {
                   style: textTheme.headlineMedium,
                 ),
               ),
+              if (resource.malfuzatAuthor.value != null) ...[
+                Container(
+                  margin: const EdgeInsets.only(bottom: 15),
+                  child: Text(
+                    resource.malfuzatAuthor.value.name,
+                    style: textTheme.labelMedium,
+                  ),
+                ),
+              ] else
+                ...[],
               Container(
                 margin: const EdgeInsets.only(bottom: 30),
                 child: HtmlText(

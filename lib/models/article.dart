@@ -2,6 +2,7 @@ import 'package:flutter_data/flutter_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter_data_json_api_adapter/flutter_data_json_api_adapter.dart';
 import 'package:native_app/adapters/application.dart';
+import 'article_author.dart';
 
 part 'article.g.dart';
 
@@ -15,11 +16,13 @@ class Article extends DataModel<Article> {
   final String body;
   final String? excerpt;
   final String language;
-  /* final Map<dynamic, dynamic>? document; */
+  final Map<dynamic, dynamic>? document;
   final int? position;
   final String? publishedAt;
   final String? createdAt;
   final String? updatedAt;
+
+  final BelongsTo<ArticleAuthor>? articleAuthor;
 
   Article({
     this.id,
@@ -28,10 +31,11 @@ class Article extends DataModel<Article> {
     required this.body,
     this.excerpt,
     required this.language,
-    /* this.document, */
+    this.document,
     this.position,
     this.publishedAt,
     this.createdAt,
     this.updatedAt,
+    this.articleAuthor,
   });
 }

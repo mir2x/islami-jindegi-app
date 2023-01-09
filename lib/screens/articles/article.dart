@@ -9,7 +9,6 @@ import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
-import 'package:native_app/helpers/format_date.dart';
 
 class Article extends ConsumerWidget {
   const Article({super.key});
@@ -21,6 +20,8 @@ class Article extends ConsumerWidget {
     var query = SingleModelQuery(
       repository: ref.articles,
       id: QR.params['id'].toString(),
+      params: const {'include': 'article-author'},
+      remote: true,
     );
 
     var modelQuery = ref.watch(singleModelProvider(query));
@@ -40,13 +41,16 @@ class Article extends ConsumerWidget {
                   style: textTheme.headlineMedium,
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 15),
-                child: Text(
-                  formatDate(resource.createdAt!),
-                  style: textTheme.labelMedium,
+              if (resource.articleAuthor.value != null) ...[
+                Container(
+                  margin: const EdgeInsets.only(bottom: 15),
+                  child: Text(
+                    resource.articleAuthor.value.name,
+                    style: textTheme.labelMedium,
+                  ),
                 ),
-              ),
+              ] else
+                ...[],
               Container(
                 margin: const EdgeInsets.only(bottom: 30),
                 child: HtmlText(
