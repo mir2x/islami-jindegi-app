@@ -14,8 +14,8 @@ class Dua extends DataModel<Dua> {
   final String body;
   final String? excerpt;
   final String language;
-  /* final Map<dynamic, dynamic>? audio; */
-  /* final Map<dynamic, dynamic>? document; */
+  final Map<dynamic, dynamic>? audio;
+  final Map<dynamic, dynamic>? document;
   final int? position;
   final String? createdAt;
   final String? updatedAt;
@@ -26,8 +26,8 @@ class Dua extends DataModel<Dua> {
     required this.body,
     this.excerpt,
     required this.language,
-    /* this.audio, */
-    /* this.document, */
+    this.audio,
+    this.document,
     this.position,
     this.createdAt,
     this.updatedAt,

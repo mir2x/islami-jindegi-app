@@ -13,7 +13,7 @@ class Madrasah extends DataModel<Madrasah> {
   final String title;
   final String introduction;
   final String? excerpt;
-  /* final Map<dynamic, dynamic>? document; */
+  final Map<dynamic, dynamic>? document;
   final int? position;
   final String? createdAt;
   final String? updatedAt;
@@ -23,7 +23,7 @@ class Madrasah extends DataModel<Madrasah> {
     required this.title,
     required this.introduction,
     this.excerpt,
-    /* this.document, */
+    this.document,
     this.position,
     this.createdAt,
     this.updatedAt,

@@ -16,8 +16,8 @@ class Masail extends DataModel<Masail> {
   final String answer;
   final String language;
   final bool? hasAudio;
-  /* final Map<dynamic, dynamic>? audio; */
-  /* final Map<dynamic, dynamic>? document; */
+  final Map<dynamic, dynamic>? audio;
+  final Map<dynamic, dynamic>? document;
   final int? position;
   final String? publishedAt;
   final String? createdAt;
@@ -31,8 +31,8 @@ class Masail extends DataModel<Masail> {
     required this.answer,
     required this.language,
     this.hasAudio,
-    /* this.audio, */
-    /* this.document, */
+    this.audio,
+    this.document,
     this.position,
     this.publishedAt,
     this.createdAt,
