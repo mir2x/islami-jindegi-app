@@ -40,14 +40,10 @@ class Books extends ConsumerWidget {
                         child: FilterList(
                           title: 'Categories',
                           paramKeys: const ['bookCategoryId'],
-                          resourceFetcher: (Map<String, dynamic> params) async {
-                            AllModelsQuery query = AllModelsQuery(
+                          queryBuilder: (Map<String, dynamic> params) {
+                            return AllModelsQuery(
                               repository: ref.bookCategories,
                               params: params,
-                            );
-
-                            return await ref.read(
-                              allModelsProvider(query).future,
                             );
                           },
                           itemBuilder: (_, item, __) {
@@ -64,14 +60,10 @@ class Books extends ConsumerWidget {
                         child: FilterList(
                           title: 'Authors',
                           paramKeys: const ['authorId'],
-                          resourceFetcher: (Map<String, dynamic> params) async {
-                            AllModelsQuery query = AllModelsQuery(
+                          queryBuilder: (Map<String, dynamic> params) {
+                            return AllModelsQuery(
                               repository: ref.authors,
                               params: params,
-                            );
-
-                            return await ref.read(
-                              allModelsProvider(query).future,
                             );
                           },
                           itemBuilder: (_, item, __) {

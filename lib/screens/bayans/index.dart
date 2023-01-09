@@ -41,14 +41,10 @@ class Bayans extends ConsumerWidget {
                         child: FilterList(
                           title: 'Categories',
                           paramKeys: const ['bayanCategoryId'],
-                          resourceFetcher: (Map<String, dynamic> params) async {
-                            AllModelsQuery query = AllModelsQuery(
+                          queryBuilder: (Map<String, dynamic> params) {
+                            return AllModelsQuery(
                               repository: ref.bayanCategories,
                               params: params,
-                            );
-
-                            return await ref.read(
-                              allModelsProvider(query).future,
                             );
                           },
                           itemBuilder: (_, item, __) {
@@ -65,14 +61,10 @@ class Bayans extends ConsumerWidget {
                         child: FilterList(
                           title: 'Speakers',
                           paramKeys: const ['speakerId'],
-                          resourceFetcher: (Map<String, dynamic> params) async {
-                            AllModelsQuery query = AllModelsQuery(
+                          queryBuilder: (Map<String, dynamic> params) {
+                            return AllModelsQuery(
                               repository: ref.speakers,
                               params: params,
-                            );
-
-                            return await ref.read(
-                              allModelsProvider(query).future,
                             );
                           },
                           itemBuilder: (_, item, __) {
