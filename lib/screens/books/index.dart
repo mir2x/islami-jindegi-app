@@ -35,7 +35,8 @@ class Books extends ConsumerWidget {
                 Expanded(
                   child: FilterButton(
                     active: qParams.keys.any(
-                      (k) => ['bookCategoryId', 'authorId'].contains(k),
+                      (k) => ['bookCategoryId', 'bookSubcategoryId', 'authorId']
+                          .contains(k),
                     ),
                     children: [
                       Expanded(

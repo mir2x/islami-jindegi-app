@@ -19,6 +19,8 @@ import 'package:native_app/models/dua_category.dart';
 import 'package:native_app/models/dua.dart';
 import 'package:native_app/models/madrasah.dart';
 import 'package:native_app/models/malfuzat.dart';
+import 'package:native_app/models/masail_category.dart';
+import 'package:native_app/models/masail_subcategory.dart';
 import 'package:native_app/models/masail.dart';
 import 'package:native_app/models/news.dart';
 import 'package:native_app/models/para.dart';
@@ -63,6 +65,8 @@ final repositoryProviders = <String, Provider<Repository<DataModel>>>{
   'duas': duasRepositoryProvider,
   'madrasahs': madrasahsRepositoryProvider,
   'malfuzats': malfuzatsRepositoryProvider,
+  'masailCategories': masailCategoriesRepositoryProvider,
+  'masailSubcategories': masailSubcategoriesRepositoryProvider,
   'masails': masailsRepositoryProvider,
   'news': newsRepositoryProvider,
   'paras': parasRepositoryProvider,
@@ -86,6 +90,8 @@ final repositoryInitializerProvider =
   DataHelpers.setInternalType<Dua>('duas');
   DataHelpers.setInternalType<Madrasah>('madrasahs');
   DataHelpers.setInternalType<Malfuzat>('malfuzats');
+  DataHelpers.setInternalType<MasailCategory>('masailCategories');
+  DataHelpers.setInternalType<MasailSubcategory>('masailSubcategories');
   DataHelpers.setInternalType<Masail>('masails');
   DataHelpers.setInternalType<News>('news');
   DataHelpers.setInternalType<Para>('paras');
@@ -107,6 +113,10 @@ final repositoryInitializerProvider =
     'duas': ref.watch(internalDuasRemoteAdapterProvider),
     'madrasahs': ref.watch(internalMadrasahsRemoteAdapterProvider),
     'malfuzats': ref.watch(internalMalfuzatsRemoteAdapterProvider),
+    'masailCategories':
+        ref.watch(internalMasailCategoriesRemoteAdapterProvider),
+    'masailSubcategories':
+        ref.watch(internalMasailSubcategoriesRemoteAdapterProvider),
     'masails': ref.watch(internalMasailsRemoteAdapterProvider),
     'news': ref.watch(internalNewsRemoteAdapterProvider),
     'paras': ref.watch(internalParasRemoteAdapterProvider),
@@ -128,6 +138,8 @@ final repositoryInitializerProvider =
     'duas': true,
     'madrasahs': true,
     'malfuzats': true,
+    'masailCategories': true,
+    'masailSubcategories': true,
     'masails': true,
     'news': true,
     'paras': true,
@@ -183,6 +195,12 @@ extension RepositoryWidgetRefX on WidgetRef {
       watch(madrasahsRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Malfuzat> get malfuzats =>
       watch(malfuzatsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<MasailCategory> get masailCategories =>
+      watch(masailCategoriesRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
+  Repository<MasailSubcategory> get masailSubcategories =>
+      watch(masailSubcategoriesRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
   Repository<Masail> get masails =>
       watch(masailsRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<News> get news =>
@@ -228,6 +246,12 @@ extension RepositoryRefX on Ref {
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Malfuzat> get malfuzats => watch(malfuzatsRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<MasailCategory> get masailCategories =>
+      watch(masailCategoriesRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<MasailSubcategory> get masailSubcategories =>
+      watch(masailSubcategoriesRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Masail> get masails => watch(masailsRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<News> get news => watch(newsRepositoryProvider)
