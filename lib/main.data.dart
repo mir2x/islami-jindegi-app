@@ -18,6 +18,9 @@ import 'package:native_app/models/chapter.dart';
 import 'package:native_app/models/dua_category.dart';
 import 'package:native_app/models/dua.dart';
 import 'package:native_app/models/madrasah.dart';
+import 'package:native_app/models/malfuzat_author.dart';
+import 'package:native_app/models/malfuzat_category.dart';
+import 'package:native_app/models/malfuzat_subcategory.dart';
 import 'package:native_app/models/malfuzat.dart';
 import 'package:native_app/models/masail_category.dart';
 import 'package:native_app/models/masail_subcategory.dart';
@@ -64,6 +67,9 @@ final repositoryProviders = <String, Provider<Repository<DataModel>>>{
   'duaCategories': duaCategoriesRepositoryProvider,
   'duas': duasRepositoryProvider,
   'madrasahs': madrasahsRepositoryProvider,
+  'malfuzatAuthors': malfuzatAuthorsRepositoryProvider,
+  'malfuzatCategories': malfuzatCategoriesRepositoryProvider,
+  'malfuzatSubcategories': malfuzatSubcategoriesRepositoryProvider,
   'malfuzats': malfuzatsRepositoryProvider,
   'masailCategories': masailCategoriesRepositoryProvider,
   'masailSubcategories': masailSubcategoriesRepositoryProvider,
@@ -89,6 +95,9 @@ final repositoryInitializerProvider =
   DataHelpers.setInternalType<DuaCategory>('duaCategories');
   DataHelpers.setInternalType<Dua>('duas');
   DataHelpers.setInternalType<Madrasah>('madrasahs');
+  DataHelpers.setInternalType<MalfuzatAuthor>('malfuzatAuthors');
+  DataHelpers.setInternalType<MalfuzatCategory>('malfuzatCategories');
+  DataHelpers.setInternalType<MalfuzatSubcategory>('malfuzatSubcategories');
   DataHelpers.setInternalType<Malfuzat>('malfuzats');
   DataHelpers.setInternalType<MasailCategory>('masailCategories');
   DataHelpers.setInternalType<MasailSubcategory>('masailSubcategories');
@@ -112,6 +121,11 @@ final repositoryInitializerProvider =
     'duaCategories': ref.watch(internalDuaCategoriesRemoteAdapterProvider),
     'duas': ref.watch(internalDuasRemoteAdapterProvider),
     'madrasahs': ref.watch(internalMadrasahsRemoteAdapterProvider),
+    'malfuzatAuthors': ref.watch(internalMalfuzatAuthorsRemoteAdapterProvider),
+    'malfuzatCategories':
+        ref.watch(internalMalfuzatCategoriesRemoteAdapterProvider),
+    'malfuzatSubcategories':
+        ref.watch(internalMalfuzatSubcategoriesRemoteAdapterProvider),
     'malfuzats': ref.watch(internalMalfuzatsRemoteAdapterProvider),
     'masailCategories':
         ref.watch(internalMasailCategoriesRemoteAdapterProvider),
@@ -137,6 +151,9 @@ final repositoryInitializerProvider =
     'duaCategories': true,
     'duas': true,
     'madrasahs': true,
+    'malfuzatAuthors': true,
+    'malfuzatCategories': true,
+    'malfuzatSubcategories': true,
     'malfuzats': true,
     'masailCategories': true,
     'masailSubcategories': true,
@@ -193,6 +210,15 @@ extension RepositoryWidgetRefX on WidgetRef {
       watch(duasRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Madrasah> get madrasahs =>
       watch(madrasahsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<MalfuzatAuthor> get malfuzatAuthors =>
+      watch(malfuzatAuthorsRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
+  Repository<MalfuzatCategory> get malfuzatCategories =>
+      watch(malfuzatCategoriesRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
+  Repository<MalfuzatSubcategory> get malfuzatSubcategories =>
+      watch(malfuzatSubcategoriesRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
   Repository<Malfuzat> get malfuzats =>
       watch(malfuzatsRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<MasailCategory> get masailCategories =>
@@ -244,6 +270,15 @@ extension RepositoryRefX on Ref {
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Madrasah> get madrasahs => watch(madrasahsRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<MalfuzatAuthor> get malfuzatAuthors =>
+      watch(malfuzatAuthorsRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<MalfuzatCategory> get malfuzatCategories =>
+      watch(malfuzatCategoriesRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<MalfuzatSubcategory> get malfuzatSubcategories =>
+      watch(malfuzatSubcategoriesRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Malfuzat> get malfuzats => watch(malfuzatsRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<MasailCategory> get masailCategories =>
