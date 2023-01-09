@@ -6,6 +6,9 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:native_app/models/article_author.dart';
+import 'package:native_app/models/article_category.dart';
+import 'package:native_app/models/article_subcategory.dart';
 import 'package:native_app/models/article.dart';
 import 'package:native_app/models/author.dart';
 import 'package:native_app/models/ayah.dart';
@@ -55,6 +58,9 @@ ConfigureRepositoryLocalStorage configureRepositoryLocalStorage = ({
 };
 
 final repositoryProviders = <String, Provider<Repository<DataModel>>>{
+  'articleAuthors': articleAuthorsRepositoryProvider,
+  'articleCategories': articleCategoriesRepositoryProvider,
+  'articleSubcategories': articleSubcategoriesRepositoryProvider,
   'articles': articlesRepositoryProvider,
   'authors': authorsRepositoryProvider,
   'ayahs': ayahsRepositoryProvider,
@@ -83,6 +89,9 @@ final repositoryProviders = <String, Provider<Repository<DataModel>>>{
 
 final repositoryInitializerProvider =
     FutureProvider<RepositoryInitializer>((ref) async {
+  DataHelpers.setInternalType<ArticleAuthor>('articleAuthors');
+  DataHelpers.setInternalType<ArticleCategory>('articleCategories');
+  DataHelpers.setInternalType<ArticleSubcategory>('articleSubcategories');
   DataHelpers.setInternalType<Article>('articles');
   DataHelpers.setInternalType<Author>('authors');
   DataHelpers.setInternalType<Ayah>('ayahs');
@@ -108,6 +117,11 @@ final repositoryInitializerProvider =
   DataHelpers.setInternalType<Subchapter>('subchapters');
   DataHelpers.setInternalType<Surah>('surahs');
   final adapters = <String, RemoteAdapter>{
+    'articleAuthors': ref.watch(internalArticleAuthorsRemoteAdapterProvider),
+    'articleCategories':
+        ref.watch(internalArticleCategoriesRemoteAdapterProvider),
+    'articleSubcategories':
+        ref.watch(internalArticleSubcategoriesRemoteAdapterProvider),
     'articles': ref.watch(internalArticlesRemoteAdapterProvider),
     'authors': ref.watch(internalAuthorsRemoteAdapterProvider),
     'ayahs': ref.watch(internalAyahsRemoteAdapterProvider),
@@ -139,6 +153,9 @@ final repositoryInitializerProvider =
     'surahs': ref.watch(internalSurahsRemoteAdapterProvider)
   };
   final remotes = <String, bool>{
+    'articleAuthors': true,
+    'articleCategories': true,
+    'articleSubcategories': true,
     'articles': true,
     'authors': true,
     'ayahs': true,
@@ -182,6 +199,15 @@ final repositoryInitializerProvider =
 });
 
 extension RepositoryWidgetRefX on WidgetRef {
+  Repository<ArticleAuthor> get articleAuthors =>
+      watch(articleAuthorsRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
+  Repository<ArticleCategory> get articleCategories =>
+      watch(articleCategoriesRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
+  Repository<ArticleSubcategory> get articleSubcategories =>
+      watch(articleSubcategoriesRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
   Repository<Article> get articles =>
       watch(articlesRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Author> get authors =>
@@ -242,6 +268,15 @@ extension RepositoryWidgetRefX on WidgetRef {
 }
 
 extension RepositoryRefX on Ref {
+  Repository<ArticleAuthor> get articleAuthors =>
+      watch(articleAuthorsRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<ArticleCategory> get articleCategories =>
+      watch(articleCategoriesRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<ArticleSubcategory> get articleSubcategories =>
+      watch(articleSubcategoriesRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Article> get articles => watch(articlesRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Author> get authors => watch(authorsRepositoryProvider)
