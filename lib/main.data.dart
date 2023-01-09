@@ -15,6 +15,7 @@ import 'package:native_app/models/book_category.dart';
 import 'package:native_app/models/book_subcategory.dart';
 import 'package:native_app/models/book.dart';
 import 'package:native_app/models/chapter.dart';
+import 'package:native_app/models/dua_category.dart';
 import 'package:native_app/models/dua.dart';
 import 'package:native_app/models/madrasah.dart';
 import 'package:native_app/models/malfuzat.dart';
@@ -58,6 +59,7 @@ final repositoryProviders = <String, Provider<Repository<DataModel>>>{
   'bookSubcategories': bookSubcategoriesRepositoryProvider,
   'books': booksRepositoryProvider,
   'chapters': chaptersRepositoryProvider,
+  'duaCategories': duaCategoriesRepositoryProvider,
   'duas': duasRepositoryProvider,
   'madrasahs': madrasahsRepositoryProvider,
   'malfuzats': malfuzatsRepositoryProvider,
@@ -80,6 +82,7 @@ final repositoryInitializerProvider =
   DataHelpers.setInternalType<BookSubcategory>('bookSubcategories');
   DataHelpers.setInternalType<Book>('books');
   DataHelpers.setInternalType<Chapter>('chapters');
+  DataHelpers.setInternalType<DuaCategory>('duaCategories');
   DataHelpers.setInternalType<Dua>('duas');
   DataHelpers.setInternalType<Madrasah>('madrasahs');
   DataHelpers.setInternalType<Malfuzat>('malfuzats');
@@ -100,6 +103,7 @@ final repositoryInitializerProvider =
         ref.watch(internalBookSubcategoriesRemoteAdapterProvider),
     'books': ref.watch(internalBooksRemoteAdapterProvider),
     'chapters': ref.watch(internalChaptersRemoteAdapterProvider),
+    'duaCategories': ref.watch(internalDuaCategoriesRemoteAdapterProvider),
     'duas': ref.watch(internalDuasRemoteAdapterProvider),
     'madrasahs': ref.watch(internalMadrasahsRemoteAdapterProvider),
     'malfuzats': ref.watch(internalMalfuzatsRemoteAdapterProvider),
@@ -120,6 +124,7 @@ final repositoryInitializerProvider =
     'bookSubcategories': true,
     'books': true,
     'chapters': true,
+    'duaCategories': true,
     'duas': true,
     'madrasahs': true,
     'malfuzats': true,
@@ -169,6 +174,9 @@ extension RepositoryWidgetRefX on WidgetRef {
       watch(booksRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Chapter> get chapters =>
       watch(chaptersRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<DuaCategory> get duaCategories =>
+      watch(duaCategoriesRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
   Repository<Dua> get duas =>
       watch(duasRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Madrasah> get madrasahs =>
@@ -211,6 +219,9 @@ extension RepositoryRefX on Ref {
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Chapter> get chapters => watch(chaptersRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<DuaCategory> get duaCategories =>
+      watch(duaCategoriesRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Dua> get duas => watch(duasRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Madrasah> get madrasahs => watch(madrasahsRepositoryProvider)

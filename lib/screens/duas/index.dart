@@ -8,6 +8,9 @@ import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/providers/query_params.dart';
+import 'package:native_app/widgets/filter/button.dart';
+import 'package:native_app/widgets/filter/list.dart';
+import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
 
 class Duas extends ConsumerWidget {
@@ -23,13 +26,51 @@ class Duas extends ConsumerWidget {
       body: Column(
         children: [
           Container(
+            width: double.infinity,
             padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
-            child: SearchField(
-              onUpdate: (value) {
-                ref
-                    .read(queryParamsProvider.notifier)
-                    .updateParams('search', value);
-              },
+            child: Row(
+              children: [
+                Expanded(
+                  child: FilterButton(
+                    active: qParams.keys.any(
+                      (k) => k == 'duaCategoryId',
+                    ),
+                    children: [
+                      Expanded(
+                        child: FilterList(
+                          title: 'Categories',
+                          paramKeys: const ['duaCategoryId'],
+                          queryBuilder: (Map<String, dynamic> params) {
+                            return AllModelsQuery(
+                              repository: ref.duaCategories,
+                              params: params,
+                            );
+                          },
+                          itemBuilder: (_, item, __) {
+                            return FilterItem(
+                              itemId: item.id,
+                              itemTitle: item.title,
+                              paramKey: 'duaCategoryId',
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  width: 15,
+                ),
+                Expanded(
+                  child: SearchField(
+                    onUpdate: (value) {
+                      ref
+                          .read(queryParamsProvider.notifier)
+                          .updateParams('search', value);
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(
