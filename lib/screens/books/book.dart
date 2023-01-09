@@ -56,7 +56,7 @@ class Book extends ConsumerWidget {
                         repository: ref.chapters,
                         params: {
                           ...params,
-                          'book_id': book.id,
+                          'bookId': book.id,
                           'include': 'subchapters',
                         },
                       );

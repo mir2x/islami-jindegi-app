@@ -9,8 +9,15 @@ part of 'book_category.dart';
 // ignore_for_file: non_constant_identifier_names, duplicate_ignore
 
 mixin $BookCategoryLocalAdapter on LocalAdapter<BookCategory> {
-  static final Map<String, RelationshipMeta> _kBookCategoryRelationshipMetas =
-      {};
+  static final Map<String, RelationshipMeta> _kBookCategoryRelationshipMetas = {
+    'book-subcategories': RelationshipMeta<BookSubcategory>(
+      name: 'bookSubcategories',
+      inverseName: 'bookCategory',
+      type: 'bookSubcategories',
+      kind: 'HasMany',
+      instance: (_) => (_ as BookCategory).bookSubcategories,
+    )
+  };
 
   @override
   Map<String, RelationshipMeta> get relationshipMetas =>
@@ -57,7 +64,16 @@ extension BookCategoryDataRepositoryX on Repository<BookCategory> {
 }
 
 extension BookCategoryRelationshipGraphNodeX
-    on RelationshipGraphNode<BookCategory> {}
+    on RelationshipGraphNode<BookCategory> {
+  RelationshipGraphNode<BookSubcategory> get bookSubcategories {
+    final meta = $BookCategoryLocalAdapter
+            ._kBookCategoryRelationshipMetas['book-subcategories']
+        as RelationshipMeta<BookSubcategory>;
+    return meta.clone(
+      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
+    );
+  }
+}
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -70,6 +86,11 @@ BookCategory _$BookCategoryFromJson(Map<String, dynamic> json) => BookCategory(
       position: json['position'] as int?,
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
+      bookSubcategories: json['book-subcategories'] == null
+          ? null
+          : HasMany<BookSubcategory>.fromJson(
+              json['book-subcategories'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$BookCategoryToJson(BookCategory instance) =>
@@ -80,4 +101,5 @@ Map<String, dynamic> _$BookCategoryToJson(BookCategory instance) =>
       'position': instance.position,
       'created-at': instance.createdAt,
       'updated-at': instance.updatedAt,
+      'book-subcategories': instance.bookSubcategories,
     };

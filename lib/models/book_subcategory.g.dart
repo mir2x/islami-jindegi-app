@@ -13,6 +13,7 @@ mixin $BookSubcategoryLocalAdapter on LocalAdapter<BookSubcategory> {
       _kBookSubcategoryRelationshipMetas = {
     'book-category': RelationshipMeta<BookCategory>(
       name: 'bookCategory',
+      inverseName: 'bookSubcategories',
       type: 'bookCategories',
       kind: 'BelongsTo',
       instance: (_) => (_ as BookSubcategory).bookCategory,

@@ -11,6 +11,8 @@ import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
+import 'package:native_app/widgets/filter/nested_item.dart';
+import 'package:native_app/widgets/filter/subitem.dart';
 import 'package:native_app/widgets/responsive/image.dart';
 
 class Books extends ConsumerWidget {
@@ -39,19 +41,39 @@ class Books extends ConsumerWidget {
                       Expanded(
                         child: FilterList(
                           title: 'Categories',
-                          paramKeys: const ['bookCategoryId'],
+                          paramKeys: const [
+                            'bookCategoryId',
+                            'bookSubcategoryId'
+                          ],
                           queryBuilder: (Map<String, dynamic> params) {
                             return AllModelsQuery(
                               repository: ref.bookCategories,
-                              params: params,
+                              params: {
+                                ...params,
+                                'include': 'book-subcategories'
+                              },
                             );
                           },
                           itemBuilder: (_, item, __) {
-                            return FilterItem(
-                              itemId: item.id,
-                              itemTitle: item.title,
-                              paramKey: 'bookCategoryId',
-                            );
+                            if (item.bookSubcategories.length > 0) {
+                              return FilterNestedItem(
+                                itemTitle: item.title,
+                                subitems: item.bookSubcategories,
+                                subitemBuilder: (var subitem) {
+                                  return FilterSubitem(
+                                    itemId: subitem.id,
+                                    itemTitle: subitem.title,
+                                    paramKey: 'bookSubcategoryId',
+                                  );
+                                },
+                              );
+                            } else {
+                              return FilterItem(
+                                itemId: item.id,
+                                itemTitle: item.title,
+                                paramKey: 'bookCategoryId',
+                              );
+                            }
                           },
                         ),
                       ),

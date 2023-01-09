@@ -2,7 +2,6 @@ import 'package:flutter_data/flutter_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter_data_json_api_adapter/flutter_data_json_api_adapter.dart';
 import 'package:native_app/adapters/application.dart';
-import 'book_subcategory.dart';
 
 part 'bayan_category.g.dart';
 
@@ -17,8 +16,6 @@ class BayanCategory extends DataModel<BayanCategory> {
   final String? createdAt;
   final String? updatedAt;
 
-  final HasMany<BookSubcategory>? bookSubcategories;
-
   BayanCategory({
     this.id,
     required this.title,
@@ -26,6 +23,5 @@ class BayanCategory extends DataModel<BayanCategory> {
     this.position,
     this.createdAt,
     this.updatedAt,
-    this.bookSubcategories,
   });
 }
