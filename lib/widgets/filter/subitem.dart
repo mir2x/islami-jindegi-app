@@ -32,7 +32,7 @@ class FilterSubitem extends ConsumerWidget {
         Navigator.of(context).pop();
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 6),
         child: Text(
           itemTitle,
           style: (qParams.containsKey(paramKey) && qParams[paramKey] == itemId)

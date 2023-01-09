@@ -27,17 +27,19 @@ class FilterNestedItem extends ConsumerWidget {
           ),
         ),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.only(top: 15, bottom: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             itemTitle,
-            style: textTheme.titleMedium,
+            style: textTheme.titleMedium?.copyWith(
+              color: ThemeColors.color8,
+            ),
           ),
           Container(
             padding: const EdgeInsets.only(
-              left: 30,
+              left: 25,
               top: 5,
             ),
             child: Column(
