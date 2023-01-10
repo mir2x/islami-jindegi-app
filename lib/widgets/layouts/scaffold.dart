@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:native_app/main.data.dart';
-import 'package:native_app/widgets/utils/full_screen_loader.dart';
 
-class MyScaffold extends ConsumerWidget {
+class MyScaffold extends StatelessWidget {
   const MyScaffold({
     super.key,
     required this.title,
@@ -18,7 +15,7 @@ class MyScaffold extends ConsumerWidget {
   final bool isHome;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: Padding(
@@ -61,11 +58,7 @@ class MyScaffold extends ConsumerWidget {
           ),
         ),
         constraints: const BoxConstraints.expand(),
-        child: ref.watch(repositoryInitializerProvider).when(
-              error: (error, _) => Text(error.toString()),
-              loading: () => const FullScreenLoader(),
-              data: (_) => body,
-            ),
+        child: body,
       ),
     );
   }

@@ -16,9 +16,15 @@ Future main() async {
     builder: () => const Page404(),
   );
 
+  final container = ProviderContainer(
+    overrides: [configureRepositoryLocalStorage()],
+  );
+
+  await container.read(repositoryInitializerProvider.future);
+
   runApp(
-    ProviderScope(
-      overrides: [configureRepositoryLocalStorage()],
+    UncontrolledProviderScope(
+      container: container,
       child: const MyApp(),
     ),
   );
