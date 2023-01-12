@@ -7,39 +7,142 @@ import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
+import 'package:native_app/theme/colors.dart';
 
-class Quran extends ConsumerWidget {
+class Quran extends ConsumerStatefulWidget {
   const Quran({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  QuranState createState() => QuranState();
+}
+
+class QuranState extends ConsumerState<Quran> {
+  bool isSurahSelected = true;
+
+  @override
+  Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
+
+    void loadSurah() {
+      setState(() {
+        isSurahSelected = true;
+      });
+    }
+
+    void loadPara() {
+      setState(() {
+        isSurahSelected = false;
+      });
+    }
 
     return MyScaffold(
       title: const Text('Quran'),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
-        child: InfiniteList(
-          resourceFetcher: (Map<String, dynamic> params) async {
-            AllModelsQuery query = AllModelsQuery(
-              repository: ref.surahs,
-              params: params,
-            );
-
-            return await ref.read(allModelsProvider(query).future);
-          },
-          itemBuilder: (_, item, __) {
-            return InkWell(
-              onTap: () => QR.to('quran/surah/${item.id}'),
-              child: ListItem(
-                item: Text(
-                  item.title,
-                  style: textTheme.titleMedium,
+      body: Column(
+        children: [
+          Container(
+            padding:
+                const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: loadSurah,
+                    style: TextButton.styleFrom(
+                      backgroundColor: isSurahSelected
+                          ? ThemeColors.color8
+                          : ThemeColors.color4,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          bottomLeft: Radius.circular(15),
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      'SURAH',
+                      style: textTheme.labelMedium?.copyWith(
+                        color: ThemeColors.color7,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            );
-          },
-        ),
+                Expanded(
+                  child: TextButton(
+                    onPressed: loadPara,
+                    style: TextButton.styleFrom(
+                      backgroundColor: !isSurahSelected
+                          ? ThemeColors.color8
+                          : ThemeColors.color4,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(15),
+                          bottomRight: Radius.circular(15),
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      'PARA',
+                      style: textTheme.labelMedium?.copyWith(
+                        color: ThemeColors.color7,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: isSurahSelected
+                  ? InfiniteList(
+                      resourceFetcher: (Map<String, dynamic> params) async {
+                        AllModelsQuery query = AllModelsQuery(
+                          repository: ref.surahs,
+                          params: params,
+                        );
+
+                        return await ref.read(allModelsProvider(query).future);
+                      },
+                      itemBuilder: (_, item, __) {
+                        return InkWell(
+                          onTap: () => QR.to('quran/surah/${item.id}'),
+                          child: ListItem(
+                            item: Text(
+                              item.title,
+                              style: textTheme.titleMedium,
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : InfiniteList(
+                      resourceFetcher: (Map<String, dynamic> params) async {
+                        AllModelsQuery query = AllModelsQuery(
+                          repository: ref.paras,
+                          params: params,
+                        );
+
+                        return await ref.read(allModelsProvider(query).future);
+                      },
+                      itemBuilder: (_, item, __) {
+                        return InkWell(
+                          onTap: () => QR.to('quran/para/${item.id}'),
+                          child: ListItem(
+                            item: Text(
+                              item.title,
+                              style: textTheme.titleMedium,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ),
+        ],
       ),
     );
   }
