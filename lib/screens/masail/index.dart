@@ -13,6 +13,7 @@ import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/nested_item.dart';
 import 'package:native_app/widgets/filter/subitem.dart';
+import 'package:native_app/widgets/filter/triple_switch_button.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
 
 class Masail extends ConsumerWidget {
@@ -94,6 +95,50 @@ class Masail extends ConsumerWidget {
                   ),
                 ),
               ],
+            ),
+          ),
+          Container(
+            padding:
+                const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 5),
+            child: TripleSwitchButton(
+              firstLabel: 'ALL',
+              secondLabel: 'TEXT',
+              thirdLabel: 'AUDIO',
+              activateFirst: () {
+                ref
+                    .read(
+                      queryParamsProvider.notifier,
+                    )
+                    .updateParams(
+                      'hasAudio',
+                      '',
+                    );
+              },
+              activateSecond: () {
+                ref
+                    .read(
+                      queryParamsProvider.notifier,
+                    )
+                    .updateParams(
+                      'hasAudio',
+                      'false',
+                    );
+              },
+              activateThird: () {
+                ref
+                    .read(
+                      queryParamsProvider.notifier,
+                    )
+                    .updateParams(
+                      'hasAudio',
+                      'true',
+                    );
+              },
+              isFirstActive: !qParams.containsKey('hasAudio'),
+              isSecondActive: qParams.containsKey('hasAudio') &&
+                  qParams['hasAudio'] == 'false',
+              isThirdActive: qParams.containsKey('hasAudio') &&
+                  qParams['hasAudio'] == 'true',
             ),
           ),
           Expanded(
