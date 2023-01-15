@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
+import 'package:native_app/widgets/filter/switch_button.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
-import 'package:native_app/theme/colors.dart';
 
 class Quran extends ConsumerStatefulWidget {
   const Quran({super.key});
@@ -42,56 +42,13 @@ class QuranState extends ConsumerState<Quran> {
           Container(
             padding:
                 const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: loadSurah,
-                    style: TextButton.styleFrom(
-                      backgroundColor: isSurahSelected
-                          ? ThemeColors.color8
-                          : ThemeColors.color4,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(15),
-                          bottomLeft: Radius.circular(15),
-                        ),
-                      ),
-                    ),
-                    child: Text(
-                      'SURAH',
-                      style: textTheme.labelMedium?.copyWith(
-                        color: ThemeColors.color7,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: TextButton(
-                    onPressed: loadPara,
-                    style: TextButton.styleFrom(
-                      backgroundColor: !isSurahSelected
-                          ? ThemeColors.color8
-                          : ThemeColors.color4,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(15),
-                          bottomRight: Radius.circular(15),
-                        ),
-                      ),
-                    ),
-                    child: Text(
-                      'PARA',
-                      style: textTheme.labelMedium?.copyWith(
-                        color: ThemeColors.color7,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            child: SwitchButton(
+              firstLabel: 'SURAH',
+              secondLabel: 'PARA',
+              activateFirst: loadSurah,
+              activateSecond: loadPara,
+              isFirstActive: isSurahSelected,
+              isSecondActive: !isSurahSelected,
             ),
           ),
           Expanded(
