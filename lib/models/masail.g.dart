@@ -65,7 +65,7 @@ Masail _$MasailFromJson(Map<String, dynamic> json) => Masail(
       title: json['title'] as String,
       slug: json['slug'] as String?,
       question: json['question'] as String,
-      answer: json['answer'] as String,
+      answer: json['answer'] as String?,
       language: json['language'] as String,
       hasAudio: json['has-audio'] as bool?,
       audio: json['audio'] as Map<dynamic, dynamic>?,

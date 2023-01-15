@@ -8,7 +8,11 @@ import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
+import 'package:native_app/widgets/presentation/description_item.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
+import 'package:native_app/widgets/audio/player.dart';
+import 'package:native_app/helpers/file_size.dart';
+import 'package:native_app/helpers/play_duration.dart';
 
 class MalfuzatItem extends ConsumerWidget {
   const MalfuzatItem({super.key});
@@ -51,10 +55,62 @@ class MalfuzatItem extends ConsumerWidget {
                 ),
               ] else
                 ...[],
+              if (resource.body != null) ...[
+                Container(
+                  margin: const EdgeInsets.only(bottom: 30),
+                  child: HtmlText(
+                    text: resource.body,
+                  ),
+                ),
+              ] else
+                ...[],
+              if (resource.audio != null) ...[
+                Container(
+                  margin: const EdgeInsets.only(top: 30),
+                  child: AudioPlayerWidget(
+                    audio: resource.audio,
+                  ),
+                ),
+              ] else
+                ...[],
               Container(
-                margin: const EdgeInsets.only(bottom: 30),
-                child: HtmlText(
-                  text: resource.body,
+                margin: const EdgeInsets.only(top: 40),
+                child: Column(
+                  children: [
+                    if (resource.audio?['metadata']?['duration'] != null) ...[
+                      DescriptionItem(
+                        title: 'Audio Duration:',
+                        description: Text(
+                          playDuration(resource.audio['metadata']['duration']),
+                          style: textTheme.labelMedium,
+                        ),
+                      ),
+                    ] else
+                      ...[],
+                    if (resource.audio?['metadata']?['size'] != null) ...[
+                      DescriptionItem(
+                        title: 'Audio Size:',
+                        description: Text(
+                          fileSize(resource.audio['metadata']['size']),
+                          style: textTheme.labelMedium,
+                        ),
+                      ),
+                    ] else
+                      ...[],
+                    if (resource.audio != null) ...[
+                      const DescriptionItem(
+                        title: 'Download:',
+                        description: Align(
+                          alignment: Alignment.topLeft,
+                          child: Icon(
+                            Icons.download,
+                            size: 24,
+                          ),
+                        ),
+                      ),
+                    ] else
+                      ...[],
+                  ],
                 ),
               ),
             ],
