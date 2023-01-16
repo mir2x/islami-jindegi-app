@@ -11,6 +11,7 @@ import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
+import 'package:native_app/widgets/filter/date.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/helpers/format_date.dart';
 
@@ -93,6 +94,11 @@ class Bayans extends ConsumerWidget {
                 ),
               ],
             ),
+          ),
+          Container(
+            padding:
+                const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 5),
+            child: DateFilter(),
           ),
           Expanded(
             child: Container(
