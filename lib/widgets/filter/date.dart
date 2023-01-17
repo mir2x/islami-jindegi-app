@@ -107,7 +107,10 @@ class DateFilter extends ConsumerWidget {
                       margin: const EdgeInsets.only(top: 30, bottom: 15),
                       child: Text(
                         'Custom Date',
-                        style: textTheme.labelMedium,
+                        style: qParams.containsKey('dateFrom') ||
+                                qParams.containsKey('dateTo')
+                            ? textTheme.labelMedium
+                            : textTheme.titleMedium,
                       ),
                     ),
                     CustomDateField(field: 'dateFrom', label: 'Date From'),
@@ -160,23 +163,36 @@ class CustomDateField extends ConsumerWidget {
     return DateTimeFormField(
       key: _formFieldStateKey,
       decoration: InputDecoration(
-        enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: ThemeColors.color3),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: qParams.containsKey(field)
+                ? ThemeColors.color3
+                : ThemeColors.color4,
+          ),
         ),
-        focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: ThemeColors.color3),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: qParams.containsKey(field)
+                ? ThemeColors.color3
+                : ThemeColors.color4,
+          ),
         ),
         suffixIcon: !qParams.containsKey(field)
-            ? const Icon(Icons.event_outlined)
+            ? const Icon(Icons.event_outlined, color: ThemeColors.color4)
             : IconButton(
-                icon: const Icon(Icons.clear_outlined),
+                icon: const Icon(
+                  Icons.clear_outlined,
+                  color: ThemeColors.color3,
+                ),
                 onPressed: () {
                   _formFieldStateKey.currentState!.didChange(null);
                   qParamsNotifier.updateParams(field, '');
                   Navigator.of(context).pop();
                 },
               ),
-        labelStyle: textTheme.labelMedium,
+        labelStyle: qParams.containsKey(field)
+            ? textTheme.labelMedium
+            : textTheme.titleMedium,
         labelText: label,
       ),
       mode: DateTimeFieldPickerMode.date,
