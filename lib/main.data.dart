@@ -29,6 +29,7 @@ import 'package:native_app/models/masail_category.dart';
 import 'package:native_app/models/masail_subcategory.dart';
 import 'package:native_app/models/masail.dart';
 import 'package:native_app/models/news.dart';
+import 'package:native_app/models/page.dart';
 import 'package:native_app/models/para.dart';
 import 'package:native_app/models/speaker.dart';
 import 'package:native_app/models/subchapter.dart';
@@ -81,6 +82,7 @@ final repositoryProviders = <String, Provider<Repository<DataModel>>>{
   'masailSubcategories': masailSubcategoriesRepositoryProvider,
   'masails': masailsRepositoryProvider,
   'news': newsRepositoryProvider,
+  'pages': pagesRepositoryProvider,
   'paras': parasRepositoryProvider,
   'speakers': speakersRepositoryProvider,
   'subchapters': subchaptersRepositoryProvider,
@@ -112,6 +114,7 @@ final repositoryInitializerProvider =
   DataHelpers.setInternalType<MasailSubcategory>('masailSubcategories');
   DataHelpers.setInternalType<Masail>('masails');
   DataHelpers.setInternalType<News>('news');
+  DataHelpers.setInternalType<Page>('pages');
   DataHelpers.setInternalType<Para>('paras');
   DataHelpers.setInternalType<Speaker>('speakers');
   DataHelpers.setInternalType<Subchapter>('subchapters');
@@ -147,6 +150,7 @@ final repositoryInitializerProvider =
         ref.watch(internalMasailSubcategoriesRemoteAdapterProvider),
     'masails': ref.watch(internalMasailsRemoteAdapterProvider),
     'news': ref.watch(internalNewsRemoteAdapterProvider),
+    'pages': ref.watch(internalPagesRemoteAdapterProvider),
     'paras': ref.watch(internalParasRemoteAdapterProvider),
     'speakers': ref.watch(internalSpeakersRemoteAdapterProvider),
     'subchapters': ref.watch(internalSubchaptersRemoteAdapterProvider),
@@ -176,6 +180,7 @@ final repositoryInitializerProvider =
     'masailSubcategories': true,
     'masails': true,
     'news': true,
+    'pages': true,
     'paras': true,
     'speakers': true,
     'subchapters': true,
@@ -257,6 +262,8 @@ extension RepositoryWidgetRefX on WidgetRef {
       watch(masailsRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<News> get news =>
       watch(newsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Page> get pages =>
+      watch(pagesRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Para> get paras =>
       watch(parasRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Speaker> get speakers =>
@@ -325,6 +332,8 @@ extension RepositoryRefX on Ref {
   Repository<Masail> get masails => watch(masailsRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<News> get news => watch(newsRepositoryProvider)
+    ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Page> get pages => watch(pagesRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Para> get paras => watch(parasRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
