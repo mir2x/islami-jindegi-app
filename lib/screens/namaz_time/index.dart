@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/widgets/presentation/item_content.dart';
+import 'package:native_app/widgets/utils/hijri_date.dart';
 
 class NamazTime extends StatelessWidget {
   const NamazTime({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var textTheme = Theme.of(context).textTheme;
-
     return MyScaffold(
       title: const Text('Namaz Time'),
-      body: Center(
-        child: Text(
-          'List of Times',
-          style: textTheme.labelMedium,
-        ),
+      body: ItemContent(
+        children: [
+          Center(
+            child: HijriDate(),
+          ),
+        ],
       ),
     );
   }
