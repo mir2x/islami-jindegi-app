@@ -5,7 +5,6 @@ import 'package:native_app/providers/settings.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
-import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/buttons/dropdown.dart';
 import 'section.dart';
 import 'time_input.dart';
@@ -17,14 +16,15 @@ class Settings extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var prefs = ref.watch(settingsProvider);
 
-    return prefs.when(
-      loading: () => const FullScreenLoader(),
-      error: (error, _) => ModelExeptionHandler(error: error),
-      data: (preferences) {
-        return StatefulSettings(
-          preferences: preferences,
-        );
-      },
+    return MyScaffold(
+      title: const Text('Settings'),
+      body: prefs.when(
+        loading: () => const FullScreenLoader(),
+        error: (error, _) => Text(error.toString()),
+        data: (preferences) {
+          return StatefulSettings(preferences: preferences);
+        },
+      ),
     );
   }
 }
@@ -253,174 +253,171 @@ class SettingsState extends ConsumerState<StatefulSettings> {
 
   @override
   Widget build(BuildContext context) {
-    return MyScaffold(
-      title: const Text('Settings'),
-      body: ItemContent(
-        children: [
-          Container(
-            margin: const EdgeInsets.only(bottom: 40, top: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SettingsSection(title: 'Language'),
-                Dropdown(
-                  items: widget.locales,
-                  selectedValue: selectedLocale,
-                  updateItem: updateLocale,
-                ),
-              ],
-            ),
+    return ItemContent(
+      children: [
+        Container(
+          margin: const EdgeInsets.only(bottom: 40, top: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SettingsSection(title: 'Language'),
+              Dropdown(
+                items: widget.locales,
+                selectedValue: selectedLocale,
+                updateItem: updateLocale,
+              ),
+            ],
           ),
-          Container(
-            margin: const EdgeInsets.only(bottom: 40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SettingsSection(title: 'Arabic Font'),
-                Dropdown(
-                  items: widget.arabicFonts,
-                  selectedValue: selectedArabicFont,
-                  updateItem: updateArabicFont,
-                ),
-              ],
-            ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(bottom: 40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SettingsSection(title: 'Arabic Font'),
+              Dropdown(
+                items: widget.arabicFonts,
+                selectedValue: selectedArabicFont,
+                updateItem: updateArabicFont,
+              ),
+            ],
           ),
-          Container(
-            margin: const EdgeInsets.only(bottom: 40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SettingsSection(title: 'Bangla Font'),
-                Dropdown(
-                  items: widget.banglaFonts,
-                  selectedValue: selectedBanglaFont,
-                  updateItem: updateBanglaFont,
-                ),
-              ],
-            ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(bottom: 40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SettingsSection(title: 'Bangla Font'),
+              Dropdown(
+                items: widget.banglaFonts,
+                selectedValue: selectedBanglaFont,
+                updateItem: updateBanglaFont,
+              ),
+            ],
           ),
-          Container(
-            margin: const EdgeInsets.only(bottom: 40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SettingsSection(title: 'Theme'),
-                Dropdown(
-                  items: widget.themes,
-                  selectedValue: selectedTheme,
-                  updateItem: updateTheme,
-                ),
-              ],
-            ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(bottom: 40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SettingsSection(title: 'Theme'),
+              Dropdown(
+                items: widget.themes,
+                selectedValue: selectedTheme,
+                updateItem: updateTheme,
+              ),
+            ],
           ),
-          Container(
-            margin: const EdgeInsets.only(bottom: 40, top: 50),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SettingsSection(title: 'Mazhab'),
-                Dropdown(
-                  items: widget.madhabs,
-                  selectedValue: selectedMadhab,
-                  updateItem: updateMadhab,
-                ),
-              ],
-            ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(bottom: 40, top: 50),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SettingsSection(title: 'Mazhab'),
+              Dropdown(
+                items: widget.madhabs,
+                selectedValue: selectedMadhab,
+                updateItem: updateMadhab,
+              ),
+            ],
           ),
-          Container(
-            margin: const EdgeInsets.only(bottom: 40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SettingsSection(title: 'Calculation Method'),
-                Dropdown(
-                  items: widget.methods,
-                  selectedValue: selectedMethod,
-                  updateItem: updateMethod,
-                ),
-              ],
-            ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(bottom: 40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SettingsSection(title: 'Calculation Method'),
+              Dropdown(
+                items: widget.methods,
+                selectedValue: selectedMethod,
+                updateItem: updateMethod,
+              ),
+            ],
           ),
-          Container(
-            margin: const EdgeInsets.only(bottom: 40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SettingsSection(title: 'Fajr'),
-                TimeInput(
-                  initialValue: selectedFajr.toString(),
-                  onChanged: updateFajr,
-                ),
-              ],
-            ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(bottom: 40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SettingsSection(title: 'Fajr'),
+              TimeInput(
+                initialValue: selectedFajr.toString(),
+                onChanged: updateFajr,
+              ),
+            ],
           ),
-          Container(
-            margin: const EdgeInsets.only(bottom: 40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SettingsSection(title: 'Sunrise'),
-                TimeInput(
-                  initialValue: selectedSunrise.toString(),
-                  onChanged: updateSunrise,
-                ),
-              ],
-            ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(bottom: 40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SettingsSection(title: 'Sunrise'),
+              TimeInput(
+                initialValue: selectedSunrise.toString(),
+                onChanged: updateSunrise,
+              ),
+            ],
           ),
-          Container(
-            margin: const EdgeInsets.only(bottom: 40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SettingsSection(title: 'Dhuhr'),
-                TimeInput(
-                  initialValue: selectedDhuhr.toString(),
-                  onChanged: updateDhuhr,
-                ),
-              ],
-            ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(bottom: 40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SettingsSection(title: 'Dhuhr'),
+              TimeInput(
+                initialValue: selectedDhuhr.toString(),
+                onChanged: updateDhuhr,
+              ),
+            ],
           ),
-          Container(
-            margin: const EdgeInsets.only(bottom: 40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SettingsSection(title: 'Asr'),
-                TimeInput(
-                  initialValue: selectedAsr.toString(),
-                  onChanged: updateAsr,
-                ),
-              ],
-            ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(bottom: 40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SettingsSection(title: 'Asr'),
+              TimeInput(
+                initialValue: selectedAsr.toString(),
+                onChanged: updateAsr,
+              ),
+            ],
           ),
-          Container(
-            margin: const EdgeInsets.only(bottom: 40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SettingsSection(title: 'Maghrib'),
-                TimeInput(
-                  initialValue: selectedMaghrib.toString(),
-                  onChanged: updateMaghrib,
-                ),
-              ],
-            ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(bottom: 40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SettingsSection(title: 'Maghrib'),
+              TimeInput(
+                initialValue: selectedMaghrib.toString(),
+                onChanged: updateMaghrib,
+              ),
+            ],
           ),
-          Container(
-            margin: const EdgeInsets.only(bottom: 40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SettingsSection(title: 'Isha'),
-                TimeInput(
-                  initialValue: selectedIsha.toString(),
-                  onChanged: updateIsha,
-                ),
-              ],
-            ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(bottom: 40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SettingsSection(title: 'Isha'),
+              TimeInput(
+                initialValue: selectedIsha.toString(),
+                onChanged: updateIsha,
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

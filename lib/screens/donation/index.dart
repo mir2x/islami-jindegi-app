@@ -4,6 +4,7 @@ import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
+import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
 
@@ -29,7 +30,7 @@ class Donation extends ConsumerWidget {
             child: CircularProgressIndicator(),
           );
         },
-        error: (error, _) => Text(error.toString()),
+        error: (error, _) => ModelExeptionHandler(error: error),
         data: (resources) {
           var item = resources[0];
 

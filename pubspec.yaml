@@ -49,10 +49,13 @@ dependencies:
   # extensions
   collection: ^1.16.0
 
+  # islamic
+  hijri: ^3.0.0
+  adhan: ^2.0.0-nullsafety.2
+
   # assets
   flutter_svg: ^1.1.1+1
   transparent_image: ^2.0.0
-  hijri: ^3.0.0
 
 dev_dependencies:
   flutter_test:
