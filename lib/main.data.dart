@@ -28,6 +28,7 @@ import 'package:native_app/models/malfuzat.dart';
 import 'package:native_app/models/masail_category.dart';
 import 'package:native_app/models/masail_subcategory.dart';
 import 'package:native_app/models/masail.dart';
+import 'package:native_app/models/namaz_time.dart';
 import 'package:native_app/models/news.dart';
 import 'package:native_app/models/page.dart';
 import 'package:native_app/models/para.dart';
@@ -81,6 +82,7 @@ final repositoryProviders = <String, Provider<Repository<DataModel>>>{
   'masailCategories': masailCategoriesRepositoryProvider,
   'masailSubcategories': masailSubcategoriesRepositoryProvider,
   'masails': masailsRepositoryProvider,
+  'namazTimes': namazTimesRepositoryProvider,
   'news': newsRepositoryProvider,
   'pages': pagesRepositoryProvider,
   'paras': parasRepositoryProvider,
@@ -113,6 +115,7 @@ final repositoryInitializerProvider =
   DataHelpers.setInternalType<MasailCategory>('masailCategories');
   DataHelpers.setInternalType<MasailSubcategory>('masailSubcategories');
   DataHelpers.setInternalType<Masail>('masails');
+  DataHelpers.setInternalType<NamazTime>('namazTimes');
   DataHelpers.setInternalType<News>('news');
   DataHelpers.setInternalType<Page>('pages');
   DataHelpers.setInternalType<Para>('paras');
@@ -149,6 +152,7 @@ final repositoryInitializerProvider =
     'masailSubcategories':
         ref.watch(internalMasailSubcategoriesRemoteAdapterProvider),
     'masails': ref.watch(internalMasailsRemoteAdapterProvider),
+    'namazTimes': ref.watch(internalNamazTimesRemoteAdapterProvider),
     'news': ref.watch(internalNewsRemoteAdapterProvider),
     'pages': ref.watch(internalPagesRemoteAdapterProvider),
     'paras': ref.watch(internalParasRemoteAdapterProvider),
@@ -179,6 +183,7 @@ final repositoryInitializerProvider =
     'masailCategories': true,
     'masailSubcategories': true,
     'masails': true,
+    'namazTimes': true,
     'news': true,
     'pages': true,
     'paras': true,
@@ -260,6 +265,8 @@ extension RepositoryWidgetRefX on WidgetRef {
         ..remoteAdapter.internalWatch = watch;
   Repository<Masail> get masails =>
       watch(masailsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<NamazTime> get namazTimes =>
+      watch(namazTimesRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<News> get news =>
       watch(newsRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Page> get pages =>
@@ -330,6 +337,8 @@ extension RepositoryRefX on Ref {
       watch(masailSubcategoriesRepositoryProvider)
         ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Masail> get masails => watch(masailsRepositoryProvider)
+    ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<NamazTime> get namazTimes => watch(namazTimesRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<News> get news => watch(newsRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
