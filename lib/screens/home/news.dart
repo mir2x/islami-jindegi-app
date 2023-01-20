@@ -26,7 +26,7 @@ class News extends ConsumerWidget {
         borderRadius: BorderRadius.circular(15),
         color: ThemeColors.color3,
       ),
-      margin: const EdgeInsets.only(top: 30, bottom: 50, left: 30, right: 30),
+      margin: const EdgeInsets.only(bottom: 50, left: 30, right: 30),
       child: Row(
         children: [
           Container(

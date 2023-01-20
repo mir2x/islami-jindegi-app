@@ -10,11 +10,15 @@ class PrayerTime {
   final dynamic coordinates;
   final dynamic preferences;
 
-  Map getTimes() {
-    final prayerTimes = PrayerTimes.today(
+  getPrayerTimes() {
+    return PrayerTimes.today(
       coordinates,
       _adjustedParams(),
     );
+  }
+
+  Map getTimes() {
+    final prayerTimes = getPrayerTimes();
 
     Duration oneMin = const Duration(minutes: 1);
     Duration threeMins = const Duration(minutes: 3);
@@ -73,6 +77,28 @@ class PrayerTime {
     };
   }
 
+  Map getCurrentAndNextPrayers() {
+    var times = getTimes();
+    var prayers = _currentAndNextPrayerNames();
+    var currentPrayer = prayers['currentPrayer'];
+    var nextPrayer = prayers['nextPrayer'];
+
+    return {
+      if (currentPrayer != 'none') ...{
+        'current': {
+          'title': times[currentPrayer]['title'],
+          'time':
+              '${times[currentPrayer]['startTime']} - ${times[currentPrayer]['endTime']}',
+        },
+      } else
+        ...{},
+      'next': {
+        'title': times[nextPrayer]['title'],
+        'time': times[nextPrayer]['startTime'],
+      },
+    };
+  }
+
   String formatTime(DateTime time) {
     return DateFormat.jm().format(time);
   }
@@ -128,5 +154,68 @@ class PrayerTime {
       case 'shafi':
         return Madhab.shafi;
     }
+  }
+
+  Map _currentAndNextPrayerNames() {
+    final prayerTimes = getPrayerTimes();
+    final currentTime = DateTime.now();
+
+    var currentPrayer = prayerTimes.currentPrayer().toString().split('.').last;
+    var nextPrayer = prayerTimes.nextPrayer().toString().split('.').last;
+
+    Duration oneMin = const Duration(minutes: 1);
+    Duration fourMins = const Duration(minutes: 4);
+    Duration fiveMins = const Duration(minutes: 5);
+    Duration tenMins = const Duration(minutes: 10);
+    Duration fifteenMins = const Duration(minutes: 15);
+
+    DateTime ishraqStartTime = prayerTimes.sunrise.add(fifteenMins);
+    DateTime ishraqEndTime = prayerTimes.dhuhr.subtract(oneMin);
+    DateTime dhuhrStartTime = prayerTimes.dhuhr.add(fiveMins);
+    DateTime asrEndTime = prayerTimes.maghrib.subtract(fourMins);
+    DateTime ishaEndTime = prayerTimes.fajr.subtract(tenMins);
+
+    if (currentPrayer == 'none') {
+      currentPrayer = 'isha';
+    }
+
+    if (currentPrayer == 'sunrise') {
+      if ((currentTime.isAtSameMomentAs(ishraqStartTime) ||
+              currentTime.isAfter(ishraqStartTime)) &&
+          currentTime.isBefore(ishraqEndTime)) {
+        currentPrayer = 'ishraq';
+      } else {
+        currentPrayer = 'none';
+      }
+    }
+
+    if (currentPrayer == 'dhuhr' && currentTime.isBefore(dhuhrStartTime)) {
+      currentPrayer = 'none';
+      nextPrayer = 'dhuhr';
+    }
+
+    if (currentPrayer == 'asr' && currentTime.isAfter(asrEndTime)) {
+      currentPrayer = 'none';
+    }
+
+    if (currentPrayer == 'isha' &&
+        currentTime.isAfter(ishaEndTime) &&
+        currentTime.isBefore(prayerTimes.fajr)) {
+      currentPrayer = 'none';
+    }
+
+    if (nextPrayer == 'none') {
+      nextPrayer = 'fajr';
+    }
+
+    if (['dhuhr', 'sunrise'].contains(nextPrayer) &&
+        currentTime.isBefore(ishraqStartTime)) {
+      nextPrayer = 'ishraq';
+    }
+
+    return {
+      'currentPrayer': currentPrayer,
+      'nextPrayer': nextPrayer,
+    };
   }
 }

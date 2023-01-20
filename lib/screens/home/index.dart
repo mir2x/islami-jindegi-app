@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/widgets/calendar/hijri_date.dart';
+import 'package:native_app/widgets/calendar/gregorian_date.dart';
+import 'current_prayers.dart';
 import 'resource.dart';
 import 'news.dart';
 
@@ -11,14 +14,36 @@ class Home extends StatelessWidget {
     return MyScaffold(
       isHome: true,
       title: const Text('Islami Jindegi'),
-      body: Column(
-        children: [
-          Flexible(
-            child: GridView.count(
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(left: 25, right: 25, top: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(left: 15, right: 15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        HijriDate(),
+                        const GregorianDate(),
+                      ],
+                    ),
+                  ),
+                  const CurrentPrayers(),
+                ],
+              ),
+            ),
+            GridView.count(
               crossAxisCount: 3,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
               crossAxisSpacing: 15,
               mainAxisSpacing: 15,
+              shrinkWrap: true,
+              physics: const ScrollPhysics(),
               children: const [
                 Resource(
                   route: 'quran',
@@ -82,9 +107,9 @@ class Home extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-          const News(),
-        ],
+            const News(),
+          ],
+        ),
       ),
     );
   }

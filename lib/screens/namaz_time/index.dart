@@ -7,7 +7,7 @@ import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/widgets/utils/hijri_date.dart';
+import 'package:native_app/widgets/calendar/hijri_date.dart';
 import 'package:native_app/objects/prayer_time.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
