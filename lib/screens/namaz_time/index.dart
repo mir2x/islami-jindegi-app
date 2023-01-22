@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:adhan/adhan.dart';
 import 'package:native_app/providers/settings.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
@@ -32,7 +33,7 @@ class NamazTime extends ConsumerWidget {
               child: CircularProgressIndicator(),
             ),
             error: (error, _) => Text(error.toString()),
-            data: (preferences) {
+            data: (SharedPreferences preferences) {
               return StatefulNamazTime(preferences: preferences);
             },
           ),
@@ -48,7 +49,7 @@ class StatefulNamazTime extends ConsumerStatefulWidget {
     required this.preferences,
   });
 
-  final dynamic preferences;
+  final SharedPreferences preferences;
 
   @override
   NamazTimeState createState() => NamazTimeState();

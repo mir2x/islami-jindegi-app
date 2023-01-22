@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:adhan/adhan.dart';
 import 'package:native_app/providers/settings.dart';
 import 'package:native_app/objects/prayer_time.dart';
@@ -25,7 +26,7 @@ class CurrentPrayers extends ConsumerWidget {
           child: CircularProgressIndicator(),
         ),
         error: (error, _) => Text(error.toString()),
-        data: (preferences) {
+        data: (SharedPreferences preferences) {
           var coordinates = Coordinates(23.8103, 90.4125);
 
           PrayerTime prayerTime = PrayerTime(
@@ -33,7 +34,7 @@ class CurrentPrayers extends ConsumerWidget {
             preferences: preferences,
           );
 
-          var prayerTimes = prayerTime.getCurrentAndNextPrayers();
+          Map prayerTimes = prayerTime.getCurrentAndNextPrayers();
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
