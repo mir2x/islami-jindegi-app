@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:collection/collection.dart';
-import 'package:native_app/providers/settings.dart';
+import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
@@ -14,7 +14,7 @@ class Settings extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var prefs = ref.watch(settingsProvider);
+    var prefs = ref.watch(preferencesProvider);
 
     return MyScaffold(
       title: const Text('Settings'),

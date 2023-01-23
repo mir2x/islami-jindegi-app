@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:adhan/adhan.dart';
-import 'package:native_app/providers/settings.dart';
+import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/objects/prayer_time.dart';
 import 'package:native_app/theme/colors.dart';
 
@@ -12,7 +12,7 @@ class CurrentPrayers extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
-    var prefs = ref.watch(settingsProvider);
+    var prefs = ref.watch(preferencesProvider);
 
     return Container(
       decoration: BoxDecoration(

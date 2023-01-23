@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:adhan/adhan.dart';
-import 'package:native_app/providers/settings.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/main.data.dart';
+import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
@@ -12,6 +12,7 @@ import 'package:native_app/widgets/calendar/hijri_date.dart';
 import 'package:native_app/objects/prayer_time.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
+import 'package:native_app/helpers/fetch_coordinates.dart';
 import 'item.dart';
 
 class NamazTime extends ConsumerWidget {
@@ -19,7 +20,7 @@ class NamazTime extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var prefs = ref.watch(settingsProvider);
+    var dataP = ref.watch(preferencesAndGeolocationProvider);
 
     return MyScaffold(
       title: const Text('Namaz Time'),
@@ -28,13 +29,45 @@ class NamazTime extends ConsumerWidget {
           Center(
             child: HijriDate(),
           ),
-          prefs.when(
-            loading: () => const Center(
-              child: CircularProgressIndicator(),
+          dataP.when(
+            loading: () => Container(
+              margin: const EdgeInsets.only(top: 100),
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
             error: (error, _) => Text(error.toString()),
-            data: (SharedPreferences preferences) {
-              return StatefulNamazTime(preferences: preferences);
+            data: (Map data) {
+              return Column(
+                children: [
+                  if (!data['geolocation']['isGeolocated']) ...[
+                    Container(
+                      margin: const EdgeInsets.only(top: 15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('Dhaka'),
+                          Container(
+                            margin: const EdgeInsets.only(left: 20, right: 5),
+                            child: GestureDetector(
+                              onTap: fetchCoordinates,
+                              child: SvgPicture.asset(
+                                'assets/images/icons/location.svg',
+                                fit: BoxFit.scaleDown,
+                                width: 40,
+                                height: 30,
+                              ),
+                            ),
+                          ),
+                          const Text('Set Location')
+                        ],
+                      ),
+                    ),
+                  ] else
+                    ...[],
+                  StatefulNamazTime(data: data),
+                ],
+              );
             },
           ),
         ],
@@ -46,10 +79,10 @@ class NamazTime extends ConsumerWidget {
 class StatefulNamazTime extends ConsumerStatefulWidget {
   const StatefulNamazTime({
     super.key,
-    required this.preferences,
+    required this.data,
   });
 
-  final SharedPreferences preferences;
+  final Map data;
 
   @override
   NamazTimeState createState() => NamazTimeState();
@@ -63,11 +96,14 @@ class NamazTimeState extends ConsumerState<StatefulNamazTime> {
   void initState() {
     super.initState();
 
-    var coordinates = Coordinates(23.8103, 90.4125);
+    Map coordinates = widget.data['geolocation']['coordinates'];
 
     PrayerTime prayerTime = PrayerTime(
-      coordinates: coordinates,
-      preferences: widget.preferences,
+      coordinates: Coordinates(
+        coordinates['latitude'],
+        coordinates['longitude'],
+      ),
+      preferences: widget.data['preferences'],
     );
 
     prayerTimes = prayerTime.getTimes();
