@@ -16,6 +16,7 @@ class MyScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
@@ -32,7 +33,13 @@ class MyScaffold extends StatelessWidget {
                 )
               : IconButton(
                   icon: const Icon(Icons.arrow_back),
-                  onPressed: QR.back,
+                  onPressed: () {
+                    if (QR.navigator.canPop) {
+                      QR.back();
+                    } else {
+                      QR.navigator.replaceAll('/');
+                    }
+                  },
                 ),
         ),
         title: title,
@@ -65,21 +72,35 @@ class MyScaffold extends StatelessWidget {
       endDrawer: Drawer(
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 30),
-          children: const [
-            DrawerLink(title: 'Quran', route: 'quran'),
-            DrawerLink(title: 'Books', route: 'books'),
-            DrawerLink(title: 'Bayans', route: 'bayans'),
-            DrawerLink(title: 'Malfuzat', route: 'malfuzat'),
-            DrawerLink(title: 'Masail', route: 'masail'),
-            DrawerLink(title: 'Dua & Durud', route: 'duas'),
-            DrawerLink(title: 'Articles', route: 'articles'),
-            DrawerLink(title: 'News', route: 'news'),
-            DrawerLink(title: 'Madrasah', route: 'madrasahs'),
-            DrawerLink(title: 'Namaz Time', route: 'namaz-time'),
-            DrawerLink(title: 'Donation', route: 'donation'),
-            DrawerLink(title: 'Settings', route: 'settings'),
-            DrawerLink(title: 'About Us', route: 'about'),
-            DrawerLink(title: 'Contact Us', route: 'contact-us'),
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+                QR.navigator.replaceAll('/');
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                child: Text(
+                  'Home',
+                  style: textTheme.titleLarge?.copyWith(fontSize: 24),
+                  textAlign: TextAlign.right,
+                ),
+              ),
+            ),
+            const DrawerLink(title: 'Quran', route: 'quran'),
+            const DrawerLink(title: 'Books', route: 'books'),
+            const DrawerLink(title: 'Bayans', route: 'bayans'),
+            const DrawerLink(title: 'Malfuzat', route: 'malfuzat'),
+            const DrawerLink(title: 'Masail', route: 'masail'),
+            const DrawerLink(title: 'Dua & Durud', route: 'duas'),
+            const DrawerLink(title: 'Articles', route: 'articles'),
+            const DrawerLink(title: 'News', route: 'news'),
+            const DrawerLink(title: 'Madrasah', route: 'madrasahs'),
+            const DrawerLink(title: 'Namaz Time', route: 'namaz-time'),
+            const DrawerLink(title: 'Donation', route: 'donation'),
+            const DrawerLink(title: 'Settings', route: 'settings'),
+            const DrawerLink(title: 'About Us', route: 'about'),
+            const DrawerLink(title: 'Contact Us', route: 'contact-us'),
           ],
         ),
       ),

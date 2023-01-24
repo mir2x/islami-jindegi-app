@@ -40,7 +40,7 @@ import '../screens/contact-us/index.dart';
 
 class AppRoutes {
   final routes = [
-    QRoute(path: '/', builder: () => const Home()),
+    QRoute(path: '/', name: 'root', builder: () => const Home()),
     QRoute(
       path: '/quran',
       builder: () => const Quran(),

@@ -51,7 +51,7 @@ class ErrorPage extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => QR.to('/'),
+                  onTap: () => QR.navigator.replaceAll('/'),
                   behavior: HitTestBehavior.opaque,
                   child: Container(
                     padding: const EdgeInsets.all(15),
