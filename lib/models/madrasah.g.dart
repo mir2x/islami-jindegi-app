@@ -9,7 +9,22 @@ part of 'madrasah.dart';
 // ignore_for_file: non_constant_identifier_names, duplicate_ignore
 
 mixin $MadrasahLocalAdapter on LocalAdapter<Madrasah> {
-  static final Map<String, RelationshipMeta> _kMadrasahRelationshipMetas = {};
+  static final Map<String, RelationshipMeta> _kMadrasahRelationshipMetas = {
+    'madrasah-infos': RelationshipMeta<MadrasahInfo>(
+      name: 'madrasahInfos',
+      inverseName: 'madrasah',
+      type: 'madrasahInfos',
+      kind: 'HasMany',
+      instance: (_) => (_ as Madrasah).madrasahInfos,
+    ),
+    'madrasah-photos': RelationshipMeta<MadrasahPhoto>(
+      name: 'madrasahPhotos',
+      inverseName: 'madrasah',
+      type: 'madrasahPhotos',
+      kind: 'HasMany',
+      instance: (_) => (_ as Madrasah).madrasahPhotos,
+    )
+  };
 
   @override
   Map<String, RelationshipMeta> get relationshipMetas =>
@@ -55,7 +70,25 @@ extension MadrasahDataRepositoryX on Repository<Madrasah> {
       remoteAdapter as ApplicationAdapter<Madrasah>;
 }
 
-extension MadrasahRelationshipGraphNodeX on RelationshipGraphNode<Madrasah> {}
+extension MadrasahRelationshipGraphNodeX on RelationshipGraphNode<Madrasah> {
+  RelationshipGraphNode<MadrasahInfo> get madrasahInfos {
+    final meta =
+        $MadrasahLocalAdapter._kMadrasahRelationshipMetas['madrasah-infos']
+            as RelationshipMeta<MadrasahInfo>;
+    return meta.clone(
+      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
+    );
+  }
+
+  RelationshipGraphNode<MadrasahPhoto> get madrasahPhotos {
+    final meta =
+        $MadrasahLocalAdapter._kMadrasahRelationshipMetas['madrasah-photos']
+            as RelationshipMeta<MadrasahPhoto>;
+    return meta.clone(
+      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
+    );
+  }
+}
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -70,6 +103,16 @@ Madrasah _$MadrasahFromJson(Map<String, dynamic> json) => Madrasah(
       position: json['position'] as int?,
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
+      madrasahInfos: json['madrasah-infos'] == null
+          ? null
+          : HasMany<MadrasahInfo>.fromJson(
+              json['madrasah-infos'] as Map<String, dynamic>,
+            ),
+      madrasahPhotos: json['madrasah-photos'] == null
+          ? null
+          : HasMany<MadrasahPhoto>.fromJson(
+              json['madrasah-photos'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$MadrasahToJson(Madrasah instance) => <String, dynamic>{
@@ -81,4 +124,6 @@ Map<String, dynamic> _$MadrasahToJson(Madrasah instance) => <String, dynamic>{
       'position': instance.position,
       'created-at': instance.createdAt,
       'updated-at': instance.updatedAt,
+      'madrasah-infos': instance.madrasahInfos,
+      'madrasah-photos': instance.madrasahPhotos,
     };

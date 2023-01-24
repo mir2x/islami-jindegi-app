@@ -20,6 +20,8 @@ import 'package:native_app/models/book.dart';
 import 'package:native_app/models/chapter.dart';
 import 'package:native_app/models/dua_category.dart';
 import 'package:native_app/models/dua.dart';
+import 'package:native_app/models/madrasah_info.dart';
+import 'package:native_app/models/madrasah_photo.dart';
 import 'package:native_app/models/madrasah.dart';
 import 'package:native_app/models/malfuzat_author.dart';
 import 'package:native_app/models/malfuzat_category.dart';
@@ -74,6 +76,8 @@ final repositoryProviders = <String, Provider<Repository<DataModel>>>{
   'chapters': chaptersRepositoryProvider,
   'duaCategories': duaCategoriesRepositoryProvider,
   'duas': duasRepositoryProvider,
+  'madrasahInfos': madrasahInfosRepositoryProvider,
+  'madrasahPhotos': madrasahPhotosRepositoryProvider,
   'madrasahs': madrasahsRepositoryProvider,
   'malfuzatAuthors': malfuzatAuthorsRepositoryProvider,
   'malfuzatCategories': malfuzatCategoriesRepositoryProvider,
@@ -107,6 +111,8 @@ final repositoryInitializerProvider =
   DataHelpers.setInternalType<Chapter>('chapters');
   DataHelpers.setInternalType<DuaCategory>('duaCategories');
   DataHelpers.setInternalType<Dua>('duas');
+  DataHelpers.setInternalType<MadrasahInfo>('madrasahInfos');
+  DataHelpers.setInternalType<MadrasahPhoto>('madrasahPhotos');
   DataHelpers.setInternalType<Madrasah>('madrasahs');
   DataHelpers.setInternalType<MalfuzatAuthor>('malfuzatAuthors');
   DataHelpers.setInternalType<MalfuzatCategory>('malfuzatCategories');
@@ -140,6 +146,8 @@ final repositoryInitializerProvider =
     'chapters': ref.watch(internalChaptersRemoteAdapterProvider),
     'duaCategories': ref.watch(internalDuaCategoriesRemoteAdapterProvider),
     'duas': ref.watch(internalDuasRemoteAdapterProvider),
+    'madrasahInfos': ref.watch(internalMadrasahInfosRemoteAdapterProvider),
+    'madrasahPhotos': ref.watch(internalMadrasahPhotosRemoteAdapterProvider),
     'madrasahs': ref.watch(internalMadrasahsRemoteAdapterProvider),
     'malfuzatAuthors': ref.watch(internalMalfuzatAuthorsRemoteAdapterProvider),
     'malfuzatCategories':
@@ -175,6 +183,8 @@ final repositoryInitializerProvider =
     'chapters': true,
     'duaCategories': true,
     'duas': true,
+    'madrasahInfos': true,
+    'madrasahPhotos': true,
     'madrasahs': true,
     'malfuzatAuthors': true,
     'malfuzatCategories': true,
@@ -244,6 +254,12 @@ extension RepositoryWidgetRefX on WidgetRef {
         ..remoteAdapter.internalWatch = watch;
   Repository<Dua> get duas =>
       watch(duasRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<MadrasahInfo> get madrasahInfos =>
+      watch(madrasahInfosRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
+  Repository<MadrasahPhoto> get madrasahPhotos =>
+      watch(madrasahPhotosRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
   Repository<Madrasah> get madrasahs =>
       watch(madrasahsRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<MalfuzatAuthor> get malfuzatAuthors =>
@@ -317,6 +333,12 @@ extension RepositoryRefX on Ref {
         ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Dua> get duas => watch(duasRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<MadrasahInfo> get madrasahInfos =>
+      watch(madrasahInfosRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<MadrasahPhoto> get madrasahPhotos =>
+      watch(madrasahPhotosRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Madrasah> get madrasahs => watch(madrasahsRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<MalfuzatAuthor> get malfuzatAuthors =>
