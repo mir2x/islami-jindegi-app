@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:adhan/adhan.dart';
-import 'package:native_app/providers/preferences.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/objects/prayer_time.dart';
 import 'package:native_app/theme/colors.dart';
 
@@ -12,7 +12,7 @@ class CurrentPrayers extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
-    var prefs = ref.watch(preferencesProvider);
+    var dataP = ref.watch(preferencesAndGeolocationProvider);
 
     return Container(
       decoration: BoxDecoration(
@@ -21,17 +21,20 @@ class CurrentPrayers extends ConsumerWidget {
       ),
       padding: const EdgeInsets.all(15),
       margin: const EdgeInsets.only(top: 12),
-      child: prefs.when(
+      child: dataP.when(
         loading: () => const Center(
           child: CircularProgressIndicator(),
         ),
         error: (error, _) => Text(error.toString()),
-        data: (SharedPreferences preferences) {
-          var coordinates = Coordinates(23.8103, 90.4125);
+        data: (Map data) {
+          Map coordinates = data['geolocation']['coordinates'];
 
           PrayerTime prayerTime = PrayerTime(
-            coordinates: coordinates,
-            preferences: preferences,
+            coordinates: Coordinates(
+              coordinates['latitude'],
+              coordinates['longitude'],
+            ),
+            preferences: data['preferences'],
           );
 
           Map prayerTimes = prayerTime.getCurrentAndNextPrayers();
@@ -39,6 +42,32 @@ class CurrentPrayers extends ConsumerWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (!data['geolocation']['isGeolocated']) ...[
+                Container(
+                  margin: const EdgeInsets.only(bottom: 7),
+                  child: Row(
+                    children: [
+                      Text('Dhaka', style: textTheme.labelSmall),
+                      Container(
+                        margin: const EdgeInsets.only(left: 15, right: 3),
+                        child: GestureDetector(
+                          onTap: () => ref
+                              .read(geolocationProvider.notifier)
+                              .updateCoordinates(),
+                          child: SvgPicture.asset(
+                            'assets/images/icons/location.svg',
+                            fit: BoxFit.scaleDown,
+                            width: 30,
+                            height: 23,
+                          ),
+                        ),
+                      ),
+                      Text('Set Location', style: textTheme.labelSmall),
+                    ],
+                  ),
+                ),
+              ] else
+                ...[],
               if (prayerTimes.containsKey('current')) ...[
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,

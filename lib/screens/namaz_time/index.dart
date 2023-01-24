@@ -12,7 +12,6 @@ import 'package:native_app/widgets/calendar/hijri_date.dart';
 import 'package:native_app/objects/prayer_time.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
-import 'package:native_app/helpers/fetch_coordinates.dart';
 import 'item.dart';
 
 class NamazTime extends ConsumerWidget {
@@ -50,7 +49,9 @@ class NamazTime extends ConsumerWidget {
                           Container(
                             margin: const EdgeInsets.only(left: 20, right: 5),
                             child: GestureDetector(
-                              onTap: fetchCoordinates,
+                              onTap: () => ref
+                                  .read(geolocationProvider.notifier)
+                                  .updateCoordinates(),
                               child: SvgPicture.asset(
                                 'assets/images/icons/location.svg',
                                 fit: BoxFit.scaleDown,
