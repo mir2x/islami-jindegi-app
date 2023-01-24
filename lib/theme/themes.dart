@@ -40,6 +40,9 @@ ThemeData darkTheme = ThemeData(
   appBarTheme: const AppBarTheme(
     backgroundColor: ThemeColors.color5,
   ),
+  drawerTheme: const DrawerThemeData(
+    backgroundColor: ThemeColors.color5,
+  ),
   iconTheme: const IconThemeData(
     color: ThemeColors.color4,
   ),
