@@ -28,7 +28,7 @@ class ResponsiveImage extends StatelessWidget {
       String? selectedWidth = selectWidth(image, vwsetWidth);
 
       if (selectedWidth != null) {
-        Map<String, int> metadata = getImageMetadata(image, model, attr);
+        Map<String, dynamic> metadata = getImageMetadata(image, model, attr);
 
         Map<String, dynamic> img = image[selectedWidth];
         String imageSrc =
@@ -56,10 +56,10 @@ class ResponsiveImage extends StatelessWidget {
         widths.lastWhereOrNull((w) => int.parse(w) < vwsetWidth);
   }
 
-  Map<String, int> getImageMetadata(image, String model, String attr) {
+  Map<String, dynamic> getImageMetadata(image, String model, String attr) {
     Map<String, int> settings = imageSettings[model]![attr]!;
 
-    return image[settings['width'].toString()] ?? settings;
+    return image[settings['width'].toString()]?['metadata'] ?? settings;
   }
 
   Widget displayPlaceHolder(model, String attr) {
