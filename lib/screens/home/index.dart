@@ -19,7 +19,7 @@ class Home extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: const EdgeInsets.only(left: 25, right: 25, top: 20),
+              margin: const EdgeInsets.only(left: 20, right: 25, top: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -39,7 +39,7 @@ class Home extends StatelessWidget {
             ),
             GridView.count(
               crossAxisCount: 3,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 50),
               crossAxisSpacing: 15,
               mainAxisSpacing: 15,
               shrinkWrap: true,
