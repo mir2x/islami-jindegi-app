@@ -41,7 +41,10 @@ dependencies:
   infinite_scroll_pagination: ^3.2.0
 
   # text
-  flutter_html: ^3.0.0-alpha.6
+  flutter_html:
+    git:
+      url: https://github.com/Sub6Resources/flutter_html
+      ref: master
   intl: ^0.17.0
   inflection3: ^0.5.3+2
   recase: ^4.1.0

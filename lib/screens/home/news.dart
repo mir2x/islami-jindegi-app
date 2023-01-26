@@ -26,12 +26,17 @@ class News extends ConsumerWidget {
         borderRadius: BorderRadius.circular(15),
         color: ThemeColors.color3,
       ),
-      margin: const EdgeInsets.only(bottom: 50, left: 30, right: 30),
+      margin: const EdgeInsets.only(bottom: 50, left: 20, right: 20),
       child: Row(
         children: [
           Container(
             width: 100,
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            padding: const EdgeInsets.only(
+              top: 10,
+              bottom: 10,
+              left: 15,
+              right: 10,
+            ),
             child: Text(
               'News & Updates',
               style: textTheme.labelMedium?.copyWith(
@@ -41,7 +46,7 @@ class News extends ConsumerWidget {
           ),
           Expanded(
             child: Container(
-              height: 65,
+              height: 75,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 border: Border.all(

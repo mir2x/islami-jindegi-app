@@ -20,7 +20,6 @@ class CurrentPrayers extends ConsumerWidget {
         color: ThemeColors.color2,
       ),
       padding: const EdgeInsets.all(15),
-      margin: const EdgeInsets.only(top: 12),
       child: dataP.when(
         loading: () => const Center(
           child: CircularProgressIndicator(),
