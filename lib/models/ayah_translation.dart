@@ -2,42 +2,28 @@ import 'package:flutter_data/flutter_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter_data_json_api_adapter/flutter_data_json_api_adapter.dart';
 import 'package:native_app/adapters/application.dart';
-import 'surah.dart';
-import 'para.dart';
-import 'ayah_translation.dart';
-import 'tafseer.dart';
+import 'ayah.dart';
 
-part 'ayah.g.dart';
+part 'ayah_translation.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.kebab)
 @DataRepository([JSONAPIAdapter, ApplicationAdapter])
-class Ayah extends DataModel<Ayah> {
+class AyahTranslation extends DataModel<AyahTranslation> {
   @override
   final String? id;
   final String title;
-  final int? surahPosition;
-  final int? paraPosition;
-  final int? ruku;
+  final String body;
   final String? createdAt;
   final String? updatedAt;
 
-  final BelongsTo<Surah>? surah;
-  final BelongsTo<Para>? para;
+  final BelongsTo<Ayah>? ayah;
 
-  final HasMany<AyahTranslation>? ayahTranslations;
-  final HasMany<Tafseer>? tafseers;
-
-  Ayah({
+  AyahTranslation({
     this.id,
     required this.title,
-    this.surahPosition,
-    this.paraPosition,
-    this.ruku,
+    required this.body,
     this.createdAt,
     this.updatedAt,
-    this.surah,
-    this.para,
-    this.ayahTranslations,
-    this.tafseers,
+    this.ayah,
   });
 }

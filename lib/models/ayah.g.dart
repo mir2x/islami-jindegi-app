@@ -22,6 +22,20 @@ mixin $AyahLocalAdapter on LocalAdapter<Ayah> {
       type: 'paras',
       kind: 'BelongsTo',
       instance: (_) => (_ as Ayah).para,
+    ),
+    'ayah-translations': RelationshipMeta<AyahTranslation>(
+      name: 'ayahTranslations',
+      inverseName: 'ayah',
+      type: 'ayahTranslations',
+      kind: 'HasMany',
+      instance: (_) => (_ as Ayah).ayahTranslations,
+    ),
+    'tafseers': RelationshipMeta<Tafseer>(
+      name: 'tafseers',
+      inverseName: 'ayah',
+      type: 'tafseers',
+      kind: 'HasMany',
+      instance: (_) => (_ as Ayah).tafseers,
     )
   };
 
@@ -83,6 +97,22 @@ extension AyahRelationshipGraphNodeX on RelationshipGraphNode<Ayah> {
       parent: this is RelationshipMeta ? this as RelationshipMeta : null,
     );
   }
+
+  RelationshipGraphNode<AyahTranslation> get ayahTranslations {
+    final meta = $AyahLocalAdapter._kAyahRelationshipMetas['ayah-translations']
+        as RelationshipMeta<AyahTranslation>;
+    return meta.clone(
+      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
+    );
+  }
+
+  RelationshipGraphNode<Tafseer> get tafseers {
+    final meta = $AyahLocalAdapter._kAyahRelationshipMetas['tafseers']
+        as RelationshipMeta<Tafseer>;
+    return meta.clone(
+      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
+    );
+  }
 }
 
 // **************************************************************************
@@ -103,6 +133,14 @@ Ayah _$AyahFromJson(Map<String, dynamic> json) => Ayah(
       para: json['para'] == null
           ? null
           : BelongsTo<Para>.fromJson(json['para'] as Map<String, dynamic>),
+      ayahTranslations: json['ayah-translations'] == null
+          ? null
+          : HasMany<AyahTranslation>.fromJson(
+              json['ayah-translations'] as Map<String, dynamic>,
+            ),
+      tafseers: json['tafseers'] == null
+          ? null
+          : HasMany<Tafseer>.fromJson(json['tafseers'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$AyahToJson(Ayah instance) => <String, dynamic>{
@@ -115,4 +153,6 @@ Map<String, dynamic> _$AyahToJson(Ayah instance) => <String, dynamic>{
       'updated-at': instance.updatedAt,
       'surah': instance.surah,
       'para': instance.para,
+      'ayah-translations': instance.ayahTranslations,
+      'tafseers': instance.tafseers,
     };

@@ -11,6 +11,7 @@ import 'package:native_app/models/article_category.dart';
 import 'package:native_app/models/article_subcategory.dart';
 import 'package:native_app/models/article.dart';
 import 'package:native_app/models/author.dart';
+import 'package:native_app/models/ayah_translation.dart';
 import 'package:native_app/models/ayah.dart';
 import 'package:native_app/models/bayan_category.dart';
 import 'package:native_app/models/bayan.dart';
@@ -34,9 +35,12 @@ import 'package:native_app/models/namaz_time.dart';
 import 'package:native_app/models/news.dart';
 import 'package:native_app/models/page.dart';
 import 'package:native_app/models/para.dart';
+import 'package:native_app/models/qari.dart';
 import 'package:native_app/models/speaker.dart';
 import 'package:native_app/models/subchapter.dart';
 import 'package:native_app/models/surah.dart';
+import 'package:native_app/models/tafseer_qitab.dart';
+import 'package:native_app/models/tafseer.dart';
 
 // ignore: prefer_function_declarations_over_variables
 ConfigureRepositoryLocalStorage configureRepositoryLocalStorage = ({
@@ -67,6 +71,7 @@ final repositoryProviders = <String, Provider<Repository<DataModel>>>{
   'articleSubcategories': articleSubcategoriesRepositoryProvider,
   'articles': articlesRepositoryProvider,
   'authors': authorsRepositoryProvider,
+  'ayahTranslations': ayahTranslationsRepositoryProvider,
   'ayahs': ayahsRepositoryProvider,
   'bayanCategories': bayanCategoriesRepositoryProvider,
   'bayans': bayansRepositoryProvider,
@@ -90,9 +95,12 @@ final repositoryProviders = <String, Provider<Repository<DataModel>>>{
   'news': newsRepositoryProvider,
   'pages': pagesRepositoryProvider,
   'paras': parasRepositoryProvider,
+  'qaris': qarisRepositoryProvider,
   'speakers': speakersRepositoryProvider,
   'subchapters': subchaptersRepositoryProvider,
-  'surahs': surahsRepositoryProvider
+  'surahs': surahsRepositoryProvider,
+  'tafseerQitabs': tafseerQitabsRepositoryProvider,
+  'tafseers': tafseersRepositoryProvider
 };
 
 final repositoryInitializerProvider =
@@ -102,6 +110,7 @@ final repositoryInitializerProvider =
   DataHelpers.setInternalType<ArticleSubcategory>('articleSubcategories');
   DataHelpers.setInternalType<Article>('articles');
   DataHelpers.setInternalType<Author>('authors');
+  DataHelpers.setInternalType<AyahTranslation>('ayahTranslations');
   DataHelpers.setInternalType<Ayah>('ayahs');
   DataHelpers.setInternalType<BayanCategory>('bayanCategories');
   DataHelpers.setInternalType<Bayan>('bayans');
@@ -125,9 +134,12 @@ final repositoryInitializerProvider =
   DataHelpers.setInternalType<News>('news');
   DataHelpers.setInternalType<Page>('pages');
   DataHelpers.setInternalType<Para>('paras');
+  DataHelpers.setInternalType<Qari>('qaris');
   DataHelpers.setInternalType<Speaker>('speakers');
   DataHelpers.setInternalType<Subchapter>('subchapters');
   DataHelpers.setInternalType<Surah>('surahs');
+  DataHelpers.setInternalType<TafseerQitab>('tafseerQitabs');
+  DataHelpers.setInternalType<Tafseer>('tafseers');
   final adapters = <String, RemoteAdapter>{
     'articleAuthors': ref.watch(internalArticleAuthorsRemoteAdapterProvider),
     'articleCategories':
@@ -136,6 +148,8 @@ final repositoryInitializerProvider =
         ref.watch(internalArticleSubcategoriesRemoteAdapterProvider),
     'articles': ref.watch(internalArticlesRemoteAdapterProvider),
     'authors': ref.watch(internalAuthorsRemoteAdapterProvider),
+    'ayahTranslations':
+        ref.watch(internalAyahTranslationsRemoteAdapterProvider),
     'ayahs': ref.watch(internalAyahsRemoteAdapterProvider),
     'bayanCategories': ref.watch(internalBayanCategoriesRemoteAdapterProvider),
     'bayans': ref.watch(internalBayansRemoteAdapterProvider),
@@ -164,9 +178,12 @@ final repositoryInitializerProvider =
     'news': ref.watch(internalNewsRemoteAdapterProvider),
     'pages': ref.watch(internalPagesRemoteAdapterProvider),
     'paras': ref.watch(internalParasRemoteAdapterProvider),
+    'qaris': ref.watch(internalQarisRemoteAdapterProvider),
     'speakers': ref.watch(internalSpeakersRemoteAdapterProvider),
     'subchapters': ref.watch(internalSubchaptersRemoteAdapterProvider),
-    'surahs': ref.watch(internalSurahsRemoteAdapterProvider)
+    'surahs': ref.watch(internalSurahsRemoteAdapterProvider),
+    'tafseerQitabs': ref.watch(internalTafseerQitabsRemoteAdapterProvider),
+    'tafseers': ref.watch(internalTafseersRemoteAdapterProvider)
   };
   final remotes = <String, bool>{
     'articleAuthors': true,
@@ -174,6 +191,7 @@ final repositoryInitializerProvider =
     'articleSubcategories': true,
     'articles': true,
     'authors': true,
+    'ayahTranslations': true,
     'ayahs': true,
     'bayanCategories': true,
     'bayans': true,
@@ -197,9 +215,12 @@ final repositoryInitializerProvider =
     'news': true,
     'pages': true,
     'paras': true,
+    'qaris': true,
     'speakers': true,
     'subchapters': true,
-    'surahs': true
+    'surahs': true,
+    'tafseerQitabs': true,
+    'tafseers': true
   };
 
   await ref.watch(graphNotifierProvider).initialize();
@@ -232,6 +253,9 @@ extension RepositoryWidgetRefX on WidgetRef {
       watch(articlesRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Author> get authors =>
       watch(authorsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<AyahTranslation> get ayahTranslations =>
+      watch(ayahTranslationsRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
   Repository<Ayah> get ayahs =>
       watch(ayahsRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<BayanCategory> get bayanCategories =>
@@ -289,12 +313,19 @@ extension RepositoryWidgetRefX on WidgetRef {
       watch(pagesRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Para> get paras =>
       watch(parasRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Qari> get qaris =>
+      watch(qarisRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Speaker> get speakers =>
       watch(speakersRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Subchapter> get subchapters =>
       watch(subchaptersRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Surah> get surahs =>
       watch(surahsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<TafseerQitab> get tafseerQitabs =>
+      watch(tafseerQitabsRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
+  Repository<Tafseer> get tafseers =>
+      watch(tafseersRepositoryProvider)..remoteAdapter.internalWatch = watch;
 }
 
 extension RepositoryRefX on Ref {
@@ -311,6 +342,9 @@ extension RepositoryRefX on Ref {
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Author> get authors => watch(authorsRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<AyahTranslation> get ayahTranslations =>
+      watch(ayahTranslationsRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Ayah> get ayahs => watch(ayahsRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<BayanCategory> get bayanCategories =>
@@ -368,10 +402,17 @@ extension RepositoryRefX on Ref {
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Para> get paras => watch(parasRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Qari> get qaris => watch(qarisRepositoryProvider)
+    ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Speaker> get speakers => watch(speakersRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Subchapter> get subchapters => watch(subchaptersRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Surah> get surahs => watch(surahsRepositoryProvider)
+    ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<TafseerQitab> get tafseerQitabs =>
+      watch(tafseerQitabsRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Tafseer> get tafseers => watch(tafseersRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
 }
