@@ -38,6 +38,7 @@ class Book extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.only(
                   top: 30,
+                  bottom: 8,
                   left: 15,
                   right: 15,
                 ),
@@ -45,12 +46,9 @@ class Book extends ConsumerWidget {
               ),
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.only(
-                    left: 15,
-                    right: 15,
-                    bottom: 30,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: InfiniteList(
+                    padding: 0,
                     resourceFetcher: (Map<String, dynamic> params) async {
                       AllModelsQuery query = AllModelsQuery(
                         repository: ref.chapters,
@@ -65,46 +63,9 @@ class Book extends ConsumerWidget {
                     },
                     itemBuilder: (_, chapter, __) {
                       if (chapter.subchapters.length > 0) {
-                        return Container(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                chapter.title,
-                                style: textTheme.titleLarge?.copyWith(
-                                  color: ThemeColors.color8,
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.only(
-                                  left: 30,
-                                  top: 15,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    ...chapter.subchapters.map((subchapter) {
-                                      return InkWell(
-                                        onTap: () => QR.to(
-                                          'books/${book.id}/subchapters/${subchapter.id}',
-                                        ),
-                                        child: Container(
-                                          padding: const EdgeInsets.only(
-                                            bottom: 15,
-                                          ),
-                                          child: Text(
-                                            subchapter.title,
-                                            style: textTheme.titleMedium,
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                        return Subchapters(
+                          book: book,
+                          chapter: chapter,
                         );
                       } else {
                         return InkWell(
@@ -112,7 +73,14 @@ class Book extends ConsumerWidget {
                             'books/${book.id}/chapters/${chapter.id}',
                           ),
                           child: Container(
-                            padding: const EdgeInsets.only(bottom: 20),
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: ThemeColors.color4,
+                                ),
+                              ),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 15),
                             child: Text(
                               chapter.title,
                               style: textTheme.titleLarge,
@@ -128,6 +96,111 @@ class Book extends ConsumerWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class Subchapters extends ConsumerStatefulWidget {
+  const Subchapters({
+    super.key,
+    required this.book,
+    required this.chapter,
+  });
+
+  final dynamic book;
+  final dynamic chapter;
+
+  @override
+  SubchaptersState createState() => SubchaptersState();
+}
+
+class SubchaptersState extends ConsumerState<Subchapters> {
+  bool isOpen = false;
+  final ScrollController sectionController = ScrollController();
+
+  toggleOpen() {
+    setState(() {
+      isOpen = !isOpen;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: ThemeColors.color4,
+          ),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InkWell(
+            onTap: toggleOpen,
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.chapter.title,
+                      style: textTheme.titleLarge,
+                    ),
+                  ),
+                  Icon(
+                    isOpen ? Icons.arrow_upward : Icons.arrow_downward,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (isOpen) ...[
+            Container(
+              padding: const EdgeInsets.only(
+                left: 30,
+                bottom: 10,
+              ),
+              constraints: BoxConstraints(
+                maxHeight: screenHeight * 0.4,
+              ),
+              child: Scrollbar(
+                thumbVisibility: true,
+                controller: sectionController,
+                child: SingleChildScrollView(
+                  controller: sectionController,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ...widget.chapter.subchapters.map((subchapter) {
+                        return InkWell(
+                          onTap: () => QR.to(
+                            'books/${widget.book.id}/subchapters/${subchapter.id}',
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.only(
+                              bottom: 15,
+                              right: 15,
+                            ),
+                            child: Text(
+                              subchapter.title,
+                              style: textTheme.titleMedium,
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ]
+        ],
+      ),
     );
   }
 }
