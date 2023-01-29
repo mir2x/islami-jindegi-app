@@ -19,21 +19,21 @@ class Quran extends ConsumerStatefulWidget {
 class QuranState extends ConsumerState<Quran> {
   bool isSurahSelected = true;
 
+  void loadSurah() {
+    setState(() {
+      isSurahSelected = true;
+    });
+  }
+
+  void loadPara() {
+    setState(() {
+      isSurahSelected = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
-
-    void loadSurah() {
-      setState(() {
-        isSurahSelected = true;
-      });
-    }
-
-    void loadPara() {
-      setState(() {
-        isSurahSelected = false;
-      });
-    }
 
     return MyScaffold(
       title: const Text('Quran'),
