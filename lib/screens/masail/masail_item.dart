@@ -68,8 +68,7 @@ class MasailItem extends ConsumerWidget {
                     text: resource.answer,
                   ),
                 ),
-              ] else
-                ...[],
+              ],
               if (resource.audio != null) ...[
                 Container(
                   margin: const EdgeInsets.only(top: 30),
@@ -77,8 +76,7 @@ class MasailItem extends ConsumerWidget {
                     audio: resource.audio,
                   ),
                 ),
-              ] else
-                ...[],
+              ],
               Container(
                 margin: const EdgeInsets.only(top: 40),
                 child: Column(
@@ -91,8 +89,7 @@ class MasailItem extends ConsumerWidget {
                           style: textTheme.labelMedium,
                         ),
                       ),
-                    ] else
-                      ...[],
+                    ],
                     if (resource.audio?['metadata']?['size'] != null) ...[
                       DescriptionItem(
                         title: 'Audio Size:',
@@ -101,8 +98,7 @@ class MasailItem extends ConsumerWidget {
                           style: textTheme.labelMedium,
                         ),
                       ),
-                    ] else
-                      ...[],
+                    ],
                     if (resource.audio != null) ...[
                       const DescriptionItem(
                         title: 'Download:',
@@ -114,8 +110,7 @@ class MasailItem extends ConsumerWidget {
                           ),
                         ),
                       ),
-                    ] else
-                      ...[],
+                    ],
                   ],
                 ),
               ),

@@ -56,8 +56,7 @@ class Dua extends ConsumerWidget {
                     audio: resource.audio,
                   ),
                 ),
-              ] else
-                ...[],
+              ],
               Container(
                 margin: const EdgeInsets.only(top: 40),
                 child: Column(
@@ -70,8 +69,7 @@ class Dua extends ConsumerWidget {
                           style: textTheme.labelMedium,
                         ),
                       ),
-                    ] else
-                      ...[],
+                    ],
                     if (resource.audio?['metadata']?['size'] != null) ...[
                       DescriptionItem(
                         title: 'Audio Size:',
@@ -80,8 +78,7 @@ class Dua extends ConsumerWidget {
                           style: textTheme.labelMedium,
                         ),
                       ),
-                    ] else
-                      ...[],
+                    ],
                     if (resource.audio != null) ...[
                       const DescriptionItem(
                         title: 'Download:',
@@ -93,8 +90,7 @@ class Dua extends ConsumerWidget {
                           ),
                         ),
                       ),
-                    ] else
-                      ...[],
+                    ],
                   ],
                 ),
               ),

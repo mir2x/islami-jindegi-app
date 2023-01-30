@@ -51,8 +51,7 @@ class Bayan extends ConsumerWidget {
                     style: textTheme.labelMedium,
                   ),
                 ),
-              ] else
-                ...[],
+              ],
               if (resource.audio != null) ...[
                 Container(
                   margin: const EdgeInsets.only(top: 30),
@@ -60,8 +59,7 @@ class Bayan extends ConsumerWidget {
                     audio: resource.audio,
                   ),
                 ),
-              ] else
-                ...[],
+              ],
               Container(
                 margin: const EdgeInsets.only(top: 40),
                 child: Column(
@@ -74,8 +72,7 @@ class Bayan extends ConsumerWidget {
                           style: textTheme.labelMedium,
                         ),
                       ),
-                    ] else
-                      ...[],
+                    ],
                     DescriptionItem(
                       title: 'Date:',
                       description: Text(
@@ -91,8 +88,7 @@ class Bayan extends ConsumerWidget {
                           style: textTheme.labelMedium,
                         ),
                       ),
-                    ] else
-                      ...[],
+                    ],
                     if (resource.audio?['metadata']?['duration'] != null) ...[
                       DescriptionItem(
                         title: 'Audio Duration:',
@@ -101,8 +97,7 @@ class Bayan extends ConsumerWidget {
                           style: textTheme.labelMedium,
                         ),
                       ),
-                    ] else
-                      ...[],
+                    ],
                     if (resource.audio?['metadata']?['size'] != null) ...[
                       DescriptionItem(
                         title: 'Audio Size:',
@@ -111,8 +106,7 @@ class Bayan extends ConsumerWidget {
                           style: textTheme.labelMedium,
                         ),
                       ),
-                    ] else
-                      ...[],
+                    ],
                     if (resource.audio != null) ...[
                       const DescriptionItem(
                         title: 'Download:',
@@ -124,8 +118,7 @@ class Bayan extends ConsumerWidget {
                           ),
                         ),
                       ),
-                    ] else
-                      ...[],
+                    ],
                   ],
                 ),
               )

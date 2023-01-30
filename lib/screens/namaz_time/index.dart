@@ -64,8 +64,7 @@ class NamazTime extends ConsumerWidget {
                         ],
                       ),
                     ),
-                  ] else
-                    ...[],
+                  ],
                   StatefulNamazTime(data: data),
                 ],
               );
@@ -261,8 +260,7 @@ class NamazTimeState extends ConsumerState<StatefulNamazTime> {
                         text: item.fazail,
                       ),
                     ),
-                  ] else
-                    ...[],
+                  ],
                 ],
               );
             },

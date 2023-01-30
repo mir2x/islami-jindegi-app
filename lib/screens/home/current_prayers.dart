@@ -65,8 +65,7 @@ class CurrentPrayers extends ConsumerWidget {
                     ],
                   ),
                 ),
-              ] else
-                ...[],
+              ],
               if (prayerTimes.containsKey('current')) ...[
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -82,8 +81,7 @@ class CurrentPrayers extends ConsumerWidget {
                     ),
                   ],
                 ),
-              ] else
-                ...[],
+              ],
               const SizedBox(height: 5),
               Text(
                 'next ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}',

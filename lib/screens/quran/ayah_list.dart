@@ -39,8 +39,7 @@ class AyahList extends ConsumerWidget {
                 ),
               ),
             ),
-          ] else
-            ...[],
+          ],
           Expanded(
             child: Container(
               padding: const EdgeInsets.only(

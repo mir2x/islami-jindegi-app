@@ -49,8 +49,7 @@ class Article extends ConsumerWidget {
                     style: textTheme.labelMedium,
                   ),
                 ),
-              ] else
-                ...[],
+              ],
               Container(
                 margin: const EdgeInsets.only(bottom: 30),
                 child: HtmlText(

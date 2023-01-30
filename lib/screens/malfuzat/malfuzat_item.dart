@@ -53,8 +53,7 @@ class MalfuzatItem extends ConsumerWidget {
                     style: textTheme.labelMedium,
                   ),
                 ),
-              ] else
-                ...[],
+              ],
               if (resource.body != null) ...[
                 Container(
                   margin: const EdgeInsets.only(bottom: 30),
@@ -62,8 +61,7 @@ class MalfuzatItem extends ConsumerWidget {
                     text: resource.body,
                   ),
                 ),
-              ] else
-                ...[],
+              ],
               if (resource.audio != null) ...[
                 Container(
                   margin: const EdgeInsets.only(top: 30),
@@ -71,8 +69,7 @@ class MalfuzatItem extends ConsumerWidget {
                     audio: resource.audio,
                   ),
                 ),
-              ] else
-                ...[],
+              ],
               Container(
                 margin: const EdgeInsets.only(top: 40),
                 child: Column(
@@ -85,8 +82,7 @@ class MalfuzatItem extends ConsumerWidget {
                           style: textTheme.labelMedium,
                         ),
                       ),
-                    ] else
-                      ...[],
+                    ],
                     if (resource.audio?['metadata']?['size'] != null) ...[
                       DescriptionItem(
                         title: 'Audio Size:',
@@ -95,8 +91,7 @@ class MalfuzatItem extends ConsumerWidget {
                           style: textTheme.labelMedium,
                         ),
                       ),
-                    ] else
-                      ...[],
+                    ],
                     if (resource.audio != null) ...[
                       const DescriptionItem(
                         title: 'Download:',
@@ -108,8 +103,7 @@ class MalfuzatItem extends ConsumerWidget {
                           ),
                         ),
                       ),
-                    ] else
-                      ...[],
+                    ],
                   ],
                 ),
               ),
