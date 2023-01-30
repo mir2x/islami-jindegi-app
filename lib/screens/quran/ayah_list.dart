@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'bismillah.dart';
+import 'ayah.dart';
 
 class AyahList extends ConsumerWidget {
   const AyahList({
@@ -20,8 +20,6 @@ class AyahList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var textTheme = Theme.of(context).textTheme;
-
     return MyScaffold(
       title: Text(chapter.title),
       body: Column(
@@ -50,43 +48,8 @@ class AyahList extends ConsumerWidget {
                   return await ref.read(allModelsProvider(query).future);
                 },
                 itemBuilder: (_, ayah, __) {
-                  return Container(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            ayah.title,
-                            textAlign: TextAlign.right,
-                            style: textTheme.headlineMedium?.copyWith(
-                              fontFamily: 'arabic/al-qalam',
-                            ),
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(left: 15),
-                          width: 50,
-                          height: 42,
-                          child: Stack(
-                            children: [
-                              SvgPicture.asset(
-                                'assets/images/icons/ayah-symbol.svg',
-                                fit: BoxFit.scaleDown,
-                              ),
-                              Container(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  ayah.surahPosition.toString(),
-                                  style: textTheme.titleMedium,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
+                  return Ayah(
+                    ayah: ayah,
                   );
                 },
               ),
