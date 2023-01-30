@@ -60,6 +60,7 @@ class Masail extends ConsumerWidget {
                             if (item.masailSubcategories.length > 0) {
                               return FilterNestedItem(
                                 itemTitle: item.title,
+                                paramKey: 'masailSubcategoryId',
                                 subitems: item.masailSubcategories,
                                 subitemBuilder: (var subitem) {
                                   return FilterSubitem(

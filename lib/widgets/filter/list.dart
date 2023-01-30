@@ -34,6 +34,13 @@ class FilterList extends ConsumerWidget {
               Text(title),
               if (qParams.keys.any((k) => paramKeys.contains(k))) ...[
                 IconButton(
+                  constraints: const BoxConstraints(
+                    maxHeight: 40,
+                  ),
+                  splashRadius: 24,
+                  icon: const Icon(
+                    Icons.close,
+                  ),
                   onPressed: () {
                     var qParamsNotifier =
                         ref.read(queryParamsProvider.notifier);
@@ -42,16 +49,8 @@ class FilterList extends ConsumerWidget {
                     }
                     Navigator.of(context).pop();
                   },
-                  constraints: const BoxConstraints(
-                    maxHeight: 40,
-                  ),
-                  splashRadius: 24,
-                  icon: const Icon(
-                    Icons.close,
-                  ),
                 )
-              ] else
-                ...[],
+              ],
             ],
           ),
         ),
