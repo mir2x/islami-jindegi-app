@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
-import 'package:flutter_svg/svg.dart';
+import 'bismillah.dart';
 
 class AyahList extends ConsumerWidget {
   const AyahList({
@@ -26,20 +27,9 @@ class AyahList extends ConsumerWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (chapter.position != 9) ...[
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(15),
-              child: Text(
-                'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ',
-                textAlign: TextAlign.right,
-                softWrap: false,
-                style: textTheme.headlineLarge?.copyWith(
-                  fontFamily: 'arabic/al-qalam',
-                ),
-              ),
-            ),
-          ],
+          Bismillah(
+            chapter: chapter,
+          ),
           Expanded(
             child: Container(
               padding: const EdgeInsets.only(
