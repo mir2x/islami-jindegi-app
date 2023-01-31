@@ -1,7 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class QueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
-  QueryParamsNotifier() : super({});
+class QueryParamsNotifier extends Notifier<Map<String, dynamic>> {
+  @override
+  Map<String, dynamic> build() {
+    return {};
+  }
 
   void updateParams(String key, String value) {
     if (value.isNotEmpty) {
@@ -17,8 +20,8 @@ class QueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
 }
 
 final queryParamsProvider =
-    StateNotifierProvider<QueryParamsNotifier, Map<String, dynamic>>(
-  (ref) {
+    NotifierProvider<QueryParamsNotifier, Map<String, dynamic>>(
+  () {
     return QueryParamsNotifier();
   },
 );
