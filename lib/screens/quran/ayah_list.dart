@@ -90,7 +90,7 @@ class AyahList extends ConsumerWidget {
                         backgroundColor: ThemeColors.color1,
                         child: Container(
                           width: screenWidth,
-                          height: screenHeight * 0.8,
+                          height: screenHeight * 0.6,
                           padding: const EdgeInsets.only(
                             top: 15,
                             bottom: 25,
