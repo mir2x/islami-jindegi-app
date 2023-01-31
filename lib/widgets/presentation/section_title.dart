@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:native_app/theme/colors.dart';
 
-class SettingsSection extends StatelessWidget {
-  const SettingsSection({
+class SectionTitle extends StatelessWidget {
+  const SectionTitle({
     super.key,
     required this.title,
   });

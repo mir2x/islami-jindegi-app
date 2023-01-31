@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:native_app/providers/quran_settings.dart';
 
-class Ayah extends StatelessWidget {
+class Ayah extends ConsumerWidget {
   const Ayah({
     super.key,
     required this.ayah,
@@ -9,45 +11,71 @@ class Ayah extends StatelessWidget {
 
   final dynamic ayah;
 
+  final Map langMap = const {
+    'bn-bd': 'Bangla',
+    'en-gb': 'English',
+  };
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
+    var qSettings = ref.watch(quranSettingsProvider);
 
     return Container(
       padding: const EdgeInsets.only(bottom: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
         children: [
-          Expanded(
-            child: Text(
-              ayah.title,
-              textAlign: TextAlign.right,
-              style: textTheme.headlineMedium?.copyWith(
-                fontFamily: 'arabic/al-qalam',
-              ),
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(left: 15),
-            width: 50,
-            height: 42,
-            child: Stack(
-              children: [
-                SvgPicture.asset(
-                  'assets/images/icons/ayah-symbol.svg',
-                  fit: BoxFit.scaleDown,
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  child: Text(
-                    ayah.surahPosition.toString(),
-                    style: textTheme.titleMedium,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  ayah.title,
+                  textAlign: TextAlign.right,
+                  style: textTheme.headlineMedium?.copyWith(
+                    fontFamily: 'arabic/al-qalam',
                   ),
                 ),
-              ],
-            ),
-          )
+              ),
+              Container(
+                margin: const EdgeInsets.only(left: 15),
+                width: 50,
+                height: 42,
+                child: Stack(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/images/icons/ayah-symbol.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        ayah.surahPosition.toString(),
+                        style: textTheme.titleMedium,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+          if (qSettings.containsKey('language') &&
+              ayah.ayahTranslations
+                  .map((a) => a.title)
+                  .any((t) => t == langMap[qSettings['language']])) ...[
+            Container(
+              margin: const EdgeInsets.only(top: 10),
+              child: Text(
+                ayah.ayahTranslations
+                    .map((a) => a)
+                    .firstWhere(
+                      (t) => t.title == langMap[qSettings['language']],
+                    )
+                    .body,
+              ),
+            )
+          ],
         ],
       ),
     );

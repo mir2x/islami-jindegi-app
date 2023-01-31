@@ -8,11 +8,13 @@ class Dropdown extends StatelessWidget {
     required this.items,
     required this.selectedValue,
     required this.updateItem,
+    this.allowClear = false,
   });
 
   final List<Map<String, String>> items;
   final String? selectedValue;
-  final void Function(String?)? updateItem;
+  final void Function(String?) updateItem;
+  final bool allowClear;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,15 @@ class Dropdown extends StatelessWidget {
       }).toList(),
       isExpanded: true,
       iconEnabledColor: ThemeColors.color3,
+      icon: allowClear
+          ? selectedValue == null
+              ? const Icon(Icons.arrow_drop_down)
+              : IconButton(
+                  icon: const Icon(Icons.clear_outlined),
+                  iconSize: 15,
+                  onPressed: () => updateItem(''),
+                )
+          : const Icon(Icons.arrow_drop_down),
       dropdownDecoration: const BoxDecoration(
         color: ThemeColors.color6,
       ),
