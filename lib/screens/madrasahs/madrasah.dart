@@ -191,7 +191,7 @@ class MadrasahSection extends StatelessWidget {
 
   final String title;
   final bool isSelected;
-  final void Function()? onSelected;
+  final void Function() onSelected;
 
   @override
   Widget build(BuildContext context) {

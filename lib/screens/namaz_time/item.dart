@@ -13,7 +13,7 @@ class NamazTimeItem extends StatelessWidget {
   final String label;
   final String value;
   final bool isSelected;
-  final void Function()? onSelected;
+  final void Function() onSelected;
 
   @override
   Widget build(BuildContext context) {

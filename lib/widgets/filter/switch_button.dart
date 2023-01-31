@@ -14,8 +14,8 @@ class SwitchButton extends StatelessWidget {
 
   final String firstLabel;
   final String secondLabel;
-  final void Function()? activateFirst;
-  final void Function()? activateSecond;
+  final void Function() activateFirst;
+  final void Function() activateSecond;
   final bool isFirstActive;
   final bool isSecondActive;
 

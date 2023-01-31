@@ -18,9 +18,9 @@ class TripleSwitchButton extends StatelessWidget {
   final String firstLabel;
   final String secondLabel;
   final String thirdLabel;
-  final void Function()? activateFirst;
-  final void Function()? activateSecond;
-  final void Function()? activateThird;
+  final void Function() activateFirst;
+  final void Function() activateSecond;
+  final void Function() activateThird;
   final bool isFirstActive;
   final bool isSecondActive;
   final bool isThirdActive;
