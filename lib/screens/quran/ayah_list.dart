@@ -52,7 +52,7 @@ class AyahList extends ConsumerWidget {
                       return await ref.read(allModelsProvider(query).future);
                     },
                     itemBuilder: (_, ayah, __) {
-                      return Ayah(ayah: ayah);
+                      return Ayah(ayah: ayah, chapter: chapter);
                     },
                   ),
                 ),

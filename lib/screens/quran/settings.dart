@@ -105,7 +105,7 @@ class QuranSettings extends ConsumerWidget {
                 data: (resources) {
                   var qaris = resources
                       .map<Map<String, String>>(
-                        (r) => {'label': r.name, 'value': r.id},
+                        (r) => {'label': r.name, 'value': r.slug},
                       )
                       .toList();
 

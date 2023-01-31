@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/providers/quran_settings.dart';
+import 'package:native_app/widgets/audio/qirat.dart';
 
 class Ayah extends ConsumerWidget {
   const Ayah({
     super.key,
     required this.ayah,
+    required this.chapter,
   });
 
   final dynamic ayah;
+  final dynamic chapter;
 
   final Map langMap = const {
     'bn-bd': 'Bangla',
@@ -40,24 +43,41 @@ class Ayah extends ConsumerWidget {
               ),
               Container(
                 margin: const EdgeInsets.only(left: 15),
-                width: 50,
-                height: 42,
-                child: Stack(
+                child: Column(
                   children: [
-                    SvgPicture.asset(
-                      'assets/images/icons/ayah-symbol.svg',
-                      fit: BoxFit.scaleDown,
-                    ),
-                    Container(
-                      alignment: Alignment.center,
-                      child: Text(
-                        ayah.surahPosition.toString(),
-                        style: textTheme.titleMedium,
+                    SizedBox(
+                      width: 50,
+                      height: 42,
+                      child: Stack(
+                        children: [
+                          SvgPicture.asset(
+                            'assets/images/icons/ayah-symbol.svg',
+                            fit: BoxFit.scaleDown,
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              ayah.surahPosition.toString(),
+                              style: textTheme.titleMedium,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                    if (qSettings.containsKey('qari') &&
+                        chapter.runtimeType.toString() == 'Surah') ...[
+                      Container(
+                        margin: const EdgeInsets.only(top: 8),
+                        child: Qirat(
+                          surah: chapter,
+                          ayah: ayah,
+                          qari: qSettings['qari'],
+                        ),
+                      ),
+                    ],
                   ],
                 ),
-              )
+              ),
             ],
           ),
           if (qSettings.containsKey('language') &&

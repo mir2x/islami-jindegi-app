@@ -3,7 +3,7 @@ import 'package:audioplayers/audioplayers.dart';
 
 final audioPlayerProvider =
     FutureProvider.autoDispose.family((ref, String audioSrc) async {
-  final AudioPlayer player = AudioPlayer(playerId: 'unique_player_id');
+  final AudioPlayer player = AudioPlayer(playerId: audioSrc);
   await player.setSourceUrl(audioSrc);
   return player;
 });
