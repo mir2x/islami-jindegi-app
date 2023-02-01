@@ -27,9 +27,11 @@ class Qirat extends ConsumerWidget {
 
     return audioPlayer.when(
       loading: () => const Center(
-        child: CircularProgressIndicator(),
+        child: Icon(Icons.play_disabled, size: 30),
       ),
-      error: (error, _) => Text(error.toString()),
+      error: (error, _) {
+        return const Icon(Icons.play_disabled, size: 30);
+      },
       data: (player) {
         return StatefulQiratPlayer(player: player);
       },
