@@ -8,6 +8,7 @@ import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
+import 'package:native_app/theme/colors.dart';
 
 class Quran extends ConsumerStatefulWidget {
   const Quran({super.key});
@@ -40,8 +41,27 @@ class QuranState extends ConsumerState<Quran> {
       body: Column(
         children: [
           Container(
-            padding:
-                const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 5),
+            padding: const EdgeInsets.only(
+              top: 15,
+              bottom: 5,
+              left: 15,
+              right: 15,
+            ),
+            child: OutlinedButton(
+              onPressed: () => QR.to('quran/search'),
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: ThemeColors.color4),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+                backgroundColor: ThemeColors.color1,
+                minimumSize: const Size.fromHeight(40),
+              ),
+              child: Text('Search', style: textTheme.titleMedium),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
             child: SwitchButton(
               firstLabel: 'SURAH',
               secondLabel: 'PARA',

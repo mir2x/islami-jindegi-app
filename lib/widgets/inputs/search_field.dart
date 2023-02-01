@@ -6,9 +6,11 @@ class SearchField extends StatelessWidget {
   const SearchField({
     super.key,
     required this.onUpdate,
+    this.labelText = 'Search',
   });
 
   final Function onUpdate;
+  final String labelText;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class SearchField extends StatelessWidget {
         focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: ThemeColors.color3),
         ),
-        labelText: 'Search',
+        labelText: labelText,
         labelStyle: textTheme.labelMedium,
         constraints: const BoxConstraints(maxHeight: 45),
       ),

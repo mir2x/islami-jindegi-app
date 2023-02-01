@@ -5,6 +5,7 @@ import '../screens/home/index.dart';
 import '../screens/quran/index.dart';
 import '../screens/quran/surah.dart';
 import '../screens/quran/para.dart';
+import '../screens/quran/search.dart';
 
 import '../screens/books/index.dart';
 import '../screens/books/book.dart';
@@ -52,6 +53,10 @@ class AppRoutes {
         QRoute(
           path: 'para/:id',
           builder: () => const Para(),
+        ),
+        QRoute(
+          path: '/search',
+          builder: () => const QuranSearch(),
         ),
       ],
     ),
