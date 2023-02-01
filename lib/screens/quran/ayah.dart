@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/widgets/audio/qirat.dart';
+import 'package:native_app/theme/colors.dart';
+import 'tafseer.dart';
 
 class Ayah extends ConsumerWidget {
   const Ayah({
@@ -33,11 +35,36 @@ class Ayah extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: Text(
-                  ayah.title,
-                  textAlign: TextAlign.right,
-                  style: textTheme.headlineMedium?.copyWith(
-                    fontFamily: 'arabic/al-qalam',
+                child: GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        double screenWidth = MediaQuery.of(context).size.width;
+                        double screenHeight =
+                            MediaQuery.of(context).size.height;
+
+                        return Dialog(
+                          backgroundColor: ThemeColors.color1,
+                          child: Container(
+                            width: screenWidth,
+                            height: screenHeight * 0.8,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 20,
+                            ),
+                            child: Tafseer(ayah: ayah),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  child: Text(
+                    ayah.title,
+                    textAlign: TextAlign.right,
+                    style: textTheme.headlineMedium?.copyWith(
+                      fontFamily: 'arabic/al-qalam',
+                    ),
                   ),
                 ),
               ),
