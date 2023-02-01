@@ -7,6 +7,7 @@ import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/theme/colors.dart';
 import 'bismillah.dart';
+import 'bismillah_tafseer.dart';
 import 'ayah.dart';
 import 'settings.dart';
 
@@ -28,8 +29,30 @@ class AyahList extends ConsumerWidget {
         children: [
           Column(
             children: [
-              Bismillah(
-                chapter: chapter,
+              GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      double screenWidth = MediaQuery.of(context).size.width;
+                      double screenHeight = MediaQuery.of(context).size.height;
+
+                      return Dialog(
+                        backgroundColor: ThemeColors.color1,
+                        child: Container(
+                          width: screenWidth,
+                          height: screenHeight * 0.8,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 20,
+                          ),
+                          child: const BismillahTafseer(),
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: Bismillah(chapter: chapter),
               ),
               Expanded(
                 child: Container(

@@ -52,14 +52,18 @@ class Tafseer extends ConsumerWidget {
               },
               error: (error, _) => Text(error.toString()),
               data: (resources) {
-                var item = resources[0];
+                if (resources.isNotEmpty) {
+                  var item = resources[0];
 
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 30),
-                  child: HtmlText(
-                    text: item.body,
-                  ),
-                );
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 30),
+                    child: HtmlText(
+                      text: item.body,
+                    ),
+                  );
+                } else {
+                  return const Text('No content yet');
+                }
               },
             ),
           ],
