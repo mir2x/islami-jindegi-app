@@ -59,7 +59,11 @@ class News extends ConsumerWidget {
               child: modelQuery.when(
                 loading: () {
                   return const Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        ThemeColors.color5,
+                      ),
+                    ),
                   );
                 },
                 error: (error, _) => Text(error.toString()),

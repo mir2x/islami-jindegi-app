@@ -46,4 +46,7 @@ ThemeData darkTheme = ThemeData(
   iconTheme: const IconThemeData(
     color: ThemeColors.color4,
   ),
+  progressIndicatorTheme: const ProgressIndicatorThemeData(
+    color: ThemeColors.color4,
+  ),
 );

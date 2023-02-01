@@ -64,8 +64,13 @@ class QuranSettings extends ConsumerWidget {
               const SectionTitle(title: 'Tafseer Qitabs'),
               qitabQuery.when(
                 loading: () {
-                  return const Center(
-                    child: CircularProgressIndicator(),
+                  return Center(
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      margin: const EdgeInsets.only(top: 10),
+                      child: const CircularProgressIndicator(),
+                    ),
                   );
                 },
                 error: (error, _) => Text(error.toString()),
@@ -97,8 +102,13 @@ class QuranSettings extends ConsumerWidget {
               const SectionTitle(title: 'Qaris'),
               qariQuery.when(
                 loading: () {
-                  return const Center(
-                    child: CircularProgressIndicator(),
+                  return Center(
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      margin: const EdgeInsets.only(top: 10),
+                      child: const CircularProgressIndicator(),
+                    ),
                   );
                 },
                 error: (error, _) => Text(error.toString()),
