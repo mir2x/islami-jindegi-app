@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 import 'preferences.dart';
 
 Future<Map> getFailSafeCoordinates() async {
@@ -32,7 +33,12 @@ class GeolocationNotifier extends AsyncNotifier<Map> {
     bool serviceEnabled;
     LocationPermission permission;
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    try {
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    } on MissingPluginException {
+      return await getFailSafeCoordinates();
+    }
+
     if (!serviceEnabled) {
       return await getFailSafeCoordinates();
     }
@@ -68,7 +74,12 @@ class GeolocationNotifier extends AsyncNotifier<Map> {
     bool serviceEnabled;
     LocationPermission permission;
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    try {
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    } on MissingPluginException {
+      return Future.error('Location services are not available.');
+    }
+
     if (!serviceEnabled) {
       // Location services are not enabled don't continue
       // accessing the position and request users of the
