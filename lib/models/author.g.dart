@@ -38,11 +38,8 @@ class $AuthorRemoteAdapter = RemoteAdapter<Author>
     with JSONAPIAdapter<Author>, ApplicationAdapter<Author>;
 
 final internalAuthorsRemoteAdapterProvider = Provider<RemoteAdapter<Author>>(
-  (ref) => $AuthorRemoteAdapter(
-    $AuthorHiveLocalAdapter(ref),
-    InternalHolder(_authorsFinders),
-  ),
-);
+    (ref) => $AuthorRemoteAdapter(
+        $AuthorHiveLocalAdapter(ref), InternalHolder(_authorsFinders)));
 
 final authorsRepositoryProvider =
     Provider<Repository<Author>>((ref) => Repository<Author>(ref));

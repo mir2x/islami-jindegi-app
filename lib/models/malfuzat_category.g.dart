@@ -47,17 +47,13 @@ class $MalfuzatCategoryRemoteAdapter = RemoteAdapter<MalfuzatCategory>
     with JSONAPIAdapter<MalfuzatCategory>, ApplicationAdapter<MalfuzatCategory>;
 
 final internalMalfuzatCategoriesRemoteAdapterProvider =
-    Provider<RemoteAdapter<MalfuzatCategory>>(
-  (ref) => $MalfuzatCategoryRemoteAdapter(
-    $MalfuzatCategoryHiveLocalAdapter(ref),
-    InternalHolder(_malfuzatCategoriesFinders),
-  ),
-);
+    Provider<RemoteAdapter<MalfuzatCategory>>((ref) =>
+        $MalfuzatCategoryRemoteAdapter($MalfuzatCategoryHiveLocalAdapter(ref),
+            InternalHolder(_malfuzatCategoriesFinders)));
 
 final malfuzatCategoriesRepositoryProvider =
     Provider<Repository<MalfuzatCategory>>(
-  (ref) => Repository<MalfuzatCategory>(ref),
-);
+        (ref) => Repository<MalfuzatCategory>(ref));
 
 extension MalfuzatCategoryDataRepositoryX on Repository<MalfuzatCategory> {
   JSONAPIAdapter<MalfuzatCategory> get jSONAPIAdapter =>
@@ -73,8 +69,7 @@ extension MalfuzatCategoryRelationshipGraphNodeX
             ._kMalfuzatCategoryRelationshipMetas['malfuzat-subcategories']
         as RelationshipMeta<MalfuzatSubcategory>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 }
 
@@ -93,8 +88,7 @@ MalfuzatCategory _$MalfuzatCategoryFromJson(Map<String, dynamic> json) =>
       malfuzatSubcategories: json['malfuzat-subcategories'] == null
           ? null
           : HasMany<MalfuzatSubcategory>.fromJson(
-              json['malfuzat-subcategories'] as Map<String, dynamic>,
-            ),
+              json['malfuzat-subcategories'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$MalfuzatCategoryToJson(MalfuzatCategory instance) =>

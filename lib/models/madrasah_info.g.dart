@@ -46,12 +46,9 @@ class $MadrasahInfoRemoteAdapter = RemoteAdapter<MadrasahInfo>
     with JSONAPIAdapter<MadrasahInfo>, ApplicationAdapter<MadrasahInfo>;
 
 final internalMadrasahInfosRemoteAdapterProvider =
-    Provider<RemoteAdapter<MadrasahInfo>>(
-  (ref) => $MadrasahInfoRemoteAdapter(
-    $MadrasahInfoHiveLocalAdapter(ref),
-    InternalHolder(_madrasahInfosFinders),
-  ),
-);
+    Provider<RemoteAdapter<MadrasahInfo>>((ref) => $MadrasahInfoRemoteAdapter(
+        $MadrasahInfoHiveLocalAdapter(ref),
+        InternalHolder(_madrasahInfosFinders)));
 
 final madrasahInfosRepositoryProvider =
     Provider<Repository<MadrasahInfo>>((ref) => Repository<MadrasahInfo>(ref));
@@ -70,8 +67,7 @@ extension MadrasahInfoRelationshipGraphNodeX
         $MadrasahInfoLocalAdapter._kMadrasahInfoRelationshipMetas['madrasah']
             as RelationshipMeta<Madrasah>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 }
 
@@ -90,8 +86,7 @@ MadrasahInfo _$MadrasahInfoFromJson(Map<String, dynamic> json) => MadrasahInfo(
       madrasah: json['madrasah'] == null
           ? null
           : BelongsTo<Madrasah>.fromJson(
-              json['madrasah'] as Map<String, dynamic>,
-            ),
+              json['madrasah'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$MadrasahInfoToJson(MadrasahInfo instance) =>

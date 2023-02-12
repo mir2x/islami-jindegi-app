@@ -4,3 +4,7 @@ linter:
   rules:
     prefer_single_quotes: true
     require_trailing_commas: true
+
+analyzer:
+  exclude:
+    - '**/*.g.dart'

@@ -65,11 +65,8 @@ class $AyahRemoteAdapter = RemoteAdapter<Ayah>
     with JSONAPIAdapter<Ayah>, ApplicationAdapter<Ayah>;
 
 final internalAyahsRemoteAdapterProvider = Provider<RemoteAdapter<Ayah>>(
-  (ref) => $AyahRemoteAdapter(
-    $AyahHiveLocalAdapter(ref),
-    InternalHolder(_ayahsFinders),
-  ),
-);
+    (ref) => $AyahRemoteAdapter(
+        $AyahHiveLocalAdapter(ref), InternalHolder(_ayahsFinders)));
 
 final ayahsRepositoryProvider =
     Provider<Repository<Ayah>>((ref) => Repository<Ayah>(ref));
@@ -86,32 +83,28 @@ extension AyahRelationshipGraphNodeX on RelationshipGraphNode<Ayah> {
     final meta = $AyahLocalAdapter._kAyahRelationshipMetas['surah']
         as RelationshipMeta<Surah>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 
   RelationshipGraphNode<Para> get para {
     final meta = $AyahLocalAdapter._kAyahRelationshipMetas['para']
         as RelationshipMeta<Para>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 
   RelationshipGraphNode<AyahTranslation> get ayahTranslations {
     final meta = $AyahLocalAdapter._kAyahRelationshipMetas['ayah-translations']
         as RelationshipMeta<AyahTranslation>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 
   RelationshipGraphNode<Tafseer> get tafseers {
     final meta = $AyahLocalAdapter._kAyahRelationshipMetas['tafseers']
         as RelationshipMeta<Tafseer>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 }
 
@@ -136,8 +129,7 @@ Ayah _$AyahFromJson(Map<String, dynamic> json) => Ayah(
       ayahTranslations: json['ayah-translations'] == null
           ? null
           : HasMany<AyahTranslation>.fromJson(
-              json['ayah-translations'] as Map<String, dynamic>,
-            ),
+              json['ayah-translations'] as Map<String, dynamic>),
       tafseers: json['tafseers'] == null
           ? null
           : HasMany<Tafseer>.fromJson(json['tafseers'] as Map<String, dynamic>),

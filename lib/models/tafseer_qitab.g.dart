@@ -39,12 +39,9 @@ class $TafseerQitabRemoteAdapter = RemoteAdapter<TafseerQitab>
     with JSONAPIAdapter<TafseerQitab>, ApplicationAdapter<TafseerQitab>;
 
 final internalTafseerQitabsRemoteAdapterProvider =
-    Provider<RemoteAdapter<TafseerQitab>>(
-  (ref) => $TafseerQitabRemoteAdapter(
-    $TafseerQitabHiveLocalAdapter(ref),
-    InternalHolder(_tafseerQitabsFinders),
-  ),
-);
+    Provider<RemoteAdapter<TafseerQitab>>((ref) => $TafseerQitabRemoteAdapter(
+        $TafseerQitabHiveLocalAdapter(ref),
+        InternalHolder(_tafseerQitabsFinders)));
 
 final tafseerQitabsRepositoryProvider =
     Provider<Repository<TafseerQitab>>((ref) => Repository<TafseerQitab>(ref));

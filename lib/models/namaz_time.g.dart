@@ -38,12 +38,8 @@ class $NamazTimeRemoteAdapter = RemoteAdapter<NamazTime>
     with JSONAPIAdapter<NamazTime>, ApplicationAdapter<NamazTime>;
 
 final internalNamazTimesRemoteAdapterProvider =
-    Provider<RemoteAdapter<NamazTime>>(
-  (ref) => $NamazTimeRemoteAdapter(
-    $NamazTimeHiveLocalAdapter(ref),
-    InternalHolder(_namazTimesFinders),
-  ),
-);
+    Provider<RemoteAdapter<NamazTime>>((ref) => $NamazTimeRemoteAdapter(
+        $NamazTimeHiveLocalAdapter(ref), InternalHolder(_namazTimesFinders)));
 
 final namazTimesRepositoryProvider =
     Provider<Repository<NamazTime>>((ref) => Repository<NamazTime>(ref));

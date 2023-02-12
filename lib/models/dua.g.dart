@@ -35,12 +35,8 @@ class $DuaHiveLocalAdapter = HiveLocalAdapter<Dua> with $DuaLocalAdapter;
 class $DuaRemoteAdapter = RemoteAdapter<Dua>
     with JSONAPIAdapter<Dua>, ApplicationAdapter<Dua>;
 
-final internalDuasRemoteAdapterProvider = Provider<RemoteAdapter<Dua>>(
-  (ref) => $DuaRemoteAdapter(
-    $DuaHiveLocalAdapter(ref),
-    InternalHolder(_duasFinders),
-  ),
-);
+final internalDuasRemoteAdapterProvider = Provider<RemoteAdapter<Dua>>((ref) =>
+    $DuaRemoteAdapter($DuaHiveLocalAdapter(ref), InternalHolder(_duasFinders)));
 
 final duasRepositoryProvider =
     Provider<Repository<Dua>>((ref) => Repository<Dua>(ref));

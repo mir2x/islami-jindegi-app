@@ -47,17 +47,13 @@ class $ArticleCategoryRemoteAdapter = RemoteAdapter<ArticleCategory>
     with JSONAPIAdapter<ArticleCategory>, ApplicationAdapter<ArticleCategory>;
 
 final internalArticleCategoriesRemoteAdapterProvider =
-    Provider<RemoteAdapter<ArticleCategory>>(
-  (ref) => $ArticleCategoryRemoteAdapter(
-    $ArticleCategoryHiveLocalAdapter(ref),
-    InternalHolder(_articleCategoriesFinders),
-  ),
-);
+    Provider<RemoteAdapter<ArticleCategory>>((ref) =>
+        $ArticleCategoryRemoteAdapter($ArticleCategoryHiveLocalAdapter(ref),
+            InternalHolder(_articleCategoriesFinders)));
 
 final articleCategoriesRepositoryProvider =
     Provider<Repository<ArticleCategory>>(
-  (ref) => Repository<ArticleCategory>(ref),
-);
+        (ref) => Repository<ArticleCategory>(ref));
 
 extension ArticleCategoryDataRepositoryX on Repository<ArticleCategory> {
   JSONAPIAdapter<ArticleCategory> get jSONAPIAdapter =>
@@ -73,8 +69,7 @@ extension ArticleCategoryRelationshipGraphNodeX
             ._kArticleCategoryRelationshipMetas['article-subcategories']
         as RelationshipMeta<ArticleSubcategory>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 }
 
@@ -93,8 +88,7 @@ ArticleCategory _$ArticleCategoryFromJson(Map<String, dynamic> json) =>
       articleSubcategories: json['article-subcategories'] == null
           ? null
           : HasMany<ArticleSubcategory>.fromJson(
-              json['article-subcategories'] as Map<String, dynamic>,
-            ),
+              json['article-subcategories'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$ArticleCategoryToJson(ArticleCategory instance) =>

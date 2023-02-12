@@ -38,11 +38,8 @@ class $MasailRemoteAdapter = RemoteAdapter<Masail>
     with JSONAPIAdapter<Masail>, ApplicationAdapter<Masail>;
 
 final internalMasailsRemoteAdapterProvider = Provider<RemoteAdapter<Masail>>(
-  (ref) => $MasailRemoteAdapter(
-    $MasailHiveLocalAdapter(ref),
-    InternalHolder(_masailsFinders),
-  ),
-);
+    (ref) => $MasailRemoteAdapter(
+        $MasailHiveLocalAdapter(ref), InternalHolder(_masailsFinders)));
 
 final masailsRepositoryProvider =
     Provider<Repository<Masail>>((ref) => Repository<Masail>(ref));

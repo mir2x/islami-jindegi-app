@@ -46,12 +46,9 @@ class $BookCategoryRemoteAdapter = RemoteAdapter<BookCategory>
     with JSONAPIAdapter<BookCategory>, ApplicationAdapter<BookCategory>;
 
 final internalBookCategoriesRemoteAdapterProvider =
-    Provider<RemoteAdapter<BookCategory>>(
-  (ref) => $BookCategoryRemoteAdapter(
-    $BookCategoryHiveLocalAdapter(ref),
-    InternalHolder(_bookCategoriesFinders),
-  ),
-);
+    Provider<RemoteAdapter<BookCategory>>((ref) => $BookCategoryRemoteAdapter(
+        $BookCategoryHiveLocalAdapter(ref),
+        InternalHolder(_bookCategoriesFinders)));
 
 final bookCategoriesRepositoryProvider =
     Provider<Repository<BookCategory>>((ref) => Repository<BookCategory>(ref));
@@ -70,8 +67,7 @@ extension BookCategoryRelationshipGraphNodeX
             ._kBookCategoryRelationshipMetas['book-subcategories']
         as RelationshipMeta<BookSubcategory>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 }
 
@@ -89,8 +85,7 @@ BookCategory _$BookCategoryFromJson(Map<String, dynamic> json) => BookCategory(
       bookSubcategories: json['book-subcategories'] == null
           ? null
           : HasMany<BookSubcategory>.fromJson(
-              json['book-subcategories'] as Map<String, dynamic>,
-            ),
+              json['book-subcategories'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$BookCategoryToJson(BookCategory instance) =>

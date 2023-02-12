@@ -38,11 +38,8 @@ class $SpeakerRemoteAdapter = RemoteAdapter<Speaker>
     with JSONAPIAdapter<Speaker>, ApplicationAdapter<Speaker>;
 
 final internalSpeakersRemoteAdapterProvider = Provider<RemoteAdapter<Speaker>>(
-  (ref) => $SpeakerRemoteAdapter(
-    $SpeakerHiveLocalAdapter(ref),
-    InternalHolder(_speakersFinders),
-  ),
-);
+    (ref) => $SpeakerRemoteAdapter(
+        $SpeakerHiveLocalAdapter(ref), InternalHolder(_speakersFinders)));
 
 final speakersRepositoryProvider =
     Provider<Repository<Speaker>>((ref) => Repository<Speaker>(ref));

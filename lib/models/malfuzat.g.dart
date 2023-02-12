@@ -45,12 +45,8 @@ class $MalfuzatRemoteAdapter = RemoteAdapter<Malfuzat>
     with JSONAPIAdapter<Malfuzat>, ApplicationAdapter<Malfuzat>;
 
 final internalMalfuzatsRemoteAdapterProvider =
-    Provider<RemoteAdapter<Malfuzat>>(
-  (ref) => $MalfuzatRemoteAdapter(
-    $MalfuzatHiveLocalAdapter(ref),
-    InternalHolder(_malfuzatsFinders),
-  ),
-);
+    Provider<RemoteAdapter<Malfuzat>>((ref) => $MalfuzatRemoteAdapter(
+        $MalfuzatHiveLocalAdapter(ref), InternalHolder(_malfuzatsFinders)));
 
 final malfuzatsRepositoryProvider =
     Provider<Repository<Malfuzat>>((ref) => Repository<Malfuzat>(ref));
@@ -68,8 +64,7 @@ extension MalfuzatRelationshipGraphNodeX on RelationshipGraphNode<Malfuzat> {
         $MalfuzatLocalAdapter._kMalfuzatRelationshipMetas['malfuzat-author']
             as RelationshipMeta<MalfuzatAuthor>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 }
 
@@ -93,8 +88,7 @@ Malfuzat _$MalfuzatFromJson(Map<String, dynamic> json) => Malfuzat(
       malfuzatAuthor: json['malfuzat-author'] == null
           ? null
           : BelongsTo<MalfuzatAuthor>.fromJson(
-              json['malfuzat-author'] as Map<String, dynamic>,
-            ),
+              json['malfuzat-author'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$MalfuzatToJson(Malfuzat instance) => <String, dynamic>{

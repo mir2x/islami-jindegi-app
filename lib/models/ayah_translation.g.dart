@@ -47,17 +47,13 @@ class $AyahTranslationRemoteAdapter = RemoteAdapter<AyahTranslation>
     with JSONAPIAdapter<AyahTranslation>, ApplicationAdapter<AyahTranslation>;
 
 final internalAyahTranslationsRemoteAdapterProvider =
-    Provider<RemoteAdapter<AyahTranslation>>(
-  (ref) => $AyahTranslationRemoteAdapter(
-    $AyahTranslationHiveLocalAdapter(ref),
-    InternalHolder(_ayahTranslationsFinders),
-  ),
-);
+    Provider<RemoteAdapter<AyahTranslation>>((ref) =>
+        $AyahTranslationRemoteAdapter($AyahTranslationHiveLocalAdapter(ref),
+            InternalHolder(_ayahTranslationsFinders)));
 
 final ayahTranslationsRepositoryProvider =
     Provider<Repository<AyahTranslation>>(
-  (ref) => Repository<AyahTranslation>(ref),
-);
+        (ref) => Repository<AyahTranslation>(ref));
 
 extension AyahTranslationDataRepositoryX on Repository<AyahTranslation> {
   JSONAPIAdapter<AyahTranslation> get jSONAPIAdapter =>
@@ -72,8 +68,7 @@ extension AyahTranslationRelationshipGraphNodeX
     final meta = $AyahTranslationLocalAdapter
         ._kAyahTranslationRelationshipMetas['ayah'] as RelationshipMeta<Ayah>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 }
 

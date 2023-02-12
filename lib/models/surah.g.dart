@@ -45,11 +45,8 @@ class $SurahRemoteAdapter = RemoteAdapter<Surah>
     with JSONAPIAdapter<Surah>, ApplicationAdapter<Surah>;
 
 final internalSurahsRemoteAdapterProvider = Provider<RemoteAdapter<Surah>>(
-  (ref) => $SurahRemoteAdapter(
-    $SurahHiveLocalAdapter(ref),
-    InternalHolder(_surahsFinders),
-  ),
-);
+    (ref) => $SurahRemoteAdapter(
+        $SurahHiveLocalAdapter(ref), InternalHolder(_surahsFinders)));
 
 final surahsRepositoryProvider =
     Provider<Repository<Surah>>((ref) => Repository<Surah>(ref));
@@ -66,8 +63,7 @@ extension SurahRelationshipGraphNodeX on RelationshipGraphNode<Surah> {
     final meta = $SurahLocalAdapter._kSurahRelationshipMetas['ayahs']
         as RelationshipMeta<Ayah>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 }
 

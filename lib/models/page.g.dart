@@ -37,11 +37,8 @@ class $PageRemoteAdapter = RemoteAdapter<Page>
     with JSONAPIAdapter<Page>, ApplicationAdapter<Page>;
 
 final internalPagesRemoteAdapterProvider = Provider<RemoteAdapter<Page>>(
-  (ref) => $PageRemoteAdapter(
-    $PageHiveLocalAdapter(ref),
-    InternalHolder(_pagesFinders),
-  ),
-);
+    (ref) => $PageRemoteAdapter(
+        $PageHiveLocalAdapter(ref), InternalHolder(_pagesFinders)));
 
 final pagesRepositoryProvider =
     Provider<Repository<Page>>((ref) => Repository<Page>(ref));

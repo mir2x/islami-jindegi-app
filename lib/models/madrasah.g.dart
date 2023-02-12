@@ -53,12 +53,8 @@ class $MadrasahRemoteAdapter = RemoteAdapter<Madrasah>
     with JSONAPIAdapter<Madrasah>, ApplicationAdapter<Madrasah>;
 
 final internalMadrasahsRemoteAdapterProvider =
-    Provider<RemoteAdapter<Madrasah>>(
-  (ref) => $MadrasahRemoteAdapter(
-    $MadrasahHiveLocalAdapter(ref),
-    InternalHolder(_madrasahsFinders),
-  ),
-);
+    Provider<RemoteAdapter<Madrasah>>((ref) => $MadrasahRemoteAdapter(
+        $MadrasahHiveLocalAdapter(ref), InternalHolder(_madrasahsFinders)));
 
 final madrasahsRepositoryProvider =
     Provider<Repository<Madrasah>>((ref) => Repository<Madrasah>(ref));
@@ -76,8 +72,7 @@ extension MadrasahRelationshipGraphNodeX on RelationshipGraphNode<Madrasah> {
         $MadrasahLocalAdapter._kMadrasahRelationshipMetas['madrasah-infos']
             as RelationshipMeta<MadrasahInfo>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 
   RelationshipGraphNode<MadrasahPhoto> get madrasahPhotos {
@@ -85,8 +80,7 @@ extension MadrasahRelationshipGraphNodeX on RelationshipGraphNode<Madrasah> {
         $MadrasahLocalAdapter._kMadrasahRelationshipMetas['madrasah-photos']
             as RelationshipMeta<MadrasahPhoto>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 }
 
@@ -106,13 +100,11 @@ Madrasah _$MadrasahFromJson(Map<String, dynamic> json) => Madrasah(
       madrasahInfos: json['madrasah-infos'] == null
           ? null
           : HasMany<MadrasahInfo>.fromJson(
-              json['madrasah-infos'] as Map<String, dynamic>,
-            ),
+              json['madrasah-infos'] as Map<String, dynamic>),
       madrasahPhotos: json['madrasah-photos'] == null
           ? null
           : HasMany<MadrasahPhoto>.fromJson(
-              json['madrasah-photos'] as Map<String, dynamic>,
-            ),
+              json['madrasah-photos'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$MadrasahToJson(Madrasah instance) => <String, dynamic>{

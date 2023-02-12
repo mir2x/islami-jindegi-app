@@ -45,11 +45,8 @@ class $ArticleRemoteAdapter = RemoteAdapter<Article>
     with JSONAPIAdapter<Article>, ApplicationAdapter<Article>;
 
 final internalArticlesRemoteAdapterProvider = Provider<RemoteAdapter<Article>>(
-  (ref) => $ArticleRemoteAdapter(
-    $ArticleHiveLocalAdapter(ref),
-    InternalHolder(_articlesFinders),
-  ),
-);
+    (ref) => $ArticleRemoteAdapter(
+        $ArticleHiveLocalAdapter(ref), InternalHolder(_articlesFinders)));
 
 final articlesRepositoryProvider =
     Provider<Repository<Article>>((ref) => Repository<Article>(ref));
@@ -67,8 +64,7 @@ extension ArticleRelationshipGraphNodeX on RelationshipGraphNode<Article> {
         $ArticleLocalAdapter._kArticleRelationshipMetas['article-author']
             as RelationshipMeta<ArticleAuthor>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 }
 
@@ -91,8 +87,7 @@ Article _$ArticleFromJson(Map<String, dynamic> json) => Article(
       articleAuthor: json['article-author'] == null
           ? null
           : BelongsTo<ArticleAuthor>.fromJson(
-              json['article-author'] as Map<String, dynamic>,
-            ),
+              json['article-author'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$ArticleToJson(Article instance) => <String, dynamic>{

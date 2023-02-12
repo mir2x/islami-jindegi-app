@@ -39,12 +39,9 @@ class $DuaCategoryRemoteAdapter = RemoteAdapter<DuaCategory>
     with JSONAPIAdapter<DuaCategory>, ApplicationAdapter<DuaCategory>;
 
 final internalDuaCategoriesRemoteAdapterProvider =
-    Provider<RemoteAdapter<DuaCategory>>(
-  (ref) => $DuaCategoryRemoteAdapter(
-    $DuaCategoryHiveLocalAdapter(ref),
-    InternalHolder(_duaCategoriesFinders),
-  ),
-);
+    Provider<RemoteAdapter<DuaCategory>>((ref) => $DuaCategoryRemoteAdapter(
+        $DuaCategoryHiveLocalAdapter(ref),
+        InternalHolder(_duaCategoriesFinders)));
 
 final duaCategoriesRepositoryProvider =
     Provider<Repository<DuaCategory>>((ref) => Repository<DuaCategory>(ref));

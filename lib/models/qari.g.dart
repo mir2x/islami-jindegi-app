@@ -37,11 +37,8 @@ class $QariRemoteAdapter = RemoteAdapter<Qari>
     with JSONAPIAdapter<Qari>, ApplicationAdapter<Qari>;
 
 final internalQarisRemoteAdapterProvider = Provider<RemoteAdapter<Qari>>(
-  (ref) => $QariRemoteAdapter(
-    $QariHiveLocalAdapter(ref),
-    InternalHolder(_qarisFinders),
-  ),
-);
+    (ref) => $QariRemoteAdapter(
+        $QariHiveLocalAdapter(ref), InternalHolder(_qarisFinders)));
 
 final qarisRepositoryProvider =
     Provider<Repository<Qari>>((ref) => Repository<Qari>(ref));

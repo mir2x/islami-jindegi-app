@@ -44,11 +44,8 @@ class $BayanRemoteAdapter = RemoteAdapter<Bayan>
     with JSONAPIAdapter<Bayan>, ApplicationAdapter<Bayan>;
 
 final internalBayansRemoteAdapterProvider = Provider<RemoteAdapter<Bayan>>(
-  (ref) => $BayanRemoteAdapter(
-    $BayanHiveLocalAdapter(ref),
-    InternalHolder(_bayansFinders),
-  ),
-);
+    (ref) => $BayanRemoteAdapter(
+        $BayanHiveLocalAdapter(ref), InternalHolder(_bayansFinders)));
 
 final bayansRepositoryProvider =
     Provider<Repository<Bayan>>((ref) => Repository<Bayan>(ref));
@@ -65,8 +62,7 @@ extension BayanRelationshipGraphNodeX on RelationshipGraphNode<Bayan> {
     final meta = $BayanLocalAdapter._kBayanRelationshipMetas['speaker']
         as RelationshipMeta<Speaker>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 }
 
@@ -87,8 +83,7 @@ Bayan _$BayanFromJson(Map<String, dynamic> json) => Bayan(
       speaker: json['speaker'] == null
           ? null
           : BelongsTo<Speaker>.fromJson(
-              json['speaker'] as Map<String, dynamic>,
-            ),
+              json['speaker'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$BayanToJson(Bayan instance) => <String, dynamic>{

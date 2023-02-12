@@ -39,16 +39,12 @@ class $MalfuzatAuthorRemoteAdapter = RemoteAdapter<MalfuzatAuthor>
     with JSONAPIAdapter<MalfuzatAuthor>, ApplicationAdapter<MalfuzatAuthor>;
 
 final internalMalfuzatAuthorsRemoteAdapterProvider =
-    Provider<RemoteAdapter<MalfuzatAuthor>>(
-  (ref) => $MalfuzatAuthorRemoteAdapter(
-    $MalfuzatAuthorHiveLocalAdapter(ref),
-    InternalHolder(_malfuzatAuthorsFinders),
-  ),
-);
+    Provider<RemoteAdapter<MalfuzatAuthor>>((ref) =>
+        $MalfuzatAuthorRemoteAdapter($MalfuzatAuthorHiveLocalAdapter(ref),
+            InternalHolder(_malfuzatAuthorsFinders)));
 
 final malfuzatAuthorsRepositoryProvider = Provider<Repository<MalfuzatAuthor>>(
-  (ref) => Repository<MalfuzatAuthor>(ref),
-);
+    (ref) => Repository<MalfuzatAuthor>(ref));
 
 extension MalfuzatAuthorDataRepositoryX on Repository<MalfuzatAuthor> {
   JSONAPIAdapter<MalfuzatAuthor> get jSONAPIAdapter =>

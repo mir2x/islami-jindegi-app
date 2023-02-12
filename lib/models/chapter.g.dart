@@ -52,11 +52,8 @@ class $ChapterRemoteAdapter = RemoteAdapter<Chapter>
     with JSONAPIAdapter<Chapter>, ApplicationAdapter<Chapter>;
 
 final internalChaptersRemoteAdapterProvider = Provider<RemoteAdapter<Chapter>>(
-  (ref) => $ChapterRemoteAdapter(
-    $ChapterHiveLocalAdapter(ref),
-    InternalHolder(_chaptersFinders),
-  ),
-);
+    (ref) => $ChapterRemoteAdapter(
+        $ChapterHiveLocalAdapter(ref), InternalHolder(_chaptersFinders)));
 
 final chaptersRepositoryProvider =
     Provider<Repository<Chapter>>((ref) => Repository<Chapter>(ref));
@@ -73,16 +70,14 @@ extension ChapterRelationshipGraphNodeX on RelationshipGraphNode<Chapter> {
     final meta = $ChapterLocalAdapter._kChapterRelationshipMetas['book']
         as RelationshipMeta<Book>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 
   RelationshipGraphNode<Subchapter> get subchapters {
     final meta = $ChapterLocalAdapter._kChapterRelationshipMetas['subchapters']
         as RelationshipMeta<Subchapter>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 }
 
@@ -103,8 +98,7 @@ Chapter _$ChapterFromJson(Map<String, dynamic> json) => Chapter(
       subchapters: json['subchapters'] == null
           ? null
           : HasMany<Subchapter>.fromJson(
-              json['subchapters'] as Map<String, dynamic>,
-            ),
+              json['subchapters'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$ChapterToJson(Chapter instance) => <String, dynamic>{

@@ -47,16 +47,12 @@ class $MadrasahPhotoRemoteAdapter = RemoteAdapter<MadrasahPhoto>
     with JSONAPIAdapter<MadrasahPhoto>, ApplicationAdapter<MadrasahPhoto>;
 
 final internalMadrasahPhotosRemoteAdapterProvider =
-    Provider<RemoteAdapter<MadrasahPhoto>>(
-  (ref) => $MadrasahPhotoRemoteAdapter(
-    $MadrasahPhotoHiveLocalAdapter(ref),
-    InternalHolder(_madrasahPhotosFinders),
-  ),
-);
+    Provider<RemoteAdapter<MadrasahPhoto>>((ref) => $MadrasahPhotoRemoteAdapter(
+        $MadrasahPhotoHiveLocalAdapter(ref),
+        InternalHolder(_madrasahPhotosFinders)));
 
 final madrasahPhotosRepositoryProvider = Provider<Repository<MadrasahPhoto>>(
-  (ref) => Repository<MadrasahPhoto>(ref),
-);
+    (ref) => Repository<MadrasahPhoto>(ref));
 
 extension MadrasahPhotoDataRepositoryX on Repository<MadrasahPhoto> {
   JSONAPIAdapter<MadrasahPhoto> get jSONAPIAdapter =>
@@ -72,8 +68,7 @@ extension MadrasahPhotoRelationshipGraphNodeX
         $MadrasahPhotoLocalAdapter._kMadrasahPhotoRelationshipMetas['madrasah']
             as RelationshipMeta<Madrasah>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 }
 
@@ -92,8 +87,7 @@ MadrasahPhoto _$MadrasahPhotoFromJson(Map<String, dynamic> json) =>
       madrasah: json['madrasah'] == null
           ? null
           : BelongsTo<Madrasah>.fromJson(
-              json['madrasah'] as Map<String, dynamic>,
-            ),
+              json['madrasah'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$MadrasahPhotoToJson(MadrasahPhoto instance) =>

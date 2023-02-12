@@ -52,11 +52,8 @@ class $TafseerRemoteAdapter = RemoteAdapter<Tafseer>
     with JSONAPIAdapter<Tafseer>, ApplicationAdapter<Tafseer>;
 
 final internalTafseersRemoteAdapterProvider = Provider<RemoteAdapter<Tafseer>>(
-  (ref) => $TafseerRemoteAdapter(
-    $TafseerHiveLocalAdapter(ref),
-    InternalHolder(_tafseersFinders),
-  ),
-);
+    (ref) => $TafseerRemoteAdapter(
+        $TafseerHiveLocalAdapter(ref), InternalHolder(_tafseersFinders)));
 
 final tafseersRepositoryProvider =
     Provider<Repository<Tafseer>>((ref) => Repository<Tafseer>(ref));
@@ -74,16 +71,14 @@ extension TafseerRelationshipGraphNodeX on RelationshipGraphNode<Tafseer> {
         $TafseerLocalAdapter._kTafseerRelationshipMetas['tafseer-qitab']
             as RelationshipMeta<TafseerQitab>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 
   RelationshipGraphNode<Ayah> get ayah {
     final meta = $TafseerLocalAdapter._kTafseerRelationshipMetas['ayah']
         as RelationshipMeta<Ayah>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 }
 
@@ -99,8 +94,7 @@ Tafseer _$TafseerFromJson(Map<String, dynamic> json) => Tafseer(
       tafseerQitab: json['tafseer-qitab'] == null
           ? null
           : BelongsTo<TafseerQitab>.fromJson(
-              json['tafseer-qitab'] as Map<String, dynamic>,
-            ),
+              json['tafseer-qitab'] as Map<String, dynamic>),
       ayah: json['ayah'] == null
           ? null
           : BelongsTo<Ayah>.fromJson(json['ayah'] as Map<String, dynamic>),

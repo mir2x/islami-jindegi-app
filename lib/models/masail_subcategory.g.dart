@@ -49,17 +49,13 @@ class $MasailSubcategoryRemoteAdapter = RemoteAdapter<MasailSubcategory>
         ApplicationAdapter<MasailSubcategory>;
 
 final internalMasailSubcategoriesRemoteAdapterProvider =
-    Provider<RemoteAdapter<MasailSubcategory>>(
-  (ref) => $MasailSubcategoryRemoteAdapter(
-    $MasailSubcategoryHiveLocalAdapter(ref),
-    InternalHolder(_masailSubcategoriesFinders),
-  ),
-);
+    Provider<RemoteAdapter<MasailSubcategory>>((ref) =>
+        $MasailSubcategoryRemoteAdapter($MasailSubcategoryHiveLocalAdapter(ref),
+            InternalHolder(_masailSubcategoriesFinders)));
 
 final masailSubcategoriesRepositoryProvider =
     Provider<Repository<MasailSubcategory>>(
-  (ref) => Repository<MasailSubcategory>(ref),
-);
+        (ref) => Repository<MasailSubcategory>(ref));
 
 extension MasailSubcategoryDataRepositoryX on Repository<MasailSubcategory> {
   JSONAPIAdapter<MasailSubcategory> get jSONAPIAdapter =>
@@ -75,8 +71,7 @@ extension MasailSubcategoryRelationshipGraphNodeX
             ._kMasailSubcategoryRelationshipMetas['masail-category']
         as RelationshipMeta<MasailCategory>;
     return meta.clone(
-      parent: this is RelationshipMeta ? this as RelationshipMeta : null,
-    );
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
   }
 }
 
@@ -95,8 +90,7 @@ MasailSubcategory _$MasailSubcategoryFromJson(Map<String, dynamic> json) =>
       masailCategory: json['masail-category'] == null
           ? null
           : BelongsTo<MasailCategory>.fromJson(
-              json['masail-category'] as Map<String, dynamic>,
-            ),
+              json['masail-category'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$MasailSubcategoryToJson(MasailSubcategory instance) =>
