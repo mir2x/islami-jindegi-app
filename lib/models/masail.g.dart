@@ -35,7 +35,10 @@ class $MasailHiveLocalAdapter = HiveLocalAdapter<Masail>
     with $MasailLocalAdapter;
 
 class $MasailRemoteAdapter = RemoteAdapter<Masail>
-    with JSONAPIAdapter<Masail>, ApplicationAdapter<Masail>;
+    with
+        JSONAPIAdapter<Masail>,
+        LocalDatabaseAdapter<Masail>,
+        ApplicationAdapter<Masail>;
 
 final internalMasailsRemoteAdapterProvider = Provider<RemoteAdapter<Masail>>(
     (ref) => $MasailRemoteAdapter(
@@ -47,6 +50,8 @@ final masailsRepositoryProvider =
 extension MasailDataRepositoryX on Repository<Masail> {
   JSONAPIAdapter<Masail> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<Masail>;
+  LocalDatabaseAdapter<Masail> get localDatabaseAdapter =>
+      remoteAdapter as LocalDatabaseAdapter<Masail>;
   ApplicationAdapter<Masail> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<Masail>;
 }
