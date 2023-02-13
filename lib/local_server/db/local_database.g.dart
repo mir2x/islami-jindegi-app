@@ -1062,6 +1062,447 @@ class $SubchaptersTable extends Subchapters
   }
 }
 
+class Malfuzat extends DataClass implements Insertable<Malfuzat> {
+  final String id;
+  final String title;
+  final String? body;
+  final String? excerpt;
+  final String language;
+  final bool hasAudio;
+  final String? audioData;
+  final String? documentData;
+  final int position;
+  final DateTime? publishedAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const Malfuzat(
+      {required this.id,
+      required this.title,
+      this.body,
+      this.excerpt,
+      required this.language,
+      required this.hasAudio,
+      this.audioData,
+      this.documentData,
+      required this.position,
+      this.publishedAt,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    if (!nullToAbsent || body != null) {
+      map['body'] = Variable<String>(body);
+    }
+    if (!nullToAbsent || excerpt != null) {
+      map['excerpt'] = Variable<String>(excerpt);
+    }
+    map['language'] = Variable<String>(language);
+    map['has_audio'] = Variable<bool>(hasAudio);
+    if (!nullToAbsent || audioData != null) {
+      map['audio_data'] = Variable<String>(audioData);
+    }
+    if (!nullToAbsent || documentData != null) {
+      map['document_data'] = Variable<String>(documentData);
+    }
+    map['position'] = Variable<int>(position);
+    if (!nullToAbsent || publishedAt != null) {
+      map['published_at'] = Variable<DateTime>(publishedAt);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  factory Malfuzat.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Malfuzat(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      body: serializer.fromJson<String?>(json['body']),
+      excerpt: serializer.fromJson<String?>(json['excerpt']),
+      language: serializer.fromJson<String>(json['language']),
+      hasAudio: serializer.fromJson<bool>(json['hasAudio']),
+      audioData: serializer.fromJson<String?>(json['audioData']),
+      documentData: serializer.fromJson<String?>(json['documentData']),
+      position: serializer.fromJson<int>(json['position']),
+      publishedAt: serializer.fromJson<DateTime?>(json['publishedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'body': serializer.toJson<String?>(body),
+      'excerpt': serializer.toJson<String?>(excerpt),
+      'language': serializer.toJson<String>(language),
+      'hasAudio': serializer.toJson<bool>(hasAudio),
+      'audioData': serializer.toJson<String?>(audioData),
+      'documentData': serializer.toJson<String?>(documentData),
+      'position': serializer.toJson<int>(position),
+      'publishedAt': serializer.toJson<DateTime?>(publishedAt),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  Malfuzat copyWith(
+          {String? id,
+          String? title,
+          Value<String?> body = const Value.absent(),
+          Value<String?> excerpt = const Value.absent(),
+          String? language,
+          bool? hasAudio,
+          Value<String?> audioData = const Value.absent(),
+          Value<String?> documentData = const Value.absent(),
+          int? position,
+          Value<DateTime?> publishedAt = const Value.absent(),
+          DateTime? createdAt,
+          DateTime? updatedAt}) =>
+      Malfuzat(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        body: body.present ? body.value : this.body,
+        excerpt: excerpt.present ? excerpt.value : this.excerpt,
+        language: language ?? this.language,
+        hasAudio: hasAudio ?? this.hasAudio,
+        audioData: audioData.present ? audioData.value : this.audioData,
+        documentData:
+            documentData.present ? documentData.value : this.documentData,
+        position: position ?? this.position,
+        publishedAt: publishedAt.present ? publishedAt.value : this.publishedAt,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Malfuzat(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('body: $body, ')
+          ..write('excerpt: $excerpt, ')
+          ..write('language: $language, ')
+          ..write('hasAudio: $hasAudio, ')
+          ..write('audioData: $audioData, ')
+          ..write('documentData: $documentData, ')
+          ..write('position: $position, ')
+          ..write('publishedAt: $publishedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, title, body, excerpt, language, hasAudio,
+      audioData, documentData, position, publishedAt, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Malfuzat &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.body == this.body &&
+          other.excerpt == this.excerpt &&
+          other.language == this.language &&
+          other.hasAudio == this.hasAudio &&
+          other.audioData == this.audioData &&
+          other.documentData == this.documentData &&
+          other.position == this.position &&
+          other.publishedAt == this.publishedAt &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<String?> body;
+  final Value<String?> excerpt;
+  final Value<String> language;
+  final Value<bool> hasAudio;
+  final Value<String?> audioData;
+  final Value<String?> documentData;
+  final Value<int> position;
+  final Value<DateTime?> publishedAt;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const MalfuzatsCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.body = const Value.absent(),
+    this.excerpt = const Value.absent(),
+    this.language = const Value.absent(),
+    this.hasAudio = const Value.absent(),
+    this.audioData = const Value.absent(),
+    this.documentData = const Value.absent(),
+    this.position = const Value.absent(),
+    this.publishedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  MalfuzatsCompanion.insert({
+    required String id,
+    required String title,
+    this.body = const Value.absent(),
+    this.excerpt = const Value.absent(),
+    required String language,
+    this.hasAudio = const Value.absent(),
+    this.audioData = const Value.absent(),
+    this.documentData = const Value.absent(),
+    required int position,
+    this.publishedAt = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  })  : id = Value(id),
+        title = Value(title),
+        language = Value(language),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<Malfuzat> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<String>? body,
+    Expression<String>? excerpt,
+    Expression<String>? language,
+    Expression<bool>? hasAudio,
+    Expression<String>? audioData,
+    Expression<String>? documentData,
+    Expression<int>? position,
+    Expression<DateTime>? publishedAt,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (body != null) 'body': body,
+      if (excerpt != null) 'excerpt': excerpt,
+      if (language != null) 'language': language,
+      if (hasAudio != null) 'has_audio': hasAudio,
+      if (audioData != null) 'audio_data': audioData,
+      if (documentData != null) 'document_data': documentData,
+      if (position != null) 'position': position,
+      if (publishedAt != null) 'published_at': publishedAt,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  MalfuzatsCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? title,
+      Value<String?>? body,
+      Value<String?>? excerpt,
+      Value<String>? language,
+      Value<bool>? hasAudio,
+      Value<String?>? audioData,
+      Value<String?>? documentData,
+      Value<int>? position,
+      Value<DateTime?>? publishedAt,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt}) {
+    return MalfuzatsCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      body: body ?? this.body,
+      excerpt: excerpt ?? this.excerpt,
+      language: language ?? this.language,
+      hasAudio: hasAudio ?? this.hasAudio,
+      audioData: audioData ?? this.audioData,
+      documentData: documentData ?? this.documentData,
+      position: position ?? this.position,
+      publishedAt: publishedAt ?? this.publishedAt,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
+    if (excerpt.present) {
+      map['excerpt'] = Variable<String>(excerpt.value);
+    }
+    if (language.present) {
+      map['language'] = Variable<String>(language.value);
+    }
+    if (hasAudio.present) {
+      map['has_audio'] = Variable<bool>(hasAudio.value);
+    }
+    if (audioData.present) {
+      map['audio_data'] = Variable<String>(audioData.value);
+    }
+    if (documentData.present) {
+      map['document_data'] = Variable<String>(documentData.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (publishedAt.present) {
+      map['published_at'] = Variable<DateTime>(publishedAt.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MalfuzatsCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('body: $body, ')
+          ..write('excerpt: $excerpt, ')
+          ..write('language: $language, ')
+          ..write('hasAudio: $hasAudio, ')
+          ..write('audioData: $audioData, ')
+          ..write('documentData: $documentData, ')
+          ..write('position: $position, ')
+          ..write('publishedAt: $publishedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $MalfuzatsTable extends Malfuzats
+    with TableInfo<$MalfuzatsTable, Malfuzat> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MalfuzatsTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+      'body', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
+      'excerpt', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> language = GeneratedColumn<String>(
+      'language', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<bool> hasAudio = GeneratedColumn<bool>(
+      'has_audio', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: 'CHECK (has_audio IN (0, 1))',
+      defaultValue: const Constant(false));
+  @override
+  late final GeneratedColumn<String> audioData = GeneratedColumn<String>(
+      'audio_data', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> documentData = GeneratedColumn<String>(
+      'document_data', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<DateTime> publishedAt = GeneratedColumn<DateTime>(
+      'published_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        title,
+        body,
+        excerpt,
+        language,
+        hasAudio,
+        audioData,
+        documentData,
+        position,
+        publishedAt,
+        createdAt,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? 'malfuzats';
+  @override
+  String get actualTableName => 'malfuzats';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Malfuzat map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Malfuzat(
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      body: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}body']),
+      excerpt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
+      language: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
+      hasAudio: attachedDatabase.options.types
+          .read(DriftSqlType.bool, data['${effectivePrefix}has_audio'])!,
+      audioData: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}audio_data']),
+      documentData: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}document_data']),
+      position: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      publishedAt: attachedDatabase.options.types
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}published_at']),
+      createdAt: attachedDatabase.options.types
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.options.types
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $MalfuzatsTable createAlias(String alias) {
+    return $MalfuzatsTable(attachedDatabase, alias);
+  }
+}
+
 class Article extends DataClass implements Insertable<Article> {
   final String id;
   final String title;
@@ -1954,6 +2395,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $BooksTable books = $BooksTable(this);
   late final $ChaptersTable chapters = $ChaptersTable(this);
   late final $SubchaptersTable subchapters = $SubchaptersTable(this);
+  late final $MalfuzatsTable malfuzats = $MalfuzatsTable(this);
   late final $ArticlesTable articles = $ArticlesTable(this);
   late final $MasailsTable masails = $MasailsTable(this);
   @override
@@ -1961,7 +2403,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [books, chapters, subchapters, articles, masails];
+      [books, chapters, subchapters, malfuzats, articles, masails];
   @override
   DriftDatabaseOptions get options =>
       const DriftDatabaseOptions(storeDateTimeAsText: true);
