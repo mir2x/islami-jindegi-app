@@ -8,7 +8,7 @@ import 'tables/index.dart';
 
 part 'local_database.g.dart';
 
-@DriftDatabase(tables: [Masails])
+@DriftDatabase(tables: [Books, Masails])
 class LocalDatabase extends _$LocalDatabase {
   LocalDatabase()
       : super(
@@ -36,6 +36,8 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<List> query(String tableName) {
     switch (tableName) {
+      case 'books':
+        return queryBook();
       case 'masails':
         return queryMasail();
       default:
@@ -45,11 +47,28 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future? findById(String tableName, String id) {
     switch (tableName) {
+      case 'books':
+        return findBookById(id);
       case 'masails':
         return findMasailById(id);
       default:
         return null;
     }
+  }
+
+  Future<List<Book>> queryBook() {
+    return (select(books)
+          ..orderBy([
+            (t) => OrderingTerm(
+                  expression: t.position,
+                  mode: OrderingMode.desc,
+                )
+          ]))
+        .get();
+  }
+
+  Future<Book> findBookById(String id) {
+    return (select(books)..where((t) => t.id.equals(id))).getSingle();
   }
 
   Future<List<Masail>> queryMasail() {

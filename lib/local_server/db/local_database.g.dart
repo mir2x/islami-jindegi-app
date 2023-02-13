@@ -7,6 +7,485 @@ part of 'local_database.dart';
 // **************************************************************************
 
 // ignore_for_file: type=lint
+class Book extends DataClass implements Insertable<Book> {
+  final String id;
+  final String title;
+  final String slug;
+  final String? excerpt;
+  final String? publisher;
+  final String? price;
+  final String language;
+  final String? imageData;
+  final String? documentData;
+  final int position;
+  final String? publishedAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const Book(
+      {required this.id,
+      required this.title,
+      required this.slug,
+      this.excerpt,
+      this.publisher,
+      this.price,
+      required this.language,
+      this.imageData,
+      this.documentData,
+      required this.position,
+      this.publishedAt,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    map['slug'] = Variable<String>(slug);
+    if (!nullToAbsent || excerpt != null) {
+      map['excerpt'] = Variable<String>(excerpt);
+    }
+    if (!nullToAbsent || publisher != null) {
+      map['publisher'] = Variable<String>(publisher);
+    }
+    if (!nullToAbsent || price != null) {
+      map['price'] = Variable<String>(price);
+    }
+    map['language'] = Variable<String>(language);
+    if (!nullToAbsent || imageData != null) {
+      map['image_data'] = Variable<String>(imageData);
+    }
+    if (!nullToAbsent || documentData != null) {
+      map['document_data'] = Variable<String>(documentData);
+    }
+    map['position'] = Variable<int>(position);
+    if (!nullToAbsent || publishedAt != null) {
+      map['published_at'] = Variable<String>(publishedAt);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  factory Book.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Book(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      slug: serializer.fromJson<String>(json['slug']),
+      excerpt: serializer.fromJson<String?>(json['excerpt']),
+      publisher: serializer.fromJson<String?>(json['publisher']),
+      price: serializer.fromJson<String?>(json['price']),
+      language: serializer.fromJson<String>(json['language']),
+      imageData: serializer.fromJson<String?>(json['imageData']),
+      documentData: serializer.fromJson<String?>(json['documentData']),
+      position: serializer.fromJson<int>(json['position']),
+      publishedAt: serializer.fromJson<String?>(json['publishedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'slug': serializer.toJson<String>(slug),
+      'excerpt': serializer.toJson<String?>(excerpt),
+      'publisher': serializer.toJson<String?>(publisher),
+      'price': serializer.toJson<String?>(price),
+      'language': serializer.toJson<String>(language),
+      'imageData': serializer.toJson<String?>(imageData),
+      'documentData': serializer.toJson<String?>(documentData),
+      'position': serializer.toJson<int>(position),
+      'publishedAt': serializer.toJson<String?>(publishedAt),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  Book copyWith(
+          {String? id,
+          String? title,
+          String? slug,
+          Value<String?> excerpt = const Value.absent(),
+          Value<String?> publisher = const Value.absent(),
+          Value<String?> price = const Value.absent(),
+          String? language,
+          Value<String?> imageData = const Value.absent(),
+          Value<String?> documentData = const Value.absent(),
+          int? position,
+          Value<String?> publishedAt = const Value.absent(),
+          DateTime? createdAt,
+          DateTime? updatedAt}) =>
+      Book(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        slug: slug ?? this.slug,
+        excerpt: excerpt.present ? excerpt.value : this.excerpt,
+        publisher: publisher.present ? publisher.value : this.publisher,
+        price: price.present ? price.value : this.price,
+        language: language ?? this.language,
+        imageData: imageData.present ? imageData.value : this.imageData,
+        documentData:
+            documentData.present ? documentData.value : this.documentData,
+        position: position ?? this.position,
+        publishedAt: publishedAt.present ? publishedAt.value : this.publishedAt,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Book(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('slug: $slug, ')
+          ..write('excerpt: $excerpt, ')
+          ..write('publisher: $publisher, ')
+          ..write('price: $price, ')
+          ..write('language: $language, ')
+          ..write('imageData: $imageData, ')
+          ..write('documentData: $documentData, ')
+          ..write('position: $position, ')
+          ..write('publishedAt: $publishedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id,
+      title,
+      slug,
+      excerpt,
+      publisher,
+      price,
+      language,
+      imageData,
+      documentData,
+      position,
+      publishedAt,
+      createdAt,
+      updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Book &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.slug == this.slug &&
+          other.excerpt == this.excerpt &&
+          other.publisher == this.publisher &&
+          other.price == this.price &&
+          other.language == this.language &&
+          other.imageData == this.imageData &&
+          other.documentData == this.documentData &&
+          other.position == this.position &&
+          other.publishedAt == this.publishedAt &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class BooksCompanion extends UpdateCompanion<Book> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<String> slug;
+  final Value<String?> excerpt;
+  final Value<String?> publisher;
+  final Value<String?> price;
+  final Value<String> language;
+  final Value<String?> imageData;
+  final Value<String?> documentData;
+  final Value<int> position;
+  final Value<String?> publishedAt;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const BooksCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.slug = const Value.absent(),
+    this.excerpt = const Value.absent(),
+    this.publisher = const Value.absent(),
+    this.price = const Value.absent(),
+    this.language = const Value.absent(),
+    this.imageData = const Value.absent(),
+    this.documentData = const Value.absent(),
+    this.position = const Value.absent(),
+    this.publishedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  BooksCompanion.insert({
+    required String id,
+    required String title,
+    required String slug,
+    this.excerpt = const Value.absent(),
+    this.publisher = const Value.absent(),
+    this.price = const Value.absent(),
+    required String language,
+    this.imageData = const Value.absent(),
+    this.documentData = const Value.absent(),
+    required int position,
+    this.publishedAt = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  })  : id = Value(id),
+        title = Value(title),
+        slug = Value(slug),
+        language = Value(language),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<Book> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<String>? slug,
+    Expression<String>? excerpt,
+    Expression<String>? publisher,
+    Expression<String>? price,
+    Expression<String>? language,
+    Expression<String>? imageData,
+    Expression<String>? documentData,
+    Expression<int>? position,
+    Expression<String>? publishedAt,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (slug != null) 'slug': slug,
+      if (excerpt != null) 'excerpt': excerpt,
+      if (publisher != null) 'publisher': publisher,
+      if (price != null) 'price': price,
+      if (language != null) 'language': language,
+      if (imageData != null) 'image_data': imageData,
+      if (documentData != null) 'document_data': documentData,
+      if (position != null) 'position': position,
+      if (publishedAt != null) 'published_at': publishedAt,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  BooksCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? title,
+      Value<String>? slug,
+      Value<String?>? excerpt,
+      Value<String?>? publisher,
+      Value<String?>? price,
+      Value<String>? language,
+      Value<String?>? imageData,
+      Value<String?>? documentData,
+      Value<int>? position,
+      Value<String?>? publishedAt,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt}) {
+    return BooksCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      slug: slug ?? this.slug,
+      excerpt: excerpt ?? this.excerpt,
+      publisher: publisher ?? this.publisher,
+      price: price ?? this.price,
+      language: language ?? this.language,
+      imageData: imageData ?? this.imageData,
+      documentData: documentData ?? this.documentData,
+      position: position ?? this.position,
+      publishedAt: publishedAt ?? this.publishedAt,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (slug.present) {
+      map['slug'] = Variable<String>(slug.value);
+    }
+    if (excerpt.present) {
+      map['excerpt'] = Variable<String>(excerpt.value);
+    }
+    if (publisher.present) {
+      map['publisher'] = Variable<String>(publisher.value);
+    }
+    if (price.present) {
+      map['price'] = Variable<String>(price.value);
+    }
+    if (language.present) {
+      map['language'] = Variable<String>(language.value);
+    }
+    if (imageData.present) {
+      map['image_data'] = Variable<String>(imageData.value);
+    }
+    if (documentData.present) {
+      map['document_data'] = Variable<String>(documentData.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (publishedAt.present) {
+      map['published_at'] = Variable<String>(publishedAt.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BooksCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('slug: $slug, ')
+          ..write('excerpt: $excerpt, ')
+          ..write('publisher: $publisher, ')
+          ..write('price: $price, ')
+          ..write('language: $language, ')
+          ..write('imageData: $imageData, ')
+          ..write('documentData: $documentData, ')
+          ..write('position: $position, ')
+          ..write('publishedAt: $publishedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BooksTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
+      'slug', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
+      'excerpt', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> publisher = GeneratedColumn<String>(
+      'publisher', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> price = GeneratedColumn<String>(
+      'price', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> language = GeneratedColumn<String>(
+      'language', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> imageData = GeneratedColumn<String>(
+      'image_data', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> documentData = GeneratedColumn<String>(
+      'document_data', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> publishedAt = GeneratedColumn<String>(
+      'published_at', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        title,
+        slug,
+        excerpt,
+        publisher,
+        price,
+        language,
+        imageData,
+        documentData,
+        position,
+        publishedAt,
+        createdAt,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? 'books';
+  @override
+  String get actualTableName => 'books';
+  @override
+  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  @override
+  Book map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Book(
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      slug: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
+      excerpt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
+      publisher: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}publisher']),
+      price: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}price']),
+      language: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
+      imageData: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}image_data']),
+      documentData: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}document_data']),
+      position: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      publishedAt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}published_at']),
+      createdAt: attachedDatabase.options.types
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.options.types
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $BooksTable createAlias(String alias) {
+    return $BooksTable(attachedDatabase, alias);
+  }
+}
+
 class Masail extends DataClass implements Insertable<Masail> {
   final String id;
   final String title;
@@ -488,12 +967,13 @@ class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
 
 abstract class _$LocalDatabase extends GeneratedDatabase {
   _$LocalDatabase(QueryExecutor e) : super(e);
+  late final $BooksTable books = $BooksTable(this);
   late final $MasailsTable masails = $MasailsTable(this);
   @override
   Iterable<TableInfo<Table, dynamic>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [masails];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [books, masails];
   @override
   DriftDatabaseOptions get options =>
       const DriftDatabaseOptions(storeDateTimeAsText: true);
