@@ -8,7 +8,7 @@ import 'tables/index.dart';
 
 part 'local_database.g.dart';
 
-@DriftDatabase(tables: [Books, Chapters, Subchapters, Masails])
+@DriftDatabase(tables: [Books, Chapters, Subchapters, Articles, Masails])
 class LocalDatabase extends _$LocalDatabase {
   LocalDatabase()
       : super(
@@ -40,6 +40,8 @@ class LocalDatabase extends _$LocalDatabase {
         return queryBook(params);
       case 'chapters':
         return queryChapter(params);
+      case 'articles':
+        return queryArticle(params);
       case 'masails':
         return queryMasail(params);
       default:
@@ -55,6 +57,8 @@ class LocalDatabase extends _$LocalDatabase {
         return findChapterById(id);
       case 'subchapters':
         return findSubchapterById(id);
+      case 'articles':
+        return findArticleById(id);
       case 'masails':
         return findMasailById(id);
       default:
@@ -63,14 +67,11 @@ class LocalDatabase extends _$LocalDatabase {
   }
 
   Future<List<Book>> queryBook(Map params) {
-    return (select(books)
-          ..orderBy([
-            (t) => OrderingTerm(
-                  expression: t.position,
-                  mode: OrderingMode.desc,
-                )
-          ]))
-        .get();
+    var query = select(books);
+    query.orderBy([
+      (t) => OrderingTerm(expression: t.position, mode: OrderingMode.desc),
+    ]);
+    return query.get();
   }
 
   Future<Book> findBookById(String id) {
@@ -78,7 +79,7 @@ class LocalDatabase extends _$LocalDatabase {
   }
 
   Future<List<Chapter>> queryChapter(Map params) {
-    final query = select(chapters);
+    var query = select(chapters);
     query.where((t) => t.bookId.equals(params['bookId']));
     query.orderBy([(t) => OrderingTerm(expression: t.position)]);
     return query.get();
@@ -90,6 +91,18 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<Subchapter> findSubchapterById(String id) {
     return (select(subchapters)..where((t) => t.id.equals(id))).getSingle();
+  }
+
+  Future<List<Article>> queryArticle(Map params) {
+    var query = select(articles);
+    query.orderBy([
+      (t) => OrderingTerm(expression: t.position, mode: OrderingMode.desc),
+    ]);
+    return query.get();
+  }
+
+  Future<Article> findArticleById(String id) {
+    return (select(articles)..where((t) => t.id.equals(id))).getSingle();
   }
 
   Future<List<Masail>> queryMasail(Map params) {

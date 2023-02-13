@@ -1062,6 +1062,414 @@ class $SubchaptersTable extends Subchapters
   }
 }
 
+class Article extends DataClass implements Insertable<Article> {
+  final String id;
+  final String title;
+  final String slug;
+  final String body;
+  final String? excerpt;
+  final String language;
+  final String? documentData;
+  final int position;
+  final DateTime? publishedAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const Article(
+      {required this.id,
+      required this.title,
+      required this.slug,
+      required this.body,
+      this.excerpt,
+      required this.language,
+      this.documentData,
+      required this.position,
+      this.publishedAt,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    map['slug'] = Variable<String>(slug);
+    map['body'] = Variable<String>(body);
+    if (!nullToAbsent || excerpt != null) {
+      map['excerpt'] = Variable<String>(excerpt);
+    }
+    map['language'] = Variable<String>(language);
+    if (!nullToAbsent || documentData != null) {
+      map['document_data'] = Variable<String>(documentData);
+    }
+    map['position'] = Variable<int>(position);
+    if (!nullToAbsent || publishedAt != null) {
+      map['published_at'] = Variable<DateTime>(publishedAt);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  factory Article.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Article(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      slug: serializer.fromJson<String>(json['slug']),
+      body: serializer.fromJson<String>(json['body']),
+      excerpt: serializer.fromJson<String?>(json['excerpt']),
+      language: serializer.fromJson<String>(json['language']),
+      documentData: serializer.fromJson<String?>(json['documentData']),
+      position: serializer.fromJson<int>(json['position']),
+      publishedAt: serializer.fromJson<DateTime?>(json['publishedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'slug': serializer.toJson<String>(slug),
+      'body': serializer.toJson<String>(body),
+      'excerpt': serializer.toJson<String?>(excerpt),
+      'language': serializer.toJson<String>(language),
+      'documentData': serializer.toJson<String?>(documentData),
+      'position': serializer.toJson<int>(position),
+      'publishedAt': serializer.toJson<DateTime?>(publishedAt),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  Article copyWith(
+          {String? id,
+          String? title,
+          String? slug,
+          String? body,
+          Value<String?> excerpt = const Value.absent(),
+          String? language,
+          Value<String?> documentData = const Value.absent(),
+          int? position,
+          Value<DateTime?> publishedAt = const Value.absent(),
+          DateTime? createdAt,
+          DateTime? updatedAt}) =>
+      Article(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        slug: slug ?? this.slug,
+        body: body ?? this.body,
+        excerpt: excerpt.present ? excerpt.value : this.excerpt,
+        language: language ?? this.language,
+        documentData:
+            documentData.present ? documentData.value : this.documentData,
+        position: position ?? this.position,
+        publishedAt: publishedAt.present ? publishedAt.value : this.publishedAt,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Article(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('slug: $slug, ')
+          ..write('body: $body, ')
+          ..write('excerpt: $excerpt, ')
+          ..write('language: $language, ')
+          ..write('documentData: $documentData, ')
+          ..write('position: $position, ')
+          ..write('publishedAt: $publishedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, title, slug, body, excerpt, language,
+      documentData, position, publishedAt, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Article &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.slug == this.slug &&
+          other.body == this.body &&
+          other.excerpt == this.excerpt &&
+          other.language == this.language &&
+          other.documentData == this.documentData &&
+          other.position == this.position &&
+          other.publishedAt == this.publishedAt &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ArticlesCompanion extends UpdateCompanion<Article> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<String> slug;
+  final Value<String> body;
+  final Value<String?> excerpt;
+  final Value<String> language;
+  final Value<String?> documentData;
+  final Value<int> position;
+  final Value<DateTime?> publishedAt;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const ArticlesCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.slug = const Value.absent(),
+    this.body = const Value.absent(),
+    this.excerpt = const Value.absent(),
+    this.language = const Value.absent(),
+    this.documentData = const Value.absent(),
+    this.position = const Value.absent(),
+    this.publishedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  ArticlesCompanion.insert({
+    required String id,
+    required String title,
+    required String slug,
+    required String body,
+    this.excerpt = const Value.absent(),
+    required String language,
+    this.documentData = const Value.absent(),
+    required int position,
+    this.publishedAt = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  })  : id = Value(id),
+        title = Value(title),
+        slug = Value(slug),
+        body = Value(body),
+        language = Value(language),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<Article> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<String>? slug,
+    Expression<String>? body,
+    Expression<String>? excerpt,
+    Expression<String>? language,
+    Expression<String>? documentData,
+    Expression<int>? position,
+    Expression<DateTime>? publishedAt,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (slug != null) 'slug': slug,
+      if (body != null) 'body': body,
+      if (excerpt != null) 'excerpt': excerpt,
+      if (language != null) 'language': language,
+      if (documentData != null) 'document_data': documentData,
+      if (position != null) 'position': position,
+      if (publishedAt != null) 'published_at': publishedAt,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  ArticlesCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? title,
+      Value<String>? slug,
+      Value<String>? body,
+      Value<String?>? excerpt,
+      Value<String>? language,
+      Value<String?>? documentData,
+      Value<int>? position,
+      Value<DateTime?>? publishedAt,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt}) {
+    return ArticlesCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      slug: slug ?? this.slug,
+      body: body ?? this.body,
+      excerpt: excerpt ?? this.excerpt,
+      language: language ?? this.language,
+      documentData: documentData ?? this.documentData,
+      position: position ?? this.position,
+      publishedAt: publishedAt ?? this.publishedAt,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (slug.present) {
+      map['slug'] = Variable<String>(slug.value);
+    }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
+    if (excerpt.present) {
+      map['excerpt'] = Variable<String>(excerpt.value);
+    }
+    if (language.present) {
+      map['language'] = Variable<String>(language.value);
+    }
+    if (documentData.present) {
+      map['document_data'] = Variable<String>(documentData.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (publishedAt.present) {
+      map['published_at'] = Variable<DateTime>(publishedAt.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ArticlesCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('slug: $slug, ')
+          ..write('body: $body, ')
+          ..write('excerpt: $excerpt, ')
+          ..write('language: $language, ')
+          ..write('documentData: $documentData, ')
+          ..write('position: $position, ')
+          ..write('publishedAt: $publishedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ArticlesTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
+      'slug', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+      'body', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
+      'excerpt', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> language = GeneratedColumn<String>(
+      'language', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> documentData = GeneratedColumn<String>(
+      'document_data', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<DateTime> publishedAt = GeneratedColumn<DateTime>(
+      'published_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        title,
+        slug,
+        body,
+        excerpt,
+        language,
+        documentData,
+        position,
+        publishedAt,
+        createdAt,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? 'articles';
+  @override
+  String get actualTableName => 'articles';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Article map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Article(
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      slug: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
+      body: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}body'])!,
+      excerpt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
+      language: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
+      documentData: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}document_data']),
+      position: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      publishedAt: attachedDatabase.options.types
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}published_at']),
+      createdAt: attachedDatabase.options.types
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.options.types
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $ArticlesTable createAlias(String alias) {
+    return $ArticlesTable(attachedDatabase, alias);
+  }
+}
+
 class Masail extends DataClass implements Insertable<Masail> {
   final String id;
   final String title;
@@ -1546,13 +1954,14 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $BooksTable books = $BooksTable(this);
   late final $ChaptersTable chapters = $ChaptersTable(this);
   late final $SubchaptersTable subchapters = $SubchaptersTable(this);
+  late final $ArticlesTable articles = $ArticlesTable(this);
   late final $MasailsTable masails = $MasailsTable(this);
   @override
   Iterable<TableInfo<Table, dynamic>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [books, chapters, subchapters, masails];
+      [books, chapters, subchapters, articles, masails];
   @override
   DriftDatabaseOptions get options =>
       const DriftDatabaseOptions(storeDateTimeAsText: true);
