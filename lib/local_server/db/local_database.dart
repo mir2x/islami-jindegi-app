@@ -10,26 +10,53 @@ part 'local_database.g.dart';
 
 @DriftDatabase(tables: [Masails])
 class LocalDatabase extends _$LocalDatabase {
-  LocalDatabase() : super(
-    LazyDatabase(() async {
-      // put the database file, called db.sqlite here, into the documents folder
-      // for your app.
-      final dbFolder = await getApplicationDocumentsDirectory();
-      final file = File(p.join(dbFolder.path, 'init.sqlite3'));
+  LocalDatabase()
+      : super(
+          LazyDatabase(() async {
+            // put the database file, called db.sqlite here, into the documents folder
+            // for your app.
+            final dbFolder = await getApplicationDocumentsDirectory();
+            final file = File(p.join(dbFolder.path, 'init.sqlite3'));
 
-      if (!await file.exists()) {
-          // Extract the pre-populated database file from assets
-          final blob = await rootBundle.load('assets/db/init.sqlite3');
-          await file.writeAsBytes(
-            blob.buffer.asUint8List(blob.offsetInBytes, blob.lengthInBytes),
-          );
-      }
+            if (!await file.exists()) {
+              // Extract the pre-populated database file from assets
+              final blob = await rootBundle.load('assets/db/init.sqlite3');
+              await file.writeAsBytes(
+                blob.buffer.asUint8List(blob.offsetInBytes, blob.lengthInBytes),
+              );
+            }
 
-      return NativeDatabase(file);
-    }),
-  );
+            return NativeDatabase(file);
+          }),
+        );
 
   // bump this number whenever a table definition has been added or changed.
   @override
   int get schemaVersion => 1;
+
+  Future<List> query(String tableName) {
+    switch (tableName) {
+      case 'masails':
+        return queryMasail();
+      default:
+        return Future.value([]);
+    }
+  }
+
+  Future? findById(String tableName, String id) {
+    switch (tableName) {
+      case 'masails':
+        return findMasailById(id);
+      default:
+        return null;
+    }
+  }
+
+  Future<List<Masail>> queryMasail() {
+    return select(masails).get();
+  }
+
+  Future<Masail> findMasailById(String id) {
+    return (select(masails)..where((t) => t.id.equals(id))).getSingle();
+  }
 }

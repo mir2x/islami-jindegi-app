@@ -66,6 +66,7 @@ dependencies:
   # assets
   flutter_svg: ^1.1.1+1
   transparent_image: ^2.0.0
+  connectivity_plus: ^3.0.3
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,7 @@
+import 'dart:convert';
 import 'package:flutter_data/flutter_data.dart';
 import 'package:native_app/providers/local_database.dart';
-import 'dart:convert';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:json_api/document.dart';
 
 mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
@@ -15,24 +16,25 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     OnErrorAll<T>? onError,
     DataRequestLabel? label,
   }) async {
+    final connectivityResult = await (Connectivity().checkConnectivity());
+
+    if (connectivityResult == ConnectivityResult.none) {
       final database = ref.read(localDatabaseProvider);
-      final allMasails = await database.select(database.masails).get();
+      final resources = await database.query(internalType);
 
-      final body = allMasails.map((m) {
-        var resource = json.decode(m.toJsonString());
+      final body = resources.map((m) {
+        var resourceMap = json.decode(m.toJsonString());
 
-        final id = resource.remove('id');
+        final id = resourceMap.remove('id');
 
         // attributes
-        Map<String, dynamic> attributes = Map.fromEntries(
-          resource.entries,
-        );
+        Map<String, dynamic> attributes = Map.from(resourceMap);
 
         // assemble type, id, attributes, relationships in `Resource`
-        final newResource = Resource(internalType, id.toString());
-        newResource.attributes.addAll(attributes);
-        /* newResource.relationships.addAll(relationships); */
-        return newResource;
+        final resource = Resource(internalType, id.toString());
+        resource.attributes.addAll(attributes);
+        /* resource.relationships.addAll(relationships); */
+        return resource;
       });
 
       final outbound = OutboundDataDocument.collection(body).toJson();
@@ -43,5 +45,50 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
 
       final deserialized = await deserialize(response);
       return deserialized.models;
+    } else {
+      return super.findAll();
+    }
+  }
+
+  @override
+  Future<T?> findOne(
+    Object id, {
+    bool? remote,
+    bool? background,
+    Map<String, dynamic>? params,
+    Map<String, String>? headers,
+    OnSuccessOne<T>? onSuccess,
+    OnErrorOne<T>? onError,
+    DataRequestLabel? label,
+  }) async {
+    final connectivityResult = await (Connectivity().checkConnectivity());
+
+    if (connectivityResult == ConnectivityResult.none) {
+      final database = ref.read(localDatabaseProvider);
+      final resource = await database.findById(internalType, id.toString());
+
+      var resourceMap = json.decode(resource.toJsonString());
+
+      final idValue = resourceMap.remove('id');
+
+      // attributes
+      Map<String, dynamic> attributes = Map.from(resourceMap);
+
+      // assemble type, id, attributes, relationships in `Resource`
+      final newResource = NewResource(internalType, idValue.toString());
+      newResource.attributes.addAll(attributes);
+      /* newResource.relationships.addAll(relationships); */
+
+      final outbound = OutboundDataDocument.newResource(newResource).toJson();
+
+      // run decode/encode because `json_api`'s `toJson()`
+      // DOES NOT return nested Map<String, dynamic>s as expected
+      var response = json.decode(json.encode(outbound)) as Map<String, dynamic>;
+
+      final deserialized = await deserialize(response);
+      return deserialized.model;
+    } else {
+      return super.findOne(id);
+    }
   }
 }
