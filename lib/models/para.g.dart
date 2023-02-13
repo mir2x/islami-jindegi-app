@@ -34,7 +34,10 @@ final _parasFinders = <String, dynamic>{};
 class $ParaHiveLocalAdapter = HiveLocalAdapter<Para> with $ParaLocalAdapter;
 
 class $ParaRemoteAdapter = RemoteAdapter<Para>
-    with JSONAPIAdapter<Para>, ApplicationAdapter<Para>;
+    with
+        JSONAPIAdapter<Para>,
+        LocalDatabaseAdapter<Para>,
+        ApplicationAdapter<Para>;
 
 final internalParasRemoteAdapterProvider = Provider<RemoteAdapter<Para>>(
     (ref) => $ParaRemoteAdapter(
@@ -46,6 +49,8 @@ final parasRepositoryProvider =
 extension ParaDataRepositoryX on Repository<Para> {
   JSONAPIAdapter<Para> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<Para>;
+  LocalDatabaseAdapter<Para> get localDatabaseAdapter =>
+      remoteAdapter as LocalDatabaseAdapter<Para>;
   ApplicationAdapter<Para> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<Para>;
 }

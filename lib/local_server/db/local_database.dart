@@ -11,6 +11,7 @@ part 'local_database.g.dart';
 @DriftDatabase(
   tables: [
     Surahs,
+    Paras,
     Books,
     Chapters,
     Subchapters,
@@ -49,6 +50,8 @@ class LocalDatabase extends _$LocalDatabase {
     switch (tableName) {
       case 'surahs':
         return querySurah(params);
+      case 'paras':
+        return queryPara(params);
       case 'books':
         return queryBook(params);
       case 'chapters':
@@ -70,6 +73,8 @@ class LocalDatabase extends _$LocalDatabase {
     switch (tableName) {
       case 'surahs':
         return findSurahById(id);
+      case 'paras':
+        return findParaById(id);
       case 'books':
         return findBookById(id);
       case 'chapters':
@@ -99,6 +104,18 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<Surah> findSurahById(String id) {
     return (select(surahs)..where((t) => t.id.equals(id))).getSingle();
+  }
+
+  Future<List<Para>> queryPara(Map params) {
+    var query = select(paras);
+    query.orderBy([
+      (t) => OrderingTerm(expression: t.position),
+    ]);
+    return query.get();
+  }
+
+  Future<Para> findParaById(String id) {
+    return (select(paras)..where((t) => t.id.equals(id))).getSingle();
   }
 
   Future<List<Book>> queryBook(Map params) {

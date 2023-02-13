@@ -414,6 +414,354 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, Surah> {
   }
 }
 
+class Para extends DataClass implements Insertable<Para> {
+  final String id;
+  final String title;
+  final String titleBn;
+  final String slug;
+  final int totalAyat;
+  final int totalRuku;
+  final int position;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const Para(
+      {required this.id,
+      required this.title,
+      required this.titleBn,
+      required this.slug,
+      required this.totalAyat,
+      required this.totalRuku,
+      required this.position,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    map['title_bn'] = Variable<String>(titleBn);
+    map['slug'] = Variable<String>(slug);
+    map['total_ayat'] = Variable<int>(totalAyat);
+    map['total_ruku'] = Variable<int>(totalRuku);
+    map['position'] = Variable<int>(position);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  factory Para.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Para(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      titleBn: serializer.fromJson<String>(json['titleBn']),
+      slug: serializer.fromJson<String>(json['slug']),
+      totalAyat: serializer.fromJson<int>(json['totalAyat']),
+      totalRuku: serializer.fromJson<int>(json['totalRuku']),
+      position: serializer.fromJson<int>(json['position']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'titleBn': serializer.toJson<String>(titleBn),
+      'slug': serializer.toJson<String>(slug),
+      'totalAyat': serializer.toJson<int>(totalAyat),
+      'totalRuku': serializer.toJson<int>(totalRuku),
+      'position': serializer.toJson<int>(position),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  Para copyWith(
+          {String? id,
+          String? title,
+          String? titleBn,
+          String? slug,
+          int? totalAyat,
+          int? totalRuku,
+          int? position,
+          DateTime? createdAt,
+          DateTime? updatedAt}) =>
+      Para(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        titleBn: titleBn ?? this.titleBn,
+        slug: slug ?? this.slug,
+        totalAyat: totalAyat ?? this.totalAyat,
+        totalRuku: totalRuku ?? this.totalRuku,
+        position: position ?? this.position,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Para(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('titleBn: $titleBn, ')
+          ..write('slug: $slug, ')
+          ..write('totalAyat: $totalAyat, ')
+          ..write('totalRuku: $totalRuku, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, title, titleBn, slug, totalAyat,
+      totalRuku, position, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Para &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.titleBn == this.titleBn &&
+          other.slug == this.slug &&
+          other.totalAyat == this.totalAyat &&
+          other.totalRuku == this.totalRuku &&
+          other.position == this.position &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ParasCompanion extends UpdateCompanion<Para> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<String> titleBn;
+  final Value<String> slug;
+  final Value<int> totalAyat;
+  final Value<int> totalRuku;
+  final Value<int> position;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const ParasCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.titleBn = const Value.absent(),
+    this.slug = const Value.absent(),
+    this.totalAyat = const Value.absent(),
+    this.totalRuku = const Value.absent(),
+    this.position = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  ParasCompanion.insert({
+    required String id,
+    required String title,
+    required String titleBn,
+    required String slug,
+    required int totalAyat,
+    required int totalRuku,
+    required int position,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  })  : id = Value(id),
+        title = Value(title),
+        titleBn = Value(titleBn),
+        slug = Value(slug),
+        totalAyat = Value(totalAyat),
+        totalRuku = Value(totalRuku),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<Para> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<String>? titleBn,
+    Expression<String>? slug,
+    Expression<int>? totalAyat,
+    Expression<int>? totalRuku,
+    Expression<int>? position,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (titleBn != null) 'title_bn': titleBn,
+      if (slug != null) 'slug': slug,
+      if (totalAyat != null) 'total_ayat': totalAyat,
+      if (totalRuku != null) 'total_ruku': totalRuku,
+      if (position != null) 'position': position,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  ParasCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? title,
+      Value<String>? titleBn,
+      Value<String>? slug,
+      Value<int>? totalAyat,
+      Value<int>? totalRuku,
+      Value<int>? position,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt}) {
+    return ParasCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      titleBn: titleBn ?? this.titleBn,
+      slug: slug ?? this.slug,
+      totalAyat: totalAyat ?? this.totalAyat,
+      totalRuku: totalRuku ?? this.totalRuku,
+      position: position ?? this.position,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (titleBn.present) {
+      map['title_bn'] = Variable<String>(titleBn.value);
+    }
+    if (slug.present) {
+      map['slug'] = Variable<String>(slug.value);
+    }
+    if (totalAyat.present) {
+      map['total_ayat'] = Variable<int>(totalAyat.value);
+    }
+    if (totalRuku.present) {
+      map['total_ruku'] = Variable<int>(totalRuku.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ParasCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('titleBn: $titleBn, ')
+          ..write('slug: $slug, ')
+          ..write('totalAyat: $totalAyat, ')
+          ..write('totalRuku: $totalRuku, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ParasTable extends Paras with TableInfo<$ParasTable, Para> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ParasTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> titleBn = GeneratedColumn<String>(
+      'title_bn', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
+      'slug', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> totalAyat = GeneratedColumn<int>(
+      'total_ayat', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> totalRuku = GeneratedColumn<int>(
+      'total_ruku', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        title,
+        titleBn,
+        slug,
+        totalAyat,
+        totalRuku,
+        position,
+        createdAt,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? 'paras';
+  @override
+  String get actualTableName => 'paras';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Para map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Para(
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      titleBn: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}title_bn'])!,
+      slug: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
+      totalAyat: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}total_ayat'])!,
+      totalRuku: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}total_ruku'])!,
+      position: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.options.types
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.options.types
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $ParasTable createAlias(String alias) {
+    return $ParasTable(attachedDatabase, alias);
+  }
+}
+
 class Book extends DataClass implements Insertable<Book> {
   final String id;
   final String title;
@@ -3180,6 +3528,7 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
 abstract class _$LocalDatabase extends GeneratedDatabase {
   _$LocalDatabase(QueryExecutor e) : super(e);
   late final $SurahsTable surahs = $SurahsTable(this);
+  late final $ParasTable paras = $ParasTable(this);
   late final $BooksTable books = $BooksTable(this);
   late final $ChaptersTable chapters = $ChaptersTable(this);
   late final $SubchaptersTable subchapters = $SubchaptersTable(this);
@@ -3193,6 +3542,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
         surahs,
+        paras,
         books,
         chapters,
         subchapters,
