@@ -43,11 +43,10 @@ import 'package:native_app/models/tafseer_qitab.dart';
 import 'package:native_app/models/tafseer.dart';
 
 // ignore: prefer_function_declarations_over_variables
-ConfigureRepositoryLocalStorage configureRepositoryLocalStorage = ({
-  FutureFn<String>? baseDirFn,
-  List<int>? encryptionKey,
-  LocalStorageClearStrategy? clear,
-}) {
+ConfigureRepositoryLocalStorage configureRepositoryLocalStorage = (
+    {FutureFn<String>? baseDirFn,
+    List<int>? encryptionKey,
+    LocalStorageClearStrategy? clear}) {
   if (!kIsWeb) {
     baseDirFn ??=
         () => getApplicationDocumentsDirectory().then((dir) => dir.path);
