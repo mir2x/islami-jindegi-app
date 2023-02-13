@@ -14,4 +14,7 @@ class Books extends Table {
   TextColumn get publishedAt => text().nullable()();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
 }

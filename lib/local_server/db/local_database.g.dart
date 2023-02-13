@@ -446,7 +446,7 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
   @override
   String get actualTableName => 'books';
   @override
-  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Book map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
@@ -493,13 +493,15 @@ class Chapter extends DataClass implements Insertable<Chapter> {
   final int position;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String bookId;
   const Chapter(
       {required this.id,
       required this.title,
       this.body,
       required this.position,
       required this.createdAt,
-      required this.updatedAt});
+      required this.updatedAt,
+      required this.bookId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -511,6 +513,7 @@ class Chapter extends DataClass implements Insertable<Chapter> {
     map['position'] = Variable<int>(position);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['book_id'] = Variable<String>(bookId);
     return map;
   }
 
@@ -524,6 +527,7 @@ class Chapter extends DataClass implements Insertable<Chapter> {
       position: serializer.fromJson<int>(json['position']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      bookId: serializer.fromJson<String>(json['bookId']),
     );
   }
   @override
@@ -536,6 +540,7 @@ class Chapter extends DataClass implements Insertable<Chapter> {
       'position': serializer.toJson<int>(position),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'bookId': serializer.toJson<String>(bookId),
     };
   }
 
@@ -545,7 +550,8 @@ class Chapter extends DataClass implements Insertable<Chapter> {
           Value<String?> body = const Value.absent(),
           int? position,
           DateTime? createdAt,
-          DateTime? updatedAt}) =>
+          DateTime? updatedAt,
+          String? bookId}) =>
       Chapter(
         id: id ?? this.id,
         title: title ?? this.title,
@@ -553,6 +559,7 @@ class Chapter extends DataClass implements Insertable<Chapter> {
         position: position ?? this.position,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
+        bookId: bookId ?? this.bookId,
       );
   @override
   String toString() {
@@ -562,14 +569,15 @@ class Chapter extends DataClass implements Insertable<Chapter> {
           ..write('body: $body, ')
           ..write('position: $position, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('bookId: $bookId')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode =>
-      Object.hash(id, title, body, position, createdAt, updatedAt);
+      Object.hash(id, title, body, position, createdAt, updatedAt, bookId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -579,7 +587,8 @@ class Chapter extends DataClass implements Insertable<Chapter> {
           other.body == this.body &&
           other.position == this.position &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.bookId == this.bookId);
 }
 
 class ChaptersCompanion extends UpdateCompanion<Chapter> {
@@ -589,6 +598,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
   final Value<int> position;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String> bookId;
   const ChaptersCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -596,6 +606,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
     this.position = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.bookId = const Value.absent(),
   });
   ChaptersCompanion.insert({
     required String id,
@@ -604,11 +615,13 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
     required int position,
     required DateTime createdAt,
     required DateTime updatedAt,
+    required String bookId,
   })  : id = Value(id),
         title = Value(title),
         position = Value(position),
         createdAt = Value(createdAt),
-        updatedAt = Value(updatedAt);
+        updatedAt = Value(updatedAt),
+        bookId = Value(bookId);
   static Insertable<Chapter> custom({
     Expression<String>? id,
     Expression<String>? title,
@@ -616,6 +629,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
     Expression<int>? position,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? bookId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -624,6 +638,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
       if (position != null) 'position': position,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (bookId != null) 'book_id': bookId,
     });
   }
 
@@ -633,7 +648,8 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
       Value<String?>? body,
       Value<int>? position,
       Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt}) {
+      Value<DateTime>? updatedAt,
+      Value<String>? bookId}) {
     return ChaptersCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -641,6 +657,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
       position: position ?? this.position,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      bookId: bookId ?? this.bookId,
     );
   }
 
@@ -665,6 +682,9 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (bookId.present) {
+      map['book_id'] = Variable<String>(bookId.value);
+    }
     return map;
   }
 
@@ -676,7 +696,8 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
           ..write('body: $body, ')
           ..write('position: $position, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('bookId: $bookId')
           ..write(')'))
         .toString();
   }
@@ -712,14 +733,20 @@ class $ChaptersTable extends Chapters with TableInfo<$ChaptersTable, Chapter> {
       'updated_at', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
   @override
+  late final GeneratedColumn<String> bookId = GeneratedColumn<String>(
+      'book_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: 'REFERENCES books (id)');
+  @override
   List<GeneratedColumn> get $columns =>
-      [id, title, body, position, createdAt, updatedAt];
+      [id, title, body, position, createdAt, updatedAt, bookId];
   @override
   String get aliasedName => _alias ?? 'chapters';
   @override
   String get actualTableName => 'chapters';
   @override
-  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Chapter map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
@@ -736,6 +763,8 @@ class $ChaptersTable extends Chapters with TableInfo<$ChaptersTable, Chapter> {
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.options.types
           .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+      bookId: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}book_id'])!,
     );
   }
 
@@ -1184,7 +1213,7 @@ class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
   @override
   String get actualTableName => 'masails';
   @override
-  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Masail map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';

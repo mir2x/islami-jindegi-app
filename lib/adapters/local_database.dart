@@ -20,7 +20,7 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
 
     if (connectivityResult == ConnectivityResult.none) {
       final database = ref.read(localDatabaseProvider);
-      final resources = await database.query(internalType);
+      final resources = await database.query(internalType, params: params);
 
       final body = resources.map((m) {
         var resourceMap = json.decode(m.toJsonString());

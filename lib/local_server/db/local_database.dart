@@ -34,12 +34,14 @@ class LocalDatabase extends _$LocalDatabase {
   @override
   int get schemaVersion => 1;
 
-  Future<List> query(String tableName) {
+  Future<List> query(String tableName, {params = const {}}) {
     switch (tableName) {
       case 'books':
-        return queryBook();
+        return queryBook(params);
+      case 'chapters':
+        return queryChapter(params);
       case 'masails':
-        return queryMasail();
+        return queryMasail(params);
       default:
         return Future.value([]);
     }
@@ -58,7 +60,7 @@ class LocalDatabase extends _$LocalDatabase {
     }
   }
 
-  Future<List<Book>> queryBook() {
+  Future<List<Book>> queryBook(Map params) {
     return (select(books)
           ..orderBy([
             (t) => OrderingTerm(
@@ -73,11 +75,18 @@ class LocalDatabase extends _$LocalDatabase {
     return (select(books)..where((t) => t.id.equals(id))).getSingle();
   }
 
+  Future<List<Chapter>> queryChapter(Map params) {
+    return (select(chapters)
+          ..where((t) => t.bookId.equals(params['bookId']))
+          ..orderBy([(t) => OrderingTerm(expression: t.position)]))
+        .get();
+  }
+
   Future<Chapter> findChapterById(String id) {
     return (select(chapters)..where((t) => t.id.equals(id))).getSingle();
   }
 
-  Future<List<Masail>> queryMasail() {
+  Future<List<Masail>> queryMasail(Map params) {
     return select(masails).get();
   }
 
