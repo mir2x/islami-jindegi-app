@@ -7,6 +7,413 @@ part of 'local_database.dart';
 // **************************************************************************
 
 // ignore_for_file: type=lint
+class Surah extends DataClass implements Insertable<Surah> {
+  final String id;
+  final String title;
+  final String titleBn;
+  final String slug;
+  final String? excerpt;
+  final int totalAyat;
+  final int totalRuku;
+  final String? introduction;
+  final int position;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const Surah(
+      {required this.id,
+      required this.title,
+      required this.titleBn,
+      required this.slug,
+      this.excerpt,
+      required this.totalAyat,
+      required this.totalRuku,
+      this.introduction,
+      required this.position,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    map['title_bn'] = Variable<String>(titleBn);
+    map['slug'] = Variable<String>(slug);
+    if (!nullToAbsent || excerpt != null) {
+      map['excerpt'] = Variable<String>(excerpt);
+    }
+    map['total_ayat'] = Variable<int>(totalAyat);
+    map['total_ruku'] = Variable<int>(totalRuku);
+    if (!nullToAbsent || introduction != null) {
+      map['introduction'] = Variable<String>(introduction);
+    }
+    map['position'] = Variable<int>(position);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  factory Surah.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Surah(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      titleBn: serializer.fromJson<String>(json['titleBn']),
+      slug: serializer.fromJson<String>(json['slug']),
+      excerpt: serializer.fromJson<String?>(json['excerpt']),
+      totalAyat: serializer.fromJson<int>(json['totalAyat']),
+      totalRuku: serializer.fromJson<int>(json['totalRuku']),
+      introduction: serializer.fromJson<String?>(json['introduction']),
+      position: serializer.fromJson<int>(json['position']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'titleBn': serializer.toJson<String>(titleBn),
+      'slug': serializer.toJson<String>(slug),
+      'excerpt': serializer.toJson<String?>(excerpt),
+      'totalAyat': serializer.toJson<int>(totalAyat),
+      'totalRuku': serializer.toJson<int>(totalRuku),
+      'introduction': serializer.toJson<String?>(introduction),
+      'position': serializer.toJson<int>(position),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  Surah copyWith(
+          {String? id,
+          String? title,
+          String? titleBn,
+          String? slug,
+          Value<String?> excerpt = const Value.absent(),
+          int? totalAyat,
+          int? totalRuku,
+          Value<String?> introduction = const Value.absent(),
+          int? position,
+          DateTime? createdAt,
+          DateTime? updatedAt}) =>
+      Surah(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        titleBn: titleBn ?? this.titleBn,
+        slug: slug ?? this.slug,
+        excerpt: excerpt.present ? excerpt.value : this.excerpt,
+        totalAyat: totalAyat ?? this.totalAyat,
+        totalRuku: totalRuku ?? this.totalRuku,
+        introduction:
+            introduction.present ? introduction.value : this.introduction,
+        position: position ?? this.position,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Surah(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('titleBn: $titleBn, ')
+          ..write('slug: $slug, ')
+          ..write('excerpt: $excerpt, ')
+          ..write('totalAyat: $totalAyat, ')
+          ..write('totalRuku: $totalRuku, ')
+          ..write('introduction: $introduction, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, title, titleBn, slug, excerpt, totalAyat,
+      totalRuku, introduction, position, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Surah &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.titleBn == this.titleBn &&
+          other.slug == this.slug &&
+          other.excerpt == this.excerpt &&
+          other.totalAyat == this.totalAyat &&
+          other.totalRuku == this.totalRuku &&
+          other.introduction == this.introduction &&
+          other.position == this.position &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class SurahsCompanion extends UpdateCompanion<Surah> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<String> titleBn;
+  final Value<String> slug;
+  final Value<String?> excerpt;
+  final Value<int> totalAyat;
+  final Value<int> totalRuku;
+  final Value<String?> introduction;
+  final Value<int> position;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const SurahsCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.titleBn = const Value.absent(),
+    this.slug = const Value.absent(),
+    this.excerpt = const Value.absent(),
+    this.totalAyat = const Value.absent(),
+    this.totalRuku = const Value.absent(),
+    this.introduction = const Value.absent(),
+    this.position = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  SurahsCompanion.insert({
+    required String id,
+    required String title,
+    required String titleBn,
+    required String slug,
+    this.excerpt = const Value.absent(),
+    required int totalAyat,
+    required int totalRuku,
+    this.introduction = const Value.absent(),
+    required int position,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  })  : id = Value(id),
+        title = Value(title),
+        titleBn = Value(titleBn),
+        slug = Value(slug),
+        totalAyat = Value(totalAyat),
+        totalRuku = Value(totalRuku),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<Surah> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<String>? titleBn,
+    Expression<String>? slug,
+    Expression<String>? excerpt,
+    Expression<int>? totalAyat,
+    Expression<int>? totalRuku,
+    Expression<String>? introduction,
+    Expression<int>? position,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (titleBn != null) 'title_bn': titleBn,
+      if (slug != null) 'slug': slug,
+      if (excerpt != null) 'excerpt': excerpt,
+      if (totalAyat != null) 'total_ayat': totalAyat,
+      if (totalRuku != null) 'total_ruku': totalRuku,
+      if (introduction != null) 'introduction': introduction,
+      if (position != null) 'position': position,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  SurahsCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? title,
+      Value<String>? titleBn,
+      Value<String>? slug,
+      Value<String?>? excerpt,
+      Value<int>? totalAyat,
+      Value<int>? totalRuku,
+      Value<String?>? introduction,
+      Value<int>? position,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt}) {
+    return SurahsCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      titleBn: titleBn ?? this.titleBn,
+      slug: slug ?? this.slug,
+      excerpt: excerpt ?? this.excerpt,
+      totalAyat: totalAyat ?? this.totalAyat,
+      totalRuku: totalRuku ?? this.totalRuku,
+      introduction: introduction ?? this.introduction,
+      position: position ?? this.position,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (titleBn.present) {
+      map['title_bn'] = Variable<String>(titleBn.value);
+    }
+    if (slug.present) {
+      map['slug'] = Variable<String>(slug.value);
+    }
+    if (excerpt.present) {
+      map['excerpt'] = Variable<String>(excerpt.value);
+    }
+    if (totalAyat.present) {
+      map['total_ayat'] = Variable<int>(totalAyat.value);
+    }
+    if (totalRuku.present) {
+      map['total_ruku'] = Variable<int>(totalRuku.value);
+    }
+    if (introduction.present) {
+      map['introduction'] = Variable<String>(introduction.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SurahsCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('titleBn: $titleBn, ')
+          ..write('slug: $slug, ')
+          ..write('excerpt: $excerpt, ')
+          ..write('totalAyat: $totalAyat, ')
+          ..write('totalRuku: $totalRuku, ')
+          ..write('introduction: $introduction, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SurahsTable extends Surahs with TableInfo<$SurahsTable, Surah> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SurahsTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> titleBn = GeneratedColumn<String>(
+      'title_bn', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
+      'slug', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
+      'excerpt', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> totalAyat = GeneratedColumn<int>(
+      'total_ayat', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> totalRuku = GeneratedColumn<int>(
+      'total_ruku', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> introduction = GeneratedColumn<String>(
+      'introduction', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        title,
+        titleBn,
+        slug,
+        excerpt,
+        totalAyat,
+        totalRuku,
+        introduction,
+        position,
+        createdAt,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? 'surahs';
+  @override
+  String get actualTableName => 'surahs';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Surah map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Surah(
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      titleBn: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}title_bn'])!,
+      slug: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
+      excerpt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
+      totalAyat: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}total_ayat'])!,
+      totalRuku: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}total_ruku'])!,
+      introduction: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}introduction']),
+      position: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.options.types
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.options.types
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $SurahsTable createAlias(String alias) {
+    return $SurahsTable(attachedDatabase, alias);
+  }
+}
+
 class Book extends DataClass implements Insertable<Book> {
   final String id;
   final String title;
@@ -2772,6 +3179,7 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
 
 abstract class _$LocalDatabase extends GeneratedDatabase {
   _$LocalDatabase(QueryExecutor e) : super(e);
+  late final $SurahsTable surahs = $SurahsTable(this);
   late final $BooksTable books = $BooksTable(this);
   late final $ChaptersTable chapters = $ChaptersTable(this);
   late final $SubchaptersTable subchapters = $SubchaptersTable(this);
@@ -2783,8 +3191,16 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   Iterable<TableInfo<Table, dynamic>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [books, chapters, subchapters, malfuzats, masails, duas, articles];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+        surahs,
+        books,
+        chapters,
+        subchapters,
+        malfuzats,
+        masails,
+        duas,
+        articles
+      ];
   @override
   DriftDatabaseOptions get options =>
       const DriftDatabaseOptions(storeDateTimeAsText: true);

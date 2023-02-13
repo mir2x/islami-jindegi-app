@@ -42,7 +42,10 @@ final _surahsFinders = <String, dynamic>{};
 class $SurahHiveLocalAdapter = HiveLocalAdapter<Surah> with $SurahLocalAdapter;
 
 class $SurahRemoteAdapter = RemoteAdapter<Surah>
-    with JSONAPIAdapter<Surah>, ApplicationAdapter<Surah>;
+    with
+        JSONAPIAdapter<Surah>,
+        LocalDatabaseAdapter<Surah>,
+        ApplicationAdapter<Surah>;
 
 final internalSurahsRemoteAdapterProvider = Provider<RemoteAdapter<Surah>>(
     (ref) => $SurahRemoteAdapter(
@@ -54,6 +57,8 @@ final surahsRepositoryProvider =
 extension SurahDataRepositoryX on Repository<Surah> {
   JSONAPIAdapter<Surah> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<Surah>;
+  LocalDatabaseAdapter<Surah> get localDatabaseAdapter =>
+      remoteAdapter as LocalDatabaseAdapter<Surah>;
   ApplicationAdapter<Surah> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<Surah>;
 }

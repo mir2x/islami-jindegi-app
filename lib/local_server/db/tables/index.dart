@@ -1,3 +1,4 @@
+export 'surahs.dart';
 export 'books.dart';
 export 'chapters.dart';
 export 'subchapters.dart';
