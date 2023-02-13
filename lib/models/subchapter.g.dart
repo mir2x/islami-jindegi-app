@@ -43,7 +43,10 @@ class $SubchapterHiveLocalAdapter = HiveLocalAdapter<Subchapter>
     with $SubchapterLocalAdapter;
 
 class $SubchapterRemoteAdapter = RemoteAdapter<Subchapter>
-    with JSONAPIAdapter<Subchapter>, ApplicationAdapter<Subchapter>;
+    with
+        JSONAPIAdapter<Subchapter>,
+        LocalDatabaseAdapter<Subchapter>,
+        ApplicationAdapter<Subchapter>;
 
 final internalSubchaptersRemoteAdapterProvider =
     Provider<RemoteAdapter<Subchapter>>((ref) => $SubchapterRemoteAdapter(
@@ -55,6 +58,8 @@ final subchaptersRepositoryProvider =
 extension SubchapterDataRepositoryX on Repository<Subchapter> {
   JSONAPIAdapter<Subchapter> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<Subchapter>;
+  LocalDatabaseAdapter<Subchapter> get localDatabaseAdapter =>
+      remoteAdapter as LocalDatabaseAdapter<Subchapter>;
   ApplicationAdapter<Subchapter> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<Subchapter>;
 }

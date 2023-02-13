@@ -8,7 +8,7 @@ import 'tables/index.dart';
 
 part 'local_database.g.dart';
 
-@DriftDatabase(tables: [Books, Chapters, Masails])
+@DriftDatabase(tables: [Books, Chapters, Subchapters, Masails])
 class LocalDatabase extends _$LocalDatabase {
   LocalDatabase()
       : super(
@@ -53,6 +53,8 @@ class LocalDatabase extends _$LocalDatabase {
         return findBookById(id);
       case 'chapters':
         return findChapterById(id);
+      case 'subchapters':
+        return findSubchapterById(id);
       case 'masails':
         return findMasailById(id);
       default:
@@ -76,14 +78,18 @@ class LocalDatabase extends _$LocalDatabase {
   }
 
   Future<List<Chapter>> queryChapter(Map params) {
-    return (select(chapters)
-          ..where((t) => t.bookId.equals(params['bookId']))
-          ..orderBy([(t) => OrderingTerm(expression: t.position)]))
-        .get();
+    final query = select(chapters);
+    query.where((t) => t.bookId.equals(params['bookId']));
+    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
+    return query.get();
   }
 
   Future<Chapter> findChapterById(String id) {
     return (select(chapters)..where((t) => t.id.equals(id))).getSingle();
+  }
+
+  Future<Subchapter> findSubchapterById(String id) {
+    return (select(subchapters)..where((t) => t.id.equals(id))).getSingle();
   }
 
   Future<List<Masail>> queryMasail(Map params) {

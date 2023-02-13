@@ -774,6 +774,294 @@ class $ChaptersTable extends Chapters with TableInfo<$ChaptersTable, Chapter> {
   }
 }
 
+class Subchapter extends DataClass implements Insertable<Subchapter> {
+  final String id;
+  final String title;
+  final String body;
+  final int position;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final String chapterId;
+  const Subchapter(
+      {required this.id,
+      required this.title,
+      required this.body,
+      required this.position,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.chapterId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    map['body'] = Variable<String>(body);
+    map['position'] = Variable<int>(position);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['chapter_id'] = Variable<String>(chapterId);
+    return map;
+  }
+
+  factory Subchapter.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Subchapter(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      body: serializer.fromJson<String>(json['body']),
+      position: serializer.fromJson<int>(json['position']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      chapterId: serializer.fromJson<String>(json['chapterId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'body': serializer.toJson<String>(body),
+      'position': serializer.toJson<int>(position),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'chapterId': serializer.toJson<String>(chapterId),
+    };
+  }
+
+  Subchapter copyWith(
+          {String? id,
+          String? title,
+          String? body,
+          int? position,
+          DateTime? createdAt,
+          DateTime? updatedAt,
+          String? chapterId}) =>
+      Subchapter(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        body: body ?? this.body,
+        position: position ?? this.position,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        chapterId: chapterId ?? this.chapterId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Subchapter(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('body: $body, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('chapterId: $chapterId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, title, body, position, createdAt, updatedAt, chapterId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Subchapter &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.body == this.body &&
+          other.position == this.position &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.chapterId == this.chapterId);
+}
+
+class SubchaptersCompanion extends UpdateCompanion<Subchapter> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<String> body;
+  final Value<int> position;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> chapterId;
+  const SubchaptersCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.body = const Value.absent(),
+    this.position = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.chapterId = const Value.absent(),
+  });
+  SubchaptersCompanion.insert({
+    required String id,
+    required String title,
+    required String body,
+    required int position,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String chapterId,
+  })  : id = Value(id),
+        title = Value(title),
+        body = Value(body),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt),
+        chapterId = Value(chapterId);
+  static Insertable<Subchapter> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<String>? body,
+    Expression<int>? position,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? chapterId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (body != null) 'body': body,
+      if (position != null) 'position': position,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (chapterId != null) 'chapter_id': chapterId,
+    });
+  }
+
+  SubchaptersCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? title,
+      Value<String>? body,
+      Value<int>? position,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt,
+      Value<String>? chapterId}) {
+    return SubchaptersCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      body: body ?? this.body,
+      position: position ?? this.position,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      chapterId: chapterId ?? this.chapterId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (chapterId.present) {
+      map['chapter_id'] = Variable<String>(chapterId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SubchaptersCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('body: $body, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('chapterId: $chapterId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SubchaptersTable extends Subchapters
+    with TableInfo<$SubchaptersTable, Subchapter> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SubchaptersTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+      'body', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> chapterId = GeneratedColumn<String>(
+      'chapter_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: 'REFERENCES chapters (id)');
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, title, body, position, createdAt, updatedAt, chapterId];
+  @override
+  String get aliasedName => _alias ?? 'subchapters';
+  @override
+  String get actualTableName => 'subchapters';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Subchapter map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Subchapter(
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      body: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}body'])!,
+      position: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.options.types
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.options.types
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+      chapterId: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}chapter_id'])!,
+    );
+  }
+
+  @override
+  $SubchaptersTable createAlias(String alias) {
+    return $SubchaptersTable(attachedDatabase, alias);
+  }
+}
+
 class Masail extends DataClass implements Insertable<Masail> {
   final String id;
   final String title;
@@ -1257,13 +1545,14 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   _$LocalDatabase(QueryExecutor e) : super(e);
   late final $BooksTable books = $BooksTable(this);
   late final $ChaptersTable chapters = $ChaptersTable(this);
+  late final $SubchaptersTable subchapters = $SubchaptersTable(this);
   late final $MasailsTable masails = $MasailsTable(this);
   @override
   Iterable<TableInfo<Table, dynamic>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [books, chapters, masails];
+      [books, chapters, subchapters, masails];
   @override
   DriftDatabaseOptions get options =>
       const DriftDatabaseOptions(storeDateTimeAsText: true);
