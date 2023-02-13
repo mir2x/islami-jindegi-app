@@ -14,8 +14,9 @@ part 'local_database.g.dart';
     Chapters,
     Subchapters,
     Malfuzats,
-    Articles,
     Masails,
+    Duas,
+    Articles,
   ],
 )
 class LocalDatabase extends _$LocalDatabase {
@@ -51,10 +52,12 @@ class LocalDatabase extends _$LocalDatabase {
         return queryChapter(params);
       case 'malfuzats':
         return queryMalfuzat(params);
-      case 'articles':
-        return queryArticle(params);
       case 'masails':
         return queryMasail(params);
+      case 'duas':
+        return queryDua(params);
+      case 'articles':
+        return queryArticle(params);
       default:
         return Future.value([]);
     }
@@ -70,10 +73,12 @@ class LocalDatabase extends _$LocalDatabase {
         return findSubchapterById(id);
       case 'malfuzats':
         return findMalfuzatById(id);
-      case 'articles':
-        return findArticleById(id);
       case 'masails':
         return findMasailById(id);
+      case 'duas':
+        return findDuaById(id);
+      case 'articles':
+        return findArticleById(id);
       default:
         return null;
     }
@@ -118,6 +123,26 @@ class LocalDatabase extends _$LocalDatabase {
     return (select(malfuzats)..where((t) => t.id.equals(id))).getSingle();
   }
 
+  Future<List<Masail>> queryMasail(Map params) {
+    return select(masails).get();
+  }
+
+  Future<Masail> findMasailById(String id) {
+    return (select(masails)..where((t) => t.id.equals(id))).getSingle();
+  }
+
+  Future<List<Dua>> queryDua(Map params) {
+    var query = select(duas);
+    query.orderBy([
+      (t) => OrderingTerm(expression: t.position),
+    ]);
+    return query.get();
+  }
+
+  Future<Dua> findDuaById(String id) {
+    return (select(duas)..where((t) => t.id.equals(id))).getSingle();
+  }
+
   Future<List<Article>> queryArticle(Map params) {
     var query = select(articles);
     query.orderBy([
@@ -128,13 +153,5 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<Article> findArticleById(String id) {
     return (select(articles)..where((t) => t.id.equals(id))).getSingle();
-  }
-
-  Future<List<Masail>> queryMasail(Map params) {
-    return select(masails).get();
-  }
-
-  Future<Masail> findMasailById(String id) {
-    return (select(masails)..where((t) => t.id.equals(id))).getSingle();
   }
 }

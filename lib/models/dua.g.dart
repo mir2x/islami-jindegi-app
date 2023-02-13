@@ -33,7 +33,10 @@ final _duasFinders = <String, dynamic>{};
 class $DuaHiveLocalAdapter = HiveLocalAdapter<Dua> with $DuaLocalAdapter;
 
 class $DuaRemoteAdapter = RemoteAdapter<Dua>
-    with JSONAPIAdapter<Dua>, ApplicationAdapter<Dua>;
+    with
+        JSONAPIAdapter<Dua>,
+        LocalDatabaseAdapter<Dua>,
+        ApplicationAdapter<Dua>;
 
 final internalDuasRemoteAdapterProvider = Provider<RemoteAdapter<Dua>>((ref) =>
     $DuaRemoteAdapter($DuaHiveLocalAdapter(ref), InternalHolder(_duasFinders)));
@@ -44,6 +47,8 @@ final duasRepositoryProvider =
 extension DuaDataRepositoryX on Repository<Dua> {
   JSONAPIAdapter<Dua> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<Dua>;
+  LocalDatabaseAdapter<Dua> get localDatabaseAdapter =>
+      remoteAdapter as LocalDatabaseAdapter<Dua>;
   ApplicationAdapter<Dua> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<Dua>;
 }
