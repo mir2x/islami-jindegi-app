@@ -46,7 +46,16 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
       final deserialized = await deserialize(response);
       return deserialized.models;
     } else {
-      return super.findAll();
+      return super.findAll(
+        remote: remote,
+        background: background,
+        params: params,
+        headers: headers,
+        syncLocal: syncLocal,
+        onSuccess: onSuccess,
+        onError: onError,
+        label: label,
+      );
     }
   }
 
@@ -88,7 +97,16 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
       final deserialized = await deserialize(response);
       return deserialized.model;
     } else {
-      return super.findOne(id);
+      return super.findOne(
+        id,
+        remote: remote,
+        background: background,
+        params: params,
+        headers: headers,
+        onSuccess: onSuccess,
+        onError: onError,
+        label: label,
+      );
     }
   }
 }
