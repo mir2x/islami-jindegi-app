@@ -10,8 +10,8 @@ class Surahs extends Table {
   IntColumn get totalRuku => integer()();
   TextColumn get introduction => text().nullable()();
   IntColumn get position => integer()();
-  DateTimeColumn get createdAt => dateTime()();
-  DateTimeColumn get updatedAt => dateTime()();
+  TextColumn get createdAt => text()();
+  TextColumn get updatedAt => text()();
 
   @override
   Set<Column> get primaryKey => {id};

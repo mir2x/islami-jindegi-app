@@ -9,9 +9,9 @@ class Articles extends Table {
   TextColumn get language => text()();
   TextColumn get documentData => text().nullable()();
   IntColumn get position => integer()();
-  DateTimeColumn get publishedAt => dateTime().nullable()();
-  DateTimeColumn get createdAt => dateTime()();
-  DateTimeColumn get updatedAt => dateTime()();
+  TextColumn get publishedAt => text().nullable()();
+  TextColumn get createdAt => text()();
+  TextColumn get updatedAt => text()();
 
   @override
   Set<Column> get primaryKey => {id};

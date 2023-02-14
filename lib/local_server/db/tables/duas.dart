@@ -9,8 +9,8 @@ class Duas extends Table {
   TextColumn get audioData => text().nullable()();
   TextColumn get documentData => text().nullable()();
   IntColumn get position => integer()();
-  DateTimeColumn get createdAt => dateTime()();
-  DateTimeColumn get updatedAt => dateTime()();
+  TextColumn get createdAt => text()();
+  TextColumn get updatedAt => text()();
 
   @override
   Set<Column> get primaryKey => {id};

@@ -6,8 +6,8 @@ class Subchapters extends Table {
   TextColumn get title => text()();
   TextColumn get body => text()();
   IntColumn get position => integer()();
-  DateTimeColumn get createdAt => dateTime()();
-  DateTimeColumn get updatedAt => dateTime()();
+  TextColumn get createdAt => text()();
+  TextColumn get updatedAt => text()();
 
   TextColumn get chapterId => text().references(Chapters, #id)();
 

@@ -6,8 +6,8 @@ class Chapters extends Table {
   TextColumn get title => text()();
   TextColumn get body => text().nullable()();
   IntColumn get position => integer()();
-  DateTimeColumn get createdAt => dateTime()();
-  DateTimeColumn get updatedAt => dateTime()();
+  TextColumn get createdAt => text()();
+  TextColumn get updatedAt => text()();
 
   TextColumn get bookId => text().references(Books, #id)();
 

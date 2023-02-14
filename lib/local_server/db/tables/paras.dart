@@ -8,8 +8,8 @@ class Paras extends Table {
   IntColumn get totalAyat => integer()();
   IntColumn get totalRuku => integer()();
   IntColumn get position => integer()();
-  DateTimeColumn get createdAt => dateTime()();
-  DateTimeColumn get updatedAt => dateTime()();
+  TextColumn get createdAt => text()();
+  TextColumn get updatedAt => text()();
 
   @override
   Set<Column> get primaryKey => {id};

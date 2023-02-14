@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:flutter_data/flutter_data.dart';
-import 'package:native_app/providers/local_database.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:json_api/document.dart';
+import 'package:recase/recase.dart';
+import 'package:native_app/providers/local_database.dart';
 
 mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
   @override
@@ -22,13 +23,15 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
       final database = ref.read(localDatabaseProvider);
       final resources = await database.query(internalType, params: params);
 
-      final body = resources.map((m) {
-        var resourceMap = json.decode(m.toJsonString());
+      final body = resources.map((item) {
+        var resourceMap = json.decode(json.encode(item));
 
         final id = resourceMap.remove('id');
 
         // attributes
-        Map<String, dynamic> attributes = Map.from(resourceMap);
+        Map<String, Object?> attributes = resourceMap.map<String, Object?>(
+          (k, v) => MapEntry<String, Object?>(ReCase(k).paramCase, v),
+        );
 
         // assemble type, id, attributes, relationships in `Resource`
         final resource = Resource(internalType, id.toString());
@@ -76,12 +79,14 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
       final database = ref.read(localDatabaseProvider);
       final resource = await database.findById(internalType, id.toString());
 
-      var resourceMap = json.decode(resource.toJsonString());
+      var resourceMap = json.decode(json.encode(resource));
 
       final idValue = resourceMap.remove('id');
 
       // attributes
-      Map<String, dynamic> attributes = Map.from(resourceMap);
+      Map<String, Object?> attributes = resourceMap.map<String, Object?>(
+        (k, v) => MapEntry<String, Object?>(ReCase(k).paramCase, v),
+      );
 
       // assemble type, id, attributes, relationships in `Resource`
       final newResource = NewResource(internalType, idValue.toString());

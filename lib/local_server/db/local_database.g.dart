@@ -17,8 +17,8 @@ class Surah extends DataClass implements Insertable<Surah> {
   final int totalRuku;
   final String? introduction;
   final int position;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String createdAt;
+  final String updatedAt;
   const Surah(
       {required this.id,
       required this.title,
@@ -47,8 +47,8 @@ class Surah extends DataClass implements Insertable<Surah> {
       map['introduction'] = Variable<String>(introduction);
     }
     map['position'] = Variable<int>(position);
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
     return map;
   }
 
@@ -65,8 +65,8 @@ class Surah extends DataClass implements Insertable<Surah> {
       totalRuku: serializer.fromJson<int>(json['totalRuku']),
       introduction: serializer.fromJson<String?>(json['introduction']),
       position: serializer.fromJson<int>(json['position']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
     );
   }
   @override
@@ -82,8 +82,8 @@ class Surah extends DataClass implements Insertable<Surah> {
       'totalRuku': serializer.toJson<int>(totalRuku),
       'introduction': serializer.toJson<String?>(introduction),
       'position': serializer.toJson<int>(position),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
     };
   }
 
@@ -97,8 +97,8 @@ class Surah extends DataClass implements Insertable<Surah> {
           int? totalRuku,
           Value<String?> introduction = const Value.absent(),
           int? position,
-          DateTime? createdAt,
-          DateTime? updatedAt}) =>
+          String? createdAt,
+          String? updatedAt}) =>
       Surah(
         id: id ?? this.id,
         title: title ?? this.title,
@@ -161,8 +161,8 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
   final Value<int> totalRuku;
   final Value<String?> introduction;
   final Value<int> position;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
   const SurahsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -186,8 +186,8 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
     required int totalRuku,
     this.introduction = const Value.absent(),
     required int position,
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    required String createdAt,
+    required String updatedAt,
   })  : id = Value(id),
         title = Value(title),
         titleBn = Value(titleBn),
@@ -207,8 +207,8 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
     Expression<int>? totalRuku,
     Expression<String>? introduction,
     Expression<int>? position,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -235,8 +235,8 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
       Value<int>? totalRuku,
       Value<String?>? introduction,
       Value<int>? position,
-      Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt}) {
+      Value<String>? createdAt,
+      Value<String>? updatedAt}) {
     return SurahsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -283,10 +283,10 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
       map['position'] = Variable<int>(position.value);
     }
     if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
+      map['created_at'] = Variable<String>(createdAt.value);
     }
     if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+      map['updated_at'] = Variable<String>(updatedAt.value);
     }
     return map;
   }
@@ -352,13 +352,13 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, Surah> {
       'position', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
       'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -402,9 +402,9 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, Surah> {
       position: attachedDatabase.options.types
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
       createdAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
     );
   }
 
@@ -422,8 +422,8 @@ class Para extends DataClass implements Insertable<Para> {
   final int totalAyat;
   final int totalRuku;
   final int position;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String createdAt;
+  final String updatedAt;
   const Para(
       {required this.id,
       required this.title,
@@ -444,8 +444,8 @@ class Para extends DataClass implements Insertable<Para> {
     map['total_ayat'] = Variable<int>(totalAyat);
     map['total_ruku'] = Variable<int>(totalRuku);
     map['position'] = Variable<int>(position);
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
     return map;
   }
 
@@ -460,8 +460,8 @@ class Para extends DataClass implements Insertable<Para> {
       totalAyat: serializer.fromJson<int>(json['totalAyat']),
       totalRuku: serializer.fromJson<int>(json['totalRuku']),
       position: serializer.fromJson<int>(json['position']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
     );
   }
   @override
@@ -475,8 +475,8 @@ class Para extends DataClass implements Insertable<Para> {
       'totalAyat': serializer.toJson<int>(totalAyat),
       'totalRuku': serializer.toJson<int>(totalRuku),
       'position': serializer.toJson<int>(position),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
     };
   }
 
@@ -488,8 +488,8 @@ class Para extends DataClass implements Insertable<Para> {
           int? totalAyat,
           int? totalRuku,
           int? position,
-          DateTime? createdAt,
-          DateTime? updatedAt}) =>
+          String? createdAt,
+          String? updatedAt}) =>
       Para(
         id: id ?? this.id,
         title: title ?? this.title,
@@ -543,8 +543,8 @@ class ParasCompanion extends UpdateCompanion<Para> {
   final Value<int> totalAyat;
   final Value<int> totalRuku;
   final Value<int> position;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
   const ParasCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -564,8 +564,8 @@ class ParasCompanion extends UpdateCompanion<Para> {
     required int totalAyat,
     required int totalRuku,
     required int position,
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    required String createdAt,
+    required String updatedAt,
   })  : id = Value(id),
         title = Value(title),
         titleBn = Value(titleBn),
@@ -583,8 +583,8 @@ class ParasCompanion extends UpdateCompanion<Para> {
     Expression<int>? totalAyat,
     Expression<int>? totalRuku,
     Expression<int>? position,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -607,8 +607,8 @@ class ParasCompanion extends UpdateCompanion<Para> {
       Value<int>? totalAyat,
       Value<int>? totalRuku,
       Value<int>? position,
-      Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt}) {
+      Value<String>? createdAt,
+      Value<String>? updatedAt}) {
     return ParasCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -647,10 +647,10 @@ class ParasCompanion extends UpdateCompanion<Para> {
       map['position'] = Variable<int>(position.value);
     }
     if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
+      map['created_at'] = Variable<String>(createdAt.value);
     }
     if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+      map['updated_at'] = Variable<String>(updatedAt.value);
     }
     return map;
   }
@@ -706,13 +706,13 @@ class $ParasTable extends Paras with TableInfo<$ParasTable, Para> {
       'position', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
       'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -750,9 +750,9 @@ class $ParasTable extends Paras with TableInfo<$ParasTable, Para> {
       position: attachedDatabase.options.types
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
       createdAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
     );
   }
 
@@ -774,8 +774,8 @@ class Book extends DataClass implements Insertable<Book> {
   final String? documentData;
   final int position;
   final String? publishedAt;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String createdAt;
+  final String updatedAt;
   const Book(
       {required this.id,
       required this.title,
@@ -816,8 +816,8 @@ class Book extends DataClass implements Insertable<Book> {
     if (!nullToAbsent || publishedAt != null) {
       map['published_at'] = Variable<String>(publishedAt);
     }
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
     return map;
   }
 
@@ -836,8 +836,8 @@ class Book extends DataClass implements Insertable<Book> {
       documentData: serializer.fromJson<String?>(json['documentData']),
       position: serializer.fromJson<int>(json['position']),
       publishedAt: serializer.fromJson<String?>(json['publishedAt']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
     );
   }
   @override
@@ -855,8 +855,8 @@ class Book extends DataClass implements Insertable<Book> {
       'documentData': serializer.toJson<String?>(documentData),
       'position': serializer.toJson<int>(position),
       'publishedAt': serializer.toJson<String?>(publishedAt),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
     };
   }
 
@@ -872,8 +872,8 @@ class Book extends DataClass implements Insertable<Book> {
           Value<String?> documentData = const Value.absent(),
           int? position,
           Value<String?> publishedAt = const Value.absent(),
-          DateTime? createdAt,
-          DateTime? updatedAt}) =>
+          String? createdAt,
+          String? updatedAt}) =>
       Book(
         id: id ?? this.id,
         title: title ?? this.title,
@@ -956,8 +956,8 @@ class BooksCompanion extends UpdateCompanion<Book> {
   final Value<String?> documentData;
   final Value<int> position;
   final Value<String?> publishedAt;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
   const BooksCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -985,8 +985,8 @@ class BooksCompanion extends UpdateCompanion<Book> {
     this.documentData = const Value.absent(),
     required int position,
     this.publishedAt = const Value.absent(),
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    required String createdAt,
+    required String updatedAt,
   })  : id = Value(id),
         title = Value(title),
         slug = Value(slug),
@@ -1006,8 +1006,8 @@ class BooksCompanion extends UpdateCompanion<Book> {
     Expression<String>? documentData,
     Expression<int>? position,
     Expression<String>? publishedAt,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1038,8 +1038,8 @@ class BooksCompanion extends UpdateCompanion<Book> {
       Value<String?>? documentData,
       Value<int>? position,
       Value<String?>? publishedAt,
-      Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt}) {
+      Value<String>? createdAt,
+      Value<String>? updatedAt}) {
     return BooksCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -1094,10 +1094,10 @@ class BooksCompanion extends UpdateCompanion<Book> {
       map['published_at'] = Variable<String>(publishedAt.value);
     }
     if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
+      map['created_at'] = Variable<String>(createdAt.value);
     }
     if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+      map['updated_at'] = Variable<String>(updatedAt.value);
     }
     return map;
   }
@@ -1173,13 +1173,13 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
       'published_at', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
       'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -1229,9 +1229,9 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
       publishedAt: attachedDatabase.options.types
           .read(DriftSqlType.string, data['${effectivePrefix}published_at']),
       createdAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
     );
   }
 
@@ -1246,8 +1246,8 @@ class Chapter extends DataClass implements Insertable<Chapter> {
   final String title;
   final String? body;
   final int position;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String createdAt;
+  final String updatedAt;
   final String bookId;
   const Chapter(
       {required this.id,
@@ -1266,8 +1266,8 @@ class Chapter extends DataClass implements Insertable<Chapter> {
       map['body'] = Variable<String>(body);
     }
     map['position'] = Variable<int>(position);
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
     map['book_id'] = Variable<String>(bookId);
     return map;
   }
@@ -1280,8 +1280,8 @@ class Chapter extends DataClass implements Insertable<Chapter> {
       title: serializer.fromJson<String>(json['title']),
       body: serializer.fromJson<String?>(json['body']),
       position: serializer.fromJson<int>(json['position']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
       bookId: serializer.fromJson<String>(json['bookId']),
     );
   }
@@ -1293,8 +1293,8 @@ class Chapter extends DataClass implements Insertable<Chapter> {
       'title': serializer.toJson<String>(title),
       'body': serializer.toJson<String?>(body),
       'position': serializer.toJson<int>(position),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
       'bookId': serializer.toJson<String>(bookId),
     };
   }
@@ -1304,8 +1304,8 @@ class Chapter extends DataClass implements Insertable<Chapter> {
           String? title,
           Value<String?> body = const Value.absent(),
           int? position,
-          DateTime? createdAt,
-          DateTime? updatedAt,
+          String? createdAt,
+          String? updatedAt,
           String? bookId}) =>
       Chapter(
         id: id ?? this.id,
@@ -1351,8 +1351,8 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
   final Value<String> title;
   final Value<String?> body;
   final Value<int> position;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
   final Value<String> bookId;
   const ChaptersCompanion({
     this.id = const Value.absent(),
@@ -1368,8 +1368,8 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
     required String title,
     this.body = const Value.absent(),
     required int position,
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    required String createdAt,
+    required String updatedAt,
     required String bookId,
   })  : id = Value(id),
         title = Value(title),
@@ -1382,8 +1382,8 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
     Expression<String>? title,
     Expression<String>? body,
     Expression<int>? position,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
     Expression<String>? bookId,
   }) {
     return RawValuesInsertable({
@@ -1402,8 +1402,8 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
       Value<String>? title,
       Value<String?>? body,
       Value<int>? position,
-      Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt,
+      Value<String>? createdAt,
+      Value<String>? updatedAt,
       Value<String>? bookId}) {
     return ChaptersCompanion(
       id: id ?? this.id,
@@ -1432,10 +1432,10 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
       map['position'] = Variable<int>(position.value);
     }
     if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
+      map['created_at'] = Variable<String>(createdAt.value);
     }
     if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+      map['updated_at'] = Variable<String>(updatedAt.value);
     }
     if (bookId.present) {
       map['book_id'] = Variable<String>(bookId.value);
@@ -1480,13 +1480,13 @@ class $ChaptersTable extends Chapters with TableInfo<$ChaptersTable, Chapter> {
       'position', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
       'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   late final GeneratedColumn<String> bookId = GeneratedColumn<String>(
       'book_id', aliasedName, false,
@@ -1515,9 +1515,9 @@ class $ChaptersTable extends Chapters with TableInfo<$ChaptersTable, Chapter> {
       position: attachedDatabase.options.types
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
       createdAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
       bookId: attachedDatabase.options.types
           .read(DriftSqlType.string, data['${effectivePrefix}book_id'])!,
     );
@@ -1534,8 +1534,8 @@ class Subchapter extends DataClass implements Insertable<Subchapter> {
   final String title;
   final String body;
   final int position;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String createdAt;
+  final String updatedAt;
   final String chapterId;
   const Subchapter(
       {required this.id,
@@ -1552,8 +1552,8 @@ class Subchapter extends DataClass implements Insertable<Subchapter> {
     map['title'] = Variable<String>(title);
     map['body'] = Variable<String>(body);
     map['position'] = Variable<int>(position);
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
     map['chapter_id'] = Variable<String>(chapterId);
     return map;
   }
@@ -1566,8 +1566,8 @@ class Subchapter extends DataClass implements Insertable<Subchapter> {
       title: serializer.fromJson<String>(json['title']),
       body: serializer.fromJson<String>(json['body']),
       position: serializer.fromJson<int>(json['position']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
       chapterId: serializer.fromJson<String>(json['chapterId']),
     );
   }
@@ -1579,8 +1579,8 @@ class Subchapter extends DataClass implements Insertable<Subchapter> {
       'title': serializer.toJson<String>(title),
       'body': serializer.toJson<String>(body),
       'position': serializer.toJson<int>(position),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
       'chapterId': serializer.toJson<String>(chapterId),
     };
   }
@@ -1590,8 +1590,8 @@ class Subchapter extends DataClass implements Insertable<Subchapter> {
           String? title,
           String? body,
           int? position,
-          DateTime? createdAt,
-          DateTime? updatedAt,
+          String? createdAt,
+          String? updatedAt,
           String? chapterId}) =>
       Subchapter(
         id: id ?? this.id,
@@ -1637,8 +1637,8 @@ class SubchaptersCompanion extends UpdateCompanion<Subchapter> {
   final Value<String> title;
   final Value<String> body;
   final Value<int> position;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
   final Value<String> chapterId;
   const SubchaptersCompanion({
     this.id = const Value.absent(),
@@ -1654,8 +1654,8 @@ class SubchaptersCompanion extends UpdateCompanion<Subchapter> {
     required String title,
     required String body,
     required int position,
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    required String createdAt,
+    required String updatedAt,
     required String chapterId,
   })  : id = Value(id),
         title = Value(title),
@@ -1669,8 +1669,8 @@ class SubchaptersCompanion extends UpdateCompanion<Subchapter> {
     Expression<String>? title,
     Expression<String>? body,
     Expression<int>? position,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
     Expression<String>? chapterId,
   }) {
     return RawValuesInsertable({
@@ -1689,8 +1689,8 @@ class SubchaptersCompanion extends UpdateCompanion<Subchapter> {
       Value<String>? title,
       Value<String>? body,
       Value<int>? position,
-      Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt,
+      Value<String>? createdAt,
+      Value<String>? updatedAt,
       Value<String>? chapterId}) {
     return SubchaptersCompanion(
       id: id ?? this.id,
@@ -1719,10 +1719,10 @@ class SubchaptersCompanion extends UpdateCompanion<Subchapter> {
       map['position'] = Variable<int>(position.value);
     }
     if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
+      map['created_at'] = Variable<String>(createdAt.value);
     }
     if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+      map['updated_at'] = Variable<String>(updatedAt.value);
     }
     if (chapterId.present) {
       map['chapter_id'] = Variable<String>(chapterId.value);
@@ -1768,13 +1768,13 @@ class $SubchaptersTable extends Subchapters
       'position', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
       'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   late final GeneratedColumn<String> chapterId = GeneratedColumn<String>(
       'chapter_id', aliasedName, false,
@@ -1803,9 +1803,9 @@ class $SubchaptersTable extends Subchapters
       position: attachedDatabase.options.types
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
       createdAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
       chapterId: attachedDatabase.options.types
           .read(DriftSqlType.string, data['${effectivePrefix}chapter_id'])!,
     );
@@ -1827,9 +1827,9 @@ class Malfuzat extends DataClass implements Insertable<Malfuzat> {
   final String? audioData;
   final String? documentData;
   final int position;
-  final DateTime? publishedAt;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String? publishedAt;
+  final String createdAt;
+  final String updatedAt;
   const Malfuzat(
       {required this.id,
       required this.title,
@@ -1864,10 +1864,10 @@ class Malfuzat extends DataClass implements Insertable<Malfuzat> {
     }
     map['position'] = Variable<int>(position);
     if (!nullToAbsent || publishedAt != null) {
-      map['published_at'] = Variable<DateTime>(publishedAt);
+      map['published_at'] = Variable<String>(publishedAt);
     }
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
     return map;
   }
 
@@ -1884,9 +1884,9 @@ class Malfuzat extends DataClass implements Insertable<Malfuzat> {
       audioData: serializer.fromJson<String?>(json['audioData']),
       documentData: serializer.fromJson<String?>(json['documentData']),
       position: serializer.fromJson<int>(json['position']),
-      publishedAt: serializer.fromJson<DateTime?>(json['publishedAt']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      publishedAt: serializer.fromJson<String?>(json['publishedAt']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
     );
   }
   @override
@@ -1902,9 +1902,9 @@ class Malfuzat extends DataClass implements Insertable<Malfuzat> {
       'audioData': serializer.toJson<String?>(audioData),
       'documentData': serializer.toJson<String?>(documentData),
       'position': serializer.toJson<int>(position),
-      'publishedAt': serializer.toJson<DateTime?>(publishedAt),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'publishedAt': serializer.toJson<String?>(publishedAt),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
     };
   }
 
@@ -1918,9 +1918,9 @@ class Malfuzat extends DataClass implements Insertable<Malfuzat> {
           Value<String?> audioData = const Value.absent(),
           Value<String?> documentData = const Value.absent(),
           int? position,
-          Value<DateTime?> publishedAt = const Value.absent(),
-          DateTime? createdAt,
-          DateTime? updatedAt}) =>
+          Value<String?> publishedAt = const Value.absent(),
+          String? createdAt,
+          String? updatedAt}) =>
       Malfuzat(
         id: id ?? this.id,
         title: title ?? this.title,
@@ -1986,9 +1986,9 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
   final Value<String?> audioData;
   final Value<String?> documentData;
   final Value<int> position;
-  final Value<DateTime?> publishedAt;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<String?> publishedAt;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
   const MalfuzatsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -2014,8 +2014,8 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
     this.documentData = const Value.absent(),
     required int position,
     this.publishedAt = const Value.absent(),
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    required String createdAt,
+    required String updatedAt,
   })  : id = Value(id),
         title = Value(title),
         language = Value(language),
@@ -2032,9 +2032,9 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
     Expression<String>? audioData,
     Expression<String>? documentData,
     Expression<int>? position,
-    Expression<DateTime>? publishedAt,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
+    Expression<String>? publishedAt,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2062,9 +2062,9 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
       Value<String?>? audioData,
       Value<String?>? documentData,
       Value<int>? position,
-      Value<DateTime?>? publishedAt,
-      Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt}) {
+      Value<String?>? publishedAt,
+      Value<String>? createdAt,
+      Value<String>? updatedAt}) {
     return MalfuzatsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -2112,13 +2112,13 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
       map['position'] = Variable<int>(position.value);
     }
     if (publishedAt.present) {
-      map['published_at'] = Variable<DateTime>(publishedAt.value);
+      map['published_at'] = Variable<String>(publishedAt.value);
     }
     if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
+      map['created_at'] = Variable<String>(createdAt.value);
     }
     if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+      map['updated_at'] = Variable<String>(updatedAt.value);
     }
     return map;
   }
@@ -2189,17 +2189,17 @@ class $MalfuzatsTable extends Malfuzats
       'position', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<DateTime> publishedAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> publishedAt = GeneratedColumn<String>(
       'published_at', aliasedName, true,
-      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
       'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -2244,11 +2244,11 @@ class $MalfuzatsTable extends Malfuzats
       position: attachedDatabase.options.types
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
       publishedAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}published_at']),
+          .read(DriftSqlType.string, data['${effectivePrefix}published_at']),
       createdAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
     );
   }
 
@@ -2269,9 +2269,9 @@ class Masail extends DataClass implements Insertable<Masail> {
   final String? audioData;
   final String? documentData;
   final int position;
-  final DateTime? publishedAt;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String? publishedAt;
+  final String createdAt;
+  final String updatedAt;
   const Masail(
       {required this.id,
       required this.title,
@@ -2306,10 +2306,10 @@ class Masail extends DataClass implements Insertable<Masail> {
     }
     map['position'] = Variable<int>(position);
     if (!nullToAbsent || publishedAt != null) {
-      map['published_at'] = Variable<DateTime>(publishedAt);
+      map['published_at'] = Variable<String>(publishedAt);
     }
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
     return map;
   }
 
@@ -2327,9 +2327,9 @@ class Masail extends DataClass implements Insertable<Masail> {
       audioData: serializer.fromJson<String?>(json['audioData']),
       documentData: serializer.fromJson<String?>(json['documentData']),
       position: serializer.fromJson<int>(json['position']),
-      publishedAt: serializer.fromJson<DateTime?>(json['publishedAt']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      publishedAt: serializer.fromJson<String?>(json['publishedAt']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
     );
   }
   @override
@@ -2346,9 +2346,9 @@ class Masail extends DataClass implements Insertable<Masail> {
       'audioData': serializer.toJson<String?>(audioData),
       'documentData': serializer.toJson<String?>(documentData),
       'position': serializer.toJson<int>(position),
-      'publishedAt': serializer.toJson<DateTime?>(publishedAt),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'publishedAt': serializer.toJson<String?>(publishedAt),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
     };
   }
 
@@ -2363,9 +2363,9 @@ class Masail extends DataClass implements Insertable<Masail> {
           Value<String?> audioData = const Value.absent(),
           Value<String?> documentData = const Value.absent(),
           int? position,
-          Value<DateTime?> publishedAt = const Value.absent(),
-          DateTime? createdAt,
-          DateTime? updatedAt}) =>
+          Value<String?> publishedAt = const Value.absent(),
+          String? createdAt,
+          String? updatedAt}) =>
       Masail(
         id: id ?? this.id,
         title: title ?? this.title,
@@ -2447,9 +2447,9 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
   final Value<String?> audioData;
   final Value<String?> documentData;
   final Value<int> position;
-  final Value<DateTime?> publishedAt;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<String?> publishedAt;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
   const MasailsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -2477,8 +2477,8 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
     this.documentData = const Value.absent(),
     required int position,
     this.publishedAt = const Value.absent(),
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    required String createdAt,
+    required String updatedAt,
   })  : id = Value(id),
         title = Value(title),
         slug = Value(slug),
@@ -2498,9 +2498,9 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
     Expression<String>? audioData,
     Expression<String>? documentData,
     Expression<int>? position,
-    Expression<DateTime>? publishedAt,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
+    Expression<String>? publishedAt,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2530,9 +2530,9 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
       Value<String?>? audioData,
       Value<String?>? documentData,
       Value<int>? position,
-      Value<DateTime?>? publishedAt,
-      Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt}) {
+      Value<String?>? publishedAt,
+      Value<String>? createdAt,
+      Value<String>? updatedAt}) {
     return MasailsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -2584,13 +2584,13 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
       map['position'] = Variable<int>(position.value);
     }
     if (publishedAt.present) {
-      map['published_at'] = Variable<DateTime>(publishedAt.value);
+      map['published_at'] = Variable<String>(publishedAt.value);
     }
     if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
+      map['created_at'] = Variable<String>(createdAt.value);
     }
     if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+      map['updated_at'] = Variable<String>(updatedAt.value);
     }
     return map;
   }
@@ -2665,17 +2665,17 @@ class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
       'position', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<DateTime> publishedAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> publishedAt = GeneratedColumn<String>(
       'published_at', aliasedName, true,
-      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
       'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -2723,11 +2723,11 @@ class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
       position: attachedDatabase.options.types
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
       publishedAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}published_at']),
+          .read(DriftSqlType.string, data['${effectivePrefix}published_at']),
       createdAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
     );
   }
 
@@ -2746,8 +2746,8 @@ class Dua extends DataClass implements Insertable<Dua> {
   final String? audioData;
   final String? documentData;
   final int position;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String createdAt;
+  final String updatedAt;
   const Dua(
       {required this.id,
       required this.title,
@@ -2776,8 +2776,8 @@ class Dua extends DataClass implements Insertable<Dua> {
       map['document_data'] = Variable<String>(documentData);
     }
     map['position'] = Variable<int>(position);
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
     return map;
   }
 
@@ -2793,8 +2793,8 @@ class Dua extends DataClass implements Insertable<Dua> {
       audioData: serializer.fromJson<String?>(json['audioData']),
       documentData: serializer.fromJson<String?>(json['documentData']),
       position: serializer.fromJson<int>(json['position']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
     );
   }
   @override
@@ -2809,8 +2809,8 @@ class Dua extends DataClass implements Insertable<Dua> {
       'audioData': serializer.toJson<String?>(audioData),
       'documentData': serializer.toJson<String?>(documentData),
       'position': serializer.toJson<int>(position),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
     };
   }
 
@@ -2823,8 +2823,8 @@ class Dua extends DataClass implements Insertable<Dua> {
           Value<String?> audioData = const Value.absent(),
           Value<String?> documentData = const Value.absent(),
           int? position,
-          DateTime? createdAt,
-          DateTime? updatedAt}) =>
+          String? createdAt,
+          String? updatedAt}) =>
       Dua(
         id: id ?? this.id,
         title: title ?? this.title,
@@ -2883,8 +2883,8 @@ class DuasCompanion extends UpdateCompanion<Dua> {
   final Value<String?> audioData;
   final Value<String?> documentData;
   final Value<int> position;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
   const DuasCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -2906,8 +2906,8 @@ class DuasCompanion extends UpdateCompanion<Dua> {
     this.audioData = const Value.absent(),
     this.documentData = const Value.absent(),
     required int position,
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    required String createdAt,
+    required String updatedAt,
   })  : id = Value(id),
         title = Value(title),
         body = Value(body),
@@ -2924,8 +2924,8 @@ class DuasCompanion extends UpdateCompanion<Dua> {
     Expression<String>? audioData,
     Expression<String>? documentData,
     Expression<int>? position,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2950,8 +2950,8 @@ class DuasCompanion extends UpdateCompanion<Dua> {
       Value<String?>? audioData,
       Value<String?>? documentData,
       Value<int>? position,
-      Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt}) {
+      Value<String>? createdAt,
+      Value<String>? updatedAt}) {
     return DuasCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -2994,10 +2994,10 @@ class DuasCompanion extends UpdateCompanion<Dua> {
       map['position'] = Variable<int>(position.value);
     }
     if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
+      map['created_at'] = Variable<String>(createdAt.value);
     }
     if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+      map['updated_at'] = Variable<String>(updatedAt.value);
     }
     return map;
   }
@@ -3058,13 +3058,13 @@ class $DuasTable extends Duas with TableInfo<$DuasTable, Dua> {
       'position', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
       'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -3105,9 +3105,9 @@ class $DuasTable extends Duas with TableInfo<$DuasTable, Dua> {
       position: attachedDatabase.options.types
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
       createdAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
     );
   }
 
@@ -3126,9 +3126,9 @@ class Article extends DataClass implements Insertable<Article> {
   final String language;
   final String? documentData;
   final int position;
-  final DateTime? publishedAt;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String? publishedAt;
+  final String createdAt;
+  final String updatedAt;
   const Article(
       {required this.id,
       required this.title,
@@ -3157,10 +3157,10 @@ class Article extends DataClass implements Insertable<Article> {
     }
     map['position'] = Variable<int>(position);
     if (!nullToAbsent || publishedAt != null) {
-      map['published_at'] = Variable<DateTime>(publishedAt);
+      map['published_at'] = Variable<String>(publishedAt);
     }
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
     return map;
   }
 
@@ -3176,9 +3176,9 @@ class Article extends DataClass implements Insertable<Article> {
       language: serializer.fromJson<String>(json['language']),
       documentData: serializer.fromJson<String?>(json['documentData']),
       position: serializer.fromJson<int>(json['position']),
-      publishedAt: serializer.fromJson<DateTime?>(json['publishedAt']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      publishedAt: serializer.fromJson<String?>(json['publishedAt']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
     );
   }
   @override
@@ -3193,9 +3193,9 @@ class Article extends DataClass implements Insertable<Article> {
       'language': serializer.toJson<String>(language),
       'documentData': serializer.toJson<String?>(documentData),
       'position': serializer.toJson<int>(position),
-      'publishedAt': serializer.toJson<DateTime?>(publishedAt),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'publishedAt': serializer.toJson<String?>(publishedAt),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
     };
   }
 
@@ -3208,9 +3208,9 @@ class Article extends DataClass implements Insertable<Article> {
           String? language,
           Value<String?> documentData = const Value.absent(),
           int? position,
-          Value<DateTime?> publishedAt = const Value.absent(),
-          DateTime? createdAt,
-          DateTime? updatedAt}) =>
+          Value<String?> publishedAt = const Value.absent(),
+          String? createdAt,
+          String? updatedAt}) =>
       Article(
         id: id ?? this.id,
         title: title ?? this.title,
@@ -3272,9 +3272,9 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
   final Value<String> language;
   final Value<String?> documentData;
   final Value<int> position;
-  final Value<DateTime?> publishedAt;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<String?> publishedAt;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
   const ArticlesCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -3298,8 +3298,8 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
     this.documentData = const Value.absent(),
     required int position,
     this.publishedAt = const Value.absent(),
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    required String createdAt,
+    required String updatedAt,
   })  : id = Value(id),
         title = Value(title),
         slug = Value(slug),
@@ -3317,9 +3317,9 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
     Expression<String>? language,
     Expression<String>? documentData,
     Expression<int>? position,
-    Expression<DateTime>? publishedAt,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
+    Expression<String>? publishedAt,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -3345,9 +3345,9 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
       Value<String>? language,
       Value<String?>? documentData,
       Value<int>? position,
-      Value<DateTime?>? publishedAt,
-      Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt}) {
+      Value<String?>? publishedAt,
+      Value<String>? createdAt,
+      Value<String>? updatedAt}) {
     return ArticlesCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -3391,13 +3391,13 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
       map['position'] = Variable<int>(position.value);
     }
     if (publishedAt.present) {
-      map['published_at'] = Variable<DateTime>(publishedAt.value);
+      map['published_at'] = Variable<String>(publishedAt.value);
     }
     if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
+      map['created_at'] = Variable<String>(createdAt.value);
     }
     if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+      map['updated_at'] = Variable<String>(updatedAt.value);
     }
     return map;
   }
@@ -3459,17 +3459,17 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
       'position', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<DateTime> publishedAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> publishedAt = GeneratedColumn<String>(
       'published_at', aliasedName, true,
-      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
       'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -3511,11 +3511,11 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
       position: attachedDatabase.options.types
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
       publishedAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}published_at']),
+          .read(DriftSqlType.string, data['${effectivePrefix}published_at']),
       createdAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.options.types
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
     );
   }
 
