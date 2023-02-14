@@ -3878,6 +3878,293 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
   }
 }
 
+class NamazTime extends DataClass implements Insertable<NamazTime> {
+  final String id;
+  final String title;
+  final String slug;
+  final String masail;
+  final String? fazail;
+  final String createdAt;
+  final String updatedAt;
+  const NamazTime(
+      {required this.id,
+      required this.title,
+      required this.slug,
+      required this.masail,
+      this.fazail,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    map['slug'] = Variable<String>(slug);
+    map['masail'] = Variable<String>(masail);
+    if (!nullToAbsent || fazail != null) {
+      map['fazail'] = Variable<String>(fazail);
+    }
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    return map;
+  }
+
+  factory NamazTime.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return NamazTime(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      slug: serializer.fromJson<String>(json['slug']),
+      masail: serializer.fromJson<String>(json['masail']),
+      fazail: serializer.fromJson<String?>(json['fazail']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'slug': serializer.toJson<String>(slug),
+      'masail': serializer.toJson<String>(masail),
+      'fazail': serializer.toJson<String?>(fazail),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+    };
+  }
+
+  NamazTime copyWith(
+          {String? id,
+          String? title,
+          String? slug,
+          String? masail,
+          Value<String?> fazail = const Value.absent(),
+          String? createdAt,
+          String? updatedAt}) =>
+      NamazTime(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        slug: slug ?? this.slug,
+        masail: masail ?? this.masail,
+        fazail: fazail.present ? fazail.value : this.fazail,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('NamazTime(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('slug: $slug, ')
+          ..write('masail: $masail, ')
+          ..write('fazail: $fazail, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, title, slug, masail, fazail, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is NamazTime &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.slug == this.slug &&
+          other.masail == this.masail &&
+          other.fazail == this.fazail &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<String> slug;
+  final Value<String> masail;
+  final Value<String?> fazail;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  const NamazTimesCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.slug = const Value.absent(),
+    this.masail = const Value.absent(),
+    this.fazail = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  NamazTimesCompanion.insert({
+    required String id,
+    required String title,
+    required String slug,
+    required String masail,
+    this.fazail = const Value.absent(),
+    required String createdAt,
+    required String updatedAt,
+  })  : id = Value(id),
+        title = Value(title),
+        slug = Value(slug),
+        masail = Value(masail),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<NamazTime> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<String>? slug,
+    Expression<String>? masail,
+    Expression<String>? fazail,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (slug != null) 'slug': slug,
+      if (masail != null) 'masail': masail,
+      if (fazail != null) 'fazail': fazail,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  NamazTimesCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? title,
+      Value<String>? slug,
+      Value<String>? masail,
+      Value<String?>? fazail,
+      Value<String>? createdAt,
+      Value<String>? updatedAt}) {
+    return NamazTimesCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      slug: slug ?? this.slug,
+      masail: masail ?? this.masail,
+      fazail: fazail ?? this.fazail,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (slug.present) {
+      map['slug'] = Variable<String>(slug.value);
+    }
+    if (masail.present) {
+      map['masail'] = Variable<String>(masail.value);
+    }
+    if (fazail.present) {
+      map['fazail'] = Variable<String>(fazail.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NamazTimesCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('slug: $slug, ')
+          ..write('masail: $masail, ')
+          ..write('fazail: $fazail, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $NamazTimesTable extends NamazTimes
+    with TableInfo<$NamazTimesTable, NamazTime> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $NamazTimesTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
+      'slug', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> masail = GeneratedColumn<String>(
+      'masail', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> fazail = GeneratedColumn<String>(
+      'fazail', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, title, slug, masail, fazail, createdAt, updatedAt];
+  @override
+  String get aliasedName => _alias ?? 'namaz_times';
+  @override
+  String get actualTableName => 'namaz_times';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  NamazTime map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return NamazTime(
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      slug: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
+      masail: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}masail'])!,
+      fazail: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}fazail']),
+      createdAt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $NamazTimesTable createAlias(String alias) {
+    return $NamazTimesTable(attachedDatabase, alias);
+  }
+}
+
 class Page extends DataClass implements Insertable<Page> {
   final String id;
   final String title;
@@ -4176,6 +4463,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $MasailsTable masails = $MasailsTable(this);
   late final $DuasTable duas = $DuasTable(this);
   late final $ArticlesTable articles = $ArticlesTable(this);
+  late final $NamazTimesTable namazTimes = $NamazTimesTable(this);
   late final $PagesTable pages = $PagesTable(this);
   @override
   Iterable<TableInfo<Table, dynamic>> get allTables =>
@@ -4192,6 +4480,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
         masails,
         duas,
         articles,
+        namazTimes,
         pages
       ];
   @override

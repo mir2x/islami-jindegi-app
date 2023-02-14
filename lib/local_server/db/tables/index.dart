@@ -8,4 +8,5 @@ export 'malfuzats.dart';
 export 'masails.dart';
 export 'duas.dart';
 export 'articles.dart';
+export 'namaz_times.dart';
 export 'pages.dart';

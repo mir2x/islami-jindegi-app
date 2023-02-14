@@ -20,6 +20,7 @@ part 'local_database.g.dart';
     Masails,
     Duas,
     Articles,
+    NamazTimes,
     Pages,
   ],
 )
@@ -68,6 +69,8 @@ class LocalDatabase extends _$LocalDatabase {
         return queryDua(params);
       case 'articles':
         return queryArticle(params);
+      case 'namazTimes':
+        return queryNamazTime(params);
       case 'pages':
         return queryPage(params);
       default:
@@ -97,6 +100,8 @@ class LocalDatabase extends _$LocalDatabase {
         return findDuaById(id);
       case 'articles':
         return findArticleById(id);
+      case 'namazTimes':
+        return findNamazTimeById(id);
       case 'pages':
         return findPageById(id);
       default:
@@ -289,7 +294,6 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<List<Page>> queryPage(Map params) {
     var query = select(pages);
-    print(params);
 
     if (params.containsKey('slug')) {
       query.where((t) => t.slug.equals(params['slug']));
@@ -304,5 +308,23 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<Page> findPageById(String id) {
     return (select(pages)..where((t) => t.id.equals(id))).getSingle();
+  }
+
+  Future<List<NamazTime>> queryNamazTime(Map params) {
+    var query = select(namazTimes);
+
+    if (params.containsKey('slug')) {
+      query.where((t) => t.slug.equals(params['slug']));
+    }
+
+    if (params.containsKey('quantity')) {
+      query.limit(params['quantity']);
+    }
+
+    return query.get();
+  }
+
+  Future<NamazTime> findNamazTimeById(String id) {
+    return (select(namazTimes)..where((t) => t.id.equals(id))).getSingle();
   }
 }
