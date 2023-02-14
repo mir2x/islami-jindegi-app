@@ -8,3 +8,4 @@ export 'malfuzats.dart';
 export 'masails.dart';
 export 'duas.dart';
 export 'articles.dart';
+export 'pages.dart';

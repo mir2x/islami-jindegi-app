@@ -3878,6 +3878,292 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
   }
 }
 
+class Page extends DataClass implements Insertable<Page> {
+  final String id;
+  final String title;
+  final String slug;
+  final String body;
+  final String? imageData;
+  final String createdAt;
+  final String updatedAt;
+  const Page(
+      {required this.id,
+      required this.title,
+      required this.slug,
+      required this.body,
+      this.imageData,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    map['slug'] = Variable<String>(slug);
+    map['body'] = Variable<String>(body);
+    if (!nullToAbsent || imageData != null) {
+      map['image_data'] = Variable<String>(imageData);
+    }
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    return map;
+  }
+
+  factory Page.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Page(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      slug: serializer.fromJson<String>(json['slug']),
+      body: serializer.fromJson<String>(json['body']),
+      imageData: serializer.fromJson<String?>(json['imageData']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'slug': serializer.toJson<String>(slug),
+      'body': serializer.toJson<String>(body),
+      'imageData': serializer.toJson<String?>(imageData),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+    };
+  }
+
+  Page copyWith(
+          {String? id,
+          String? title,
+          String? slug,
+          String? body,
+          Value<String?> imageData = const Value.absent(),
+          String? createdAt,
+          String? updatedAt}) =>
+      Page(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        slug: slug ?? this.slug,
+        body: body ?? this.body,
+        imageData: imageData.present ? imageData.value : this.imageData,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Page(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('slug: $slug, ')
+          ..write('body: $body, ')
+          ..write('imageData: $imageData, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, title, slug, body, imageData, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Page &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.slug == this.slug &&
+          other.body == this.body &&
+          other.imageData == this.imageData &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class PagesCompanion extends UpdateCompanion<Page> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<String> slug;
+  final Value<String> body;
+  final Value<String?> imageData;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  const PagesCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.slug = const Value.absent(),
+    this.body = const Value.absent(),
+    this.imageData = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  PagesCompanion.insert({
+    required String id,
+    required String title,
+    required String slug,
+    required String body,
+    this.imageData = const Value.absent(),
+    required String createdAt,
+    required String updatedAt,
+  })  : id = Value(id),
+        title = Value(title),
+        slug = Value(slug),
+        body = Value(body),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<Page> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<String>? slug,
+    Expression<String>? body,
+    Expression<String>? imageData,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (slug != null) 'slug': slug,
+      if (body != null) 'body': body,
+      if (imageData != null) 'image_data': imageData,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  PagesCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? title,
+      Value<String>? slug,
+      Value<String>? body,
+      Value<String?>? imageData,
+      Value<String>? createdAt,
+      Value<String>? updatedAt}) {
+    return PagesCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      slug: slug ?? this.slug,
+      body: body ?? this.body,
+      imageData: imageData ?? this.imageData,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (slug.present) {
+      map['slug'] = Variable<String>(slug.value);
+    }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
+    if (imageData.present) {
+      map['image_data'] = Variable<String>(imageData.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PagesCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('slug: $slug, ')
+          ..write('body: $body, ')
+          ..write('imageData: $imageData, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $PagesTable extends Pages with TableInfo<$PagesTable, Page> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PagesTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
+      'slug', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+      'body', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> imageData = GeneratedColumn<String>(
+      'image_data', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, title, slug, body, imageData, createdAt, updatedAt];
+  @override
+  String get aliasedName => _alias ?? 'pages';
+  @override
+  String get actualTableName => 'pages';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Page map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Page(
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      slug: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
+      body: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}body'])!,
+      imageData: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}image_data']),
+      createdAt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $PagesTable createAlias(String alias) {
+    return $PagesTable(attachedDatabase, alias);
+  }
+}
+
 abstract class _$LocalDatabase extends GeneratedDatabase {
   _$LocalDatabase(QueryExecutor e) : super(e);
   late final $SurahsTable surahs = $SurahsTable(this);
@@ -3890,6 +4176,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $MasailsTable masails = $MasailsTable(this);
   late final $DuasTable duas = $DuasTable(this);
   late final $ArticlesTable articles = $ArticlesTable(this);
+  late final $PagesTable pages = $PagesTable(this);
   @override
   Iterable<TableInfo<Table, dynamic>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3904,7 +4191,8 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
         malfuzats,
         masails,
         duas,
-        articles
+        articles,
+        pages
       ];
   @override
   DriftDatabaseOptions get options =>

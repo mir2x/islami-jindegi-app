@@ -20,6 +20,7 @@ part 'local_database.g.dart';
     Masails,
     Duas,
     Articles,
+    Pages,
   ],
 )
 class LocalDatabase extends _$LocalDatabase {
@@ -67,6 +68,8 @@ class LocalDatabase extends _$LocalDatabase {
         return queryDua(params);
       case 'articles':
         return queryArticle(params);
+      case 'pages':
+        return queryPage(params);
       default:
         return Future.value([]);
     }
@@ -94,6 +97,8 @@ class LocalDatabase extends _$LocalDatabase {
         return findDuaById(id);
       case 'articles':
         return findArticleById(id);
+      case 'pages':
+        return findPageById(id);
       default:
         return null;
     }
@@ -280,5 +285,24 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<Article> findArticleById(String id) {
     return (select(articles)..where((t) => t.id.equals(id))).getSingle();
+  }
+
+  Future<List<Page>> queryPage(Map params) {
+    var query = select(pages);
+    print(params);
+
+    if (params.containsKey('slug')) {
+      query.where((t) => t.slug.equals(params['slug']));
+    }
+
+    if (params.containsKey('quantity')) {
+      query.limit(params['quantity']);
+    }
+
+    return query.get();
+  }
+
+  Future<Page> findPageById(String id) {
+    return (select(pages)..where((t) => t.id.equals(id))).getSingle();
   }
 }
