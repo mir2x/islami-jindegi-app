@@ -762,6 +762,359 @@ class $ParasTable extends Paras with TableInfo<$ParasTable, Para> {
   }
 }
 
+class Ayah extends DataClass implements Insertable<Ayah> {
+  final String id;
+  final String title;
+  final int surahPosition;
+  final int paraPosition;
+  final int? ruku;
+  final String createdAt;
+  final String updatedAt;
+  final String surahId;
+  final String paraId;
+  const Ayah(
+      {required this.id,
+      required this.title,
+      required this.surahPosition,
+      required this.paraPosition,
+      this.ruku,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.surahId,
+      required this.paraId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    map['surah_position'] = Variable<int>(surahPosition);
+    map['para_position'] = Variable<int>(paraPosition);
+    if (!nullToAbsent || ruku != null) {
+      map['ruku'] = Variable<int>(ruku);
+    }
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    map['surah_id'] = Variable<String>(surahId);
+    map['para_id'] = Variable<String>(paraId);
+    return map;
+  }
+
+  factory Ayah.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Ayah(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      surahPosition: serializer.fromJson<int>(json['surahPosition']),
+      paraPosition: serializer.fromJson<int>(json['paraPosition']),
+      ruku: serializer.fromJson<int?>(json['ruku']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+      surahId: serializer.fromJson<String>(json['surahId']),
+      paraId: serializer.fromJson<String>(json['paraId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'surahPosition': serializer.toJson<int>(surahPosition),
+      'paraPosition': serializer.toJson<int>(paraPosition),
+      'ruku': serializer.toJson<int?>(ruku),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+      'surahId': serializer.toJson<String>(surahId),
+      'paraId': serializer.toJson<String>(paraId),
+    };
+  }
+
+  Ayah copyWith(
+          {String? id,
+          String? title,
+          int? surahPosition,
+          int? paraPosition,
+          Value<int?> ruku = const Value.absent(),
+          String? createdAt,
+          String? updatedAt,
+          String? surahId,
+          String? paraId}) =>
+      Ayah(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        surahPosition: surahPosition ?? this.surahPosition,
+        paraPosition: paraPosition ?? this.paraPosition,
+        ruku: ruku.present ? ruku.value : this.ruku,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        surahId: surahId ?? this.surahId,
+        paraId: paraId ?? this.paraId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Ayah(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('surahPosition: $surahPosition, ')
+          ..write('paraPosition: $paraPosition, ')
+          ..write('ruku: $ruku, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('surahId: $surahId, ')
+          ..write('paraId: $paraId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, title, surahPosition, paraPosition, ruku,
+      createdAt, updatedAt, surahId, paraId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Ayah &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.surahPosition == this.surahPosition &&
+          other.paraPosition == this.paraPosition &&
+          other.ruku == this.ruku &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.surahId == this.surahId &&
+          other.paraId == this.paraId);
+}
+
+class AyahsCompanion extends UpdateCompanion<Ayah> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<int> surahPosition;
+  final Value<int> paraPosition;
+  final Value<int?> ruku;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  final Value<String> surahId;
+  final Value<String> paraId;
+  const AyahsCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.surahPosition = const Value.absent(),
+    this.paraPosition = const Value.absent(),
+    this.ruku = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.surahId = const Value.absent(),
+    this.paraId = const Value.absent(),
+  });
+  AyahsCompanion.insert({
+    required String id,
+    required String title,
+    required int surahPosition,
+    required int paraPosition,
+    this.ruku = const Value.absent(),
+    required String createdAt,
+    required String updatedAt,
+    required String surahId,
+    required String paraId,
+  })  : id = Value(id),
+        title = Value(title),
+        surahPosition = Value(surahPosition),
+        paraPosition = Value(paraPosition),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt),
+        surahId = Value(surahId),
+        paraId = Value(paraId);
+  static Insertable<Ayah> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<int>? surahPosition,
+    Expression<int>? paraPosition,
+    Expression<int>? ruku,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+    Expression<String>? surahId,
+    Expression<String>? paraId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (surahPosition != null) 'surah_position': surahPosition,
+      if (paraPosition != null) 'para_position': paraPosition,
+      if (ruku != null) 'ruku': ruku,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (surahId != null) 'surah_id': surahId,
+      if (paraId != null) 'para_id': paraId,
+    });
+  }
+
+  AyahsCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? title,
+      Value<int>? surahPosition,
+      Value<int>? paraPosition,
+      Value<int?>? ruku,
+      Value<String>? createdAt,
+      Value<String>? updatedAt,
+      Value<String>? surahId,
+      Value<String>? paraId}) {
+    return AyahsCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      surahPosition: surahPosition ?? this.surahPosition,
+      paraPosition: paraPosition ?? this.paraPosition,
+      ruku: ruku ?? this.ruku,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      surahId: surahId ?? this.surahId,
+      paraId: paraId ?? this.paraId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (surahPosition.present) {
+      map['surah_position'] = Variable<int>(surahPosition.value);
+    }
+    if (paraPosition.present) {
+      map['para_position'] = Variable<int>(paraPosition.value);
+    }
+    if (ruku.present) {
+      map['ruku'] = Variable<int>(ruku.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (surahId.present) {
+      map['surah_id'] = Variable<String>(surahId.value);
+    }
+    if (paraId.present) {
+      map['para_id'] = Variable<String>(paraId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AyahsCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('surahPosition: $surahPosition, ')
+          ..write('paraPosition: $paraPosition, ')
+          ..write('ruku: $ruku, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('surahId: $surahId, ')
+          ..write('paraId: $paraId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AyahsTable extends Ayahs with TableInfo<$AyahsTable, Ayah> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AyahsTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> surahPosition = GeneratedColumn<int>(
+      'surah_position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> paraPosition = GeneratedColumn<int>(
+      'para_position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> ruku = GeneratedColumn<int>(
+      'ruku', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> surahId = GeneratedColumn<String>(
+      'surah_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: 'REFERENCES surahs (id)');
+  @override
+  late final GeneratedColumn<String> paraId = GeneratedColumn<String>(
+      'para_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: 'REFERENCES paras (id)');
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        title,
+        surahPosition,
+        paraPosition,
+        ruku,
+        createdAt,
+        updatedAt,
+        surahId,
+        paraId
+      ];
+  @override
+  String get aliasedName => _alias ?? 'ayahs';
+  @override
+  String get actualTableName => 'ayahs';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Ayah map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Ayah(
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      surahPosition: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}surah_position'])!,
+      paraPosition: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}para_position'])!,
+      ruku: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}ruku']),
+      createdAt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      surahId: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}surah_id'])!,
+      paraId: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}para_id'])!,
+    );
+  }
+
+  @override
+  $AyahsTable createAlias(String alias) {
+    return $AyahsTable(attachedDatabase, alias);
+  }
+}
+
 class Book extends DataClass implements Insertable<Book> {
   final String id;
   final String title;
@@ -3529,6 +3882,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   _$LocalDatabase(QueryExecutor e) : super(e);
   late final $SurahsTable surahs = $SurahsTable(this);
   late final $ParasTable paras = $ParasTable(this);
+  late final $AyahsTable ayahs = $AyahsTable(this);
   late final $BooksTable books = $BooksTable(this);
   late final $ChaptersTable chapters = $ChaptersTable(this);
   late final $SubchaptersTable subchapters = $SubchaptersTable(this);
@@ -3543,6 +3897,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
         surahs,
         paras,
+        ayahs,
         books,
         chapters,
         subchapters,

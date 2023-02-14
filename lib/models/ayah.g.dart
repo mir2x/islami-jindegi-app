@@ -62,7 +62,10 @@ final _ayahsFinders = <String, dynamic>{};
 class $AyahHiveLocalAdapter = HiveLocalAdapter<Ayah> with $AyahLocalAdapter;
 
 class $AyahRemoteAdapter = RemoteAdapter<Ayah>
-    with JSONAPIAdapter<Ayah>, ApplicationAdapter<Ayah>;
+    with
+        JSONAPIAdapter<Ayah>,
+        LocalDatabaseAdapter<Ayah>,
+        ApplicationAdapter<Ayah>;
 
 final internalAyahsRemoteAdapterProvider = Provider<RemoteAdapter<Ayah>>(
     (ref) => $AyahRemoteAdapter(
@@ -74,6 +77,8 @@ final ayahsRepositoryProvider =
 extension AyahDataRepositoryX on Repository<Ayah> {
   JSONAPIAdapter<Ayah> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<Ayah>;
+  LocalDatabaseAdapter<Ayah> get localDatabaseAdapter =>
+      remoteAdapter as LocalDatabaseAdapter<Ayah>;
   ApplicationAdapter<Ayah> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<Ayah>;
 }

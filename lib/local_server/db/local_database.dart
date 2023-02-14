@@ -12,6 +12,7 @@ part 'local_database.g.dart';
   tables: [
     Surahs,
     Paras,
+    Ayahs,
     Books,
     Chapters,
     Subchapters,
@@ -52,6 +53,8 @@ class LocalDatabase extends _$LocalDatabase {
         return querySurah(params);
       case 'paras':
         return queryPara(params);
+      case 'ayahs':
+        return queryAyah(params);
       case 'books':
         return queryBook(params);
       case 'chapters':
@@ -75,6 +78,8 @@ class LocalDatabase extends _$LocalDatabase {
         return findSurahById(id);
       case 'paras':
         return findParaById(id);
+      case 'ayahs':
+        return findAyahById(id);
       case 'books':
         return findBookById(id);
       case 'chapters':
@@ -96,9 +101,15 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<List<Surah>> querySurah(Map params) {
     var query = select(surahs);
-    query.orderBy([
-      (t) => OrderingTerm(expression: t.position),
-    ]);
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    }
+
+    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
     return query.get();
   }
 
@@ -108,9 +119,15 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<List<Para>> queryPara(Map params) {
     var query = select(paras);
-    query.orderBy([
-      (t) => OrderingTerm(expression: t.position),
-    ]);
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    }
+
+    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
     return query.get();
   }
 
@@ -118,8 +135,47 @@ class LocalDatabase extends _$LocalDatabase {
     return (select(paras)..where((t) => t.id.equals(id))).getSingle();
   }
 
+  Future<List<Ayah>> queryAyah(Map params) {
+    var query = select(ayahs);
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    }
+
+    if (params.containsKey('surah_id')) {
+      query.where((t) => t.surahId.equals(params['surah_id']));
+    }
+
+    if (params.containsKey('para_id')) {
+      query.where((t) => t.paraId.equals(params['para_id']));
+    }
+
+    if (params.containsKey('sort') && params['sort'] == 'para-position') {
+      query.orderBy([(t) => OrderingTerm(expression: t.paraPosition)]);
+    } else {
+      query.orderBy([(t) => OrderingTerm(expression: t.surahPosition)]);
+    }
+
+    return query.get();
+  }
+
+  Future<Ayah> findAyahById(String id) {
+    return (select(ayahs)..where((t) => t.id.equals(id))).getSingle();
+  }
+
   Future<List<Book>> queryBook(Map params) {
     var query = select(books);
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    }
+
     query.orderBy([
       (t) => OrderingTerm(expression: t.position, mode: OrderingMode.desc),
     ]);
@@ -133,6 +189,14 @@ class LocalDatabase extends _$LocalDatabase {
   Future<List<Chapter>> queryChapter(Map params) {
     var query = select(chapters);
     query.where((t) => t.bookId.equals(params['bookId']));
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    }
+
     query.orderBy([(t) => OrderingTerm(expression: t.position)]);
     return query.get();
   }
@@ -147,9 +211,15 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<List<Malfuzat>> queryMalfuzat(Map params) {
     var query = select(malfuzats);
-    query.orderBy([
-      (t) => OrderingTerm(expression: t.position),
-    ]);
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    }
+
+    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
     return query.get();
   }
 
@@ -158,7 +228,16 @@ class LocalDatabase extends _$LocalDatabase {
   }
 
   Future<List<Masail>> queryMasail(Map params) {
-    return select(masails).get();
+    var query = select(masails);
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    }
+
+    return query.get();
   }
 
   Future<Masail> findMasailById(String id) {
@@ -167,9 +246,15 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<List<Dua>> queryDua(Map params) {
     var query = select(duas);
-    query.orderBy([
-      (t) => OrderingTerm(expression: t.position),
-    ]);
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    }
+
+    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
     return query.get();
   }
 
@@ -179,6 +264,14 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<List<Article>> queryArticle(Map params) {
     var query = select(articles);
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    }
+
     query.orderBy([
       (t) => OrderingTerm(expression: t.position, mode: OrderingMode.desc),
     ]);
