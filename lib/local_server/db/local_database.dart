@@ -117,6 +117,8 @@ class LocalDatabase extends _$LocalDatabase {
         params['per_page'],
         offset: (params['page'] - 1) * params['per_page'],
       );
+    } else {
+      query.limit(params['quantity'] ?? 20);
     }
 
     query.orderBy([(t) => OrderingTerm(expression: t.position)]);
@@ -135,6 +137,8 @@ class LocalDatabase extends _$LocalDatabase {
         params['per_page'],
         offset: (params['page'] - 1) * params['per_page'],
       );
+    } else {
+      query.limit(params['quantity'] ?? 20);
     }
 
     query.orderBy([(t) => OrderingTerm(expression: t.position)]);
@@ -153,6 +157,8 @@ class LocalDatabase extends _$LocalDatabase {
         params['per_page'],
         offset: (params['page'] - 1) * params['per_page'],
       );
+    } else {
+      query.limit(params['quantity'] ?? 20);
     }
 
     if (params.containsKey('surah_id')) {
@@ -184,6 +190,8 @@ class LocalDatabase extends _$LocalDatabase {
         params['per_page'],
         offset: (params['page'] - 1) * params['per_page'],
       );
+    } else {
+      query.limit(params['quantity'] ?? 20);
     }
 
     query.orderBy([
@@ -205,6 +213,8 @@ class LocalDatabase extends _$LocalDatabase {
         params['per_page'],
         offset: (params['page'] - 1) * params['per_page'],
       );
+    } else {
+      query.limit(params['quantity'] ?? 20);
     }
 
     query.orderBy([(t) => OrderingTerm(expression: t.position)]);
@@ -227,6 +237,8 @@ class LocalDatabase extends _$LocalDatabase {
         params['per_page'],
         offset: (params['page'] - 1) * params['per_page'],
       );
+    } else {
+      query.limit(params['quantity'] ?? 20);
     }
 
     query.orderBy([(t) => OrderingTerm(expression: t.position)]);
@@ -245,6 +257,8 @@ class LocalDatabase extends _$LocalDatabase {
         params['per_page'],
         offset: (params['page'] - 1) * params['per_page'],
       );
+    } else {
+      query.limit(params['quantity'] ?? 20);
     }
 
     return query.get();
@@ -262,6 +276,8 @@ class LocalDatabase extends _$LocalDatabase {
         params['per_page'],
         offset: (params['page'] - 1) * params['per_page'],
       );
+    } else {
+      query.limit(params['quantity'] ?? 20);
     }
 
     query.orderBy([(t) => OrderingTerm(expression: t.position)]);
@@ -280,6 +296,8 @@ class LocalDatabase extends _$LocalDatabase {
         params['per_page'],
         offset: (params['page'] - 1) * params['per_page'],
       );
+    } else {
+      query.limit(params['quantity'] ?? 20);
     }
 
     query.orderBy([
@@ -299,9 +317,7 @@ class LocalDatabase extends _$LocalDatabase {
       query.where((t) => t.slug.equals(params['slug']));
     }
 
-    if (params.containsKey('quantity')) {
-      query.limit(params['quantity']);
-    }
+    query.limit(params['quantity'] ?? 20);
 
     return query.get();
   }
@@ -317,9 +333,7 @@ class LocalDatabase extends _$LocalDatabase {
       query.where((t) => t.slug.equals(params['slug']));
     }
 
-    if (params.containsKey('quantity')) {
-      query.limit(params['quantity']);
-    }
+    query.limit(params['quantity'] ?? 20);
 
     return query.get();
   }
