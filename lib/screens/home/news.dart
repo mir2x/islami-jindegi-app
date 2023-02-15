@@ -68,28 +68,32 @@ class News extends ConsumerWidget {
                 },
                 error: (error, _) => Text(error.toString()),
                 data: (resources) {
-                  return CarouselSlider.builder(
-                    options: CarouselOptions(
-                      autoPlay: true,
-                      viewportFraction: 1.0,
-                    ),
-                    itemCount: resources.length,
-                    itemBuilder: (context, index, pageIndex) {
-                      return InkWell(
-                        onTap: () => QR.to('news/${resources[index].id}'),
-                        child: Center(
-                          child: Text(
-                            resources[index].title,
-                            style: textTheme.titleMedium?.copyWith(
-                              color: ThemeColors.color2,
+                  if (resources.isNotEmpty) {
+                    return CarouselSlider.builder(
+                      options: CarouselOptions(
+                        autoPlay: true,
+                        viewportFraction: 1.0,
+                      ),
+                      itemCount: resources.length,
+                      itemBuilder: (context, index, pageIndex) {
+                        return InkWell(
+                          onTap: () => QR.to('news/${resources[index].id}'),
+                          child: Center(
+                            child: Text(
+                              resources[index].title,
+                              style: textTheme.titleMedium?.copyWith(
+                                color: ThemeColors.color2,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      );
-                    },
-                  );
+                        );
+                      },
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
                 },
               ),
             ),
