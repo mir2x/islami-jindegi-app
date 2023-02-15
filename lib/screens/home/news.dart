@@ -92,7 +92,14 @@ class News extends ConsumerWidget {
                       },
                     );
                   } else {
-                    return const SizedBox.shrink();
+                    return Center(
+                      child: Text(
+                        'No items found',
+                        style: textTheme.titleMedium?.copyWith(
+                          color: ThemeColors.color2,
+                        ),
+                      ),
+                    );
                   }
                 },
               ),
