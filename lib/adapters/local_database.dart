@@ -77,9 +77,9 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
 
     if (connectivityResult == ConnectivityResult.none) {
       final database = ref.read(localDatabaseProvider);
-      final resource = await database.findById(internalType, id.toString());
+      final item = await database.findById(internalType, id.toString());
 
-      var resourceMap = json.decode(json.encode(resource));
+      var resourceMap = json.decode(json.encode(item));
 
       final idValue = resourceMap.remove('id');
 
@@ -89,11 +89,11 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
       );
 
       // assemble type, id, attributes, relationships in `Resource`
-      final newResource = NewResource(internalType, idValue.toString());
-      newResource.attributes.addAll(attributes);
-      /* newResource.relationships.addAll(relationships); */
+      final resource = Resource(internalType, idValue.toString());
+      resource.attributes.addAll(attributes);
+      /* resource.relationships.addAll(relationships); */
 
-      final outbound = OutboundDataDocument.newResource(newResource).toJson();
+      final outbound = OutboundDataDocument.resource(resource).toJson();
 
       // run decode/encode because `json_api`'s `toJson()`
       // DOES NOT return nested Map<String, dynamic>s as expected
