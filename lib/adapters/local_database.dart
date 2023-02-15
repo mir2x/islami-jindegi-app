@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter_data/flutter_data.dart';
+import 'package:flutter_data/flutter_data.dart' hide Relationship;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:json_api/document.dart';
 import 'package:recase/recase.dart';
@@ -22,25 +22,47 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     if (connectivityResult == ConnectivityResult.none) {
       final database = ref.read(localDatabaseProvider);
       final resources = await database.query(internalType, params: params);
+      List<Resource> included = [];
 
       final body = resources.map((item) {
-        var resourceMap = json.decode(json.encode(item));
+        Map resourceMap;
+        Map<String, Relationship> relationships = {};
 
-        final id = resourceMap.remove('id');
+        if (item is Map) {
+          resourceMap = json.decode(json.encode(item[internalType]));
 
-        // attributes
-        Map<String, Object?> attributes = resourceMap.map<String, Object?>(
-          (k, v) => MapEntry<String, Object?>(ReCase(k).paramCase, v),
-        );
+          for (final relEntry in item['relationships'].entries) {
+            final key = relEntry.key;
+            final value = relEntry.value;
 
-        // assemble type, id, attributes, relationships in `Resource`
-        final resource = Resource(internalType, id.toString());
-        resource.attributes.addAll(attributes);
-        /* resource.relationships.addAll(relationships); */
+            if (value is Iterable) {
+              final identifiers = value.map((subitem) {
+                return Identifier(key, subitem.id.toString());
+              }).toList();
+              relationships[key] = ToMany(identifiers);
+
+              for (final subitem in value) {
+                var includedResourceMap = json.decode(json.encode(subitem));
+                included.add(mapToResource(includedResourceMap, key));
+              }
+            } else if (value != null) {
+              relationships[key] = ToOne(Identifier(key, value.id.toString()));
+            }
+          }
+        } else {
+          resourceMap = json.decode(json.encode(item));
+        }
+
+        Resource resource = mapToResource(resourceMap, internalType);
+        resource.relationships.addAll(relationships);
         return resource;
       });
 
-      final outbound = OutboundDataDocument.collection(body).toJson();
+      var outboundData = OutboundDataDocument.collection(body);
+
+      outboundData.included.addAll(included);
+
+      var outbound = outboundData.toJson();
 
       // run decode/encode because `json_api`'s `toJson()`
       // DOES NOT return nested Map<String, dynamic>s as expected
@@ -78,20 +100,8 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     if (connectivityResult == ConnectivityResult.none) {
       final database = ref.read(localDatabaseProvider);
       final item = await database.findById(internalType, id.toString());
-
-      var resourceMap = json.decode(json.encode(item));
-
-      final idValue = resourceMap.remove('id');
-
-      // attributes
-      Map<String, Object?> attributes = resourceMap.map<String, Object?>(
-        (k, v) => MapEntry<String, Object?>(ReCase(k).paramCase, v),
-      );
-
-      // assemble type, id, attributes, relationships in `Resource`
-      final resource = Resource(internalType, idValue.toString());
-      resource.attributes.addAll(attributes);
-      /* resource.relationships.addAll(relationships); */
+      final resourceMap = json.decode(json.encode(item));
+      Resource resource = mapToResource(resourceMap, internalType);
 
       final outbound = OutboundDataDocument.resource(resource).toJson();
 
@@ -113,5 +123,18 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
         label: label,
       );
     }
+  }
+
+  Resource mapToResource(Map resourceMap, String type) {
+    final id = resourceMap.remove('id');
+
+    // attributes
+    Map<String, Object?> attributes = resourceMap.map<String, Object?>(
+      (k, v) => MapEntry<String, Object?>(ReCase(k).paramCase, v),
+    );
+
+    final resource = Resource(type, id.toString());
+    resource.attributes.addAll(attributes);
+    return resource;
   }
 }

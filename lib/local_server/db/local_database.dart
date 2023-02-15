@@ -4,6 +4,7 @@ import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path/path.dart' as p;
+import 'package:collection/collection.dart';
 import 'tables/index.dart';
 
 part 'local_database.g.dart';
@@ -204,7 +205,7 @@ class LocalDatabase extends _$LocalDatabase {
     return (select(books)..where((t) => t.id.equals(id))).getSingle();
   }
 
-  Future<List<Chapter>> queryChapter(Map params) {
+  Future<List> queryChapter(Map params) async {
     var query = select(chapters);
     query.where((t) => t.bookId.equals(params['bookId']));
 
@@ -218,7 +219,35 @@ class LocalDatabase extends _$LocalDatabase {
     }
 
     query.orderBy([(t) => OrderingTerm(expression: t.position)]);
-    return query.get();
+
+    var chapterItems = await query.get();
+
+    if (params.containsKey('include')) {
+      Map<String, Chapter> idToChapters = <String, Chapter>{
+        for (var v in chapterItems) v.id: v
+      };
+      var ids = idToChapters.keys;
+
+      var subchapterItems = await (select(subchapters)
+            ..where((s) => s.chapterId.isIn(ids)))
+          .get();
+
+      var idToSubchapters =
+          groupBy(subchapterItems, (Subchapter obj) => obj.chapterId);
+
+      var chapterWithSubchapters = ids.map((id) {
+        return {
+          'chapters': idToChapters[id],
+          'relationships': {
+            'subchapters': idToSubchapters[id] ?? [],
+          }
+        };
+      }).toList();
+
+      return Future.value(chapterWithSubchapters);
+    } else {
+      return Future.value(chapterItems);
+    }
   }
 
   Future<Chapter> findChapterById(String id) {
