@@ -2170,6 +2170,357 @@ class $SubchaptersTable extends Subchapters
   }
 }
 
+class Bayan extends DataClass implements Insertable<Bayan> {
+  final String id;
+  final String title;
+  final String? excerpt;
+  final String language;
+  final String? location;
+  final String? audioData;
+  final String publishedAt;
+  final String createdAt;
+  final String updatedAt;
+  const Bayan(
+      {required this.id,
+      required this.title,
+      this.excerpt,
+      required this.language,
+      this.location,
+      this.audioData,
+      required this.publishedAt,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    if (!nullToAbsent || excerpt != null) {
+      map['excerpt'] = Variable<String>(excerpt);
+    }
+    map['language'] = Variable<String>(language);
+    if (!nullToAbsent || location != null) {
+      map['location'] = Variable<String>(location);
+    }
+    if (!nullToAbsent || audioData != null) {
+      map['audio_data'] = Variable<String>(audioData);
+    }
+    map['published_at'] = Variable<String>(publishedAt);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    return map;
+  }
+
+  factory Bayan.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Bayan(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      excerpt: serializer.fromJson<String?>(json['excerpt']),
+      language: serializer.fromJson<String>(json['language']),
+      location: serializer.fromJson<String?>(json['location']),
+      audioData: serializer.fromJson<String?>(json['audioData']),
+      publishedAt: serializer.fromJson<String>(json['publishedAt']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'excerpt': serializer.toJson<String?>(excerpt),
+      'language': serializer.toJson<String>(language),
+      'location': serializer.toJson<String?>(location),
+      'audioData': serializer.toJson<String?>(audioData),
+      'publishedAt': serializer.toJson<String>(publishedAt),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+    };
+  }
+
+  Bayan copyWith(
+          {String? id,
+          String? title,
+          Value<String?> excerpt = const Value.absent(),
+          String? language,
+          Value<String?> location = const Value.absent(),
+          Value<String?> audioData = const Value.absent(),
+          String? publishedAt,
+          String? createdAt,
+          String? updatedAt}) =>
+      Bayan(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        excerpt: excerpt.present ? excerpt.value : this.excerpt,
+        language: language ?? this.language,
+        location: location.present ? location.value : this.location,
+        audioData: audioData.present ? audioData.value : this.audioData,
+        publishedAt: publishedAt ?? this.publishedAt,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Bayan(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('excerpt: $excerpt, ')
+          ..write('language: $language, ')
+          ..write('location: $location, ')
+          ..write('audioData: $audioData, ')
+          ..write('publishedAt: $publishedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, title, excerpt, language, location,
+      audioData, publishedAt, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Bayan &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.excerpt == this.excerpt &&
+          other.language == this.language &&
+          other.location == this.location &&
+          other.audioData == this.audioData &&
+          other.publishedAt == this.publishedAt &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class BayansCompanion extends UpdateCompanion<Bayan> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<String?> excerpt;
+  final Value<String> language;
+  final Value<String?> location;
+  final Value<String?> audioData;
+  final Value<String> publishedAt;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  const BayansCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.excerpt = const Value.absent(),
+    this.language = const Value.absent(),
+    this.location = const Value.absent(),
+    this.audioData = const Value.absent(),
+    this.publishedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  BayansCompanion.insert({
+    required String id,
+    required String title,
+    this.excerpt = const Value.absent(),
+    required String language,
+    this.location = const Value.absent(),
+    this.audioData = const Value.absent(),
+    required String publishedAt,
+    required String createdAt,
+    required String updatedAt,
+  })  : id = Value(id),
+        title = Value(title),
+        language = Value(language),
+        publishedAt = Value(publishedAt),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<Bayan> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<String>? excerpt,
+    Expression<String>? language,
+    Expression<String>? location,
+    Expression<String>? audioData,
+    Expression<String>? publishedAt,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (excerpt != null) 'excerpt': excerpt,
+      if (language != null) 'language': language,
+      if (location != null) 'location': location,
+      if (audioData != null) 'audio_data': audioData,
+      if (publishedAt != null) 'published_at': publishedAt,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  BayansCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? title,
+      Value<String?>? excerpt,
+      Value<String>? language,
+      Value<String?>? location,
+      Value<String?>? audioData,
+      Value<String>? publishedAt,
+      Value<String>? createdAt,
+      Value<String>? updatedAt}) {
+    return BayansCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      excerpt: excerpt ?? this.excerpt,
+      language: language ?? this.language,
+      location: location ?? this.location,
+      audioData: audioData ?? this.audioData,
+      publishedAt: publishedAt ?? this.publishedAt,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (excerpt.present) {
+      map['excerpt'] = Variable<String>(excerpt.value);
+    }
+    if (language.present) {
+      map['language'] = Variable<String>(language.value);
+    }
+    if (location.present) {
+      map['location'] = Variable<String>(location.value);
+    }
+    if (audioData.present) {
+      map['audio_data'] = Variable<String>(audioData.value);
+    }
+    if (publishedAt.present) {
+      map['published_at'] = Variable<String>(publishedAt.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BayansCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('excerpt: $excerpt, ')
+          ..write('language: $language, ')
+          ..write('location: $location, ')
+          ..write('audioData: $audioData, ')
+          ..write('publishedAt: $publishedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $BayansTable extends Bayans with TableInfo<$BayansTable, Bayan> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BayansTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
+      'excerpt', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> language = GeneratedColumn<String>(
+      'language', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> location = GeneratedColumn<String>(
+      'location', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> audioData = GeneratedColumn<String>(
+      'audio_data', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> publishedAt = GeneratedColumn<String>(
+      'published_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        title,
+        excerpt,
+        language,
+        location,
+        audioData,
+        publishedAt,
+        createdAt,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? 'bayans';
+  @override
+  String get actualTableName => 'bayans';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Bayan map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Bayan(
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      excerpt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
+      language: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
+      location: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}location']),
+      audioData: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}audio_data']),
+      publishedAt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}published_at'])!,
+      createdAt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $BayansTable createAlias(String alias) {
+    return $BayansTable(attachedDatabase, alias);
+  }
+}
+
 class Malfuzat extends DataClass implements Insertable<Malfuzat> {
   final String id;
   final String title;
@@ -4459,6 +4810,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $BooksTable books = $BooksTable(this);
   late final $ChaptersTable chapters = $ChaptersTable(this);
   late final $SubchaptersTable subchapters = $SubchaptersTable(this);
+  late final $BayansTable bayans = $BayansTable(this);
   late final $MalfuzatsTable malfuzats = $MalfuzatsTable(this);
   late final $MasailsTable masails = $MasailsTable(this);
   late final $DuasTable duas = $DuasTable(this);
@@ -4476,6 +4828,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
         books,
         chapters,
         subchapters,
+        bayans,
         malfuzats,
         masails,
         duas,

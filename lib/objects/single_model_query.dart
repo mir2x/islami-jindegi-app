@@ -6,7 +6,7 @@ class SingleModelQuery extends Equatable {
     required this.repository,
     required this.id,
     this.params = const {},
-    this.remote = false,
+    this.remote = true,
   });
 
   final Repository repository;

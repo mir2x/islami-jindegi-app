@@ -41,7 +41,10 @@ final _bayansFinders = <String, dynamic>{};
 class $BayanHiveLocalAdapter = HiveLocalAdapter<Bayan> with $BayanLocalAdapter;
 
 class $BayanRemoteAdapter = RemoteAdapter<Bayan>
-    with JSONAPIAdapter<Bayan>, ApplicationAdapter<Bayan>;
+    with
+        JSONAPIAdapter<Bayan>,
+        LocalDatabaseAdapter<Bayan>,
+        ApplicationAdapter<Bayan>;
 
 final internalBayansRemoteAdapterProvider = Provider<RemoteAdapter<Bayan>>(
     (ref) => $BayanRemoteAdapter(
@@ -53,6 +56,8 @@ final bayansRepositoryProvider =
 extension BayanDataRepositoryX on Repository<Bayan> {
   JSONAPIAdapter<Bayan> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<Bayan>;
+  LocalDatabaseAdapter<Bayan> get localDatabaseAdapter =>
+      remoteAdapter as LocalDatabaseAdapter<Bayan>;
   ApplicationAdapter<Bayan> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<Bayan>;
 }

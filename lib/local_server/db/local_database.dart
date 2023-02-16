@@ -17,6 +17,7 @@ part 'local_database.g.dart';
     Books,
     Chapters,
     Subchapters,
+    Bayans,
     Malfuzats,
     Masails,
     Duas,
@@ -62,6 +63,8 @@ class LocalDatabase extends _$LocalDatabase {
         return queryBook(params);
       case 'chapters':
         return queryChapter(params);
+      case 'bayans':
+        return queryBayan(params);
       case 'malfuzats':
         return queryMalfuzat(params);
       case 'masails':
@@ -93,6 +96,8 @@ class LocalDatabase extends _$LocalDatabase {
         return findChapterById(id);
       case 'subchapters':
         return findSubchapterById(id);
+      case 'bayans':
+        return findBayanById(id);
       case 'malfuzats':
         return findMalfuzatById(id);
       case 'masails':
@@ -256,6 +261,28 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<Subchapter> findSubchapterById(String id) {
     return (select(subchapters)..where((t) => t.id.equals(id))).getSingle();
+  }
+
+  Future<List<Bayan>> queryBayan(Map params) {
+    var query = select(bayans);
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    } else {
+      query.limit(params['quantity'] ?? 20);
+    }
+
+    query.orderBy([
+      (t) => OrderingTerm(expression: t.publishedAt, mode: OrderingMode.desc),
+    ]);
+    return query.get();
+  }
+
+  Future<Bayan> findBayanById(String id) {
+    return (select(bayans)..where((t) => t.id.equals(id))).getSingle();
   }
 
   Future<List<Malfuzat>> queryMalfuzat(Map params) {
