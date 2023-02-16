@@ -6,13 +6,11 @@ class NamazTimeItem extends StatelessWidget {
     super.key,
     required this.label,
     required this.value,
-    required this.isSelected,
     required this.onSelected,
   });
 
   final String label;
   final String value;
-  final bool isSelected;
   final void Function() onSelected;
 
   @override
@@ -28,7 +26,7 @@ class NamazTimeItem extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: isSelected ? ThemeColors.color8 : ThemeColors.color7,
+                color: ThemeColors.color7,
               ),
               padding: const EdgeInsets.symmetric(
                 horizontal: 15,
@@ -49,7 +47,7 @@ class NamazTimeItem extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: isSelected ? ThemeColors.color8 : ThemeColors.color3,
+                color: ThemeColors.color3,
               ),
               padding: const EdgeInsets.symmetric(
                 horizontal: 15,
@@ -59,7 +57,7 @@ class NamazTimeItem extends StatelessWidget {
                 value,
                 textAlign: TextAlign.center,
                 style: textTheme.labelMedium?.copyWith(
-                  color: isSelected ? ThemeColors.color3 : ThemeColors.color2,
+                  color: ThemeColors.color2,
                 ),
               ),
             ),

@@ -95,7 +95,7 @@ class Home extends StatelessWidget {
                   icon: 'madrasah',
                 ),
                 Resource(
-                  route: 'namaz-time',
+                  route: 'namaz-times',
                   title: 'Namaz Time',
                   icon: 'namaz-time',
                 ),
