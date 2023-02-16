@@ -4229,6 +4229,330 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
   }
 }
 
+class Madrasah extends DataClass implements Insertable<Madrasah> {
+  final String id;
+  final String title;
+  final String introduction;
+  final String? excerpt;
+  final String? documentData;
+  final int position;
+  final String createdAt;
+  final String updatedAt;
+  const Madrasah(
+      {required this.id,
+      required this.title,
+      required this.introduction,
+      this.excerpt,
+      this.documentData,
+      required this.position,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    map['introduction'] = Variable<String>(introduction);
+    if (!nullToAbsent || excerpt != null) {
+      map['excerpt'] = Variable<String>(excerpt);
+    }
+    if (!nullToAbsent || documentData != null) {
+      map['document_data'] = Variable<String>(documentData);
+    }
+    map['position'] = Variable<int>(position);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    return map;
+  }
+
+  factory Madrasah.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Madrasah(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      introduction: serializer.fromJson<String>(json['introduction']),
+      excerpt: serializer.fromJson<String?>(json['excerpt']),
+      documentData: serializer.fromJson<String?>(json['documentData']),
+      position: serializer.fromJson<int>(json['position']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'introduction': serializer.toJson<String>(introduction),
+      'excerpt': serializer.toJson<String?>(excerpt),
+      'documentData': serializer.toJson<String?>(documentData),
+      'position': serializer.toJson<int>(position),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+    };
+  }
+
+  Madrasah copyWith(
+          {String? id,
+          String? title,
+          String? introduction,
+          Value<String?> excerpt = const Value.absent(),
+          Value<String?> documentData = const Value.absent(),
+          int? position,
+          String? createdAt,
+          String? updatedAt}) =>
+      Madrasah(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        introduction: introduction ?? this.introduction,
+        excerpt: excerpt.present ? excerpt.value : this.excerpt,
+        documentData:
+            documentData.present ? documentData.value : this.documentData,
+        position: position ?? this.position,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Madrasah(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('introduction: $introduction, ')
+          ..write('excerpt: $excerpt, ')
+          ..write('documentData: $documentData, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, title, introduction, excerpt,
+      documentData, position, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Madrasah &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.introduction == this.introduction &&
+          other.excerpt == this.excerpt &&
+          other.documentData == this.documentData &&
+          other.position == this.position &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class MadrasahsCompanion extends UpdateCompanion<Madrasah> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<String> introduction;
+  final Value<String?> excerpt;
+  final Value<String?> documentData;
+  final Value<int> position;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  const MadrasahsCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.introduction = const Value.absent(),
+    this.excerpt = const Value.absent(),
+    this.documentData = const Value.absent(),
+    this.position = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  MadrasahsCompanion.insert({
+    required String id,
+    required String title,
+    required String introduction,
+    this.excerpt = const Value.absent(),
+    this.documentData = const Value.absent(),
+    required int position,
+    required String createdAt,
+    required String updatedAt,
+  })  : id = Value(id),
+        title = Value(title),
+        introduction = Value(introduction),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<Madrasah> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<String>? introduction,
+    Expression<String>? excerpt,
+    Expression<String>? documentData,
+    Expression<int>? position,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (introduction != null) 'introduction': introduction,
+      if (excerpt != null) 'excerpt': excerpt,
+      if (documentData != null) 'document_data': documentData,
+      if (position != null) 'position': position,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  MadrasahsCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? title,
+      Value<String>? introduction,
+      Value<String?>? excerpt,
+      Value<String?>? documentData,
+      Value<int>? position,
+      Value<String>? createdAt,
+      Value<String>? updatedAt}) {
+    return MadrasahsCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      introduction: introduction ?? this.introduction,
+      excerpt: excerpt ?? this.excerpt,
+      documentData: documentData ?? this.documentData,
+      position: position ?? this.position,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (introduction.present) {
+      map['introduction'] = Variable<String>(introduction.value);
+    }
+    if (excerpt.present) {
+      map['excerpt'] = Variable<String>(excerpt.value);
+    }
+    if (documentData.present) {
+      map['document_data'] = Variable<String>(documentData.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MadrasahsCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('introduction: $introduction, ')
+          ..write('excerpt: $excerpt, ')
+          ..write('documentData: $documentData, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $MadrasahsTable extends Madrasahs
+    with TableInfo<$MadrasahsTable, Madrasah> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MadrasahsTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> introduction = GeneratedColumn<String>(
+      'introduction', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
+      'excerpt', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> documentData = GeneratedColumn<String>(
+      'document_data', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        title,
+        introduction,
+        excerpt,
+        documentData,
+        position,
+        createdAt,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? 'madrasahs';
+  @override
+  String get actualTableName => 'madrasahs';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Madrasah map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Madrasah(
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      introduction: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}introduction'])!,
+      excerpt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
+      documentData: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}document_data']),
+      position: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $MadrasahsTable createAlias(String alias) {
+    return $MadrasahsTable(attachedDatabase, alias);
+  }
+}
+
 class NamazTime extends DataClass implements Insertable<NamazTime> {
   final String id;
   final String title;
@@ -4815,6 +5139,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $MasailsTable masails = $MasailsTable(this);
   late final $DuasTable duas = $DuasTable(this);
   late final $ArticlesTable articles = $ArticlesTable(this);
+  late final $MadrasahsTable madrasahs = $MadrasahsTable(this);
   late final $NamazTimesTable namazTimes = $NamazTimesTable(this);
   late final $PagesTable pages = $PagesTable(this);
   @override
@@ -4833,6 +5158,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
         masails,
         duas,
         articles,
+        madrasahs,
         namazTimes,
         pages
       ];

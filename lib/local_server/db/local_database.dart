@@ -22,6 +22,7 @@ part 'local_database.g.dart';
     Masails,
     Duas,
     Articles,
+    Madrasahs,
     NamazTimes,
     Pages,
   ],
@@ -73,6 +74,8 @@ class LocalDatabase extends _$LocalDatabase {
         return queryDua(params);
       case 'articles':
         return queryArticle(params);
+      case 'madrasahs':
+        return queryMadrasah(params);
       case 'namazTimes':
         return queryNamazTime(params);
       case 'pages':
@@ -106,6 +109,8 @@ class LocalDatabase extends _$LocalDatabase {
         return findDuaById(id);
       case 'articles':
         return findArticleById(id);
+      case 'madrasahs':
+        return findMadrasahById(id);
       case 'namazTimes':
         return findNamazTimeById(id);
       case 'pages':
@@ -364,6 +369,26 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<Article> findArticleById(String id) {
     return (select(articles)..where((t) => t.id.equals(id))).getSingle();
+  }
+
+  Future<List<Madrasah>> queryMadrasah(Map params) {
+    var query = select(madrasahs);
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    } else {
+      query.limit(params['quantity'] ?? 20);
+    }
+
+    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
+    return query.get();
+  }
+
+  Future<Madrasah> findMadrasahById(String id) {
+    return (select(madrasahs)..where((t) => t.id.equals(id))).getSingle();
   }
 
   Future<List<Page>> queryPage(Map params) {
