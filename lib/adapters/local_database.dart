@@ -17,7 +17,7 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     OnErrorAll<T>? onError,
     DataRequestLabel? label,
   }) async {
-    final connectivityResult = await (Connectivity().checkConnectivity());
+    final connectivityResult = await Connectivity().checkConnectivity();
 
     if (connectivityResult == ConnectivityResult.none) {
       final database = ref.read(localDatabaseProvider);
@@ -66,10 +66,11 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
 
       // run decode/encode because `json_api`'s `toJson()`
       // DOES NOT return nested Map<String, dynamic>s as expected
-      var response = json.decode(json.encode(outbound)) as Map<String, dynamic>;
+      var data = json.decode(json.encode(outbound)) as Map<String, dynamic>;
+      label ??= DataRequestLabel('custom', type: internalType);
 
-      final deserialized = await deserialize(response);
-      return deserialized.models;
+      onSuccess ??= (data, label, _) => this.onSuccess<List<T>>(data, label);
+      return onSuccess.call(data, label, this);
     } else {
       return super.findAll(
         remote: remote,
@@ -107,10 +108,11 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
 
       // run decode/encode because `json_api`'s `toJson()`
       // DOES NOT return nested Map<String, dynamic>s as expected
-      var response = json.decode(json.encode(outbound)) as Map<String, dynamic>;
+      var data = json.decode(json.encode(outbound)) as Map<String, dynamic>;
+      label ??= DataRequestLabel('custom', type: internalType);
 
-      final deserialized = await deserialize(response);
-      return deserialized.model;
+      onSuccess ??= (data, label, _) => this.onSuccess<T>(data, label);
+      return onSuccess.call(data, label, this);
     } else {
       return super.findOne(
         id,
