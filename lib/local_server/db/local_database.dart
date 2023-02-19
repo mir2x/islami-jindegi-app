@@ -22,6 +22,7 @@ part 'local_database.g.dart';
     Malfuzats,
     Masails,
     Duas,
+    ArticleAuthors,
     Articles,
     Madrasahs,
     NamazTimes,
@@ -86,7 +87,7 @@ class LocalDatabase extends _$LocalDatabase {
     }
   }
 
-  Future? findById(String tableName, String id) {
+  Future? findById(String tableName, String id, {params = const {}}) {
     switch (tableName) {
       case 'surahs':
         return findSurahById(id);
@@ -110,8 +111,10 @@ class LocalDatabase extends _$LocalDatabase {
         return findMasailById(id);
       case 'duas':
         return findDuaById(id);
+      case 'articleAuthors':
+        return findArticleAuthorById(id);
       case 'articles':
-        return findArticleById(id);
+        return findArticleById(id, params);
       case 'madrasahs':
         return findMadrasahById(id);
       case 'namazTimes':
@@ -386,6 +389,10 @@ class LocalDatabase extends _$LocalDatabase {
     return (select(duas)..where((t) => t.id.equals(id))).getSingle();
   }
 
+  Future<ArticleAuthor> findArticleAuthorById(String id) {
+    return (select(articleAuthors)..where((t) => t.id.equals(id))).getSingle();
+  }
+
   Future<List<Article>> queryArticle(Map params) {
     var query = select(articles);
 
@@ -404,8 +411,27 @@ class LocalDatabase extends _$LocalDatabase {
     return query.get();
   }
 
-  Future<Article> findArticleById(String id) {
-    return (select(articles)..where((t) => t.id.equals(id))).getSingle();
+  Future<dynamic> findArticleById(String id, Map params) async {
+    var article =
+        await (select(articles)..where((t) => t.id.equals(id))).getSingle();
+
+    if (params.containsKey('include') &&
+        params['include'] == 'article-author') {
+      var author = await (select(articleAuthors)
+            ..where((s) => s.id.equals(article.articleAuthorId)))
+          .getSingle();
+
+      var articleWithAuthor = {
+        'articles': article,
+        'relationships': {
+          'articleAuthor': author,
+        }
+      };
+
+      return Future.value(articleWithAuthor);
+    } else {
+      return Future.value(article);
+    }
   }
 
   Future<List<Madrasah>> queryMadrasah(Map params) {

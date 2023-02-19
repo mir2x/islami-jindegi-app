@@ -36,7 +36,10 @@ class $ArticleAuthorHiveLocalAdapter = HiveLocalAdapter<ArticleAuthor>
     with $ArticleAuthorLocalAdapter;
 
 class $ArticleAuthorRemoteAdapter = RemoteAdapter<ArticleAuthor>
-    with JSONAPIAdapter<ArticleAuthor>, ApplicationAdapter<ArticleAuthor>;
+    with
+        JSONAPIAdapter<ArticleAuthor>,
+        LocalDatabaseAdapter<ArticleAuthor>,
+        ApplicationAdapter<ArticleAuthor>;
 
 final internalArticleAuthorsRemoteAdapterProvider =
     Provider<RemoteAdapter<ArticleAuthor>>((ref) => $ArticleAuthorRemoteAdapter(
@@ -49,6 +52,8 @@ final articleAuthorsRepositoryProvider = Provider<Repository<ArticleAuthor>>(
 extension ArticleAuthorDataRepositoryX on Repository<ArticleAuthor> {
   JSONAPIAdapter<ArticleAuthor> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<ArticleAuthor>;
+  LocalDatabaseAdapter<ArticleAuthor> get localDatabaseAdapter =>
+      remoteAdapter as LocalDatabaseAdapter<ArticleAuthor>;
   ApplicationAdapter<ArticleAuthor> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<ArticleAuthor>;
 }

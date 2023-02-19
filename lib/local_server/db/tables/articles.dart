@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'article_authors.dart';
 
 class Articles extends Table {
   TextColumn get id => text()();
@@ -12,6 +13,8 @@ class Articles extends Table {
   TextColumn get publishedAt => text().nullable()();
   TextColumn get createdAt => text()();
   TextColumn get updatedAt => text()();
+
+  TextColumn get articleAuthorId => text().references(ArticleAuthors, #id)();
 
   @override
   Set<Column> get primaryKey => {id};

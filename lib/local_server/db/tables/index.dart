@@ -9,6 +9,7 @@ export 'bayans.dart';
 export 'malfuzats.dart';
 export 'masails.dart';
 export 'duas.dart';
+export 'article_authors.dart';
 export 'articles.dart';
 export 'madrasahs.dart';
 export 'namaz_times.dart';

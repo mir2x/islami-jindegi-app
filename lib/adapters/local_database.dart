@@ -32,7 +32,7 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
           resourceMap = json.decode(json.encode(item[internalType]));
 
           for (final relEntry in item['relationships'].entries) {
-            final key = ReCase(relEntry.key).paramCase;
+            final key = relEntry.key;
             final value = relEntry.value;
 
             if (value is Iterable) {
@@ -47,6 +47,8 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
               }
             } else if (value != null) {
               relationships[key] = ToOne(Identifier(key, value.id.toString()));
+              var includedResourceMap = json.decode(json.encode(value));
+              included.add(mapToResource(includedResourceMap, key));
             }
           }
         } else {
@@ -59,7 +61,6 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
       });
 
       var outboundData = OutboundDataDocument.collection(body);
-
       outboundData.included.addAll(included);
 
       var outbound = outboundData.toJson();
@@ -100,11 +101,50 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
 
     if (connectivityResult == ConnectivityResult.none) {
       final database = ref.read(localDatabaseProvider);
-      final item = await database.findById(internalType, id.toString());
-      final resourceMap = json.decode(json.encode(item));
-      Resource resource = mapToResource(resourceMap, internalType);
+      final item = await database.findById(
+        internalType,
+        id.toString(),
+        params: params,
+      );
 
-      final outbound = OutboundDataDocument.resource(resource).toJson();
+      Map resourceMap;
+      Map<String, Relationship> relationships = {};
+      List<Resource> included = [];
+
+      if (item is Map) {
+        resourceMap = json.decode(json.encode(item[internalType]));
+
+        for (final relEntry in item['relationships'].entries) {
+          final key = relEntry.key;
+          final value = relEntry.value;
+
+          if (value is Iterable) {
+            final identifiers = value.map((subitem) {
+              return Identifier(key, subitem.id.toString());
+            }).toList();
+            relationships[key] = ToMany(identifiers);
+
+            for (final subitem in value) {
+              var includedResourceMap = json.decode(json.encode(subitem));
+              included.add(mapToResource(includedResourceMap, key));
+            }
+          } else if (value != null) {
+            relationships[key] = ToOne(Identifier(key, value.id.toString()));
+            var includedResourceMap = json.decode(json.encode(value));
+            included.add(mapToResource(includedResourceMap, key));
+          }
+        }
+      } else {
+        resourceMap = json.decode(json.encode(item));
+      }
+
+      Resource resource = mapToResource(resourceMap, internalType);
+      resource.relationships.addAll(relationships);
+
+      final outboundData = OutboundDataDocument.resource(resource);
+      outboundData.included.addAll(included);
+
+      var outbound = outboundData.toJson();
 
       // run decode/encode because `json_api`'s `toJson()`
       // DOES NOT return nested Map<String, dynamic>s as expected
@@ -135,7 +175,7 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
       (k, v) => MapEntry<String, Object?>(ReCase(k).paramCase, v),
     );
 
-    final resource = Resource(ReCase(type).paramCase, id.toString());
+    final resource = Resource(type, id.toString());
     resource.attributes.addAll(attributes);
     return resource;
   }

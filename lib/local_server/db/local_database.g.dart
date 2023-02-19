@@ -4082,6 +4082,266 @@ class $DuasTable extends Duas with TableInfo<$DuasTable, Dua> {
   }
 }
 
+class ArticleAuthor extends DataClass implements Insertable<ArticleAuthor> {
+  final String id;
+  final String name;
+  final String? info;
+  final int position;
+  final String createdAt;
+  final String updatedAt;
+  const ArticleAuthor(
+      {required this.id,
+      required this.name,
+      this.info,
+      required this.position,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || info != null) {
+      map['info'] = Variable<String>(info);
+    }
+    map['position'] = Variable<int>(position);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    return map;
+  }
+
+  factory ArticleAuthor.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ArticleAuthor(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      info: serializer.fromJson<String?>(json['info']),
+      position: serializer.fromJson<int>(json['position']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'info': serializer.toJson<String?>(info),
+      'position': serializer.toJson<int>(position),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+    };
+  }
+
+  ArticleAuthor copyWith(
+          {String? id,
+          String? name,
+          Value<String?> info = const Value.absent(),
+          int? position,
+          String? createdAt,
+          String? updatedAt}) =>
+      ArticleAuthor(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        info: info.present ? info.value : this.info,
+        position: position ?? this.position,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('ArticleAuthor(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('info: $info, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, name, info, position, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ArticleAuthor &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.info == this.info &&
+          other.position == this.position &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ArticleAuthorsCompanion extends UpdateCompanion<ArticleAuthor> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<String?> info;
+  final Value<int> position;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  const ArticleAuthorsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.info = const Value.absent(),
+    this.position = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  ArticleAuthorsCompanion.insert({
+    required String id,
+    required String name,
+    this.info = const Value.absent(),
+    required int position,
+    required String createdAt,
+    required String updatedAt,
+  })  : id = Value(id),
+        name = Value(name),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<ArticleAuthor> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<String>? info,
+    Expression<int>? position,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (info != null) 'info': info,
+      if (position != null) 'position': position,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  ArticleAuthorsCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? name,
+      Value<String?>? info,
+      Value<int>? position,
+      Value<String>? createdAt,
+      Value<String>? updatedAt}) {
+    return ArticleAuthorsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      info: info ?? this.info,
+      position: position ?? this.position,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (info.present) {
+      map['info'] = Variable<String>(info.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ArticleAuthorsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('info: $info, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ArticleAuthorsTable extends ArticleAuthors
+    with TableInfo<$ArticleAuthorsTable, ArticleAuthor> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ArticleAuthorsTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> info = GeneratedColumn<String>(
+      'info', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, name, info, position, createdAt, updatedAt];
+  @override
+  String get aliasedName => _alias ?? 'article_authors';
+  @override
+  String get actualTableName => 'article_authors';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ArticleAuthor map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ArticleAuthor(
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      name: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      info: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}info']),
+      position: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $ArticleAuthorsTable createAlias(String alias) {
+    return $ArticleAuthorsTable(attachedDatabase, alias);
+  }
+}
+
 class Article extends DataClass implements Insertable<Article> {
   final String id;
   final String title;
@@ -4094,6 +4354,7 @@ class Article extends DataClass implements Insertable<Article> {
   final String? publishedAt;
   final String createdAt;
   final String updatedAt;
+  final String articleAuthorId;
   const Article(
       {required this.id,
       required this.title,
@@ -4105,7 +4366,8 @@ class Article extends DataClass implements Insertable<Article> {
       required this.position,
       this.publishedAt,
       required this.createdAt,
-      required this.updatedAt});
+      required this.updatedAt,
+      required this.articleAuthorId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -4126,6 +4388,7 @@ class Article extends DataClass implements Insertable<Article> {
     }
     map['created_at'] = Variable<String>(createdAt);
     map['updated_at'] = Variable<String>(updatedAt);
+    map['article_author_id'] = Variable<String>(articleAuthorId);
     return map;
   }
 
@@ -4144,6 +4407,7 @@ class Article extends DataClass implements Insertable<Article> {
       publishedAt: serializer.fromJson<String?>(json['publishedAt']),
       createdAt: serializer.fromJson<String>(json['createdAt']),
       updatedAt: serializer.fromJson<String>(json['updatedAt']),
+      articleAuthorId: serializer.fromJson<String>(json['articleAuthorId']),
     );
   }
   @override
@@ -4161,6 +4425,7 @@ class Article extends DataClass implements Insertable<Article> {
       'publishedAt': serializer.toJson<String?>(publishedAt),
       'createdAt': serializer.toJson<String>(createdAt),
       'updatedAt': serializer.toJson<String>(updatedAt),
+      'articleAuthorId': serializer.toJson<String>(articleAuthorId),
     };
   }
 
@@ -4175,7 +4440,8 @@ class Article extends DataClass implements Insertable<Article> {
           int? position,
           Value<String?> publishedAt = const Value.absent(),
           String? createdAt,
-          String? updatedAt}) =>
+          String? updatedAt,
+          String? articleAuthorId}) =>
       Article(
         id: id ?? this.id,
         title: title ?? this.title,
@@ -4189,6 +4455,7 @@ class Article extends DataClass implements Insertable<Article> {
         publishedAt: publishedAt.present ? publishedAt.value : this.publishedAt,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
+        articleAuthorId: articleAuthorId ?? this.articleAuthorId,
       );
   @override
   String toString() {
@@ -4203,14 +4470,26 @@ class Article extends DataClass implements Insertable<Article> {
           ..write('position: $position, ')
           ..write('publishedAt: $publishedAt, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('articleAuthorId: $articleAuthorId')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, title, slug, body, excerpt, language,
-      documentData, position, publishedAt, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+      id,
+      title,
+      slug,
+      body,
+      excerpt,
+      language,
+      documentData,
+      position,
+      publishedAt,
+      createdAt,
+      updatedAt,
+      articleAuthorId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -4225,7 +4504,8 @@ class Article extends DataClass implements Insertable<Article> {
           other.position == this.position &&
           other.publishedAt == this.publishedAt &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.articleAuthorId == this.articleAuthorId);
 }
 
 class ArticlesCompanion extends UpdateCompanion<Article> {
@@ -4240,6 +4520,7 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
   final Value<String?> publishedAt;
   final Value<String> createdAt;
   final Value<String> updatedAt;
+  final Value<String> articleAuthorId;
   const ArticlesCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -4252,6 +4533,7 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
     this.publishedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.articleAuthorId = const Value.absent(),
   });
   ArticlesCompanion.insert({
     required String id,
@@ -4265,6 +4547,7 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
     this.publishedAt = const Value.absent(),
     required String createdAt,
     required String updatedAt,
+    required String articleAuthorId,
   })  : id = Value(id),
         title = Value(title),
         slug = Value(slug),
@@ -4272,7 +4555,8 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
         language = Value(language),
         position = Value(position),
         createdAt = Value(createdAt),
-        updatedAt = Value(updatedAt);
+        updatedAt = Value(updatedAt),
+        articleAuthorId = Value(articleAuthorId);
   static Insertable<Article> custom({
     Expression<String>? id,
     Expression<String>? title,
@@ -4285,6 +4569,7 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
     Expression<String>? publishedAt,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
+    Expression<String>? articleAuthorId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -4298,6 +4583,7 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
       if (publishedAt != null) 'published_at': publishedAt,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (articleAuthorId != null) 'article_author_id': articleAuthorId,
     });
   }
 
@@ -4312,7 +4598,8 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
       Value<int>? position,
       Value<String?>? publishedAt,
       Value<String>? createdAt,
-      Value<String>? updatedAt}) {
+      Value<String>? updatedAt,
+      Value<String>? articleAuthorId}) {
     return ArticlesCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -4325,6 +4612,7 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
       publishedAt: publishedAt ?? this.publishedAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      articleAuthorId: articleAuthorId ?? this.articleAuthorId,
     );
   }
 
@@ -4364,6 +4652,9 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<String>(updatedAt.value);
     }
+    if (articleAuthorId.present) {
+      map['article_author_id'] = Variable<String>(articleAuthorId.value);
+    }
     return map;
   }
 
@@ -4380,7 +4671,8 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
           ..write('position: $position, ')
           ..write('publishedAt: $publishedAt, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('articleAuthorId: $articleAuthorId')
           ..write(')'))
         .toString();
   }
@@ -4436,6 +4728,12 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
       'updated_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
+  late final GeneratedColumn<String> articleAuthorId = GeneratedColumn<String>(
+      'article_author_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: 'REFERENCES article_authors (id)');
+  @override
   List<GeneratedColumn> get $columns => [
         id,
         title,
@@ -4447,7 +4745,8 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
         position,
         publishedAt,
         createdAt,
-        updatedAt
+        updatedAt,
+        articleAuthorId
       ];
   @override
   String get aliasedName => _alias ?? 'articles';
@@ -4481,6 +4780,8 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.options.types
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      articleAuthorId: attachedDatabase.options.types.read(
+          DriftSqlType.string, data['${effectivePrefix}article_author_id'])!,
     );
   }
 
@@ -5401,6 +5702,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $MalfuzatsTable malfuzats = $MalfuzatsTable(this);
   late final $MasailsTable masails = $MasailsTable(this);
   late final $DuasTable duas = $DuasTable(this);
+  late final $ArticleAuthorsTable articleAuthors = $ArticleAuthorsTable(this);
   late final $ArticlesTable articles = $ArticlesTable(this);
   late final $MadrasahsTable madrasahs = $MadrasahsTable(this);
   late final $NamazTimesTable namazTimes = $NamazTimesTable(this);
@@ -5421,6 +5723,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
         malfuzats,
         masails,
         duas,
+        articleAuthors,
         articles,
         madrasahs,
         namazTimes,
