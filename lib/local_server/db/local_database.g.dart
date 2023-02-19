@@ -1121,12 +1121,14 @@ class AyahTranslation extends DataClass implements Insertable<AyahTranslation> {
   final String body;
   final String createdAt;
   final String updatedAt;
+  final String ayahId;
   const AyahTranslation(
       {required this.id,
       required this.title,
       required this.body,
       required this.createdAt,
-      required this.updatedAt});
+      required this.updatedAt,
+      required this.ayahId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1135,6 +1137,7 @@ class AyahTranslation extends DataClass implements Insertable<AyahTranslation> {
     map['body'] = Variable<String>(body);
     map['created_at'] = Variable<String>(createdAt);
     map['updated_at'] = Variable<String>(updatedAt);
+    map['ayah_id'] = Variable<String>(ayahId);
     return map;
   }
 
@@ -1147,6 +1150,7 @@ class AyahTranslation extends DataClass implements Insertable<AyahTranslation> {
       body: serializer.fromJson<String>(json['body']),
       createdAt: serializer.fromJson<String>(json['createdAt']),
       updatedAt: serializer.fromJson<String>(json['updatedAt']),
+      ayahId: serializer.fromJson<String>(json['ayahId']),
     );
   }
   @override
@@ -1158,6 +1162,7 @@ class AyahTranslation extends DataClass implements Insertable<AyahTranslation> {
       'body': serializer.toJson<String>(body),
       'createdAt': serializer.toJson<String>(createdAt),
       'updatedAt': serializer.toJson<String>(updatedAt),
+      'ayahId': serializer.toJson<String>(ayahId),
     };
   }
 
@@ -1166,13 +1171,15 @@ class AyahTranslation extends DataClass implements Insertable<AyahTranslation> {
           String? title,
           String? body,
           String? createdAt,
-          String? updatedAt}) =>
+          String? updatedAt,
+          String? ayahId}) =>
       AyahTranslation(
         id: id ?? this.id,
         title: title ?? this.title,
         body: body ?? this.body,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
+        ayahId: ayahId ?? this.ayahId,
       );
   @override
   String toString() {
@@ -1181,13 +1188,15 @@ class AyahTranslation extends DataClass implements Insertable<AyahTranslation> {
           ..write('title: $title, ')
           ..write('body: $body, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('ayahId: $ayahId')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, title, body, createdAt, updatedAt);
+  int get hashCode =>
+      Object.hash(id, title, body, createdAt, updatedAt, ayahId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1196,7 +1205,8 @@ class AyahTranslation extends DataClass implements Insertable<AyahTranslation> {
           other.title == this.title &&
           other.body == this.body &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.ayahId == this.ayahId);
 }
 
 class AyahTranslationsCompanion extends UpdateCompanion<AyahTranslation> {
@@ -1205,12 +1215,14 @@ class AyahTranslationsCompanion extends UpdateCompanion<AyahTranslation> {
   final Value<String> body;
   final Value<String> createdAt;
   final Value<String> updatedAt;
+  final Value<String> ayahId;
   const AyahTranslationsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.body = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.ayahId = const Value.absent(),
   });
   AyahTranslationsCompanion.insert({
     required String id,
@@ -1218,17 +1230,20 @@ class AyahTranslationsCompanion extends UpdateCompanion<AyahTranslation> {
     required String body,
     required String createdAt,
     required String updatedAt,
+    required String ayahId,
   })  : id = Value(id),
         title = Value(title),
         body = Value(body),
         createdAt = Value(createdAt),
-        updatedAt = Value(updatedAt);
+        updatedAt = Value(updatedAt),
+        ayahId = Value(ayahId);
   static Insertable<AyahTranslation> custom({
     Expression<String>? id,
     Expression<String>? title,
     Expression<String>? body,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
+    Expression<String>? ayahId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1236,6 +1251,7 @@ class AyahTranslationsCompanion extends UpdateCompanion<AyahTranslation> {
       if (body != null) 'body': body,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (ayahId != null) 'ayah_id': ayahId,
     });
   }
 
@@ -1244,13 +1260,15 @@ class AyahTranslationsCompanion extends UpdateCompanion<AyahTranslation> {
       Value<String>? title,
       Value<String>? body,
       Value<String>? createdAt,
-      Value<String>? updatedAt}) {
+      Value<String>? updatedAt,
+      Value<String>? ayahId}) {
     return AyahTranslationsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
       body: body ?? this.body,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      ayahId: ayahId ?? this.ayahId,
     );
   }
 
@@ -1272,6 +1290,9 @@ class AyahTranslationsCompanion extends UpdateCompanion<AyahTranslation> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<String>(updatedAt.value);
     }
+    if (ayahId.present) {
+      map['ayah_id'] = Variable<String>(ayahId.value);
+    }
     return map;
   }
 
@@ -1282,7 +1303,8 @@ class AyahTranslationsCompanion extends UpdateCompanion<AyahTranslation> {
           ..write('title: $title, ')
           ..write('body: $body, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('ayahId: $ayahId')
           ..write(')'))
         .toString();
   }
@@ -1315,7 +1337,14 @@ class $AyahTranslationsTable extends AyahTranslations
       'updated_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [id, title, body, createdAt, updatedAt];
+  late final GeneratedColumn<String> ayahId = GeneratedColumn<String>(
+      'ayah_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: 'REFERENCES ayahs (id)');
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, title, body, createdAt, updatedAt, ayahId];
   @override
   String get aliasedName => _alias ?? 'ayah_translations';
   @override
@@ -1336,6 +1365,8 @@ class $AyahTranslationsTable extends AyahTranslations
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.options.types
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      ayahId: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}ayah_id'])!,
     );
   }
 

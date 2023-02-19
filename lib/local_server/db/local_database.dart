@@ -163,7 +163,7 @@ class LocalDatabase extends _$LocalDatabase {
     return (select(paras)..where((t) => t.id.equals(id))).getSingle();
   }
 
-  Future<List<Ayah>> queryAyah(Map params) {
+  Future<List> queryAyah(Map params) async {
     var query = select(ayahs);
 
     if (params.containsKey('page') && params.containsKey('per_page')) {
@@ -189,7 +189,35 @@ class LocalDatabase extends _$LocalDatabase {
       query.orderBy([(t) => OrderingTerm(expression: t.surahPosition)]);
     }
 
-    return query.get();
+    var ayahItems = await query.get();
+
+    if (params.containsKey('include') &&
+        params['include'] == 'ayah-translations') {
+      Map<String, Ayah> idToAyahs = <String, Ayah>{
+        for (var v in ayahItems) v.id: v
+      };
+      var ids = idToAyahs.keys;
+
+      var translationItems = await (select(ayahTranslations)
+            ..where((s) => s.ayahId.isIn(ids)))
+          .get();
+
+      var idToTranslations =
+          groupBy(translationItems, (AyahTranslation obj) => obj.ayahId);
+
+      var ayahWithTranslations = ids.map((id) {
+        return {
+          'ayahs': idToAyahs[id],
+          'relationships': {
+            'ayahTranslations': idToTranslations[id] ?? [],
+          }
+        };
+      }).toList();
+
+      return Future.value(ayahWithTranslations);
+    } else {
+      return Future.value(ayahItems);
+    }
   }
 
   Future<Ayah> findAyahById(String id) {
@@ -240,7 +268,7 @@ class LocalDatabase extends _$LocalDatabase {
 
     var chapterItems = await query.get();
 
-    if (params.containsKey('include')) {
+    if (params.containsKey('include') && params['include'] == 'subchapters') {
       Map<String, Chapter> idToChapters = <String, Chapter>{
         for (var v in chapterItems) v.id: v
       };

@@ -32,7 +32,7 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
           resourceMap = json.decode(json.encode(item[internalType]));
 
           for (final relEntry in item['relationships'].entries) {
-            final key = relEntry.key;
+            final key = ReCase(relEntry.key).paramCase;
             final value = relEntry.value;
 
             if (value is Iterable) {
