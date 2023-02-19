@@ -5,6 +5,7 @@ export 'ayah_translations.dart';
 export 'books.dart';
 export 'chapters.dart';
 export 'subchapters.dart';
+export 'speakers.dart';
 export 'bayans.dart';
 export 'malfuzats.dart';
 export 'masails.dart';

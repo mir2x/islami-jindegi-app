@@ -18,6 +18,7 @@ part 'local_database.g.dart';
     Books,
     Chapters,
     Subchapters,
+    Speakers,
     Bayans,
     Malfuzats,
     Masails,
@@ -103,8 +104,10 @@ class LocalDatabase extends _$LocalDatabase {
         return findChapterById(id);
       case 'subchapters':
         return findSubchapterById(id);
+      case 'speakers':
+        return findSpeakerById(id);
       case 'bayans':
-        return findBayanById(id);
+        return findBayanById(id, params);
       case 'malfuzats':
         return findMalfuzatById(id);
       case 'masails':
@@ -307,6 +310,10 @@ class LocalDatabase extends _$LocalDatabase {
     return (select(subchapters)..where((t) => t.id.equals(id))).getSingle();
   }
 
+  Future<Speaker> findSpeakerById(String id) {
+    return (select(speakers)..where((t) => t.id.equals(id))).getSingle();
+  }
+
   Future<List<Bayan>> queryBayan(Map params) {
     var query = select(bayans);
 
@@ -325,8 +332,27 @@ class LocalDatabase extends _$LocalDatabase {
     return query.get();
   }
 
-  Future<Bayan> findBayanById(String id) {
-    return (select(bayans)..where((t) => t.id.equals(id))).getSingle();
+  Future<dynamic> findBayanById(String id, Map params) async {
+    print(params);
+    var bayan =
+        await (select(bayans)..where((t) => t.id.equals(id))).getSingle();
+
+    if (params.containsKey('include') && params['include'] == 'speaker') {
+      var speaker = await (select(speakers)
+            ..where((s) => s.id.equals(bayan.speakerId)))
+          .getSingle();
+
+      var bayanWithSpeaker = {
+        'bayans': bayan,
+        'relationships': {
+          'speaker': speaker,
+        }
+      };
+
+      return Future.value(bayanWithSpeaker);
+    } else {
+      return Future.value(bayan);
+    }
   }
 
   Future<List<Malfuzat>> queryMalfuzat(Map params) {

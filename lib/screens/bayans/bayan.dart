@@ -24,6 +24,8 @@ class Bayan extends ConsumerWidget {
     var query = SingleModelQuery(
       repository: ref.bayans,
       id: QR.params['id'].toString(),
+      params: const {'include': 'speaker'},
+      remote: true,
     );
 
     var modelQuery = ref.watch(singleModelProvider(query));

@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'speakers.dart';
 
 class Bayans extends Table {
   TextColumn get id => text()();
@@ -10,6 +11,8 @@ class Bayans extends Table {
   TextColumn get publishedAt => text()();
   TextColumn get createdAt => text()();
   TextColumn get updatedAt => text()();
+
+  TextColumn get speakerId => text().references(Speakers, #id)();
 
   @override
   Set<Column> get primaryKey => {id};
