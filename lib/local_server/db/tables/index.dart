@@ -1,6 +1,7 @@
 export 'surahs.dart';
 export 'paras.dart';
 export 'ayahs.dart';
+export 'ayah_translations.dart';
 export 'books.dart';
 export 'chapters.dart';
 export 'subchapters.dart';

@@ -14,6 +14,7 @@ part 'local_database.g.dart';
     Surahs,
     Paras,
     Ayahs,
+    AyahTranslations,
     Books,
     Chapters,
     Subchapters,
@@ -93,6 +94,8 @@ class LocalDatabase extends _$LocalDatabase {
         return findParaById(id);
       case 'ayahs':
         return findAyahById(id);
+      case 'ayahTranslations':
+        return findAyahTranslationById(id);
       case 'books':
         return findBookById(id);
       case 'chapters':
@@ -191,6 +194,11 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<Ayah> findAyahById(String id) {
     return (select(ayahs)..where((t) => t.id.equals(id))).getSingle();
+  }
+
+  Future<AyahTranslation> findAyahTranslationById(String id) {
+    return (select(ayahTranslations)..where((t) => t.id.equals(id)))
+        .getSingle();
   }
 
   Future<List<Book>> queryBook(Map params) {

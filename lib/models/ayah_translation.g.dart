@@ -44,7 +44,10 @@ class $AyahTranslationHiveLocalAdapter = HiveLocalAdapter<AyahTranslation>
     with $AyahTranslationLocalAdapter;
 
 class $AyahTranslationRemoteAdapter = RemoteAdapter<AyahTranslation>
-    with JSONAPIAdapter<AyahTranslation>, ApplicationAdapter<AyahTranslation>;
+    with
+        JSONAPIAdapter<AyahTranslation>,
+        LocalDatabaseAdapter<AyahTranslation>,
+        ApplicationAdapter<AyahTranslation>;
 
 final internalAyahTranslationsRemoteAdapterProvider =
     Provider<RemoteAdapter<AyahTranslation>>((ref) =>
@@ -58,6 +61,8 @@ final ayahTranslationsRepositoryProvider =
 extension AyahTranslationDataRepositoryX on Repository<AyahTranslation> {
   JSONAPIAdapter<AyahTranslation> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<AyahTranslation>;
+  LocalDatabaseAdapter<AyahTranslation> get localDatabaseAdapter =>
+      remoteAdapter as LocalDatabaseAdapter<AyahTranslation>;
   ApplicationAdapter<AyahTranslation> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<AyahTranslation>;
 }
