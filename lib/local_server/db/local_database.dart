@@ -358,6 +358,7 @@ class LocalDatabase extends _$LocalDatabase {
       query.limit(params['quantity'] ?? 20);
     }
 
+    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
     return query.get();
   }
 
@@ -431,7 +432,7 @@ class LocalDatabase extends _$LocalDatabase {
     var query = select(pages);
 
     if (params.containsKey('slug')) {
-      query.where((t) => t.slug.equals(params['slug']));
+      query.where((t) => t.slug.equals(params['slug'].toString()));
     }
 
     query.limit(params['quantity'] ?? 20);
@@ -447,7 +448,7 @@ class LocalDatabase extends _$LocalDatabase {
     var query = select(namazTimes);
 
     if (params.containsKey('slug')) {
-      query.where((t) => t.slug.equals(params['slug']));
+      query.where((t) => t.slug.equals(params['slug'].toString()));
     }
 
     query.limit(params['quantity'] ?? 20);

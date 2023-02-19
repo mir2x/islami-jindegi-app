@@ -67,7 +67,7 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
       // run decode/encode because `json_api`'s `toJson()`
       // DOES NOT return nested Map<String, dynamic>s as expected
       var data = json.decode(json.encode(outbound)) as Map<String, dynamic>;
-      label ??= DataRequestLabel('custom', type: internalType);
+      label ??= DataRequestLabel('findAll', type: internalType);
 
       onSuccess ??= (data, label, _) => this.onSuccess<List<T>>(data, label);
       return onSuccess.call(data, label, this);
@@ -109,7 +109,7 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
       // run decode/encode because `json_api`'s `toJson()`
       // DOES NOT return nested Map<String, dynamic>s as expected
       var data = json.decode(json.encode(outbound)) as Map<String, dynamic>;
-      label ??= DataRequestLabel('custom', type: internalType);
+      label ??= DataRequestLabel('findOne', type: internalType);
 
       onSuccess ??= (data, label, _) => this.onSuccess<T>(data, label);
       return onSuccess.call(data, label, this);
@@ -135,7 +135,7 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
       (k, v) => MapEntry<String, Object?>(ReCase(k).paramCase, v),
     );
 
-    final resource = Resource(type, id.toString());
+    final resource = Resource(ReCase(type).paramCase, id.toString());
     resource.attributes.addAll(attributes);
     return resource;
   }
