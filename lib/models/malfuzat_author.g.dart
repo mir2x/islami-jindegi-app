@@ -36,7 +36,10 @@ class $MalfuzatAuthorHiveLocalAdapter = HiveLocalAdapter<MalfuzatAuthor>
     with $MalfuzatAuthorLocalAdapter;
 
 class $MalfuzatAuthorRemoteAdapter = RemoteAdapter<MalfuzatAuthor>
-    with JSONAPIAdapter<MalfuzatAuthor>, ApplicationAdapter<MalfuzatAuthor>;
+    with
+        JSONAPIAdapter<MalfuzatAuthor>,
+        LocalDatabaseAdapter<MalfuzatAuthor>,
+        ApplicationAdapter<MalfuzatAuthor>;
 
 final internalMalfuzatAuthorsRemoteAdapterProvider =
     Provider<RemoteAdapter<MalfuzatAuthor>>((ref) =>
@@ -49,6 +52,8 @@ final malfuzatAuthorsRepositoryProvider = Provider<Repository<MalfuzatAuthor>>(
 extension MalfuzatAuthorDataRepositoryX on Repository<MalfuzatAuthor> {
   JSONAPIAdapter<MalfuzatAuthor> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<MalfuzatAuthor>;
+  LocalDatabaseAdapter<MalfuzatAuthor> get localDatabaseAdapter =>
+      remoteAdapter as LocalDatabaseAdapter<MalfuzatAuthor>;
   ApplicationAdapter<MalfuzatAuthor> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<MalfuzatAuthor>;
 }

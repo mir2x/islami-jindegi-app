@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'malfuzat_authors.dart';
 
 class Malfuzats extends Table {
   TextColumn get id => text()();
@@ -13,6 +14,8 @@ class Malfuzats extends Table {
   TextColumn get publishedAt => text().nullable()();
   TextColumn get createdAt => text()();
   TextColumn get updatedAt => text()();
+
+  TextColumn get malfuzatAuthorId => text().references(MalfuzatAuthors, #id)();
 
   @override
   Set<Column> get primaryKey => {id};

@@ -20,6 +20,7 @@ part 'local_database.g.dart';
     Subchapters,
     Speakers,
     Bayans,
+    MalfuzatAuthors,
     Malfuzats,
     Masails,
     Duas,
@@ -108,8 +109,10 @@ class LocalDatabase extends _$LocalDatabase {
         return findSpeakerById(id);
       case 'bayans':
         return findBayanById(id, params);
+      case 'malfuzatAuthors':
+        return findMalfuzatAuthorById(id);
       case 'malfuzats':
-        return findMalfuzatById(id);
+        return findMalfuzatById(id, params);
       case 'masails':
         return findMasailById(id);
       case 'duas':
@@ -333,7 +336,6 @@ class LocalDatabase extends _$LocalDatabase {
   }
 
   Future<dynamic> findBayanById(String id, Map params) async {
-    print(params);
     var bayan =
         await (select(bayans)..where((t) => t.id.equals(id))).getSingle();
 
@@ -355,6 +357,10 @@ class LocalDatabase extends _$LocalDatabase {
     }
   }
 
+  Future<MalfuzatAuthor> findMalfuzatAuthorById(String id) {
+    return (select(malfuzatAuthors)..where((t) => t.id.equals(id))).getSingle();
+  }
+
   Future<List<Malfuzat>> queryMalfuzat(Map params) {
     var query = select(malfuzats);
 
@@ -371,8 +377,27 @@ class LocalDatabase extends _$LocalDatabase {
     return query.get();
   }
 
-  Future<Malfuzat> findMalfuzatById(String id) {
-    return (select(malfuzats)..where((t) => t.id.equals(id))).getSingle();
+  Future<dynamic> findMalfuzatById(String id, Map params) async {
+    var malfuzat =
+        await (select(malfuzats)..where((t) => t.id.equals(id))).getSingle();
+
+    if (params.containsKey('include') &&
+        params['include'] == 'malfuzat-author') {
+      var author = await (select(malfuzatAuthors)
+            ..where((s) => s.id.equals(malfuzat.malfuzatAuthorId)))
+          .getSingle();
+
+      var malfuzatWithAuthor = {
+        'malfuzats': malfuzat,
+        'relationships': {
+          'malfuzatAuthor': author,
+        }
+      };
+
+      return Future.value(malfuzatWithAuthor);
+    } else {
+      return Future.value(malfuzat);
+    }
   }
 
   Future<List<Masail>> queryMasail(Map params) {
