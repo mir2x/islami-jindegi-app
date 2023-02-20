@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/filter/switch_button.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
+import 'package:native_app/providers/connectivity_result.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/theme/colors.dart';
@@ -35,33 +37,43 @@ class QuranState extends ConsumerState<Quran> {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
+    var connectivity = ref.watch(connectivityResultProvider);
 
     return MyScaffold(
       title: const Text('Quran'),
       body: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.only(
-              top: 15,
-              bottom: 5,
-              left: 15,
-              right: 15,
-            ),
-            child: OutlinedButton(
-              onPressed: () => QR.to('quran/search'),
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: ThemeColors.color4),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                ),
-                backgroundColor: ThemeColors.color1,
-                minimumSize: const Size.fromHeight(40),
-              ),
-              child: Text('Search', style: textTheme.titleMedium),
-            ),
+          connectivity.when(
+            loading: () => const CircularProgressIndicator(),
+            error: (error, stackTrace) => Text(error.toString()),
+            data: (connectivityResult) {
+              if (connectivityResult != ConnectivityResult.none) {
+                return Container(
+                  padding: const EdgeInsets.only(
+                    top: 15,
+                    left: 15,
+                    right: 15,
+                  ),
+                  child: OutlinedButton(
+                    onPressed: () => QR.to('quran/search'),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: ThemeColors.color4),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                      backgroundColor: ThemeColors.color1,
+                      minimumSize: const Size.fromHeight(40),
+                    ),
+                    child: Text('Search', style: textTheme.titleMedium),
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
+            padding: const EdgeInsets.only(left: 15, right: 15, top: 8),
             child: SwitchButton(
               firstLabel: 'SURAH',
               secondLabel: 'PARA',

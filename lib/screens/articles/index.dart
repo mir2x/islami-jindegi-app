@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
@@ -8,6 +9,7 @@ import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/query_params.dart';
+import 'package:native_app/providers/connectivity_result.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
@@ -22,103 +24,114 @@ class Articles extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(queryParamsProvider);
+    final connectivity = ref.watch(connectivityResultProvider);
 
     return MyScaffold(
       title: const Text('Articles'),
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
-            child: Row(
-              children: [
-                Expanded(
-                  child: FilterButton(
-                    active: qParams.keys.any(
-                      (k) => [
-                        'articleCategoryId',
-                        'articleSubcategoryId',
-                        'articleAuthorId'
-                      ].contains(k),
-                    ),
+          connectivity.when(
+            loading: () => const CircularProgressIndicator(),
+            error: (error, stackTrace) => Text(error.toString()),
+            data: (connectivityResult) {
+              if (connectivityResult != ConnectivityResult.none) {
+                return Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
+                  child: Row(
                     children: [
                       Expanded(
-                        child: FilterList(
-                          title: 'Categories',
-                          paramKeys: const [
-                            'articleCategoryId',
-                            'articleSubcategoryId'
-                          ],
-                          queryBuilder: (Map<String, dynamic> params) {
-                            return AllModelsQuery(
-                              repository: ref.articleCategories,
-                              params: {
-                                ...params,
-                                'include': 'article-subcategories'
-                              },
-                            );
-                          },
-                          itemBuilder: (_, item, __) {
-                            if (item.articleSubcategories.length > 0) {
-                              return FilterNestedItem(
-                                itemTitle: item.title,
-                                paramKey: 'articleSubcategoryId',
-                                subitems: item.articleSubcategories,
-                                subitemBuilder: (var subitem) {
-                                  return FilterSubitem(
-                                    itemId: subitem.id,
-                                    itemTitle: subitem.title,
-                                    paramKey: 'articleSubcategoryId',
+                        child: FilterButton(
+                          active: qParams.keys.any(
+                            (k) => [
+                              'articleCategoryId',
+                              'articleSubcategoryId',
+                              'articleAuthorId'
+                            ].contains(k),
+                          ),
+                          children: [
+                            Expanded(
+                              child: FilterList(
+                                title: 'Categories',
+                                paramKeys: const [
+                                  'articleCategoryId',
+                                  'articleSubcategoryId'
+                                ],
+                                queryBuilder: (Map<String, dynamic> params) {
+                                  return AllModelsQuery(
+                                    repository: ref.articleCategories,
+                                    params: {
+                                      ...params,
+                                      'include': 'article-subcategories'
+                                    },
                                   );
                                 },
-                              );
-                            } else {
-                              return FilterItem(
-                                itemId: item.id,
-                                itemTitle: item.title,
-                                paramKey: 'articleCategoryId',
-                              );
-                            }
-                          },
+                                itemBuilder: (_, item, __) {
+                                  if (item.articleSubcategories.length > 0) {
+                                    return FilterNestedItem(
+                                      itemTitle: item.title,
+                                      paramKey: 'articleSubcategoryId',
+                                      subitems: item.articleSubcategories,
+                                      subitemBuilder: (var subitem) {
+                                        return FilterSubitem(
+                                          itemId: subitem.id,
+                                          itemTitle: subitem.title,
+                                          paramKey: 'articleSubcategoryId',
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    return FilterItem(
+                                      itemId: item.id,
+                                      itemTitle: item.title,
+                                      paramKey: 'articleCategoryId',
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 40),
+                            Expanded(
+                              child: FilterList(
+                                title: 'Authors',
+                                paramKeys: const ['articleAuthorId'],
+                                queryBuilder: (Map<String, dynamic> params) {
+                                  return AllModelsQuery(
+                                    repository: ref.articleAuthors,
+                                    params: params,
+                                  );
+                                },
+                                itemBuilder: (_, item, __) {
+                                  return FilterItem(
+                                    itemId: item.id,
+                                    itemTitle: item.name,
+                                    paramKey: 'articleAuthorId',
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 40),
+                      const SizedBox(
+                        width: 15,
+                      ),
                       Expanded(
-                        child: FilterList(
-                          title: 'Authors',
-                          paramKeys: const ['articleAuthorId'],
-                          queryBuilder: (Map<String, dynamic> params) {
-                            return AllModelsQuery(
-                              repository: ref.articleAuthors,
-                              params: params,
-                            );
-                          },
-                          itemBuilder: (_, item, __) {
-                            return FilterItem(
-                              itemId: item.id,
-                              itemTitle: item.name,
-                              paramKey: 'articleAuthorId',
-                            );
+                        child: SearchField(
+                          onUpdate: (value) {
+                            ref
+                                .read(queryParamsProvider.notifier)
+                                .updateParams('search', value);
                           },
                         ),
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(
-                  width: 15,
-                ),
-                Expanded(
-                  child: SearchField(
-                    onUpdate: (value) {
-                      ref
-                          .read(queryParamsProvider.notifier)
-                          .updateParams('search', value);
-                    },
-                  ),
-                ),
-              ],
-            ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
           ),
           Expanded(
             child: Container(

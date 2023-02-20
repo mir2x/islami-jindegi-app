@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/query_params.dart';
+import 'package:native_app/providers/connectivity_result.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/list.dart';
@@ -22,83 +24,106 @@ class Bayans extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(queryParamsProvider);
+    var connectivity = ref.watch(connectivityResultProvider);
 
     return MyScaffold(
       title: const Text('Bayans'),
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
-            child: Row(
-              children: [
-                Expanded(
-                  child: FilterButton(
-                    active: qParams.keys.any(
-                      (k) => ['bayanCategoryId', 'speakerId'].contains(k),
+          connectivity.when(
+            loading: () => const CircularProgressIndicator(),
+            error: (error, stackTrace) => Text(error.toString()),
+            data: (connectivityResult) {
+              if (connectivityResult != ConnectivityResult.none) {
+                return Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding:
+                          const EdgeInsets.only(top: 20, left: 15, right: 15),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: FilterButton(
+                              active: qParams.keys.any(
+                                (k) => ['bayanCategoryId', 'speakerId']
+                                    .contains(k),
+                              ),
+                              children: [
+                                Expanded(
+                                  child: FilterList(
+                                    title: 'Categories',
+                                    paramKeys: const ['bayanCategoryId'],
+                                    queryBuilder:
+                                        (Map<String, dynamic> params) {
+                                      return AllModelsQuery(
+                                        repository: ref.bayanCategories,
+                                        params: params,
+                                      );
+                                    },
+                                    itemBuilder: (_, item, __) {
+                                      return FilterItem(
+                                        itemId: item.id,
+                                        itemTitle: item.title,
+                                        paramKey: 'bayanCategoryId',
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 40),
+                                Expanded(
+                                  child: FilterList(
+                                    title: 'Speakers',
+                                    paramKeys: const ['speakerId'],
+                                    queryBuilder:
+                                        (Map<String, dynamic> params) {
+                                      return AllModelsQuery(
+                                        repository: ref.speakers,
+                                        params: params,
+                                      );
+                                    },
+                                    itemBuilder: (_, item, __) {
+                                      return FilterItem(
+                                        itemId: item.id,
+                                        itemTitle: item.name,
+                                        paramKey: 'speakerId',
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          Expanded(
+                            child: SearchField(
+                              onUpdate: (value) {
+                                ref
+                                    .read(queryParamsProvider.notifier)
+                                    .updateParams('search', value);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    children: [
-                      Expanded(
-                        child: FilterList(
-                          title: 'Categories',
-                          paramKeys: const ['bayanCategoryId'],
-                          queryBuilder: (Map<String, dynamic> params) {
-                            return AllModelsQuery(
-                              repository: ref.bayanCategories,
-                              params: params,
-                            );
-                          },
-                          itemBuilder: (_, item, __) {
-                            return FilterItem(
-                              itemId: item.id,
-                              itemTitle: item.title,
-                              paramKey: 'bayanCategoryId',
-                            );
-                          },
-                        ),
+                    Container(
+                      padding: const EdgeInsets.only(
+                        left: 15,
+                        right: 15,
+                        top: 10,
+                        bottom: 5,
                       ),
-                      const SizedBox(height: 40),
-                      Expanded(
-                        child: FilterList(
-                          title: 'Speakers',
-                          paramKeys: const ['speakerId'],
-                          queryBuilder: (Map<String, dynamic> params) {
-                            return AllModelsQuery(
-                              repository: ref.speakers,
-                              params: params,
-                            );
-                          },
-                          itemBuilder: (_, item, __) {
-                            return FilterItem(
-                              itemId: item.id,
-                              itemTitle: item.name,
-                              paramKey: 'speakerId',
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  width: 15,
-                ),
-                Expanded(
-                  child: SearchField(
-                    onUpdate: (value) {
-                      ref
-                          .read(queryParamsProvider.notifier)
-                          .updateParams('search', value);
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding:
-                const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 5),
-            child: DateFilter(),
+                      child: DateFilter(),
+                    ),
+                  ],
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
           ),
           Expanded(
             child: Container(
