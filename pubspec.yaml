@@ -38,9 +38,10 @@ dependencies:
   easy_debounce: ^2.0.2+1
 
   # widgets
+  infinite_scroll_pagination: ^3.2.0
   carousel_slider: ^4.1.1
   audioplayers: ^1.1.0
-  infinite_scroll_pagination: ^3.2.0
+  pdfx: ^2.3.0
 
   # text
   flutter_html:
@@ -62,6 +63,7 @@ dependencies:
 
   # utility
   path: '^1.8.2'
+  internet_file: ^1.2.0
 
   # extensions
   collection: ^1.16.0

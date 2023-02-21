@@ -30,69 +30,93 @@ class Book extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (book) {
+        var cQuery = AllModelsQuery(
+          repository: ref.chapters,
+          params: {'bookId': book.id, 'quantity': 1},
+        );
+
+        var chapterQuery = ref.watch(allModelsProvider(cQuery));
+
         return MyScaffold(
           title: Text(book.title),
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.only(
-                  top: 30,
-                  bottom: 8,
-                  left: 15,
-                  right: 15,
-                ),
-                child: Text('Contents', style: textTheme.labelLarge),
-              ),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: InfiniteList(
-                    padding: 0,
-                    resourceFetcher: (Map<String, dynamic> params) async {
-                      AllModelsQuery query = AllModelsQuery(
-                        repository: ref.chapters,
-                        params: {
-                          ...params,
-                          'bookId': book.id,
-                          'include': 'subchapters',
-                        },
-                      );
-
-                      return await ref.read(allModelsProvider(query).future);
-                    },
-                    itemBuilder: (_, chapter, __) {
-                      if (chapter.subchapters.length > 0) {
-                        return Subchapters(
-                          book: book,
-                          chapter: chapter,
-                        );
-                      } else {
-                        return InkWell(
-                          onTap: () => QR.to(
-                            'books/${book.id}/chapters/${chapter.id}',
-                          ),
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: ThemeColors.color4,
-                                ),
-                              ),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            child: Text(
-                              chapter.title,
-                              style: textTheme.titleLarge,
-                            ),
-                          ),
-                        );
-                      }
-                    },
+          body: chapterQuery.when(
+            loading: () {
+              return const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    ThemeColors.color5,
                   ),
                 ),
-              ),
-            ],
+              );
+            },
+            error: (error, _) => Text(error.toString()),
+            data: (chapters) {
+              if (chapters.isNotEmpty) {
+                return Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(
+                        top: 30,
+                        bottom: 8,
+                        left: 15,
+                        right: 15,
+                      ),
+                      child: Text('Contents', style: textTheme.labelLarge),
+                    ),
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: InfiniteList(
+                          padding: 0,
+                          resourceFetcher: (Map<String, dynamic> params) async {
+                            AllModelsQuery query = AllModelsQuery(
+                              repository: ref.chapters,
+                              params: {
+                                ...params,
+                                'bookId': book.id,
+                                'include': 'subchapters',
+                              },
+                            );
+
+                            return await ref.read(allModelsProvider(query).future);
+                          },
+                          itemBuilder: (_, chapter, __) {
+                            if (chapter.subchapters.length > 0) {
+                              return Subchapters(
+                                book: book,
+                                chapter: chapter,
+                              );
+                            } else {
+                              return InkWell(
+                                onTap: () => QR.to(
+                                  'books/${book.id}/chapters/${chapter.id}',
+                                ),
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: ThemeColors.color4,
+                                      ),
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(vertical: 15),
+                                  child: Text(
+                                    chapter.title,
+                                    style: textTheme.titleLarge,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return const Text('Display PDF');
+              }
+            },
           ),
         );
       },
