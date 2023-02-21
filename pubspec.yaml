@@ -53,17 +53,20 @@ dependencies:
   recase: ^4.1.0
 
   # platform
+  permission_handler: ^10.2.0
   path_provider: ^2.0.12
   shared_preferences: ^2.0.16
   geolocator: ^9.0.2
   connectivity_plus: ^3.0.3
+
+  # http
+  dio: ^5.0.0
 
   # builder
   json_annotation: ^4.7.0
 
   # utility
   path: '^1.8.2'
-  internet_file: ^1.2.0
 
   # extensions
   collection: ^1.16.0

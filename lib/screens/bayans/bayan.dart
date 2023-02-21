@@ -4,6 +4,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/objects/single_model_query.dart';
+import 'package:native_app/objects/downloader.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
@@ -13,6 +14,7 @@ import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/helpers/format_date.dart';
 import 'package:native_app/helpers/file_size.dart';
 import 'package:native_app/helpers/play_duration.dart';
+import 'package:native_app/helpers/audio_utils.dart';
 
 class Bayan extends ConsumerWidget {
   const Bayan({super.key});
@@ -110,15 +112,25 @@ class Bayan extends ConsumerWidget {
                       ),
                     ],
                     if (resource.audio != null) ...[
-                      const DescriptionItem(
+                      DescriptionItem(
                         title: 'Download:',
                         description: Align(
-                          alignment: Alignment.topLeft,
-                          child: Icon(
-                            Icons.download,
-                            size: 24,
+                          alignment: Alignment.centerLeft,
+                          child: IconButton(
+                            iconSize: 35,
+                            icon: const Icon(Icons.download),
+                            onPressed: () async {
+                              var url = audioSrc(resource.audio);
+                              var savePath = resource.audio['id'];
+                              var downloader = Downloader();
+                              await downloader.download(
+                                url: url,
+                                savePath: savePath,
+                              );
+                            },
                           ),
                         ),
+                        alignment: CrossAxisAlignment.center,
                       ),
                     ],
                   ],

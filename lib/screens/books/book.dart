@@ -78,7 +78,8 @@ class Book extends ConsumerWidget {
                               },
                             );
 
-                            return await ref.read(allModelsProvider(query).future);
+                            return await ref
+                                .read(allModelsProvider(query).future);
                           },
                           itemBuilder: (_, chapter, __) {
                             if (chapter.subchapters.length > 0) {
@@ -99,7 +100,8 @@ class Book extends ConsumerWidget {
                                       ),
                                     ),
                                   ),
-                                  padding: const EdgeInsets.symmetric(vertical: 15),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 15),
                                   child: Text(
                                     chapter.title,
                                     style: textTheme.titleLarge,
@@ -114,7 +116,7 @@ class Book extends ConsumerWidget {
                   ],
                 );
               } else {
-                return const Text('Display PDF');
+                return const Text('Download PDF');
               }
             },
           ),
