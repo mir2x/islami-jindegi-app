@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:native_app/providers/audio_player.dart';
+import 'package:native_app/providers/qirat_player.dart';
 
 class Qirat extends ConsumerWidget {
   const Qirat({
@@ -23,7 +23,7 @@ class Qirat extends ConsumerWidget {
     String src =
         '${dotenv.env['STATIC_HOST_NAME']}/assets/al-quran/qirats/$qari/${surah.position}/${ayah.surahPosition}.mp3';
 
-    var audioPlayer = ref.watch(audioPlayerProvider(src));
+    var audioPlayer = ref.watch(qiratPlayerProvider(src));
 
     return audioPlayer.when(
       loading: () => const Center(

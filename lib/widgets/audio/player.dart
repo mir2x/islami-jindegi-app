@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:native_app/providers/audio_player.dart';
-import 'package:native_app/helpers/audio_utils.dart';
+import 'package:native_app/objects/audio_source.dart';
 import 'package:native_app/helpers/play_time.dart';
 import 'package:native_app/theme/colors.dart';
 
@@ -19,9 +19,8 @@ class AudioPlayerWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    String url = audioSrc(audio);
-
-    var audioPlayer = ref.watch(audioPlayerProvider(url));
+    var audioSource = AudioSource(id: audio['id'], storage: audio['storage']);
+    var audioPlayer = ref.watch(audioPlayerProvider(audioSource));
 
     return audioPlayer.when(
       loading: () => const Center(
