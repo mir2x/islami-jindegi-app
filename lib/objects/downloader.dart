@@ -5,8 +5,14 @@ import 'package:dio/dio.dart';
 class Downloader {
   Future<void> download({required String url, required String savePath}) async {
     // requests permission for downloading the file
-    bool hasPermission = await _requestWritePermission();
-    if (!hasPermission) return;
+    var result = await Permission.storage.request();
+    if (result != PermissionStatus.granted) {
+      if (await Permission.speech.isPermanentlyDenied) {
+        openAppSettings();
+      }
+
+      return;
+    }
 
     var dir = await getExternalStorageDirectory();
 
@@ -14,10 +20,5 @@ class Downloader {
       Dio dio = Dio();
       await dio.download(url, '${dir.path}/$savePath');
     }
-  }
-
-  Future<bool> _requestWritePermission() async {
-    var result = await Permission.storage.request();
-    return result == PermissionStatus.granted;
   }
 }
