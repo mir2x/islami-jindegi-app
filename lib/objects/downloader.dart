@@ -6,7 +6,10 @@ import 'package:dio/dio.dart';
 class Downloader {
   final progressNotifier = ValueNotifier<double>(0);
 
-  Future<void> download({required String url, required String savePath}) async {
+  Future<dynamic> download({
+    required String url,
+    required String savePath,
+  }) async {
     // requests permission for downloading the file
     var result = await Permission.storage.request();
     if (result != PermissionStatus.granted) {
@@ -21,7 +24,7 @@ class Downloader {
 
     if (dir != null) {
       Dio dio = Dio();
-      await dio.download(
+      return await dio.download(
         url,
         '${dir.path}/$savePath',
         onReceiveProgress: (int count, int total) {

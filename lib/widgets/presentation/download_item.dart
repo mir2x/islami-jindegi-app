@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dio/dio.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/objects/downloader.dart';
 import 'package:native_app/helpers/file_utils.dart';
@@ -16,6 +17,7 @@ class DownloadItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var textTheme = Theme.of(context).textTheme;
     var filePath = file['id'];
     var checkFileProvider = checkDownloadedFileProvider(filePath);
     var checkDownloadedFile = ref.watch(checkFileProvider);
@@ -52,13 +54,30 @@ class DownloadItem extends ConsumerWidget {
                     iconSize: 35,
                     icon: const Icon(Icons.download),
                     onPressed: () async {
-                      await downloader.download(
+                      var response = await downloader.download(
                         url: fileSrcUrl(file),
                         savePath: filePath,
                       );
-                      await ref
-                          .read(checkFileProvider.notifier)
-                          .check(filePath);
+
+                      if (response is Response && response.statusCode == 200) {
+                        await ref
+                            .read(checkFileProvider.notifier)
+                            .check(filePath);
+                      } else if (context.mounted) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              backgroundColor: ThemeColors.color1,
+                              title: const Text('Error!'),
+                              content: Text(
+                                'There has been a problem while downloading the file. Please check your network connection and try again.',
+                                style: textTheme.labelMedium,
+                              ),
+                            );
+                          },
+                        );
+                      }
                     },
                   ),
                   Container(
