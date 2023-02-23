@@ -10,6 +10,10 @@ import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
+import 'package:native_app/widgets/presentation/item_content.dart';
+import 'package:native_app/widgets/presentation/description_item.dart';
+import 'package:native_app/widgets/presentation/download_item.dart';
+import 'package:native_app/widgets/responsive/image.dart';
 import 'package:native_app/theme/colors.dart';
 
 class Book extends ConsumerWidget {
@@ -53,6 +57,7 @@ class Book extends ConsumerWidget {
             data: (chapters) {
               if (chapters.isNotEmpty) {
                 return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       padding: const EdgeInsets.only(
@@ -116,7 +121,58 @@ class Book extends ConsumerWidget {
                   ],
                 );
               } else {
-                return const Text('Download PDF');
+                double screenWidth = MediaQuery.of(context).size.width;
+
+                return ItemContent(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 20),
+                      width: screenWidth / 2,
+                      child: ResponsiveImage(
+                        image: book.image,
+                        model: 'book',
+                        vwset: const {'xs': 50},
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 30),
+                      child: Text(
+                        book.title,
+                        style: textTheme.headlineLarge,
+                      ),
+                    ),
+                    if (book.publisher != null) ...[
+                      DescriptionItem(
+                        title: 'Publisher:',
+                        description: Text(
+                          book.publisher,
+                          style: textTheme.labelMedium,
+                        ),
+                      ),
+                    ],
+                    if (book.publishedAt != null) ...[
+                      DescriptionItem(
+                        title: 'Published Date:',
+                        description: Text(
+                          book.publishedAt,
+                          style: textTheme.labelMedium,
+                        ),
+                      ),
+                    ],
+                    if (book.price != null) ...[
+                      DescriptionItem(
+                        title: 'Price:',
+                        description: Text(
+                          book.price,
+                          style: textTheme.labelMedium,
+                        ),
+                      ),
+                    ],
+                    if (book.document != null) ...[
+                      DownloadItem(file: book.document),
+                    ],
+                  ],
+                );
               }
             },
           ),
