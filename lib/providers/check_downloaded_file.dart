@@ -24,7 +24,7 @@ class CheckDownloadedFileNotifier extends FamilyAsyncNotifier<bool, String> {
       result = false;
     }
 
-    return Future.value(result);
+    return result;
   }
 }
 

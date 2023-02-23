@@ -56,7 +56,7 @@ class LocalDatabase extends _$LocalDatabase {
   @override
   int get schemaVersion => 1;
 
-  Future<List> query(String tableName, {params = const {}}) {
+  Future<List> query(String tableName, {params = const {}}) async {
     switch (tableName) {
       case 'surahs':
         return querySurah(params);
@@ -85,11 +85,11 @@ class LocalDatabase extends _$LocalDatabase {
       case 'pages':
         return queryPage(params);
       default:
-        return Future.value([]);
+        return [];
     }
   }
 
-  Future? findById(String tableName, String id, {params = const {}}) {
+  Future? findById(String tableName, String id, {params = const {}}) async {
     switch (tableName) {
       case 'surahs':
         return findSurahById(id);
@@ -223,9 +223,9 @@ class LocalDatabase extends _$LocalDatabase {
         };
       }).toList();
 
-      return Future.value(ayahWithTranslations);
+      return ayahWithTranslations;
     } else {
-      return Future.value(ayahItems);
+      return ayahItems;
     }
   }
 
@@ -299,9 +299,9 @@ class LocalDatabase extends _$LocalDatabase {
         };
       }).toList();
 
-      return Future.value(chapterWithSubchapters);
+      return chapterWithSubchapters;
     } else {
-      return Future.value(chapterItems);
+      return chapterItems;
     }
   }
 
@@ -351,9 +351,9 @@ class LocalDatabase extends _$LocalDatabase {
         }
       };
 
-      return Future.value(bayanWithSpeaker);
+      return bayanWithSpeaker;
     } else {
-      return Future.value(bayan);
+      return bayan;
     }
   }
 
@@ -394,9 +394,9 @@ class LocalDatabase extends _$LocalDatabase {
         }
       };
 
-      return Future.value(malfuzatWithAuthor);
+      return malfuzatWithAuthor;
     } else {
-      return Future.value(malfuzat);
+      return malfuzat;
     }
   }
 
@@ -479,9 +479,9 @@ class LocalDatabase extends _$LocalDatabase {
         }
       };
 
-      return Future.value(articleWithAuthor);
+      return articleWithAuthor;
     } else {
-      return Future.value(article);
+      return article;
     }
   }
 
