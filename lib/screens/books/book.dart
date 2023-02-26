@@ -14,6 +14,7 @@ import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/description_item.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/responsive/image.dart';
+import 'package:native_app/widgets/document/pdf_reader.dart';
 import 'package:native_app/theme/colors.dart';
 
 class Book extends ConsumerWidget {
@@ -125,15 +126,23 @@ class Book extends ConsumerWidget {
 
                 return ItemContent(
                   children: [
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 20),
-                      width: screenWidth / 2,
-                      child: ResponsiveImage(
-                        image: book.image,
-                        model: 'book',
-                        vwset: const {'xs': 50},
+                    if (book.document != null) ...[
+                      Container(
+                        height: 540,
+                        margin: const EdgeInsets.only(bottom: 40),
+                        child: PDFReader(document: book.document),
                       ),
-                    ),
+                    ] else ...[
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 20),
+                        width: screenWidth / 2,
+                        child: ResponsiveImage(
+                          image: book.image,
+                          model: 'book',
+                          vwset: const {'xs': 50},
+                        ),
+                      ),
+                    ],
                     Container(
                       margin: const EdgeInsets.only(bottom: 30),
                       child: Text(

@@ -61,6 +61,7 @@ dependencies:
 
   # http
   dio: ^5.0.0
+  internet_file: ^1.2.0
 
   # builder
   json_annotation: ^4.7.0
