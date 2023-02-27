@@ -15,4 +15,5 @@ class ThemeColors {
   static const Color color10 = Color(0xFFf6f6f6);
   static const Color placeholder = Color(0xFFcdd4ca);
   static const Color border = Color(0xFFBDBDBD);
+  static const Color danger = Color(0xFFa12f1f);
 }

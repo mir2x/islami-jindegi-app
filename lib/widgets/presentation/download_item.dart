@@ -1,6 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
+import 'package:open_file/open_file.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/objects/downloader.dart';
 import 'package:native_app/helpers/file_utils.dart';
@@ -32,11 +36,56 @@ class DownloadItem extends ConsumerWidget {
             title: 'Downloaded:',
             description: Container(
               padding: const EdgeInsets.all(8),
-              child: const Align(
+              child: Align(
                 alignment: Alignment.centerLeft,
-                child: Icon(
-                  Icons.download_done,
-                  size: 35,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(right: 10),
+                      child: const Icon(
+                        Icons.download_done,
+                        size: 35,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.open_in_new),
+                      iconSize: 30,
+                      onPressed: () async {
+                        var downloadDir = await getExternalStorageDirectory();
+
+                        if (downloadDir != null) {
+                          await OpenFile.open(
+                            p.join(downloadDir.path, filePath),
+                          );
+                        }
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.delete,
+                        color: ThemeColors.danger,
+                      ),
+                      iconSize: 30,
+                      color: Colors.red,
+                      onPressed: () async {
+                        var downloadDir = await getExternalStorageDirectory();
+
+                        if (downloadDir != null) {
+                          var localFile = File(
+                            p.join(downloadDir.path, filePath),
+                          );
+
+                          if (await localFile.exists()) {
+                            await localFile.delete();
+                            await ref
+                                .read(checkFileProvider.notifier)
+                                .check(filePath);
+                          }
+                        }
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),
