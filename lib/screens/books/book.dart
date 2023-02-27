@@ -15,6 +15,7 @@ import 'package:native_app/widgets/presentation/description_item.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/responsive/image.dart';
 import 'package:native_app/widgets/document/pdf_reader.dart';
+import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/theme/colors.dart';
 
 class Book extends ConsumerWidget {
@@ -178,7 +179,10 @@ class Book extends ConsumerWidget {
                       ),
                     ],
                     if (book.document != null) ...[
-                      DownloadItem(file: book.document),
+                      DownloadItem(
+                        filePath: book.document['id'],
+                        fileUrl: fileSrcUrl(book.document),
+                      ),
                     ],
                   ],
                 );

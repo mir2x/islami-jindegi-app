@@ -7,22 +7,22 @@ import 'package:path/path.dart' as p;
 import 'package:open_file/open_file.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/objects/downloader.dart';
-import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/theme/colors.dart';
 import 'description_item.dart';
 
 class DownloadItem extends ConsumerWidget {
   const DownloadItem({
     super.key,
-    required this.file,
+    required this.filePath,
+    required this.fileUrl,
   });
 
-  final Map file;
+  final String filePath;
+  final String fileUrl;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
-    var filePath = file['id'];
     var checkFileProvider = checkDownloadedFileProvider(filePath);
     var checkDownloadedFile = ref.watch(checkFileProvider);
     var downloader = Downloader();
@@ -104,7 +104,7 @@ class DownloadItem extends ConsumerWidget {
                     icon: const Icon(Icons.download),
                     onPressed: () async {
                       var response = await downloader.download(
-                        url: fileSrcUrl(file),
+                        url: fileUrl,
                         savePath: filePath,
                       );
 

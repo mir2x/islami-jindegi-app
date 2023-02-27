@@ -14,6 +14,7 @@ import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/helpers/format_date.dart';
 import 'package:native_app/helpers/file_size.dart';
 import 'package:native_app/helpers/play_duration.dart';
+import 'package:native_app/helpers/file_utils.dart';
 
 class Bayan extends ConsumerWidget {
   const Bayan({super.key});
@@ -111,7 +112,10 @@ class Bayan extends ConsumerWidget {
                       ),
                     ],
                     if (resource.audio != null) ...[
-                      DownloadItem(file: resource.audio),
+                      DownloadItem(
+                        filePath: resource.audio['id'],
+                        fileUrl: fileSrcUrl(resource.audio),
+                      ),
                     ],
                   ],
                 ),

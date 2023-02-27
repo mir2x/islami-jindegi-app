@@ -14,6 +14,7 @@ import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/widgets/audio/player.dart';
 import 'package:native_app/helpers/file_size.dart';
 import 'package:native_app/helpers/play_duration.dart';
+import 'package:native_app/helpers/file_utils.dart';
 
 class Dua extends ConsumerWidget {
   const Dua({super.key});
@@ -81,7 +82,10 @@ class Dua extends ConsumerWidget {
                       ),
                     ],
                     if (resource.audio != null) ...[
-                      DownloadItem(file: resource.audio),
+                      DownloadItem(
+                        filePath: resource.audio['id'],
+                        fileUrl: fileSrcUrl(resource.audio),
+                      ),
                     ],
                   ],
                 ),

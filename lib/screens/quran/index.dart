@@ -73,6 +73,25 @@ class QuranState extends ConsumerState<Quran> {
             },
           ),
           Container(
+            padding: const EdgeInsets.only(
+              top: 10,
+              left: 15,
+              right: 15,
+            ),
+            child: OutlinedButton(
+              onPressed: () => QR.to('quran/download'),
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: ThemeColors.color4),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+                backgroundColor: ThemeColors.color1,
+                minimumSize: const Size.fromHeight(40),
+              ),
+              child: Text('PDF Files', style: textTheme.titleMedium),
+            ),
+          ),
+          Container(
             padding: const EdgeInsets.only(left: 15, right: 15, top: 8),
             child: SwitchButton(
               firstLabel: 'SURAH',
