@@ -40,7 +40,8 @@ import '../screens/namaz_times/namaz_time.dart';
 import '../screens/settings/index.dart';
 import '../screens/donation/index.dart';
 import '../screens/about/index.dart';
-import '../screens/contact-us/index.dart';
+import '../screens/contact_us/index.dart';
+import '../screens/important_matters/index.dart';
 
 class AppRoutes {
   final routes = [
@@ -147,5 +148,6 @@ class AppRoutes {
     QRoute(path: '/donation', builder: () => const Donation()),
     QRoute(path: '/about', builder: () => const About()),
     QRoute(path: '/contact-us', builder: () => const ContactUs()),
+    QRoute(path: '/important-matters', builder: () => const ImportantMatters()),
   ];
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyScaffold extends StatelessWidget {
   const MyScaffold({
@@ -46,16 +47,53 @@ class MyScaffold extends StatelessWidget {
         centerTitle: true,
         actions: <Widget>[
           Padding(
-            padding: EdgeInsets.only(right: isHome ? 10 : 20),
+            padding: EdgeInsets.only(right: isHome ? 5 : 20),
             child: isHome
-                ? GestureDetector(
-                    onTap: () => QR.to('settings'),
-                    child: SvgPicture.asset(
-                      'assets/images/icons/settings-icon.svg',
-                      fit: BoxFit.scaleDown,
-                      width: 40,
-                      height: 40,
-                    ),
+                ? PopupMenuButton<int>(
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuEntry<int>>[
+                      const PopupMenuItem<int>(
+                        value: 0,
+                        child: Text('Settings'),
+                      ),
+                      const PopupMenuItem<int>(
+                        value: 1,
+                        child: Text('Contact'),
+                      ),
+                      const PopupMenuItem<int>(
+                        value: 2,
+                        child: Text('Rate this app'),
+                      ),
+                      const PopupMenuItem<int>(
+                        value: 3,
+                        child: Text('iPhone App Link'),
+                      ),
+                      const PopupMenuItem<int>(
+                        value: 4,
+                        child: Text('Website Link'),
+                      ),
+                      const PopupMenuItem<int>(
+                        value: 5,
+                        child: Text('Important Matters'),
+                      ),
+                    ],
+                    onSelected: (int item) {
+                      switch (item) {
+                        case 0:
+                          QR.to('settings');
+                          break;
+                        case 1:
+                          QR.to('contact-us');
+                          break;
+                        case 4:
+                          final Uri url = Uri.parse('https://islamidars.com');
+                          launchUrl(url);
+                          break;
+                        case 5:
+                          QR.to('important-matters');
+                          break;
+                      }
+                    },
                   )
                 : GestureDetector(
                     onTap: () => scaffoldKey.currentState!.openEndDrawer(),

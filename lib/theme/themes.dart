@@ -49,4 +49,7 @@ ThemeData darkTheme = ThemeData(
   progressIndicatorTheme: const ProgressIndicatorThemeData(
     color: ThemeColors.color4,
   ),
+  popupMenuTheme: const PopupMenuThemeData(
+    color: ThemeColors.color5,
+  ),
 );
