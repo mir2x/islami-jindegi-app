@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MyScaffold extends StatelessWidget {
   const MyScaffold({
@@ -62,22 +63,29 @@ class MyScaffold extends StatelessWidget {
                       ),
                       const PopupMenuItem<int>(
                         value: 2,
-                        child: Text('Rate this app'),
+                        child: Text('Share this app'),
                       ),
                       const PopupMenuItem<int>(
                         value: 3,
-                        child: Text('iPhone App Link'),
+                        child: Text('Rate this app'),
                       ),
                       const PopupMenuItem<int>(
                         value: 4,
-                        child: Text('Website Link'),
+                        child: Text('iPhone App Link'),
                       ),
                       const PopupMenuItem<int>(
                         value: 5,
+                        child: Text('Website Link'),
+                      ),
+                      const PopupMenuItem<int>(
+                        value: 6,
                         child: Text('Important Matters'),
                       ),
                     ],
                     onSelected: (int item) {
+                      const appLink =
+                          'https://play.google.com/store/apps/details?id=com.islami_jindegi';
+
                       switch (item) {
                         case 0:
                           QR.to('settings');
@@ -85,11 +93,24 @@ class MyScaffold extends StatelessWidget {
                         case 1:
                           QR.to('contact-us');
                           break;
+                        case 2:
+                          Share.share(appLink);
+                          break;
+                        case 3:
+                          final Uri url = Uri.parse(appLink);
+                          launchUrl(url);
+                          break;
                         case 4:
-                          final Uri url = Uri.parse('https://islamidars.com');
+                          final Uri url = Uri.parse(
+                            'https://apps.apple.com/us/app/islami-jindegi/id1271205014',
+                          );
                           launchUrl(url);
                           break;
                         case 5:
+                          final Uri url = Uri.parse('https://islamidars.com');
+                          launchUrl(url);
+                          break;
+                        case 6:
                           QR.to('important-matters');
                           break;
                       }
