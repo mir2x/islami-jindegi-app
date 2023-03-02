@@ -62,8 +62,8 @@ class Qiblah extends ConsumerWidget {
                   ),
                 ],
                 SmoothCompass(
-                  height: 350,
-                  width: 350,
+                  height: 320,
+                  width: 320,
                   compassBuilder: (context, snapshot, child) {
                     return AnimatedRotation(
                       duration: const Duration(milliseconds: 800),
@@ -91,8 +91,8 @@ class Qiblah extends ConsumerWidget {
                               child: SvgPicture.asset(
                                 'assets/images/icons/kaaba.svg',
                                 fit: BoxFit.scaleDown,
-                                width: 40,
-                                height: 40,
+                                width: 320,
+                                height: 320,
                               ),
                             ),
                           ),
