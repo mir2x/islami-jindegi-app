@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/widgets/utils/comma_separated_list.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/main.data.dart';
@@ -141,7 +142,10 @@ class Books extends ConsumerWidget {
                 resourceFetcher: (Map<String, dynamic> params) async {
                   AllModelsQuery query = AllModelsQuery(
                     repository: ref.books,
-                    params: params,
+                    params: {
+                      ...params,
+                      'include': 'authors',
+                    },
                   );
 
                   return await ref.read(allModelsProvider(query).future);
@@ -149,7 +153,7 @@ class Books extends ConsumerWidget {
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 15,
-                  mainAxisExtent: 390,
+                  mainAxisExtent: 400,
                 ),
                 itemBuilder: (_, item, __) {
                   return Container(
@@ -173,6 +177,20 @@ class Books extends ConsumerWidget {
                               style: textTheme.titleMedium,
                               textAlign: TextAlign.center,
                             ),
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(top: 5),
+                          child: CommaSeparatedList(
+                            resources: item.authors.map((e) => e).toList(),
+                            alignment: WrapAlignment.center,
+                            builder: (_, author, __) {
+                              return Text(
+                                author.name,
+                                textAlign: TextAlign.center,
+                                style: textTheme.labelSmall,
+                              );
+                            },
                           ),
                         ),
                       ],
