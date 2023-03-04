@@ -2431,6 +2431,438 @@ class $SubchaptersTable extends Subchapters
   }
 }
 
+class Author extends DataClass implements Insertable<Author> {
+  final String id;
+  final String name;
+  final String? info;
+  final int position;
+  final String createdAt;
+  final String updatedAt;
+  const Author(
+      {required this.id,
+      required this.name,
+      this.info,
+      required this.position,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || info != null) {
+      map['info'] = Variable<String>(info);
+    }
+    map['position'] = Variable<int>(position);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    return map;
+  }
+
+  factory Author.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Author(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      info: serializer.fromJson<String?>(json['info']),
+      position: serializer.fromJson<int>(json['position']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'info': serializer.toJson<String?>(info),
+      'position': serializer.toJson<int>(position),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+    };
+  }
+
+  Author copyWith(
+          {String? id,
+          String? name,
+          Value<String?> info = const Value.absent(),
+          int? position,
+          String? createdAt,
+          String? updatedAt}) =>
+      Author(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        info: info.present ? info.value : this.info,
+        position: position ?? this.position,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Author(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('info: $info, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, name, info, position, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Author &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.info == this.info &&
+          other.position == this.position &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class AuthorsCompanion extends UpdateCompanion<Author> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<String?> info;
+  final Value<int> position;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  const AuthorsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.info = const Value.absent(),
+    this.position = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  AuthorsCompanion.insert({
+    required String id,
+    required String name,
+    this.info = const Value.absent(),
+    required int position,
+    required String createdAt,
+    required String updatedAt,
+  })  : id = Value(id),
+        name = Value(name),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<Author> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<String>? info,
+    Expression<int>? position,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (info != null) 'info': info,
+      if (position != null) 'position': position,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  AuthorsCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? name,
+      Value<String?>? info,
+      Value<int>? position,
+      Value<String>? createdAt,
+      Value<String>? updatedAt}) {
+    return AuthorsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      info: info ?? this.info,
+      position: position ?? this.position,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (info.present) {
+      map['info'] = Variable<String>(info.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AuthorsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('info: $info, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AuthorsTable extends Authors with TableInfo<$AuthorsTable, Author> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AuthorsTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> info = GeneratedColumn<String>(
+      'info', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, name, info, position, createdAt, updatedAt];
+  @override
+  String get aliasedName => _alias ?? 'authors';
+  @override
+  String get actualTableName => 'authors';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Author map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Author(
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      name: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      info: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}info']),
+      position: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $AuthorsTable createAlias(String alias) {
+    return $AuthorsTable(attachedDatabase, alias);
+  }
+}
+
+class BooksAuthor extends DataClass implements Insertable<BooksAuthor> {
+  final String id;
+  final String bookId;
+  final String authorId;
+  const BooksAuthor(
+      {required this.id, required this.bookId, required this.authorId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['book_id'] = Variable<String>(bookId);
+    map['author_id'] = Variable<String>(authorId);
+    return map;
+  }
+
+  factory BooksAuthor.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BooksAuthor(
+      id: serializer.fromJson<String>(json['id']),
+      bookId: serializer.fromJson<String>(json['bookId']),
+      authorId: serializer.fromJson<String>(json['authorId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'bookId': serializer.toJson<String>(bookId),
+      'authorId': serializer.toJson<String>(authorId),
+    };
+  }
+
+  BooksAuthor copyWith({String? id, String? bookId, String? authorId}) =>
+      BooksAuthor(
+        id: id ?? this.id,
+        bookId: bookId ?? this.bookId,
+        authorId: authorId ?? this.authorId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('BooksAuthor(')
+          ..write('id: $id, ')
+          ..write('bookId: $bookId, ')
+          ..write('authorId: $authorId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, bookId, authorId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BooksAuthor &&
+          other.id == this.id &&
+          other.bookId == this.bookId &&
+          other.authorId == this.authorId);
+}
+
+class BooksAuthorsCompanion extends UpdateCompanion<BooksAuthor> {
+  final Value<String> id;
+  final Value<String> bookId;
+  final Value<String> authorId;
+  const BooksAuthorsCompanion({
+    this.id = const Value.absent(),
+    this.bookId = const Value.absent(),
+    this.authorId = const Value.absent(),
+  });
+  BooksAuthorsCompanion.insert({
+    required String id,
+    required String bookId,
+    required String authorId,
+  })  : id = Value(id),
+        bookId = Value(bookId),
+        authorId = Value(authorId);
+  static Insertable<BooksAuthor> custom({
+    Expression<String>? id,
+    Expression<String>? bookId,
+    Expression<String>? authorId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (bookId != null) 'book_id': bookId,
+      if (authorId != null) 'author_id': authorId,
+    });
+  }
+
+  BooksAuthorsCompanion copyWith(
+      {Value<String>? id, Value<String>? bookId, Value<String>? authorId}) {
+    return BooksAuthorsCompanion(
+      id: id ?? this.id,
+      bookId: bookId ?? this.bookId,
+      authorId: authorId ?? this.authorId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (bookId.present) {
+      map['book_id'] = Variable<String>(bookId.value);
+    }
+    if (authorId.present) {
+      map['author_id'] = Variable<String>(authorId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BooksAuthorsCompanion(')
+          ..write('id: $id, ')
+          ..write('bookId: $bookId, ')
+          ..write('authorId: $authorId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $BooksAuthorsTable extends BooksAuthors
+    with TableInfo<$BooksAuthorsTable, BooksAuthor> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BooksAuthorsTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> bookId = GeneratedColumn<String>(
+      'book_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: 'REFERENCES books (id)');
+  @override
+  late final GeneratedColumn<String> authorId = GeneratedColumn<String>(
+      'author_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: 'REFERENCES authors (id)');
+  @override
+  List<GeneratedColumn> get $columns => [id, bookId, authorId];
+  @override
+  String get aliasedName => _alias ?? 'books_authors';
+  @override
+  String get actualTableName => 'books_authors';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  BooksAuthor map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BooksAuthor(
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      bookId: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}book_id'])!,
+      authorId: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}author_id'])!,
+    );
+  }
+
+  @override
+  $BooksAuthorsTable createAlias(String alias) {
+    return $BooksAuthorsTable(attachedDatabase, alias);
+  }
+}
+
 class Speaker extends DataClass implements Insertable<Speaker> {
   final String id;
   final String name;
@@ -6289,6 +6721,8 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $BooksTable books = $BooksTable(this);
   late final $ChaptersTable chapters = $ChaptersTable(this);
   late final $SubchaptersTable subchapters = $SubchaptersTable(this);
+  late final $AuthorsTable authors = $AuthorsTable(this);
+  late final $BooksAuthorsTable booksAuthors = $BooksAuthorsTable(this);
   late final $SpeakersTable speakers = $SpeakersTable(this);
   late final $BayansTable bayans = $BayansTable(this);
   late final $MalfuzatAuthorsTable malfuzatAuthors =
@@ -6313,6 +6747,8 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
         books,
         chapters,
         subchapters,
+        authors,
+        booksAuthors,
         speakers,
         bayans,
         malfuzatAuthors,

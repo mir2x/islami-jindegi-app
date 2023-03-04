@@ -5,6 +5,8 @@ export 'ayah_translations.dart';
 export 'books.dart';
 export 'chapters.dart';
 export 'subchapters.dart';
+export 'authors.dart';
+export 'books_authors.dart';
 export 'speakers.dart';
 export 'bayans.dart';
 export 'malfuzat_authors.dart';

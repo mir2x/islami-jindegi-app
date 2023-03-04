@@ -18,6 +18,8 @@ part 'local_database.g.dart';
     Books,
     Chapters,
     Subchapters,
+    Authors,
+    BooksAuthors,
     Speakers,
     Bayans,
     MalfuzatAuthors,
@@ -105,6 +107,8 @@ class LocalDatabase extends _$LocalDatabase {
         return findChapterById(id);
       case 'subchapters':
         return findSubchapterById(id);
+      case 'authors':
+        return findAuthorById(id);
       case 'speakers':
         return findSpeakerById(id);
       case 'bayans':
@@ -214,7 +218,7 @@ class LocalDatabase extends _$LocalDatabase {
       var idToTranslations =
           groupBy(translationItems, (AyahTranslation obj) => obj.ayahId);
 
-      var ayahWithTranslations = ids.map((id) {
+      var ayahsWithTranslations = ids.map((id) {
         return {
           'ayahs': idToAyahs[id],
           'relationships': {
@@ -223,7 +227,7 @@ class LocalDatabase extends _$LocalDatabase {
         };
       }).toList();
 
-      return ayahWithTranslations;
+      return ayahsWithTranslations;
     } else {
       return ayahItems;
     }
@@ -238,7 +242,7 @@ class LocalDatabase extends _$LocalDatabase {
         .getSingle();
   }
 
-  Future<List<Book>> queryBook(Map params) {
+  Future<List> queryBook(Map params) async {
     var query = select(books);
 
     if (params.containsKey('page') && params.containsKey('per_page')) {
@@ -253,7 +257,44 @@ class LocalDatabase extends _$LocalDatabase {
     query.orderBy([
       (t) => OrderingTerm(expression: t.position, mode: OrderingMode.desc),
     ]);
-    return query.get();
+
+    var bookItems = await query.get();
+
+    if (params.containsKey('include') && params['include'] == 'authors') {
+      Map<String, Book> idToBooks = <String, Book>{
+        for (var v in bookItems) v.id: v
+      };
+      var ids = idToBooks.keys;
+
+      var authorItems = await (select(authors).join([
+        innerJoin(booksAuthors, booksAuthors.authorId.equalsExp(authors.id)),
+      ])
+            ..where(booksAuthors.bookId.isIn(ids)))
+          .map((row) {
+        return {
+          'bookId': row.readTable(booksAuthors).bookId,
+          'author': row.readTable(authors)
+        };
+      }).get();
+
+      var idToAuthors = <String, List>{};
+      for (Map element in authorItems) {
+        (idToAuthors[element['bookId']] ??= []).add(element['author']);
+      }
+
+      var booksWithAuthors = ids.map((id) {
+        return {
+          'books': idToBooks[id],
+          'relationships': {
+            'authors': idToAuthors[id] ?? [],
+          }
+        };
+      }).toList();
+
+      return booksWithAuthors;
+    } else {
+      return bookItems;
+    }
   }
 
   Future<Book> findBookById(String id) {
@@ -290,7 +331,7 @@ class LocalDatabase extends _$LocalDatabase {
       var idToSubchapters =
           groupBy(subchapterItems, (Subchapter obj) => obj.chapterId);
 
-      var chapterWithSubchapters = ids.map((id) {
+      var chaptersWithSubchapters = ids.map((id) {
         return {
           'chapters': idToChapters[id],
           'relationships': {
@@ -299,7 +340,7 @@ class LocalDatabase extends _$LocalDatabase {
         };
       }).toList();
 
-      return chapterWithSubchapters;
+      return chaptersWithSubchapters;
     } else {
       return chapterItems;
     }
@@ -311,6 +352,10 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<Subchapter> findSubchapterById(String id) {
     return (select(subchapters)..where((t) => t.id.equals(id))).getSingle();
+  }
+
+  Future<Author> findAuthorById(String id) {
+    return (select(authors)..where((t) => t.id.equals(id))).getSingle();
   }
 
   Future<Speaker> findSpeakerById(String id) {
