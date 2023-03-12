@@ -15,6 +15,8 @@ import 'package:native_app/widgets/audio/player.dart';
 import 'package:native_app/helpers/file_size.dart';
 import 'package:native_app/helpers/play_duration.dart';
 import 'package:native_app/helpers/file_utils.dart';
+import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/buttons/social_share.dart';
 
 class MasailItem extends ConsumerWidget {
   const MasailItem({super.key});
@@ -109,6 +111,15 @@ class MasailItem extends ConsumerWidget {
                     ],
                   ],
                 ),
+              ),
+            ],
+          ),
+          bottomBar: BottomBar(
+            children: [
+              SocialShare(
+                title: resource.title,
+                subtitle: resource.question,
+                body: resource.answer,
               ),
             ],
           ),

@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
+import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/buttons/social_share.dart';
 
 class ContactUs extends ConsumerWidget {
   const ContactUs({super.key});
@@ -22,19 +25,15 @@ class ContactUs extends ConsumerWidget {
 
     var modelQuery = ref.watch(allModelsProvider(query));
 
-    return MyScaffold(
-      title: const Text('Contact Us'),
-      body: modelQuery.when(
-        loading: () {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-        error: (error, _) => ModelExeptionHandler(error: error),
-        data: (resources) {
-          var item = resources[0];
+    return modelQuery.when(
+      loading: () => const FullScreenLoader(),
+      error: (error, _) => ModelExeptionHandler(error: error),
+      data: (resources) {
+        var item = resources[0];
 
-          return ItemContent(
+        return MyScaffold(
+          title: const Text('Contact Us'),
+          body: ItemContent(
             children: [
               Container(
                 margin: const EdgeInsets.only(bottom: 15),
@@ -50,9 +49,17 @@ class ContactUs extends ConsumerWidget {
                 ),
               ),
             ],
-          );
-        },
-      ),
+          ),
+          bottomBar: BottomBar(
+            children: [
+              SocialShare(
+                title: item.title,
+                body: item.body,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

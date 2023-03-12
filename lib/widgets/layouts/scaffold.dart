@@ -9,12 +9,14 @@ class MyScaffold extends StatelessWidget {
     super.key,
     required this.title,
     required this.body,
+    this.bottomBar,
     this.isHome = false,
   });
 
   final Text title;
   final Widget body;
   final bool isHome;
+  final Widget? bottomBar;
 
   @override
   Widget build(BuildContext context) {
@@ -175,6 +177,7 @@ class MyScaffold extends StatelessWidget {
         constraints: const BoxConstraints.expand(),
         child: body,
       ),
+      bottomNavigationBar: bottomBar,
     );
   }
 }

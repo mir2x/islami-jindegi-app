@@ -9,6 +9,8 @@ import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
+import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/buttons/social_share.dart';
 
 class Chapter extends ConsumerWidget {
   const Chapter({super.key});
@@ -35,6 +37,14 @@ class Chapter extends ConsumerWidget {
                 child: HtmlText(
                   text: resource.body,
                 ),
+              ),
+            ],
+          ),
+          bottomBar: BottomBar(
+            children: [
+              SocialShare(
+                title: resource.title,
+                body: resource.body,
               ),
             ],
           ),

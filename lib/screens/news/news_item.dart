@@ -10,6 +10,8 @@ import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/helpers/format_date.dart';
+import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/buttons/social_share.dart';
 
 class NewsItem extends ConsumerWidget {
   const NewsItem({super.key});
@@ -52,6 +54,14 @@ class NewsItem extends ConsumerWidget {
                 child: HtmlText(
                   text: resource.body,
                 ),
+              ),
+            ],
+          ),
+          bottomBar: BottomBar(
+            children: [
+              SocialShare(
+                title: resource.title,
+                body: resource.body,
               ),
             ],
           ),
