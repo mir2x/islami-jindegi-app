@@ -15,6 +15,8 @@ import 'package:native_app/helpers/format_date.dart';
 import 'package:native_app/helpers/file_size.dart';
 import 'package:native_app/helpers/play_duration.dart';
 import 'package:native_app/helpers/file_utils.dart';
+import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/buttons/social_share.dart';
 
 class Bayan extends ConsumerWidget {
   const Bayan({super.key});
@@ -36,6 +38,8 @@ class Bayan extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
+        String resourceLink = 'https://islamidars.com/bayans/${resource.id}';
+
         return MyScaffold(
           title: Text(resource.title),
           body: ItemContent(
@@ -120,6 +124,14 @@ class Bayan extends ConsumerWidget {
                   ],
                 ),
               )
+            ],
+          ),
+          bottomBar: BottomBar(
+            children: [
+              SocialShare(
+                title: resource.title,
+                subtitle: '${resource.speaker.value.name}\n\n$resourceLink',
+              ),
             ],
           ),
         );
