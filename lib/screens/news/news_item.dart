@@ -8,17 +8,21 @@ import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/widgets/utils/html_text.dart';
+import 'package:native_app/objects/font_size_ratio.dart';
+import 'package:native_app/widgets/page/title.dart';
+import 'package:native_app/widgets/page/subtitle.dart';
+import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/helpers/format_date.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
+import 'package:native_app/widgets/buttons/font_resizer.dart';
 
 class NewsItem extends ConsumerWidget {
   const NewsItem({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var textTheme = Theme.of(context).textTheme;
+    var fontSizeRatio = FontSizeRatio();
 
     var query = SingleModelQuery(
       repository: ref.news,
@@ -37,32 +41,35 @@ class NewsItem extends ConsumerWidget {
             children: [
               Container(
                 margin: const EdgeInsets.only(bottom: 15),
-                child: Text(
-                  resource.title,
-                  style: textTheme.headlineMedium,
+                child: PageTitle(
+                  text: resource.title,
+                  fontSizeRatio: fontSizeRatio,
                 ),
               ),
               Container(
                 margin: const EdgeInsets.only(bottom: 15),
-                child: Text(
-                  formatDate(resource.createdAt!),
-                  style: textTheme.labelMedium,
+                child: PageSubtitle(
+                  text: formatDate(resource.createdAt!),
+                  fontSizeRatio: fontSizeRatio,
                 ),
               ),
               Container(
                 margin: const EdgeInsets.only(bottom: 30),
-                child: HtmlText(
+                child: PageHtmlBody(
                   text: resource.body,
+                  fontSizeRatio: fontSizeRatio,
                 ),
               ),
             ],
           ),
           bottomBar: BottomBar(
+            alignment: MainAxisAlignment.spaceBetween,
             children: [
               SocialShare(
                 title: resource.title,
                 body: resource.body,
               ),
+              FontResizer(fontSizeRatio: fontSizeRatio),
             ],
           ),
         );

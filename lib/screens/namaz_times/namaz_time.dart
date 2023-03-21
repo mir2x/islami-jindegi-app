@@ -8,14 +8,18 @@ import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/widgets/utils/html_text.dart';
+import 'package:native_app/objects/font_size_ratio.dart';
+import 'package:native_app/widgets/page/title.dart';
+import 'package:native_app/widgets/page/html_body.dart';
+import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/buttons/font_resizer.dart';
 
 class NamazTime extends ConsumerWidget {
   const NamazTime({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var textTheme = Theme.of(context).textTheme;
+    var fontSizeRatio = FontSizeRatio();
 
     var query = AllModelsQuery(
       repository: ref.namazTimes,
@@ -36,32 +40,39 @@ class NamazTime extends ConsumerWidget {
             children: [
               Container(
                 margin: const EdgeInsets.only(bottom: 15),
-                child: Text(
-                  'Masail',
-                  style: textTheme.headlineMedium,
+                child: PageTitle(
+                  text: 'Masail',
+                  fontSizeRatio: fontSizeRatio,
                 ),
               ),
               Container(
                 margin: const EdgeInsets.only(bottom: 30),
-                child: HtmlText(
+                child: PageHtmlBody(
                   text: item.masail,
+                  fontSizeRatio: fontSizeRatio,
                 ),
               ),
               if (item.fazail != null) ...[
                 Container(
                   margin: const EdgeInsets.only(top: 30, bottom: 15),
-                  child: Text(
-                    'Fazail',
-                    style: textTheme.headlineMedium,
+                  child: PageTitle(
+                    text: 'Fazail',
+                    fontSizeRatio: fontSizeRatio,
                   ),
                 ),
                 Container(
                   margin: const EdgeInsets.only(bottom: 30),
-                  child: HtmlText(
+                  child: PageHtmlBody(
                     text: item.fazail,
+                    fontSizeRatio: fontSizeRatio,
                   ),
                 ),
               ],
+            ],
+          ),
+          bottomBar: BottomBar(
+            children: [
+              FontResizer(fontSizeRatio: fontSizeRatio),
             ],
           ),
         );

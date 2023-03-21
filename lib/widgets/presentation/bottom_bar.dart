@@ -5,9 +5,11 @@ class BottomBar extends StatelessWidget {
   const BottomBar({
     super.key,
     required this.children,
+    this.alignment = MainAxisAlignment.start,
   });
 
   final List<Widget> children;
+  final MainAxisAlignment alignment;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +17,10 @@ class BottomBar extends StatelessWidget {
       color: ThemeColors.color5,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-        child: Row(children: children),
+        child: Row(
+          mainAxisAlignment: alignment,
+          children: children,
+        ),
       ),
     );
   }

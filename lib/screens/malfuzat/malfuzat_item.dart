@@ -10,13 +10,17 @@ import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/description_item.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
-import 'package:native_app/widgets/utils/html_text.dart';
+import 'package:native_app/objects/font_size_ratio.dart';
+import 'package:native_app/widgets/page/title.dart';
+import 'package:native_app/widgets/page/subtitle.dart';
+import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/widgets/audio/player.dart';
 import 'package:native_app/helpers/file_size.dart';
 import 'package:native_app/helpers/play_duration.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
+import 'package:native_app/widgets/buttons/font_resizer.dart';
 
 class MalfuzatItem extends ConsumerWidget {
   const MalfuzatItem({super.key});
@@ -24,6 +28,7 @@ class MalfuzatItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
+    var fontSizeRatio = FontSizeRatio();
 
     var query = SingleModelQuery(
       repository: ref.malfuzats,
@@ -44,25 +49,26 @@ class MalfuzatItem extends ConsumerWidget {
             children: [
               Container(
                 margin: const EdgeInsets.only(bottom: 15),
-                child: Text(
-                  resource.title,
-                  style: textTheme.headlineMedium,
+                child: PageTitle(
+                  text: resource.title,
+                  fontSizeRatio: fontSizeRatio,
                 ),
               ),
               if (resource.malfuzatAuthor.value != null) ...[
                 Container(
                   margin: const EdgeInsets.only(bottom: 15),
-                  child: Text(
-                    resource.malfuzatAuthor.value.name,
-                    style: textTheme.labelMedium,
+                  child: PageSubtitle(
+                    text: resource.malfuzatAuthor.value.name,
+                    fontSizeRatio: fontSizeRatio,
                   ),
                 ),
               ],
               if (resource.body != null) ...[
                 Container(
                   margin: const EdgeInsets.only(bottom: 30),
-                  child: HtmlText(
+                  child: PageHtmlBody(
                     text: resource.body,
+                    fontSizeRatio: fontSizeRatio,
                   ),
                 ),
               ],
@@ -108,12 +114,14 @@ class MalfuzatItem extends ConsumerWidget {
             ],
           ),
           bottomBar: BottomBar(
+            alignment: MainAxisAlignment.spaceBetween,
             children: [
               SocialShare(
                 title: resource.title,
                 subtitle: resource.malfuzatAuthor.value.name,
                 body: resource.body,
               ),
+              FontResizer(fontSizeRatio: fontSizeRatio),
             ],
           ),
         );
