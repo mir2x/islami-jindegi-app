@@ -26,21 +26,29 @@ class BookmarkButton extends ConsumerWidget {
         if (bookmark != null) {
           return IconButton(
             icon: const Icon(Icons.bookmark_remove),
-            onPressed: () async {
+            onPressed: () {
               ref
                   .read(bookmarkProviderWithLink.notifier)
                   .deleteItem(bookmark.id);
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Bookmark deleted')),
+              );
             },
           );
         } else {
           return IconButton(
             icon: const Icon(Icons.bookmark_add),
-            onPressed: () async {
+            onPressed: () {
               ref.read(bookmarkProviderWithLink.notifier).createItem({
                 'type': type,
                 'title': title,
                 'link': link,
               });
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Bookmark added')),
+              );
             },
           );
         }
