@@ -161,6 +161,7 @@ class MyScaffold extends StatelessWidget {
             const DrawerLink(title: 'Qiblah', route: 'qiblah'),
             const DrawerLink(title: 'Donation', route: 'donation'),
             const DrawerLink(title: 'Settings', route: 'settings'),
+            const DrawerLink(title: 'Bookmarks', route: 'bookmarks'),
             const DrawerLink(title: 'About Us', route: 'about'),
             const DrawerLink(title: 'Contact Us', route: 'contact-us'),
           ],

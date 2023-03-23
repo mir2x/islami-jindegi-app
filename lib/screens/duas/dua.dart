@@ -19,6 +19,7 @@ import 'package:native_app/helpers/play_duration.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
+import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 
 class Dua extends ConsumerWidget {
@@ -102,9 +103,18 @@ class Dua extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              SocialShare(
-                title: resource.title,
-                body: resource.body,
+              Row(
+                children: [
+                  SocialShare(
+                    title: resource.title,
+                    body: resource.body,
+                  ),
+                  BookmarkButton(
+                    type: 'Dua',
+                    title: resource.title,
+                    link: 'duas/${resource.id}',
+                  ),
+                ],
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
             ],

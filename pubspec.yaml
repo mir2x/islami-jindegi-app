@@ -8,6 +8,8 @@ version: 1.0.0+1
 environment:
   sdk: ">=2.17.0 <3.0.0"
 
+isar_version: &isar_version 3.0.5
+
 dependencies:
   flutter:
     sdk: flutter
@@ -24,6 +26,8 @@ dependencies:
   # data
   flutter_data: ^1.5.4
   flutter_data_json_api_adapter: ^0.8.0
+  isar: *isar_version
+  isar_flutter_libs: *isar_version
   equatable: ^2.0.5
 
   # local db
@@ -59,7 +63,9 @@ dependencies:
   shared_preferences: ^2.0.16
   geolocator: ^9.0.2
   connectivity_plus: ^3.0.3
-  open_file: ^3.2.1
+  open_file:
+    git:
+      url: https://github.com/crazecoder/open_file
   share_plus: ^4.5.3
 
   # http
@@ -92,6 +98,7 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
   build_runner: ^2.3.3
+  isar_generator: *isar_version
 
   json_serializable: ^6.3.1
   faker: ^2.0.0

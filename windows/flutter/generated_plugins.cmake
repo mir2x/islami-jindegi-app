@@ -6,6 +6,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   audioplayers_windows
   connectivity_plus
   geolocator_windows
+  isar_flutter_libs
   pdfx
   permission_handler_windows
   sqlite3_flutter_libs

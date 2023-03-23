@@ -38,6 +38,7 @@ import '../screens/namaz_times/index.dart';
 import '../screens/namaz_times/namaz_time.dart';
 
 import '../screens/settings/index.dart';
+import '../screens/bookmarks/index.dart';
 import '../screens/donation/index.dart';
 import '../screens/qiblah/index.dart';
 import '../screens/about/index.dart';
@@ -146,6 +147,7 @@ class AppRoutes {
       ],
     ),
     QRoute(path: '/settings', builder: () => const Settings()),
+    QRoute(path: '/bookmarks', builder: () => const Bookmarks()),
     QRoute(path: '/donation', builder: () => const Donation()),
     QRoute(path: '/qiblah', builder: () => const Qiblah()),
     QRoute(path: '/about', builder: () => const About()),

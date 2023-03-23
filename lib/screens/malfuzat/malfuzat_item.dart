@@ -20,6 +20,7 @@ import 'package:native_app/helpers/play_duration.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
+import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 
 class MalfuzatItem extends ConsumerWidget {
@@ -116,10 +117,19 @@ class MalfuzatItem extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              SocialShare(
-                title: resource.title,
-                subtitle: resource.malfuzatAuthor.value.name,
-                body: resource.body,
+              Row(
+                children: [
+                  SocialShare(
+                    title: resource.title,
+                    subtitle: resource.malfuzatAuthor.value.name,
+                    body: resource.body,
+                  ),
+                  BookmarkButton(
+                    type: 'Malfuzat',
+                    title: resource.title,
+                    link: 'malfuzat/${resource.id}',
+                  ),
+                ],
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
             ],

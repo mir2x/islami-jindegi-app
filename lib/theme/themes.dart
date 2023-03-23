@@ -43,6 +43,9 @@ ThemeData darkTheme = ThemeData(
   drawerTheme: const DrawerThemeData(
     backgroundColor: ThemeColors.color5,
   ),
+  listTileTheme: const ListTileThemeData(
+    tileColor: ThemeColors.color7,
+  ),
   iconTheme: const IconThemeData(
     color: ThemeColors.color4,
   ),

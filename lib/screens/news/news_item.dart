@@ -15,6 +15,7 @@ import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/helpers/format_date.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
+import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 
 class NewsItem extends ConsumerWidget {
@@ -65,9 +66,18 @@ class NewsItem extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              SocialShare(
-                title: resource.title,
-                body: resource.body,
+              Row(
+                children: [
+                  SocialShare(
+                    title: resource.title,
+                    body: resource.body,
+                  ),
+                  BookmarkButton(
+                    type: 'News',
+                    title: resource.title,
+                    link: 'news/${resource.id}',
+                  ),
+                ],
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
             ],

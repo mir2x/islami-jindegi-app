@@ -17,6 +17,7 @@ import 'package:native_app/helpers/play_duration.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
+import 'package:native_app/widgets/buttons/bookmark.dart';
 
 class Bayan extends ConsumerWidget {
   const Bayan({super.key});
@@ -128,9 +129,18 @@ class Bayan extends ConsumerWidget {
           ),
           bottomBar: BottomBar(
             children: [
-              SocialShare(
-                title: resource.title,
-                subtitle: '${resource.speaker.value.name}\n\n$resourceLink',
+              Row(
+                children: [
+                  SocialShare(
+                    title: resource.title,
+                    subtitle: '${resource.speaker.value.name}\n\n$resourceLink',
+                  ),
+                  BookmarkButton(
+                    type: 'Bayan',
+                    title: resource.title,
+                    link: 'bayans/${resource.id}',
+                  ),
+                ],
               ),
             ],
           ),
