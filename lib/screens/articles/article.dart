@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
-import 'package:native_app/providers/single_model.dart';
-import 'package:native_app/objects/single_model_query.dart';
+import 'package:native_app/providers/first_model.dart';
+import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
@@ -24,14 +24,16 @@ class Article extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var fontSizeRatio = FontSizeRatio();
 
-    var query = SingleModelQuery(
+    var query = AllModelsQuery(
       repository: ref.articles,
-      id: QR.params['id'].toString(),
-      params: const {'include': 'article-author'},
-      remote: true,
+      params: {
+        'slug': QR.params['slug'],
+        'quantity': 1,
+        'include': 'article-author',
+      },
     );
 
-    var modelQuery = ref.watch(singleModelProvider(query));
+    var modelQuery = ref.watch(firstModelProvider(query));
 
     return modelQuery.when(
       loading: () => const FullScreenLoader(),

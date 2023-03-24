@@ -149,7 +149,7 @@ class Articles extends ConsumerWidget {
                 },
                 itemBuilder: (_, item, __) {
                   return InkWell(
-                    onTap: () => QR.to('articles/${item.id}'),
+                    onTap: () => QR.to('articles/${item.slug}'),
                     child: ListItem(
                       item: Text(
                         item.title,

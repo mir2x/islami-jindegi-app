@@ -183,7 +183,7 @@ class Masail extends ConsumerWidget {
                 },
                 itemBuilder: (_, item, __) {
                   return InkWell(
-                    onTap: () => QR.to('masail/${item.id}'),
+                    onTap: () => QR.to('masail/${item.slug}'),
                     child: ListItem(
                       item: Text(
                         item.title,

@@ -53,11 +53,11 @@ class AppRoutes {
       builder: () => const Quran(),
       children: [
         QRoute(
-          path: 'surah/:id',
+          path: 'surah/:slug',
           builder: () => const Surah(),
         ),
         QRoute(
-          path: 'para/:id',
+          path: 'para/:slug',
           builder: () => const Para(),
         ),
         QRoute(
@@ -108,7 +108,7 @@ class AppRoutes {
       path: '/masail',
       builder: () => const Masail(),
       children: [
-        QRoute(path: '/:id', builder: () => const MasailItem()),
+        QRoute(path: '/:slug', builder: () => const MasailItem()),
       ],
     ),
     QRoute(
@@ -122,14 +122,14 @@ class AppRoutes {
       path: '/articles',
       builder: () => const Articles(),
       children: [
-        QRoute(path: '/:id', builder: () => const Article()),
+        QRoute(path: '/:slug', builder: () => const Article()),
       ],
     ),
     QRoute(
       path: '/news',
       builder: () => const News(),
       children: [
-        QRoute(path: '/:id', builder: () => const NewsItem()),
+        QRoute(path: '/:slug', builder: () => const NewsItem()),
       ],
     ),
     QRoute(

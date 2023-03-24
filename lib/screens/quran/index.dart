@@ -117,7 +117,7 @@ class QuranState extends ConsumerState<Quran> {
                       },
                       itemBuilder: (_, item, __) {
                         return InkWell(
-                          onTap: () => QR.to('quran/surah/${item.id}'),
+                          onTap: () => QR.to('quran/surah/${item.slug}'),
                           child: ListItem(
                             item: Text(
                               item.title,
@@ -138,7 +138,7 @@ class QuranState extends ConsumerState<Quran> {
                       },
                       itemBuilder: (_, item, __) {
                         return InkWell(
-                          onTap: () => QR.to('quran/para/${item.id}'),
+                          onTap: () => QR.to('quran/para/${item.slug}'),
                           child: ListItem(
                             item: Text(
                               item.title,

@@ -77,7 +77,7 @@ class News extends ConsumerWidget {
                       itemCount: resources.length,
                       itemBuilder: (context, index, pageIndex) {
                         return InkWell(
-                          onTap: () => QR.to('news/${resources[index].id}'),
+                          onTap: () => QR.to('news/${resources[index].slug}'),
                           child: Center(
                             child: Text(
                               resources[index].title,

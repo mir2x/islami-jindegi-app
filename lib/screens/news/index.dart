@@ -62,7 +62,7 @@ class News extends ConsumerWidget {
                 },
                 itemBuilder: (_, item, __) {
                   return InkWell(
-                    onTap: () => QR.to('news/${item.id}'),
+                    onTap: () => QR.to('news/${item.slug}'),
                     child: ListItem(
                       item: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
