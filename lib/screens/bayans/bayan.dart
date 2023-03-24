@@ -39,8 +39,6 @@ class Bayan extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
-        String resourceLink = 'https://islamidars.com/bayans/${resource.id}';
-
         return MyScaffold(
           title: Text(resource.title),
           body: ItemContent(
@@ -133,7 +131,8 @@ class Bayan extends ConsumerWidget {
                 children: [
                   SocialShare(
                     title: resource.title,
-                    subtitle: '${resource.speaker.value.name}\n\n$resourceLink',
+                    subtitle: resource.speaker.value.name,
+                    link: 'bayans/${resource.id}',
                   ),
                   BookmarkButton(
                     type: 'Bayan',

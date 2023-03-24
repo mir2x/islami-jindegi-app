@@ -60,6 +60,7 @@ class About extends ConsumerWidget {
               SocialShare(
                 title: item.title,
                 body: item.body,
+                link: 'about',
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
             ],

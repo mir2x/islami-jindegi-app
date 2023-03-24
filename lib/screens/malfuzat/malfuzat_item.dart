@@ -123,6 +123,7 @@ class MalfuzatItem extends ConsumerWidget {
                     title: resource.title,
                     subtitle: resource.malfuzatAuthor.value.name,
                     body: resource.body,
+                    link: 'malfuzat/${resource.id}',
                   ),
                   BookmarkButton(
                     type: 'Malfuzat',

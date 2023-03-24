@@ -74,11 +74,12 @@ class NewsItem extends ConsumerWidget {
                   SocialShare(
                     title: resource.title,
                     body: resource.body,
+                    link: 'news/${resource.slug}',
                   ),
                   BookmarkButton(
                     type: 'News',
                     title: resource.title,
-                    link: 'news/${resource.id}',
+                    link: 'news/${resource.slug}',
                   ),
                 ],
               ),

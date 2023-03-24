@@ -9,11 +9,13 @@ class SocialShare extends StatelessWidget {
     this.title,
     this.subtitle,
     this.body,
+    this.link,
   });
 
   final String? title;
   final String? subtitle;
   final dynamic body;
+  final String? link;
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +28,11 @@ class SocialShare extends StatelessWidget {
         String text = '';
 
         if (title != null) {
-          text += '$title\n\n';
+          text += '$title';
         }
 
         if (subtitle != null) {
-          text += '$subtitle\n\n';
+          text += '\n\n$subtitle';
         }
 
         if (body != null) {
@@ -38,6 +40,7 @@ class SocialShare extends StatelessWidget {
           List pList = document.querySelectorAll('p');
 
           if (pList.isNotEmpty) {
+            text += '\n\n';
             for (var p in pList) {
               if (p.text != '') {
                 text += '${p.text}\n';
@@ -46,7 +49,11 @@ class SocialShare extends StatelessWidget {
           }
         }
 
-        text += '\n$appLink';
+        if (link != null) {
+          text += '\n\nhttps://islamidars.com/$link';
+        }
+
+        text += '\n\n$appLink';
 
         await Clipboard.setData(ClipboardData(text: text));
 

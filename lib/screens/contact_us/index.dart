@@ -60,6 +60,7 @@ class ContactUs extends ConsumerWidget {
               SocialShare(
                 title: item.title,
                 body: item.body,
+                link: 'contact-us',
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
             ],

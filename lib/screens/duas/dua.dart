@@ -108,6 +108,7 @@ class Dua extends ConsumerWidget {
                   SocialShare(
                     title: resource.title,
                     body: resource.body,
+                    link: 'duas/${resource.id}',
                   ),
                   BookmarkButton(
                     type: 'Dua',

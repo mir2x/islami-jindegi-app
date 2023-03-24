@@ -60,6 +60,7 @@ class Donation extends ConsumerWidget {
               SocialShare(
                 title: item.title,
                 body: item.body,
+                link: 'donation',
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
             ],

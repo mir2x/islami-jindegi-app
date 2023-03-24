@@ -77,11 +77,12 @@ class Article extends ConsumerWidget {
                     title: resource.title,
                     subtitle: resource.articleAuthor.value.name,
                     body: resource.body,
+                    link: 'articles/${resource.slug}',
                   ),
                   BookmarkButton(
                     type: 'Article',
                     title: resource.title,
-                    link: 'articles/${resource.id}',
+                    link: 'articles/${resource.slug}',
                   ),
                 ],
               ),

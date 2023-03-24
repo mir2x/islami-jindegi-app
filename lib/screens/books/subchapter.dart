@@ -12,6 +12,7 @@ import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
+import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 
 class Subchapter extends ConsumerWidget {
@@ -48,9 +49,19 @@ class Subchapter extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              SocialShare(
-                title: resource.title,
-                body: resource.body,
+              Row(
+                children: [
+                  SocialShare(
+                    title: resource.title,
+                    body: resource.body,
+                    link: 'books/${QR.params['id']}/subchapters/${resource.id}',
+                  ),
+                  BookmarkButton(
+                    type: 'Book Subchapter',
+                    title: resource.title,
+                    link: 'books/${QR.params['id']}/subchapters/${resource.id}',
+                  ),
+                ],
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
             ],

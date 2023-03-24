@@ -132,11 +132,12 @@ class MasailItem extends ConsumerWidget {
                     title: resource.title,
                     subtitle: resource.question,
                     body: resource.answer,
+                    link: 'masail/${resource.slug}',
                   ),
                   BookmarkButton(
                     type: 'Masail',
                     title: resource.title,
-                    link: 'masail/${resource.id}',
+                    link: 'masail/${resource.slug}',
                   ),
                 ],
               ),
