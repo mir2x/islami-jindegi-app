@@ -24,6 +24,7 @@ class QuranSearch extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
             child: SearchField(
+              value: qParams['search'],
               labelText: 'Search in Arabic',
               onUpdate: (value) {
                 ref

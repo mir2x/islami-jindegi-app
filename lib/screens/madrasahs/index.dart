@@ -33,6 +33,7 @@ class Madrasahs extends ConsumerWidget {
                 return Container(
                   padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
                   child: SearchField(
+                    value: qParams['search'],
                     onUpdate: (value) {
                       ref
                           .read(queryParamsProvider.notifier)

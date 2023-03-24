@@ -4,15 +4,15 @@ import 'package:flutter/services.dart';
 class InputField extends StatefulWidget {
   const InputField({
     super.key,
-    required this.initialValue,
     required this.onChanged,
+    this.initialValue,
     this.keyboardType,
     this.inputFormatters,
     this.decoration,
     this.style,
   });
 
-  final String initialValue;
+  final String? initialValue;
   final void Function(String)? onChanged;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;

@@ -119,6 +119,7 @@ class Books extends ConsumerWidget {
                       ),
                       Expanded(
                         child: SearchField(
+                          value: qParams['search'],
                           onUpdate: (value) {
                             ref
                                 .read(queryParamsProvider.notifier)

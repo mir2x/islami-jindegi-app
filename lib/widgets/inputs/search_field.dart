@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:native_app/theme/colors.dart';
+import 'input_field.dart';
 
 class SearchField extends StatelessWidget {
   const SearchField({
     super.key,
     required this.onUpdate,
+    this.value,
     this.labelText = 'Search',
   });
 
+  final String? value;
   final Function onUpdate;
   final String labelText;
 
@@ -16,7 +19,8 @@ class SearchField extends StatelessWidget {
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
 
-    return TextField(
+    return InputField(
+      initialValue: value,
       decoration: InputDecoration(
         enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: ThemeColors.color3),
