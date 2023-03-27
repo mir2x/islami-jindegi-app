@@ -25,8 +25,8 @@ class Resource extends StatelessWidget {
           SvgPicture.asset(
             'assets/images/icons/$icon.svg',
             fit: BoxFit.scaleDown,
-            width: 50,
-            height: 50,
+            width: 40,
+            height: 40,
           ),
           Container(
             margin: const EdgeInsets.only(top: 10),

@@ -11,15 +11,20 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return MyScaffold(
       isHome: true,
       title: const Text('Islami Jindegi'),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: const EdgeInsets.only(left: 20, right: 20, top: 25),
+              margin: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: screenHeight * 0.02,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -43,9 +48,13 @@ class Home extends StatelessWidget {
             ),
             GridView.count(
               crossAxisCount: 3,
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 50),
+              padding: EdgeInsets.symmetric(
+                horizontal: 15,
+                vertical: screenHeight * 0.04,
+              ),
+              childAspectRatio: screenHeight / 720,
               crossAxisSpacing: 15,
-              mainAxisSpacing: 15,
+              mainAxisSpacing: 0,
               shrinkWrap: true,
               physics: const ScrollPhysics(),
               children: const [
@@ -111,7 +120,14 @@ class Home extends StatelessWidget {
                 ),
               ],
             ),
-            const News(),
+            Container(
+              margin: EdgeInsets.only(
+                bottom: screenHeight * 0.02,
+                left: 20,
+                right: 20,
+              ),
+              child: const News(),
+            )
           ],
         ),
       ),
