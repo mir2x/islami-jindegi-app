@@ -50,11 +50,11 @@ class Home extends StatelessWidget {
               crossAxisCount: 3,
               padding: EdgeInsets.symmetric(
                 horizontal: 15,
-                vertical: screenHeight * 0.04,
+                vertical: screenHeight * 0.05,
               ),
-              childAspectRatio: screenHeight / 720,
+              childAspectRatio: 1.5,
               crossAxisSpacing: 15,
-              mainAxisSpacing: 0,
+              mainAxisSpacing: screenHeight * 0.025,
               shrinkWrap: true,
               physics: const ScrollPhysics(),
               children: const [
