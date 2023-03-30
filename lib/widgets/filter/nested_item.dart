@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_data/flutter_data.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/theme/colors.dart';
 
@@ -63,7 +64,12 @@ class FilterNestedItemState extends ConsumerState<FilterNestedItem> {
                       style: textTheme.titleMedium,
                     ),
                   ),
-                  const Icon(Icons.arrow_upward),
+                  const SizedBox(width: 10),
+                  SvgPicture.asset(
+                    'assets/images/icons/angle-up.svg',
+                    fit: BoxFit.scaleDown,
+                    width: 20,
+                  ),
                 ],
               ),
             ),
@@ -80,9 +86,18 @@ class FilterNestedItemState extends ConsumerState<FilterNestedItem> {
                         style: textTheme.titleMedium,
                       ),
                     ),
-                    Icon(
-                      isOpen ? Icons.arrow_upward : Icons.arrow_downward,
-                    ),
+                    const SizedBox(width: 10),
+                    isOpen
+                        ? SvgPicture.asset(
+                            'assets/images/icons/angle-up.svg',
+                            fit: BoxFit.scaleDown,
+                            width: 20,
+                          )
+                        : SvgPicture.asset(
+                            'assets/images/icons/angle-down.svg',
+                            fit: BoxFit.scaleDown,
+                            width: 20,
+                          ),
                   ],
                 ),
               ),

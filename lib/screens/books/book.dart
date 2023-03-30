@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/single_model.dart';
@@ -252,9 +253,18 @@ class SubchaptersState extends ConsumerState<Subchapters> {
                       style: textTheme.titleLarge,
                     ),
                   ),
-                  Icon(
-                    isOpen ? Icons.arrow_upward : Icons.arrow_downward,
-                  ),
+                  const SizedBox(width: 20),
+                  isOpen
+                      ? SvgPicture.asset(
+                          'assets/images/icons/angle-up.svg',
+                          fit: BoxFit.scaleDown,
+                          width: 20,
+                        )
+                      : SvgPicture.asset(
+                          'assets/images/icons/angle-down.svg',
+                          fit: BoxFit.scaleDown,
+                          width: 20,
+                        ),
                 ],
               ),
             ),
