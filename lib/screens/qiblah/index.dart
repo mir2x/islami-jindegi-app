@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smooth_compass/utils/src/compass_ui.dart';
 import 'package:adhan/adhan.dart';
@@ -11,11 +12,12 @@ class Qiblah extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var geoData = ref.watch(geolocationProvider);
 
     return MyScaffold(
-      title: const Text('Qiblah'),
+      title: Text(locales.qiblah),
       body: Container(
         margin: const EdgeInsets.only(
           left: 20,
@@ -42,7 +44,7 @@ class Qiblah extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Dhaka'),
+                      Text(locales.dhaka),
                       Container(
                         margin: const EdgeInsets.only(left: 20, right: 5),
                         child: GestureDetector(
@@ -57,7 +59,7 @@ class Qiblah extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      const Text('Set Location')
+                      Text(locales.setLocation)
                     ],
                   ),
                 ],
@@ -105,7 +107,7 @@ class Qiblah extends ConsumerWidget {
                   width: 250,
                   margin: const EdgeInsets.only(bottom: 40),
                   child: Text(
-                    'Set the device horizontally to get the best result.',
+                    locales.qiblahInstruction,
                     style: textTheme.labelMedium,
                     textAlign: TextAlign.center,
                   ),

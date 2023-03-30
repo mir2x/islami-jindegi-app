@@ -39,7 +39,7 @@ class Bismillah extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.only(bottom: 5, left: 15, right: 15),
               child: Text(
-                (qSettings['language'] == 'en-gb')
+                (qSettings['language'] == 'en')
                     ? 'In the name of Allah, Most Gracious, Most Merciful.'
                     : 'পরম করুণাময় অসীম দয়ালু মহান আল্লাহ্‌র নামে শুরু করছি।',
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -23,12 +24,13 @@ class Masail extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(queryParamsProvider);
     var connectivity = ref.watch(connectivityResultProvider);
 
     return MyScaffold(
-      title: const Text('Masail'),
+      title: Text(locales.masail),
       body: Column(
         children: [
           connectivity.when(
@@ -55,7 +57,7 @@ class Masail extends ConsumerWidget {
                               children: [
                                 Expanded(
                                   child: FilterList(
-                                    title: 'Categories',
+                                    title: locales.categories,
                                     paramKeys: const [
                                       'masailCategoryId',
                                       'masailSubcategoryId'
@@ -121,9 +123,9 @@ class Masail extends ConsumerWidget {
                         bottom: 5,
                       ),
                       child: TripleSwitchButton(
-                        firstLabel: 'ALL',
-                        secondLabel: 'TEXT',
-                        thirdLabel: 'AUDIO',
+                        firstLabel: locales.all,
+                        secondLabel: locales.text,
+                        thirdLabel: locales.audio,
                         activateFirst: () {
                           ref
                               .read(

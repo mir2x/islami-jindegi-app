@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:idkit_inputformatters/idkit_inputformatters.dart';
 import 'package:native_app/widgets/inputs/input_field.dart';
 import 'package:native_app/theme/colors.dart';
@@ -15,6 +16,7 @@ class TimeInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
 
     return Column(
@@ -48,13 +50,13 @@ class TimeInput extends StatelessWidget {
                 onChanged: onChanged,
               ),
             ),
-            const Text('minute(s)'),
+            Text(locales.minutes),
           ],
         ),
         Container(
           margin: const EdgeInsets.only(top: 10),
           child: Text(
-            'min: -60, max: 60',
+            locales.minutesHint,
             style: textTheme.labelSmall?.copyWith(
               color: ThemeColors.placeholder,
             ),

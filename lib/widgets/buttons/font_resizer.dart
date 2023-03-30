@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
 
 class FontResizer extends StatelessWidget {
@@ -11,11 +12,12 @@ class FontResizer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
 
     return Row(
       children: [
-        Text('Font Size', style: textTheme.labelMedium),
+        Text(locales.fontSize, style: textTheme.labelMedium),
         IconButton(
           icon: const Icon(Icons.add),
           padding: const EdgeInsets.only(

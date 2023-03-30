@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'error_page.dart';
 
 class Page404 extends StatelessWidget {
@@ -6,9 +7,11 @@ class Page404 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ErrorPage(
-      title: 'Page Not Found',
-      subtitle: 'We cannot seem to find the page you are looking for.',
+    var locales = AppLocalizations.of(context)!;
+
+    return ErrorPage(
+      title: locales.notFoundErrorTitle,
+      subtitle: locales.notFoundErrorMsg,
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
@@ -27,6 +28,7 @@ class Dua extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var fontSizeRatio = FontSizeRatio();
 
@@ -73,7 +75,7 @@ class Dua extends ConsumerWidget {
                   children: [
                     if (resource.audio?['metadata']?['duration'] != null) ...[
                       DescriptionItem(
-                        title: 'Audio Duration:',
+                        title: '${locales.audioDuration}:',
                         description: Text(
                           playDuration(resource.audio['metadata']['duration']),
                           style: textTheme.labelMedium,
@@ -82,7 +84,7 @@ class Dua extends ConsumerWidget {
                     ],
                     if (resource.audio?['metadata']?['size'] != null) ...[
                       DescriptionItem(
-                        title: 'Audio Size:',
+                        title: '${locales.audioSize}:',
                         description: Text(
                           fileSize(resource.audio['metadata']['size']),
                           style: textTheme.labelMedium,

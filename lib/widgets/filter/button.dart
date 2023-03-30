@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/theme/colors.dart';
 
 class FilterButton extends StatelessWidget {
@@ -13,6 +14,7 @@ class FilterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
 
     return OutlinedButton(
@@ -51,7 +53,9 @@ class FilterButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            active == true ? 'Filter (Active)' : 'Filter',
+            active == true
+                ? '${locales.filter} (${locales.active})'
+                : locales.filter,
             style: textTheme.labelMedium,
           ),
           const Icon(Icons.arrow_drop_down),

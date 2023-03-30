@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
@@ -9,11 +10,12 @@ class Bookmarks extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var bookmarks = ref.watch(bookmarksProvider);
 
     return MyScaffold(
-      title: const Text('Bookmarks'),
+      title: Text(locales.bookmarks),
       body: bookmarks.when(
         loading: () => const CircularProgressIndicator(),
         error: (error, stackTrace) => Text(error.toString()),

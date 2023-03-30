@@ -40,7 +40,7 @@ class SwitchButton extends StatelessWidget {
               ),
             ),
             child: Text(
-              firstLabel,
+              firstLabel.toUpperCase(),
               style: textTheme.labelMedium?.copyWith(
                 color: ThemeColors.color7,
                 fontWeight: FontWeight.bold,
@@ -62,7 +62,7 @@ class SwitchButton extends StatelessWidget {
               ),
             ),
             child: Text(
-              secondLabel,
+              secondLabel.toUpperCase(),
               style: textTheme.labelMedium?.copyWith(
                 color: ThemeColors.color7,
                 fontWeight: FontWeight.bold,

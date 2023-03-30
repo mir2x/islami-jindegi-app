@@ -6,6 +6,7 @@ class GregorianDate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
 
     final DateTime today = DateTime.now();
@@ -13,7 +14,7 @@ class GregorianDate extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(top: 5),
       child: Text(
-        DateFormat('EEEE, dd MMMM, yyyy').format(today),
+        DateFormat('EEEE, dd MMMM, yyyy', currentLang).format(today),
         style: textTheme.labelSmall,
       ),
     );

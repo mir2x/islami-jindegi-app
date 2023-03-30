@@ -46,7 +46,7 @@ class TripleSwitchButton extends StatelessWidget {
               ),
             ),
             child: Text(
-              firstLabel,
+              firstLabel.toUpperCase(),
               style: textTheme.labelMedium?.copyWith(
                 color: ThemeColors.color7,
                 fontWeight: FontWeight.bold,
@@ -65,7 +65,7 @@ class TripleSwitchButton extends StatelessWidget {
               ),
             ),
             child: Text(
-              secondLabel,
+              secondLabel.toUpperCase(),
               style: textTheme.labelMedium?.copyWith(
                 color: ThemeColors.color7,
                 fontWeight: FontWeight.bold,
@@ -87,7 +87,7 @@ class TripleSwitchButton extends StatelessWidget {
               ),
             ),
             child: Text(
-              thirdLabel,
+              thirdLabel.toUpperCase(),
               style: textTheme.labelMedium?.copyWith(
                 color: ThemeColors.color7,
                 fontWeight: FontWeight.bold,

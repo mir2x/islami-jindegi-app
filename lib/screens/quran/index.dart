@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -36,11 +37,13 @@ class QuranState extends ConsumerState<Quran> {
 
   @override
   Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
+    String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
     var connectivity = ref.watch(connectivityResultProvider);
 
     return MyScaffold(
-      title: const Text('Quran'),
+      title: Text(locales.quran),
       body: Column(
         children: [
           connectivity.when(
@@ -64,7 +67,7 @@ class QuranState extends ConsumerState<Quran> {
                       backgroundColor: ThemeColors.color1,
                       minimumSize: const Size.fromHeight(40),
                     ),
-                    child: Text('Search', style: textTheme.titleMedium),
+                    child: Text(locales.search, style: textTheme.titleMedium),
                   ),
                 );
               } else {
@@ -88,14 +91,14 @@ class QuranState extends ConsumerState<Quran> {
                 backgroundColor: ThemeColors.color1,
                 minimumSize: const Size.fromHeight(40),
               ),
-              child: Text('PDF Files', style: textTheme.titleMedium),
+              child: Text(locales.pdfFiles, style: textTheme.titleMedium),
             ),
           ),
           Container(
             padding: const EdgeInsets.only(left: 15, right: 15, top: 8),
             child: SwitchButton(
-              firstLabel: 'SURAH',
-              secondLabel: 'PARA',
+              firstLabel: locales.surah,
+              secondLabel: locales.para,
               activateFirst: loadSurah,
               activateSecond: loadPara,
               isFirstActive: isSurahSelected,
@@ -120,7 +123,7 @@ class QuranState extends ConsumerState<Quran> {
                           onTap: () => QR.to('quran/surah/${item.slug}'),
                           child: ListItem(
                             item: Text(
-                              item.title,
+                              currentLang == 'bn' ? item.titleBn : item.title,
                               style: textTheme.titleMedium,
                             ),
                           ),
@@ -141,7 +144,7 @@ class QuranState extends ConsumerState<Quran> {
                           onTap: () => QR.to('quran/para/${item.slug}'),
                           child: ListItem(
                             item: Text(
-                              item.title,
+                              currentLang == 'bn' ? item.titleBn : item.title,
                               style: textTheme.titleMedium,
                             ),
                           ),

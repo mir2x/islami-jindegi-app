@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:adhan/adhan.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,6 +12,8 @@ class CurrentPrayers extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
+    String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
     var dataP = ref.watch(preferencesAndGeolocationProvider);
 
@@ -36,7 +39,10 @@ class CurrentPrayers extends ConsumerWidget {
             preferences: data['preferences'],
           );
 
-          Map prayerTimes = prayerTime.getCurrentAndNextPrayers();
+          Map prayerTimes = prayerTime.getCurrentAndNextPrayers(
+            locales,
+            currentLang,
+          );
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,7 +52,7 @@ class CurrentPrayers extends ConsumerWidget {
                   margin: const EdgeInsets.only(bottom: 7),
                   child: Row(
                     children: [
-                      Text('Dhaka', style: textTheme.labelSmall),
+                      Text(locales.dhaka, style: textTheme.labelSmall),
                       Container(
                         margin: const EdgeInsets.only(left: 15, right: 3),
                         child: GestureDetector(
@@ -61,30 +67,33 @@ class CurrentPrayers extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      Text('Set Location', style: textTheme.labelSmall),
+                      Text(locales.setLocation, style: textTheme.labelSmall),
                     ],
                   ),
                 ),
               ],
               if (prayerTimes.containsKey('current')) ...[
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       '${prayerTimes['current']['title']}',
                       style: textTheme.titleLarge,
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      '${prayerTimes['current']['time']}',
-                      style: textTheme.titleMedium,
-                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 3),
+                      child: Text(
+                        '${prayerTimes['current']['time']}',
+                        style: textTheme.titleMedium,
+                      ),
+                    )
                   ],
                 ),
               ],
               const SizedBox(height: 5),
               Text(
-                'next ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}',
+                '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}',
                 style: textTheme.labelSmall,
               ),
             ],

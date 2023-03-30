@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -22,12 +23,14 @@ class Bayans extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
+    String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(queryParamsProvider);
     var connectivity = ref.watch(connectivityResultProvider);
 
     return MyScaffold(
-      title: const Text('Bayans'),
+      title: Text(locales.bayans),
       body: Column(
         children: [
           connectivity.when(
@@ -52,7 +55,7 @@ class Bayans extends ConsumerWidget {
                               children: [
                                 Expanded(
                                   child: FilterList(
-                                    title: 'Categories',
+                                    title: locales.categories,
                                     paramKeys: const ['bayanCategoryId'],
                                     queryBuilder:
                                         (Map<String, dynamic> params) {
@@ -73,7 +76,7 @@ class Bayans extends ConsumerWidget {
                                 const SizedBox(height: 40),
                                 Expanded(
                                   child: FilterList(
-                                    title: 'Speakers',
+                                    title: locales.speakers,
                                     paramKeys: const ['speakerId'],
                                     queryBuilder:
                                         (Map<String, dynamic> params) {
@@ -117,7 +120,7 @@ class Bayans extends ConsumerWidget {
                         top: 10,
                         bottom: 5,
                       ),
-                      child: DateFilter(),
+                      child: const DateFilter(),
                     ),
                   ],
                 );
@@ -157,7 +160,7 @@ class Bayans extends ConsumerWidget {
                           Container(
                             margin: const EdgeInsets.only(top: 10),
                             child: Text(
-                              formatDate(item.publishedAt),
+                              formatDate(item.publishedAt, currentLang),
                               style: textTheme.labelSmall,
                             ),
                           ),

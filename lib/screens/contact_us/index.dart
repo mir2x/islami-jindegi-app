@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
@@ -19,6 +20,7 @@ class ContactUs extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var fontSizeRatio = FontSizeRatio();
 
     var query = AllModelsQuery(
@@ -35,13 +37,13 @@ class ContactUs extends ConsumerWidget {
         var item = resources[0];
 
         return MyScaffold(
-          title: const Text('Contact Us'),
+          title: Text(locales.contactUs),
           body: ItemContent(
             children: [
               Container(
                 margin: const EdgeInsets.only(bottom: 15),
                 child: PageTitle(
-                  text: item.title,
+                  text: locales.contactUs,
                   fontSizeRatio: fontSizeRatio,
                 ),
               ),

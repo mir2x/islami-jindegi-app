@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
@@ -80,6 +81,8 @@ class MadrasahState extends ConsumerState<StatefulMadrasah> {
 
   @override
   Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
+    String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -87,7 +90,7 @@ class MadrasahState extends ConsumerState<StatefulMadrasah> {
       children: [
         Container(
           margin: const EdgeInsets.only(left: 10, bottom: 15),
-          child: Text('Info', style: textTheme.labelLarge),
+          child: Text(locales.info, style: textTheme.labelLarge),
         ),
         Container(
           margin: const EdgeInsets.only(bottom: 30),
@@ -103,24 +106,24 @@ class MadrasahState extends ConsumerState<StatefulMadrasah> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   MadrasahSection(
-                    title: 'Introduction',
+                    title: locales.introduction,
                     isSelected: activeSection == 'introduction',
                     onSelected: () => updateSection('introduction'),
                   ),
                   ...widget.madrasah.madrasahInfos.map((info) {
                     return MadrasahSection(
-                      title: info.label,
+                      title: currentLang == 'bn' ? info.labelBn : info.label,
                       isSelected: activeInfo?.id == info.id,
                       onSelected: () => updateInfo(info),
                     );
                   }),
                   MadrasahSection(
-                    title: 'Gallery',
+                    title: locales.gallery,
                     isSelected: activeSection == 'gallery',
                     onSelected: () => updateSection('gallery'),
                   ),
                   MadrasahSection(
-                    title: 'Document',
+                    title: locales.document,
                     isSelected: activeSection == 'document',
                     onSelected: () => updateSection('document'),
                   ),
@@ -137,7 +140,7 @@ class MadrasahState extends ConsumerState<StatefulMadrasah> {
           ),
         ),
         if (activeSection == 'introduction') ...[
-          Text('Introduction', style: textTheme.labelMedium),
+          Text(locales.introduction, style: textTheme.labelMedium),
           Container(
             margin: const EdgeInsets.only(top: 20),
             child: HtmlText(
@@ -147,7 +150,7 @@ class MadrasahState extends ConsumerState<StatefulMadrasah> {
         ] else if (activeSection == 'gallery') ...[
           Container(
             margin: const EdgeInsets.only(bottom: 20),
-            child: Text('Gallery', style: textTheme.labelMedium),
+            child: Text(locales.gallery, style: textTheme.labelMedium),
           ),
           ...widget.madrasah.madrasahPhotos.map((photo) {
             return Container(
@@ -159,9 +162,9 @@ class MadrasahState extends ConsumerState<StatefulMadrasah> {
             );
           }),
         ] else if (activeSection == 'document') ...[
-          const DescriptionItem(
-            title: 'Download:',
-            description: Align(
+          DescriptionItem(
+            title: '${locales.download}:',
+            description: const Align(
               alignment: Alignment.topLeft,
               child: Icon(
                 Icons.download,
@@ -170,7 +173,10 @@ class MadrasahState extends ConsumerState<StatefulMadrasah> {
             ),
           ),
         ] else if (activeInfo != null) ...[
-          Text(activeInfo.label, style: textTheme.labelMedium),
+          Text(
+            currentLang == 'bn' ? activeInfo.labelBn : activeInfo.label,
+            style: textTheme.labelMedium,
+          ),
           Container(
             margin: const EdgeInsets.only(top: 20),
             child: HtmlText(text: activeInfo.info),

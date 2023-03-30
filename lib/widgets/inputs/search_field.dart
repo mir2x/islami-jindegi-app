@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:native_app/theme/colors.dart';
 import 'input_field.dart';
@@ -8,15 +9,16 @@ class SearchField extends StatelessWidget {
     super.key,
     required this.onUpdate,
     this.value,
-    this.labelText = 'Search',
+    this.labelText,
   });
 
   final String? value;
   final Function onUpdate;
-  final String labelText;
+  final String? labelText;
 
   @override
   Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
 
     return InputField(
@@ -28,7 +30,7 @@ class SearchField extends StatelessWidget {
         focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: ThemeColors.color3),
         ),
-        labelText: labelText,
+        labelText: labelText ?? locales.search,
         labelStyle: textTheme.labelMedium,
         constraints: const BoxConstraints(maxHeight: 45),
       ),

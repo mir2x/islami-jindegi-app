@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -12,6 +13,7 @@ class News extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
 
     var query = AllModelsQuery(
@@ -37,7 +39,7 @@ class News extends ConsumerWidget {
               right: 10,
             ),
             child: Text(
-              'News & Updates',
+              locales.newsAndUpdates,
               style: textTheme.labelMedium?.copyWith(
                 color: ThemeColors.color2,
               ),

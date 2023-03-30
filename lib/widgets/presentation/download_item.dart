@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
@@ -22,6 +23,7 @@ class DownloadItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var checkFileProvider = checkDownloadedFileProvider(filePath);
     var checkDownloadedFile = ref.watch(checkFileProvider);
@@ -33,7 +35,7 @@ class DownloadItem extends ConsumerWidget {
       data: (isFileExists) {
         if (isFileExists) {
           return DescriptionItem(
-            title: 'Downloaded:',
+            title: '${locales.downloaded}:',
             description: Container(
               padding: const EdgeInsets.all(8),
               child: Align(
@@ -93,7 +95,7 @@ class DownloadItem extends ConsumerWidget {
           );
         } else {
           return DescriptionItem(
-            title: 'Download:',
+            title: '${locales.download}:',
             description: Align(
               alignment: Alignment.centerLeft,
               child: Row(
@@ -118,9 +120,9 @@ class DownloadItem extends ConsumerWidget {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               backgroundColor: ThemeColors.color1,
-                              title: const Text('Error!'),
+                              title: Text(locales.errorTitle),
                               content: Text(
-                                'There has been a problem while downloading the file. Please check your network connection and try again.',
+                                locales.downloadErrorMsg,
                                 style: textTheme.labelMedium,
                               ),
                             );

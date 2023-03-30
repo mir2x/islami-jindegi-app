@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/all_models.dart';
@@ -10,6 +11,7 @@ class BismillahTafseer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
 
     var query = AllModelsQuery(
@@ -26,7 +28,7 @@ class BismillahTafseer extends ConsumerWidget {
           Container(
             margin: const EdgeInsets.only(bottom: 15),
             child: Text(
-              'Tafseer',
+              locales.tafseer,
               style: textTheme.headlineMedium,
             ),
           ),
@@ -48,7 +50,7 @@ class BismillahTafseer extends ConsumerWidget {
                   ),
                 );
               } else {
-                return const Text('No content yet');
+                return Text(locales.noContent);
               }
             },
           ),

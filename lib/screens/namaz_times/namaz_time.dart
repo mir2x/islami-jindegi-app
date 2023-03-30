@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/providers/all_models.dart';
@@ -19,6 +20,7 @@ class NamazTime extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var fontSizeRatio = FontSizeRatio();
 
     var query = AllModelsQuery(
@@ -41,7 +43,7 @@ class NamazTime extends ConsumerWidget {
               Container(
                 margin: const EdgeInsets.only(bottom: 15),
                 child: PageTitle(
-                  text: 'Masail',
+                  text: locales.masail,
                   fontSizeRatio: fontSizeRatio,
                 ),
               ),
@@ -56,7 +58,7 @@ class NamazTime extends ConsumerWidget {
                 Container(
                   margin: const EdgeInsets.only(top: 30, bottom: 15),
                   child: PageTitle(
-                    text: 'Fazail',
+                    text: locales.fazail,
                     fontSizeRatio: fontSizeRatio,
                   ),
                 ),

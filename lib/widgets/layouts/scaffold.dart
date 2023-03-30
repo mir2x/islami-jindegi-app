@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -20,6 +21,7 @@ class MyScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -55,33 +57,33 @@ class MyScaffold extends StatelessWidget {
                 ? PopupMenuButton<int>(
                     itemBuilder: (BuildContext context) =>
                         <PopupMenuEntry<int>>[
-                      const PopupMenuItem<int>(
+                      PopupMenuItem<int>(
                         value: 0,
-                        child: Text('Settings'),
+                        child: Text(locales.settings),
                       ),
-                      const PopupMenuItem<int>(
+                      PopupMenuItem<int>(
                         value: 1,
-                        child: Text('Contact'),
+                        child: Text(locales.contactUs),
                       ),
-                      const PopupMenuItem<int>(
+                      PopupMenuItem<int>(
                         value: 2,
-                        child: Text('Share this app'),
+                        child: Text(locales.shareThisApp),
                       ),
-                      const PopupMenuItem<int>(
+                      PopupMenuItem<int>(
                         value: 3,
-                        child: Text('Rate this app'),
+                        child: Text(locales.rateThisApp),
                       ),
-                      const PopupMenuItem<int>(
+                      PopupMenuItem<int>(
                         value: 4,
-                        child: Text('iPhone App Link'),
+                        child: Text(locales.iphoneAppLink),
                       ),
-                      const PopupMenuItem<int>(
+                      PopupMenuItem<int>(
                         value: 5,
-                        child: Text('Website Link'),
+                        child: Text(locales.websiteLink),
                       ),
-                      const PopupMenuItem<int>(
+                      PopupMenuItem<int>(
                         value: 6,
-                        child: Text('Important Matters'),
+                        child: Text(locales.importantMatters),
                       ),
                     ],
                     onSelected: (int item) {
@@ -142,28 +144,28 @@ class MyScaffold extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 15),
                 child: Text(
-                  'Home',
+                  locales.home,
                   style: textTheme.titleLarge?.copyWith(fontSize: 24),
                   textAlign: TextAlign.right,
                 ),
               ),
             ),
-            const DrawerLink(title: 'Quran', route: 'quran'),
-            const DrawerLink(title: 'Books', route: 'books'),
-            const DrawerLink(title: 'Bayans', route: 'bayans'),
-            const DrawerLink(title: 'Malfuzat', route: 'malfuzat'),
-            const DrawerLink(title: 'Masail', route: 'masail'),
-            const DrawerLink(title: 'Dua & Durud', route: 'duas'),
-            const DrawerLink(title: 'Articles', route: 'articles'),
-            const DrawerLink(title: 'News', route: 'news'),
-            const DrawerLink(title: 'Madrasah', route: 'madrasahs'),
-            const DrawerLink(title: 'Namaz Time', route: 'namaz-times'),
-            const DrawerLink(title: 'Qiblah', route: 'qiblah'),
-            const DrawerLink(title: 'Donation', route: 'donation'),
-            const DrawerLink(title: 'Settings', route: 'settings'),
-            const DrawerLink(title: 'Bookmarks', route: 'bookmarks'),
-            const DrawerLink(title: 'About Us', route: 'about'),
-            const DrawerLink(title: 'Contact Us', route: 'contact-us'),
+            DrawerLink(title: locales.quran, route: 'quran'),
+            DrawerLink(title: locales.books, route: 'books'),
+            DrawerLink(title: locales.bayans, route: 'bayans'),
+            DrawerLink(title: locales.malfuzat, route: 'malfuzat'),
+            DrawerLink(title: locales.masail, route: 'masail'),
+            DrawerLink(title: locales.duaDurud, route: 'duas'),
+            DrawerLink(title: locales.articles, route: 'articles'),
+            DrawerLink(title: locales.news, route: 'news'),
+            DrawerLink(title: locales.madrasah, route: 'madrasahs'),
+            DrawerLink(title: locales.namazTime, route: 'namaz-times'),
+            DrawerLink(title: locales.qiblah, route: 'qiblah'),
+            DrawerLink(title: locales.donation, route: 'donation'),
+            DrawerLink(title: locales.settings, route: 'settings'),
+            DrawerLink(title: locales.bookmarks, route: 'bookmarks'),
+            DrawerLink(title: locales.aboutUs, route: 'about'),
+            DrawerLink(title: locales.contactUs, route: 'contact-us'),
           ],
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:adhan/adhan.dart';
 import 'package:qlevar_router/qlevar_router.dart';
@@ -15,13 +16,15 @@ class NamazTimes extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
+    String currentLang = Localizations.localeOf(context).languageCode;
     var dataP = ref.watch(preferencesAndGeolocationProvider);
 
     return MyScaffold(
-      title: const Text('Namaz Time'),
+      title: Text(locales.namazTime),
       body: ItemContent(
         children: [
-          Center(
+          const Center(
             child: HijriDate(),
           ),
           dataP.when(
@@ -43,7 +46,7 @@ class NamazTimes extends ConsumerWidget {
                 preferences: data['preferences'],
               );
 
-              Map prayerTimes = prayerTime.getTimes();
+              Map prayerTimes = prayerTime.getTimes(locales, currentLang);
 
               return Column(
                 children: [
@@ -53,7 +56,7 @@ class NamazTimes extends ConsumerWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text('Dhaka'),
+                          Text(locales.dhaka),
                           Container(
                             margin: const EdgeInsets.only(left: 20, right: 5),
                             child: GestureDetector(
@@ -68,7 +71,7 @@ class NamazTimes extends ConsumerWidget {
                               ),
                             ),
                           ),
-                          const Text('Set Location')
+                          Text(locales.setLocation)
                         ],
                       ),
                     ),

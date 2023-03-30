@@ -1,4 +1,5 @@
 import 'package:adhan/adhan.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,59 +24,74 @@ class PrayerTime {
   final Duration tenMins = const Duration(minutes: 10);
   final Duration fifteenMins = const Duration(minutes: 15);
 
-  Map getTimes() {
+  Map getTimes(AppLocalizations locales, String currentLang) {
     return {
       'tahajjud': {
-        'title': 'Tahajjud, Sehri Ends',
-        'endTime': _formatTime(prayerTimes.fajr.subtract(tenMins)),
+        'title': locales.tahajjudSehri,
+        'endTime': _formatTime(prayerTimes.fajr.subtract(tenMins), currentLang),
       },
       'fajr': {
-        'title': 'Fajr',
-        'startTime': _formatTime(prayerTimes.fajr),
-        'endTime': _formatTime(prayerTimes.sunrise.subtract(oneMin)),
+        'title': locales.fajr,
+        'startTime': _formatTime(prayerTimes.fajr, currentLang),
+        'endTime': _formatTime(
+          prayerTimes.sunrise.subtract(oneMin),
+          currentLang,
+        ),
       },
       'sunrise': {
-        'title': 'Sunrise',
-        'time': _formatTime(prayerTimes.sunrise),
+        'title': locales.sunrise,
+        'time': _formatTime(prayerTimes.sunrise, currentLang),
       },
       'ishraq': {
-        'title': 'Ishraq, Chasht',
-        'startTime': _formatTime(prayerTimes.sunrise.add(fifteenMins)),
-        'endTime': _formatTime(prayerTimes.dhuhr.subtract(oneMin)),
+        'title': locales.ishraqChasht,
+        'startTime': _formatTime(
+          prayerTimes.sunrise.add(fifteenMins),
+          currentLang,
+        ),
+        'endTime': _formatTime(prayerTimes.dhuhr.subtract(oneMin), currentLang),
       },
       'midday': {
-        'title': 'Midday',
-        'time': _formatTime(prayerTimes.dhuhr),
+        'title': locales.midday,
+        'time': _formatTime(prayerTimes.dhuhr, currentLang),
       },
       'dhuhr': {
-        'title': 'Zuhr, Zawal',
-        'startTime': _formatTime(prayerTimes.dhuhr.add(fiveMins)),
-        'endTime': _formatTime(prayerTimes.asr.subtract(oneMin)),
+        'title': locales.zuhrZawal,
+        'startTime': _formatTime(prayerTimes.dhuhr.add(fiveMins), currentLang),
+        'endTime': _formatTime(prayerTimes.asr.subtract(oneMin), currentLang),
       },
       'asr': {
-        'title': 'Asr',
-        'startTime': _formatTime(prayerTimes.asr),
-        'endTime': _formatTime(prayerTimes.maghrib.subtract(fourMins)),
+        'title': locales.asr,
+        'startTime': _formatTime(prayerTimes.asr, currentLang),
+        'endTime': _formatTime(
+          prayerTimes.maghrib.subtract(fourMins),
+          currentLang,
+        ),
       },
       'sunset': {
-        'title': 'Sunset',
-        'time': _formatTime(prayerTimes.maghrib.subtract(threeMins)),
+        'title': locales.sunset,
+        'time': _formatTime(
+          prayerTimes.maghrib.subtract(threeMins),
+          currentLang,
+        ),
       },
       'maghrib': {
-        'title': 'Maghrib, Iftar',
-        'startTime': _formatTime(prayerTimes.maghrib),
-        'endTime': _formatTime(prayerTimes.isha.subtract(oneMin)),
+        'title': locales.maghribIftar,
+        'startTime': _formatTime(
+          prayerTimes.maghrib,
+          currentLang,
+        ),
+        'endTime': _formatTime(prayerTimes.isha.subtract(oneMin), currentLang),
       },
       'isha': {
-        'title': 'Isha',
-        'startTime': _formatTime(prayerTimes.isha),
-        'endTime': _formatTime(prayerTimes.fajr.subtract(tenMins)),
+        'title': locales.isha,
+        'startTime': _formatTime(prayerTimes.isha, currentLang),
+        'endTime': _formatTime(prayerTimes.fajr.subtract(tenMins), currentLang),
       }
     };
   }
 
-  Map getCurrentAndNextPrayers() {
-    Map times = getTimes();
+  Map getCurrentAndNextPrayers(AppLocalizations locales, String currentLang) {
+    Map times = getTimes(locales, currentLang);
     Map prayers = _currentAndNextPrayerNames();
     var currentPrayer = prayers['currentPrayer'];
     var nextPrayer = prayers['nextPrayer'];
@@ -96,8 +112,8 @@ class PrayerTime {
     };
   }
 
-  String _formatTime(DateTime time) {
-    return DateFormat.jm().format(time);
+  String _formatTime(DateTime time, String locale) {
+    return DateFormat.jm(locale).format(time);
   }
 
   CalculationParameters _adjustedParams() {

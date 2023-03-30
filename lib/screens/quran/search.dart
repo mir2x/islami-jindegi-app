@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
@@ -14,18 +15,19 @@ class QuranSearch extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(queryParamsProvider);
 
     return MyScaffold(
-      title: const Text('Search in Quran'),
+      title: Text(locales.searchInQuran),
       body: Column(
         children: [
           Container(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
             child: SearchField(
               value: qParams['search'],
-              labelText: 'Search in Arabic',
+              labelText: locales.searchInArabic,
               onUpdate: (value) {
                 ref
                     .read(queryParamsProvider.notifier)
@@ -62,7 +64,7 @@ class QuranSearch extends ConsumerWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              const Text('Surah:'),
+                              Text('${locales.surah}:'),
                               const SizedBox(width: 5),
                               GestureDetector(
                                 onTap: () =>
@@ -72,7 +74,7 @@ class QuranSearch extends ConsumerWidget {
                                   style: textTheme.titleMedium,
                                 ),
                               ),
-                              Text(', Ayah: ${ayah.surahPosition}')
+                              Text(', ${locales.ayah}: ${ayah.surahPosition}')
                             ],
                           ),
                           Container(

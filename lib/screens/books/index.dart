@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/widgets/utils/comma_separated_list.dart';
 import 'package:qlevar_router/qlevar_router.dart';
@@ -23,12 +24,13 @@ class Books extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(queryParamsProvider);
     var connectivity = ref.watch(connectivityResultProvider);
 
     return MyScaffold(
-      title: const Text('Books'),
+      title: Text(locales.books),
       body: Column(
         children: [
           connectivity.when(
@@ -53,7 +55,7 @@ class Books extends ConsumerWidget {
                           children: [
                             Expanded(
                               child: FilterList(
-                                title: 'Categories',
+                                title: locales.categories,
                                 paramKeys: const [
                                   'bookCategoryId',
                                   'bookSubcategoryId'
@@ -94,7 +96,7 @@ class Books extends ConsumerWidget {
                             const SizedBox(height: 40),
                             Expanded(
                               child: FilterList(
-                                title: 'Authors',
+                                title: locales.authors,
                                 paramKeys: const ['authorId'],
                                 queryBuilder: (Map<String, dynamic> params) {
                                   return AllModelsQuery(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/quran_settings.dart';
@@ -18,6 +19,7 @@ class Tafseer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qSettings = ref.watch(quranSettingsProvider);
 
@@ -40,7 +42,7 @@ class Tafseer extends ConsumerWidget {
             Container(
               margin: const EdgeInsets.only(bottom: 15),
               child: Text(
-                'Tafseer',
+                locales.tafseer,
                 style: textTheme.headlineMedium,
               ),
             ),
@@ -62,7 +64,7 @@ class Tafseer extends ConsumerWidget {
                     ),
                   );
                 } else {
-                  return const Text('No content yet');
+                  return Text(locales.noContent);
                 }
               },
             ),
@@ -81,14 +83,14 @@ class Tafseer extends ConsumerWidget {
         children: [
           Container(
             margin: const EdgeInsets.only(top: 20),
-            child: const Text('Select a Tafseer Qitab from Settings'),
+            child: Text(locales.selectTafseer),
           ),
           Container(
             margin: const EdgeInsets.only(top: 60),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SectionTitle(title: 'Tafseer Qitabs'),
+                SectionTitle(title: locales.tafseerQitabs),
                 qitabQuery.when(
                   loading: () {
                     return Center(

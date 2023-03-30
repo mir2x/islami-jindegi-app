@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:collection/collection.dart';
 import 'package:date_field/date_field.dart';
@@ -7,23 +8,14 @@ import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/theme/colors.dart';
 
 class DateFilter extends ConsumerWidget {
-  DateFilter({super.key});
-
-  final List<Map> options = [
-    {'value': '', 'label': 'Any Time'},
-    {'value': 'now-1w', 'label': 'Past Week'},
-    {'value': 'now-1m', 'label': 'Past Month'},
-    {'value': 'now-1y', 'label': 'Past Year'},
-    {'value': 'now-5y', 'label': 'Past 5 Years'},
-    {'value': 'now-10y', 'label': 'Past 10 Years'}
-  ];
+  const DateFilter({super.key});
 
   String formatDate(String date) {
     var inputDate = DateFormat('yyyy-MM-dd').parse(date);
     return DateFormat('dd/MM/yyyy').format(inputDate);
   }
 
-  String selectedDate(Map qParams, List options) {
+  String selectedDate(Map qParams, List options, AppLocalizations locales) {
     if (qParams.containsKey('dateFrom')) {
       String from = formatDate(qParams['dateFrom']);
 
@@ -45,15 +37,25 @@ class DateFilter extends ConsumerWidget {
       }
     }
 
-    return 'Filter by Date';
+    return locales.filterByDate;
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(queryParamsProvider);
 
-    String selectedLabel = selectedDate(qParams, options);
+    final List<Map> options = [
+      {'value': '', 'label': locales.anyTime},
+      {'value': 'now-1w', 'label': locales.pastWeek},
+      {'value': 'now-1m', 'label': locales.pastMonth},
+      {'value': 'now-1y', 'label': locales.pastMonth},
+      {'value': 'now-5y', 'label': locales.pastFiveYears},
+      {'value': 'now-10y', 'label': locales.pastTenYears}
+    ];
+
+    String selectedLabel = selectedDate(qParams, options, locales);
 
     return OutlinedButton(
       onPressed: () {
@@ -106,18 +108,18 @@ class DateFilter extends ConsumerWidget {
                     Container(
                       margin: const EdgeInsets.only(top: 30, bottom: 15),
                       child: Text(
-                        'Custom Date',
+                        locales.customDate,
                         style: qParams.containsKey('dateFrom') ||
                                 qParams.containsKey('dateTo')
                             ? textTheme.labelMedium
                             : textTheme.titleMedium,
                       ),
                     ),
-                    CustomDateField(field: 'dateFrom', label: 'Date From'),
+                    CustomDateField(field: 'dateFrom', label: locales.dateFrom),
                     const SizedBox(
                       height: 15,
                     ),
-                    CustomDateField(field: 'dateTo', label: 'Date To'),
+                    CustomDateField(field: 'dateTo', label: locales.dateTo),
                   ],
                 ),
               ),

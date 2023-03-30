@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:collection/collection.dart';
 import 'package:native_app/providers/preferences.dart';
@@ -14,10 +15,11 @@ class Settings extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var prefs = ref.watch(preferencesProvider);
 
     return MyScaffold(
-      title: const Text('Settings'),
+      title: Text(locales.settings),
       body: prefs.when(
         loading: () => const FullScreenLoader(),
         error: (error, _) => Text(error.toString()),
@@ -38,8 +40,8 @@ class StatefulSettings extends ConsumerStatefulWidget {
   final dynamic preferences;
 
   final List<Map<String, String>> locales = const [
-    {'label': 'Bangla', 'value': 'bn-bd'},
-    {'label': 'English', 'value': 'en-gb'}
+    {'label': 'Bangla', 'value': 'bn'},
+    {'label': 'English', 'value': 'en'}
   ];
 
   final List<Map<String, String>> banglaFonts = const [
@@ -110,7 +112,7 @@ class SettingsState extends ConsumerState<StatefulSettings> {
         widget.locales.map((i) => i['value']).firstWhereOrNull((i) {
               return i == widget.preferences.getString('locale');
             }) ??
-            'en-gb';
+            'en';
 
     selectedArabicFont =
         widget.arabicFonts.map((i) => i['value']).firstWhereOrNull((i) {
@@ -152,7 +154,7 @@ class SettingsState extends ConsumerState<StatefulSettings> {
   updateLocale(String? value) {
     setState(() {
       selectedLocale = value;
-      widget.preferences.setString('locale', value);
+      ref.read(preferencesProvider.notifier).updateLocale(value);
     });
   }
 
@@ -253,6 +255,8 @@ class SettingsState extends ConsumerState<StatefulSettings> {
 
   @override
   Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
+
     return ItemContent(
       children: [
         Container(
@@ -260,7 +264,7 @@ class SettingsState extends ConsumerState<StatefulSettings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SectionTitle(title: 'Language'),
+              SectionTitle(title: locales.language),
               Dropdown(
                 items: widget.locales,
                 selectedValue: selectedLocale,
@@ -274,7 +278,7 @@ class SettingsState extends ConsumerState<StatefulSettings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SectionTitle(title: 'Arabic Font'),
+              SectionTitle(title: locales.arabicFont),
               Dropdown(
                 items: widget.arabicFonts,
                 selectedValue: selectedArabicFont,
@@ -288,7 +292,7 @@ class SettingsState extends ConsumerState<StatefulSettings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SectionTitle(title: 'Bangla Font'),
+              SectionTitle(title: locales.banglaFont),
               Dropdown(
                 items: widget.banglaFonts,
                 selectedValue: selectedBanglaFont,
@@ -302,7 +306,7 @@ class SettingsState extends ConsumerState<StatefulSettings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SectionTitle(title: 'Theme'),
+              SectionTitle(title: locales.theme),
               Dropdown(
                 items: widget.themes,
                 selectedValue: selectedTheme,
@@ -316,7 +320,7 @@ class SettingsState extends ConsumerState<StatefulSettings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SectionTitle(title: 'Mazhab'),
+              SectionTitle(title: locales.mazhab),
               Dropdown(
                 items: widget.madhabs,
                 selectedValue: selectedMadhab,
@@ -330,7 +334,7 @@ class SettingsState extends ConsumerState<StatefulSettings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SectionTitle(title: 'Calculation Method'),
+              SectionTitle(title: locales.calcuationMethod),
               Dropdown(
                 items: widget.methods,
                 selectedValue: selectedMethod,
@@ -344,7 +348,7 @@ class SettingsState extends ConsumerState<StatefulSettings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SectionTitle(title: 'Fajr'),
+              SectionTitle(title: locales.fajr),
               TimeInput(
                 initialValue: selectedFajr.toString(),
                 onChanged: updateFajr,
@@ -357,7 +361,7 @@ class SettingsState extends ConsumerState<StatefulSettings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SectionTitle(title: 'Sunrise'),
+              SectionTitle(title: locales.sunrise),
               TimeInput(
                 initialValue: selectedSunrise.toString(),
                 onChanged: updateSunrise,
@@ -370,7 +374,7 @@ class SettingsState extends ConsumerState<StatefulSettings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SectionTitle(title: 'Dhuhr'),
+              SectionTitle(title: locales.zuhr),
               TimeInput(
                 initialValue: selectedDhuhr.toString(),
                 onChanged: updateDhuhr,
@@ -383,7 +387,7 @@ class SettingsState extends ConsumerState<StatefulSettings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SectionTitle(title: 'Asr'),
+              SectionTitle(title: locales.asr),
               TimeInput(
                 initialValue: selectedAsr.toString(),
                 onChanged: updateAsr,
@@ -396,7 +400,7 @@ class SettingsState extends ConsumerState<StatefulSettings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SectionTitle(title: 'Maghrib'),
+              SectionTitle(title: locales.maghrib),
               TimeInput(
                 initialValue: selectedMaghrib.toString(),
                 onChanged: updateMaghrib,
@@ -409,7 +413,7 @@ class SettingsState extends ConsumerState<StatefulSettings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SectionTitle(title: 'Isha'),
+              SectionTitle(title: locales.isha),
               TimeInput(
                 initialValue: selectedIsha.toString(),
                 onChanged: updateIsha,

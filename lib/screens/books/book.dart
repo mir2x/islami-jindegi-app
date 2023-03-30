@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
@@ -23,6 +24,7 @@ class Book extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
 
     var query = SingleModelQuery(
@@ -68,7 +70,10 @@ class Book extends ConsumerWidget {
                         left: 15,
                         right: 15,
                       ),
-                      child: Text('Contents', style: textTheme.labelLarge),
+                      child: Text(
+                        locales.contents,
+                        style: textTheme.labelLarge,
+                      ),
                     ),
                     Expanded(
                       child: Container(
@@ -153,7 +158,7 @@ class Book extends ConsumerWidget {
                     ),
                     if (book.publisher != null) ...[
                       DescriptionItem(
-                        title: 'Publisher:',
+                        title: '${locales.publisher}:',
                         description: Text(
                           book.publisher,
                           style: textTheme.labelMedium,
@@ -162,7 +167,7 @@ class Book extends ConsumerWidget {
                     ],
                     if (book.publishedAt != null) ...[
                       DescriptionItem(
-                        title: 'Published Date:',
+                        title: '${locales.publicationDate}:',
                         description: Text(
                           book.publishedAt,
                           style: textTheme.labelMedium,
@@ -171,7 +176,7 @@ class Book extends ConsumerWidget {
                     ],
                     if (book.price != null) ...[
                       DescriptionItem(
-                        title: 'Price:',
+                        title: '${locales.price}:',
                         description: Text(
                           book.price,
                           style: textTheme.labelMedium,

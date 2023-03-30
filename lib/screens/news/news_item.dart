@@ -23,6 +23,7 @@ class NewsItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    String currentLang = Localizations.localeOf(context).languageCode;
     var fontSizeRatio = FontSizeRatio();
 
     var query = AllModelsQuery(
@@ -53,7 +54,7 @@ class NewsItem extends ConsumerWidget {
               Container(
                 margin: const EdgeInsets.only(bottom: 15),
                 child: PageSubtitle(
-                  text: formatDate(resource.createdAt!),
+                  text: formatDate(resource.createdAt!, currentLang),
                   fontSizeRatio: fontSizeRatio,
                 ),
               ),

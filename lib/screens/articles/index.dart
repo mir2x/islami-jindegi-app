@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -22,12 +23,13 @@ class Articles extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(queryParamsProvider);
     final connectivity = ref.watch(connectivityResultProvider);
 
     return MyScaffold(
-      title: const Text('Articles'),
+      title: Text(locales.articles),
       body: Column(
         children: [
           connectivity.when(
@@ -52,7 +54,7 @@ class Articles extends ConsumerWidget {
                           children: [
                             Expanded(
                               child: FilterList(
-                                title: 'Categories',
+                                title: locales.categories,
                                 paramKeys: const [
                                   'articleCategoryId',
                                   'articleSubcategoryId'
@@ -93,7 +95,7 @@ class Articles extends ConsumerWidget {
                             const SizedBox(height: 40),
                             Expanded(
                               child: FilterList(
-                                title: 'Authors',
+                                title: locales.authors,
                                 paramKeys: const ['articleAuthorId'],
                                 queryBuilder: (Map<String, dynamic> params) {
                                   return AllModelsQuery(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/providers/bookmarks.dart';
 
@@ -16,6 +17,7 @@ class BookmarkButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var bookmarkProviderWithLink = bookmarkProvider(link);
     var bookmarkQuery = ref.watch(bookmarkProviderWithLink);
 
@@ -32,7 +34,7 @@ class BookmarkButton extends ConsumerWidget {
                   .deleteItem(bookmark.id);
 
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Bookmark deleted')),
+                SnackBar(content: Text(locales.bookmarkDeleted)),
               );
             },
           );
@@ -47,7 +49,7 @@ class BookmarkButton extends ConsumerWidget {
               });
 
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Bookmark added')),
+                SnackBar(content: Text(locales.bookmarkAdded)),
               );
             },
           );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/widgets/audio/qirat.dart';
@@ -17,12 +18,14 @@ class Ayah extends ConsumerWidget {
   final dynamic chapter;
 
   final Map langMap = const {
-    'bn-bd': 'Bangla',
-    'en-gb': 'English',
+    'bn': 'Bangla',
+    'en': 'English',
   };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    String currentLang = Localizations.localeOf(context).languageCode;
+    var numFormatter = NumberFormat('#', currentLang);
     var textTheme = Theme.of(context).textTheme;
     var qSettings = ref.watch(quranSettingsProvider);
 
@@ -84,7 +87,7 @@ class Ayah extends ConsumerWidget {
                           Container(
                             alignment: Alignment.center,
                             child: Text(
-                              ayah.surahPosition.toString(),
+                              numFormatter.format(ayah.surahPosition),
                               style: textTheme.titleMedium,
                             ),
                           ),

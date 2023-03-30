@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/calendar/hijri_date.dart';
 import 'package:native_app/widgets/calendar/gregorian_date.dart';
@@ -12,10 +13,11 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
+    var locales = AppLocalizations.of(context)!;
 
     return MyScaffold(
       isHome: true,
-      title: const Text('Islami Jindegi'),
+      title: Text(locales.siteFullName),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -36,9 +38,9 @@ class Home extends StatelessWidget {
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                      children: const [
                         HijriDate(),
-                        const GregorianDate(),
+                        GregorianDate(),
                       ],
                     ),
                   ),
@@ -57,65 +59,65 @@ class Home extends StatelessWidget {
               mainAxisSpacing: screenHeight * 0.025,
               shrinkWrap: true,
               physics: const ScrollPhysics(),
-              children: const [
+              children: [
                 Resource(
                   route: 'quran',
-                  title: 'Quran',
+                  title: locales.quran,
                   icon: 'quran',
                 ),
                 Resource(
                   route: 'books',
-                  title: 'Books',
+                  title: locales.books,
                   icon: 'book',
                 ),
                 Resource(
                   route: 'bayans',
-                  title: 'Bayans',
+                  title: locales.bayans,
                   icon: 'bayan',
                 ),
                 Resource(
                   route: 'malfuzat',
-                  title: 'Malfuzat',
+                  title: locales.malfuzat,
                   icon: 'malfuzat',
                 ),
                 Resource(
                   route: 'masail',
-                  title: 'Masail',
+                  title: locales.masail,
                   icon: 'masail',
                 ),
                 Resource(
                   route: 'duas',
-                  title: 'Dua & Durud',
+                  title: locales.duaDurud,
                   icon: 'dua',
                 ),
                 Resource(
                   route: 'articles',
-                  title: 'Articles',
+                  title: locales.articles,
                   icon: 'article',
                 ),
                 Resource(
                   route: 'news',
-                  title: 'News',
+                  title: locales.news,
                   icon: 'news',
                 ),
                 Resource(
                   route: 'madrasahs',
-                  title: 'Madrasah',
+                  title: locales.madrasah,
                   icon: 'madrasah',
                 ),
                 Resource(
                   route: 'namaz-times',
-                  title: 'Namaz Time',
+                  title: locales.namazTime,
                   icon: 'namaz-time',
                 ),
                 Resource(
                   route: 'donation',
-                  title: 'Donation',
+                  title: locales.donation,
                   icon: 'donate',
                 ),
                 Resource(
                   route: 'settings',
-                  title: 'Settings',
+                  title: locales.settings,
                   icon: 'settings',
                 ),
               ],

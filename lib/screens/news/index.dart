@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -18,12 +19,14 @@ class News extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
+    String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(queryParamsProvider);
     var connectivity = ref.watch(connectivityResultProvider);
 
     return MyScaffold(
-      title: const Text('News'),
+      title: Text(locales.news),
       body: Column(
         children: [
           connectivity.when(
@@ -74,7 +77,7 @@ class News extends ConsumerWidget {
                           Container(
                             margin: const EdgeInsets.only(top: 10),
                             child: Text(
-                              formatDate(item.createdAt),
+                              formatDate(item.createdAt, currentLang),
                               style: textTheme.labelSmall,
                             ),
                           ),

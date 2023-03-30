@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
@@ -24,6 +25,8 @@ class Bayan extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
+    String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
 
     var query = SingleModelQuery(
@@ -73,7 +76,7 @@ class Bayan extends ConsumerWidget {
                   children: [
                     if (resource.location != null) ...[
                       DescriptionItem(
-                        title: 'Location:',
+                        title: '${locales.location}:',
                         description: Text(
                           resource.location,
                           style: textTheme.labelMedium,
@@ -81,15 +84,15 @@ class Bayan extends ConsumerWidget {
                       ),
                     ],
                     DescriptionItem(
-                      title: 'Date:',
+                      title: '${locales.date}:',
                       description: Text(
-                        formatDate(resource.publishedAt),
+                        formatDate(resource.publishedAt, currentLang),
                         style: textTheme.labelMedium,
                       ),
                     ),
                     if (resource.excerpt != null) ...[
                       DescriptionItem(
-                        title: 'Topic:',
+                        title: '${locales.topic}:',
                         description: Text(
                           resource.excerpt,
                           style: textTheme.labelMedium,
@@ -98,7 +101,7 @@ class Bayan extends ConsumerWidget {
                     ],
                     if (resource.audio?['metadata']?['duration'] != null) ...[
                       DescriptionItem(
-                        title: 'Audio Duration:',
+                        title: '${locales.audioDuration}:',
                         description: Text(
                           playDuration(resource.audio['metadata']['duration']),
                           style: textTheme.labelMedium,
@@ -107,7 +110,7 @@ class Bayan extends ConsumerWidget {
                     ],
                     if (resource.audio?['metadata']?['size'] != null) ...[
                       DescriptionItem(
-                        title: 'Audio Size:',
+                        title: '${locales.audioSize}:',
                         description: Text(
                           fileSize(resource.audio['metadata']['size']),
                           style: textTheme.labelMedium,
