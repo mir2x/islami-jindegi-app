@@ -144,7 +144,10 @@ class Articles extends ConsumerWidget {
                 resourceFetcher: (Map<String, dynamic> params) async {
                   AllModelsQuery query = AllModelsQuery(
                     repository: ref.articles,
-                    params: params,
+                    params: {
+                      ...params,
+                      'include': 'article-author',
+                    },
                   );
 
                   return await ref.read(allModelsProvider(query).future);
@@ -153,9 +156,21 @@ class Articles extends ConsumerWidget {
                   return InkWell(
                     onTap: () => QR.to('articles/${item.slug}'),
                     child: ListItem(
-                      item: Text(
-                        item.title,
-                        style: textTheme.titleMedium,
+                      item: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.title,
+                            style: textTheme.titleMedium,
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(top: 10),
+                            child: Text(
+                              item.articleAuthor.value.name,
+                              style: textTheme.labelSmall,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   );

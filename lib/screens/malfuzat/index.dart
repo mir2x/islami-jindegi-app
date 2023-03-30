@@ -201,7 +201,10 @@ class Malfuzat extends ConsumerWidget {
                 resourceFetcher: (Map<String, dynamic> params) async {
                   AllModelsQuery query = AllModelsQuery(
                     repository: ref.malfuzats,
-                    params: params,
+                    params: {
+                      ...params,
+                      'include': 'malfuzat-author',
+                    },
                   );
 
                   return await ref.read(allModelsProvider(query).future);
@@ -210,9 +213,21 @@ class Malfuzat extends ConsumerWidget {
                   return InkWell(
                     onTap: () => QR.to('malfuzat/${item.id}'),
                     child: ListItem(
-                      item: Text(
-                        item.title,
-                        style: textTheme.titleMedium,
+                      item: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.title,
+                            style: textTheme.titleMedium,
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(top: 10),
+                            child: Text(
+                              item.malfuzatAuthor.value.name,
+                              style: textTheme.labelSmall,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   );
