@@ -12,7 +12,7 @@ class GregorianDate extends StatelessWidget {
     final DateTime today = DateTime.now();
 
     return Container(
-      margin: const EdgeInsets.only(top: 5),
+      margin: const EdgeInsets.only(top: 2),
       child: Text(
         DateFormat('EEEE, dd MMMM, yyyy', currentLang).format(today),
         style: textTheme.labelSmall,

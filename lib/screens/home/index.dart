@@ -34,7 +34,7 @@ class Home extends StatelessWidget {
                     padding: const EdgeInsets.only(
                       left: 15,
                       right: 15,
-                      bottom: 12,
+                      bottom: 10,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,11 +50,13 @@ class Home extends StatelessWidget {
             ),
             GridView.count(
               crossAxisCount: 3,
-              padding: EdgeInsets.symmetric(
-                horizontal: 15,
-                vertical: screenHeight * 0.05,
+              padding: EdgeInsets.only(
+                left: 15,
+                right: 15,
+                top: screenHeight * 0.05,
+                bottom: screenHeight * 0.06,
               ),
-              childAspectRatio: 1.6,
+              childAspectRatio: 1.55,
               crossAxisSpacing: 5,
               mainAxisSpacing: screenHeight * 0.025,
               shrinkWrap: true,

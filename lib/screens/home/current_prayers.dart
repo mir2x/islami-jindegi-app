@@ -49,7 +49,7 @@ class CurrentPrayers extends ConsumerWidget {
             children: [
               if (!data['geolocation']['isGeolocated']) ...[
                 Container(
-                  margin: const EdgeInsets.only(bottom: 7),
+                  margin: const EdgeInsets.only(bottom: 5),
                   child: Row(
                     children: [
                       Text(locales.dhaka, style: textTheme.labelSmall),
@@ -91,7 +91,7 @@ class CurrentPrayers extends ConsumerWidget {
                   ],
                 ),
               ],
-              const SizedBox(height: 5),
+              const SizedBox(height: 2),
               Text(
                 '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}',
                 style: textTheme.labelSmall,

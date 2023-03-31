@@ -25,11 +25,11 @@ class Resource extends StatelessWidget {
           SvgPicture.asset(
             'assets/images/icons/$icon.svg',
             fit: BoxFit.scaleDown,
-            width: 40,
-            height: 40,
+            width: 42,
+            height: 42,
           ),
           Container(
-            margin: const EdgeInsets.only(top: 6),
+            margin: const EdgeInsets.only(top: 5),
             child: Text(
               title.toUpperCase(),
               style: textTheme.labelMedium,
