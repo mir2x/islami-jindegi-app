@@ -220,13 +220,15 @@ class Malfuzat extends ConsumerWidget {
                             item.title,
                             style: textTheme.titleMedium,
                           ),
-                          Container(
-                            margin: const EdgeInsets.only(top: 10),
-                            child: Text(
-                              item.malfuzatAuthor.value.name,
-                              style: textTheme.labelSmall,
+                          if (item.malfuzatAuthor.value != null) ...[
+                            Container(
+                              margin: const EdgeInsets.only(top: 10),
+                              child: Text(
+                                item.malfuzatAuthor.value.name,
+                                style: textTheme.labelSmall,
+                              ),
                             ),
-                          ),
+                          ],
                         ],
                       ),
                     ),

@@ -75,7 +75,7 @@ class Article extends ConsumerWidget {
                 children: [
                   SocialShare(
                     title: resource.title,
-                    subtitle: resource.articleAuthor.value.name,
+                    subtitle: resource.articleAuthor.value?.name,
                     body: resource.body,
                     link: 'articles/${resource.slug}',
                   ),

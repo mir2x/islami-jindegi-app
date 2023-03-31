@@ -163,13 +163,15 @@ class Articles extends ConsumerWidget {
                             item.title,
                             style: textTheme.titleMedium,
                           ),
-                          Container(
-                            margin: const EdgeInsets.only(top: 10),
-                            child: Text(
-                              item.articleAuthor.value.name,
-                              style: textTheme.labelSmall,
+                          if (item.articleAuthor.value != null) ...[
+                            Container(
+                              margin: const EdgeInsets.only(top: 10),
+                              child: Text(
+                                item.articleAuthor.value.name,
+                                style: textTheme.labelSmall,
+                              ),
                             ),
-                          ),
+                          ],
                         ],
                       ),
                     ),

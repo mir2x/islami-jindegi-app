@@ -134,7 +134,7 @@ class Bayan extends ConsumerWidget {
                 children: [
                   SocialShare(
                     title: resource.title,
-                    subtitle: resource.speaker.value.name,
+                    subtitle: resource.speaker.value?.name,
                     link: 'bayans/${resource.id}',
                   ),
                   BookmarkButton(

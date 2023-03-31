@@ -123,7 +123,7 @@ class MalfuzatItem extends ConsumerWidget {
                 children: [
                   SocialShare(
                     title: resource.title,
-                    subtitle: resource.malfuzatAuthor.value.name,
+                    subtitle: resource.malfuzatAuthor.value?.name,
                     body: resource.body,
                     link: 'malfuzat/${resource.id}',
                   ),
