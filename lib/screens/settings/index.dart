@@ -112,7 +112,7 @@ class SettingsState extends ConsumerState<StatefulSettings> {
         widget.locales.map((i) => i['value']).firstWhereOrNull((i) {
               return i == widget.preferences.getString('locale');
             }) ??
-            'en';
+            'bn';
 
     selectedArabicFont =
         widget.arabicFonts.map((i) => i['value']).firstWhereOrNull((i) {

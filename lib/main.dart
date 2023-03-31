@@ -52,7 +52,7 @@ class MyApp extends ConsumerWidget {
           themeMode: ThemeMode.dark,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: Locale(preferences.getString('locale') ?? 'en'),
+          locale: Locale(preferences.getString('locale') ?? 'bn'),
         );
       },
     );
