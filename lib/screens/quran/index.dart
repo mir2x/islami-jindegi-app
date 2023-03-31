@@ -11,6 +11,7 @@ import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/connectivity_result.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
+import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/theme/colors.dart';
 
 class Quran extends ConsumerStatefulWidget {
@@ -123,7 +124,11 @@ class QuranState extends ConsumerState<Quran> {
                           onTap: () => QR.to('quran/surah/${item.slug}'),
                           child: ListItem(
                             item: Text(
-                              currentLang == 'bn' ? item.titleBn : item.title,
+                              contextualTranslation(
+                                locale: currentLang,
+                                enText: item.title,
+                                bnText: item.titleBn,
+                              ),
                               style: textTheme.titleMedium,
                             ),
                           ),
@@ -144,7 +149,11 @@ class QuranState extends ConsumerState<Quran> {
                           onTap: () => QR.to('quran/para/${item.slug}'),
                           child: ListItem(
                             item: Text(
-                              currentLang == 'bn' ? item.titleBn : item.title,
+                              contextualTranslation(
+                                locale: currentLang,
+                                enText: item.title,
+                                bnText: item.titleBn,
+                              ),
                               style: textTheme.titleMedium,
                             ),
                           ),

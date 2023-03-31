@@ -11,6 +11,7 @@ import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/description_item.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
+import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/widgets/responsive/image.dart';
 import 'package:native_app/theme/colors.dart';
 
@@ -112,7 +113,11 @@ class MadrasahState extends ConsumerState<StatefulMadrasah> {
                   ),
                   ...widget.madrasah.madrasahInfos.map((info) {
                     return MadrasahSection(
-                      title: currentLang == 'bn' ? info.labelBn : info.label,
+                      title: contextualTranslation(
+                        locale: currentLang,
+                        enText: info.label,
+                        bnText: info.labelBn,
+                      ),
                       isSelected: activeInfo?.id == info.id,
                       onSelected: () => updateInfo(info),
                     );
@@ -174,7 +179,11 @@ class MadrasahState extends ConsumerState<StatefulMadrasah> {
           ),
         ] else if (activeInfo != null) ...[
           Text(
-            currentLang == 'bn' ? activeInfo.labelBn : activeInfo.label,
+            contextualTranslation(
+              locale: currentLang,
+              enText: activeInfo.label,
+              bnText: activeInfo.labelBn,
+            ),
             style: textTheme.labelMedium,
           ),
           Container(

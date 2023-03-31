@@ -5,6 +5,7 @@ import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/theme/colors.dart';
 import 'bismillah.dart';
 import 'bismillah_tafseer.dart';
@@ -23,8 +24,16 @@ class AyahList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    String currentLang = Localizations.localeOf(context).languageCode;
+
     return MyScaffold(
-      title: Text(chapter.title),
+      title: Text(
+        contextualTranslation(
+          locale: currentLang,
+          enText: chapter.title,
+          bnText: chapter.titleBn,
+        ),
+      ),
       body: Stack(
         children: [
           Column(
