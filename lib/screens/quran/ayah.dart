@@ -17,11 +17,6 @@ class Ayah extends ConsumerWidget {
   final dynamic ayah;
   final dynamic chapter;
 
-  final Map langMap = const {
-    'bn': 'Bangla',
-    'en': 'English',
-  };
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     String currentLang = Localizations.localeOf(context).languageCode;
@@ -110,21 +105,13 @@ class Ayah extends ConsumerWidget {
               ),
             ],
           ),
-          if (qSettings.containsKey('language') &&
-              ayah.ayahTranslations
-                  .map((a) => a.title)
-                  .any((t) => t == langMap[qSettings['language']])) ...[
+          if (qSettings.containsKey('translation') &&
+              qSettings['translation'] &&
+              ayah.ayahTranslations.first != null) ...[
             Container(
               margin: const EdgeInsets.only(top: 10),
-              child: Text(
-                ayah.ayahTranslations
-                    .map((a) => a)
-                    .firstWhere(
-                      (t) => t.title == langMap[qSettings['language']],
-                    )
-                    .body,
-              ),
-            )
+              child: Text(ayah.ayahTranslations.first.body),
+            ),
           ],
         ],
       ),

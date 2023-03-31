@@ -11,17 +11,17 @@ class Dropdown extends StatelessWidget {
     this.allowClear = false,
   });
 
-  final List<Map<String, String>> items;
-  final String? selectedValue;
-  final void Function(String?) updateItem;
+  final List<Map<String, dynamic>> items;
+  final dynamic selectedValue;
+  final void Function(dynamic) updateItem;
   final bool allowClear;
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton2<String>(
+    return DropdownButton2<dynamic>(
       value: selectedValue,
-      items: items.map<DropdownMenuItem<String>>((Map item) {
-        return DropdownMenuItem<String>(
+      items: items.map<DropdownMenuItem<dynamic>>((Map item) {
+        return DropdownMenuItem<dynamic>(
           value: item['value'],
           child: Text(item['label']),
         );

@@ -35,15 +35,14 @@ class Bismillah extends ConsumerWidget {
               ),
             ),
           ),
-          if (qSettings.containsKey('language')) ...[
+          if (qSettings.containsKey('translation') &&
+              qSettings['translation']) ...[
             Container(
               padding: const EdgeInsets.only(bottom: 5, left: 15, right: 15),
-              child: Text(
-                (qSettings['language'] == 'bn')
-                    ? 'In the name of Allah, Most Gracious, Most Merciful.'
-                    : 'পরম করুণাময় অসীম দয়ালু মহান আল্লাহ্‌র নামে শুরু করছি।',
+              child: const Text(
+                'পরম করুণাময় অসীম দয়ালু মহান আল্লাহ্‌র নামে শুরু করছি।',
               ),
-            )
+            ),
           ],
         ],
       );

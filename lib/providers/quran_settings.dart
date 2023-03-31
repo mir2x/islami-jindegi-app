@@ -6,13 +6,13 @@ class QuranSettingsNotifier extends Notifier<Map<String, dynamic>> {
     return {};
   }
 
-  void updateSettings(String key, String value) {
-    if (value.isNotEmpty) {
-      state = {
-        ...state,
-        key: value,
-      };
-    } else {
+  void updateSettings(String key, dynamic value) {
+    state = {
+      ...state,
+      key: value,
+    };
+
+    if (value is String && value.isEmpty) {
       state.remove(key);
       state = {...state};
     }

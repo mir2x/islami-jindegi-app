@@ -151,42 +151,42 @@ class SettingsState extends ConsumerState<StatefulSettings> {
     selectedIsha = widget.preferences.getInt('isha') ?? 0;
   }
 
-  updateLocale(String? value) {
+  updateLocale(dynamic value) {
     setState(() {
       selectedLocale = value;
       ref.read(preferencesProvider.notifier).updateLocale(value);
     });
   }
 
-  updateArabicFont(String? value) {
+  updateArabicFont(dynamic value) {
     setState(() {
       selectedArabicFont = value;
       widget.preferences.setString('arabicFont', value);
     });
   }
 
-  updateBanglaFont(String? value) {
+  updateBanglaFont(dynamic value) {
     setState(() {
       selectedBanglaFont = value;
       widget.preferences.setString('banglaFont', value);
     });
   }
 
-  updateTheme(String? value) {
+  updateTheme(dynamic value) {
     setState(() {
       selectedTheme = value;
       widget.preferences.setString('theme', value);
     });
   }
 
-  updateMadhab(String? value) {
+  updateMadhab(dynamic value) {
     setState(() {
       selectedMadhab = value;
       widget.preferences.setString('madhab', value);
     });
   }
 
-  updateMethod(String? value) {
+  updateMethod(dynamic value) {
     setState(() {
       selectedMethod = value;
       widget.preferences.setString('method', value);

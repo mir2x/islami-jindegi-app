@@ -11,16 +11,16 @@ import 'package:native_app/widgets/presentation/section_title.dart';
 class QuranSettings extends ConsumerWidget {
   const QuranSettings({super.key});
 
-  final List<Map<String, String>> languages = const [
-    {'label': 'Bangla', 'value': 'bn'},
-    {'label': 'English', 'value': 'en'}
-  ];
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var qSettings = ref.watch(quranSettingsProvider);
     var qNotifier = ref.read(quranSettingsProvider.notifier);
+
+    List<Map<String, dynamic>> translationOptions = [
+      {'label': locales.display, 'value': true},
+      {'label': locales.dontDisplay, 'value': false}
+    ];
 
     var qitabQuery = ref.watch(
       allModelsProvider(AllModelsQuery(repository: ref.tafseerQitabs)),
@@ -30,8 +30,8 @@ class QuranSettings extends ConsumerWidget {
       allModelsProvider(AllModelsQuery(repository: ref.qaris)),
     );
 
-    String? selectedLanguage =
-        qSettings.containsKey('language') ? qSettings['language'] : null;
+    bool selectedTranslationOption =
+        qSettings.containsKey('translation') ? qSettings['translation'] : false;
 
     String? selectedQitab =
         qSettings.containsKey('qitab') ? qSettings['qitab'] : null;
@@ -46,13 +46,12 @@ class QuranSettings extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SectionTitle(title: locales.translations),
+              SectionTitle(title: locales.ayahTranslations),
               Dropdown(
-                items: languages,
-                selectedValue: selectedLanguage,
-                allowClear: true,
+                items: translationOptions,
+                selectedValue: selectedTranslationOption,
                 updateItem: (value) {
-                  qNotifier.updateSettings('language', value!);
+                  qNotifier.updateSettings('translation', value!);
                 },
               ),
             ],
