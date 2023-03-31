@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:adhan/adhan.dart';
+import 'package:native_app/screens/namaz_times/settings.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
@@ -160,6 +161,7 @@ class NamazTimes extends ConsumerWidget {
                       ),
                     ],
                   ),
+                  NamazSettings(preferences: data['preferences']),
                 ],
               );
             },

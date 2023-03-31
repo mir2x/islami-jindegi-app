@@ -24,6 +24,78 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
     await prefs.setString('banglaFont', value);
     state = AsyncValue.data(prefs);
   }
+
+  Future<dynamic> updateTheme(value) async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setString('theme', value);
+    state = AsyncValue.data(prefs);
+  }
+
+  Future<dynamic> updateMadhab(value) async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setString('madhab', value);
+    state = AsyncValue.data(prefs);
+  }
+
+  Future<dynamic> updateMethod(value) async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setString('method', value);
+    state = AsyncValue.data(prefs);
+  }
+
+  Future<dynamic> updateFajr(value) async {
+    if (int.tryParse(value) != null) {
+      int intValue = int.parse(value);
+      var prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('fajr', intValue);
+      state = AsyncValue.data(prefs);
+    }
+  }
+
+  Future<dynamic> updateSunrise(value) async {
+    if (int.tryParse(value) != null) {
+      int intValue = int.parse(value);
+      var prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('sunrise', intValue);
+      state = AsyncValue.data(prefs);
+    }
+  }
+
+  Future<dynamic> updateDhuhr(value) async {
+    if (int.tryParse(value) != null) {
+      int intValue = int.parse(value);
+      var prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('dhuhr', intValue);
+      state = AsyncValue.data(prefs);
+    }
+  }
+
+  Future<dynamic> updateAsr(value) async {
+    if (int.tryParse(value) != null) {
+      int intValue = int.parse(value);
+      var prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('asr', intValue);
+      state = AsyncValue.data(prefs);
+    }
+  }
+
+  Future<dynamic> updateMaghrib(value) async {
+    if (int.tryParse(value) != null) {
+      int intValue = int.parse(value);
+      var prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('maghrib', intValue);
+      state = AsyncValue.data(prefs);
+    }
+  }
+
+  Future<dynamic> updateIsha(value) async {
+    if (int.tryParse(value) != null) {
+      int intValue = int.parse(value);
+      var prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('isha', intValue);
+      state = AsyncValue.data(prefs);
+    }
+  }
 }
 
 final preferencesProvider =

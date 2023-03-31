@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:idkit_inputformatters/idkit_inputformatters.dart';
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:native_app/widgets/inputs/input_field.dart';
 import 'package:native_app/theme/colors.dart';
 
@@ -47,7 +48,13 @@ class TimeInput extends StatelessWidget {
                   ),
                   constraints: BoxConstraints(maxHeight: 45),
                 ),
-                onChanged: onChanged,
+                onChanged: (value) {
+                  EasyDebounce.debounce(
+                    'search-debouncer',
+                    const Duration(milliseconds: 2000),
+                    () => onChanged(value),
+                  );
+                },
               ),
             ),
             Text(locales.minutes),
