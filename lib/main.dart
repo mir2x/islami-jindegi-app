@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/theme/themes.dart';
-import 'package:native_app/widgets/utils/full_screen_loader.dart';
+import 'package:native_app/widgets/utils/full_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'routes/index.dart';
 import 'screens/error_pages/page_404.dart';
@@ -41,7 +41,7 @@ class MyApp extends ConsumerWidget {
     var prefs = ref.watch(preferencesProvider);
 
     return prefs.when(
-      loading: () => const FullScreenLoader(),
+      loading: () => const FullScreen(),
       error: (error, _) => Text(error.toString()),
       data: (preferences) {
         return MaterialApp.router(

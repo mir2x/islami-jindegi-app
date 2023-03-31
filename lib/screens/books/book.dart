@@ -11,7 +11,7 @@ import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
-import 'package:native_app/widgets/utils/full_screen_loader.dart';
+import 'package:native_app/widgets/utils/full_screen.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/description_item.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
@@ -36,7 +36,7 @@ class Book extends ConsumerWidget {
     var modelQuery = ref.watch(singleModelProvider(query));
 
     return modelQuery.when(
-      loading: () => const FullScreenLoader(),
+      loading: () => const FullScreen(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (book) {
         var cQuery = AllModelsQuery(
@@ -49,15 +49,7 @@ class Book extends ConsumerWidget {
         return MyScaffold(
           title: Text(book.title),
           body: chapterQuery.when(
-            loading: () {
-              return const Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    ThemeColors.color5,
-                  ),
-                ),
-              );
-            },
+            loading: () => const SizedBox.shrink(),
             error: (error, _) => Text(error.toString()),
             data: (chapters) {
               if (chapters.isNotEmpty) {
