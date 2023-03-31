@@ -161,14 +161,14 @@ class SettingsState extends ConsumerState<StatefulSettings> {
   updateArabicFont(dynamic value) {
     setState(() {
       selectedArabicFont = value;
-      widget.preferences.setString('arabicFont', value);
+      ref.read(preferencesProvider.notifier).updateArabicFont(value);
     });
   }
 
   updateBanglaFont(dynamic value) {
     setState(() {
       selectedBanglaFont = value;
-      widget.preferences.setString('banglaFont', value);
+      ref.read(preferencesProvider.notifier).updateBanglaFont(value);
     });
   }
 
@@ -301,20 +301,20 @@ class SettingsState extends ConsumerState<StatefulSettings> {
             ],
           ),
         ),
-        Container(
-          margin: const EdgeInsets.only(bottom: 40),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SectionTitle(title: locales.theme),
-              Dropdown(
-                items: widget.themes,
-                selectedValue: selectedTheme,
-                updateItem: updateTheme,
-              ),
-            ],
-          ),
-        ),
+        /* Container( */
+        /*   margin: const EdgeInsets.only(bottom: 40), */
+        /*   child: Column( */
+        /*     crossAxisAlignment: CrossAxisAlignment.stretch, */
+        /*     children: [ */
+        /*       SectionTitle(title: locales.theme), */
+        /*       Dropdown( */
+        /*         items: widget.themes, */
+        /*         selectedValue: selectedTheme, */
+        /*         updateItem: updateTheme, */
+        /*       ), */
+        /*     ], */
+        /*   ), */
+        /* ), */
         Container(
           margin: const EdgeInsets.only(bottom: 40, top: 50),
           child: Column(

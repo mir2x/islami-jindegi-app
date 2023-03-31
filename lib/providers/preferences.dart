@@ -12,6 +12,18 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
     await prefs.setString('locale', value);
     state = AsyncValue.data(prefs);
   }
+
+  Future<dynamic> updateArabicFont(value) async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setString('arabicFont', value);
+    state = AsyncValue.data(prefs);
+  }
+
+  Future<dynamic> updateBanglaFont(value) async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setString('banglaFont', value);
+    state = AsyncValue.data(prefs);
+  }
 }
 
 final preferencesProvider =

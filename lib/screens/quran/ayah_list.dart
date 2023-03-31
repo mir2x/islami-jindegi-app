@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
+import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
@@ -25,6 +26,7 @@ class AyahList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     String currentLang = Localizations.localeOf(context).languageCode;
+    var prefs = ref.watch(preferencesProvider);
 
     return MyScaffold(
       title: Text(
@@ -36,60 +38,76 @@ class AyahList extends ConsumerWidget {
       ),
       body: Stack(
         children: [
-          Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      double screenWidth = MediaQuery.of(context).size.width;
-                      double screenHeight = MediaQuery.of(context).size.height;
+          prefs.when(
+            loading: () => const SizedBox.shrink(),
+            error: (error, _) => Text(error.toString()),
+            data: (preferences) {
+              return Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          double screenWidth =
+                              MediaQuery.of(context).size.width;
+                          double screenHeight =
+                              MediaQuery.of(context).size.height;
 
-                      return Dialog(
-                        backgroundColor: ThemeColors.color1,
-                        child: Container(
-                          width: screenWidth,
-                          height: screenHeight * 0.8,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 20,
-                          ),
-                          child: const BismillahTafseer(),
-                        ),
-                      );
-                    },
-                  );
-                },
-                child: Bismillah(chapter: chapter),
-              ),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.only(
-                    left: 15,
-                    right: 15,
-                    bottom: 30,
-                  ),
-                  child: InfiniteList(
-                    resourceFetcher: (Map<String, dynamic> params) async {
-                      AllModelsQuery query = AllModelsQuery(
-                        repository: ref.ayahs,
-                        params: {
-                          ...params,
-                          ...filterParams,
-                          'include': 'ayah-translations'
+                          return Dialog(
+                            backgroundColor: ThemeColors.color1,
+                            child: Container(
+                              width: screenWidth,
+                              height: screenHeight * 0.8,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 20,
+                              ),
+                              child: const BismillahTafseer(),
+                            ),
+                          );
                         },
                       );
-
-                      return await ref.read(allModelsProvider(query).future);
                     },
-                    itemBuilder: (_, ayah, __) {
-                      return Ayah(ayah: ayah, chapter: chapter);
-                    },
+                    child: Bismillah(
+                      chapter: chapter,
+                      preferences: preferences,
+                    ),
                   ),
-                ),
-              ),
-            ],
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.only(
+                        left: 15,
+                        right: 15,
+                        bottom: 30,
+                      ),
+                      child: InfiniteList(
+                        resourceFetcher: (Map<String, dynamic> params) async {
+                          AllModelsQuery query = AllModelsQuery(
+                            repository: ref.ayahs,
+                            params: {
+                              ...params,
+                              ...filterParams,
+                              'include': 'ayah-translations'
+                            },
+                          );
+
+                          return await ref
+                              .read(allModelsProvider(query).future);
+                        },
+                        itemBuilder: (_, ayah, __) {
+                          return Ayah(
+                            ayah: ayah,
+                            chapter: chapter,
+                            preferences: preferences,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
           Positioned(
             bottom: 30,

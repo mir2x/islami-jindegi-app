@@ -6,9 +6,11 @@ class Bismillah extends ConsumerWidget {
   const Bismillah({
     super.key,
     required this.chapter,
+    required this.preferences,
   });
 
   final dynamic chapter;
+  final dynamic preferences;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -31,7 +33,8 @@ class Bismillah extends ConsumerWidget {
               textDirection: TextDirection.rtl,
               softWrap: false,
               style: textTheme.headlineLarge?.copyWith(
-                fontFamily: 'arabic/al-qalam',
+                fontFamily:
+                    preferences.getString('arabicFont') ?? 'arabic/al-qalam',
               ),
             ),
           ),

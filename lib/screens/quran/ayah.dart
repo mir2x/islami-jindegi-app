@@ -12,10 +12,12 @@ class Ayah extends ConsumerWidget {
     super.key,
     required this.ayah,
     required this.chapter,
+    required this.preferences,
   });
 
   final dynamic ayah;
   final dynamic chapter;
+  final dynamic preferences;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -61,7 +63,8 @@ class Ayah extends ConsumerWidget {
                     ayah.title,
                     textDirection: TextDirection.rtl,
                     style: textTheme.headlineMedium?.copyWith(
-                      fontFamily: 'arabic/al-qalam',
+                      fontFamily: preferences.getString('arabicFont') ??
+                          'arabic/al-qalam',
                     ),
                   ),
                 ),

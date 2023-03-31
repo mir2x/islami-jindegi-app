@@ -54,7 +54,7 @@ class Home extends StatelessWidget {
                 horizontal: 15,
                 vertical: screenHeight * 0.05,
               ),
-              childAspectRatio: 1.65,
+              childAspectRatio: 1.6,
               crossAxisSpacing: 5,
               mainAxisSpacing: screenHeight * 0.025,
               shrinkWrap: true,
