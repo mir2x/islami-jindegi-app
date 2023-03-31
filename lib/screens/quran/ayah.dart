@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/widgets/audio/qirat.dart';
@@ -59,7 +59,7 @@ class Ayah extends ConsumerWidget {
                   },
                   child: Text(
                     ayah.title,
-                    textAlign: TextAlign.right,
+                    textDirection: TextDirection.rtl,
                     style: textTheme.headlineMedium?.copyWith(
                       fontFamily: 'arabic/al-qalam',
                     ),

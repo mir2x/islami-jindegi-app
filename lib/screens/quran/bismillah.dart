@@ -28,7 +28,7 @@ class Bismillah extends ConsumerWidget {
             ),
             child: Text(
               'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ',
-              textAlign: TextAlign.right,
+              textDirection: TextDirection.rtl,
               softWrap: false,
               style: textTheme.headlineLarge?.copyWith(
                 fontFamily: 'arabic/al-qalam',
