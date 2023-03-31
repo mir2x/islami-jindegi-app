@@ -406,7 +406,7 @@ class LocalDatabase extends _$LocalDatabase {
     return (select(malfuzatAuthors)..where((t) => t.id.equals(id))).getSingle();
   }
 
-  Future<List<Malfuzat>> queryMalfuzat(Map params) {
+  Future<List> queryMalfuzat(Map params) async {
     var query = select(malfuzats);
 
     if (params.containsKey('page') && params.containsKey('per_page')) {
@@ -419,7 +419,35 @@ class LocalDatabase extends _$LocalDatabase {
     }
 
     query.orderBy([(t) => OrderingTerm(expression: t.position)]);
-    return query.get();
+
+    var malfuzatItems = await query.get();
+
+    if (params.containsKey('include') &&
+        params['include'] == 'malfuzat-author') {
+      var authorIds =
+          malfuzatItems.map((item) => item.malfuzatAuthorId).toSet().toList();
+
+      var authorItems = await (select(malfuzatAuthors)
+            ..where((s) => s.id.isIn(authorIds)))
+          .get();
+
+      Map<String, MalfuzatAuthor> idToAuthors = <String, MalfuzatAuthor>{
+        for (var v in authorItems) v.id: v
+      };
+
+      var malfuzatsWithAuthor = malfuzatItems.map((item) {
+        return {
+          'malfuzats': item,
+          'relationships': {
+            'malfuzatAuthor': idToAuthors[item.malfuzatAuthorId],
+          }
+        };
+      }).toList();
+
+      return malfuzatsWithAuthor;
+    } else {
+      return malfuzatItems;
+    }
   }
 
   Future<dynamic> findMalfuzatById(String id, Map params) async {
@@ -489,7 +517,7 @@ class LocalDatabase extends _$LocalDatabase {
     return (select(articleAuthors)..where((t) => t.id.equals(id))).getSingle();
   }
 
-  Future<List<Article>> queryArticle(Map params) {
+  Future<List> queryArticle(Map params) async {
     var query = select(articles);
 
     if (params.containsKey('page') && params.containsKey('per_page')) {
@@ -504,7 +532,35 @@ class LocalDatabase extends _$LocalDatabase {
     query.orderBy([
       (t) => OrderingTerm(expression: t.position, mode: OrderingMode.desc),
     ]);
-    return query.get();
+
+    var articleItems = await query.get();
+
+    if (params.containsKey('include') &&
+        params['include'] == 'article-author') {
+      var authorIds =
+          articleItems.map((item) => item.articleAuthorId).toSet().toList();
+
+      var authorItems = await (select(articleAuthors)
+            ..where((s) => s.id.isIn(authorIds)))
+          .get();
+
+      Map<String, ArticleAuthor> idToAuthors = <String, ArticleAuthor>{
+        for (var v in authorItems) v.id: v
+      };
+
+      var articlesWithAuthor = articleItems.map((item) {
+        return {
+          'articles': item,
+          'relationships': {
+            'articleAuthor': idToAuthors[item.articleAuthorId],
+          }
+        };
+      }).toList();
+
+      return articlesWithAuthor;
+    } else {
+      return articleItems;
+    }
   }
 
   Future<dynamic> findArticleById(String id, Map params) async {
