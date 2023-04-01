@@ -39,11 +39,11 @@ class MyScaffold extends StatelessWidget {
                 )
               : IconButton(
                   icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    if (QR.navigator.canPop) {
-                      QR.back();
-                    } else {
-                      QR.navigator.replaceAll('/');
+                  onPressed: () async {
+                    try {
+                      await QR.back();
+                    } catch (error) {
+                      await QR.navigator.replaceAll('/');
                     }
                   },
                 ),
