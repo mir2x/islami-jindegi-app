@@ -23,8 +23,11 @@ class CurrentPrayers extends ConsumerWidget {
         color: ThemeColors.color2,
       ),
       child: dataP.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
+        loading: () => Container(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 15),
+          child: const Center(
+            child: CircularProgressIndicator(),
+          ),
         ),
         error: (error, _) => Text(error.toString()),
         data: (Map data) {
