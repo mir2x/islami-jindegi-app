@@ -37,7 +37,6 @@ class MalfuzatItem extends ConsumerWidget {
       repository: ref.malfuzats,
       id: QR.params['id'].toString(),
       params: const {'include': 'malfuzat-author'},
-      remote: true,
     );
 
     var modelQuery = ref.watch(singleModelProvider(query));
