@@ -4,6 +4,9 @@ import 'colors.dart';
 ThemeData darkTheme(preferences) {
   return ThemeData(
     fontFamily: preferences.getString('banglaFont') ?? 'bangla/solaimanlipi',
+    fontFamilyFallback: [
+      preferences.getString('arabicFont') ?? 'arabic/al-qalam-quran-majeed',
+    ],
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
         color: ThemeColors.color3,

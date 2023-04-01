@@ -62,10 +62,7 @@ class Ayah extends ConsumerWidget {
                   child: Text(
                     ayah.title,
                     textDirection: TextDirection.rtl,
-                    style: textTheme.headlineMedium?.copyWith(
-                      fontFamily: preferences.getString('arabicFont') ??
-                          'arabic/al-qalam',
-                    ),
+                    style: textTheme.headlineMedium,
                   ),
                 ),
               ),

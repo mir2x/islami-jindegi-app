@@ -24,7 +24,10 @@ class Settings extends ConsumerWidget {
   ];
 
   final List<Map<String, String>> arabicFonts = const [
-    {'label': 'Al Qalam Quran Majeed', 'value': 'arabic/al-qalam'},
+    {
+      'label': 'Al Qalam Quran Majeed',
+      'value': 'arabic/al-qalam-quran-majeed',
+    },
     {
       'label': 'Al Qalam Kolkatta Quran Majeed',
       'value': 'arabic/al-qalam-kolkatta'
@@ -57,7 +60,7 @@ class Settings extends ConsumerWidget {
               arabicFonts.map((i) => i['value']).firstWhereOrNull((i) {
                     return i == preferences.getString('arabicFont');
                   }) ??
-                  'arabic/al-qalam';
+                  'arabic/al-qalam-quran-majeed';
 
           String selectedBanglaFont =
               banglaFonts.map((i) => i['value']).firstWhereOrNull((i) {

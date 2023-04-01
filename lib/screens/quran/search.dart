@@ -82,9 +82,7 @@ class QuranSearch extends ConsumerWidget {
                             child: Text(
                               ayah.title,
                               textAlign: TextAlign.right,
-                              style: textTheme.headlineMedium?.copyWith(
-                                fontFamily: 'arabic/al-qalam',
-                              ),
+                              style: textTheme.headlineMedium,
                             ),
                           ),
                         ],

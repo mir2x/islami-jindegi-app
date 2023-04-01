@@ -32,10 +32,7 @@ class Bismillah extends ConsumerWidget {
               'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ',
               textDirection: TextDirection.rtl,
               softWrap: false,
-              style: textTheme.headlineLarge?.copyWith(
-                fontFamily:
-                    preferences.getString('arabicFont') ?? 'arabic/al-qalam',
-              ),
+              style: textTheme.headlineLarge,
             ),
           ),
           if (qSettings.containsKey('translation') &&
