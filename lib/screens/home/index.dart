@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/calendar/hijri_date.dart';
+import 'package:native_app/widgets/calendar/bangali_date.dart';
 import 'package:native_app/widgets/calendar/gregorian_date.dart';
 import 'current_prayers.dart';
 import 'resource.dart';
@@ -40,6 +41,7 @@ class Home extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
                         HijriDate(),
+                        BangaliDate(),
                         GregorianDate(),
                       ],
                     ),
