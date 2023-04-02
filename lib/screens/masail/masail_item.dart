@@ -3,8 +3,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
-import 'package:native_app/providers/first_model.dart';
-import 'package:native_app/objects/all_models_query.dart';
+import 'package:native_app/providers/single_model.dart';
+import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
@@ -33,15 +33,12 @@ class MasailItem extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
     var fontSizeRatio = FontSizeRatio();
 
-    var query = AllModelsQuery(
+    var query = SingleModelQuery(
       repository: ref.masails,
-      params: {
-        'slug': QR.params['slug'],
-        'quantity': 1,
-      },
+      id: QR.params['id'].toString(),
     );
 
-    var modelQuery = ref.watch(firstModelProvider(query));
+    var modelQuery = ref.watch(singleModelProvider(query));
 
     return modelQuery.when(
       loading: () => const FullScreenLoader(),
@@ -134,12 +131,12 @@ class MasailItem extends ConsumerWidget {
                     title: resource.title,
                     subtitle: resource.question,
                     body: resource.answer,
-                    link: 'masail/${resource.slug}',
+                    link: 'masail/${resource.id}',
                   ),
                   BookmarkButton(
                     type: 'Masail',
                     title: resource.title,
-                    link: 'masail/${resource.slug}',
+                    link: 'masail/${resource.id}',
                   ),
                 ],
               ),
