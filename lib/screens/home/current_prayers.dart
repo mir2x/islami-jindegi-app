@@ -59,28 +59,25 @@ class CurrentPrayers extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (!data['geolocation']['isGeolocated']) ...[
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 1),
-                    child: Row(
-                      children: [
-                        Text(locales.dhaka, style: textTheme.labelSmall),
-                        Container(
-                          margin: const EdgeInsets.only(left: 15, right: 3),
-                          child: GestureDetector(
-                            onTap: () => ref
-                                .read(geolocationProvider.notifier)
-                                .updateCoordinates(),
-                            child: SvgPicture.asset(
-                              'assets/images/icons/location.svg',
-                              fit: BoxFit.scaleDown,
-                              width: 30,
-                              height: 23,
-                            ),
+                  Row(
+                    children: [
+                      Text(locales.dhaka, style: textTheme.labelSmall),
+                      Container(
+                        margin: const EdgeInsets.only(left: 15, right: 3),
+                        child: GestureDetector(
+                          onTap: () => ref
+                              .read(geolocationProvider.notifier)
+                              .updateCoordinates(),
+                          child: SvgPicture.asset(
+                            'assets/images/icons/location.svg',
+                            fit: BoxFit.scaleDown,
+                            width: 30,
+                            height: 23,
                           ),
                         ),
-                        Text(locales.setLocation, style: textTheme.labelSmall),
-                      ],
-                    ),
+                      ),
+                      Text(locales.setLocation, style: textTheme.labelSmall),
+                    ],
                   ),
                 ],
                 if (prayerTimes.containsKey('current')) ...[
@@ -102,7 +99,9 @@ class CurrentPrayers extends ConsumerWidget {
                     ],
                   ),
                 ],
-                SizedBox(height: data['geolocation']['isGeolocated'] ? 5 : 1),
+                if (data['geolocation']['isGeolocated']) ...[
+                  const SizedBox(height: 5),
+                ],
                 Text(
                   '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}',
                   style: textTheme.labelSmall,
