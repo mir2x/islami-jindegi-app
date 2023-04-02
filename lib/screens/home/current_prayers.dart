@@ -50,7 +50,7 @@ class CurrentPrayers extends ConsumerWidget {
             padding: data['geolocation']['isGeolocated']
                 ? const EdgeInsets.symmetric(vertical: 17, horizontal: 15)
                 : const EdgeInsets.only(
-                    top: 8,
+                    top: 7,
                     bottom: 10,
                     left: 15,
                     right: 15,
@@ -60,7 +60,7 @@ class CurrentPrayers extends ConsumerWidget {
               children: [
                 if (!data['geolocation']['isGeolocated']) ...[
                   Container(
-                    margin: const EdgeInsets.only(bottom: 2),
+                    margin: const EdgeInsets.only(bottom: 1),
                     child: Row(
                       children: [
                         Text(locales.dhaka, style: textTheme.labelSmall),
