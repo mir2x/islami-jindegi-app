@@ -8,6 +8,7 @@ import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/section_title.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/buttons/dropdown.dart';
+import 'date_button.dart';
 
 class Settings extends ConsumerWidget {
   const Settings({super.key});
@@ -50,6 +51,8 @@ class Settings extends ConsumerWidget {
         loading: () => const FullScreenLoader(),
         error: (error, _) => Text(error.toString()),
         data: (preferences) {
+          int selectedHijriAdj = preferences.getInt('hijriAdjustment') ?? 0;
+
           String selectedLocale =
               languages.map((i) => i['value']).firstWhereOrNull((i) {
                     return i == preferences.getString('locale');
@@ -78,6 +81,48 @@ class Settings extends ConsumerWidget {
             children: [
               Container(
                 margin: const EdgeInsets.only(bottom: 40, top: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SectionTitle(title: locales.hijriDateAdjustment),
+                    Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          DateButton(
+                            label: '-2',
+                            value: -2,
+                            selectedValue: selectedHijriAdj,
+                          ),
+                          DateButton(
+                            label: '-1',
+                            value: -1,
+                            selectedValue: selectedHijriAdj,
+                          ),
+                          DateButton(
+                            label: '0',
+                            value: 0,
+                            selectedValue: selectedHijriAdj,
+                          ),
+                          DateButton(
+                            label: '+1',
+                            value: 1,
+                            selectedValue: selectedHijriAdj,
+                          ),
+                          DateButton(
+                            label: '+2',
+                            value: 2,
+                            selectedValue: selectedHijriAdj,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(bottom: 40),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
