@@ -72,6 +72,7 @@ class Chapter extends ConsumerWidget {
                   var previousResources = await ref.chapters.findAll(
                         params: {
                           'quantity': 1,
+                          'include': 'subchapters',
                           'bookId': bookId,
                           'position': resource.position - 1,
                         },
@@ -79,15 +80,24 @@ class Chapter extends ConsumerWidget {
                       [];
 
                   if (previousResources.isNotEmpty) {
-                    await QR.to(
-                      'books/$bookId/chapters/${previousResources.first.id}',
-                    );
+                    var subchapters = previousResources.first.subchapters;
+
+                    if (subchapters != null && subchapters.isNotEmpty) {
+                      await QR.to(
+                        'books/$bookId/subchapters/${subchapters.first.id}',
+                      );
+                    } else {
+                      await QR.to(
+                        'books/$bookId/chapters/${previousResources.first.id}',
+                      );
+                    }
                   }
                 },
                 onNext: () async {
                   var nextResources = await ref.chapters.findAll(
                         params: {
                           'quantity': 1,
+                          'include': 'subchapters',
                           'bookId': bookId,
                           'position': resource.position + 1,
                         },
@@ -95,9 +105,17 @@ class Chapter extends ConsumerWidget {
                       [];
 
                   if (nextResources.isNotEmpty) {
-                    await QR.to(
-                      'books/$bookId/chapters/${nextResources.first.id}',
-                    );
+                    var subchapters = nextResources.first.subchapters;
+
+                    if (subchapters != null && subchapters.isNotEmpty) {
+                      await QR.to(
+                        'books/$bookId/subchapters/${subchapters.first.id}',
+                      );
+                    } else {
+                      await QR.to(
+                        'books/$bookId/chapters/${nextResources.first.id}',
+                      );
+                    }
                   }
                 },
                 previousDisabled: resource.position == 1,
