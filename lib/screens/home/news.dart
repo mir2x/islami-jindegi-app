@@ -35,7 +35,7 @@ class News extends ConsumerWidget {
             padding: const EdgeInsets.only(
               top: 10,
               bottom: 10,
-              left: 15,
+              left: 10,
               right: 10,
             ),
             child: Text(
@@ -43,6 +43,7 @@ class News extends ConsumerWidget {
               style: textTheme.labelMedium?.copyWith(
                 color: ThemeColors.color2,
               ),
+              textAlign: TextAlign.center,
             ),
           ),
           Expanded(
@@ -95,7 +96,7 @@ class News extends ConsumerWidget {
                   } else {
                     return Center(
                       child: Text(
-                        'No items found',
+                        locales.noItemFound,
                         style: textTheme.titleMedium?.copyWith(
                           color: ThemeColors.color2,
                         ),

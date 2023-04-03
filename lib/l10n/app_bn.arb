@@ -141,6 +141,7 @@
   "developer": "ডেভেলাপার",
   "goBack": "আগের পেইজে যান",
   "noContent": "কোন কনটেন্ট নেই",
+  "noItemFound": "কোন আইটেম পাওয়া যায়নি",
   "display": "দেখাবে",
   "dontDisplay": "দেখাবে না",
 
