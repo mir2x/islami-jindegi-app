@@ -23,6 +23,7 @@ import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
+import 'package:native_app/widgets/buttons/previous_next.dart';
 
 class MalfuzatItem extends ConsumerWidget {
   const MalfuzatItem({super.key});
@@ -134,6 +135,37 @@ class MalfuzatItem extends ConsumerWidget {
                 ],
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
+              PreviousNext(
+                onPrevious: () async {
+                  var previousResources = await ref.malfuzats.findAll(
+                        params: {
+                          'quantity': 1,
+                          'include': 'malfuzat-author',
+                          'position': resource.position - 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (previousResources.isNotEmpty) {
+                    await QR.to('malfuzat/${previousResources.first.id}');
+                  }
+                },
+                onNext: () async {
+                  var nextResources = await ref.malfuzats.findAll(
+                        params: {
+                          'quantity': 1,
+                          'include': 'malfuzat-author',
+                          'position': resource.position + 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (nextResources.isNotEmpty) {
+                    await QR.to('malfuzat/${nextResources.first.id}');
+                  }
+                },
+                previousDisabled: resource.position == 1,
+              ),
             ],
           ),
         );

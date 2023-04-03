@@ -14,6 +14,7 @@ import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
+import 'package:native_app/widgets/buttons/previous_next.dart';
 
 class Chapter extends ConsumerWidget {
   const Chapter({super.key});
@@ -26,6 +27,8 @@ class Chapter extends ConsumerWidget {
       repository: ref.chapters,
       id: QR.params['chapter_id'].toString(),
     );
+
+    var bookId = QR.params['id'];
 
     var modelQuery = ref.watch(singleModelProvider(query));
 
@@ -54,16 +57,51 @@ class Chapter extends ConsumerWidget {
                   SocialShare(
                     title: resource.title,
                     body: resource.body,
-                    link: 'books/${QR.params['id']}/chapters/${resource.id}',
+                    link: 'books/$bookId/chapters/${resource.id}',
                   ),
                   BookmarkButton(
                     type: 'Book Chapter',
                     title: resource.title,
-                    link: 'books/${QR.params['id']}/chapters/${resource.id}',
+                    link: 'books/$bookId/chapters/${resource.id}',
                   ),
                 ],
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
+              PreviousNext(
+                onPrevious: () async {
+                  var previousResources = await ref.chapters.findAll(
+                        params: {
+                          'quantity': 1,
+                          'bookId': bookId,
+                          'position': resource.position - 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (previousResources.isNotEmpty) {
+                    await QR.to(
+                      'books/$bookId/chapters/${previousResources.first.id}',
+                    );
+                  }
+                },
+                onNext: () async {
+                  var nextResources = await ref.chapters.findAll(
+                        params: {
+                          'quantity': 1,
+                          'bookId': bookId,
+                          'position': resource.position + 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (nextResources.isNotEmpty) {
+                    await QR.to(
+                      'books/$bookId/chapters/${nextResources.first.id}',
+                    );
+                  }
+                },
+                previousDisabled: resource.position == 1,
+              ),
             ],
           ),
         );

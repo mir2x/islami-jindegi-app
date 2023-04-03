@@ -14,6 +14,10 @@ import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/widgets/responsive/image.dart';
 import 'package:native_app/theme/colors.dart';
+import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/buttons/social_share.dart';
+import 'package:native_app/widgets/buttons/bookmark.dart';
+import 'package:native_app/widgets/buttons/previous_next.dart';
 
 class Madrasah extends ConsumerWidget {
   const Madrasah({super.key});
@@ -36,6 +40,54 @@ class Madrasah extends ConsumerWidget {
         return MyScaffold(
           title: Text(resource.title),
           body: StatefulMadrasah(madrasah: resource),
+          bottomBar: BottomBar(
+            alignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  SocialShare(
+                    title: resource.title,
+                    body: resource.introduction,
+                    link: 'madrasahs/${resource.id}',
+                  ),
+                  BookmarkButton(
+                    type: 'Madrasah',
+                    title: resource.title,
+                    link: 'madrasahs/${resource.id}',
+                  ),
+                ],
+              ),
+              PreviousNext(
+                onPrevious: () async {
+                  var previousResources = await ref.madrasahs.findAll(
+                        params: {
+                          'quantity': 1,
+                          'position': resource.position - 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (previousResources.isNotEmpty) {
+                    await QR.to('madrasahs/${previousResources.first.id}');
+                  }
+                },
+                onNext: () async {
+                  var nextResources = await ref.madrasahs.findAll(
+                        params: {
+                          'quantity': 1,
+                          'position': resource.position + 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (nextResources.isNotEmpty) {
+                    await QR.to('madrasahs/${nextResources.first.id}');
+                  }
+                },
+                previousDisabled: resource.position == 1,
+              ),
+            ],
+          ),
         );
       },
     );

@@ -22,6 +22,7 @@ import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
+import 'package:native_app/widgets/buttons/previous_next.dart';
 
 class Dua extends ConsumerWidget {
   const Dua({super.key});
@@ -120,6 +121,35 @@ class Dua extends ConsumerWidget {
                 ],
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
+              PreviousNext(
+                onPrevious: () async {
+                  var previousResources = await ref.duas.findAll(
+                        params: {
+                          'quantity': 1,
+                          'position': resource.position - 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (previousResources.isNotEmpty) {
+                    await QR.to('duas/${previousResources.first.id}');
+                  }
+                },
+                onNext: () async {
+                  var nextResources = await ref.duas.findAll(
+                        params: {
+                          'quantity': 1,
+                          'position': resource.position + 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (nextResources.isNotEmpty) {
+                    await QR.to('duas/${nextResources.first.id}');
+                  }
+                },
+                previousDisabled: resource.position == 1,
+              ),
             ],
           ),
         );

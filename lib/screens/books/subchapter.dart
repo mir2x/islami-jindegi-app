@@ -14,6 +14,7 @@ import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
+import 'package:native_app/widgets/buttons/previous_next.dart';
 
 class Subchapter extends ConsumerWidget {
   const Subchapter({super.key});
@@ -25,7 +26,10 @@ class Subchapter extends ConsumerWidget {
     var query = SingleModelQuery(
       repository: ref.subchapters,
       id: QR.params['subchapter_id'].toString(),
+      params: const {'include': 'chapter'},
     );
+
+    var bookId = QR.params['id'];
 
     var modelQuery = ref.watch(singleModelProvider(query));
 
@@ -33,6 +37,8 @@ class Subchapter extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
+        var chapterId = resource.chapter.value.id;
+
         return MyScaffold(
           title: Text(resource.title),
           body: ItemContent(
@@ -54,16 +60,51 @@ class Subchapter extends ConsumerWidget {
                   SocialShare(
                     title: resource.title,
                     body: resource.body,
-                    link: 'books/${QR.params['id']}/subchapters/${resource.id}',
+                    link: 'books/$bookId/subchapters/${resource.id}',
                   ),
                   BookmarkButton(
                     type: 'Book Subchapter',
                     title: resource.title,
-                    link: 'books/${QR.params['id']}/subchapters/${resource.id}',
+                    link: 'books/$bookId/subchapters/${resource.id}',
                   ),
                 ],
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
+              PreviousNext(
+                onPrevious: () async {
+                  var previousResources = await ref.subchapters.findAll(
+                        params: {
+                          'quantity': 1,
+                          'chapterId': chapterId,
+                          'position': resource.position - 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (previousResources.isNotEmpty) {
+                    await QR.to(
+                      'books/$bookId/subchapters/${previousResources.first.id}',
+                    );
+                  }
+                },
+                onNext: () async {
+                  var nextResources = await ref.subchapters.findAll(
+                        params: {
+                          'quantity': 1,
+                          'chapterId': chapterId,
+                          'position': resource.position + 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (nextResources.isNotEmpty) {
+                    await QR.to(
+                      'books/$bookId/subchapters/${nextResources.first.id}',
+                    );
+                  }
+                },
+                previousDisabled: resource.position == 1,
+              ),
             ],
           ),
         );
