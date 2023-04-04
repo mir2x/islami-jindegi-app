@@ -85,6 +85,36 @@ class Subchapter extends ConsumerWidget {
                     await QR.to(
                       'books/$bookId/subchapters/${previousResources.first.id}',
                     );
+                  } else {
+                    var currentChapter = await ref.chapters.findOne(chapterId);
+
+                    if (currentChapter != null) {
+                      var previousChapters = await ref.chapters.findAll(
+                            params: {
+                              'quantity': 1,
+                              'include': 'subchapters',
+                              'bookId': bookId,
+                              'position': currentChapter.position! - 1,
+                            },
+                          ) ??
+                          [];
+
+                      if (previousChapters.isNotEmpty) {
+                        var subchapters = previousChapters.first.subchapters;
+
+                        if (subchapters != null && subchapters.isNotEmpty) {
+                          var lastSubchapter = subchapters.map((a) => a).last;
+
+                          await QR.to(
+                            'books/$bookId/subchapters/${lastSubchapter.id}',
+                          );
+                        } else {
+                          await QR.to(
+                            'books/$bookId/chapters/${previousChapters.first.id}',
+                          );
+                        }
+                      }
+                    }
                   }
                 },
                 onNext: () async {
@@ -101,9 +131,36 @@ class Subchapter extends ConsumerWidget {
                     await QR.to(
                       'books/$bookId/subchapters/${nextResources.first.id}',
                     );
+                  } else {
+                    var currentChapter = await ref.chapters.findOne(chapterId);
+
+                    if (currentChapter != null) {
+                      var nextChapters = await ref.chapters.findAll(
+                            params: {
+                              'quantity': 1,
+                              'include': 'subchapters',
+                              'bookId': bookId,
+                              'position': currentChapter.position! + 1,
+                            },
+                          ) ??
+                          [];
+
+                      if (nextChapters.isNotEmpty) {
+                        var subchapters = nextChapters.first.subchapters;
+
+                        if (subchapters != null && subchapters.isNotEmpty) {
+                          await QR.to(
+                            'books/$bookId/subchapters/${subchapters.first.id}',
+                          );
+                        } else {
+                          await QR.to(
+                            'books/$bookId/chapters/${nextChapters.first.id}',
+                          );
+                        }
+                      }
+                    }
                   }
                 },
-                previousDisabled: resource.position == 1,
               ),
             ],
           ),

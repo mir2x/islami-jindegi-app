@@ -83,8 +83,10 @@ class Chapter extends ConsumerWidget {
                     var subchapters = previousResources.first.subchapters;
 
                     if (subchapters != null && subchapters.isNotEmpty) {
+                      var lastSubchapter = subchapters.map((a) => a).last;
+
                       await QR.to(
-                        'books/$bookId/subchapters/${subchapters.first.id}',
+                        'books/$bookId/subchapters/${lastSubchapter.id}',
                       );
                     } else {
                       await QR.to(
