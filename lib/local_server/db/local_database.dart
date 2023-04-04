@@ -70,6 +70,8 @@ class LocalDatabase extends _$LocalDatabase {
         return queryBook(params);
       case 'chapters':
         return queryChapter(params);
+      case 'subchapters':
+        return querySubchapter(params);
       case 'bayans':
         return queryBayan(params);
       case 'malfuzats':
@@ -189,11 +191,11 @@ class LocalDatabase extends _$LocalDatabase {
     }
 
     if (params.containsKey('surah_id')) {
-      query.where((t) => t.surahId.equals(params['surah_id']));
+      query.where((t) => t.surahId.equals(params['surah_id'].toString()));
     }
 
     if (params.containsKey('para_id')) {
-      query.where((t) => t.paraId.equals(params['para_id']));
+      query.where((t) => t.paraId.equals(params['para_id'].toString()));
     }
 
     if (params.containsKey('sort') && params['sort'] == 'para-position') {
@@ -303,7 +305,14 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<List> queryChapter(Map params) async {
     var query = select(chapters);
-    query.where((t) => t.bookId.equals(params['bookId']));
+
+    if (params.containsKey('position')) {
+      query.where((r) => r.position.equals(params['position']));
+    }
+
+    if (params.containsKey('bookId')) {
+      query.where((r) => r.bookId.equals(params['bookId'].toString()));
+    }
 
     if (params.containsKey('page') && params.containsKey('per_page')) {
       query.limit(
@@ -348,6 +357,30 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<Chapter> findChapterById(String id) {
     return (select(chapters)..where((t) => t.id.equals(id))).getSingle();
+  }
+
+  Future<List<Subchapter>> querySubchapter(Map params) {
+    var query = select(subchapters);
+
+    if (params.containsKey('position')) {
+      query.where((r) => r.position.equals(params['position']));
+    }
+
+    if (params.containsKey('chapterId')) {
+      query.where((r) => r.chapterId.equals(params['chapterId'].toString()));
+    }
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    } else {
+      query.limit(params['quantity'] ?? 20);
+    }
+
+    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
+    return query.get();
   }
 
   Future<Subchapter> findSubchapterById(String id) {
@@ -408,6 +441,10 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<List> queryMalfuzat(Map params) async {
     var query = select(malfuzats);
+
+    if (params.containsKey('position')) {
+      query.where((r) => r.position.equals(params['position']));
+    }
 
     if (params.containsKey('page') && params.containsKey('per_page')) {
       query.limit(
@@ -476,6 +513,10 @@ class LocalDatabase extends _$LocalDatabase {
   Future<List<Masail>> queryMasail(Map params) {
     var query = select(masails);
 
+    if (params.containsKey('position')) {
+      query.where((r) => r.position.equals(params['position']));
+    }
+
     if (params.containsKey('page') && params.containsKey('per_page')) {
       query.limit(
         params['per_page'],
@@ -495,6 +536,10 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<List<Dua>> queryDua(Map params) {
     var query = select(duas);
+
+    if (params.containsKey('position')) {
+      query.where((r) => r.position.equals(params['position']));
+    }
 
     if (params.containsKey('page') && params.containsKey('per_page')) {
       query.limit(
@@ -519,6 +564,10 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<List> queryArticle(Map params) async {
     var query = select(articles);
+
+    if (params.containsKey('position')) {
+      query.where((r) => r.position.equals(params['position']));
+    }
 
     if (params.containsKey('page') && params.containsKey('per_page')) {
       query.limit(
@@ -588,6 +637,10 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<List<Madrasah>> queryMadrasah(Map params) {
     var query = select(madrasahs);
+
+    if (params.containsKey('position')) {
+      query.where((r) => r.position.equals(params['position']));
+    }
 
     if (params.containsKey('page') && params.containsKey('per_page')) {
       query.limit(
