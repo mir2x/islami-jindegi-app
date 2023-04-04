@@ -21,6 +21,7 @@ import '../screens/malfuzat/malfuzat_item.dart';
 
 import '../screens/masail/index.dart';
 import '../screens/masail/masail_item.dart';
+import '../screens/masail/ask_question.dart';
 
 import '../screens/duas/index.dart';
 import '../screens/duas/dua.dart';
@@ -109,6 +110,7 @@ class AppRoutes {
       builder: () => const Masail(),
       children: [
         QRoute(path: '/:id', builder: () => const MasailItem()),
+        QRoute(path: '/ask-question', builder: () => const AskQuestion()),
       ],
     ),
     QRoute(

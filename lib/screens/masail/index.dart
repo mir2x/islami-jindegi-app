@@ -18,6 +18,7 @@ import 'package:native_app/widgets/filter/nested_item.dart';
 import 'package:native_app/widgets/filter/subitem.dart';
 import 'package:native_app/widgets/filter/triple_switch_button.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
+import 'package:native_app/widgets/presentation/bottom_bar.dart';
 
 class Masail extends ConsumerWidget {
   const Masail({super.key});
@@ -196,6 +197,19 @@ class Masail extends ConsumerWidget {
                 },
               ),
             ),
+          ),
+        ],
+      ),
+      bottomBar: BottomBar(
+        alignment: MainAxisAlignment.center,
+        children: [
+          Text(locales.knowMasala),
+          TextButton(
+            child: Text(
+              locales.askQuestion,
+              style: textTheme.titleMedium,
+            ),
+            onPressed: () => QR.to('masail/ask-question'),
           ),
         ],
       ),
