@@ -16,7 +16,7 @@ class BottomBar extends StatelessWidget {
     return BottomAppBar(
       color: ThemeColors.color5,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
         child: Row(
           mainAxisAlignment: alignment,
           children: children,
