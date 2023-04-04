@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:io' show File, Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -54,7 +54,9 @@ class DownloadItem extends ConsumerWidget {
                       icon: const Icon(Icons.open_in_new),
                       iconSize: 30,
                       onPressed: () async {
-                        var downloadDir = await getExternalStorageDirectory();
+                        var downloadDir = Platform.isAndroid
+                            ? await getExternalStorageDirectory()
+                            : await getApplicationSupportDirectory();
 
                         if (downloadDir != null) {
                           await OpenFile.open(
@@ -71,7 +73,9 @@ class DownloadItem extends ConsumerWidget {
                       iconSize: 30,
                       color: Colors.red,
                       onPressed: () async {
-                        var downloadDir = await getExternalStorageDirectory();
+                        var downloadDir = Platform.isAndroid
+                            ? await getExternalStorageDirectory()
+                            : await getApplicationSupportDirectory();
 
                         if (downloadDir != null) {
                           var localFile = File(

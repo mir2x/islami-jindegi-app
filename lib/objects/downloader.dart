@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
@@ -20,7 +21,9 @@ class Downloader {
       return;
     }
 
-    var dir = await getExternalStorageDirectory();
+    var dir = Platform.isAndroid
+        ? await getExternalStorageDirectory()
+        : await getApplicationSupportDirectory();
 
     if (dir != null) {
       Dio dio = Dio();

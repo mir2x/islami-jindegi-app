@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:io' show File, Platform;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:path_provider/path_provider.dart';
@@ -11,7 +11,9 @@ final audioPlayerProvider =
   AudioPlayer player;
   player = AudioPlayer(playerId: audioSource.id);
 
-  var downloadDir = await getExternalStorageDirectory();
+  var downloadDir = Platform.isAndroid
+      ? await getExternalStorageDirectory()
+      : await getApplicationSupportDirectory();
 
   if (downloadDir != null) {
     final localFile = File(p.join(downloadDir.path, audioSource.id));
