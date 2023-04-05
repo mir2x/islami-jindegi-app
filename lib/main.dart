@@ -2,6 +2,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/theme/themes.dart';
 import 'package:native_app/widgets/utils/full_screen.dart';
@@ -12,6 +13,9 @@ import 'main.data.dart';
 
 Future main() async {
   await dotenv.load(fileName: '.env');
+
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   QR.settings.pagesType = const QSlidePage();
   QR.settings.notFoundPage = QRoute(
@@ -31,6 +35,8 @@ Future main() async {
       child: const MyApp(),
     ),
   );
+
+  FlutterNativeSplash.remove();
 }
 
 class MyApp extends ConsumerWidget {

@@ -90,6 +90,7 @@ dependencies:
   # assets
   flutter_svg: ^1.1.1+1
   transparent_image: ^2.0.0
+  flutter_native_splash: ^2.2.16
 
 dev_dependencies:
   flutter_test:
@@ -140,4 +141,9 @@ flutter:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/logos/logo-icon.png"
+  image_path: assets/images/logos/logo-icon.png
+
+flutter_native_splash:
+  color: "#0a676a"
+  image: assets/images/logos/logo-transparent.png
+  web: false
