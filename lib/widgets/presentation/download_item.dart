@@ -6,7 +6,9 @@ import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:open_file/open_file.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
+import 'package:native_app/providers/connectivity_result.dart';
 import 'package:native_app/objects/downloader.dart';
 import 'package:native_app/theme/colors.dart';
 import 'description_item.dart';
@@ -98,64 +100,77 @@ class DownloadItem extends ConsumerWidget {
             alignment: CrossAxisAlignment.center,
           );
         } else {
-          return DescriptionItem(
-            title: '${locales.download}:',
-            description: Align(
-              alignment: Alignment.centerLeft,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  IconButton(
-                    iconSize: 35,
-                    icon: const Icon(Icons.download),
-                    onPressed: () async {
-                      var response = await downloader.download(
-                        url: fileUrl,
-                        savePath: filePath,
-                      );
+          var connectivity = ref.watch(connectivityResultProvider);
 
-                      if (response is Response && response.statusCode == 200) {
-                        await ref
-                            .read(checkFileProvider.notifier)
-                            .check(filePath);
-                      } else if (context.mounted) {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              backgroundColor: ThemeColors.color1,
-                              title: Text(locales.errorTitle),
-                              content: Text(
-                                locales.downloadErrorMsg,
-                                style: textTheme.labelMedium,
-                              ),
+          return connectivity.when(
+            loading: () => const CircularProgressIndicator(),
+            error: (error, stackTrace) => Text(error.toString()),
+            data: (connectivityResult) {
+              if (connectivityResult != ConnectivityResult.none) {
+                return DescriptionItem(
+                  title: '${locales.download}:',
+                  description: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          iconSize: 35,
+                          icon: const Icon(Icons.download),
+                          onPressed: () async {
+                            var response = await downloader.download(
+                              url: fileUrl,
+                              savePath: filePath,
                             );
+
+                            if (response is Response &&
+                                response.statusCode == 200) {
+                              await ref
+                                  .read(checkFileProvider.notifier)
+                                  .check(filePath);
+                            } else if (context.mounted) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    backgroundColor: ThemeColors.color1,
+                                    title: Text(locales.errorTitle),
+                                    content: Text(
+                                      locales.downloadErrorMsg,
+                                      style: textTheme.labelMedium,
+                                    ),
+                                  );
+                                },
+                              );
+                            }
                           },
-                        );
-                      }
-                    },
-                  ),
-                  Container(
-                    width: 100,
-                    margin: const EdgeInsets.only(left: 15),
-                    child: ValueListenableBuilder<double>(
-                      valueListenable: downloader.progressNotifier,
-                      builder: (context, percent, child) {
-                        if (percent > 0) {
-                          return LinearProgressIndicator(
-                            backgroundColor: ThemeColors.color3,
-                            value: percent,
-                          );
-                        } else {
-                          return const SizedBox.shrink();
-                        }
-                      },
+                        ),
+                        Container(
+                          width: 100,
+                          margin: const EdgeInsets.only(left: 15),
+                          child: ValueListenableBuilder<double>(
+                            valueListenable: downloader.progressNotifier,
+                            builder: (context, percent, child) {
+                              if (percent > 0) {
+                                return LinearProgressIndicator(
+                                  backgroundColor: ThemeColors.color3,
+                                  value: percent,
+                                );
+                              } else {
+                                return const SizedBox.shrink();
+                              }
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-            alignment: CrossAxisAlignment.center,
+                  alignment: CrossAxisAlignment.center,
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
           );
         }
       },

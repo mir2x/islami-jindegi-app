@@ -132,7 +132,7 @@
   "fontSize": "Font Size",
   "bookmarkAdded": "Bookmark added",
   "bookmarkDeleted": "Bookmark deleted",
-  
+
   "askQuestion": "Ask Question",
   "knowMasala": "Do you want to know a Mas'ala?",
   "instructions": "Instructions",
@@ -165,5 +165,6 @@
   "errorTitle": "Error!",
   "notFoundErrorTitle": "Page Not Found",
   "notFoundErrorMsg": "We cannot seem to find the page you are looking for.",
-  "downloadErrorMsg": "There has been a problem while downloading the file. Please check your network connection and try again."
+  "downloadErrorMsg": "There has been a problem while downloading the file. Please check your network connection and try again.",
+  "connectToInternetMsg": "Please connect to the Internet"
 }

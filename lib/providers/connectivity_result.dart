@@ -11,7 +11,7 @@ class ConnectivityResultNotifier extends AsyncNotifier<ConnectivityResult> {
       }
     });
 
-    final connectivityResult = await (Connectivity().checkConnectivity());
+    final connectivityResult = await Connectivity().checkConnectivity();
     return connectivityResult;
   }
 }
