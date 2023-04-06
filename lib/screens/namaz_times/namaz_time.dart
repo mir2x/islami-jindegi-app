@@ -74,7 +74,10 @@ class NamazTime extends ConsumerWidget {
           ),
           bottomBar: BottomBar(
             children: [
-              FontResizer(fontSizeRatio: fontSizeRatio),
+              Container(
+                margin: const EdgeInsets.only(left: 15),
+                child: FontResizer(fontSizeRatio: fontSizeRatio),
+              ),
             ],
           ),
         );
