@@ -65,13 +65,22 @@ class ResponsiveImage extends StatelessWidget {
   Widget displayPlaceHolder(model, String attr) {
     Map<String, int> settings = imageSettings[model]![attr]!;
 
-    return AspectRatio(
-      aspectRatio: settings['width']! / settings['height']!,
-      child: const DecoratedBox(
-        decoration: BoxDecoration(
-          color: ThemeColors.placeholder,
+    if (model == 'book') {
+      return AspectRatio(
+        aspectRatio: settings['width']! / settings['height']!,
+        child: const Image(
+          image: AssetImage('assets/images/books/default.png'),
         ),
-      ),
-    );
+      );
+    } else {
+      return AspectRatio(
+        aspectRatio: settings['width']! / settings['height']!,
+        child: const DecoratedBox(
+          decoration: BoxDecoration(
+            color: ThemeColors.placeholder,
+          ),
+        ),
+      );
+    }
   }
 }
