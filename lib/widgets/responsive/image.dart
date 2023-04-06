@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:collection/collection.dart';
 import 'package:native_app/settings/image.dart';
@@ -36,9 +37,9 @@ class ResponsiveImage extends StatelessWidget {
 
         return AspectRatio(
           aspectRatio: metadata['width']! / metadata['height']!,
-          child: FadeInImage.memoryNetwork(
-            image: imageSrc,
-            placeholder: kTransparentImage,
+          child: CachedNetworkImage(
+            imageUrl: imageSrc,
+            placeholder: (context, url) => Image.memory(kTransparentImage),
             fit: BoxFit.fill,
             fadeInDuration: const Duration(milliseconds: 150),
           ),
