@@ -40,6 +40,7 @@ class ResponsiveImage extends StatelessWidget {
             image: imageSrc,
             placeholder: kTransparentImage,
             fit: BoxFit.fill,
+            fadeInDuration: const Duration(milliseconds: 150),
           ),
         );
       } else {
