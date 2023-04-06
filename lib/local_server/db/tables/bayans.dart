@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'speakers.dart';
+import '../types/file_data.dart';
 
 class Bayans extends Table {
   TextColumn get id => text()();
@@ -7,7 +8,10 @@ class Bayans extends Table {
   TextColumn get excerpt => text().nullable()();
   TextColumn get language => text()();
   TextColumn get location => text().nullable()();
-  TextColumn get audioData => text().nullable()();
+
+  @JsonKey('audio')
+  TextColumn get audioData => text().map(const FileData()).nullable()();
+
   TextColumn get publishedAt => text()();
   TextColumn get createdAt => text()();
   TextColumn get updatedAt => text()();

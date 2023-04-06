@@ -1384,8 +1384,8 @@ class Book extends DataClass implements Insertable<Book> {
   final String? publisher;
   final String? price;
   final String language;
-  final String? imageData;
-  final String? documentData;
+  final Map<dynamic, dynamic>? imageData;
+  final Map<dynamic, dynamic>? documentData;
   final int position;
   final String? publishedAt;
   final String createdAt;
@@ -1421,10 +1421,12 @@ class Book extends DataClass implements Insertable<Book> {
     }
     map['language'] = Variable<String>(language);
     if (!nullToAbsent || imageData != null) {
-      map['image_data'] = Variable<String>(imageData);
+      final converter = $BooksTable.$converter0n;
+      map['image_data'] = Variable<String>(converter.toSql(imageData));
     }
     if (!nullToAbsent || documentData != null) {
-      map['document_data'] = Variable<String>(documentData);
+      final converter = $BooksTable.$converter1n;
+      map['document_data'] = Variable<String>(converter.toSql(documentData));
     }
     map['position'] = Variable<int>(position);
     if (!nullToAbsent || publishedAt != null) {
@@ -1446,8 +1448,9 @@ class Book extends DataClass implements Insertable<Book> {
       publisher: serializer.fromJson<String?>(json['publisher']),
       price: serializer.fromJson<String?>(json['price']),
       language: serializer.fromJson<String>(json['language']),
-      imageData: serializer.fromJson<String?>(json['imageData']),
-      documentData: serializer.fromJson<String?>(json['documentData']),
+      imageData: serializer.fromJson<Map<dynamic, dynamic>?>(json['image']),
+      documentData:
+          serializer.fromJson<Map<dynamic, dynamic>?>(json['document']),
       position: serializer.fromJson<int>(json['position']),
       publishedAt: serializer.fromJson<String?>(json['publishedAt']),
       createdAt: serializer.fromJson<String>(json['createdAt']),
@@ -1465,8 +1468,8 @@ class Book extends DataClass implements Insertable<Book> {
       'publisher': serializer.toJson<String?>(publisher),
       'price': serializer.toJson<String?>(price),
       'language': serializer.toJson<String>(language),
-      'imageData': serializer.toJson<String?>(imageData),
-      'documentData': serializer.toJson<String?>(documentData),
+      'image': serializer.toJson<Map<dynamic, dynamic>?>(imageData),
+      'document': serializer.toJson<Map<dynamic, dynamic>?>(documentData),
       'position': serializer.toJson<int>(position),
       'publishedAt': serializer.toJson<String?>(publishedAt),
       'createdAt': serializer.toJson<String>(createdAt),
@@ -1482,8 +1485,8 @@ class Book extends DataClass implements Insertable<Book> {
           Value<String?> publisher = const Value.absent(),
           Value<String?> price = const Value.absent(),
           String? language,
-          Value<String?> imageData = const Value.absent(),
-          Value<String?> documentData = const Value.absent(),
+          Value<Map<dynamic, dynamic>?> imageData = const Value.absent(),
+          Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
           int? position,
           Value<String?> publishedAt = const Value.absent(),
           String? createdAt,
@@ -1566,8 +1569,8 @@ class BooksCompanion extends UpdateCompanion<Book> {
   final Value<String?> publisher;
   final Value<String?> price;
   final Value<String> language;
-  final Value<String?> imageData;
-  final Value<String?> documentData;
+  final Value<Map<dynamic, dynamic>?> imageData;
+  final Value<Map<dynamic, dynamic>?> documentData;
   final Value<int> position;
   final Value<String?> publishedAt;
   final Value<String> createdAt;
@@ -1648,8 +1651,8 @@ class BooksCompanion extends UpdateCompanion<Book> {
       Value<String?>? publisher,
       Value<String?>? price,
       Value<String>? language,
-      Value<String?>? imageData,
-      Value<String?>? documentData,
+      Value<Map<dynamic, dynamic>?>? imageData,
+      Value<Map<dynamic, dynamic>?>? documentData,
       Value<int>? position,
       Value<String?>? publishedAt,
       Value<String>? createdAt,
@@ -1696,10 +1699,13 @@ class BooksCompanion extends UpdateCompanion<Book> {
       map['language'] = Variable<String>(language.value);
     }
     if (imageData.present) {
-      map['image_data'] = Variable<String>(imageData.value);
+      final converter = $BooksTable.$converter0n;
+      map['image_data'] = Variable<String>(converter.toSql(imageData.value));
     }
     if (documentData.present) {
-      map['document_data'] = Variable<String>(documentData.value);
+      final converter = $BooksTable.$converter1n;
+      map['document_data'] =
+          Variable<String>(converter.toSql(documentData.value));
     }
     if (position.present) {
       map['position'] = Variable<int>(position.value);
@@ -1771,13 +1777,15 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
       'language', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> imageData = GeneratedColumn<String>(
-      'image_data', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      imageData = GeneratedColumn<String>('image_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>($BooksTable.$converter0n);
   @override
-  late final GeneratedColumn<String> documentData = GeneratedColumn<String>(
-      'document_data', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      documentData = GeneratedColumn<String>('document_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>($BooksTable.$converter1n);
   @override
   late final GeneratedColumn<int> position = GeneratedColumn<int>(
       'position', aliasedName, false,
@@ -1834,10 +1842,11 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
           .read(DriftSqlType.string, data['${effectivePrefix}price']),
       language: attachedDatabase.options.types
           .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
-      imageData: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}image_data']),
-      documentData: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}document_data']),
+      imageData: $BooksTable.$converter0n.fromSql(attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}image_data'])),
+      documentData: $BooksTable.$converter1n.fromSql(attachedDatabase
+          .options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}document_data'])),
       position: attachedDatabase.options.types
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
       publishedAt: attachedDatabase.options.types
@@ -1853,6 +1862,15 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
   $BooksTable createAlias(String alias) {
     return $BooksTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<Map<dynamic, dynamic>, String> $converter0 =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>, String> $converter1 =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter0n =
+      NullAwareTypeConverter.wrap($converter0);
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter1n =
+      NullAwareTypeConverter.wrap($converter1);
 }
 
 class Chapter extends DataClass implements Insertable<Chapter> {
@@ -3128,7 +3146,7 @@ class Bayan extends DataClass implements Insertable<Bayan> {
   final String? excerpt;
   final String language;
   final String? location;
-  final String? audioData;
+  final Map<dynamic, dynamic>? audioData;
   final String publishedAt;
   final String createdAt;
   final String updatedAt;
@@ -3157,7 +3175,8 @@ class Bayan extends DataClass implements Insertable<Bayan> {
       map['location'] = Variable<String>(location);
     }
     if (!nullToAbsent || audioData != null) {
-      map['audio_data'] = Variable<String>(audioData);
+      final converter = $BayansTable.$converter0n;
+      map['audio_data'] = Variable<String>(converter.toSql(audioData));
     }
     map['published_at'] = Variable<String>(publishedAt);
     map['created_at'] = Variable<String>(createdAt);
@@ -3175,7 +3194,7 @@ class Bayan extends DataClass implements Insertable<Bayan> {
       excerpt: serializer.fromJson<String?>(json['excerpt']),
       language: serializer.fromJson<String>(json['language']),
       location: serializer.fromJson<String?>(json['location']),
-      audioData: serializer.fromJson<String?>(json['audioData']),
+      audioData: serializer.fromJson<Map<dynamic, dynamic>?>(json['audio']),
       publishedAt: serializer.fromJson<String>(json['publishedAt']),
       createdAt: serializer.fromJson<String>(json['createdAt']),
       updatedAt: serializer.fromJson<String>(json['updatedAt']),
@@ -3191,7 +3210,7 @@ class Bayan extends DataClass implements Insertable<Bayan> {
       'excerpt': serializer.toJson<String?>(excerpt),
       'language': serializer.toJson<String>(language),
       'location': serializer.toJson<String?>(location),
-      'audioData': serializer.toJson<String?>(audioData),
+      'audio': serializer.toJson<Map<dynamic, dynamic>?>(audioData),
       'publishedAt': serializer.toJson<String>(publishedAt),
       'createdAt': serializer.toJson<String>(createdAt),
       'updatedAt': serializer.toJson<String>(updatedAt),
@@ -3205,7 +3224,7 @@ class Bayan extends DataClass implements Insertable<Bayan> {
           Value<String?> excerpt = const Value.absent(),
           String? language,
           Value<String?> location = const Value.absent(),
-          Value<String?> audioData = const Value.absent(),
+          Value<Map<dynamic, dynamic>?> audioData = const Value.absent(),
           String? publishedAt,
           String? createdAt,
           String? updatedAt,
@@ -3264,7 +3283,7 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
   final Value<String?> excerpt;
   final Value<String> language;
   final Value<String?> location;
-  final Value<String?> audioData;
+  final Value<Map<dynamic, dynamic>?> audioData;
   final Value<String> publishedAt;
   final Value<String> createdAt;
   final Value<String> updatedAt;
@@ -3331,7 +3350,7 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
       Value<String?>? excerpt,
       Value<String>? language,
       Value<String?>? location,
-      Value<String?>? audioData,
+      Value<Map<dynamic, dynamic>?>? audioData,
       Value<String>? publishedAt,
       Value<String>? createdAt,
       Value<String>? updatedAt,
@@ -3369,7 +3388,8 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
       map['location'] = Variable<String>(location.value);
     }
     if (audioData.present) {
-      map['audio_data'] = Variable<String>(audioData.value);
+      final converter = $BayansTable.$converter0n;
+      map['audio_data'] = Variable<String>(converter.toSql(audioData.value));
     }
     if (publishedAt.present) {
       map['published_at'] = Variable<String>(publishedAt.value);
@@ -3430,9 +3450,10 @@ class $BayansTable extends Bayans with TableInfo<$BayansTable, Bayan> {
       'location', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
-  late final GeneratedColumn<String> audioData = GeneratedColumn<String>(
-      'audio_data', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      audioData = GeneratedColumn<String>('audio_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>($BayansTable.$converter0n);
   @override
   late final GeneratedColumn<String> publishedAt = GeneratedColumn<String>(
       'published_at', aliasedName, false,
@@ -3484,8 +3505,9 @@ class $BayansTable extends Bayans with TableInfo<$BayansTable, Bayan> {
           .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
       location: attachedDatabase.options.types
           .read(DriftSqlType.string, data['${effectivePrefix}location']),
-      audioData: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}audio_data']),
+      audioData: $BayansTable.$converter0n.fromSql(attachedDatabase
+          .options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}audio_data'])),
       publishedAt: attachedDatabase.options.types
           .read(DriftSqlType.string, data['${effectivePrefix}published_at'])!,
       createdAt: attachedDatabase.options.types
@@ -3501,6 +3523,11 @@ class $BayansTable extends Bayans with TableInfo<$BayansTable, Bayan> {
   $BayansTable createAlias(String alias) {
     return $BayansTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<Map<dynamic, dynamic>, String> $converter0 =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter0n =
+      NullAwareTypeConverter.wrap($converter0);
 }
 
 class MalfuzatAuthor extends DataClass implements Insertable<MalfuzatAuthor> {
@@ -3770,8 +3797,8 @@ class Malfuzat extends DataClass implements Insertable<Malfuzat> {
   final String? excerpt;
   final String language;
   final bool hasAudio;
-  final String? audioData;
-  final String? documentData;
+  final Map<dynamic, dynamic>? audioData;
+  final Map<dynamic, dynamic>? documentData;
   final int position;
   final String? publishedAt;
   final String createdAt;
@@ -3805,10 +3832,12 @@ class Malfuzat extends DataClass implements Insertable<Malfuzat> {
     map['language'] = Variable<String>(language);
     map['has_audio'] = Variable<bool>(hasAudio);
     if (!nullToAbsent || audioData != null) {
-      map['audio_data'] = Variable<String>(audioData);
+      final converter = $MalfuzatsTable.$converter0n;
+      map['audio_data'] = Variable<String>(converter.toSql(audioData));
     }
     if (!nullToAbsent || documentData != null) {
-      map['document_data'] = Variable<String>(documentData);
+      final converter = $MalfuzatsTable.$converter1n;
+      map['document_data'] = Variable<String>(converter.toSql(documentData));
     }
     map['position'] = Variable<int>(position);
     if (!nullToAbsent || publishedAt != null) {
@@ -3830,8 +3859,9 @@ class Malfuzat extends DataClass implements Insertable<Malfuzat> {
       excerpt: serializer.fromJson<String?>(json['excerpt']),
       language: serializer.fromJson<String>(json['language']),
       hasAudio: serializer.fromJson<bool>(json['hasAudio']),
-      audioData: serializer.fromJson<String?>(json['audioData']),
-      documentData: serializer.fromJson<String?>(json['documentData']),
+      audioData: serializer.fromJson<Map<dynamic, dynamic>?>(json['audio']),
+      documentData:
+          serializer.fromJson<Map<dynamic, dynamic>?>(json['document']),
       position: serializer.fromJson<int>(json['position']),
       publishedAt: serializer.fromJson<String?>(json['publishedAt']),
       createdAt: serializer.fromJson<String>(json['createdAt']),
@@ -3849,8 +3879,8 @@ class Malfuzat extends DataClass implements Insertable<Malfuzat> {
       'excerpt': serializer.toJson<String?>(excerpt),
       'language': serializer.toJson<String>(language),
       'hasAudio': serializer.toJson<bool>(hasAudio),
-      'audioData': serializer.toJson<String?>(audioData),
-      'documentData': serializer.toJson<String?>(documentData),
+      'audio': serializer.toJson<Map<dynamic, dynamic>?>(audioData),
+      'document': serializer.toJson<Map<dynamic, dynamic>?>(documentData),
       'position': serializer.toJson<int>(position),
       'publishedAt': serializer.toJson<String?>(publishedAt),
       'createdAt': serializer.toJson<String>(createdAt),
@@ -3866,8 +3896,8 @@ class Malfuzat extends DataClass implements Insertable<Malfuzat> {
           Value<String?> excerpt = const Value.absent(),
           String? language,
           bool? hasAudio,
-          Value<String?> audioData = const Value.absent(),
-          Value<String?> documentData = const Value.absent(),
+          Value<Map<dynamic, dynamic>?> audioData = const Value.absent(),
+          Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
           int? position,
           Value<String?> publishedAt = const Value.absent(),
           String? createdAt,
@@ -3950,8 +3980,8 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
   final Value<String?> excerpt;
   final Value<String> language;
   final Value<bool> hasAudio;
-  final Value<String?> audioData;
-  final Value<String?> documentData;
+  final Value<Map<dynamic, dynamic>?> audioData;
+  final Value<Map<dynamic, dynamic>?> documentData;
   final Value<int> position;
   final Value<String?> publishedAt;
   final Value<String> createdAt;
@@ -4032,8 +4062,8 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
       Value<String?>? excerpt,
       Value<String>? language,
       Value<bool>? hasAudio,
-      Value<String?>? audioData,
-      Value<String?>? documentData,
+      Value<Map<dynamic, dynamic>?>? audioData,
+      Value<Map<dynamic, dynamic>?>? documentData,
       Value<int>? position,
       Value<String?>? publishedAt,
       Value<String>? createdAt,
@@ -4078,10 +4108,13 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
       map['has_audio'] = Variable<bool>(hasAudio.value);
     }
     if (audioData.present) {
-      map['audio_data'] = Variable<String>(audioData.value);
+      final converter = $MalfuzatsTable.$converter0n;
+      map['audio_data'] = Variable<String>(converter.toSql(audioData.value));
     }
     if (documentData.present) {
-      map['document_data'] = Variable<String>(documentData.value);
+      final converter = $MalfuzatsTable.$converter1n;
+      map['document_data'] =
+          Variable<String>(converter.toSql(documentData.value));
     }
     if (position.present) {
       map['position'] = Variable<int>(position.value);
@@ -4156,13 +4189,15 @@ class $MalfuzatsTable extends Malfuzats
       defaultConstraints: 'CHECK (has_audio IN (0, 1))',
       defaultValue: const Constant(false));
   @override
-  late final GeneratedColumn<String> audioData = GeneratedColumn<String>(
-      'audio_data', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      audioData = GeneratedColumn<String>('audio_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>($MalfuzatsTable.$converter0n);
   @override
-  late final GeneratedColumn<String> documentData = GeneratedColumn<String>(
-      'document_data', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      documentData = GeneratedColumn<String>('document_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>($MalfuzatsTable.$converter1n);
   @override
   late final GeneratedColumn<int> position = GeneratedColumn<int>(
       'position', aliasedName, false,
@@ -4223,10 +4258,12 @@ class $MalfuzatsTable extends Malfuzats
           .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
       hasAudio: attachedDatabase.options.types
           .read(DriftSqlType.bool, data['${effectivePrefix}has_audio'])!,
-      audioData: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}audio_data']),
-      documentData: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}document_data']),
+      audioData: $MalfuzatsTable.$converter0n.fromSql(attachedDatabase
+          .options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}audio_data'])),
+      documentData: $MalfuzatsTable.$converter1n.fromSql(attachedDatabase
+          .options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}document_data'])),
       position: attachedDatabase.options.types
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
       publishedAt: attachedDatabase.options.types
@@ -4244,6 +4281,15 @@ class $MalfuzatsTable extends Malfuzats
   $MalfuzatsTable createAlias(String alias) {
     return $MalfuzatsTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<Map<dynamic, dynamic>, String> $converter0 =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>, String> $converter1 =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter0n =
+      NullAwareTypeConverter.wrap($converter0);
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter1n =
+      NullAwareTypeConverter.wrap($converter1);
 }
 
 class Masail extends DataClass implements Insertable<Masail> {
@@ -4254,8 +4300,8 @@ class Masail extends DataClass implements Insertable<Masail> {
   final String? answer;
   final String language;
   final bool hasAudio;
-  final String? audioData;
-  final String? documentData;
+  final Map<dynamic, dynamic>? audioData;
+  final Map<dynamic, dynamic>? documentData;
   final int position;
   final String? publishedAt;
   final String createdAt;
@@ -4287,10 +4333,12 @@ class Masail extends DataClass implements Insertable<Masail> {
     map['language'] = Variable<String>(language);
     map['has_audio'] = Variable<bool>(hasAudio);
     if (!nullToAbsent || audioData != null) {
-      map['audio_data'] = Variable<String>(audioData);
+      final converter = $MasailsTable.$converter0n;
+      map['audio_data'] = Variable<String>(converter.toSql(audioData));
     }
     if (!nullToAbsent || documentData != null) {
-      map['document_data'] = Variable<String>(documentData);
+      final converter = $MasailsTable.$converter1n;
+      map['document_data'] = Variable<String>(converter.toSql(documentData));
     }
     map['position'] = Variable<int>(position);
     if (!nullToAbsent || publishedAt != null) {
@@ -4312,8 +4360,9 @@ class Masail extends DataClass implements Insertable<Masail> {
       answer: serializer.fromJson<String?>(json['answer']),
       language: serializer.fromJson<String>(json['language']),
       hasAudio: serializer.fromJson<bool>(json['hasAudio']),
-      audioData: serializer.fromJson<String?>(json['audioData']),
-      documentData: serializer.fromJson<String?>(json['documentData']),
+      audioData: serializer.fromJson<Map<dynamic, dynamic>?>(json['audio']),
+      documentData:
+          serializer.fromJson<Map<dynamic, dynamic>?>(json['document']),
       position: serializer.fromJson<int>(json['position']),
       publishedAt: serializer.fromJson<String?>(json['publishedAt']),
       createdAt: serializer.fromJson<String>(json['createdAt']),
@@ -4331,8 +4380,8 @@ class Masail extends DataClass implements Insertable<Masail> {
       'answer': serializer.toJson<String?>(answer),
       'language': serializer.toJson<String>(language),
       'hasAudio': serializer.toJson<bool>(hasAudio),
-      'audioData': serializer.toJson<String?>(audioData),
-      'documentData': serializer.toJson<String?>(documentData),
+      'audio': serializer.toJson<Map<dynamic, dynamic>?>(audioData),
+      'document': serializer.toJson<Map<dynamic, dynamic>?>(documentData),
       'position': serializer.toJson<int>(position),
       'publishedAt': serializer.toJson<String?>(publishedAt),
       'createdAt': serializer.toJson<String>(createdAt),
@@ -4348,8 +4397,8 @@ class Masail extends DataClass implements Insertable<Masail> {
           Value<String?> answer = const Value.absent(),
           String? language,
           bool? hasAudio,
-          Value<String?> audioData = const Value.absent(),
-          Value<String?> documentData = const Value.absent(),
+          Value<Map<dynamic, dynamic>?> audioData = const Value.absent(),
+          Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
           int? position,
           Value<String?> publishedAt = const Value.absent(),
           String? createdAt,
@@ -4432,8 +4481,8 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
   final Value<String?> answer;
   final Value<String> language;
   final Value<bool> hasAudio;
-  final Value<String?> audioData;
-  final Value<String?> documentData;
+  final Value<Map<dynamic, dynamic>?> audioData;
+  final Value<Map<dynamic, dynamic>?> documentData;
   final Value<int> position;
   final Value<String?> publishedAt;
   final Value<String> createdAt;
@@ -4515,8 +4564,8 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
       Value<String?>? answer,
       Value<String>? language,
       Value<bool>? hasAudio,
-      Value<String?>? audioData,
-      Value<String?>? documentData,
+      Value<Map<dynamic, dynamic>?>? audioData,
+      Value<Map<dynamic, dynamic>?>? documentData,
       Value<int>? position,
       Value<String?>? publishedAt,
       Value<String>? createdAt,
@@ -4563,10 +4612,13 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
       map['has_audio'] = Variable<bool>(hasAudio.value);
     }
     if (audioData.present) {
-      map['audio_data'] = Variable<String>(audioData.value);
+      final converter = $MasailsTable.$converter0n;
+      map['audio_data'] = Variable<String>(converter.toSql(audioData.value));
     }
     if (documentData.present) {
-      map['document_data'] = Variable<String>(documentData.value);
+      final converter = $MasailsTable.$converter1n;
+      map['document_data'] =
+          Variable<String>(converter.toSql(documentData.value));
     }
     if (position.present) {
       map['position'] = Variable<int>(position.value);
@@ -4641,13 +4693,15 @@ class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
       defaultConstraints: 'CHECK (has_audio IN (0, 1))',
       defaultValue: const Constant(false));
   @override
-  late final GeneratedColumn<String> audioData = GeneratedColumn<String>(
-      'audio_data', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      audioData = GeneratedColumn<String>('audio_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>($MasailsTable.$converter0n);
   @override
-  late final GeneratedColumn<String> documentData = GeneratedColumn<String>(
-      'document_data', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      documentData = GeneratedColumn<String>('document_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>($MasailsTable.$converter1n);
   @override
   late final GeneratedColumn<int> position = GeneratedColumn<int>(
       'position', aliasedName, false,
@@ -4704,10 +4758,12 @@ class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
           .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
       hasAudio: attachedDatabase.options.types
           .read(DriftSqlType.bool, data['${effectivePrefix}has_audio'])!,
-      audioData: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}audio_data']),
-      documentData: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}document_data']),
+      audioData: $MasailsTable.$converter0n.fromSql(attachedDatabase
+          .options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}audio_data'])),
+      documentData: $MasailsTable.$converter1n.fromSql(attachedDatabase
+          .options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}document_data'])),
       position: attachedDatabase.options.types
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
       publishedAt: attachedDatabase.options.types
@@ -4723,6 +4779,15 @@ class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
   $MasailsTable createAlias(String alias) {
     return $MasailsTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<Map<dynamic, dynamic>, String> $converter0 =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>, String> $converter1 =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter0n =
+      NullAwareTypeConverter.wrap($converter0);
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter1n =
+      NullAwareTypeConverter.wrap($converter1);
 }
 
 class Dua extends DataClass implements Insertable<Dua> {
@@ -4731,8 +4796,8 @@ class Dua extends DataClass implements Insertable<Dua> {
   final String body;
   final String? excerpt;
   final String language;
-  final String? audioData;
-  final String? documentData;
+  final Map<dynamic, dynamic>? audioData;
+  final Map<dynamic, dynamic>? documentData;
   final int position;
   final String createdAt;
   final String updatedAt;
@@ -4758,10 +4823,12 @@ class Dua extends DataClass implements Insertable<Dua> {
     }
     map['language'] = Variable<String>(language);
     if (!nullToAbsent || audioData != null) {
-      map['audio_data'] = Variable<String>(audioData);
+      final converter = $DuasTable.$converter0n;
+      map['audio_data'] = Variable<String>(converter.toSql(audioData));
     }
     if (!nullToAbsent || documentData != null) {
-      map['document_data'] = Variable<String>(documentData);
+      final converter = $DuasTable.$converter1n;
+      map['document_data'] = Variable<String>(converter.toSql(documentData));
     }
     map['position'] = Variable<int>(position);
     map['created_at'] = Variable<String>(createdAt);
@@ -4778,8 +4845,9 @@ class Dua extends DataClass implements Insertable<Dua> {
       body: serializer.fromJson<String>(json['body']),
       excerpt: serializer.fromJson<String?>(json['excerpt']),
       language: serializer.fromJson<String>(json['language']),
-      audioData: serializer.fromJson<String?>(json['audioData']),
-      documentData: serializer.fromJson<String?>(json['documentData']),
+      audioData: serializer.fromJson<Map<dynamic, dynamic>?>(json['audio']),
+      documentData:
+          serializer.fromJson<Map<dynamic, dynamic>?>(json['document']),
       position: serializer.fromJson<int>(json['position']),
       createdAt: serializer.fromJson<String>(json['createdAt']),
       updatedAt: serializer.fromJson<String>(json['updatedAt']),
@@ -4794,8 +4862,8 @@ class Dua extends DataClass implements Insertable<Dua> {
       'body': serializer.toJson<String>(body),
       'excerpt': serializer.toJson<String?>(excerpt),
       'language': serializer.toJson<String>(language),
-      'audioData': serializer.toJson<String?>(audioData),
-      'documentData': serializer.toJson<String?>(documentData),
+      'audio': serializer.toJson<Map<dynamic, dynamic>?>(audioData),
+      'document': serializer.toJson<Map<dynamic, dynamic>?>(documentData),
       'position': serializer.toJson<int>(position),
       'createdAt': serializer.toJson<String>(createdAt),
       'updatedAt': serializer.toJson<String>(updatedAt),
@@ -4808,8 +4876,8 @@ class Dua extends DataClass implements Insertable<Dua> {
           String? body,
           Value<String?> excerpt = const Value.absent(),
           String? language,
-          Value<String?> audioData = const Value.absent(),
-          Value<String?> documentData = const Value.absent(),
+          Value<Map<dynamic, dynamic>?> audioData = const Value.absent(),
+          Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
           int? position,
           String? createdAt,
           String? updatedAt}) =>
@@ -4868,8 +4936,8 @@ class DuasCompanion extends UpdateCompanion<Dua> {
   final Value<String> body;
   final Value<String?> excerpt;
   final Value<String> language;
-  final Value<String?> audioData;
-  final Value<String?> documentData;
+  final Value<Map<dynamic, dynamic>?> audioData;
+  final Value<Map<dynamic, dynamic>?> documentData;
   final Value<int> position;
   final Value<String> createdAt;
   final Value<String> updatedAt;
@@ -4935,8 +5003,8 @@ class DuasCompanion extends UpdateCompanion<Dua> {
       Value<String>? body,
       Value<String?>? excerpt,
       Value<String>? language,
-      Value<String?>? audioData,
-      Value<String?>? documentData,
+      Value<Map<dynamic, dynamic>?>? audioData,
+      Value<Map<dynamic, dynamic>?>? documentData,
       Value<int>? position,
       Value<String>? createdAt,
       Value<String>? updatedAt}) {
@@ -4973,10 +5041,13 @@ class DuasCompanion extends UpdateCompanion<Dua> {
       map['language'] = Variable<String>(language.value);
     }
     if (audioData.present) {
-      map['audio_data'] = Variable<String>(audioData.value);
+      final converter = $DuasTable.$converter0n;
+      map['audio_data'] = Variable<String>(converter.toSql(audioData.value));
     }
     if (documentData.present) {
-      map['document_data'] = Variable<String>(documentData.value);
+      final converter = $DuasTable.$converter1n;
+      map['document_data'] =
+          Variable<String>(converter.toSql(documentData.value));
     }
     if (position.present) {
       map['position'] = Variable<int>(position.value);
@@ -5034,13 +5105,15 @@ class $DuasTable extends Duas with TableInfo<$DuasTable, Dua> {
       'language', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> audioData = GeneratedColumn<String>(
-      'audio_data', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      audioData = GeneratedColumn<String>('audio_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>($DuasTable.$converter0n);
   @override
-  late final GeneratedColumn<String> documentData = GeneratedColumn<String>(
-      'document_data', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      documentData = GeneratedColumn<String>('document_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>($DuasTable.$converter1n);
   @override
   late final GeneratedColumn<int> position = GeneratedColumn<int>(
       'position', aliasedName, false,
@@ -5086,10 +5159,11 @@ class $DuasTable extends Duas with TableInfo<$DuasTable, Dua> {
           .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
       language: attachedDatabase.options.types
           .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
-      audioData: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}audio_data']),
-      documentData: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}document_data']),
+      audioData: $DuasTable.$converter0n.fromSql(attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}audio_data'])),
+      documentData: $DuasTable.$converter1n.fromSql(attachedDatabase
+          .options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}document_data'])),
       position: attachedDatabase.options.types
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
       createdAt: attachedDatabase.options.types
@@ -5103,6 +5177,15 @@ class $DuasTable extends Duas with TableInfo<$DuasTable, Dua> {
   $DuasTable createAlias(String alias) {
     return $DuasTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<Map<dynamic, dynamic>, String> $converter0 =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>, String> $converter1 =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter0n =
+      NullAwareTypeConverter.wrap($converter0);
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter1n =
+      NullAwareTypeConverter.wrap($converter1);
 }
 
 class ArticleAuthor extends DataClass implements Insertable<ArticleAuthor> {
@@ -5372,7 +5455,7 @@ class Article extends DataClass implements Insertable<Article> {
   final String body;
   final String? excerpt;
   final String language;
-  final String? documentData;
+  final Map<dynamic, dynamic>? documentData;
   final int position;
   final String? publishedAt;
   final String createdAt;
@@ -5403,7 +5486,8 @@ class Article extends DataClass implements Insertable<Article> {
     }
     map['language'] = Variable<String>(language);
     if (!nullToAbsent || documentData != null) {
-      map['document_data'] = Variable<String>(documentData);
+      final converter = $ArticlesTable.$converter0n;
+      map['document_data'] = Variable<String>(converter.toSql(documentData));
     }
     map['position'] = Variable<int>(position);
     if (!nullToAbsent || publishedAt != null) {
@@ -5425,7 +5509,8 @@ class Article extends DataClass implements Insertable<Article> {
       body: serializer.fromJson<String>(json['body']),
       excerpt: serializer.fromJson<String?>(json['excerpt']),
       language: serializer.fromJson<String>(json['language']),
-      documentData: serializer.fromJson<String?>(json['documentData']),
+      documentData:
+          serializer.fromJson<Map<dynamic, dynamic>?>(json['document']),
       position: serializer.fromJson<int>(json['position']),
       publishedAt: serializer.fromJson<String?>(json['publishedAt']),
       createdAt: serializer.fromJson<String>(json['createdAt']),
@@ -5443,7 +5528,7 @@ class Article extends DataClass implements Insertable<Article> {
       'body': serializer.toJson<String>(body),
       'excerpt': serializer.toJson<String?>(excerpt),
       'language': serializer.toJson<String>(language),
-      'documentData': serializer.toJson<String?>(documentData),
+      'document': serializer.toJson<Map<dynamic, dynamic>?>(documentData),
       'position': serializer.toJson<int>(position),
       'publishedAt': serializer.toJson<String?>(publishedAt),
       'createdAt': serializer.toJson<String>(createdAt),
@@ -5459,7 +5544,7 @@ class Article extends DataClass implements Insertable<Article> {
           String? body,
           Value<String?> excerpt = const Value.absent(),
           String? language,
-          Value<String?> documentData = const Value.absent(),
+          Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
           int? position,
           Value<String?> publishedAt = const Value.absent(),
           String? createdAt,
@@ -5538,7 +5623,7 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
   final Value<String> body;
   final Value<String?> excerpt;
   final Value<String> language;
-  final Value<String?> documentData;
+  final Value<Map<dynamic, dynamic>?> documentData;
   final Value<int> position;
   final Value<String?> publishedAt;
   final Value<String> createdAt;
@@ -5617,7 +5702,7 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
       Value<String>? body,
       Value<String?>? excerpt,
       Value<String>? language,
-      Value<String?>? documentData,
+      Value<Map<dynamic, dynamic>?>? documentData,
       Value<int>? position,
       Value<String?>? publishedAt,
       Value<String>? createdAt,
@@ -5661,7 +5746,9 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
       map['language'] = Variable<String>(language.value);
     }
     if (documentData.present) {
-      map['document_data'] = Variable<String>(documentData.value);
+      final converter = $ArticlesTable.$converter0n;
+      map['document_data'] =
+          Variable<String>(converter.toSql(documentData.value));
     }
     if (position.present) {
       map['position'] = Variable<int>(position.value);
@@ -5731,9 +5818,10 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
       'language', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> documentData = GeneratedColumn<String>(
-      'document_data', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      documentData = GeneratedColumn<String>('document_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>($ArticlesTable.$converter0n);
   @override
   late final GeneratedColumn<int> position = GeneratedColumn<int>(
       'position', aliasedName, false,
@@ -5793,8 +5881,9 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
           .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
       language: attachedDatabase.options.types
           .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
-      documentData: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}document_data']),
+      documentData: $ArticlesTable.$converter0n.fromSql(attachedDatabase
+          .options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}document_data'])),
       position: attachedDatabase.options.types
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
       publishedAt: attachedDatabase.options.types
@@ -5812,6 +5901,11 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
   $ArticlesTable createAlias(String alias) {
     return $ArticlesTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<Map<dynamic, dynamic>, String> $converter0 =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter0n =
+      NullAwareTypeConverter.wrap($converter0);
 }
 
 class Madrasah extends DataClass implements Insertable<Madrasah> {
@@ -5819,7 +5913,7 @@ class Madrasah extends DataClass implements Insertable<Madrasah> {
   final String title;
   final String introduction;
   final String? excerpt;
-  final String? documentData;
+  final Map<dynamic, dynamic>? documentData;
   final int position;
   final String createdAt;
   final String updatedAt;
@@ -5842,7 +5936,8 @@ class Madrasah extends DataClass implements Insertable<Madrasah> {
       map['excerpt'] = Variable<String>(excerpt);
     }
     if (!nullToAbsent || documentData != null) {
-      map['document_data'] = Variable<String>(documentData);
+      final converter = $MadrasahsTable.$converter0n;
+      map['document_data'] = Variable<String>(converter.toSql(documentData));
     }
     map['position'] = Variable<int>(position);
     map['created_at'] = Variable<String>(createdAt);
@@ -5858,7 +5953,8 @@ class Madrasah extends DataClass implements Insertable<Madrasah> {
       title: serializer.fromJson<String>(json['title']),
       introduction: serializer.fromJson<String>(json['introduction']),
       excerpt: serializer.fromJson<String?>(json['excerpt']),
-      documentData: serializer.fromJson<String?>(json['documentData']),
+      documentData:
+          serializer.fromJson<Map<dynamic, dynamic>?>(json['document']),
       position: serializer.fromJson<int>(json['position']),
       createdAt: serializer.fromJson<String>(json['createdAt']),
       updatedAt: serializer.fromJson<String>(json['updatedAt']),
@@ -5872,7 +5968,7 @@ class Madrasah extends DataClass implements Insertable<Madrasah> {
       'title': serializer.toJson<String>(title),
       'introduction': serializer.toJson<String>(introduction),
       'excerpt': serializer.toJson<String?>(excerpt),
-      'documentData': serializer.toJson<String?>(documentData),
+      'document': serializer.toJson<Map<dynamic, dynamic>?>(documentData),
       'position': serializer.toJson<int>(position),
       'createdAt': serializer.toJson<String>(createdAt),
       'updatedAt': serializer.toJson<String>(updatedAt),
@@ -5884,7 +5980,7 @@ class Madrasah extends DataClass implements Insertable<Madrasah> {
           String? title,
           String? introduction,
           Value<String?> excerpt = const Value.absent(),
-          Value<String?> documentData = const Value.absent(),
+          Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
           int? position,
           String? createdAt,
           String? updatedAt}) =>
@@ -5936,7 +6032,7 @@ class MadrasahsCompanion extends UpdateCompanion<Madrasah> {
   final Value<String> title;
   final Value<String> introduction;
   final Value<String?> excerpt;
-  final Value<String?> documentData;
+  final Value<Map<dynamic, dynamic>?> documentData;
   final Value<int> position;
   final Value<String> createdAt;
   final Value<String> updatedAt;
@@ -5992,7 +6088,7 @@ class MadrasahsCompanion extends UpdateCompanion<Madrasah> {
       Value<String>? title,
       Value<String>? introduction,
       Value<String?>? excerpt,
-      Value<String?>? documentData,
+      Value<Map<dynamic, dynamic>?>? documentData,
       Value<int>? position,
       Value<String>? createdAt,
       Value<String>? updatedAt}) {
@@ -6024,7 +6120,9 @@ class MadrasahsCompanion extends UpdateCompanion<Madrasah> {
       map['excerpt'] = Variable<String>(excerpt.value);
     }
     if (documentData.present) {
-      map['document_data'] = Variable<String>(documentData.value);
+      final converter = $MadrasahsTable.$converter0n;
+      map['document_data'] =
+          Variable<String>(converter.toSql(documentData.value));
     }
     if (position.present) {
       map['position'] = Variable<int>(position.value);
@@ -6077,9 +6175,10 @@ class $MadrasahsTable extends Madrasahs
       'excerpt', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
-  late final GeneratedColumn<String> documentData = GeneratedColumn<String>(
-      'document_data', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      documentData = GeneratedColumn<String>('document_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>($MadrasahsTable.$converter0n);
   @override
   late final GeneratedColumn<int> position = GeneratedColumn<int>(
       'position', aliasedName, false,
@@ -6121,8 +6220,9 @@ class $MadrasahsTable extends Madrasahs
           .read(DriftSqlType.string, data['${effectivePrefix}introduction'])!,
       excerpt: attachedDatabase.options.types
           .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
-      documentData: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}document_data']),
+      documentData: $MadrasahsTable.$converter0n.fromSql(attachedDatabase
+          .options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}document_data'])),
       position: attachedDatabase.options.types
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
       createdAt: attachedDatabase.options.types
@@ -6136,6 +6236,11 @@ class $MadrasahsTable extends Madrasahs
   $MadrasahsTable createAlias(String alias) {
     return $MadrasahsTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<Map<dynamic, dynamic>, String> $converter0 =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter0n =
+      NullAwareTypeConverter.wrap($converter0);
 }
 
 class NamazTime extends DataClass implements Insertable<NamazTime> {
@@ -6430,7 +6535,7 @@ class Page extends DataClass implements Insertable<Page> {
   final String title;
   final String slug;
   final String body;
-  final String? imageData;
+  final Map<dynamic, dynamic>? imageData;
   final String createdAt;
   final String updatedAt;
   const Page(
@@ -6449,7 +6554,8 @@ class Page extends DataClass implements Insertable<Page> {
     map['slug'] = Variable<String>(slug);
     map['body'] = Variable<String>(body);
     if (!nullToAbsent || imageData != null) {
-      map['image_data'] = Variable<String>(imageData);
+      final converter = $PagesTable.$converter0n;
+      map['image_data'] = Variable<String>(converter.toSql(imageData));
     }
     map['created_at'] = Variable<String>(createdAt);
     map['updated_at'] = Variable<String>(updatedAt);
@@ -6464,7 +6570,7 @@ class Page extends DataClass implements Insertable<Page> {
       title: serializer.fromJson<String>(json['title']),
       slug: serializer.fromJson<String>(json['slug']),
       body: serializer.fromJson<String>(json['body']),
-      imageData: serializer.fromJson<String?>(json['imageData']),
+      imageData: serializer.fromJson<Map<dynamic, dynamic>?>(json['image']),
       createdAt: serializer.fromJson<String>(json['createdAt']),
       updatedAt: serializer.fromJson<String>(json['updatedAt']),
     );
@@ -6477,7 +6583,7 @@ class Page extends DataClass implements Insertable<Page> {
       'title': serializer.toJson<String>(title),
       'slug': serializer.toJson<String>(slug),
       'body': serializer.toJson<String>(body),
-      'imageData': serializer.toJson<String?>(imageData),
+      'image': serializer.toJson<Map<dynamic, dynamic>?>(imageData),
       'createdAt': serializer.toJson<String>(createdAt),
       'updatedAt': serializer.toJson<String>(updatedAt),
     };
@@ -6488,7 +6594,7 @@ class Page extends DataClass implements Insertable<Page> {
           String? title,
           String? slug,
           String? body,
-          Value<String?> imageData = const Value.absent(),
+          Value<Map<dynamic, dynamic>?> imageData = const Value.absent(),
           String? createdAt,
           String? updatedAt}) =>
       Page(
@@ -6535,7 +6641,7 @@ class PagesCompanion extends UpdateCompanion<Page> {
   final Value<String> title;
   final Value<String> slug;
   final Value<String> body;
-  final Value<String?> imageData;
+  final Value<Map<dynamic, dynamic>?> imageData;
   final Value<String> createdAt;
   final Value<String> updatedAt;
   const PagesCompanion({
@@ -6586,7 +6692,7 @@ class PagesCompanion extends UpdateCompanion<Page> {
       Value<String>? title,
       Value<String>? slug,
       Value<String>? body,
-      Value<String?>? imageData,
+      Value<Map<dynamic, dynamic>?>? imageData,
       Value<String>? createdAt,
       Value<String>? updatedAt}) {
     return PagesCompanion(
@@ -6616,7 +6722,8 @@ class PagesCompanion extends UpdateCompanion<Page> {
       map['body'] = Variable<String>(body.value);
     }
     if (imageData.present) {
-      map['image_data'] = Variable<String>(imageData.value);
+      final converter = $PagesTable.$converter0n;
+      map['image_data'] = Variable<String>(converter.toSql(imageData.value));
     }
     if (createdAt.present) {
       map['created_at'] = Variable<String>(createdAt.value);
@@ -6664,9 +6771,10 @@ class $PagesTable extends Pages with TableInfo<$PagesTable, Page> {
       'body', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> imageData = GeneratedColumn<String>(
-      'image_data', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      imageData = GeneratedColumn<String>('image_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>($PagesTable.$converter0n);
   @override
   late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
@@ -6696,8 +6804,8 @@ class $PagesTable extends Pages with TableInfo<$PagesTable, Page> {
           .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
       body: attachedDatabase.options.types
           .read(DriftSqlType.string, data['${effectivePrefix}body'])!,
-      imageData: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}image_data']),
+      imageData: $PagesTable.$converter0n.fromSql(attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}image_data'])),
       createdAt: attachedDatabase.options.types
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.options.types
@@ -6709,6 +6817,11 @@ class $PagesTable extends Pages with TableInfo<$PagesTable, Page> {
   $PagesTable createAlias(String alias) {
     return $PagesTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<Map<dynamic, dynamic>, String> $converter0 =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter0n =
+      NullAwareTypeConverter.wrap($converter0);
 }
 
 abstract class _$LocalDatabase extends GeneratedDatabase {

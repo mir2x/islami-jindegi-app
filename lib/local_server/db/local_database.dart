@@ -6,6 +6,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:path/path.dart' as p;
 import 'package:collection/collection.dart';
 import 'tables/index.dart';
+import 'types/file_data.dart';
 
 part 'local_database.g.dart';
 

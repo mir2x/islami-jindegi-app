@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'article_authors.dart';
+import '../types/file_data.dart';
 
 class Articles extends Table {
   TextColumn get id => text()();
@@ -8,7 +9,10 @@ class Articles extends Table {
   TextColumn get body => text()();
   TextColumn get excerpt => text().nullable()();
   TextColumn get language => text()();
-  TextColumn get documentData => text().nullable()();
+
+  @JsonKey('document')
+  TextColumn get documentData => text().map(const FileData()).nullable()();
+
   IntColumn get position => integer()();
   TextColumn get publishedAt => text().nullable()();
   TextColumn get createdAt => text()();
