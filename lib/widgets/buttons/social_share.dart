@@ -20,7 +20,7 @@ class SocialShare extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const appLink =
-        'https://play.google.com/store/apps/details?id=com.islami_jindegi';
+        'https://play.google.com/store/apps/details?id=com.islamidars';
 
     return IconButton(
       icon: const Icon(Icons.ios_share_rounded),

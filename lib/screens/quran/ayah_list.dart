@@ -78,7 +78,6 @@ class AyahList extends ConsumerWidget {
                     child: Container(
                       padding: const EdgeInsets.only(
                         left: 15,
-                        right: 15,
                         bottom: 30,
                       ),
                       child: InfiniteList(

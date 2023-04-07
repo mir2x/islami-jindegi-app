@@ -88,7 +88,7 @@ class AppScaffold extends StatelessWidget {
                     ],
                     onSelected: (int item) {
                       const appLink =
-                          'https://play.google.com/store/apps/details?id=com.islami_jindegi';
+                          'https://play.google.com/store/apps/details?id=com.islamidars';
 
                       switch (item) {
                         case 0:
@@ -106,7 +106,7 @@ class AppScaffold extends StatelessWidget {
                           break;
                         case 4:
                           final Uri url = Uri.parse(
-                            'https://apps.apple.com/us/app/islami-jindegi/id1271205014',
+                            'https://apps.apple.com/us/app/islamidars/id6447244518',
                           );
                           launchUrl(url);
                           break;

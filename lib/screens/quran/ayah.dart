@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter/services.dart';
+import 'package:native_app/helpers/contextual_translation.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/widgets/audio/qirat.dart';
 import 'package:native_app/theme/colors.dart';
@@ -21,6 +25,7 @@ class Ayah extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
     var numFormatter = NumberFormat('#', currentLang);
     var textTheme = Theme.of(context).textTheme;
@@ -31,7 +36,7 @@ class Ayah extends ConsumerWidget {
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
@@ -67,7 +72,7 @@ class Ayah extends ConsumerWidget {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.only(left: 15),
+                margin: const EdgeInsets.only(left: 10),
                 child: Column(
                   children: [
                     SizedBox(
@@ -103,13 +108,67 @@ class Ayah extends ConsumerWidget {
                   ],
                 ),
               ),
+              PopupMenuButton<int>(
+                child: const SizedBox(
+                  height: 40,
+                  width: 40,
+                  child: Icon(Icons.more_vert),
+                ),
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                  /* PopupMenuItem<int>( */
+                  /*   value: 0, */
+                  /*   child: Text(locales.bookmark), */
+                  /* ), */
+                  PopupMenuItem<int>(
+                    value: 1,
+                    child: Text(locales.copyAyah),
+                  ),
+                  PopupMenuItem<int>(
+                    value: 2,
+                    child: Text(locales.share),
+                  ),
+                ],
+                onSelected: (int item) async {
+                  switch (item) {
+                    case 1:
+                      await Clipboard.setData(ClipboardData(text: ayah.title));
+                      break;
+                    case 2:
+                      String chapterTitle = contextualTranslation(
+                        locale: currentLang,
+                        enText: chapter.title,
+                        bnText: chapter.titleBn,
+                      );
+
+                      String ayahPosition = numFormatter.format(
+                        ayah.surahPosition,
+                      );
+
+                      var text = ayah.title;
+
+                      if (ayah.ayahTranslations.first.body != null) {
+                        text += '\n\n${ayah.ayahTranslations.first.body}';
+                      }
+
+                      text += '\n\n$chapterTitle - $ayahPosition';
+
+                      await Clipboard.setData(ClipboardData(text: text));
+
+                      Share.share(
+                        text,
+                        subject: '$chapterTitle - $ayahPosition',
+                      );
+                      break;
+                  }
+                },
+              ),
             ],
           ),
           if (qSettings.containsKey('translation') &&
               qSettings['translation'] &&
               ayah.ayahTranslations.first != null) ...[
             Container(
-              margin: const EdgeInsets.only(top: 10),
+              margin: const EdgeInsets.only(top: 10, right: 15),
               child: Text(ayah.ayahTranslations.first.body),
             ),
           ],
