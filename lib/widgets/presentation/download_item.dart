@@ -1,4 +1,4 @@
-import 'dart:io' show File, Platform;
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +9,7 @@ import 'package:open_file/open_file.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/providers/connectivity_result.dart';
+import 'package:native_app/providers/local_file.dart';
 import 'package:native_app/objects/downloader.dart';
 import 'package:native_app/theme/colors.dart';
 import 'description_item.dart';
@@ -34,8 +35,8 @@ class DownloadItem extends ConsumerWidget {
     return checkDownloadedFile.when(
       loading: () => const CircularProgressIndicator(),
       error: (error, stackTrace) => Text(error.toString()),
-      data: (isFileExists) {
-        if (isFileExists) {
+      data: (isDownloaded) {
+        if (isDownloaded) {
           return DescriptionItem(
             title: '${locales.downloaded}:',
             description: Container(
@@ -75,21 +76,15 @@ class DownloadItem extends ConsumerWidget {
                       iconSize: 30,
                       color: Colors.red,
                       onPressed: () async {
-                        var downloadDir = Platform.isAndroid
-                            ? await getExternalStorageDirectory()
-                            : await getApplicationSupportDirectory();
+                        var localFile = await ref.read(
+                          localFileProvider(filePath).future,
+                        );
 
-                        if (downloadDir != null) {
-                          var localFile = File(
-                            p.join(downloadDir.path, filePath),
-                          );
-
-                          if (await localFile.exists()) {
-                            await localFile.delete();
-                            await ref
-                                .read(checkFileProvider.notifier)
-                                .check(filePath);
-                          }
+                        if (localFile != null) {
+                          await localFile.delete();
+                          await ref
+                              .read(checkFileProvider.notifier)
+                              .check(filePath);
                         }
                       },
                     ),

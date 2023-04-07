@@ -1,7 +1,5 @@
-import 'dart:io' show File, Platform;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
+import 'local_file.dart';
 
 class CheckDownloadedFileNotifier extends FamilyAsyncNotifier<bool, String> {
   @override
@@ -14,19 +12,8 @@ class CheckDownloadedFileNotifier extends FamilyAsyncNotifier<bool, String> {
   }
 
   Future<bool> _checkFile(String path) async {
-    var downloadDir = Platform.isAndroid
-        ? await getExternalStorageDirectory()
-        : await getApplicationSupportDirectory();
-    bool result;
-
-    if (downloadDir != null) {
-      final localFile = File(p.join(downloadDir.path, path));
-      result = await localFile.exists();
-    } else {
-      result = false;
-    }
-
-    return result;
+    var localFile = await ref.read(localFileProvider(path).future);
+    return localFile != null;
   }
 }
 

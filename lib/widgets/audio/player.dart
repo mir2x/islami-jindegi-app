@@ -33,8 +33,11 @@ class AudioPlayerWidget extends ConsumerWidget {
           var audioPlayer = ref.watch(audioPlayerProvider(audioSource));
 
           return audioPlayer.when(
-            loading: () => const Center(
-              child: CircularProgressIndicator(),
+            loading: () => Center(
+              child: Container(
+                margin: const EdgeInsets.all(54),
+                child: const CircularProgressIndicator(),
+              ),
             ),
             error: (error, _) => Text(error.toString()),
             data: (player) {
@@ -45,7 +48,32 @@ class AudioPlayerWidget extends ConsumerWidget {
             },
           );
         } else {
-          return const ConnectToInternet();
+          var audioPlayer = ref.watch(localAudioPlayerProvider(audioSource));
+
+          return audioPlayer.when(
+            loading: () => Center(
+              child: Container(
+                margin: const EdgeInsets.all(54),
+                child: const CircularProgressIndicator(),
+              ),
+            ),
+            error: (error, _) => Text(error.toString()),
+            data: (player) {
+              if (player != null) {
+                return StatefulAudioPlayer(
+                  player: player,
+                  audio: audio,
+                );
+              } else {
+                return Center(
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 27, bottom: 26),
+                    child: const ConnectToInternet(),
+                  ),
+                );
+              }
+            },
+          );
         }
       },
     );
