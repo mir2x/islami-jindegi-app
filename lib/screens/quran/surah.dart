@@ -4,8 +4,8 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/first_model.dart';
 import 'package:native_app/objects/all_models_query.dart';
+import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
-import 'package:native_app/widgets/utils/full_screen.dart';
 import 'ayah_list.dart';
 
 class Surah extends ConsumerWidget {
@@ -24,7 +24,11 @@ class Surah extends ConsumerWidget {
     var modelQuery = ref.watch(firstModelProvider(query));
 
     return modelQuery.when(
-      loading: () => const FullScreen(),
+      loading: () {
+        return const PlaceholderScaffold(
+          body: SizedBox.shrink(),
+        );
+      },
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (surah) {
         return AyahList(

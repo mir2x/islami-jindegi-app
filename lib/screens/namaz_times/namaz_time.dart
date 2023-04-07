@@ -5,8 +5,8 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/main.data.dart';
+import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
-import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
@@ -31,7 +31,13 @@ class NamazTime extends ConsumerWidget {
     var modelQuery = ref.watch(allModelsProvider(query));
 
     return modelQuery.when(
-      loading: () => const FullScreenLoader(),
+      loading: () {
+        return const PlaceholderScaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resources) {
         var item = resources[0];
