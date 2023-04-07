@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flutter/services.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/widgets/audio/qirat.dart';
 
@@ -16,11 +17,13 @@ class Ayah extends ConsumerWidget {
     required this.ayah,
     required this.chapter,
     required this.preferences,
+    required this.fontSizeRatio,
   });
 
   final dynamic ayah;
   final dynamic chapter;
   final dynamic preferences;
+  final FontSizeRatio fontSizeRatio;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,15 +39,21 @@ class Ayah extends ConsumerWidget {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: InkWell(
                   onTap: () => QR.to('quran/tafseers/${ayah.id}'),
-                  child: Text(
-                    ayah.title,
-                    textDirection: TextDirection.rtl,
-                    style: textTheme.headlineMedium,
+                  child: ValueListenableBuilder<double>(
+                    valueListenable: fontSizeRatio,
+                    builder: (context, ratio, child) {
+                      return Text(
+                        ayah.title,
+                        textDirection: TextDirection.rtl,
+                        style: textTheme.headlineMedium?.copyWith(
+                          fontSize: 20 * ratio,
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
@@ -145,8 +154,19 @@ class Ayah extends ConsumerWidget {
               qSettings['translation'] &&
               ayah.ayahTranslations.first != null) ...[
             Container(
+              width: double.infinity,
               margin: const EdgeInsets.only(top: 10, right: 15),
-              child: Text(ayah.ayahTranslations.first.body),
+              child: ValueListenableBuilder<double>(
+                valueListenable: fontSizeRatio,
+                builder: (context, ratio, child) {
+                  return Text(
+                    ayah.ayahTranslations.first.body,
+                    style: textTheme.labelMedium?.copyWith(
+                      fontSize: 16 * ratio,
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ],

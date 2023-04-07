@@ -7,6 +7,9 @@ import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
+import 'package:native_app/objects/font_size_ratio.dart';
+import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/theme/colors.dart';
 import 'bismillah.dart';
 import 'bismillah_tafseer.dart';
@@ -26,6 +29,7 @@ class AyahList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     String currentLang = Localizations.localeOf(context).languageCode;
+    var fontSizeRatio = FontSizeRatio();
     var prefs = ref.watch(preferencesProvider);
 
     return AppScaffold(
@@ -99,6 +103,7 @@ class AyahList extends ConsumerWidget {
                             ayah: ayah,
                             chapter: chapter,
                             preferences: preferences,
+                            fontSizeRatio: fontSizeRatio,
                           );
                         },
                       ),
@@ -154,6 +159,15 @@ class AyahList extends ConsumerWidget {
                 },
               ),
             ),
+          ),
+        ],
+      ),
+      bottomBar: BottomBar(
+        children: [
+          Row(
+            children: [
+              FontResizer(fontSizeRatio: fontSizeRatio),
+            ],
           ),
         ],
       ),
