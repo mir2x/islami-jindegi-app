@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
@@ -14,7 +16,6 @@ import 'package:native_app/theme/colors.dart';
 import 'bismillah.dart';
 import 'bismillah_tafseer.dart';
 import 'ayah.dart';
-import 'settings.dart';
 
 class AyahList extends ConsumerWidget {
   const AyahList({
@@ -28,7 +29,9 @@ class AyahList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
+    var textTheme = Theme.of(context).textTheme;
     var fontSizeRatio = FontSizeRatio();
     var prefs = ref.watch(preferencesProvider);
 
@@ -113,62 +116,19 @@ class AyahList extends ConsumerWidget {
               );
             },
           ),
-          Positioned(
-            bottom: 30,
-            right: 0,
-            child: Container(
-              padding: const EdgeInsets.only(
-                top: 5,
-                bottom: 5,
-                left: 7,
-                right: 2,
-              ),
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  bottomLeft: Radius.circular(30),
-                ),
-                color: Colors.white,
-              ),
-              child: IconButton(
-                iconSize: 40,
-                icon: const Icon(Icons.settings),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      double screenWidth = MediaQuery.of(context).size.width;
-                      double screenHeight = MediaQuery.of(context).size.height;
-
-                      return Dialog(
-                        backgroundColor: ThemeColors.color1,
-                        child: Container(
-                          width: screenWidth,
-                          height: screenHeight * 0.6,
-                          padding: const EdgeInsets.only(
-                            top: 15,
-                            bottom: 25,
-                            left: 15,
-                            right: 15,
-                          ),
-                          child: const QuranSettings(),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-          ),
         ],
       ),
       bottomBar: BottomBar(
+        alignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              FontResizer(fontSizeRatio: fontSizeRatio),
-            ],
+          TextButton(
+            child: Text(
+              locales.settings,
+              style: textTheme.titleMedium,
+            ),
+            onPressed: () => QR.to('quran/settings'),
           ),
+          FontResizer(fontSizeRatio: fontSizeRatio),
         ],
       ),
     );

@@ -5,6 +5,8 @@ import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
+import 'package:native_app/widgets/layouts/app_scaffold.dart';
+import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/buttons/dropdown.dart';
 import 'package:native_app/widgets/presentation/section_title.dart';
 
@@ -39,101 +41,104 @@ class QuranSettings extends ConsumerWidget {
     String? selectedQari =
         qSettings.containsKey('qari') ? qSettings['qari'] : null;
 
-    return Column(
-      children: [
-        Container(
-          margin: const EdgeInsets.only(bottom: 40, top: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SectionTitle(title: locales.ayahTranslations),
-              Dropdown(
-                items: translationOptions,
-                selectedValue: selectedTranslationOption,
-                updateItem: (value) {
-                  qNotifier.updateSettings('translation', value!);
-                },
-              ),
-            ],
+    return AppScaffold(
+      title: Text('${locales.quran} ${locales.settings}'),
+      body: ItemContent(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 40, top: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SectionTitle(title: locales.ayahTranslations),
+                Dropdown(
+                  items: translationOptions,
+                  selectedValue: selectedTranslationOption,
+                  updateItem: (value) {
+                    qNotifier.updateSettings('translation', value!);
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(bottom: 40, top: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SectionTitle(title: locales.tafseerQitabs),
-              qitabQuery.when(
-                loading: () {
-                  return Center(
-                    child: Container(
-                      width: 20,
-                      height: 20,
-                      margin: const EdgeInsets.only(top: 10),
-                      child: const CircularProgressIndicator(),
-                    ),
-                  );
-                },
-                error: (error, _) => Text(error.toString()),
-                data: (resources) {
-                  var qitabs = resources
-                      .map<Map<String, String>>(
-                        (r) => {'label': r.title, 'value': r.id},
-                      )
-                      .toList();
+          Container(
+            margin: const EdgeInsets.only(bottom: 40, top: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SectionTitle(title: locales.tafseerQitabs),
+                qitabQuery.when(
+                  loading: () {
+                    return Center(
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        margin: const EdgeInsets.only(top: 10),
+                        child: const CircularProgressIndicator(),
+                      ),
+                    );
+                  },
+                  error: (error, _) => Text(error.toString()),
+                  data: (resources) {
+                    var qitabs = resources
+                        .map<Map<String, String>>(
+                          (r) => {'label': r.title, 'value': r.id},
+                        )
+                        .toList();
 
-                  return Dropdown(
-                    items: qitabs,
-                    selectedValue: selectedQitab,
-                    allowClear: true,
-                    updateItem: (value) {
-                      qNotifier.updateSettings('qitab', value!);
-                    },
-                  );
-                },
-              ),
-            ],
+                    return Dropdown(
+                      items: qitabs,
+                      selectedValue: selectedQitab,
+                      allowClear: true,
+                      updateItem: (value) {
+                        qNotifier.updateSettings('qitab', value!);
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(bottom: 40, top: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SectionTitle(title: locales.qaris),
-              qariQuery.when(
-                loading: () {
-                  return Center(
-                    child: Container(
-                      width: 20,
-                      height: 20,
-                      margin: const EdgeInsets.only(top: 10),
-                      child: const CircularProgressIndicator(),
-                    ),
-                  );
-                },
-                error: (error, _) => Text(error.toString()),
-                data: (resources) {
-                  var qaris = resources
-                      .map<Map<String, String>>(
-                        (r) => {'label': r.name, 'value': r.slug},
-                      )
-                      .toList();
+          Container(
+            margin: const EdgeInsets.only(bottom: 40, top: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SectionTitle(title: locales.qaris),
+                qariQuery.when(
+                  loading: () {
+                    return Center(
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        margin: const EdgeInsets.only(top: 10),
+                        child: const CircularProgressIndicator(),
+                      ),
+                    );
+                  },
+                  error: (error, _) => Text(error.toString()),
+                  data: (resources) {
+                    var qaris = resources
+                        .map<Map<String, String>>(
+                          (r) => {'label': r.name, 'value': r.slug},
+                        )
+                        .toList();
 
-                  return Dropdown(
-                    items: qaris,
-                    selectedValue: selectedQari,
-                    allowClear: true,
-                    updateItem: (value) {
-                      qNotifier.updateSettings('qari', value!);
-                    },
-                  );
-                },
-              ),
-            ],
+                    return Dropdown(
+                      items: qaris,
+                      selectedValue: selectedQari,
+                      allowClear: true,
+                      updateItem: (value) {
+                        qNotifier.updateSettings('qari', value!);
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
