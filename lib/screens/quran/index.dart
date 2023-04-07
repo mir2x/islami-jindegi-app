@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:intl/intl.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/filter/switch_button.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
@@ -40,6 +41,7 @@ class QuranState extends ConsumerState<Quran> {
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
+    var numFormatter = NumberFormat('#', currentLang);
     var textTheme = Theme.of(context).textTheme;
     var connectivity = ref.watch(connectivityResultProvider);
 
@@ -123,13 +125,22 @@ class QuranState extends ConsumerState<Quran> {
                         return InkWell(
                           onTap: () => QR.to('quran/surah/${item.slug}'),
                           child: ListItem(
-                            item: Text(
-                              contextualTranslation(
-                                locale: currentLang,
-                                enText: item.title,
-                                bnText: item.titleBn,
-                              ),
-                              style: textTheme.titleMedium,
+                            item: Row(
+                              children: [
+                                Text(
+                                  '${numFormatter.format(item.position)}.',
+                                  style: textTheme.titleMedium,
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  contextualTranslation(
+                                    locale: currentLang,
+                                    enText: item.title,
+                                    bnText: item.titleBn,
+                                  ),
+                                  style: textTheme.titleMedium,
+                                ),
+                              ],
                             ),
                           ),
                         );
