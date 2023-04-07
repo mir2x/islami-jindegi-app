@@ -6,6 +6,7 @@ import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/preferences.dart';
+import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
@@ -34,6 +35,7 @@ class AyahList extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
     var fontSizeRatio = FontSizeRatio();
     var prefs = ref.watch(preferencesProvider);
+    var qSettings = ref.watch(quranSettingsProvider);
 
     return AppScaffold(
       title: Text(
@@ -122,13 +124,52 @@ class AyahList extends ConsumerWidget {
         alignment: MainAxisAlignment.spaceBetween,
         children: [
           TextButton(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (qSettings.containsKey('translation') &&
+                    qSettings['translation']) ...[
+                  const Icon(
+                    Icons.check_box,
+                    color: ThemeColors.color4,
+                    size: 20,
+                  ),
+                ] else ...[
+                  const Icon(
+                    Icons.check_box_outline_blank,
+                    color: ThemeColors.color4,
+                    size: 20,
+                  ),
+                ],
+                Container(
+                  margin: const EdgeInsets.only(left: 4, bottom: 1),
+                  child: Text(
+                    locales.translation,
+                    style: textTheme.labelMedium,
+                  ),
+                )
+              ],
+            ),
+            onPressed: () {
+              bool selectedTranslationOption =
+                  qSettings.containsKey('translation')
+                      ? qSettings['translation']
+                      : false;
+
+              ref.read(quranSettingsProvider.notifier).updateSettings(
+                    'translation',
+                    !selectedTranslationOption,
+                  );
+            },
+          ),
+          FontResizer(fontSizeRatio: fontSizeRatio),
+          TextButton(
             child: Text(
               locales.settings,
               style: textTheme.titleMedium,
             ),
             onPressed: () => QR.to('quran/settings'),
           ),
-          FontResizer(fontSizeRatio: fontSizeRatio),
         ],
       ),
     );

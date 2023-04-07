@@ -19,11 +19,6 @@ class QuranSettings extends ConsumerWidget {
     var qSettings = ref.watch(quranSettingsProvider);
     var qNotifier = ref.read(quranSettingsProvider.notifier);
 
-    List<Map<String, dynamic>> translationOptions = [
-      {'label': locales.display, 'value': true},
-      {'label': locales.dontDisplay, 'value': false}
-    ];
-
     var qitabQuery = ref.watch(
       allModelsProvider(AllModelsQuery(repository: ref.tafseerQitabs)),
     );
@@ -31,9 +26,6 @@ class QuranSettings extends ConsumerWidget {
     var qariQuery = ref.watch(
       allModelsProvider(AllModelsQuery(repository: ref.qaris)),
     );
-
-    bool selectedTranslationOption =
-        qSettings.containsKey('translation') ? qSettings['translation'] : false;
 
     String? selectedQitab =
         qSettings.containsKey('qitab') ? qSettings['qitab'] : null;
@@ -45,22 +37,6 @@ class QuranSettings extends ConsumerWidget {
       title: Text('${locales.quran} ${locales.settings}'),
       body: ItemContent(
         children: [
-          Container(
-            margin: const EdgeInsets.only(bottom: 40, top: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SectionTitle(title: locales.ayahTranslations),
-                Dropdown(
-                  items: translationOptions,
-                  selectedValue: selectedTranslationOption,
-                  updateItem: (value) {
-                    qNotifier.updateSettings('translation', value!);
-                  },
-                ),
-              ],
-            ),
-          ),
           Container(
             margin: const EdgeInsets.only(bottom: 40, top: 10),
             child: Column(
