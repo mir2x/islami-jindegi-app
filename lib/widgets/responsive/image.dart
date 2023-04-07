@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:collection/collection.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:native_app/providers/connectivity_result.dart';
 import 'package:native_app/settings/image.dart';
 import 'package:native_app/theme/colors.dart';
 
-class ResponsiveImage extends StatelessWidget {
+class ResponsiveImage extends ConsumerWidget {
   const ResponsiveImage({
     super.key,
     required this.image,
@@ -21,7 +24,7 @@ class ResponsiveImage extends StatelessWidget {
   final Map<String, int> vwset;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     double screenWidth = MediaQuery.of(context).size.width;
     double vwsetWidth = screenWidth * (vwset['xs']! / 100);
 
@@ -29,20 +32,39 @@ class ResponsiveImage extends StatelessWidget {
       String? selectedWidth = selectWidth(image, vwsetWidth);
 
       if (selectedWidth != null) {
-        Map<String, dynamic> metadata = getImageMetadata(image, model, attr);
+        var connectivity = ref.watch(connectivityResultProvider);
 
-        Map<String, dynamic> img = image[selectedWidth];
-        String imageSrc =
-            "${dotenv.env['STATIC_HOST_NAME']}/uploads/${img['storage']}/${img['id']}";
+        return connectivity.when(
+          loading: () => const CircularProgressIndicator(),
+          error: (error, stackTrace) => Text(error.toString()),
+          data: (connectivityResult) {
+            if (connectivityResult != ConnectivityResult.none) {
+              Map<String, dynamic> metadata = getImageMetadata(
+                image,
+                model,
+                attr,
+              );
 
-        return AspectRatio(
-          aspectRatio: metadata['width']! / metadata['height']!,
-          child: CachedNetworkImage(
-            imageUrl: imageSrc,
-            placeholder: (context, url) => Image.memory(kTransparentImage),
-            fit: BoxFit.fill,
-            fadeInDuration: const Duration(milliseconds: 150),
-          ),
+              Map<String, dynamic> img = image[selectedWidth];
+              String staticHostName = dotenv.env['STATIC_HOST_NAME']!;
+              String imageSrc =
+                  "$staticHostName/uploads/${img['storage']}/${img['id']}";
+
+              return AspectRatio(
+                aspectRatio: metadata['width']! / metadata['height']!,
+                child: CachedNetworkImage(
+                  imageUrl: imageSrc,
+                  placeholder: (context, url) {
+                    return Image.memory(kTransparentImage);
+                  },
+                  fit: BoxFit.fill,
+                  fadeInDuration: const Duration(milliseconds: 150),
+                ),
+              );
+            } else {
+              return displayPlaceHolder(model, attr);
+            }
+          },
         );
       } else {
         return displayPlaceHolder(model, attr);
