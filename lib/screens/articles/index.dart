@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/main.data.dart';
-import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/objects/all_models_query.dart';
@@ -28,7 +28,7 @@ class Articles extends ConsumerWidget {
     var qParams = ref.watch(queryParamsProvider);
     final connectivity = ref.watch(connectivityResultProvider);
 
-    return MyScaffold(
+    return AppScaffold(
       title: Text(locales.articles),
       body: Column(
         children: [

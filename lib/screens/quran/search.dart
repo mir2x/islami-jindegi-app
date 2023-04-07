@@ -6,7 +6,7 @@ import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
-import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 
@@ -19,7 +19,7 @@ class QuranSearch extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(queryParamsProvider);
 
-    return MyScaffold(
+    return AppScaffold(
       title: Text(locales.searchInQuran),
       body: Column(
         children: [

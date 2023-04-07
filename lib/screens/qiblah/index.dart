@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smooth_compass/utils/src/compass_ui.dart';
 import 'package:adhan/adhan.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/geolocation.dart';
 
 class Qiblah extends ConsumerWidget {
@@ -16,7 +16,7 @@ class Qiblah extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
     var geoData = ref.watch(geolocationProvider);
 
-    return MyScaffold(
+    return AppScaffold(
       title: Text(locales.qiblah),
       body: Container(
         margin: const EdgeInsets.only(

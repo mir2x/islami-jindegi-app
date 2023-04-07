@@ -5,7 +5,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/filter/switch_button.dart';
-import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/connectivity_result.dart';
@@ -43,7 +43,7 @@ class QuranState extends ConsumerState<Quran> {
     var textTheme = Theme.of(context).textTheme;
     var connectivity = ref.watch(connectivityResultProvider);
 
-    return MyScaffold(
+    return AppScaffold(
       title: Text(locales.quran),
       body: Column(
         children: [

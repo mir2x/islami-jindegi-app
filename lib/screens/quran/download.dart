@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/widgets/image/static_image.dart';
-import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/presentation/description_item.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
@@ -17,7 +17,7 @@ class QuranDownload extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
     String assetPath = 'al-quran/qitabs/al-quran-kolkata.pdf';
 
-    return MyScaffold(
+    return AppScaffold(
       title: Text(locales.quranInPdf),
       body: ItemContent(
         children: [

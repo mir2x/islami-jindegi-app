@@ -5,7 +5,7 @@ import 'package:adhan/adhan.dart';
 import 'package:native_app/screens/namaz_times/settings.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/calendar/hijri_date.dart';
@@ -21,7 +21,7 @@ class NamazTimes extends ConsumerWidget {
     String currentLang = Localizations.localeOf(context).languageCode;
     var dataP = ref.watch(preferencesAndGeolocationProvider);
 
-    return MyScaffold(
+    return AppScaffold(
       title: Text(locales.namazTime),
       body: ItemContent(
         children: [

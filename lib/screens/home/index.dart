@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/calendar/hijri_date.dart';
 import 'package:native_app/widgets/calendar/bangali_date.dart';
 import 'package:native_app/widgets/calendar/gregorian_date.dart';
@@ -16,7 +16,7 @@ class Home extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     var locales = AppLocalizations.of(context)!;
 
-    return MyScaffold(
+    return AppScaffold(
       isHome: true,
       title: Text(locales.siteFullName),
       body: SingleChildScrollView(

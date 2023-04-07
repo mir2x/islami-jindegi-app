@@ -5,8 +5,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 
-class MyScaffold extends StatelessWidget {
-  const MyScaffold({
+class AppScaffold extends StatelessWidget {
+  const AppScaffold({
     super.key,
     required this.title,
     required this.body,

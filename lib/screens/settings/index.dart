@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:collection/collection.dart';
 import 'package:native_app/providers/preferences.dart';
-import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/section_title.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
@@ -45,7 +45,7 @@ class Settings extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var prefs = ref.watch(preferencesProvider);
 
-    return MyScaffold(
+    return AppScaffold(
       title: Text(locales.settings),
       body: prefs.when(
         loading: () => const FullScreenLoader(),

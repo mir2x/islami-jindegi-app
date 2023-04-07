@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
-import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/widgets/layouts/app_scaffold.dart';
 
 class ErrorPage extends StatelessWidget {
   const ErrorPage({
@@ -18,7 +18,7 @@ class ErrorPage extends StatelessWidget {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
 
-    return MyScaffold(
+    return AppScaffold(
       title: Text(title),
       body: Container(
         padding: const EdgeInsets.all(25),

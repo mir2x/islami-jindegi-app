@@ -5,7 +5,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/objects/single_model_query.dart';
-import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/description_item.dart';
@@ -42,7 +42,7 @@ class Bayan extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
-        return MyScaffold(
+        return AppScaffold(
           title: Text(resource.title),
           body: ItemContent(
             children: [

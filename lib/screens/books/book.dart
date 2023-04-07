@@ -10,7 +10,7 @@ import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
-import 'package:native_app/widgets/layouts/scaffold.dart';
+import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/description_item.dart';
@@ -46,7 +46,7 @@ class Book extends ConsumerWidget {
 
         var chapterQuery = ref.watch(allModelsProvider(cQuery));
 
-        return MyScaffold(
+        return AppScaffold(
           title: Text(book.title),
           body: chapterQuery.when(
             loading: () => const SizedBox.shrink(),
