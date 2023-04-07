@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:native_app/providers/connectivity_result.dart';
 import 'package:native_app/providers/qirat_player.dart';
 
 class Qirat extends ConsumerWidget {
@@ -20,20 +22,31 @@ class Qirat extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    String src =
-        '${dotenv.env['STATIC_HOST_NAME']}/assets/al-quran/qirats/$qari/${surah.position}/${ayah.surahPosition}.mp3';
+    var connectivity = ref.watch(connectivityResultProvider);
 
-    var audioPlayer = ref.watch(qiratPlayerProvider(src));
+    return connectivity.when(
+      loading: () => const CircularProgressIndicator(),
+      error: (error, stackTrace) => Text(error.toString()),
+      data: (connectivityResult) {
+        if (connectivityResult != ConnectivityResult.none) {
+          String staticHostName = dotenv.env['STATIC_HOST_NAME']!;
+          String src =
+              '$staticHostName/assets/al-quran/qirats/$qari/${surah.position}/${ayah.surahPosition}.mp3';
 
-    return audioPlayer.when(
-      loading: () => const Center(
-        child: Icon(Icons.play_disabled, size: 30),
-      ),
-      error: (error, _) {
-        return const Icon(Icons.play_disabled, size: 30);
-      },
-      data: (player) {
-        return StatefulQiratPlayer(player: player);
+          var audioPlayer = ref.watch(qiratPlayerProvider(src));
+
+          return audioPlayer.when(
+            loading: () => const Icon(Icons.play_disabled, size: 30),
+            error: (error, _) {
+              return const Icon(Icons.play_disabled, size: 30);
+            },
+            data: (player) {
+              return StatefulQiratPlayer(player: player);
+            },
+          );
+        } else {
+          return const Icon(Icons.play_disabled, size: 30);
+        }
       },
     );
   }
