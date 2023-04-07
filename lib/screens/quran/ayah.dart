@@ -38,7 +38,7 @@ class Ayah extends ConsumerWidget {
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: InkWell(
@@ -132,7 +132,7 @@ class Ayah extends ConsumerWidget {
 
                       var text = ayah.title;
 
-                      if (ayah.ayahTranslations.first.body != null) {
+                      if (ayah.ayahTranslations.isNotEmpty) {
                         text += '\n\n${ayah.ayahTranslations.first.body}';
                       }
 
@@ -152,7 +152,7 @@ class Ayah extends ConsumerWidget {
           ),
           if (qSettings.containsKey('translation') &&
               qSettings['translation'] &&
-              ayah.ayahTranslations.first != null) ...[
+              ayah.ayahTranslations.isNotEmpty) ...[
             Container(
               width: double.infinity,
               margin: const EdgeInsets.only(top: 10, right: 15),
