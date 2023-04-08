@@ -78,19 +78,32 @@ class QuranState extends ConsumerState<Quran> {
                           onTap: () => QR.to('quran/surah/${item.slug}'),
                           child: ListItem(
                             item: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  '${numFormatter.format(item.position)}.',
-                                  style: textTheme.titleMedium,
+                                Row(
+                                  children: [
+                                    Text(
+                                      '${numFormatter.format(item.position)}.',
+                                      style: textTheme.titleMedium,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      contextualTranslation(
+                                        locale: currentLang,
+                                        enText: item.title,
+                                        bnText: item.titleBn,
+                                      ),
+                                      style: textTheme.titleMedium,
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  contextualTranslation(
-                                    locale: currentLang,
-                                    enText: item.title,
-                                    bnText: item.titleBn,
-                                  ),
-                                  style: textTheme.titleMedium,
+                                Row(
+                                  children: [
+                                    Text(
+                                      '${locales.ayah}: ${numFormatter.format(item.totalAyat)}',
+                                      style: textTheme.labelSmall,
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -111,13 +124,22 @@ class QuranState extends ConsumerState<Quran> {
                         return InkWell(
                           onTap: () => QR.to('quran/para/${item.slug}'),
                           child: ListItem(
-                            item: Text(
-                              contextualTranslation(
-                                locale: currentLang,
-                                enText: item.title,
-                                bnText: item.titleBn,
-                              ),
-                              style: textTheme.titleMedium,
+                            item: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  contextualTranslation(
+                                    locale: currentLang,
+                                    enText: item.title,
+                                    bnText: item.titleBn,
+                                  ),
+                                  style: textTheme.titleMedium,
+                                ),
+                                Text(
+                                  '${locales.ayah}: ${numFormatter.format(item.totalAyat)}',
+                                  style: textTheme.labelSmall,
+                                ),
+                              ],
                             ),
                           ),
                         );
