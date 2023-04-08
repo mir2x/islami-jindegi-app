@@ -20,8 +20,8 @@ import 'package:native_app/widgets/document/pdf_reader.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/theme/colors.dart';
 
-class Book extends ConsumerWidget {
-  const Book({super.key});
+class BookItem extends ConsumerWidget {
+  const BookItem({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
