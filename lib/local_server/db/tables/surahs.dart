@@ -5,10 +5,11 @@ class Surahs extends Table {
   TextColumn get title => text()();
   TextColumn get titleBn => text()();
   TextColumn get slug => text()();
+  TextColumn get introduction => text().nullable()();
   TextColumn get excerpt => text().nullable()();
   IntColumn get totalAyat => integer()();
   IntColumn get totalRuku => integer()();
-  TextColumn get introduction => text().nullable()();
+  TextColumn get location => text().nullable()();
   IntColumn get position => integer()();
   TextColumn get createdAt => text()();
   TextColumn get updatedAt => text()();

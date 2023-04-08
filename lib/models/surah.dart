@@ -15,10 +15,11 @@ class Surah extends DataModel<Surah> {
   final String title;
   final String titleBn;
   final String slug;
+  final String? introduction;
   final String? excerpt;
   final int totalAyat;
   final int totalRuku;
-  final String? introduction;
+  final String? location;
   final int? position;
   final String? createdAt;
   final String? updatedAt;
@@ -30,10 +31,11 @@ class Surah extends DataModel<Surah> {
     required this.title,
     required this.titleBn,
     required this.slug,
+    this.introduction,
     this.excerpt,
     required this.totalAyat,
     required this.totalRuku,
-    this.introduction,
+    this.location,
     this.position,
     this.createdAt,
     this.updatedAt,

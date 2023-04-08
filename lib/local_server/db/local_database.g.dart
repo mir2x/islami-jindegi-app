@@ -12,10 +12,11 @@ class Surah extends DataClass implements Insertable<Surah> {
   final String title;
   final String titleBn;
   final String slug;
+  final String? introduction;
   final String? excerpt;
   final int totalAyat;
   final int totalRuku;
-  final String? introduction;
+  final String? location;
   final int position;
   final String createdAt;
   final String updatedAt;
@@ -24,10 +25,11 @@ class Surah extends DataClass implements Insertable<Surah> {
       required this.title,
       required this.titleBn,
       required this.slug,
+      this.introduction,
       this.excerpt,
       required this.totalAyat,
       required this.totalRuku,
-      this.introduction,
+      this.location,
       required this.position,
       required this.createdAt,
       required this.updatedAt});
@@ -38,13 +40,16 @@ class Surah extends DataClass implements Insertable<Surah> {
     map['title'] = Variable<String>(title);
     map['title_bn'] = Variable<String>(titleBn);
     map['slug'] = Variable<String>(slug);
+    if (!nullToAbsent || introduction != null) {
+      map['introduction'] = Variable<String>(introduction);
+    }
     if (!nullToAbsent || excerpt != null) {
       map['excerpt'] = Variable<String>(excerpt);
     }
     map['total_ayat'] = Variable<int>(totalAyat);
     map['total_ruku'] = Variable<int>(totalRuku);
-    if (!nullToAbsent || introduction != null) {
-      map['introduction'] = Variable<String>(introduction);
+    if (!nullToAbsent || location != null) {
+      map['location'] = Variable<String>(location);
     }
     map['position'] = Variable<int>(position);
     map['created_at'] = Variable<String>(createdAt);
@@ -60,10 +65,11 @@ class Surah extends DataClass implements Insertable<Surah> {
       title: serializer.fromJson<String>(json['title']),
       titleBn: serializer.fromJson<String>(json['titleBn']),
       slug: serializer.fromJson<String>(json['slug']),
+      introduction: serializer.fromJson<String?>(json['introduction']),
       excerpt: serializer.fromJson<String?>(json['excerpt']),
       totalAyat: serializer.fromJson<int>(json['totalAyat']),
       totalRuku: serializer.fromJson<int>(json['totalRuku']),
-      introduction: serializer.fromJson<String?>(json['introduction']),
+      location: serializer.fromJson<String?>(json['location']),
       position: serializer.fromJson<int>(json['position']),
       createdAt: serializer.fromJson<String>(json['createdAt']),
       updatedAt: serializer.fromJson<String>(json['updatedAt']),
@@ -77,10 +83,11 @@ class Surah extends DataClass implements Insertable<Surah> {
       'title': serializer.toJson<String>(title),
       'titleBn': serializer.toJson<String>(titleBn),
       'slug': serializer.toJson<String>(slug),
+      'introduction': serializer.toJson<String?>(introduction),
       'excerpt': serializer.toJson<String?>(excerpt),
       'totalAyat': serializer.toJson<int>(totalAyat),
       'totalRuku': serializer.toJson<int>(totalRuku),
-      'introduction': serializer.toJson<String?>(introduction),
+      'location': serializer.toJson<String?>(location),
       'position': serializer.toJson<int>(position),
       'createdAt': serializer.toJson<String>(createdAt),
       'updatedAt': serializer.toJson<String>(updatedAt),
@@ -92,10 +99,11 @@ class Surah extends DataClass implements Insertable<Surah> {
           String? title,
           String? titleBn,
           String? slug,
+          Value<String?> introduction = const Value.absent(),
           Value<String?> excerpt = const Value.absent(),
           int? totalAyat,
           int? totalRuku,
-          Value<String?> introduction = const Value.absent(),
+          Value<String?> location = const Value.absent(),
           int? position,
           String? createdAt,
           String? updatedAt}) =>
@@ -104,11 +112,12 @@ class Surah extends DataClass implements Insertable<Surah> {
         title: title ?? this.title,
         titleBn: titleBn ?? this.titleBn,
         slug: slug ?? this.slug,
+        introduction:
+            introduction.present ? introduction.value : this.introduction,
         excerpt: excerpt.present ? excerpt.value : this.excerpt,
         totalAyat: totalAyat ?? this.totalAyat,
         totalRuku: totalRuku ?? this.totalRuku,
-        introduction:
-            introduction.present ? introduction.value : this.introduction,
+        location: location.present ? location.value : this.location,
         position: position ?? this.position,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
@@ -120,10 +129,11 @@ class Surah extends DataClass implements Insertable<Surah> {
           ..write('title: $title, ')
           ..write('titleBn: $titleBn, ')
           ..write('slug: $slug, ')
+          ..write('introduction: $introduction, ')
           ..write('excerpt: $excerpt, ')
           ..write('totalAyat: $totalAyat, ')
           ..write('totalRuku: $totalRuku, ')
-          ..write('introduction: $introduction, ')
+          ..write('location: $location, ')
           ..write('position: $position, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -132,8 +142,8 @@ class Surah extends DataClass implements Insertable<Surah> {
   }
 
   @override
-  int get hashCode => Object.hash(id, title, titleBn, slug, excerpt, totalAyat,
-      totalRuku, introduction, position, createdAt, updatedAt);
+  int get hashCode => Object.hash(id, title, titleBn, slug, introduction,
+      excerpt, totalAyat, totalRuku, location, position, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -142,10 +152,11 @@ class Surah extends DataClass implements Insertable<Surah> {
           other.title == this.title &&
           other.titleBn == this.titleBn &&
           other.slug == this.slug &&
+          other.introduction == this.introduction &&
           other.excerpt == this.excerpt &&
           other.totalAyat == this.totalAyat &&
           other.totalRuku == this.totalRuku &&
-          other.introduction == this.introduction &&
+          other.location == this.location &&
           other.position == this.position &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
@@ -156,10 +167,11 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
   final Value<String> title;
   final Value<String> titleBn;
   final Value<String> slug;
+  final Value<String?> introduction;
   final Value<String?> excerpt;
   final Value<int> totalAyat;
   final Value<int> totalRuku;
-  final Value<String?> introduction;
+  final Value<String?> location;
   final Value<int> position;
   final Value<String> createdAt;
   final Value<String> updatedAt;
@@ -168,10 +180,11 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
     this.title = const Value.absent(),
     this.titleBn = const Value.absent(),
     this.slug = const Value.absent(),
+    this.introduction = const Value.absent(),
     this.excerpt = const Value.absent(),
     this.totalAyat = const Value.absent(),
     this.totalRuku = const Value.absent(),
-    this.introduction = const Value.absent(),
+    this.location = const Value.absent(),
     this.position = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -181,10 +194,11 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
     required String title,
     required String titleBn,
     required String slug,
+    this.introduction = const Value.absent(),
     this.excerpt = const Value.absent(),
     required int totalAyat,
     required int totalRuku,
-    this.introduction = const Value.absent(),
+    this.location = const Value.absent(),
     required int position,
     required String createdAt,
     required String updatedAt,
@@ -202,10 +216,11 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
     Expression<String>? title,
     Expression<String>? titleBn,
     Expression<String>? slug,
+    Expression<String>? introduction,
     Expression<String>? excerpt,
     Expression<int>? totalAyat,
     Expression<int>? totalRuku,
-    Expression<String>? introduction,
+    Expression<String>? location,
     Expression<int>? position,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
@@ -215,10 +230,11 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
       if (title != null) 'title': title,
       if (titleBn != null) 'title_bn': titleBn,
       if (slug != null) 'slug': slug,
+      if (introduction != null) 'introduction': introduction,
       if (excerpt != null) 'excerpt': excerpt,
       if (totalAyat != null) 'total_ayat': totalAyat,
       if (totalRuku != null) 'total_ruku': totalRuku,
-      if (introduction != null) 'introduction': introduction,
+      if (location != null) 'location': location,
       if (position != null) 'position': position,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -230,10 +246,11 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
       Value<String>? title,
       Value<String>? titleBn,
       Value<String>? slug,
+      Value<String?>? introduction,
       Value<String?>? excerpt,
       Value<int>? totalAyat,
       Value<int>? totalRuku,
-      Value<String?>? introduction,
+      Value<String?>? location,
       Value<int>? position,
       Value<String>? createdAt,
       Value<String>? updatedAt}) {
@@ -242,10 +259,11 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
       title: title ?? this.title,
       titleBn: titleBn ?? this.titleBn,
       slug: slug ?? this.slug,
+      introduction: introduction ?? this.introduction,
       excerpt: excerpt ?? this.excerpt,
       totalAyat: totalAyat ?? this.totalAyat,
       totalRuku: totalRuku ?? this.totalRuku,
-      introduction: introduction ?? this.introduction,
+      location: location ?? this.location,
       position: position ?? this.position,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -267,6 +285,9 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
     if (slug.present) {
       map['slug'] = Variable<String>(slug.value);
     }
+    if (introduction.present) {
+      map['introduction'] = Variable<String>(introduction.value);
+    }
     if (excerpt.present) {
       map['excerpt'] = Variable<String>(excerpt.value);
     }
@@ -276,8 +297,8 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
     if (totalRuku.present) {
       map['total_ruku'] = Variable<int>(totalRuku.value);
     }
-    if (introduction.present) {
-      map['introduction'] = Variable<String>(introduction.value);
+    if (location.present) {
+      map['location'] = Variable<String>(location.value);
     }
     if (position.present) {
       map['position'] = Variable<int>(position.value);
@@ -298,10 +319,11 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
           ..write('title: $title, ')
           ..write('titleBn: $titleBn, ')
           ..write('slug: $slug, ')
+          ..write('introduction: $introduction, ')
           ..write('excerpt: $excerpt, ')
           ..write('totalAyat: $totalAyat, ')
           ..write('totalRuku: $totalRuku, ')
-          ..write('introduction: $introduction, ')
+          ..write('location: $location, ')
           ..write('position: $position, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -332,6 +354,10 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, Surah> {
       'slug', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
+  late final GeneratedColumn<String> introduction = GeneratedColumn<String>(
+      'introduction', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
   late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
       'excerpt', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
@@ -344,8 +370,8 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, Surah> {
       'total_ruku', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> introduction = GeneratedColumn<String>(
-      'introduction', aliasedName, true,
+  late final GeneratedColumn<String> location = GeneratedColumn<String>(
+      'location', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<int> position = GeneratedColumn<int>(
@@ -365,10 +391,11 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, Surah> {
         title,
         titleBn,
         slug,
+        introduction,
         excerpt,
         totalAyat,
         totalRuku,
-        introduction,
+        location,
         position,
         createdAt,
         updatedAt
@@ -391,14 +418,16 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, Surah> {
           .read(DriftSqlType.string, data['${effectivePrefix}title_bn'])!,
       slug: attachedDatabase.options.types
           .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
+      introduction: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}introduction']),
       excerpt: attachedDatabase.options.types
           .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
       totalAyat: attachedDatabase.options.types
           .read(DriftSqlType.int, data['${effectivePrefix}total_ayat'])!,
       totalRuku: attachedDatabase.options.types
           .read(DriftSqlType.int, data['${effectivePrefix}total_ruku'])!,
-      introduction: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}introduction']),
+      location: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}location']),
       position: attachedDatabase.options.types
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
       createdAt: attachedDatabase.options.types

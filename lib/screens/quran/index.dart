@@ -74,6 +74,16 @@ class QuranState extends ConsumerState<Quran> {
                         return await ref.read(allModelsProvider(query).future);
                       },
                       itemBuilder: (_, item, __) {
+                        String? location;
+
+                        if (item.location == 'Makkah') {
+                          location = locales.makkah;
+                        } else if (item.location == 'Madinah') {
+                          location = locales.madinah;
+                        } else if (item.location == 'Makkah & Madinah') {
+                          location = locales.makkahAndMadinah;
+                        }
+
                         return InkWell(
                           onTap: () => QR.to('quran/surah/${item.slug}'),
                           child: ListItem(
@@ -86,7 +96,7 @@ class QuranState extends ConsumerState<Quran> {
                                       '${numFormatter.format(item.position)}.',
                                       style: textTheme.titleMedium,
                                     ),
-                                    const SizedBox(width: 5),
+                                    const SizedBox(width: 3),
                                     Text(
                                       contextualTranslation(
                                         locale: currentLang,
@@ -103,6 +113,12 @@ class QuranState extends ConsumerState<Quran> {
                                       '${locales.ayah}: ${numFormatter.format(item.totalAyat)}',
                                       style: textTheme.labelSmall,
                                     ),
+                                    if (location != null) ...[
+                                      Text(
+                                        ', $location',
+                                        style: textTheme.labelSmall,
+                                      ),
+                                    ],
                                   ],
                                 ),
                               ],
