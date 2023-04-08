@@ -7,9 +7,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flutter/services.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:native_app/main.data.dart';
+import 'package:native_app/providers/single_model.dart';
+import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/widgets/audio/qirat.dart';
+import 'package:native_app/providers/ayah_bookmarks.dart';
 
 class Ayah extends ConsumerWidget {
   const Ayah({
@@ -97,14 +101,14 @@ class Ayah extends ConsumerWidget {
               PopupMenuButton<int>(
                 child: const SizedBox(
                   height: 40,
-                  width: 40,
+                  width: 35,
                   child: Icon(Icons.more_vert),
                 ),
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-                  /* PopupMenuItem<int>( */
-                  /*   value: 0, */
-                  /*   child: Text(locales.bookmark), */
-                  /* ), */
+                  PopupMenuItem<int>(
+                    value: 0,
+                    child: Text(locales.saveAyah),
+                  ),
                   PopupMenuItem<int>(
                     value: 1,
                     child: Text(locales.copyAyah),
@@ -116,14 +120,52 @@ class Ayah extends ConsumerWidget {
                 ],
                 onSelected: (int item) async {
                   switch (item) {
+                    case 0:
+                      var query = SingleModelQuery(
+                        repository: ref.ayahs,
+                        id: ayah.id,
+                        params: const {'include': 'surah,ayah-translations'},
+                        remote: true,
+                      );
+
+                      var reloadedAyah = await ref.read(
+                        singleModelProvider(query).future,
+                      );
+
+                      await ref
+                          .read(ayahBookmarkProvider(ayah.id).notifier)
+                          .createItem({
+                        'ayahId': ayah.id,
+                        'title': ayah.title,
+                        if (ayah.ayahTranslations.isNotEmpty) ...{
+                          'translation':
+                              reloadedAyah.ayahTranslations.first.body
+                        },
+                        'position': ayah.surahPosition,
+                        'surahTitle': reloadedAyah.surah.value.title,
+                        'surahTitleBn': reloadedAyah.surah.value.titleBn,
+                      });
+
+                      break;
                     case 1:
                       await Clipboard.setData(ClipboardData(text: ayah.title));
                       break;
                     case 2:
-                      String chapterTitle = contextualTranslation(
+                      var query = SingleModelQuery(
+                        repository: ref.ayahs,
+                        id: ayah.id,
+                        params: const {'include': 'surah,ayah-translations'},
+                        remote: true,
+                      );
+
+                      var reloadedAyah = await ref.read(
+                        singleModelProvider(query).future,
+                      );
+
+                      String surahTitle = contextualTranslation(
                         locale: currentLang,
-                        enText: chapter.title,
-                        bnText: chapter.titleBn,
+                        enText: reloadedAyah.surah.value.title,
+                        bnText: reloadedAyah.surah.value.titleBn,
                       );
 
                       String ayahPosition = numFormatter.format(
@@ -136,14 +178,15 @@ class Ayah extends ConsumerWidget {
                         text += '\n\n${ayah.ayahTranslations.first.body}';
                       }
 
-                      text += '\n\n$chapterTitle - $ayahPosition';
+                      text += '\n\n$surahTitle - $ayahPosition';
 
                       await Clipboard.setData(ClipboardData(text: text));
 
                       Share.share(
                         text,
-                        subject: '$chapterTitle - $ayahPosition',
+                        subject: '$surahTitle - $ayahPosition',
                       );
+
                       break;
                   }
                 },

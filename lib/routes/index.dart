@@ -7,6 +7,7 @@ import '../screens/quran/surah.dart';
 import '../screens/quran/para.dart';
 import '../screens/quran/tafseer.dart';
 import '../screens/quran/settings.dart';
+import '../screens/quran/bookmarks.dart';
 import '../screens/quran/search.dart';
 import '../screens/quran/download.dart';
 
@@ -70,6 +71,10 @@ class AppRoutes {
         QRoute(
           path: '/settings',
           builder: () => const QuranSettings(),
+        ),
+        QRoute(
+          path: '/bookmarks',
+          builder: () => const QuranBookmarks(),
         ),
         QRoute(
           path: '/search',

@@ -96,7 +96,10 @@ class AyahList extends ConsumerWidget {
                             params: {
                               ...params,
                               ...filterParams,
-                              'include': 'ayah-translations'
+                              if (qSettings.containsKey('translation') &&
+                                  qSettings['translation']) ...{
+                                'include': 'ayah-translations'
+                              }
                             },
                           );
 

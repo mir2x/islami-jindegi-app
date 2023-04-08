@@ -38,7 +38,8 @@
   "selectTafseer": "Select a Tafseer Qitab from Settings.",
   "quranInPdf": "Quran in PDF",
   "quranTitle": "Title",
-  "bookmark": "Bookmark",
+  "savedAyahs": "Saved Ayahs",
+  "saveAyah": "Save Ayah",  
   "copyAyah": "Copy Ayah",
   "share": "Share",
 
@@ -156,6 +157,7 @@
   "pdfFiles": "PDF Files",
   "developer": "Developer",
   "goBack": "Go Back",
+  "remove": "Remove",
   "noContent": "No content yet",
   "noItemFound": "No item found",
   "display": "Display",

@@ -13,7 +13,7 @@ import 'package:native_app/providers/connectivity_result.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
-import 'package:native_app/theme/colors.dart';
+import 'package:native_app/widgets/presentation/bottom_bar.dart';
 
 class Quran extends ConsumerStatefulWidget {
   const Quran({super.key});
@@ -49,54 +49,6 @@ class QuranState extends ConsumerState<Quran> {
       title: Text(locales.quran),
       body: Column(
         children: [
-          connectivity.when(
-            loading: () => const CircularProgressIndicator(),
-            error: (error, stackTrace) => Text(error.toString()),
-            data: (connectivityResult) {
-              if (connectivityResult != ConnectivityResult.none) {
-                return Container(
-                  padding: const EdgeInsets.only(
-                    top: 15,
-                    left: 15,
-                    right: 15,
-                  ),
-                  child: OutlinedButton(
-                    onPressed: () => QR.to('quran/search'),
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: ThemeColors.color4),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
-                      ),
-                      backgroundColor: ThemeColors.color1,
-                      minimumSize: const Size.fromHeight(40),
-                    ),
-                    child: Text(locales.search, style: textTheme.titleMedium),
-                  ),
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            },
-          ),
-          Container(
-            padding: const EdgeInsets.only(
-              top: 10,
-              left: 15,
-              right: 15,
-            ),
-            child: OutlinedButton(
-              onPressed: () => QR.to('quran/download'),
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: ThemeColors.color4),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                ),
-                backgroundColor: ThemeColors.color1,
-                minimumSize: const Size.fromHeight(40),
-              ),
-              child: Text(locales.pdfFiles, style: textTheme.titleMedium),
-            ),
-          ),
           Container(
             padding: const EdgeInsets.only(left: 15, right: 15, top: 8),
             child: SwitchButton(
@@ -172,6 +124,42 @@ class QuranState extends ConsumerState<Quran> {
                       },
                     ),
             ),
+          ),
+        ],
+      ),
+      bottomBar: BottomBar(
+        alignment: MainAxisAlignment.spaceBetween,
+        children: [
+          TextButton(
+            child: Text(
+              locales.quranInPdf,
+              style: textTheme.titleMedium,
+            ),
+            onPressed: () => QR.to('quran/download'),
+          ),
+          connectivity.when(
+            loading: () => const CircularProgressIndicator(),
+            error: (error, stackTrace) => Text(error.toString()),
+            data: (connectivityResult) {
+              if (connectivityResult != ConnectivityResult.none) {
+                return TextButton(
+                  child: Text(
+                    locales.search,
+                    style: textTheme.titleMedium,
+                  ),
+                  onPressed: () => QR.to('quran/search'),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+          TextButton(
+            child: Text(
+              locales.savedAyahs,
+              style: textTheme.titleMedium,
+            ),
+            onPressed: () => QR.to('quran/bookmarks'),
           ),
         ],
       ),
