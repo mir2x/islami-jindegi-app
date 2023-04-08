@@ -9,7 +9,8 @@ import '../screens/quran/tafseer.dart';
 import '../screens/quran/settings.dart';
 import '../screens/quran/bookmarks.dart';
 import '../screens/quran/search.dart';
-import '../screens/quran/download.dart';
+import '../screens/quran/books/index.dart';
+import '../screens/quran/books/book.dart';
 
 import '../screens/books/index.dart';
 import '../screens/books/book.dart';
@@ -81,8 +82,11 @@ class AppRoutes {
           builder: () => const QuranSearch(),
         ),
         QRoute(
-          path: '/download',
-          builder: () => const QuranDownload(),
+          path: '/books',
+          builder: () => const QuranBooks(),
+          children: [
+            QRoute(path: '/:id', builder: () => const QuranBookItem()),
+          ],
         ),
       ],
     ),
@@ -92,7 +96,7 @@ class AppRoutes {
       children: [
         QRoute(
           path: '/:id',
-          builder: () => const Book(),
+          builder: () => const BookItem(),
           children: [
             QRoute(
               path: 'chapters/:chapter_id',

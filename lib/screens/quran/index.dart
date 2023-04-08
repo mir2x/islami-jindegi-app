@@ -175,7 +175,7 @@ class QuranState extends ConsumerState<Quran> {
                 locales.quranInPdf,
                 style: textTheme.titleMedium,
               ),
-              onPressed: () => QR.to('quran/download'),
+              onPressed: () => QR.to('quran/books'),
             ),
           ),
           connectivity.when(
