@@ -168,12 +168,15 @@ class QuranState extends ConsumerState<Quran> {
       bottomBar: BottomBar(
         alignment: MainAxisAlignment.spaceBetween,
         children: [
-          TextButton(
-            child: Text(
-              locales.quranInPdf,
-              style: textTheme.titleMedium,
+          Container(
+            margin: const EdgeInsets.only(left: 3),
+            child: TextButton(
+              child: Text(
+                locales.quranInPdf,
+                style: textTheme.titleMedium,
+              ),
+              onPressed: () => QR.to('quran/download'),
             ),
-            onPressed: () => QR.to('quran/download'),
           ),
           connectivity.when(
             loading: () => const CircularProgressIndicator(),
@@ -192,12 +195,15 @@ class QuranState extends ConsumerState<Quran> {
               }
             },
           ),
-          TextButton(
-            child: Text(
-              locales.savedAyahs,
-              style: textTheme.titleMedium,
+          Container(
+            margin: const EdgeInsets.only(right: 4),
+            child: TextButton(
+              child: Text(
+                locales.savedAyahs,
+                style: textTheme.titleMedium,
+              ),
+              onPressed: () => QR.to('quran/bookmarks'),
             ),
-            onPressed: () => QR.to('quran/bookmarks'),
           ),
         ],
       ),
