@@ -20,7 +20,7 @@ class QuranBooks extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
 
     return AppScaffold(
-      title: Text(locales.books),
+      title: Text(locales.pageBasedQuran),
       body: Column(
         children: [
           Expanded(

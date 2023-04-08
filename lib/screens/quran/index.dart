@@ -172,7 +172,7 @@ class QuranState extends ConsumerState<Quran> {
             margin: const EdgeInsets.only(left: 3),
             child: TextButton(
               child: Text(
-                locales.quranInPdf,
+                locales.pageBasedQuran,
                 style: textTheme.titleMedium,
               ),
               onPressed: () => QR.to('quran/books'),
