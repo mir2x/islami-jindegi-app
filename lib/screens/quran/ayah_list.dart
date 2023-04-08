@@ -84,37 +84,30 @@ class AyahList extends ConsumerWidget {
                     ),
                   ),
                   Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.only(
-                        left: 15,
-                        bottom: 30,
-                      ),
-                      child: InfiniteList(
-                        resourceFetcher: (Map<String, dynamic> params) async {
-                          AllModelsQuery query = AllModelsQuery(
-                            repository: ref.ayahs,
-                            params: {
-                              ...params,
-                              ...filterParams,
-                              if (qSettings.containsKey('translation') &&
-                                  qSettings['translation']) ...{
-                                'include': 'ayah-translations'
-                              }
-                            },
-                          );
+                    child: InfiniteList(
+                      resourceFetcher: (Map<String, dynamic> params) async {
+                        AllModelsQuery query = AllModelsQuery(
+                          repository: ref.ayahs,
+                          params: {
+                            ...params,
+                            ...filterParams,
+                            if (qSettings.containsKey('translation') &&
+                                qSettings['translation']) ...{
+                              'include': 'ayah-translations'
+                            }
+                          },
+                        );
 
-                          return await ref
-                              .read(allModelsProvider(query).future);
-                        },
-                        itemBuilder: (_, ayah, __) {
-                          return Ayah(
-                            ayah: ayah,
-                            chapter: chapter,
-                            preferences: preferences,
-                            fontSizeRatio: fontSizeRatio,
-                          );
-                        },
-                      ),
+                        return await ref.read(allModelsProvider(query).future);
+                      },
+                      itemBuilder: (_, ayah, __) {
+                        return Ayah(
+                          ayah: ayah,
+                          chapter: chapter,
+                          preferences: preferences,
+                          fontSizeRatio: fontSizeRatio,
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -126,52 +119,58 @@ class AyahList extends ConsumerWidget {
       bottomBar: BottomBar(
         alignment: MainAxisAlignment.spaceBetween,
         children: [
-          TextButton(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (qSettings.containsKey('translation') &&
-                    qSettings['translation']) ...[
-                  const Icon(
-                    Icons.check_box,
-                    color: ThemeColors.color4,
-                    size: 20,
-                  ),
-                ] else ...[
-                  const Icon(
-                    Icons.check_box_outline_blank,
-                    color: ThemeColors.color4,
-                    size: 20,
-                  ),
+          Container(
+            margin: const EdgeInsets.only(left: 2),
+            child: TextButton(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (qSettings.containsKey('translation') &&
+                      qSettings['translation']) ...[
+                    const Icon(
+                      Icons.check_box,
+                      color: ThemeColors.color4,
+                      size: 20,
+                    ),
+                  ] else ...[
+                    const Icon(
+                      Icons.check_box_outline_blank,
+                      color: ThemeColors.color4,
+                      size: 20,
+                    ),
+                  ],
+                  Container(
+                    margin: const EdgeInsets.only(left: 4, bottom: 1),
+                    child: Text(
+                      locales.translation,
+                      style: textTheme.labelMedium,
+                    ),
+                  )
                 ],
-                Container(
-                  margin: const EdgeInsets.only(left: 4, bottom: 1),
-                  child: Text(
-                    locales.translation,
-                    style: textTheme.labelMedium,
-                  ),
-                )
-              ],
-            ),
-            onPressed: () {
-              bool selectedTranslationOption =
-                  qSettings.containsKey('translation')
-                      ? qSettings['translation']
-                      : false;
+              ),
+              onPressed: () {
+                bool selectedTranslationOption =
+                    qSettings.containsKey('translation')
+                        ? qSettings['translation']
+                        : false;
 
-              ref.read(quranSettingsProvider.notifier).updateSettings(
-                    'translation',
-                    !selectedTranslationOption,
-                  );
-            },
+                ref.read(quranSettingsProvider.notifier).updateSettings(
+                      'translation',
+                      !selectedTranslationOption,
+                    );
+              },
+            ),
           ),
           FontResizer(fontSizeRatio: fontSizeRatio),
-          TextButton(
-            child: Text(
-              locales.settings,
-              style: textTheme.titleMedium,
+          Container(
+            margin: const EdgeInsets.only(right: 2),
+            child: TextButton(
+              child: Text(
+                locales.settings,
+                style: textTheme.titleMedium,
+              ),
+              onPressed: () => QR.to('quran/settings'),
             ),
-            onPressed: () => QR.to('quran/settings'),
           ),
         ],
       ),

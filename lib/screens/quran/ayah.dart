@@ -38,7 +38,7 @@ class Ayah extends ConsumerWidget {
     var qSettings = ref.watch(quranSettingsProvider);
 
     return Container(
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.only(bottom: 20, left: 15),
       child: Column(
         children: [
           Row(
