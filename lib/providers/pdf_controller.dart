@@ -7,7 +7,7 @@ import 'local_file.dart';
 final pdfControllerProvider =
     FutureProvider.autoDispose.family((ref, Map document) async {
   var documentPath = document['id'];
-  var localFile = await ref.read(localFileProvider(documentPath).future);
+  var localFile = await ref.watch(localFileProvider(documentPath).future);
 
   dynamic pdfDoc;
 
