@@ -3,7 +3,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:adhan/adhan.dart';
 import 'package:hijri/hijri_calendar.dart';
-import 'package:native_app/screens/namaz_times/settings.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/widgets/calendar/hijri_date.dart';
@@ -34,6 +33,7 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
+    var textTheme = Theme.of(context).textTheme;
     var dataP = ref.watch(preferencesAndGeolocationProvider);
 
     return AppScaffold(
@@ -87,26 +87,41 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                 children: [
                   if (!data['geolocation']['isGeolocated']) ...[
                     Container(
-                      margin: const EdgeInsets.only(top: 15),
+                      margin: const EdgeInsets.only(top: 5),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(locales.dhaka),
-                          Container(
-                            margin: const EdgeInsets.only(left: 20, right: 5),
-                            child: GestureDetector(
-                              onTap: () => ref
-                                  .read(geolocationProvider.notifier)
-                                  .updateCoordinates(),
-                              child: SvgPicture.asset(
-                                'assets/images/icons/location.svg',
-                                fit: BoxFit.scaleDown,
-                                width: 40,
-                                height: 30,
+                          Row(
+                            children: [
+                              Text(locales.dhaka),
+                              Container(
+                                margin: const EdgeInsets.only(
+                                  left: 10,
+                                  right: 5,
+                                ),
+                                child: GestureDetector(
+                                  onTap: () => ref
+                                      .read(geolocationProvider.notifier)
+                                      .updateCoordinates(),
+                                  child: SvgPicture.asset(
+                                    'assets/images/icons/location.svg',
+                                    fit: BoxFit.scaleDown,
+                                    width: 40,
+                                    height: 30,
+                                  ),
+                                ),
                               ),
-                            ),
+                              Text(locales.setLocation)
+                            ],
                           ),
-                          Text(locales.setLocation)
+                          const SizedBox(width: 30),
+                          TextButton(
+                            child: Text(
+                              locales.settings,
+                              style: textTheme.titleLarge,
+                            ),
+                            onPressed: () => QR.to('namaz-times/settings'),
+                          ),
                         ],
                       ),
                     ),
@@ -114,7 +129,7 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                   Column(
                     children: [
                       Container(
-                        margin: const EdgeInsets.only(top: 30),
+                        margin: const EdgeInsets.only(top: 15),
                         child: NamazTimeItem(
                           label: prayerTimes['tahajjud']['title'],
                           value: prayerTimes['tahajjud']['endTime'],
@@ -195,7 +210,6 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                       ),
                     ],
                   ),
-                  NamazSettings(preferences: data['preferences']),
                 ],
               );
             },
