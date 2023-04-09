@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:native_app/helpers/file_utils.dart';
 import 'package:pdfx/pdfx.dart';
-import 'package:internet_file/internet_file.dart';
-import 'package:native_app/providers/local_file.dart';
+import 'package:native_app/providers/pdf_controller.dart';
 
 class PDFReader extends ConsumerWidget {
   const PDFReader({
@@ -16,27 +14,16 @@ class PDFReader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
-    var documentPath = document['id'];
-    var localFile = ref.watch(localFileProvider(documentPath));
+    var pdfCtrl = ref.watch(pdfControllerProvider(document));
 
-    return localFile.when(
-      loading: () => const CircularProgressIndicator(),
+    return pdfCtrl.when(
+      loading: () {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
       error: (error, stackTrace) => Text(error.toString()),
-      data: (localDocument) {
-        dynamic pdfController;
-
-        if (localDocument != null) {
-          pdfController = PdfController(
-            document: PdfDocument.openFile(localDocument.path),
-          );
-        } else {
-          pdfController = PdfController(
-            document: PdfDocument.openData(
-              InternetFile.get(fileSrcUrl(document)),
-            ),
-          );
-        }
-
+      data: (pdfController) {
         return Column(
           children: [
             Row(
@@ -79,6 +66,14 @@ class PDFReader extends ConsumerWidget {
             Expanded(
               child: PdfView(
                 controller: pdfController,
+                builders: PdfViewBuilders<DefaultBuilderOptions>(
+                  options: const DefaultBuilderOptions(),
+                  documentLoaderBuilder: (BuildContext context) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                ),
               ),
             ),
           ],

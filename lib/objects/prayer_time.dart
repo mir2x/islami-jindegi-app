@@ -7,15 +7,19 @@ class PrayerTime {
   PrayerTime({
     required this.coordinates,
     required this.preferences,
+    this.currentDate,
   }) {
-    prayerTimes = PrayerTimes.today(
+    DateTime today = currentDate ?? DateTime.now();
+    prayerTimes = PrayerTimes(
       coordinates,
+      DateComponents(today.year, today.month, today.day),
       _adjustedParams(),
     );
   }
 
   final Coordinates coordinates;
   final SharedPreferences preferences;
+  final DateTime? currentDate;
   late final PrayerTimes prayerTimes;
   final Duration oneMin = const Duration(minutes: 1);
   final Duration threeMins = const Duration(minutes: 3);

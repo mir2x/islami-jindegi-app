@@ -41,6 +41,7 @@ import '../screens/madrasahs/madrasah.dart';
 
 import '../screens/namaz_times/index.dart';
 import '../screens/namaz_times/namaz_time.dart';
+import '../screens/namaz_times/settings.dart';
 
 import '../screens/settings/index.dart';
 import '../screens/bookmarks/index.dart';
@@ -165,6 +166,7 @@ class AppRoutes {
       builder: () => const NamazTimes(),
       children: [
         QRoute(path: '/:slug', builder: () => const NamazTime()),
+        QRoute(path: '/settings', builder: () => const NamazSettings()),
       ],
     ),
     QRoute(path: '/settings', builder: () => const Settings()),
