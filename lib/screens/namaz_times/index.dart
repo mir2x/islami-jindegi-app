@@ -46,7 +46,7 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 HijriDate(currentDate: selectedHijriDate),
-                const SizedBox(width: 8),
+                const SizedBox(width: 15),
                 const Icon(Icons.calendar_month),
               ],
             ),
@@ -85,12 +85,12 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
 
               return Column(
                 children: [
-                  if (!data['geolocation']['isGeolocated']) ...[
-                    Container(
-                      margin: const EdgeInsets.only(top: 5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (!data['geolocation']['isGeolocated']) ...[
                           Row(
                             children: [
                               Text(locales.dhaka),
@@ -115,17 +115,17 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                             ],
                           ),
                           const SizedBox(width: 30),
-                          TextButton(
-                            child: Text(
-                              locales.settings,
-                              style: textTheme.titleLarge,
-                            ),
-                            onPressed: () => QR.to('namaz-times/settings'),
-                          ),
                         ],
-                      ),
+                        TextButton(
+                          child: Text(
+                            locales.settings,
+                            style: textTheme.titleLarge,
+                          ),
+                          onPressed: () => QR.to('namaz-times/settings'),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                   Column(
                     children: [
                       Container(
