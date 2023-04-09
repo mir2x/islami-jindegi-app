@@ -6,7 +6,12 @@ import 'package:intl/intl.dart';
 import 'package:native_app/providers/preferences.dart';
 
 class HijriDate extends ConsumerWidget {
-  const HijriDate({super.key});
+  const HijriDate({
+    super.key,
+    this.currentDate,
+  });
+
+  final HijriCalendar? currentDate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,12 +38,19 @@ class HijriDate extends ConsumerWidget {
           '12': locales.jilhajj,
         };
 
-        int adjustment = prefs.getInt('hijriAdjustment') ?? 0;
-        final DateTime date = DateTime.now();
-        DateTime adjustedToday =
-            DateTime(date.year, date.month, date.day + adjustment);
+        HijriCalendar today;
 
-        dynamic today = HijriCalendar.fromDate(adjustedToday);
+        if (currentDate != null) {
+          today = currentDate!;
+        } else {
+          int adjustment = prefs.getInt('hijriAdjustment') ?? 0;
+          final DateTime date = DateTime.now();
+          DateTime adjustedToday =
+              DateTime(date.year, date.month, date.day + adjustment);
+
+          today = HijriCalendar.fromDate(adjustedToday);
+        }
+
         var numFormatter = NumberFormat('#', currentLang);
         var day = numFormatter.format(today.hDay);
         String month = months[today.hMonth.toString()];

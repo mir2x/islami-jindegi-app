@@ -694,6 +694,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+  hijri_picker:
+    dependency: "direct main"
+    description:
+      name: hijri_picker
+      sha256: "15dd1716f3bd0b72122a71740b3ec9bc623463b11e0c907602d2b7598f851984"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
   hive:
     dependency: transitive
     description:
