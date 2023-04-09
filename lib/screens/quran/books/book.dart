@@ -16,6 +16,7 @@ import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'download.dart';
+import 'drawer.dart';
 
 class QuranBookItem extends ConsumerWidget {
   const QuranBookItem({super.key});
@@ -54,7 +55,10 @@ class QuranBookItem extends ConsumerWidget {
             },
             error: (error, stackTrace) => Text(error.toString()),
             data: (pdfController) {
+              final GlobalKey<ScaffoldState> sKey = GlobalKey<ScaffoldState>();
+
               return AppScaffold(
+                scaffoldKey: sKey,
                 title: Text(bookTitle),
                 body: ItemContent(
                   children: [
@@ -75,6 +79,9 @@ class QuranBookItem extends ConsumerWidget {
                     ),
                   ],
                 ),
+                drawer: Drawer(
+                  child: QuranDrawer(pdfController: pdfController),
+                ),
                 bottomBar: BottomBar(
                   alignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -83,11 +90,14 @@ class QuranBookItem extends ConsumerWidget {
                         horizontal: 15,
                         vertical: 10,
                       ),
-                      child: SvgPicture.asset(
-                        'assets/images/icons/menu.svg',
-                        fit: BoxFit.scaleDown,
-                        width: 30,
-                        height: 30,
+                      child: GestureDetector(
+                        onTap: () => sKey.currentState!.openDrawer(),
+                        child: SvgPicture.asset(
+                          'assets/images/icons/menu.svg',
+                          fit: BoxFit.scaleDown,
+                          width: 30,
+                          height: 30,
+                        ),
                       ),
                     ),
                     QuranDownload(

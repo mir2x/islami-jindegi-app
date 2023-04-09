@@ -10,23 +10,28 @@ class AppScaffold extends StatelessWidget {
     super.key,
     required this.title,
     required this.body,
+    this.drawer,
     this.bottomBar,
+    this.scaffoldKey,
     this.isHome = false,
   });
 
   final Text title;
   final Widget body;
-  final bool isHome;
+  final Drawer? drawer;
   final Widget? bottomBar;
+  final GlobalKey<ScaffoldState>? scaffoldKey;
+  final bool isHome;
 
   @override
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    final GlobalKey<ScaffoldState> sKey =
+        scaffoldKey ?? GlobalKey<ScaffoldState>();
 
     return Scaffold(
-      key: scaffoldKey,
+      key: sKey,
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.only(left: 15),
@@ -121,7 +126,7 @@ class AppScaffold extends StatelessWidget {
                     },
                   )
                 : GestureDetector(
-                    onTap: () => scaffoldKey.currentState!.openEndDrawer(),
+                    onTap: () => sKey.currentState!.openEndDrawer(),
                     child: SvgPicture.asset(
                       'assets/images/icons/menu.svg',
                       fit: BoxFit.scaleDown,
@@ -132,6 +137,7 @@ class AppScaffold extends StatelessWidget {
           ),
         ],
       ),
+      drawer: drawer,
       endDrawer: Drawer(
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 30),
