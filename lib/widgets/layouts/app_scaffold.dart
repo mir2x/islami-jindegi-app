@@ -18,7 +18,7 @@ class AppScaffold extends StatelessWidget {
 
   final Text title;
   final Widget body;
-  final Drawer? drawer;
+  final Widget? drawer;
   final Widget? bottomBar;
   final GlobalKey<ScaffoldState>? scaffoldKey;
   final bool isHome;

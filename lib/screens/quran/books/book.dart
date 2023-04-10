@@ -79,8 +79,10 @@ class QuranBookItem extends ConsumerWidget {
                     ),
                   ],
                 ),
-                drawer: Drawer(
-                  child: QuranDrawer(pdfController: pdfController),
+                drawer: SafeArea(
+                  child: Drawer(
+                    child: QuranDrawer(pdfController: pdfController),
+                  ),
                 ),
                 bottomBar: BottomBar(
                   alignment: MainAxisAlignment.spaceBetween,
