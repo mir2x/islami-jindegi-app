@@ -8,9 +8,11 @@ import 'paras.dart';
 class QuranDrawer extends StatefulWidget {
   const QuranDrawer({
     super.key,
+    required this.book,
     required this.pdfController,
   });
 
+  final dynamic book;
   final PdfController pdfController;
 
   @override
@@ -109,7 +111,7 @@ class _QuranDrawerState extends State<QuranDrawer> {
                     vertical: 10,
                   ),
                   child: Text(
-                    locales.ayah,
+                    selectedSection == 'Surah' ? locales.ayah : locales.page,
                     style: textTheme.labelMedium,
                     textAlign: TextAlign.center,
                   ),
@@ -118,9 +120,15 @@ class _QuranDrawerState extends State<QuranDrawer> {
             ],
           ),
           if (selectedSection == 'Surah') ...[
-            QuranBookSurahs(pdfController: widget.pdfController),
+            QuranBookSurahs(
+              book: widget.book,
+              pdfController: widget.pdfController,
+            ),
           ] else ...[
-            QuranBookParas(pdfController: widget.pdfController),
+            QuranBookParas(
+              book: widget.book,
+              pdfController: widget.pdfController,
+            ),
           ]
         ],
       ),

@@ -11,9 +11,11 @@ import 'package:native_app/theme/colors.dart';
 class QuranBookSurahs extends ConsumerWidget {
   const QuranBookSurahs({
     super.key,
+    required this.book,
     required this.pdfController,
   });
 
+  final dynamic book;
   final PdfController pdfController;
 
   @override
@@ -28,8 +30,11 @@ class QuranBookSurahs extends ConsumerWidget {
     return Container(
       child: modelQuery.when(
         loading: () {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return Center(
+            child: Container(
+              margin: const EdgeInsets.only(top: 30),
+              child: const CircularProgressIndicator(),
+            ),
           );
         },
         error: (error, _) => Text(error.toString()),

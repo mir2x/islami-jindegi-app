@@ -81,7 +81,10 @@ class QuranBookItem extends ConsumerWidget {
                 ),
                 drawer: SafeArea(
                   child: Drawer(
-                    child: QuranDrawer(pdfController: pdfController),
+                    child: QuranDrawer(
+                      book: book,
+                      pdfController: pdfController,
+                    ),
                   ),
                 ),
                 bottomBar: BottomBar(

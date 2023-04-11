@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:native_app/main.data.dart';
@@ -11,16 +12,20 @@ import 'package:native_app/theme/colors.dart';
 class QuranBookParas extends ConsumerWidget {
   const QuranBookParas({
     super.key,
+    required this.book,
     required this.pdfController,
   });
 
+  final dynamic book;
   final PdfController pdfController;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
+
     var query = AllModelsQuery(
-      repository: ref.paras,
-      params: const {'quantity': 30},
+      repository: ref.quranBookParas,
+      params: {'quranBookId': book.id, 'include': 'para', 'quantity': 30},
     );
 
     var modelQuery = ref.watch(allModelsProvider(query));
@@ -28,16 +33,28 @@ class QuranBookParas extends ConsumerWidget {
     return Container(
       child: modelQuery.when(
         loading: () {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return Center(
+            child: Container(
+              margin: const EdgeInsets.only(top: 30),
+              child: const CircularProgressIndicator(),
+            ),
           );
         },
         error: (error, _) => Text(error.toString()),
         data: (resources) {
-          return StatefulParas(
-            paras: resources,
-            pdfController: pdfController,
-          );
+          if (resources.isNotEmpty) {
+            return StatefulParas(
+              bookParas: resources,
+              pdfController: pdfController,
+            );
+          } else {
+            return Center(
+              child: Container(
+                margin: const EdgeInsets.only(top: 35),
+                child: Text(locales.noContent),
+              ),
+            );
+          }
         },
       ),
     );
@@ -47,11 +64,11 @@ class QuranBookParas extends ConsumerWidget {
 class StatefulParas extends StatefulWidget {
   const StatefulParas({
     super.key,
-    required this.paras,
+    required this.bookParas,
     required this.pdfController,
   });
 
-  final List paras;
+  final List bookParas;
   final PdfController pdfController;
 
   @override
@@ -59,18 +76,18 @@ class StatefulParas extends StatefulWidget {
 }
 
 class _ParasState extends State<StatefulParas> {
-  dynamic selectedPara;
+  dynamic selectedBookPara;
 
   @override
   void initState() {
     super.initState();
 
-    selectedPara = widget.paras.first;
+    selectedBookPara = widget.bookParas.first;
   }
 
-  updateSelectedPara(para) {
+  updateSelectedBookPara(para) {
     setState(() {
-      selectedPara = para;
+      selectedBookPara = para;
     });
   }
 
@@ -92,25 +109,26 @@ class _ParasState extends State<StatefulParas> {
                 ),
               ),
               child: ListView.builder(
-                itemCount: widget.paras.length,
+                itemCount: widget.bookParas.length,
                 itemBuilder: (BuildContext context, int index) {
-                  var item = widget.paras[index];
+                  var bookPara = widget.bookParas[index];
+                  var para = bookPara.para.value;
 
                   String paraTitle = contextualTranslation(
                     locale: currentLang,
-                    enText: item.title,
-                    bnText: item.titleBn,
+                    enText: para.title,
+                    bnText: para.titleBn,
                   );
 
                   return GestureDetector(
-                    onTap: () => updateSelectedPara(item),
+                    onTap: () => updateSelectedBookPara(bookPara),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 15,
                         vertical: 10,
                       ),
                       decoration: BoxDecoration(
-                        color: selectedPara.id == item.id
+                        color: selectedBookPara.id == bookPara.id
                             ? ThemeColors.color7
                             : null,
                       ),
@@ -128,7 +146,7 @@ class _ParasState extends State<StatefulParas> {
           Expanded(
             flex: 1,
             child: ListView.builder(
-              itemCount: 20,
+              itemCount: selectedBookPara.totalPage,
               itemBuilder: (BuildContext context, int index) {
                 var number = index + 1;
 

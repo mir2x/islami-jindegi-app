@@ -30,7 +30,7 @@ class QuranBooks extends ConsumerWidget {
                 resourceFetcher: (Map<String, dynamic> params) async {
                   AllModelsQuery query = AllModelsQuery(
                     repository: ref.quranBooks,
-                    params: params,
+                    params: {...params, 'published': true},
                   );
 
                   return await ref.read(allModelsProvider(query).future);
