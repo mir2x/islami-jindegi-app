@@ -60,24 +60,16 @@ class QuranBookItem extends ConsumerWidget {
               return AppScaffold(
                 scaffoldKey: sKey,
                 title: Text(bookTitle),
-                body: ItemContent(
-                  children: [
-                    Container(
-                      height: 600,
-                      margin: const EdgeInsets.only(bottom: 40),
-                      child: PdfView(
-                        controller: pdfController,
-                        builders: PdfViewBuilders<DefaultBuilderOptions>(
-                          options: const DefaultBuilderOptions(),
-                          documentLoaderBuilder: (BuildContext context) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
+                body: PdfView(
+                  controller: pdfController,
+                  builders: PdfViewBuilders<DefaultBuilderOptions>(
+                    options: const DefaultBuilderOptions(),
+                    documentLoaderBuilder: (BuildContext context) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                  ),
                 ),
                 drawer: SafeArea(
                   child: Drawer(
