@@ -36,6 +36,9 @@ import 'package:native_app/models/news.dart';
 import 'package:native_app/models/page.dart';
 import 'package:native_app/models/para.dart';
 import 'package:native_app/models/qari.dart';
+import 'package:native_app/models/quran_book_page.dart';
+import 'package:native_app/models/quran_book_para.dart';
+import 'package:native_app/models/quran_book_surah.dart';
 import 'package:native_app/models/quran_book.dart';
 import 'package:native_app/models/speaker.dart';
 import 'package:native_app/models/subchapter.dart';
@@ -96,6 +99,9 @@ final repositoryProviders = <String, Provider<Repository<DataModel>>>{
   'pages': pagesRepositoryProvider,
   'paras': parasRepositoryProvider,
   'qaris': qarisRepositoryProvider,
+  'quranBookPages': quranBookPagesRepositoryProvider,
+  'quranBookParas': quranBookParasRepositoryProvider,
+  'quranBookSurahs': quranBookSurahsRepositoryProvider,
   'quranBooks': quranBooksRepositoryProvider,
   'speakers': speakersRepositoryProvider,
   'subchapters': subchaptersRepositoryProvider,
@@ -136,6 +142,9 @@ final repositoryInitializerProvider =
   DataHelpers.setInternalType<Page>('pages');
   DataHelpers.setInternalType<Para>('paras');
   DataHelpers.setInternalType<Qari>('qaris');
+  DataHelpers.setInternalType<QuranBookPage>('quranBookPages');
+  DataHelpers.setInternalType<QuranBookPara>('quranBookParas');
+  DataHelpers.setInternalType<QuranBookSurah>('quranBookSurahs');
   DataHelpers.setInternalType<QuranBook>('quranBooks');
   DataHelpers.setInternalType<Speaker>('speakers');
   DataHelpers.setInternalType<Subchapter>('subchapters');
@@ -181,6 +190,9 @@ final repositoryInitializerProvider =
     'pages': ref.watch(internalPagesRemoteAdapterProvider),
     'paras': ref.watch(internalParasRemoteAdapterProvider),
     'qaris': ref.watch(internalQarisRemoteAdapterProvider),
+    'quranBookPages': ref.watch(internalQuranBookPagesRemoteAdapterProvider),
+    'quranBookParas': ref.watch(internalQuranBookParasRemoteAdapterProvider),
+    'quranBookSurahs': ref.watch(internalQuranBookSurahsRemoteAdapterProvider),
     'quranBooks': ref.watch(internalQuranBooksRemoteAdapterProvider),
     'speakers': ref.watch(internalSpeakersRemoteAdapterProvider),
     'subchapters': ref.watch(internalSubchaptersRemoteAdapterProvider),
@@ -219,6 +231,9 @@ final repositoryInitializerProvider =
     'pages': true,
     'paras': true,
     'qaris': true,
+    'quranBookPages': true,
+    'quranBookParas': true,
+    'quranBookSurahs': true,
     'quranBooks': true,
     'speakers': true,
     'subchapters': true,
@@ -319,6 +334,15 @@ extension RepositoryWidgetRefX on WidgetRef {
       watch(parasRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Qari> get qaris =>
       watch(qarisRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<QuranBookPage> get quranBookPages =>
+      watch(quranBookPagesRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
+  Repository<QuranBookPara> get quranBookParas =>
+      watch(quranBookParasRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
+  Repository<QuranBookSurah> get quranBookSurahs =>
+      watch(quranBookSurahsRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
   Repository<QuranBook> get quranBooks =>
       watch(quranBooksRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Speaker> get speakers =>
@@ -410,6 +434,15 @@ extension RepositoryRefX on Ref {
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Qari> get qaris => watch(qarisRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<QuranBookPage> get quranBookPages =>
+      watch(quranBookPagesRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<QuranBookPara> get quranBookParas =>
+      watch(quranBookParasRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<QuranBookSurah> get quranBookSurahs =>
+      watch(quranBookSurahsRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<QuranBook> get quranBooks => watch(quranBooksRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Speaker> get speakers => watch(speakersRepositoryProvider)
