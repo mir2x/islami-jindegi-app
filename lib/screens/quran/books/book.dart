@@ -76,6 +76,7 @@ class QuranBookItem extends ConsumerWidget {
                     child: QuranDrawer(
                       book: book,
                       pdfController: pdfController,
+                      closeDrawer: () => sKey.currentState!.closeDrawer(),
                     ),
                   ),
                 ),

@@ -14,10 +14,12 @@ class QuranBookParas extends ConsumerWidget {
     super.key,
     required this.book,
     required this.pdfController,
+    required this.closeDrawer,
   });
 
   final dynamic book;
   final PdfController pdfController;
+  final Function closeDrawer;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -44,8 +46,10 @@ class QuranBookParas extends ConsumerWidget {
         data: (resources) {
           if (resources.isNotEmpty) {
             return StatefulParas(
+              book: book,
               bookParas: resources,
               pdfController: pdfController,
+              closeDrawer: closeDrawer,
             );
           } else {
             return Center(
@@ -61,21 +65,25 @@ class QuranBookParas extends ConsumerWidget {
   }
 }
 
-class StatefulParas extends StatefulWidget {
+class StatefulParas extends ConsumerStatefulWidget {
   const StatefulParas({
     super.key,
+    required this.book,
     required this.bookParas,
     required this.pdfController,
+    required this.closeDrawer,
   });
 
+  final dynamic book;
   final List bookParas;
   final PdfController pdfController;
+  final Function closeDrawer;
 
   @override
-  State<StatefulParas> createState() => _ParasState();
+  ConsumerState<StatefulParas> createState() => _ParasState();
 }
 
-class _ParasState extends State<StatefulParas> {
+class _ParasState extends ConsumerState<StatefulParas> {
   dynamic selectedBookPara;
 
   @override
@@ -151,9 +159,27 @@ class _ParasState extends State<StatefulParas> {
                 var number = index + 1;
 
                 return GestureDetector(
-                  onTap: () {
-                    widget.pdfController.jumpToPage(number);
-                    Navigator.of(context).pop();
+                  onTap: () async {
+                    var query = AllModelsQuery(
+                      repository: ref.quranBookPages,
+                      params: {
+                        'quranBookId': widget.book.id,
+                        'paraPage': number,
+                        'include': 'para',
+                        'quantity': 1,
+                      },
+                    );
+
+                    var resources =
+                        await ref.read(allModelsProvider(query).future);
+
+                    if (resources.isNotEmpty) {
+                      var bookPage = resources.first;
+                      widget.pdfController.jumpToPage(bookPage.position);
+                    }
+
+                    /* Navigator.of(context).pop(); */
+                    widget.closeDrawer();
                   },
                   child: Container(
                     decoration: BoxDecoration(

@@ -13,10 +13,12 @@ class QuranBookSurahs extends ConsumerWidget {
     super.key,
     required this.book,
     required this.pdfController,
+    required this.closeDrawer,
   });
 
   final dynamic book;
   final PdfController pdfController;
+  final Function closeDrawer;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -42,6 +44,7 @@ class QuranBookSurahs extends ConsumerWidget {
           return StatefulSurahs(
             surahs: resources,
             pdfController: pdfController,
+            closeDrawer: closeDrawer,
           );
         },
       ),
@@ -54,10 +57,12 @@ class StatefulSurahs extends StatefulWidget {
     super.key,
     required this.surahs,
     required this.pdfController,
+    required this.closeDrawer,
   });
 
   final List surahs;
   final PdfController pdfController;
+  final Function closeDrawer;
 
   @override
   State<StatefulSurahs> createState() => _SurahsState();
@@ -145,7 +150,7 @@ class _SurahsState extends State<StatefulSurahs> {
                 return GestureDetector(
                   onTap: () {
                     widget.pdfController.jumpToPage(number);
-                    Navigator.of(context).pop();
+                    widget.closeDrawer();
                   },
                   child: Container(
                     decoration: BoxDecoration(

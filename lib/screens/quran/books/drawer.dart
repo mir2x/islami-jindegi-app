@@ -10,10 +10,12 @@ class QuranDrawer extends StatefulWidget {
     super.key,
     required this.book,
     required this.pdfController,
+    required this.closeDrawer,
   });
 
   final dynamic book;
   final PdfController pdfController;
+  final Function closeDrawer;
 
   @override
   State<QuranDrawer> createState() => _QuranDrawerState();
@@ -123,11 +125,13 @@ class _QuranDrawerState extends State<QuranDrawer> {
             QuranBookSurahs(
               book: widget.book,
               pdfController: widget.pdfController,
+              closeDrawer: widget.closeDrawer,
             ),
           ] else ...[
             QuranBookParas(
               book: widget.book,
               pdfController: widget.pdfController,
+              closeDrawer: widget.closeDrawer,
             ),
           ]
         ],
