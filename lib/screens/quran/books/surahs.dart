@@ -42,6 +42,7 @@ class QuranBookSurahs extends ConsumerWidget {
         error: (error, _) => Text(error.toString()),
         data: (resources) {
           return StatefulSurahs(
+            book: book,
             surahs: resources,
             pdfController: pdfController,
             closeDrawer: closeDrawer,
@@ -52,23 +53,25 @@ class QuranBookSurahs extends ConsumerWidget {
   }
 }
 
-class StatefulSurahs extends StatefulWidget {
+class StatefulSurahs extends ConsumerStatefulWidget {
   const StatefulSurahs({
     super.key,
+    required this.book,
     required this.surahs,
     required this.pdfController,
     required this.closeDrawer,
   });
 
+  final dynamic book;
   final List surahs;
   final PdfController pdfController;
   final Function closeDrawer;
 
   @override
-  State<StatefulSurahs> createState() => _SurahsState();
+  ConsumerState<StatefulSurahs> createState() => _SurahsState();
 }
 
-class _SurahsState extends State<StatefulSurahs> {
+class _SurahsState extends ConsumerState<StatefulSurahs> {
   dynamic selectedSurah;
 
   @override
@@ -148,8 +151,25 @@ class _SurahsState extends State<StatefulSurahs> {
                 var number = index + 1;
 
                 return GestureDetector(
-                  onTap: () {
-                    widget.pdfController.jumpToPage(number);
+                  onTap: () async {
+                    var query = AllModelsQuery(
+                      repository: ref.quranBookPages,
+                      params: {
+                        'quranBookId': widget.book.id,
+                        'surahId': selectedSurah.id,
+                        'ayahNo': number,
+                        'quantity': 1,
+                      },
+                    );
+
+                    var resources =
+                        await ref.read(allModelsProvider(query).future);
+
+                    if (resources.isNotEmpty) {
+                      var bookPage = resources.first;
+                      widget.pdfController.jumpToPage(bookPage.position);
+                    }
+
                     widget.closeDrawer();
                   },
                   child: Container(

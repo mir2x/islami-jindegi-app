@@ -166,7 +166,6 @@ class _ParasState extends ConsumerState<StatefulParas> {
                         'quranBookId': widget.book.id,
                         'paraId': selectedBookPara.para.value.id,
                         'paraPage': number,
-                        'include': 'para',
                         'quantity': 1,
                       },
                     );
@@ -179,7 +178,6 @@ class _ParasState extends ConsumerState<StatefulParas> {
                       widget.pdfController.jumpToPage(bookPage.position);
                     }
 
-                    /* Navigator.of(context).pop(); */
                     widget.closeDrawer();
                   },
                   child: Container(
