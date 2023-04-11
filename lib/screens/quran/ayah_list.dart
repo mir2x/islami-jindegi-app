@@ -33,7 +33,8 @@ class AyahList extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
-    var fontSizeRatio = FontSizeRatio();
+    var arabicFontSizeRatio = FontSizeRatio();
+    var banglaFontSizeRatio = FontSizeRatio();
     var prefs = ref.watch(preferencesProvider);
     var qSettings = ref.watch(quranSettingsProvider);
 
@@ -105,7 +106,8 @@ class AyahList extends ConsumerWidget {
                           ayah: ayah,
                           chapter: chapter,
                           preferences: preferences,
-                          fontSizeRatio: fontSizeRatio,
+                          arabicFontSizeRatio: arabicFontSizeRatio,
+                          banglaFontSizeRatio: banglaFontSizeRatio,
                         );
                       },
                     ),
@@ -161,7 +163,39 @@ class AyahList extends ConsumerWidget {
               },
             ),
           ),
-          FontResizer(fontSizeRatio: fontSizeRatio),
+          TextButton(
+            child: Text(locales.fontSize, style: textTheme.titleMedium),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return Dialog(
+                    backgroundColor: ThemeColors.color1,
+                    child: SizedBox(
+                      width: 200,
+                      height: 100,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Center(
+                            child: FontResizer(
+                              fontSizeRatio: arabicFontSizeRatio,
+                              text: locales.arabicFont,
+                            ),
+                          ),
+                          FontResizer(
+                            fontSizeRatio: banglaFontSizeRatio,
+                            text: locales.banglaFont,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
           Container(
             margin: const EdgeInsets.only(right: 2),
             child: TextButton(

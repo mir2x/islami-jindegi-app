@@ -5,13 +5,14 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/main.data.dart';
-import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/providers/pdf_controller.dart';
+import 'package:native_app/providers/single_model.dart';
+import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/single_model_query.dart';
+import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen.dart';
-import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/helpers/file_utils.dart';
@@ -64,12 +65,44 @@ class QuranBookItem extends ConsumerWidget {
                   controller: pdfController,
                   builders: PdfViewBuilders<DefaultBuilderOptions>(
                     options: const DefaultBuilderOptions(),
-                    documentLoaderBuilder: (BuildContext context) {
+                    documentLoaderBuilder: (_) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                    pageLoaderBuilder: (_) {
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
                     },
                   ),
+                  onPageChanged: (page) async {
+                    var scaffoldMessenger = ScaffoldMessenger.of(context);
+
+                    var query = AllModelsQuery(
+                      repository: ref.quranBookPages,
+                      params: {
+                        'quranBookId': book.id,
+                        'position': page,
+                        'quantity': 1,
+                      },
+                    );
+
+                    var resources =
+                        await ref.read(allModelsProvider(query).future);
+
+                    if (resources.isNotEmpty) {
+                      scaffoldMessenger.showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            resources.first.title,
+                            textAlign: TextAlign.center,
+                          ),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  },
                 ),
                 drawer: SafeArea(
                   child: Drawer(

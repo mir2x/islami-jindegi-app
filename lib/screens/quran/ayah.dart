@@ -21,13 +21,15 @@ class Ayah extends ConsumerWidget {
     required this.ayah,
     required this.chapter,
     required this.preferences,
-    required this.fontSizeRatio,
+    required this.arabicFontSizeRatio,
+    required this.banglaFontSizeRatio,
   });
 
   final dynamic ayah;
   final dynamic chapter;
   final dynamic preferences;
-  final FontSizeRatio fontSizeRatio;
+  final FontSizeRatio arabicFontSizeRatio;
+  final FontSizeRatio banglaFontSizeRatio;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -48,7 +50,7 @@ class Ayah extends ConsumerWidget {
                 child: InkWell(
                   onTap: () => QR.to('quran/tafseers/${ayah.id}'),
                   child: ValueListenableBuilder<double>(
-                    valueListenable: fontSizeRatio,
+                    valueListenable: arabicFontSizeRatio,
                     builder: (context, ratio, child) {
                       return Text(
                         ayah.title,
@@ -200,7 +202,7 @@ class Ayah extends ConsumerWidget {
               width: double.infinity,
               margin: const EdgeInsets.only(top: 10, right: 15),
               child: ValueListenableBuilder<double>(
-                valueListenable: fontSizeRatio,
+                valueListenable: banglaFontSizeRatio,
                 builder: (context, ratio, child) {
                   return Text(
                     ayah.ayahTranslations.first.body,

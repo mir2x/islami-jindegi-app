@@ -6,9 +6,11 @@ class FontResizer extends StatelessWidget {
   const FontResizer({
     super.key,
     required this.fontSizeRatio,
+    this.text,
   });
 
   final FontSizeRatio fontSizeRatio;
+  final String? text;
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +18,9 @@ class FontResizer extends StatelessWidget {
     var textTheme = Theme.of(context).textTheme;
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(locales.fontSize, style: textTheme.labelMedium),
+        Text(text ?? locales.fontSize, style: textTheme.labelMedium),
         IconButton(
           icon: const Icon(Icons.add),
           padding: const EdgeInsets.only(
