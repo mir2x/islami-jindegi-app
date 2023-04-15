@@ -29,8 +29,12 @@ class QuranBooks extends ConsumerWidget {
               child: InfiniteList(
                 resourceFetcher: (Map<String, dynamic> params) async {
                   AllModelsQuery query = AllModelsQuery(
-                    repository: ref.quranBooks,
-                    params: {...params, 'published': true},
+                    repository: ref.quranBookQitabs,
+                    params: {
+                      ...params,
+                      'published': true,
+                      'include': 'quran-book',
+                    },
                   );
 
                   return await ref.read(allModelsProvider(query).future);

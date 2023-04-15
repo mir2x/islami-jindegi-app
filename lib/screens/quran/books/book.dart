@@ -29,8 +29,9 @@ class QuranBookItem extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
 
     var query = SingleModelQuery(
-      repository: ref.quranBooks,
+      repository: ref.quranBookQitabs,
       id: QR.params['id'].toString(),
+      params: const {'include': 'quran-book'},
     );
 
     var modelQuery = ref.watch(singleModelProvider(query));
@@ -38,15 +39,17 @@ class QuranBookItem extends ConsumerWidget {
     return modelQuery.when(
       loading: () => const FullScreen(),
       error: (error, _) => ModelExeptionHandler(error: error),
-      data: (book) {
-        String bookTitle = contextualTranslation(
+      data: (qitab) {
+        String qitabTitle = contextualTranslation(
           locale: currentLang,
-          enText: book.title,
-          bnText: book.titleBn,
+          enText: qitab.title,
+          bnText: qitab.titleBn,
         );
 
-        if (book.document != null) {
-          var pdfCtrl = ref.watch(pdfControllerProvider(book.document));
+        var book = qitab.quranBook.value;
+
+        if (qitab.document != null) {
+          var pdfCtrl = ref.watch(pdfControllerProvider(qitab.document));
 
           return pdfCtrl.when(
             loading: () {
@@ -60,14 +63,31 @@ class QuranBookItem extends ConsumerWidget {
 
               return AppScaffold(
                 scaffoldKey: sKey,
-                title: Text(bookTitle),
+                title: Text(qitabTitle),
                 body: PdfView(
                   controller: pdfController,
                   builders: PdfViewBuilders<DefaultBuilderOptions>(
                     options: const DefaultBuilderOptions(),
                     documentLoaderBuilder: (_) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const CircularProgressIndicator(),
+                          Container(
+                            margin: const EdgeInsets.symmetric(vertical: 25),
+                            child: Text(
+                              locales.downloading,
+                              style: textTheme.labelLarge,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              locales.downloadTips,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
                       );
                     },
                     pageLoaderBuilder: (_) {
@@ -132,8 +152,8 @@ class QuranBookItem extends ConsumerWidget {
                       ),
                     ),
                     QuranDownload(
-                      filePath: book.document['id'],
-                      fileUrl: fileSrcUrl(book.document),
+                      filePath: qitab.document['id'],
+                      fileUrl: fileSrcUrl(qitab.document),
                     )
                   ],
                 ),
@@ -142,7 +162,7 @@ class QuranBookItem extends ConsumerWidget {
           );
         } else {
           return AppScaffold(
-            title: Text(bookTitle),
+            title: Text(qitabTitle),
             body: Center(
               child: Text(locales.noContent, style: textTheme.labelLarge),
             ),

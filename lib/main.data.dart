@@ -38,6 +38,7 @@ import 'package:native_app/models/para.dart';
 import 'package:native_app/models/qari.dart';
 import 'package:native_app/models/quran_book_page.dart';
 import 'package:native_app/models/quran_book_para.dart';
+import 'package:native_app/models/quran_book_qitab.dart';
 import 'package:native_app/models/quran_book_surah.dart';
 import 'package:native_app/models/quran_book.dart';
 import 'package:native_app/models/speaker.dart';
@@ -101,6 +102,7 @@ final repositoryProviders = <String, Provider<Repository<DataModel>>>{
   'qaris': qarisRepositoryProvider,
   'quranBookPages': quranBookPagesRepositoryProvider,
   'quranBookParas': quranBookParasRepositoryProvider,
+  'quranBookQitabs': quranBookQitabsRepositoryProvider,
   'quranBookSurahs': quranBookSurahsRepositoryProvider,
   'quranBooks': quranBooksRepositoryProvider,
   'speakers': speakersRepositoryProvider,
@@ -144,6 +146,7 @@ final repositoryInitializerProvider =
   DataHelpers.setInternalType<Qari>('qaris');
   DataHelpers.setInternalType<QuranBookPage>('quranBookPages');
   DataHelpers.setInternalType<QuranBookPara>('quranBookParas');
+  DataHelpers.setInternalType<QuranBookQitab>('quranBookQitabs');
   DataHelpers.setInternalType<QuranBookSurah>('quranBookSurahs');
   DataHelpers.setInternalType<QuranBook>('quranBooks');
   DataHelpers.setInternalType<Speaker>('speakers');
@@ -192,6 +195,7 @@ final repositoryInitializerProvider =
     'qaris': ref.watch(internalQarisRemoteAdapterProvider),
     'quranBookPages': ref.watch(internalQuranBookPagesRemoteAdapterProvider),
     'quranBookParas': ref.watch(internalQuranBookParasRemoteAdapterProvider),
+    'quranBookQitabs': ref.watch(internalQuranBookQitabsRemoteAdapterProvider),
     'quranBookSurahs': ref.watch(internalQuranBookSurahsRemoteAdapterProvider),
     'quranBooks': ref.watch(internalQuranBooksRemoteAdapterProvider),
     'speakers': ref.watch(internalSpeakersRemoteAdapterProvider),
@@ -233,6 +237,7 @@ final repositoryInitializerProvider =
     'qaris': true,
     'quranBookPages': true,
     'quranBookParas': true,
+    'quranBookQitabs': true,
     'quranBookSurahs': true,
     'quranBooks': true,
     'speakers': true,
@@ -340,6 +345,9 @@ extension RepositoryWidgetRefX on WidgetRef {
   Repository<QuranBookPara> get quranBookParas =>
       watch(quranBookParasRepositoryProvider)
         ..remoteAdapter.internalWatch = watch;
+  Repository<QuranBookQitab> get quranBookQitabs =>
+      watch(quranBookQitabsRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
   Repository<QuranBookSurah> get quranBookSurahs =>
       watch(quranBookSurahsRepositoryProvider)
         ..remoteAdapter.internalWatch = watch;
@@ -439,6 +447,9 @@ extension RepositoryRefX on Ref {
         ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<QuranBookPara> get quranBookParas =>
       watch(quranBookParasRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<QuranBookQitab> get quranBookQitabs =>
+      watch(quranBookQitabsRepositoryProvider)
         ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<QuranBookSurah> get quranBookSurahs =>
       watch(quranBookSurahsRepositoryProvider)

@@ -60,9 +60,6 @@ extension QuranBookRelationshipGraphNodeX on RelationshipGraphNode<QuranBook> {}
 QuranBook _$QuranBookFromJson(Map<String, dynamic> json) => QuranBook(
       id: json['id'] as String?,
       title: json['title'] as String,
-      titleBn: json['title-bn'] as String?,
-      image: json['image'] as Map<dynamic, dynamic>?,
-      document: json['document'] as Map<dynamic, dynamic>?,
       position: json['position'] as int?,
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
@@ -71,9 +68,6 @@ QuranBook _$QuranBookFromJson(Map<String, dynamic> json) => QuranBook(
 Map<String, dynamic> _$QuranBookToJson(QuranBook instance) => <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
-      'title-bn': instance.titleBn,
-      'image': instance.image,
-      'document': instance.document,
       'position': instance.position,
       'created-at': instance.createdAt,
       'updated-at': instance.updatedAt,
