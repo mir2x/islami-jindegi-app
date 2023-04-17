@@ -3,12 +3,17 @@
 
   "quran": "কুরআন",
   "books": "কিতাব",
+  "book": "কিতাব",
+  "chapter": "চ্যাপ্টার",
+  "subchapter": "সাবচ্যাপ্টার",
   "articles": "প্রবন্ধ",
+  "article": "প্রবন্ধ",
   "malfuzat": "মালফুযাত",
   "masail": "মাসাইল",
   "duaDurud": "দু`আ-দুরূদ",
   "namazTime": "নামাযের সময়",
   "bayans": "বয়ান",
+  "bayan": "বয়ান",
   "news": "সংবাদ",
   "madrasah": "মাদরাসা",
 

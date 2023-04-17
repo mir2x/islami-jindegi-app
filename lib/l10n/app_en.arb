@@ -3,12 +3,17 @@
 
   "quran": "Quran",
   "books": "Books",
+  "book": "Book",
+  "chapter": "Chapter",
+  "subchapter": "Subchapter",
   "articles": "Articles",
+  "article": "Article",
   "malfuzat": "Malfuzat",
   "masail": "Masail",
   "duaDurud": "Dua & Durud",
   "namazTime": "Namaz Time",
   "bayans": "Bayans",
+  "bayan": "Bayan",
   "news": "News",
   "madrasah": "Madrasah",
 

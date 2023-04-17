@@ -1,5 +1,5 @@
-import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter/material.dart';
+import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class Resource extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
@@ -9,7 +9,6 @@ import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
-import 'package:native_app/widgets/page/title.dart';
 import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
@@ -46,13 +45,6 @@ class Donation extends ConsumerWidget {
           title: Text(locales.donation),
           body: ItemContent(
             children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 15),
-                child: PageTitle(
-                  text: locales.donation,
-                  fontSizeRatio: fontSizeRatio,
-                ),
-              ),
               Container(
                 margin: const EdgeInsets.only(bottom: 30),
                 child: PageHtmlBody(

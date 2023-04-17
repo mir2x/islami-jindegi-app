@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/main.data.dart';
@@ -47,145 +47,156 @@ class BookItem extends ConsumerWidget {
         var chapterQuery = ref.watch(allModelsProvider(cQuery));
 
         return AppScaffold(
-          title: Text(book.title),
-          body: chapterQuery.when(
-            loading: () => const SizedBox.shrink(),
-            error: (error, _) => Text(error.toString()),
-            data: (chapters) {
-              if (chapters.isNotEmpty) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.only(
-                        top: 30,
-                        bottom: 8,
-                        left: 15,
-                        right: 15,
-                      ),
-                      child: Text(
-                        locales.contents,
-                        style: textTheme.labelLarge,
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: InfiniteList(
-                          padding: 0,
-                          resourceFetcher: (Map<String, dynamic> params) async {
-                            AllModelsQuery query = AllModelsQuery(
-                              repository: ref.chapters,
-                              params: {
-                                ...params,
-                                'bookId': book.id,
-                                'include': 'subchapters',
-                              },
-                            );
+          title: Text(locales.book),
+          body: Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(
+                  vertical: 20,
+                  horizontal: 15,
+                ),
+                child: Text(
+                  book.title,
+                  style: textTheme.headlineMedium,
+                ),
+              ),
+              chapterQuery.when(
+                loading: () => const SizedBox.shrink(),
+                error: (error, _) => Text(error.toString()),
+                data: (chapters) {
+                  if (chapters.isNotEmpty) {
+                    return Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.only(
+                              top: 20,
+                              bottom: 8,
+                              left: 15,
+                              right: 15,
+                            ),
+                            child: Text(
+                              locales.contents,
+                              style: textTheme.labelLarge,
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              child: InfiniteList(
+                                padding: 0,
+                                resourceFetcher:
+                                    (Map<String, dynamic> params) async {
+                                  AllModelsQuery query = AllModelsQuery(
+                                    repository: ref.chapters,
+                                    params: {
+                                      ...params,
+                                      'bookId': book.id,
+                                      'include': 'subchapters',
+                                    },
+                                  );
 
-                            return await ref
-                                .read(allModelsProvider(query).future);
-                          },
-                          itemBuilder: (_, chapter, __) {
-                            if (chapter.subchapters.length > 0) {
-                              return Subchapters(
-                                book: book,
-                                chapter: chapter,
-                              );
-                            } else {
-                              return InkWell(
-                                onTap: () => QR.to(
-                                  'books/${book.id}/chapters/${chapter.id}',
-                                ),
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    border: Border(
-                                      bottom: BorderSide(
-                                        color: ThemeColors.color4,
+                                  return await ref
+                                      .read(allModelsProvider(query).future);
+                                },
+                                itemBuilder: (_, chapter, __) {
+                                  if (chapter.subchapters.length > 0) {
+                                    return Subchapters(
+                                      book: book,
+                                      chapter: chapter,
+                                    );
+                                  } else {
+                                    return InkWell(
+                                      onTap: () => QR.to(
+                                        'books/${book.id}/chapters/${chapter.id}',
                                       ),
-                                    ),
-                                  ),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 15),
-                                  child: Text(
-                                    chapter.title,
-                                    style: textTheme.titleLarge,
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                        ),
+                                      child: Container(
+                                        decoration: const BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
+                                              color: ThemeColors.color4,
+                                            ),
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 15),
+                                        child: Text(
+                                          chapter.title,
+                                          style: textTheme.titleLarge,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                );
-              } else {
-                double screenWidth = MediaQuery.of(context).size.width;
+                    );
+                  } else {
+                    double screenWidth = MediaQuery.of(context).size.width;
 
-                return ItemContent(
-                  children: [
-                    if (book.document != null) ...[
-                      Container(
-                        height: 540,
-                        margin: const EdgeInsets.only(bottom: 40),
-                        child: PDFReader(document: book.document),
-                      ),
-                    ] else ...[
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 20),
-                        width: screenWidth / 2,
-                        child: ResponsiveImage(
-                          image: book.image,
-                          model: 'book',
-                          vwset: const {'xs': 50},
-                        ),
-                      ),
-                    ],
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 30),
-                      child: Text(
-                        book.title,
-                        style: textTheme.headlineLarge,
-                      ),
-                    ),
-                    if (book.publisher != null) ...[
-                      DescriptionItem(
-                        title: '${locales.publisher}:',
-                        description: Text(
-                          book.publisher,
-                          style: textTheme.labelMedium,
-                        ),
-                      ),
-                    ],
-                    if (book.publishedAt != null) ...[
-                      DescriptionItem(
-                        title: '${locales.publicationDate}:',
-                        description: Text(
-                          book.publishedAt,
-                          style: textTheme.labelMedium,
-                        ),
-                      ),
-                    ],
-                    if (book.price != null) ...[
-                      DescriptionItem(
-                        title: '${locales.price}:',
-                        description: Text(
-                          book.price,
-                          style: textTheme.labelMedium,
-                        ),
-                      ),
-                    ],
-                    if (book.document != null) ...[
-                      DownloadItem(
-                        filePath: book.document['id'],
-                        fileUrl: fileSrcUrl(book.document),
-                      ),
-                    ],
-                  ],
-                );
-              }
-            },
+                    return ItemContent(
+                      children: [
+                        if (book.document != null) ...[
+                          Container(
+                            height: 540,
+                            margin: const EdgeInsets.only(bottom: 40),
+                            child: PDFReader(document: book.document),
+                          ),
+                        ] else ...[
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 20),
+                            width: screenWidth / 2,
+                            child: ResponsiveImage(
+                              image: book.image,
+                              model: 'book',
+                              vwset: const {'xs': 50},
+                            ),
+                          ),
+                        ],
+                        if (book.publisher != null) ...[
+                          DescriptionItem(
+                            title: '${locales.publisher}:',
+                            description: Text(
+                              book.publisher,
+                              style: textTheme.labelMedium,
+                            ),
+                          ),
+                        ],
+                        if (book.publishedAt != null) ...[
+                          DescriptionItem(
+                            title: '${locales.publicationDate}:',
+                            description: Text(
+                              book.publishedAt,
+                              style: textTheme.labelMedium,
+                            ),
+                          ),
+                        ],
+                        if (book.price != null) ...[
+                          DescriptionItem(
+                            title: '${locales.price}:',
+                            description: Text(
+                              book.price,
+                              style: textTheme.labelMedium,
+                            ),
+                          ),
+                        ],
+                        if (book.document != null) ...[
+                          DownloadItem(
+                            filePath: book.document['id'],
+                            fileUrl: fileSrcUrl(book.document),
+                          ),
+                        ],
+                      ],
+                    );
+                  }
+                },
+              ),
+            ],
           ),
         );
       },
