@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/providers/quran_settings.dart';
 
 class Bismillah extends ConsumerWidget {
@@ -14,34 +16,63 @@ class Bismillah extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qSettings = ref.watch(quranSettingsProvider);
+    String chapterType = chapter.runtimeType.toString();
 
-    if (chapter.position != 9 || chapter.runtimeType.toString() != 'Surah') {
+    if (chapter.position != 9 || chapterType != 'Surah') {
       return Column(
         children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.only(
+            padding: EdgeInsets.only(
               top: 15,
               bottom: 10,
               left: 15,
-              right: 15,
+              right: chapterType == 'Para' ? 15 : 0,
             ),
-            child: Text(
-              'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ',
-              textDirection: TextDirection.rtl,
-              softWrap: false,
-              style: textTheme.headlineLarge,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ',
+                    textDirection: TextDirection.rtl,
+                    softWrap: false,
+                    style: textTheme.headlineLarge,
+                  ),
+                ),
+                if (chapterType != 'Para') ...[
+                  PopupMenuButton<int>(
+                    child: const SizedBox(
+                      height: 40,
+                      width: 35,
+                      child: Icon(Icons.more_vert),
+                    ),
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuEntry<int>>[
+                      PopupMenuItem<int>(
+                        value: 0,
+                        child: Text(locales.surahIntroduction),
+                      ),
+                    ],
+                    onSelected: (int item) async {
+                      switch (item) {
+                        case 0:
+                          await QR
+                              .to('quran/surah/${chapter.slug}/description');
+                      }
+                    },
+                  ),
+                ]
+              ],
             ),
           ),
           if (qSettings.containsKey('translation') &&
               qSettings['translation']) ...[
             Container(
               padding: const EdgeInsets.only(bottom: 5, left: 15, right: 15),
-              child: const Text(
-                'পরম করুণাময় অসীম দয়ালু মহান আল্লাহ্‌র নামে শুরু করছি।',
-              ),
+              child: Text(locales.bismillah),
             ),
           ],
         ],

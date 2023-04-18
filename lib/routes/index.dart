@@ -4,6 +4,7 @@ import '../screens/home/index.dart';
 
 import '../screens/quran/index.dart';
 import '../screens/quran/surah.dart';
+import '../screens/quran/surah_description.dart';
 import '../screens/quran/para.dart';
 import '../screens/quran/tafseer.dart';
 import '../screens/quran/settings.dart';
@@ -59,15 +60,21 @@ class AppRoutes {
       builder: () => const Quran(),
       children: [
         QRoute(
-          path: 'surah/:slug',
+          path: '/surah/:slug',
           builder: () => const Surah(),
+          children: [
+            QRoute(
+              path: '/description',
+              builder: () => const SurahDescription(),
+            ),
+          ],
         ),
         QRoute(
-          path: 'para/:slug',
+          path: '/para/:slug',
           builder: () => const Para(),
         ),
         QRoute(
-          path: 'tafseers/:ayah_id',
+          path: '/tafseers/:ayah_id',
           builder: () => const Tafseer(),
         ),
         QRoute(
@@ -100,11 +107,11 @@ class AppRoutes {
           builder: () => const BookItem(),
           children: [
             QRoute(
-              path: 'chapters/:chapter_id',
+              path: '/chapters/:chapter_id',
               builder: () => const Chapter(),
             ),
             QRoute(
-              path: 'subchapters/:subchapter_id',
+              path: '/subchapters/:subchapter_id',
               builder: () => const Subchapter(),
             ),
           ],

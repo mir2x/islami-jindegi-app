@@ -121,7 +121,8 @@ class BookItem extends ConsumerWidget {
                                           ),
                                         ),
                                         padding: const EdgeInsets.symmetric(
-                                            vertical: 15),
+                                          vertical: 15,
+                                        ),
                                         child: Text(
                                           chapter.title,
                                           style: textTheme.titleLarge,
