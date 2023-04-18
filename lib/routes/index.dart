@@ -7,6 +7,7 @@ import '../screens/quran/surah.dart';
 import '../screens/quran/surah_description.dart';
 import '../screens/quran/para.dart';
 import '../screens/quran/tafseer.dart';
+import '../screens/quran/bismillah_tafseer.dart';
 import '../screens/quran/settings.dart';
 import '../screens/quran/bookmarks.dart';
 import '../screens/quran/search.dart';
@@ -76,6 +77,10 @@ class AppRoutes {
         QRoute(
           path: '/tafseers/:ayah_id',
           builder: () => const Tafseer(),
+        ),
+        QRoute(
+          path: '/bismillah-tafseer',
+          builder: () => const BismillahTafseer(),
         ),
         QRoute(
           path: '/settings',

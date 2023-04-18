@@ -15,7 +15,6 @@ import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/theme/colors.dart';
 import 'bismillah.dart';
-import 'bismillah_tafseer.dart';
 import 'ayah.dart';
 
 class AyahList extends ConsumerWidget {
@@ -54,31 +53,8 @@ class AyahList extends ConsumerWidget {
             data: (preferences) {
               return Column(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          double screenWidth =
-                              MediaQuery.of(context).size.width;
-                          double screenHeight =
-                              MediaQuery.of(context).size.height;
-
-                          return Dialog(
-                            backgroundColor: ThemeColors.color1,
-                            child: Container(
-                              width: screenWidth,
-                              height: screenHeight * 0.8,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 20,
-                              ),
-                              child: const BismillahTafseer(),
-                            ),
-                          );
-                        },
-                      );
-                    },
+                  InkWell(
+                    onTap: () => QR.to('quran/bismillah-tafseer'),
                     child: Bismillah(
                       chapter: chapter,
                       preferences: preferences,
