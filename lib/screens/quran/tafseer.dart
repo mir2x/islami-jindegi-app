@@ -12,9 +12,13 @@ import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/widgets/buttons/dropdown.dart';
 import 'package:native_app/widgets/presentation/section_title.dart';
+import 'package:native_app/objects/font_size_ratio.dart';
+import 'package:native_app/widgets/page/title.dart';
+import 'package:native_app/widgets/page/html_body.dart';
+import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/buttons/font_resizer.dart';
 
 class Tafseer extends ConsumerWidget {
   const Tafseer({super.key});
@@ -23,6 +27,7 @@ class Tafseer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    var fontSizeRatio = FontSizeRatio();
 
     var query = SingleModelQuery(
       repository: ref.ayahs,
@@ -41,37 +46,56 @@ class Tafseer extends ConsumerWidget {
             children: [
               Container(
                 margin: const EdgeInsets.only(bottom: 5),
-                child: Text(
-                  locales.ayah,
-                  style: textTheme.headlineMedium,
+                child: PageTitle(
+                  text: locales.ayah,
+                  fontSizeRatio: fontSizeRatio,
                 ),
               ),
               Container(
                 width: double.infinity,
                 margin: const EdgeInsets.only(bottom: 30),
-                child: Text(
-                  ayah.title,
-                  textDirection: TextDirection.rtl,
-                  style: textTheme.headlineMedium,
+                child: ValueListenableBuilder<double>(
+                  valueListenable: fontSizeRatio,
+                  builder: (context, ratio, child) {
+                    return Text(
+                      ayah.title,
+                      textDirection: TextDirection.rtl,
+                      style: textTheme.headlineMedium?.copyWith(
+                        fontSize: 20 * ratio,
+                      ),
+                    );
+                  },
                 ),
               ),
               const SelectQitab(),
-              const TafseerDisplay(),
+              TafseerDisplay(fontSizeRatio: fontSizeRatio),
             ],
           );
         },
+      ),
+      bottomBar: BottomBar(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(left: 15),
+            child: FontResizer(fontSizeRatio: fontSizeRatio),
+          ),
+        ],
       ),
     );
   }
 }
 
 class TafseerDisplay extends ConsumerWidget {
-  const TafseerDisplay({super.key});
+  const TafseerDisplay({
+    super.key,
+    required this.fontSizeRatio,
+  });
+
+  final FontSizeRatio fontSizeRatio;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    var textTheme = Theme.of(context).textTheme;
     var qSettings = ref.watch(quranSettingsProvider);
 
     var query = AllModelsQuery(
@@ -91,9 +115,9 @@ class TafseerDisplay extends ConsumerWidget {
         if (qSettings.containsKey('qitab')) ...[
           Container(
             margin: const EdgeInsets.only(top: 30, bottom: 10),
-            child: Text(
-              locales.tafseer,
-              style: textTheme.headlineMedium,
+            child: PageTitle(
+              text: locales.tafseer,
+              fontSizeRatio: fontSizeRatio,
             ),
           ),
           modelQuery.when(
@@ -109,8 +133,9 @@ class TafseerDisplay extends ConsumerWidget {
 
                 return Container(
                   margin: const EdgeInsets.only(bottom: 30),
-                  child: HtmlText(
+                  child: PageHtmlBody(
                     text: item.body,
+                    fontSizeRatio: fontSizeRatio,
                   ),
                 );
               } else {
