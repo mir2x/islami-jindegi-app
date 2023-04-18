@@ -40,7 +40,7 @@ class Chapter extends ConsumerWidget {
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
         return AppScaffold(
-          title: Text(locales.chapter),
+          title: Text(locales.book),
           body: ItemContent(
             children: [
               Container(

@@ -4,8 +4,6 @@
   "quran": "কুরআন",
   "books": "কিতাব",
   "book": "কিতাব",
-  "chapter": "চ্যাপ্টার",
-  "subchapter": "সাবচ্যাপ্টার",
   "articles": "প্রবন্ধ",
   "article": "প্রবন্ধ",
   "malfuzat": "মালফুযাত",
@@ -77,7 +75,7 @@
 
   "question": "প্রশ্ন",
   "answer": "উত্তর",
-  
+
   "tahajjudSehri": "তাহাজ্জুদ, সেহরী শেষ",
   "fajr": "ফজর",
   "sunrise": "সূর্যোদয়",

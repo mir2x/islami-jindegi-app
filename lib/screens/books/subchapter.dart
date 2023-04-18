@@ -43,7 +43,7 @@ class Subchapter extends ConsumerWidget {
         var chapterId = resource.chapter.value.id;
 
         return AppScaffold(
-          title: Text(locales.subchapter),
+          title: Text(locales.book),
           body: ItemContent(
             children: [
               Container(
