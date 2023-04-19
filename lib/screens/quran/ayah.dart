@@ -207,7 +207,7 @@ class Ayah extends ConsumerWidget {
                   return Text(
                     ayah.ayahTranslations.first.body,
                     style: textTheme.labelMedium?.copyWith(
-                      fontSize: 16 * ratio,
+                      fontSize: 17 * ratio,
                     ),
                   );
                 },

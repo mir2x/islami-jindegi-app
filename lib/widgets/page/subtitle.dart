@@ -23,7 +23,7 @@ class PageSubtitle extends StatelessWidget {
         return Text(
           text,
           style: textTheme.labelLarge?.copyWith(
-            fontSize: 18 * ratio,
+            fontSize: 20 * ratio,
             fontWeight: fontWeight,
           ),
         );

@@ -11,7 +11,7 @@ class BangaliDate extends StatelessWidget {
     final today = Bongabdo.now();
 
     return Container(
-      margin: const EdgeInsets.only(top: 2),
+      margin: const EdgeInsets.only(top: 1),
       child: Text(
         '${today.bDay} ${today.bMonth}, ${today.bYear} বঙ্গাব্দ',
         style: textTheme.labelSmall,

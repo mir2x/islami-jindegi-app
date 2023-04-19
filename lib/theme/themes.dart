@@ -16,30 +16,41 @@ ThemeData darkTheme(preferences) {
         color: ThemeColors.color3,
         fontSize: 20,
       ),
+      headlineSmall: TextStyle(
+        color: ThemeColors.color3,
+        fontSize: 17,
+      ),
       titleLarge: TextStyle(
         color: ThemeColors.color4,
         fontSize: 20,
       ),
       titleMedium: TextStyle(
         color: ThemeColors.color4,
-        fontSize: 16,
+        fontSize: 17,
+      ),
+      bodyLarge: TextStyle(
+        color: ThemeColors.color3,
+        fontSize: 20,
       ),
       bodyMedium: TextStyle(
         color: ThemeColors.color3,
-        fontSize: 16,
+        fontSize: 17,
+      ),
+      bodySmall: TextStyle(
+        color: ThemeColors.color3,
+        fontSize: 14,
       ),
       labelLarge: TextStyle(
         color: ThemeColors.color3,
-        fontSize: 18,
+        fontSize: 20,
       ),
       labelMedium: TextStyle(
         color: ThemeColors.color3,
-        fontSize: 16,
+        fontSize: 17,
       ),
       labelSmall: TextStyle(
         color: ThemeColors.color3,
-        fontSize: 13,
-        letterSpacing: 0.9,
+        fontSize: 14,
       ),
     ),
     appBarTheme: const AppBarTheme(

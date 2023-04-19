@@ -49,12 +49,7 @@ class CurrentPrayers extends ConsumerWidget {
           return Container(
             padding: data['geolocation']['isGeolocated']
                 ? const EdgeInsets.symmetric(vertical: 17, horizontal: 15)
-                : const EdgeInsets.only(
-                    top: 7,
-                    bottom: 10,
-                    left: 15,
-                    right: 15,
-                  ),
+                : const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

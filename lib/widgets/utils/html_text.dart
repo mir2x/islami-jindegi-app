@@ -15,16 +15,52 @@ class HtmlText extends StatelessWidget {
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
 
+    Style bodySmall = Style.fromTextStyle(
+      textTheme.bodySmall!,
+    ).copyWith(
+      lineHeight: const LineHeight(1.45),
+      margin: Margins.zero,
+      fontSize: FontSize(14 * fontSizeRatio),
+    );
+
+    Style bodyMedium = Style.fromTextStyle(
+      textTheme.bodyMedium!,
+    ).copyWith(
+      lineHeight: const LineHeight(1.45),
+      margin: Margins.zero,
+      fontSize: FontSize(17 * fontSizeRatio),
+    );
+
+    Style bodyLarge = Style.fromTextStyle(
+      textTheme.headlineMedium!,
+    ).copyWith(
+      lineHeight: const LineHeight(1.45),
+      margin: Margins.zero,
+      fontSize: FontSize(20 * fontSizeRatio),
+    );
+
+    Style bodyExtraLarge = Style.fromTextStyle(
+      textTheme.headlineLarge!,
+    ).copyWith(
+      lineHeight: const LineHeight(1.45),
+      margin: Margins.zero,
+      fontSize: FontSize(24 * fontSizeRatio),
+    );
+
     return Html(
       data: text,
       style: {
-        'body': Style.fromTextStyle(
-          textTheme.bodyMedium!,
-        ).copyWith(
-          lineHeight: const LineHeight(1.4),
-          margin: Margins.zero,
-          fontSize: FontSize(16 * fontSizeRatio),
-        ),
+        'body': bodyMedium,
+        'h6': bodyMedium,
+        'h5': bodyLarge,
+        'h4': bodyExtraLarge,
+        'h3': bodyExtraLarge,
+        'h2': bodyExtraLarge,
+        'h1': bodyExtraLarge,
+        '.tiptap-sm-font': bodySmall,
+        '.tiptap-md-font': bodyMedium,
+        '.tiptap-lg-font': bodyLarge,
+        '.tiptap-xl-font': bodyExtraLarge,
       },
     );
   }
