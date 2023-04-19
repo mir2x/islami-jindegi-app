@@ -2,11 +2,118 @@
 
 part of 'local_database.dart';
 
-// **************************************************************************
-// DriftDatabaseGenerator
-// **************************************************************************
-
 // ignore_for_file: type=lint
+class $SurahsTable extends Surahs with TableInfo<$SurahsTable, Surah> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SurahsTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> titleBn = GeneratedColumn<String>(
+      'title_bn', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
+      'slug', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> introduction = GeneratedColumn<String>(
+      'introduction', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
+      'excerpt', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> totalAyat = GeneratedColumn<int>(
+      'total_ayat', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> totalRuku = GeneratedColumn<int>(
+      'total_ruku', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> location = GeneratedColumn<String>(
+      'location', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        title,
+        titleBn,
+        slug,
+        introduction,
+        excerpt,
+        totalAyat,
+        totalRuku,
+        location,
+        position,
+        createdAt,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? 'surahs';
+  @override
+  String get actualTableName => 'surahs';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Surah map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Surah(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      titleBn: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title_bn'])!,
+      slug: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
+      introduction: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}introduction']),
+      excerpt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
+      totalAyat: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}total_ayat'])!,
+      totalRuku: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}total_ruku'])!,
+      location: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}location']),
+      position: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $SurahsTable createAlias(String alias) {
+    return $SurahsTable(attachedDatabase, alias);
+  }
+}
+
 class Surah extends DataClass implements Insertable<Surah> {
   final String id;
   final String title;
@@ -175,6 +282,7 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
   final Value<int> position;
   final Value<String> createdAt;
   final Value<String> updatedAt;
+  final Value<int> rowid;
   const SurahsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -188,6 +296,7 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
     this.position = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   SurahsCompanion.insert({
     required String id,
@@ -202,6 +311,7 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
     required int position,
     required String createdAt,
     required String updatedAt,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
         titleBn = Value(titleBn),
@@ -224,6 +334,7 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
     Expression<int>? position,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -238,6 +349,7 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
       if (position != null) 'position': position,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -253,7 +365,8 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
       Value<String?>? location,
       Value<int>? position,
       Value<String>? createdAt,
-      Value<String>? updatedAt}) {
+      Value<String>? updatedAt,
+      Value<int>? rowid}) {
     return SurahsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -267,6 +380,7 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
       position: position ?? this.position,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -309,6 +423,9 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<String>(updatedAt.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -326,17 +443,18 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
           ..write('location: $location, ')
           ..write('position: $position, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $SurahsTable extends Surahs with TableInfo<$SurahsTable, Surah> {
+class $ParasTable extends Paras with TableInfo<$ParasTable, Para> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $SurahsTable(this.attachedDatabase, [this._alias]);
+  $ParasTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
@@ -354,14 +472,6 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, Surah> {
       'slug', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> introduction = GeneratedColumn<String>(
-      'introduction', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  @override
-  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
-      'excerpt', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  @override
   late final GeneratedColumn<int> totalAyat = GeneratedColumn<int>(
       'total_ayat', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
@@ -369,10 +479,6 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, Surah> {
   late final GeneratedColumn<int> totalRuku = GeneratedColumn<int>(
       'total_ruku', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumn<String> location = GeneratedColumn<String>(
-      'location', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<int> position = GeneratedColumn<int>(
       'position', aliasedName, false,
@@ -391,55 +497,46 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, Surah> {
         title,
         titleBn,
         slug,
-        introduction,
-        excerpt,
         totalAyat,
         totalRuku,
-        location,
         position,
         createdAt,
         updatedAt
       ];
   @override
-  String get aliasedName => _alias ?? 'surahs';
+  String get aliasedName => _alias ?? 'paras';
   @override
-  String get actualTableName => 'surahs';
+  String get actualTableName => 'paras';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Surah map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Para map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Surah(
-      id: attachedDatabase.options.types
+    return Para(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      title: attachedDatabase.options.types
+      title: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      titleBn: attachedDatabase.options.types
+      titleBn: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title_bn'])!,
-      slug: attachedDatabase.options.types
+      slug: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
-      introduction: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}introduction']),
-      excerpt: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
-      totalAyat: attachedDatabase.options.types
+      totalAyat: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}total_ayat'])!,
-      totalRuku: attachedDatabase.options.types
+      totalRuku: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}total_ruku'])!,
-      location: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}location']),
-      position: attachedDatabase.options.types
+      position: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
-      createdAt: attachedDatabase.options.types
+      createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
+      updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
     );
   }
 
   @override
-  $SurahsTable createAlias(String alias) {
-    return $SurahsTable(attachedDatabase, alias);
+  $ParasTable createAlias(String alias) {
+    return $ParasTable(attachedDatabase, alias);
   }
 }
 
@@ -574,6 +671,7 @@ class ParasCompanion extends UpdateCompanion<Para> {
   final Value<int> position;
   final Value<String> createdAt;
   final Value<String> updatedAt;
+  final Value<int> rowid;
   const ParasCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -584,6 +682,7 @@ class ParasCompanion extends UpdateCompanion<Para> {
     this.position = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   ParasCompanion.insert({
     required String id,
@@ -595,6 +694,7 @@ class ParasCompanion extends UpdateCompanion<Para> {
     required int position,
     required String createdAt,
     required String updatedAt,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
         titleBn = Value(titleBn),
@@ -614,6 +714,7 @@ class ParasCompanion extends UpdateCompanion<Para> {
     Expression<int>? position,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -625,6 +726,7 @@ class ParasCompanion extends UpdateCompanion<Para> {
       if (position != null) 'position': position,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -637,7 +739,8 @@ class ParasCompanion extends UpdateCompanion<Para> {
       Value<int>? totalRuku,
       Value<int>? position,
       Value<String>? createdAt,
-      Value<String>? updatedAt}) {
+      Value<String>? updatedAt,
+      Value<int>? rowid}) {
     return ParasCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -648,6 +751,7 @@ class ParasCompanion extends UpdateCompanion<Para> {
       position: position ?? this.position,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -681,6 +785,9 @@ class ParasCompanion extends UpdateCompanion<Para> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<String>(updatedAt.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -695,17 +802,18 @@ class ParasCompanion extends UpdateCompanion<Para> {
           ..write('totalRuku: $totalRuku, ')
           ..write('position: $position, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $ParasTable extends Paras with TableInfo<$ParasTable, Para> {
+class $AyahsTable extends Ayahs with TableInfo<$AyahsTable, Ayah> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $ParasTable(this.attachedDatabase, [this._alias]);
+  $AyahsTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
@@ -715,25 +823,17 @@ class $ParasTable extends Paras with TableInfo<$ParasTable, Para> {
       'title', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> titleBn = GeneratedColumn<String>(
-      'title_bn', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
-      'slug', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumn<int> totalAyat = GeneratedColumn<int>(
-      'total_ayat', aliasedName, false,
+  late final GeneratedColumn<int> surahPosition = GeneratedColumn<int>(
+      'surah_position', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<int> totalRuku = GeneratedColumn<int>(
-      'total_ruku', aliasedName, false,
+  late final GeneratedColumn<int> paraPosition = GeneratedColumn<int>(
+      'para_position', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<int> position = GeneratedColumn<int>(
-      'position', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+  late final GeneratedColumn<int> ruku = GeneratedColumn<int>(
+      'ruku', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
@@ -743,51 +843,65 @@ class $ParasTable extends Paras with TableInfo<$ParasTable, Para> {
       'updated_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
+  late final GeneratedColumn<String> surahId = GeneratedColumn<String>(
+      'surah_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES surahs (id)'));
+  @override
+  late final GeneratedColumn<String> paraId = GeneratedColumn<String>(
+      'para_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES paras (id)'));
+  @override
   List<GeneratedColumn> get $columns => [
         id,
         title,
-        titleBn,
-        slug,
-        totalAyat,
-        totalRuku,
-        position,
+        surahPosition,
+        paraPosition,
+        ruku,
         createdAt,
-        updatedAt
+        updatedAt,
+        surahId,
+        paraId
       ];
   @override
-  String get aliasedName => _alias ?? 'paras';
+  String get aliasedName => _alias ?? 'ayahs';
   @override
-  String get actualTableName => 'paras';
+  String get actualTableName => 'ayahs';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Para map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Ayah map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Para(
-      id: attachedDatabase.options.types
+    return Ayah(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      title: attachedDatabase.options.types
+      title: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      titleBn: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}title_bn'])!,
-      slug: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
-      totalAyat: attachedDatabase.options.types
-          .read(DriftSqlType.int, data['${effectivePrefix}total_ayat'])!,
-      totalRuku: attachedDatabase.options.types
-          .read(DriftSqlType.int, data['${effectivePrefix}total_ruku'])!,
-      position: attachedDatabase.options.types
-          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
-      createdAt: attachedDatabase.options.types
+      surahPosition: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}surah_position'])!,
+      paraPosition: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}para_position'])!,
+      ruku: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}ruku']),
+      createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
+      updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      surahId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}surah_id'])!,
+      paraId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}para_id'])!,
     );
   }
 
   @override
-  $ParasTable createAlias(String alias) {
-    return $ParasTable(attachedDatabase, alias);
+  $AyahsTable createAlias(String alias) {
+    return $AyahsTable(attachedDatabase, alias);
   }
 }
 
@@ -924,6 +1038,7 @@ class AyahsCompanion extends UpdateCompanion<Ayah> {
   final Value<String> updatedAt;
   final Value<String> surahId;
   final Value<String> paraId;
+  final Value<int> rowid;
   const AyahsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -934,6 +1049,7 @@ class AyahsCompanion extends UpdateCompanion<Ayah> {
     this.updatedAt = const Value.absent(),
     this.surahId = const Value.absent(),
     this.paraId = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   AyahsCompanion.insert({
     required String id,
@@ -945,6 +1061,7 @@ class AyahsCompanion extends UpdateCompanion<Ayah> {
     required String updatedAt,
     required String surahId,
     required String paraId,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
         surahPosition = Value(surahPosition),
@@ -963,6 +1080,7 @@ class AyahsCompanion extends UpdateCompanion<Ayah> {
     Expression<String>? updatedAt,
     Expression<String>? surahId,
     Expression<String>? paraId,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -974,6 +1092,7 @@ class AyahsCompanion extends UpdateCompanion<Ayah> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (surahId != null) 'surah_id': surahId,
       if (paraId != null) 'para_id': paraId,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -986,7 +1105,8 @@ class AyahsCompanion extends UpdateCompanion<Ayah> {
       Value<String>? createdAt,
       Value<String>? updatedAt,
       Value<String>? surahId,
-      Value<String>? paraId}) {
+      Value<String>? paraId,
+      Value<int>? rowid}) {
     return AyahsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -997,6 +1117,7 @@ class AyahsCompanion extends UpdateCompanion<Ayah> {
       updatedAt: updatedAt ?? this.updatedAt,
       surahId: surahId ?? this.surahId,
       paraId: paraId ?? this.paraId,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -1030,6 +1151,9 @@ class AyahsCompanion extends UpdateCompanion<Ayah> {
     if (paraId.present) {
       map['para_id'] = Variable<String>(paraId.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -1044,17 +1168,19 @@ class AyahsCompanion extends UpdateCompanion<Ayah> {
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('surahId: $surahId, ')
-          ..write('paraId: $paraId')
+          ..write('paraId: $paraId, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $AyahsTable extends Ayahs with TableInfo<$AyahsTable, Ayah> {
+class $AyahTranslationsTable extends AyahTranslations
+    with TableInfo<$AyahTranslationsTable, AyahTranslation> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $AyahsTable(this.attachedDatabase, [this._alias]);
+  $AyahTranslationsTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
@@ -1064,17 +1190,9 @@ class $AyahsTable extends Ayahs with TableInfo<$AyahsTable, Ayah> {
       'title', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<int> surahPosition = GeneratedColumn<int>(
-      'surah_position', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumn<int> paraPosition = GeneratedColumn<int>(
-      'para_position', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumn<int> ruku = GeneratedColumn<int>(
-      'ruku', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+      'body', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
@@ -1084,63 +1202,43 @@ class $AyahsTable extends Ayahs with TableInfo<$AyahsTable, Ayah> {
       'updated_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> surahId = GeneratedColumn<String>(
-      'surah_id', aliasedName, false,
+  late final GeneratedColumn<String> ayahId = GeneratedColumn<String>(
+      'ayah_id', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
-      defaultConstraints: 'REFERENCES surahs (id)');
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES ayahs (id)'));
   @override
-  late final GeneratedColumn<String> paraId = GeneratedColumn<String>(
-      'para_id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: 'REFERENCES paras (id)');
+  List<GeneratedColumn> get $columns =>
+      [id, title, body, createdAt, updatedAt, ayahId];
   @override
-  List<GeneratedColumn> get $columns => [
-        id,
-        title,
-        surahPosition,
-        paraPosition,
-        ruku,
-        createdAt,
-        updatedAt,
-        surahId,
-        paraId
-      ];
+  String get aliasedName => _alias ?? 'ayah_translations';
   @override
-  String get aliasedName => _alias ?? 'ayahs';
-  @override
-  String get actualTableName => 'ayahs';
+  String get actualTableName => 'ayah_translations';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Ayah map(Map<String, dynamic> data, {String? tablePrefix}) {
+  AyahTranslation map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Ayah(
-      id: attachedDatabase.options.types
+    return AyahTranslation(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      title: attachedDatabase.options.types
+      title: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      surahPosition: attachedDatabase.options.types
-          .read(DriftSqlType.int, data['${effectivePrefix}surah_position'])!,
-      paraPosition: attachedDatabase.options.types
-          .read(DriftSqlType.int, data['${effectivePrefix}para_position'])!,
-      ruku: attachedDatabase.options.types
-          .read(DriftSqlType.int, data['${effectivePrefix}ruku']),
-      createdAt: attachedDatabase.options.types
+      body: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}body'])!,
+      createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
+      updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
-      surahId: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}surah_id'])!,
-      paraId: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}para_id'])!,
+      ayahId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}ayah_id'])!,
     );
   }
 
   @override
-  $AyahsTable createAlias(String alias) {
-    return $AyahsTable(attachedDatabase, alias);
+  $AyahTranslationsTable createAlias(String alias) {
+    return $AyahTranslationsTable(attachedDatabase, alias);
   }
 }
 
@@ -1245,6 +1343,7 @@ class AyahTranslationsCompanion extends UpdateCompanion<AyahTranslation> {
   final Value<String> createdAt;
   final Value<String> updatedAt;
   final Value<String> ayahId;
+  final Value<int> rowid;
   const AyahTranslationsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -1252,6 +1351,7 @@ class AyahTranslationsCompanion extends UpdateCompanion<AyahTranslation> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.ayahId = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   AyahTranslationsCompanion.insert({
     required String id,
@@ -1260,6 +1360,7 @@ class AyahTranslationsCompanion extends UpdateCompanion<AyahTranslation> {
     required String createdAt,
     required String updatedAt,
     required String ayahId,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
         body = Value(body),
@@ -1273,6 +1374,7 @@ class AyahTranslationsCompanion extends UpdateCompanion<AyahTranslation> {
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
     Expression<String>? ayahId,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1281,6 +1383,7 @@ class AyahTranslationsCompanion extends UpdateCompanion<AyahTranslation> {
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (ayahId != null) 'ayah_id': ayahId,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -1290,7 +1393,8 @@ class AyahTranslationsCompanion extends UpdateCompanion<AyahTranslation> {
       Value<String>? body,
       Value<String>? createdAt,
       Value<String>? updatedAt,
-      Value<String>? ayahId}) {
+      Value<String>? ayahId,
+      Value<int>? rowid}) {
     return AyahTranslationsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -1298,6 +1402,7 @@ class AyahTranslationsCompanion extends UpdateCompanion<AyahTranslation> {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       ayahId: ayahId ?? this.ayahId,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -1322,6 +1427,9 @@ class AyahTranslationsCompanion extends UpdateCompanion<AyahTranslation> {
     if (ayahId.present) {
       map['ayah_id'] = Variable<String>(ayahId.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -1333,18 +1441,18 @@ class AyahTranslationsCompanion extends UpdateCompanion<AyahTranslation> {
           ..write('body: $body, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('ayahId: $ayahId')
+          ..write('ayahId: $ayahId, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $AyahTranslationsTable extends AyahTranslations
-    with TableInfo<$AyahTranslationsTable, AyahTranslation> {
+class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $AyahTranslationsTable(this.attachedDatabase, [this._alias]);
+  $BooksTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
@@ -1354,9 +1462,45 @@ class $AyahTranslationsTable extends AyahTranslations
       'title', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> body = GeneratedColumn<String>(
-      'body', aliasedName, false,
+  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
+      'slug', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
+      'excerpt', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> publisher = GeneratedColumn<String>(
+      'publisher', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> price = GeneratedColumn<String>(
+      'price', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> language = GeneratedColumn<String>(
+      'language', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      imageData = GeneratedColumn<String>('image_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>(
+              $BooksTable.$converterimageDatan);
+  @override
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      documentData = GeneratedColumn<String>('document_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>(
+              $BooksTable.$converterdocumentDatan);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> publishedAt = GeneratedColumn<String>(
+      'published_at', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
@@ -1366,43 +1510,76 @@ class $AyahTranslationsTable extends AyahTranslations
       'updated_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> ayahId = GeneratedColumn<String>(
-      'ayah_id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: 'REFERENCES ayahs (id)');
+  List<GeneratedColumn> get $columns => [
+        id,
+        title,
+        slug,
+        excerpt,
+        publisher,
+        price,
+        language,
+        imageData,
+        documentData,
+        position,
+        publishedAt,
+        createdAt,
+        updatedAt
+      ];
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, title, body, createdAt, updatedAt, ayahId];
+  String get aliasedName => _alias ?? 'books';
   @override
-  String get aliasedName => _alias ?? 'ayah_translations';
-  @override
-  String get actualTableName => 'ayah_translations';
+  String get actualTableName => 'books';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  AyahTranslation map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Book map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return AyahTranslation(
-      id: attachedDatabase.options.types
+    return Book(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      title: attachedDatabase.options.types
+      title: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      body: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}body'])!,
-      createdAt: attachedDatabase.options.types
+      slug: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
+      excerpt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
+      publisher: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}publisher']),
+      price: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}price']),
+      language: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
+      imageData: $BooksTable.$converterimageDatan.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}image_data'])),
+      documentData: $BooksTable.$converterdocumentDatan.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}document_data'])),
+      position: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      publishedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}published_at']),
+      createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
+      updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
-      ayahId: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}ayah_id'])!,
     );
   }
 
   @override
-  $AyahTranslationsTable createAlias(String alias) {
-    return $AyahTranslationsTable(attachedDatabase, alias);
+  $BooksTable createAlias(String alias) {
+    return $BooksTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<Map<dynamic, dynamic>, String> $converterimageData =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converterimageDatan =
+      NullAwareTypeConverter.wrap($converterimageData);
+  static TypeConverter<Map<dynamic, dynamic>, String> $converterdocumentData =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>?, String?>
+      $converterdocumentDatan =
+      NullAwareTypeConverter.wrap($converterdocumentData);
 }
 
 class Book extends DataClass implements Insertable<Book> {
@@ -1450,11 +1627,11 @@ class Book extends DataClass implements Insertable<Book> {
     }
     map['language'] = Variable<String>(language);
     if (!nullToAbsent || imageData != null) {
-      final converter = $BooksTable.$converter0n;
+      final converter = $BooksTable.$converterimageDatan;
       map['image_data'] = Variable<String>(converter.toSql(imageData));
     }
     if (!nullToAbsent || documentData != null) {
-      final converter = $BooksTable.$converter1n;
+      final converter = $BooksTable.$converterdocumentDatan;
       map['document_data'] = Variable<String>(converter.toSql(documentData));
     }
     map['position'] = Variable<int>(position);
@@ -1604,6 +1781,7 @@ class BooksCompanion extends UpdateCompanion<Book> {
   final Value<String?> publishedAt;
   final Value<String> createdAt;
   final Value<String> updatedAt;
+  final Value<int> rowid;
   const BooksCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -1618,6 +1796,7 @@ class BooksCompanion extends UpdateCompanion<Book> {
     this.publishedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   BooksCompanion.insert({
     required String id,
@@ -1633,6 +1812,7 @@ class BooksCompanion extends UpdateCompanion<Book> {
     this.publishedAt = const Value.absent(),
     required String createdAt,
     required String updatedAt,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
         slug = Value(slug),
@@ -1654,6 +1834,7 @@ class BooksCompanion extends UpdateCompanion<Book> {
     Expression<String>? publishedAt,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1669,6 +1850,7 @@ class BooksCompanion extends UpdateCompanion<Book> {
       if (publishedAt != null) 'published_at': publishedAt,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -1685,7 +1867,8 @@ class BooksCompanion extends UpdateCompanion<Book> {
       Value<int>? position,
       Value<String?>? publishedAt,
       Value<String>? createdAt,
-      Value<String>? updatedAt}) {
+      Value<String>? updatedAt,
+      Value<int>? rowid}) {
     return BooksCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -1700,6 +1883,7 @@ class BooksCompanion extends UpdateCompanion<Book> {
       publishedAt: publishedAt ?? this.publishedAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -1728,11 +1912,11 @@ class BooksCompanion extends UpdateCompanion<Book> {
       map['language'] = Variable<String>(language.value);
     }
     if (imageData.present) {
-      final converter = $BooksTable.$converter0n;
+      final converter = $BooksTable.$converterimageDatan;
       map['image_data'] = Variable<String>(converter.toSql(imageData.value));
     }
     if (documentData.present) {
-      final converter = $BooksTable.$converter1n;
+      final converter = $BooksTable.$converterdocumentDatan;
       map['document_data'] =
           Variable<String>(converter.toSql(documentData.value));
     }
@@ -1747,6 +1931,9 @@ class BooksCompanion extends UpdateCompanion<Book> {
     }
     if (updatedAt.present) {
       map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -1766,17 +1953,18 @@ class BooksCompanion extends UpdateCompanion<Book> {
           ..write('position: $position, ')
           ..write('publishedAt: $publishedAt, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
+class $ChaptersTable extends Chapters with TableInfo<$ChaptersTable, Chapter> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $BooksTable(this.attachedDatabase, [this._alias]);
+  $ChaptersTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
@@ -1786,43 +1974,13 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
       'title', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
-      'slug', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
-      'excerpt', aliasedName, true,
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+      'body', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  @override
-  late final GeneratedColumn<String> publisher = GeneratedColumn<String>(
-      'publisher', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  @override
-  late final GeneratedColumn<String> price = GeneratedColumn<String>(
-      'price', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  @override
-  late final GeneratedColumn<String> language = GeneratedColumn<String>(
-      'language', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
-      imageData = GeneratedColumn<String>('image_data', aliasedName, true,
-              type: DriftSqlType.string, requiredDuringInsert: false)
-          .withConverter<Map<dynamic, dynamic>?>($BooksTable.$converter0n);
-  @override
-  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
-      documentData = GeneratedColumn<String>('document_data', aliasedName, true,
-              type: DriftSqlType.string, requiredDuringInsert: false)
-          .withConverter<Map<dynamic, dynamic>?>($BooksTable.$converter1n);
   @override
   late final GeneratedColumn<int> position = GeneratedColumn<int>(
       'position', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumn<String> publishedAt = GeneratedColumn<String>(
-      'published_at', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
@@ -1832,74 +1990,46 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
       'updated_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [
-        id,
-        title,
-        slug,
-        excerpt,
-        publisher,
-        price,
-        language,
-        imageData,
-        documentData,
-        position,
-        publishedAt,
-        createdAt,
-        updatedAt
-      ];
+  late final GeneratedColumn<String> bookId = GeneratedColumn<String>(
+      'book_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES books (id)'));
   @override
-  String get aliasedName => _alias ?? 'books';
+  List<GeneratedColumn> get $columns =>
+      [id, title, body, position, createdAt, updatedAt, bookId];
   @override
-  String get actualTableName => 'books';
+  String get aliasedName => _alias ?? 'chapters';
+  @override
+  String get actualTableName => 'chapters';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Book map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Chapter map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Book(
-      id: attachedDatabase.options.types
+    return Chapter(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      title: attachedDatabase.options.types
+      title: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      slug: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
-      excerpt: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
-      publisher: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}publisher']),
-      price: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}price']),
-      language: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
-      imageData: $BooksTable.$converter0n.fromSql(attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}image_data'])),
-      documentData: $BooksTable.$converter1n.fromSql(attachedDatabase
-          .options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}document_data'])),
-      position: attachedDatabase.options.types
+      body: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}body']),
+      position: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
-      publishedAt: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}published_at']),
-      createdAt: attachedDatabase.options.types
+      createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
+      updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      bookId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}book_id'])!,
     );
   }
 
   @override
-  $BooksTable createAlias(String alias) {
-    return $BooksTable(attachedDatabase, alias);
+  $ChaptersTable createAlias(String alias) {
+    return $ChaptersTable(attachedDatabase, alias);
   }
-
-  static TypeConverter<Map<dynamic, dynamic>, String> $converter0 =
-      const FileData();
-  static TypeConverter<Map<dynamic, dynamic>, String> $converter1 =
-      const FileData();
-  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter0n =
-      NullAwareTypeConverter.wrap($converter0);
-  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter1n =
-      NullAwareTypeConverter.wrap($converter1);
 }
 
 class Chapter extends DataClass implements Insertable<Chapter> {
@@ -2015,6 +2145,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
   final Value<String> createdAt;
   final Value<String> updatedAt;
   final Value<String> bookId;
+  final Value<int> rowid;
   const ChaptersCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -2023,6 +2154,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.bookId = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   ChaptersCompanion.insert({
     required String id,
@@ -2032,6 +2164,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
     required String createdAt,
     required String updatedAt,
     required String bookId,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
         position = Value(position),
@@ -2046,6 +2179,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
     Expression<String>? bookId,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2055,6 +2189,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (bookId != null) 'book_id': bookId,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -2065,7 +2200,8 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
       Value<int>? position,
       Value<String>? createdAt,
       Value<String>? updatedAt,
-      Value<String>? bookId}) {
+      Value<String>? bookId,
+      Value<int>? rowid}) {
     return ChaptersCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -2074,6 +2210,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       bookId: bookId ?? this.bookId,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -2101,6 +2238,9 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
     if (bookId.present) {
       map['book_id'] = Variable<String>(bookId.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -2113,17 +2253,19 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
           ..write('position: $position, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('bookId: $bookId')
+          ..write('bookId: $bookId, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $ChaptersTable extends Chapters with TableInfo<$ChaptersTable, Chapter> {
+class $SubchaptersTable extends Subchapters
+    with TableInfo<$SubchaptersTable, Subchapter> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $ChaptersTable(this.attachedDatabase, [this._alias]);
+  $SubchaptersTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
@@ -2134,8 +2276,8 @@ class $ChaptersTable extends Chapters with TableInfo<$ChaptersTable, Chapter> {
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   late final GeneratedColumn<String> body = GeneratedColumn<String>(
-      'body', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+      'body', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   late final GeneratedColumn<int> position = GeneratedColumn<int>(
       'position', aliasedName, false,
@@ -2149,44 +2291,45 @@ class $ChaptersTable extends Chapters with TableInfo<$ChaptersTable, Chapter> {
       'updated_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> bookId = GeneratedColumn<String>(
-      'book_id', aliasedName, false,
+  late final GeneratedColumn<String> chapterId = GeneratedColumn<String>(
+      'chapter_id', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
-      defaultConstraints: 'REFERENCES books (id)');
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES chapters (id)'));
   @override
   List<GeneratedColumn> get $columns =>
-      [id, title, body, position, createdAt, updatedAt, bookId];
+      [id, title, body, position, createdAt, updatedAt, chapterId];
   @override
-  String get aliasedName => _alias ?? 'chapters';
+  String get aliasedName => _alias ?? 'subchapters';
   @override
-  String get actualTableName => 'chapters';
+  String get actualTableName => 'subchapters';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Chapter map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Subchapter map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Chapter(
-      id: attachedDatabase.options.types
+    return Subchapter(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      title: attachedDatabase.options.types
+      title: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      body: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}body']),
-      position: attachedDatabase.options.types
+      body: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}body'])!,
+      position: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
-      createdAt: attachedDatabase.options.types
+      createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
+      updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
-      bookId: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}book_id'])!,
+      chapterId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}chapter_id'])!,
     );
   }
 
   @override
-  $ChaptersTable createAlias(String alias) {
-    return $ChaptersTable(attachedDatabase, alias);
+  $SubchaptersTable createAlias(String alias) {
+    return $SubchaptersTable(attachedDatabase, alias);
   }
 }
 
@@ -2301,6 +2444,7 @@ class SubchaptersCompanion extends UpdateCompanion<Subchapter> {
   final Value<String> createdAt;
   final Value<String> updatedAt;
   final Value<String> chapterId;
+  final Value<int> rowid;
   const SubchaptersCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -2309,6 +2453,7 @@ class SubchaptersCompanion extends UpdateCompanion<Subchapter> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.chapterId = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   SubchaptersCompanion.insert({
     required String id,
@@ -2318,6 +2463,7 @@ class SubchaptersCompanion extends UpdateCompanion<Subchapter> {
     required String createdAt,
     required String updatedAt,
     required String chapterId,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
         body = Value(body),
@@ -2333,6 +2479,7 @@ class SubchaptersCompanion extends UpdateCompanion<Subchapter> {
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
     Expression<String>? chapterId,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2342,6 +2489,7 @@ class SubchaptersCompanion extends UpdateCompanion<Subchapter> {
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (chapterId != null) 'chapter_id': chapterId,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -2352,7 +2500,8 @@ class SubchaptersCompanion extends UpdateCompanion<Subchapter> {
       Value<int>? position,
       Value<String>? createdAt,
       Value<String>? updatedAt,
-      Value<String>? chapterId}) {
+      Value<String>? chapterId,
+      Value<int>? rowid}) {
     return SubchaptersCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -2361,6 +2510,7 @@ class SubchaptersCompanion extends UpdateCompanion<Subchapter> {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       chapterId: chapterId ?? this.chapterId,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -2388,6 +2538,9 @@ class SubchaptersCompanion extends UpdateCompanion<Subchapter> {
     if (chapterId.present) {
       map['chapter_id'] = Variable<String>(chapterId.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -2400,30 +2553,30 @@ class SubchaptersCompanion extends UpdateCompanion<Subchapter> {
           ..write('position: $position, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('chapterId: $chapterId')
+          ..write('chapterId: $chapterId, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $SubchaptersTable extends Subchapters
-    with TableInfo<$SubchaptersTable, Subchapter> {
+class $AuthorsTable extends Authors with TableInfo<$AuthorsTable, Author> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $SubchaptersTable(this.attachedDatabase, [this._alias]);
+  $AuthorsTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> title = GeneratedColumn<String>(
-      'title', aliasedName, false,
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> body = GeneratedColumn<String>(
-      'body', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+  late final GeneratedColumn<String> info = GeneratedColumn<String>(
+      'info', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<int> position = GeneratedColumn<int>(
       'position', aliasedName, false,
@@ -2437,44 +2590,36 @@ class $SubchaptersTable extends Subchapters
       'updated_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> chapterId = GeneratedColumn<String>(
-      'chapter_id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: 'REFERENCES chapters (id)');
-  @override
   List<GeneratedColumn> get $columns =>
-      [id, title, body, position, createdAt, updatedAt, chapterId];
+      [id, name, info, position, createdAt, updatedAt];
   @override
-  String get aliasedName => _alias ?? 'subchapters';
+  String get aliasedName => _alias ?? 'authors';
   @override
-  String get actualTableName => 'subchapters';
+  String get actualTableName => 'authors';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Subchapter map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Author map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Subchapter(
-      id: attachedDatabase.options.types
+    return Author(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      title: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      body: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}body'])!,
-      position: attachedDatabase.options.types
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      info: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}info']),
+      position: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
-      createdAt: attachedDatabase.options.types
+      createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
+      updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
-      chapterId: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}chapter_id'])!,
     );
   }
 
   @override
-  $SubchaptersTable createAlias(String alias) {
-    return $SubchaptersTable(attachedDatabase, alias);
+  $AuthorsTable createAlias(String alias) {
+    return $AuthorsTable(attachedDatabase, alias);
   }
 }
 
@@ -2581,6 +2726,7 @@ class AuthorsCompanion extends UpdateCompanion<Author> {
   final Value<int> position;
   final Value<String> createdAt;
   final Value<String> updatedAt;
+  final Value<int> rowid;
   const AuthorsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -2588,6 +2734,7 @@ class AuthorsCompanion extends UpdateCompanion<Author> {
     this.position = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   AuthorsCompanion.insert({
     required String id,
@@ -2596,6 +2743,7 @@ class AuthorsCompanion extends UpdateCompanion<Author> {
     required int position,
     required String createdAt,
     required String updatedAt,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         name = Value(name),
         position = Value(position),
@@ -2608,6 +2756,7 @@ class AuthorsCompanion extends UpdateCompanion<Author> {
     Expression<int>? position,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2616,6 +2765,7 @@ class AuthorsCompanion extends UpdateCompanion<Author> {
       if (position != null) 'position': position,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -2625,7 +2775,8 @@ class AuthorsCompanion extends UpdateCompanion<Author> {
       Value<String?>? info,
       Value<int>? position,
       Value<String>? createdAt,
-      Value<String>? updatedAt}) {
+      Value<String>? updatedAt,
+      Value<int>? rowid}) {
     return AuthorsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -2633,6 +2784,7 @@ class AuthorsCompanion extends UpdateCompanion<Author> {
       position: position ?? this.position,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -2657,6 +2809,9 @@ class AuthorsCompanion extends UpdateCompanion<Author> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<String>(updatedAt.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -2668,72 +2823,61 @@ class AuthorsCompanion extends UpdateCompanion<Author> {
           ..write('info: $info, ')
           ..write('position: $position, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $AuthorsTable extends Authors with TableInfo<$AuthorsTable, Author> {
+class $BooksAuthorsTable extends BooksAuthors
+    with TableInfo<$BooksAuthorsTable, BooksAuthor> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $AuthorsTable(this.attachedDatabase, [this._alias]);
+  $BooksAuthorsTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+  late final GeneratedColumn<String> bookId = GeneratedColumn<String>(
+      'book_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES books (id)'));
   @override
-  late final GeneratedColumn<String> info = GeneratedColumn<String>(
-      'info', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumn<String> authorId = GeneratedColumn<String>(
+      'author_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES authors (id)'));
   @override
-  late final GeneratedColumn<int> position = GeneratedColumn<int>(
-      'position', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+  List<GeneratedColumn> get $columns => [id, bookId, authorId];
   @override
-  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
-      'created_at', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+  String get aliasedName => _alias ?? 'books_authors';
   @override
-  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
-      'updated_at', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  List<GeneratedColumn> get $columns =>
-      [id, name, info, position, createdAt, updatedAt];
-  @override
-  String get aliasedName => _alias ?? 'authors';
-  @override
-  String get actualTableName => 'authors';
+  String get actualTableName => 'books_authors';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Author map(Map<String, dynamic> data, {String? tablePrefix}) {
+  BooksAuthor map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Author(
-      id: attachedDatabase.options.types
+    return BooksAuthor(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      name: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      info: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}info']),
-      position: attachedDatabase.options.types
-          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
-      createdAt: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      bookId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}book_id'])!,
+      authorId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}author_id'])!,
     );
   }
 
   @override
-  $AuthorsTable createAlias(String alias) {
-    return $AuthorsTable(attachedDatabase, alias);
+  $BooksAuthorsTable createAlias(String alias) {
+    return $BooksAuthorsTable(attachedDatabase, alias);
   }
 }
 
@@ -2802,15 +2946,18 @@ class BooksAuthorsCompanion extends UpdateCompanion<BooksAuthor> {
   final Value<String> id;
   final Value<String> bookId;
   final Value<String> authorId;
+  final Value<int> rowid;
   const BooksAuthorsCompanion({
     this.id = const Value.absent(),
     this.bookId = const Value.absent(),
     this.authorId = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   BooksAuthorsCompanion.insert({
     required String id,
     required String bookId,
     required String authorId,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         bookId = Value(bookId),
         authorId = Value(authorId);
@@ -2818,20 +2965,26 @@ class BooksAuthorsCompanion extends UpdateCompanion<BooksAuthor> {
     Expression<String>? id,
     Expression<String>? bookId,
     Expression<String>? authorId,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (bookId != null) 'book_id': bookId,
       if (authorId != null) 'author_id': authorId,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   BooksAuthorsCompanion copyWith(
-      {Value<String>? id, Value<String>? bookId, Value<String>? authorId}) {
+      {Value<String>? id,
+      Value<String>? bookId,
+      Value<String>? authorId,
+      Value<int>? rowid}) {
     return BooksAuthorsCompanion(
       id: id ?? this.id,
       bookId: bookId ?? this.bookId,
       authorId: authorId ?? this.authorId,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -2847,6 +3000,9 @@ class BooksAuthorsCompanion extends UpdateCompanion<BooksAuthor> {
     if (authorId.present) {
       map['author_id'] = Variable<String>(authorId.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -2855,58 +3011,73 @@ class BooksAuthorsCompanion extends UpdateCompanion<BooksAuthor> {
     return (StringBuffer('BooksAuthorsCompanion(')
           ..write('id: $id, ')
           ..write('bookId: $bookId, ')
-          ..write('authorId: $authorId')
+          ..write('authorId: $authorId, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $BooksAuthorsTable extends BooksAuthors
-    with TableInfo<$BooksAuthorsTable, BooksAuthor> {
+class $SpeakersTable extends Speakers with TableInfo<$SpeakersTable, Speaker> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $BooksAuthorsTable(this.attachedDatabase, [this._alias]);
+  $SpeakersTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> bookId = GeneratedColumn<String>(
-      'book_id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: 'REFERENCES books (id)');
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> authorId = GeneratedColumn<String>(
-      'author_id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: 'REFERENCES authors (id)');
+  late final GeneratedColumn<String> info = GeneratedColumn<String>(
+      'info', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
-  List<GeneratedColumn> get $columns => [id, bookId, authorId];
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
   @override
-  String get aliasedName => _alias ?? 'books_authors';
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  String get actualTableName => 'books_authors';
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, name, info, position, createdAt, updatedAt];
+  @override
+  String get aliasedName => _alias ?? 'speakers';
+  @override
+  String get actualTableName => 'speakers';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  BooksAuthor map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Speaker map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return BooksAuthor(
-      id: attachedDatabase.options.types
+    return Speaker(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      bookId: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}book_id'])!,
-      authorId: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}author_id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      info: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}info']),
+      position: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
     );
   }
 
   @override
-  $BooksAuthorsTable createAlias(String alias) {
-    return $BooksAuthorsTable(attachedDatabase, alias);
+  $SpeakersTable createAlias(String alias) {
+    return $SpeakersTable(attachedDatabase, alias);
   }
 }
 
@@ -3013,6 +3184,7 @@ class SpeakersCompanion extends UpdateCompanion<Speaker> {
   final Value<int> position;
   final Value<String> createdAt;
   final Value<String> updatedAt;
+  final Value<int> rowid;
   const SpeakersCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -3020,6 +3192,7 @@ class SpeakersCompanion extends UpdateCompanion<Speaker> {
     this.position = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   SpeakersCompanion.insert({
     required String id,
@@ -3028,6 +3201,7 @@ class SpeakersCompanion extends UpdateCompanion<Speaker> {
     required int position,
     required String createdAt,
     required String updatedAt,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         name = Value(name),
         position = Value(position),
@@ -3040,6 +3214,7 @@ class SpeakersCompanion extends UpdateCompanion<Speaker> {
     Expression<int>? position,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -3048,6 +3223,7 @@ class SpeakersCompanion extends UpdateCompanion<Speaker> {
       if (position != null) 'position': position,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -3057,7 +3233,8 @@ class SpeakersCompanion extends UpdateCompanion<Speaker> {
       Value<String?>? info,
       Value<int>? position,
       Value<String>? createdAt,
-      Value<String>? updatedAt}) {
+      Value<String>? updatedAt,
+      Value<int>? rowid}) {
     return SpeakersCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -3065,6 +3242,7 @@ class SpeakersCompanion extends UpdateCompanion<Speaker> {
       position: position ?? this.position,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -3089,6 +3267,9 @@ class SpeakersCompanion extends UpdateCompanion<Speaker> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<String>(updatedAt.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -3100,33 +3281,48 @@ class SpeakersCompanion extends UpdateCompanion<Speaker> {
           ..write('info: $info, ')
           ..write('position: $position, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $SpeakersTable extends Speakers with TableInfo<$SpeakersTable, Speaker> {
+class $BayansTable extends Bayans with TableInfo<$BayansTable, Bayan> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $SpeakersTable(this.attachedDatabase, [this._alias]);
+  $BayansTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> info = GeneratedColumn<String>(
-      'info', aliasedName, true,
+  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
+      'excerpt', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
-  late final GeneratedColumn<int> position = GeneratedColumn<int>(
-      'position', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+  late final GeneratedColumn<String> language = GeneratedColumn<String>(
+      'language', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> location = GeneratedColumn<String>(
+      'location', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      audioData = GeneratedColumn<String>('audio_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>(
+              $BayansTable.$converteraudioDatan);
+  @override
+  late final GeneratedColumn<String> publishedAt = GeneratedColumn<String>(
+      'published_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
@@ -3136,37 +3332,68 @@ class $SpeakersTable extends Speakers with TableInfo<$SpeakersTable, Speaker> {
       'updated_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, name, info, position, createdAt, updatedAt];
+  late final GeneratedColumn<String> speakerId = GeneratedColumn<String>(
+      'speaker_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES speakers (id)'));
   @override
-  String get aliasedName => _alias ?? 'speakers';
+  List<GeneratedColumn> get $columns => [
+        id,
+        title,
+        excerpt,
+        language,
+        location,
+        audioData,
+        publishedAt,
+        createdAt,
+        updatedAt,
+        speakerId
+      ];
   @override
-  String get actualTableName => 'speakers';
+  String get aliasedName => _alias ?? 'bayans';
+  @override
+  String get actualTableName => 'bayans';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Speaker map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Bayan map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Speaker(
-      id: attachedDatabase.options.types
+    return Bayan(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      name: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      info: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}info']),
-      position: attachedDatabase.options.types
-          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
-      createdAt: attachedDatabase.options.types
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      excerpt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
+      language: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
+      location: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}location']),
+      audioData: $BayansTable.$converteraudioDatan.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}audio_data'])),
+      publishedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}published_at'])!,
+      createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
+      updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      speakerId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}speaker_id'])!,
     );
   }
 
   @override
-  $SpeakersTable createAlias(String alias) {
-    return $SpeakersTable(attachedDatabase, alias);
+  $BayansTable createAlias(String alias) {
+    return $BayansTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<Map<dynamic, dynamic>, String> $converteraudioData =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converteraudioDatan =
+      NullAwareTypeConverter.wrap($converteraudioData);
 }
 
 class Bayan extends DataClass implements Insertable<Bayan> {
@@ -3204,7 +3431,7 @@ class Bayan extends DataClass implements Insertable<Bayan> {
       map['location'] = Variable<String>(location);
     }
     if (!nullToAbsent || audioData != null) {
-      final converter = $BayansTable.$converter0n;
+      final converter = $BayansTable.$converteraudioDatan;
       map['audio_data'] = Variable<String>(converter.toSql(audioData));
     }
     map['published_at'] = Variable<String>(publishedAt);
@@ -3317,6 +3544,7 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
   final Value<String> createdAt;
   final Value<String> updatedAt;
   final Value<String> speakerId;
+  final Value<int> rowid;
   const BayansCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -3328,6 +3556,7 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.speakerId = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   BayansCompanion.insert({
     required String id,
@@ -3340,6 +3569,7 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
     required String createdAt,
     required String updatedAt,
     required String speakerId,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
         language = Value(language),
@@ -3358,6 +3588,7 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
     Expression<String>? speakerId,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -3370,6 +3601,7 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (speakerId != null) 'speaker_id': speakerId,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -3383,7 +3615,8 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
       Value<String>? publishedAt,
       Value<String>? createdAt,
       Value<String>? updatedAt,
-      Value<String>? speakerId}) {
+      Value<String>? speakerId,
+      Value<int>? rowid}) {
     return BayansCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -3395,6 +3628,7 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       speakerId: speakerId ?? this.speakerId,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -3417,7 +3651,7 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
       map['location'] = Variable<String>(location.value);
     }
     if (audioData.present) {
-      final converter = $BayansTable.$converter0n;
+      final converter = $BayansTable.$converteraudioDatan;
       map['audio_data'] = Variable<String>(converter.toSql(audioData.value));
     }
     if (publishedAt.present) {
@@ -3431,6 +3665,9 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
     }
     if (speakerId.present) {
       map['speaker_id'] = Variable<String>(speakerId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -3447,46 +3684,35 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
           ..write('publishedAt: $publishedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('speakerId: $speakerId')
+          ..write('speakerId: $speakerId, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $BayansTable extends Bayans with TableInfo<$BayansTable, Bayan> {
+class $MalfuzatAuthorsTable extends MalfuzatAuthors
+    with TableInfo<$MalfuzatAuthorsTable, MalfuzatAuthor> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $BayansTable(this.attachedDatabase, [this._alias]);
+  $MalfuzatAuthorsTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> title = GeneratedColumn<String>(
-      'title', aliasedName, false,
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
-      'excerpt', aliasedName, true,
+  late final GeneratedColumn<String> info = GeneratedColumn<String>(
+      'info', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
-  late final GeneratedColumn<String> language = GeneratedColumn<String>(
-      'language', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumn<String> location = GeneratedColumn<String>(
-      'location', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  @override
-  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
-      audioData = GeneratedColumn<String>('audio_data', aliasedName, true,
-              type: DriftSqlType.string, requiredDuringInsert: false)
-          .withConverter<Map<dynamic, dynamic>?>($BayansTable.$converter0n);
-  @override
-  late final GeneratedColumn<String> publishedAt = GeneratedColumn<String>(
-      'published_at', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
   @override
   late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
@@ -3496,67 +3722,37 @@ class $BayansTable extends Bayans with TableInfo<$BayansTable, Bayan> {
       'updated_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> speakerId = GeneratedColumn<String>(
-      'speaker_id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: 'REFERENCES speakers (id)');
+  List<GeneratedColumn> get $columns =>
+      [id, name, info, position, createdAt, updatedAt];
   @override
-  List<GeneratedColumn> get $columns => [
-        id,
-        title,
-        excerpt,
-        language,
-        location,
-        audioData,
-        publishedAt,
-        createdAt,
-        updatedAt,
-        speakerId
-      ];
+  String get aliasedName => _alias ?? 'malfuzat_authors';
   @override
-  String get aliasedName => _alias ?? 'bayans';
-  @override
-  String get actualTableName => 'bayans';
+  String get actualTableName => 'malfuzat_authors';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Bayan map(Map<String, dynamic> data, {String? tablePrefix}) {
+  MalfuzatAuthor map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Bayan(
-      id: attachedDatabase.options.types
+    return MalfuzatAuthor(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      title: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      excerpt: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
-      language: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
-      location: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}location']),
-      audioData: $BayansTable.$converter0n.fromSql(attachedDatabase
-          .options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}audio_data'])),
-      publishedAt: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}published_at'])!,
-      createdAt: attachedDatabase.options.types
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      info: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}info']),
+      position: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
+      updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
-      speakerId: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}speaker_id'])!,
     );
   }
 
   @override
-  $BayansTable createAlias(String alias) {
-    return $BayansTable(attachedDatabase, alias);
+  $MalfuzatAuthorsTable createAlias(String alias) {
+    return $MalfuzatAuthorsTable(attachedDatabase, alias);
   }
-
-  static TypeConverter<Map<dynamic, dynamic>, String> $converter0 =
-      const FileData();
-  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter0n =
-      NullAwareTypeConverter.wrap($converter0);
 }
 
 class MalfuzatAuthor extends DataClass implements Insertable<MalfuzatAuthor> {
@@ -3662,6 +3858,7 @@ class MalfuzatAuthorsCompanion extends UpdateCompanion<MalfuzatAuthor> {
   final Value<int> position;
   final Value<String> createdAt;
   final Value<String> updatedAt;
+  final Value<int> rowid;
   const MalfuzatAuthorsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -3669,6 +3866,7 @@ class MalfuzatAuthorsCompanion extends UpdateCompanion<MalfuzatAuthor> {
     this.position = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   MalfuzatAuthorsCompanion.insert({
     required String id,
@@ -3677,6 +3875,7 @@ class MalfuzatAuthorsCompanion extends UpdateCompanion<MalfuzatAuthor> {
     required int position,
     required String createdAt,
     required String updatedAt,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         name = Value(name),
         position = Value(position),
@@ -3689,6 +3888,7 @@ class MalfuzatAuthorsCompanion extends UpdateCompanion<MalfuzatAuthor> {
     Expression<int>? position,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -3697,6 +3897,7 @@ class MalfuzatAuthorsCompanion extends UpdateCompanion<MalfuzatAuthor> {
       if (position != null) 'position': position,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -3706,7 +3907,8 @@ class MalfuzatAuthorsCompanion extends UpdateCompanion<MalfuzatAuthor> {
       Value<String?>? info,
       Value<int>? position,
       Value<String>? createdAt,
-      Value<String>? updatedAt}) {
+      Value<String>? updatedAt,
+      Value<int>? rowid}) {
     return MalfuzatAuthorsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -3714,6 +3916,7 @@ class MalfuzatAuthorsCompanion extends UpdateCompanion<MalfuzatAuthor> {
       position: position ?? this.position,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -3738,6 +3941,9 @@ class MalfuzatAuthorsCompanion extends UpdateCompanion<MalfuzatAuthor> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<String>(updatedAt.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -3749,34 +3955,70 @@ class MalfuzatAuthorsCompanion extends UpdateCompanion<MalfuzatAuthor> {
           ..write('info: $info, ')
           ..write('position: $position, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $MalfuzatAuthorsTable extends MalfuzatAuthors
-    with TableInfo<$MalfuzatAuthorsTable, MalfuzatAuthor> {
+class $MalfuzatsTable extends Malfuzats
+    with TableInfo<$MalfuzatsTable, Malfuzat> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $MalfuzatAuthorsTable(this.attachedDatabase, [this._alias]);
+  $MalfuzatsTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> info = GeneratedColumn<String>(
-      'info', aliasedName, true,
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+      'body', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
+      'excerpt', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> language = GeneratedColumn<String>(
+      'language', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<bool> hasAudio =
+      GeneratedColumn<bool>('has_audio', aliasedName, false,
+          type: DriftSqlType.bool,
+          requiredDuringInsert: false,
+          defaultConstraints: GeneratedColumn.constraintsDependsOnDialect({
+            SqlDialect.sqlite: 'CHECK ("has_audio" IN (0, 1))',
+            SqlDialect.mysql: '',
+            SqlDialect.postgres: '',
+          }),
+          defaultValue: const Constant(false));
+  @override
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      audioData = GeneratedColumn<String>('audio_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>(
+              $MalfuzatsTable.$converteraudioDatan);
+  @override
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      documentData = GeneratedColumn<String>('document_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>(
+              $MalfuzatsTable.$converterdocumentDatan);
   @override
   late final GeneratedColumn<int> position = GeneratedColumn<int>(
       'position', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> publishedAt = GeneratedColumn<String>(
+      'published_at', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
@@ -3786,37 +4028,83 @@ class $MalfuzatAuthorsTable extends MalfuzatAuthors
       'updated_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, name, info, position, createdAt, updatedAt];
+  late final GeneratedColumn<String> malfuzatAuthorId = GeneratedColumn<String>(
+      'malfuzat_author_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES malfuzat_authors (id)'));
   @override
-  String get aliasedName => _alias ?? 'malfuzat_authors';
+  List<GeneratedColumn> get $columns => [
+        id,
+        title,
+        body,
+        excerpt,
+        language,
+        hasAudio,
+        audioData,
+        documentData,
+        position,
+        publishedAt,
+        createdAt,
+        updatedAt,
+        malfuzatAuthorId
+      ];
   @override
-  String get actualTableName => 'malfuzat_authors';
+  String get aliasedName => _alias ?? 'malfuzats';
+  @override
+  String get actualTableName => 'malfuzats';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  MalfuzatAuthor map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Malfuzat map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return MalfuzatAuthor(
-      id: attachedDatabase.options.types
+    return Malfuzat(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      name: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      info: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}info']),
-      position: attachedDatabase.options.types
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      body: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}body']),
+      excerpt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
+      language: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
+      hasAudio: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}has_audio'])!,
+      audioData: $MalfuzatsTable.$converteraudioDatan.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}audio_data'])),
+      documentData: $MalfuzatsTable.$converterdocumentDatan.fromSql(
+          attachedDatabase.typeMapping.read(
+              DriftSqlType.string, data['${effectivePrefix}document_data'])),
+      position: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
-      createdAt: attachedDatabase.options.types
+      publishedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}published_at']),
+      createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
+      updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      malfuzatAuthorId: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}malfuzat_author_id'])!,
     );
   }
 
   @override
-  $MalfuzatAuthorsTable createAlias(String alias) {
-    return $MalfuzatAuthorsTable(attachedDatabase, alias);
+  $MalfuzatsTable createAlias(String alias) {
+    return $MalfuzatsTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<Map<dynamic, dynamic>, String> $converteraudioData =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converteraudioDatan =
+      NullAwareTypeConverter.wrap($converteraudioData);
+  static TypeConverter<Map<dynamic, dynamic>, String> $converterdocumentData =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>?, String?>
+      $converterdocumentDatan =
+      NullAwareTypeConverter.wrap($converterdocumentData);
 }
 
 class Malfuzat extends DataClass implements Insertable<Malfuzat> {
@@ -3861,11 +4149,11 @@ class Malfuzat extends DataClass implements Insertable<Malfuzat> {
     map['language'] = Variable<String>(language);
     map['has_audio'] = Variable<bool>(hasAudio);
     if (!nullToAbsent || audioData != null) {
-      final converter = $MalfuzatsTable.$converter0n;
+      final converter = $MalfuzatsTable.$converteraudioDatan;
       map['audio_data'] = Variable<String>(converter.toSql(audioData));
     }
     if (!nullToAbsent || documentData != null) {
-      final converter = $MalfuzatsTable.$converter1n;
+      final converter = $MalfuzatsTable.$converterdocumentDatan;
       map['document_data'] = Variable<String>(converter.toSql(documentData));
     }
     map['position'] = Variable<int>(position);
@@ -4016,6 +4304,7 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
   final Value<String> createdAt;
   final Value<String> updatedAt;
   final Value<String> malfuzatAuthorId;
+  final Value<int> rowid;
   const MalfuzatsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -4030,6 +4319,7 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.malfuzatAuthorId = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   MalfuzatsCompanion.insert({
     required String id,
@@ -4045,6 +4335,7 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
     required String createdAt,
     required String updatedAt,
     required String malfuzatAuthorId,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
         language = Value(language),
@@ -4066,6 +4357,7 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
     Expression<String>? malfuzatAuthorId,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -4081,6 +4373,7 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (malfuzatAuthorId != null) 'malfuzat_author_id': malfuzatAuthorId,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -4097,7 +4390,8 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
       Value<String?>? publishedAt,
       Value<String>? createdAt,
       Value<String>? updatedAt,
-      Value<String>? malfuzatAuthorId}) {
+      Value<String>? malfuzatAuthorId,
+      Value<int>? rowid}) {
     return MalfuzatsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -4112,6 +4406,7 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       malfuzatAuthorId: malfuzatAuthorId ?? this.malfuzatAuthorId,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -4137,11 +4432,11 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
       map['has_audio'] = Variable<bool>(hasAudio.value);
     }
     if (audioData.present) {
-      final converter = $MalfuzatsTable.$converter0n;
+      final converter = $MalfuzatsTable.$converteraudioDatan;
       map['audio_data'] = Variable<String>(converter.toSql(audioData.value));
     }
     if (documentData.present) {
-      final converter = $MalfuzatsTable.$converter1n;
+      final converter = $MalfuzatsTable.$converterdocumentDatan;
       map['document_data'] =
           Variable<String>(converter.toSql(documentData.value));
     }
@@ -4159,6 +4454,9 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
     }
     if (malfuzatAuthorId.present) {
       map['malfuzat_author_id'] = Variable<String>(malfuzatAuthorId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -4178,18 +4476,18 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
           ..write('publishedAt: $publishedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('malfuzatAuthorId: $malfuzatAuthorId')
+          ..write('malfuzatAuthorId: $malfuzatAuthorId, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $MalfuzatsTable extends Malfuzats
-    with TableInfo<$MalfuzatsTable, Malfuzat> {
+class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $MalfuzatsTable(this.attachedDatabase, [this._alias]);
+  $MasailsTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
@@ -4199,34 +4497,44 @@ class $MalfuzatsTable extends Malfuzats
       'title', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> body = GeneratedColumn<String>(
-      'body', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
+      'slug', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
-      'excerpt', aliasedName, true,
+  late final GeneratedColumn<String> question = GeneratedColumn<String>(
+      'question', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> answer = GeneratedColumn<String>(
+      'answer', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<String> language = GeneratedColumn<String>(
       'language', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<bool> hasAudio = GeneratedColumn<bool>(
-      'has_audio', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      defaultConstraints: 'CHECK (has_audio IN (0, 1))',
-      defaultValue: const Constant(false));
+  late final GeneratedColumn<bool> hasAudio =
+      GeneratedColumn<bool>('has_audio', aliasedName, false,
+          type: DriftSqlType.bool,
+          requiredDuringInsert: false,
+          defaultConstraints: GeneratedColumn.constraintsDependsOnDialect({
+            SqlDialect.sqlite: 'CHECK ("has_audio" IN (0, 1))',
+            SqlDialect.mysql: '',
+            SqlDialect.postgres: '',
+          }),
+          defaultValue: const Constant(false));
   @override
   late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
       audioData = GeneratedColumn<String>('audio_data', aliasedName, true,
               type: DriftSqlType.string, requiredDuringInsert: false)
-          .withConverter<Map<dynamic, dynamic>?>($MalfuzatsTable.$converter0n);
+          .withConverter<Map<dynamic, dynamic>?>(
+              $MasailsTable.$converteraudioDatan);
   @override
   late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
       documentData = GeneratedColumn<String>('document_data', aliasedName, true,
               type: DriftSqlType.string, requiredDuringInsert: false)
-          .withConverter<Map<dynamic, dynamic>?>($MalfuzatsTable.$converter1n);
+          .withConverter<Map<dynamic, dynamic>?>(
+              $MasailsTable.$converterdocumentDatan);
   @override
   late final GeneratedColumn<int> position = GeneratedColumn<int>(
       'position', aliasedName, false,
@@ -4244,17 +4552,12 @@ class $MalfuzatsTable extends Malfuzats
       'updated_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> malfuzatAuthorId = GeneratedColumn<String>(
-      'malfuzat_author_id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: 'REFERENCES malfuzat_authors (id)');
-  @override
   List<GeneratedColumn> get $columns => [
         id,
         title,
-        body,
-        excerpt,
+        slug,
+        question,
+        answer,
         language,
         hasAudio,
         audioData,
@@ -4262,63 +4565,63 @@ class $MalfuzatsTable extends Malfuzats
         position,
         publishedAt,
         createdAt,
-        updatedAt,
-        malfuzatAuthorId
+        updatedAt
       ];
   @override
-  String get aliasedName => _alias ?? 'malfuzats';
+  String get aliasedName => _alias ?? 'masails';
   @override
-  String get actualTableName => 'malfuzats';
+  String get actualTableName => 'masails';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Malfuzat map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Masail map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Malfuzat(
-      id: attachedDatabase.options.types
+    return Masail(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      title: attachedDatabase.options.types
+      title: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      body: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}body']),
-      excerpt: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
-      language: attachedDatabase.options.types
+      slug: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
+      question: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}question'])!,
+      answer: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}answer']),
+      language: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
-      hasAudio: attachedDatabase.options.types
+      hasAudio: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}has_audio'])!,
-      audioData: $MalfuzatsTable.$converter0n.fromSql(attachedDatabase
-          .options.types
+      audioData: $MasailsTable.$converteraudioDatan.fromSql(attachedDatabase
+          .typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}audio_data'])),
-      documentData: $MalfuzatsTable.$converter1n.fromSql(attachedDatabase
-          .options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}document_data'])),
-      position: attachedDatabase.options.types
+      documentData: $MasailsTable.$converterdocumentDatan.fromSql(
+          attachedDatabase.typeMapping.read(
+              DriftSqlType.string, data['${effectivePrefix}document_data'])),
+      position: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
-      publishedAt: attachedDatabase.options.types
+      publishedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}published_at']),
-      createdAt: attachedDatabase.options.types
+      createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
+      updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
-      malfuzatAuthorId: attachedDatabase.options.types.read(
-          DriftSqlType.string, data['${effectivePrefix}malfuzat_author_id'])!,
     );
   }
 
   @override
-  $MalfuzatsTable createAlias(String alias) {
-    return $MalfuzatsTable(attachedDatabase, alias);
+  $MasailsTable createAlias(String alias) {
+    return $MasailsTable(attachedDatabase, alias);
   }
 
-  static TypeConverter<Map<dynamic, dynamic>, String> $converter0 =
+  static TypeConverter<Map<dynamic, dynamic>, String> $converteraudioData =
       const FileData();
-  static TypeConverter<Map<dynamic, dynamic>, String> $converter1 =
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converteraudioDatan =
+      NullAwareTypeConverter.wrap($converteraudioData);
+  static TypeConverter<Map<dynamic, dynamic>, String> $converterdocumentData =
       const FileData();
-  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter0n =
-      NullAwareTypeConverter.wrap($converter0);
-  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter1n =
-      NullAwareTypeConverter.wrap($converter1);
+  static TypeConverter<Map<dynamic, dynamic>?, String?>
+      $converterdocumentDatan =
+      NullAwareTypeConverter.wrap($converterdocumentData);
 }
 
 class Masail extends DataClass implements Insertable<Masail> {
@@ -4362,11 +4665,11 @@ class Masail extends DataClass implements Insertable<Masail> {
     map['language'] = Variable<String>(language);
     map['has_audio'] = Variable<bool>(hasAudio);
     if (!nullToAbsent || audioData != null) {
-      final converter = $MasailsTable.$converter0n;
+      final converter = $MasailsTable.$converteraudioDatan;
       map['audio_data'] = Variable<String>(converter.toSql(audioData));
     }
     if (!nullToAbsent || documentData != null) {
-      final converter = $MasailsTable.$converter1n;
+      final converter = $MasailsTable.$converterdocumentDatan;
       map['document_data'] = Variable<String>(converter.toSql(documentData));
     }
     map['position'] = Variable<int>(position);
@@ -4516,6 +4819,7 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
   final Value<String?> publishedAt;
   final Value<String> createdAt;
   final Value<String> updatedAt;
+  final Value<int> rowid;
   const MasailsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -4530,6 +4834,7 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
     this.publishedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   MasailsCompanion.insert({
     required String id,
@@ -4545,6 +4850,7 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
     this.publishedAt = const Value.absent(),
     required String createdAt,
     required String updatedAt,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
         slug = Value(slug),
@@ -4567,6 +4873,7 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
     Expression<String>? publishedAt,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -4582,6 +4889,7 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
       if (publishedAt != null) 'published_at': publishedAt,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -4598,7 +4906,8 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
       Value<int>? position,
       Value<String?>? publishedAt,
       Value<String>? createdAt,
-      Value<String>? updatedAt}) {
+      Value<String>? updatedAt,
+      Value<int>? rowid}) {
     return MasailsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -4613,6 +4922,7 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
       publishedAt: publishedAt ?? this.publishedAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -4641,11 +4951,11 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
       map['has_audio'] = Variable<bool>(hasAudio.value);
     }
     if (audioData.present) {
-      final converter = $MasailsTable.$converter0n;
+      final converter = $MasailsTable.$converteraudioDatan;
       map['audio_data'] = Variable<String>(converter.toSql(audioData.value));
     }
     if (documentData.present) {
-      final converter = $MasailsTable.$converter1n;
+      final converter = $MasailsTable.$converterdocumentDatan;
       map['document_data'] =
           Variable<String>(converter.toSql(documentData.value));
     }
@@ -4660,6 +4970,9 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
     }
     if (updatedAt.present) {
       map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -4679,17 +4992,18 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
           ..write('position: $position, ')
           ..write('publishedAt: $publishedAt, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
+class $DuasTable extends Duas with TableInfo<$DuasTable, Dua> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $MasailsTable(this.attachedDatabase, [this._alias]);
+  $DuasTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
@@ -4699,46 +5013,33 @@ class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
       'title', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
-      'slug', aliasedName, false,
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+      'body', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> question = GeneratedColumn<String>(
-      'question', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumn<String> answer = GeneratedColumn<String>(
-      'answer', aliasedName, true,
+  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
+      'excerpt', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<String> language = GeneratedColumn<String>(
       'language', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<bool> hasAudio = GeneratedColumn<bool>(
-      'has_audio', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      defaultConstraints: 'CHECK (has_audio IN (0, 1))',
-      defaultValue: const Constant(false));
-  @override
   late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
       audioData = GeneratedColumn<String>('audio_data', aliasedName, true,
               type: DriftSqlType.string, requiredDuringInsert: false)
-          .withConverter<Map<dynamic, dynamic>?>($MasailsTable.$converter0n);
+          .withConverter<Map<dynamic, dynamic>?>(
+              $DuasTable.$converteraudioDatan);
   @override
   late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
       documentData = GeneratedColumn<String>('document_data', aliasedName, true,
               type: DriftSqlType.string, requiredDuringInsert: false)
-          .withConverter<Map<dynamic, dynamic>?>($MasailsTable.$converter1n);
+          .withConverter<Map<dynamic, dynamic>?>(
+              $DuasTable.$converterdocumentDatan);
   @override
   late final GeneratedColumn<int> position = GeneratedColumn<int>(
       'position', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumn<String> publishedAt = GeneratedColumn<String>(
-      'published_at', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
@@ -4751,72 +5052,64 @@ class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
   List<GeneratedColumn> get $columns => [
         id,
         title,
-        slug,
-        question,
-        answer,
+        body,
+        excerpt,
         language,
-        hasAudio,
         audioData,
         documentData,
         position,
-        publishedAt,
         createdAt,
         updatedAt
       ];
   @override
-  String get aliasedName => _alias ?? 'masails';
+  String get aliasedName => _alias ?? 'duas';
   @override
-  String get actualTableName => 'masails';
+  String get actualTableName => 'duas';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Masail map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Dua map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Masail(
-      id: attachedDatabase.options.types
+    return Dua(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      title: attachedDatabase.options.types
+      title: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      slug: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
-      question: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}question'])!,
-      answer: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}answer']),
-      language: attachedDatabase.options.types
+      body: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}body'])!,
+      excerpt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
+      language: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
-      hasAudio: attachedDatabase.options.types
-          .read(DriftSqlType.bool, data['${effectivePrefix}has_audio'])!,
-      audioData: $MasailsTable.$converter0n.fromSql(attachedDatabase
-          .options.types
+      audioData: $DuasTable.$converteraudioDatan.fromSql(attachedDatabase
+          .typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}audio_data'])),
-      documentData: $MasailsTable.$converter1n.fromSql(attachedDatabase
-          .options.types
+      documentData: $DuasTable.$converterdocumentDatan.fromSql(attachedDatabase
+          .typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}document_data'])),
-      position: attachedDatabase.options.types
+      position: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
-      publishedAt: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}published_at']),
-      createdAt: attachedDatabase.options.types
+      createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
+      updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
     );
   }
 
   @override
-  $MasailsTable createAlias(String alias) {
-    return $MasailsTable(attachedDatabase, alias);
+  $DuasTable createAlias(String alias) {
+    return $DuasTable(attachedDatabase, alias);
   }
 
-  static TypeConverter<Map<dynamic, dynamic>, String> $converter0 =
+  static TypeConverter<Map<dynamic, dynamic>, String> $converteraudioData =
       const FileData();
-  static TypeConverter<Map<dynamic, dynamic>, String> $converter1 =
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converteraudioDatan =
+      NullAwareTypeConverter.wrap($converteraudioData);
+  static TypeConverter<Map<dynamic, dynamic>, String> $converterdocumentData =
       const FileData();
-  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter0n =
-      NullAwareTypeConverter.wrap($converter0);
-  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter1n =
-      NullAwareTypeConverter.wrap($converter1);
+  static TypeConverter<Map<dynamic, dynamic>?, String?>
+      $converterdocumentDatan =
+      NullAwareTypeConverter.wrap($converterdocumentData);
 }
 
 class Dua extends DataClass implements Insertable<Dua> {
@@ -4852,11 +5145,11 @@ class Dua extends DataClass implements Insertable<Dua> {
     }
     map['language'] = Variable<String>(language);
     if (!nullToAbsent || audioData != null) {
-      final converter = $DuasTable.$converter0n;
+      final converter = $DuasTable.$converteraudioDatan;
       map['audio_data'] = Variable<String>(converter.toSql(audioData));
     }
     if (!nullToAbsent || documentData != null) {
-      final converter = $DuasTable.$converter1n;
+      final converter = $DuasTable.$converterdocumentDatan;
       map['document_data'] = Variable<String>(converter.toSql(documentData));
     }
     map['position'] = Variable<int>(position);
@@ -4970,6 +5263,7 @@ class DuasCompanion extends UpdateCompanion<Dua> {
   final Value<int> position;
   final Value<String> createdAt;
   final Value<String> updatedAt;
+  final Value<int> rowid;
   const DuasCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -4981,6 +5275,7 @@ class DuasCompanion extends UpdateCompanion<Dua> {
     this.position = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   DuasCompanion.insert({
     required String id,
@@ -4993,6 +5288,7 @@ class DuasCompanion extends UpdateCompanion<Dua> {
     required int position,
     required String createdAt,
     required String updatedAt,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
         body = Value(body),
@@ -5011,6 +5307,7 @@ class DuasCompanion extends UpdateCompanion<Dua> {
     Expression<int>? position,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -5023,6 +5320,7 @@ class DuasCompanion extends UpdateCompanion<Dua> {
       if (position != null) 'position': position,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -5036,7 +5334,8 @@ class DuasCompanion extends UpdateCompanion<Dua> {
       Value<Map<dynamic, dynamic>?>? documentData,
       Value<int>? position,
       Value<String>? createdAt,
-      Value<String>? updatedAt}) {
+      Value<String>? updatedAt,
+      Value<int>? rowid}) {
     return DuasCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -5048,6 +5347,7 @@ class DuasCompanion extends UpdateCompanion<Dua> {
       position: position ?? this.position,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -5070,11 +5370,11 @@ class DuasCompanion extends UpdateCompanion<Dua> {
       map['language'] = Variable<String>(language.value);
     }
     if (audioData.present) {
-      final converter = $DuasTable.$converter0n;
+      final converter = $DuasTable.$converteraudioDatan;
       map['audio_data'] = Variable<String>(converter.toSql(audioData.value));
     }
     if (documentData.present) {
-      final converter = $DuasTable.$converter1n;
+      final converter = $DuasTable.$converterdocumentDatan;
       map['document_data'] =
           Variable<String>(converter.toSql(documentData.value));
     }
@@ -5086,6 +5386,9 @@ class DuasCompanion extends UpdateCompanion<Dua> {
     }
     if (updatedAt.present) {
       map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -5102,47 +5405,31 @@ class DuasCompanion extends UpdateCompanion<Dua> {
           ..write('documentData: $documentData, ')
           ..write('position: $position, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $DuasTable extends Duas with TableInfo<$DuasTable, Dua> {
+class $ArticleAuthorsTable extends ArticleAuthors
+    with TableInfo<$ArticleAuthorsTable, ArticleAuthor> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $DuasTable(this.attachedDatabase, [this._alias]);
+  $ArticleAuthorsTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> title = GeneratedColumn<String>(
-      'title', aliasedName, false,
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> body = GeneratedColumn<String>(
-      'body', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
-      'excerpt', aliasedName, true,
+  late final GeneratedColumn<String> info = GeneratedColumn<String>(
+      'info', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  @override
-  late final GeneratedColumn<String> language = GeneratedColumn<String>(
-      'language', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
-      audioData = GeneratedColumn<String>('audio_data', aliasedName, true,
-              type: DriftSqlType.string, requiredDuringInsert: false)
-          .withConverter<Map<dynamic, dynamic>?>($DuasTable.$converter0n);
-  @override
-  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
-      documentData = GeneratedColumn<String>('document_data', aliasedName, true,
-              type: DriftSqlType.string, requiredDuringInsert: false)
-          .withConverter<Map<dynamic, dynamic>?>($DuasTable.$converter1n);
   @override
   late final GeneratedColumn<int> position = GeneratedColumn<int>(
       'position', aliasedName, false,
@@ -5156,65 +5443,37 @@ class $DuasTable extends Duas with TableInfo<$DuasTable, Dua> {
       'updated_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [
-        id,
-        title,
-        body,
-        excerpt,
-        language,
-        audioData,
-        documentData,
-        position,
-        createdAt,
-        updatedAt
-      ];
+  List<GeneratedColumn> get $columns =>
+      [id, name, info, position, createdAt, updatedAt];
   @override
-  String get aliasedName => _alias ?? 'duas';
+  String get aliasedName => _alias ?? 'article_authors';
   @override
-  String get actualTableName => 'duas';
+  String get actualTableName => 'article_authors';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Dua map(Map<String, dynamic> data, {String? tablePrefix}) {
+  ArticleAuthor map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Dua(
-      id: attachedDatabase.options.types
+    return ArticleAuthor(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      title: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      body: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}body'])!,
-      excerpt: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
-      language: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
-      audioData: $DuasTable.$converter0n.fromSql(attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}audio_data'])),
-      documentData: $DuasTable.$converter1n.fromSql(attachedDatabase
-          .options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}document_data'])),
-      position: attachedDatabase.options.types
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      info: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}info']),
+      position: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
-      createdAt: attachedDatabase.options.types
+      createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
+      updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
     );
   }
 
   @override
-  $DuasTable createAlias(String alias) {
-    return $DuasTable(attachedDatabase, alias);
+  $ArticleAuthorsTable createAlias(String alias) {
+    return $ArticleAuthorsTable(attachedDatabase, alias);
   }
-
-  static TypeConverter<Map<dynamic, dynamic>, String> $converter0 =
-      const FileData();
-  static TypeConverter<Map<dynamic, dynamic>, String> $converter1 =
-      const FileData();
-  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter0n =
-      NullAwareTypeConverter.wrap($converter0);
-  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter1n =
-      NullAwareTypeConverter.wrap($converter1);
 }
 
 class ArticleAuthor extends DataClass implements Insertable<ArticleAuthor> {
@@ -5320,6 +5579,7 @@ class ArticleAuthorsCompanion extends UpdateCompanion<ArticleAuthor> {
   final Value<int> position;
   final Value<String> createdAt;
   final Value<String> updatedAt;
+  final Value<int> rowid;
   const ArticleAuthorsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -5327,6 +5587,7 @@ class ArticleAuthorsCompanion extends UpdateCompanion<ArticleAuthor> {
     this.position = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   ArticleAuthorsCompanion.insert({
     required String id,
@@ -5335,6 +5596,7 @@ class ArticleAuthorsCompanion extends UpdateCompanion<ArticleAuthor> {
     required int position,
     required String createdAt,
     required String updatedAt,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         name = Value(name),
         position = Value(position),
@@ -5347,6 +5609,7 @@ class ArticleAuthorsCompanion extends UpdateCompanion<ArticleAuthor> {
     Expression<int>? position,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -5355,6 +5618,7 @@ class ArticleAuthorsCompanion extends UpdateCompanion<ArticleAuthor> {
       if (position != null) 'position': position,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -5364,7 +5628,8 @@ class ArticleAuthorsCompanion extends UpdateCompanion<ArticleAuthor> {
       Value<String?>? info,
       Value<int>? position,
       Value<String>? createdAt,
-      Value<String>? updatedAt}) {
+      Value<String>? updatedAt,
+      Value<int>? rowid}) {
     return ArticleAuthorsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -5372,6 +5637,7 @@ class ArticleAuthorsCompanion extends UpdateCompanion<ArticleAuthor> {
       position: position ?? this.position,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -5396,6 +5662,9 @@ class ArticleAuthorsCompanion extends UpdateCompanion<ArticleAuthor> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<String>(updatedAt.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -5407,34 +5676,56 @@ class ArticleAuthorsCompanion extends UpdateCompanion<ArticleAuthor> {
           ..write('info: $info, ')
           ..write('position: $position, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $ArticleAuthorsTable extends ArticleAuthors
-    with TableInfo<$ArticleAuthorsTable, ArticleAuthor> {
+class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $ArticleAuthorsTable(this.attachedDatabase, [this._alias]);
+  $ArticlesTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> info = GeneratedColumn<String>(
-      'info', aliasedName, true,
+  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
+      'slug', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+      'body', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
+      'excerpt', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> language = GeneratedColumn<String>(
+      'language', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      documentData = GeneratedColumn<String>('document_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>(
+              $ArticlesTable.$converterdocumentDatan);
   @override
   late final GeneratedColumn<int> position = GeneratedColumn<int>(
       'position', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> publishedAt = GeneratedColumn<String>(
+      'published_at', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
@@ -5444,37 +5735,75 @@ class $ArticleAuthorsTable extends ArticleAuthors
       'updated_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, name, info, position, createdAt, updatedAt];
+  late final GeneratedColumn<String> articleAuthorId = GeneratedColumn<String>(
+      'article_author_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES article_authors (id)'));
   @override
-  String get aliasedName => _alias ?? 'article_authors';
+  List<GeneratedColumn> get $columns => [
+        id,
+        title,
+        slug,
+        body,
+        excerpt,
+        language,
+        documentData,
+        position,
+        publishedAt,
+        createdAt,
+        updatedAt,
+        articleAuthorId
+      ];
   @override
-  String get actualTableName => 'article_authors';
+  String get aliasedName => _alias ?? 'articles';
+  @override
+  String get actualTableName => 'articles';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  ArticleAuthor map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Article map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return ArticleAuthor(
-      id: attachedDatabase.options.types
+    return Article(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      name: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      info: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}info']),
-      position: attachedDatabase.options.types
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      slug: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
+      body: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}body'])!,
+      excerpt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
+      language: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
+      documentData: $ArticlesTable.$converterdocumentDatan.fromSql(
+          attachedDatabase.typeMapping.read(
+              DriftSqlType.string, data['${effectivePrefix}document_data'])),
+      position: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
-      createdAt: attachedDatabase.options.types
+      publishedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}published_at']),
+      createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
+      updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      articleAuthorId: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}article_author_id'])!,
     );
   }
 
   @override
-  $ArticleAuthorsTable createAlias(String alias) {
-    return $ArticleAuthorsTable(attachedDatabase, alias);
+  $ArticlesTable createAlias(String alias) {
+    return $ArticlesTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<Map<dynamic, dynamic>, String> $converterdocumentData =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>?, String?>
+      $converterdocumentDatan =
+      NullAwareTypeConverter.wrap($converterdocumentData);
 }
 
 class Article extends DataClass implements Insertable<Article> {
@@ -5515,7 +5844,7 @@ class Article extends DataClass implements Insertable<Article> {
     }
     map['language'] = Variable<String>(language);
     if (!nullToAbsent || documentData != null) {
-      final converter = $ArticlesTable.$converter0n;
+      final converter = $ArticlesTable.$converterdocumentDatan;
       map['document_data'] = Variable<String>(converter.toSql(documentData));
     }
     map['position'] = Variable<int>(position);
@@ -5658,6 +5987,7 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
   final Value<String> createdAt;
   final Value<String> updatedAt;
   final Value<String> articleAuthorId;
+  final Value<int> rowid;
   const ArticlesCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -5671,6 +6001,7 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.articleAuthorId = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   ArticlesCompanion.insert({
     required String id,
@@ -5685,6 +6016,7 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
     required String createdAt,
     required String updatedAt,
     required String articleAuthorId,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
         slug = Value(slug),
@@ -5707,6 +6039,7 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
     Expression<String>? articleAuthorId,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -5721,6 +6054,7 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (articleAuthorId != null) 'article_author_id': articleAuthorId,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -5736,7 +6070,8 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
       Value<String?>? publishedAt,
       Value<String>? createdAt,
       Value<String>? updatedAt,
-      Value<String>? articleAuthorId}) {
+      Value<String>? articleAuthorId,
+      Value<int>? rowid}) {
     return ArticlesCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -5750,6 +6085,7 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       articleAuthorId: articleAuthorId ?? this.articleAuthorId,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -5775,7 +6111,7 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
       map['language'] = Variable<String>(language.value);
     }
     if (documentData.present) {
-      final converter = $ArticlesTable.$converter0n;
+      final converter = $ArticlesTable.$converterdocumentDatan;
       map['document_data'] =
           Variable<String>(converter.toSql(documentData.value));
     }
@@ -5794,6 +6130,9 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
     if (articleAuthorId.present) {
       map['article_author_id'] = Variable<String>(articleAuthorId.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -5811,17 +6150,19 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
           ..write('publishedAt: $publishedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('articleAuthorId: $articleAuthorId')
+          ..write('articleAuthorId: $articleAuthorId, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
+class $MadrasahsTable extends Madrasahs
+    with TableInfo<$MadrasahsTable, Madrasah> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $ArticlesTable(this.attachedDatabase, [this._alias]);
+  $MadrasahsTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
@@ -5831,34 +6172,23 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
       'title', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
-      'slug', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumn<String> body = GeneratedColumn<String>(
-      'body', aliasedName, false,
+  late final GeneratedColumn<String> introduction = GeneratedColumn<String>(
+      'introduction', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
       'excerpt', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
-  late final GeneratedColumn<String> language = GeneratedColumn<String>(
-      'language', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
   late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
       documentData = GeneratedColumn<String>('document_data', aliasedName, true,
               type: DriftSqlType.string, requiredDuringInsert: false)
-          .withConverter<Map<dynamic, dynamic>?>($ArticlesTable.$converter0n);
+          .withConverter<Map<dynamic, dynamic>?>(
+              $MadrasahsTable.$converterdocumentDatan);
   @override
   late final GeneratedColumn<int> position = GeneratedColumn<int>(
       'position', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumn<String> publishedAt = GeneratedColumn<String>(
-      'published_at', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
@@ -5868,73 +6198,56 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
       'updated_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> articleAuthorId = GeneratedColumn<String>(
-      'article_author_id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: 'REFERENCES article_authors (id)');
-  @override
   List<GeneratedColumn> get $columns => [
         id,
         title,
-        slug,
-        body,
+        introduction,
         excerpt,
-        language,
         documentData,
         position,
-        publishedAt,
         createdAt,
-        updatedAt,
-        articleAuthorId
+        updatedAt
       ];
   @override
-  String get aliasedName => _alias ?? 'articles';
+  String get aliasedName => _alias ?? 'madrasahs';
   @override
-  String get actualTableName => 'articles';
+  String get actualTableName => 'madrasahs';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Article map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Madrasah map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Article(
-      id: attachedDatabase.options.types
+    return Madrasah(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      title: attachedDatabase.options.types
+      title: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      slug: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
-      body: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}body'])!,
-      excerpt: attachedDatabase.options.types
+      introduction: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}introduction'])!,
+      excerpt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
-      language: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
-      documentData: $ArticlesTable.$converter0n.fromSql(attachedDatabase
-          .options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}document_data'])),
-      position: attachedDatabase.options.types
+      documentData: $MadrasahsTable.$converterdocumentDatan.fromSql(
+          attachedDatabase.typeMapping.read(
+              DriftSqlType.string, data['${effectivePrefix}document_data'])),
+      position: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
-      publishedAt: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}published_at']),
-      createdAt: attachedDatabase.options.types
+      createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
+      updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
-      articleAuthorId: attachedDatabase.options.types.read(
-          DriftSqlType.string, data['${effectivePrefix}article_author_id'])!,
     );
   }
 
   @override
-  $ArticlesTable createAlias(String alias) {
-    return $ArticlesTable(attachedDatabase, alias);
+  $MadrasahsTable createAlias(String alias) {
+    return $MadrasahsTable(attachedDatabase, alias);
   }
 
-  static TypeConverter<Map<dynamic, dynamic>, String> $converter0 =
+  static TypeConverter<Map<dynamic, dynamic>, String> $converterdocumentData =
       const FileData();
-  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter0n =
-      NullAwareTypeConverter.wrap($converter0);
+  static TypeConverter<Map<dynamic, dynamic>?, String?>
+      $converterdocumentDatan =
+      NullAwareTypeConverter.wrap($converterdocumentData);
 }
 
 class Madrasah extends DataClass implements Insertable<Madrasah> {
@@ -5965,7 +6278,7 @@ class Madrasah extends DataClass implements Insertable<Madrasah> {
       map['excerpt'] = Variable<String>(excerpt);
     }
     if (!nullToAbsent || documentData != null) {
-      final converter = $MadrasahsTable.$converter0n;
+      final converter = $MadrasahsTable.$converterdocumentDatan;
       map['document_data'] = Variable<String>(converter.toSql(documentData));
     }
     map['position'] = Variable<int>(position);
@@ -6065,6 +6378,7 @@ class MadrasahsCompanion extends UpdateCompanion<Madrasah> {
   final Value<int> position;
   final Value<String> createdAt;
   final Value<String> updatedAt;
+  final Value<int> rowid;
   const MadrasahsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -6074,6 +6388,7 @@ class MadrasahsCompanion extends UpdateCompanion<Madrasah> {
     this.position = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   MadrasahsCompanion.insert({
     required String id,
@@ -6084,6 +6399,7 @@ class MadrasahsCompanion extends UpdateCompanion<Madrasah> {
     required int position,
     required String createdAt,
     required String updatedAt,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
         introduction = Value(introduction),
@@ -6099,6 +6415,7 @@ class MadrasahsCompanion extends UpdateCompanion<Madrasah> {
     Expression<int>? position,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -6109,6 +6426,7 @@ class MadrasahsCompanion extends UpdateCompanion<Madrasah> {
       if (position != null) 'position': position,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -6120,7 +6438,8 @@ class MadrasahsCompanion extends UpdateCompanion<Madrasah> {
       Value<Map<dynamic, dynamic>?>? documentData,
       Value<int>? position,
       Value<String>? createdAt,
-      Value<String>? updatedAt}) {
+      Value<String>? updatedAt,
+      Value<int>? rowid}) {
     return MadrasahsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -6130,6 +6449,7 @@ class MadrasahsCompanion extends UpdateCompanion<Madrasah> {
       position: position ?? this.position,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -6149,7 +6469,7 @@ class MadrasahsCompanion extends UpdateCompanion<Madrasah> {
       map['excerpt'] = Variable<String>(excerpt.value);
     }
     if (documentData.present) {
-      final converter = $MadrasahsTable.$converter0n;
+      final converter = $MadrasahsTable.$converterdocumentDatan;
       map['document_data'] =
           Variable<String>(converter.toSql(documentData.value));
     }
@@ -6161,6 +6481,9 @@ class MadrasahsCompanion extends UpdateCompanion<Madrasah> {
     }
     if (updatedAt.present) {
       map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -6175,18 +6498,19 @@ class MadrasahsCompanion extends UpdateCompanion<Madrasah> {
           ..write('documentData: $documentData, ')
           ..write('position: $position, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $MadrasahsTable extends Madrasahs
-    with TableInfo<$MadrasahsTable, Madrasah> {
+class $NamazTimesTable extends NamazTimes
+    with TableInfo<$NamazTimesTable, NamazTime> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $MadrasahsTable(this.attachedDatabase, [this._alias]);
+  $NamazTimesTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
@@ -6196,22 +6520,17 @@ class $MadrasahsTable extends Madrasahs
       'title', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> introduction = GeneratedColumn<String>(
-      'introduction', aliasedName, false,
+  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
+      'slug', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
-      'excerpt', aliasedName, true,
+  late final GeneratedColumn<String> masail = GeneratedColumn<String>(
+      'masail', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> fazail = GeneratedColumn<String>(
+      'fazail', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  @override
-  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
-      documentData = GeneratedColumn<String>('document_data', aliasedName, true,
-              type: DriftSqlType.string, requiredDuringInsert: false)
-          .withConverter<Map<dynamic, dynamic>?>($MadrasahsTable.$converter0n);
-  @override
-  late final GeneratedColumn<int> position = GeneratedColumn<int>(
-      'position', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
   @override
   late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
@@ -6221,55 +6540,39 @@ class $MadrasahsTable extends Madrasahs
       'updated_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [
-        id,
-        title,
-        introduction,
-        excerpt,
-        documentData,
-        position,
-        createdAt,
-        updatedAt
-      ];
+  List<GeneratedColumn> get $columns =>
+      [id, title, slug, masail, fazail, createdAt, updatedAt];
   @override
-  String get aliasedName => _alias ?? 'madrasahs';
+  String get aliasedName => _alias ?? 'namaz_times';
   @override
-  String get actualTableName => 'madrasahs';
+  String get actualTableName => 'namaz_times';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Madrasah map(Map<String, dynamic> data, {String? tablePrefix}) {
+  NamazTime map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Madrasah(
-      id: attachedDatabase.options.types
+    return NamazTime(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      title: attachedDatabase.options.types
+      title: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      introduction: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}introduction'])!,
-      excerpt: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
-      documentData: $MadrasahsTable.$converter0n.fromSql(attachedDatabase
-          .options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}document_data'])),
-      position: attachedDatabase.options.types
-          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
-      createdAt: attachedDatabase.options.types
+      slug: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
+      masail: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}masail'])!,
+      fazail: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}fazail']),
+      createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
+      updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
     );
   }
 
   @override
-  $MadrasahsTable createAlias(String alias) {
-    return $MadrasahsTable(attachedDatabase, alias);
+  $NamazTimesTable createAlias(String alias) {
+    return $NamazTimesTable(attachedDatabase, alias);
   }
-
-  static TypeConverter<Map<dynamic, dynamic>, String> $converter0 =
-      const FileData();
-  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter0n =
-      NullAwareTypeConverter.wrap($converter0);
 }
 
 class NamazTime extends DataClass implements Insertable<NamazTime> {
@@ -6385,6 +6688,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
   final Value<String?> fazail;
   final Value<String> createdAt;
   final Value<String> updatedAt;
+  final Value<int> rowid;
   const NamazTimesCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -6393,6 +6697,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
     this.fazail = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   NamazTimesCompanion.insert({
     required String id,
@@ -6402,6 +6707,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
     this.fazail = const Value.absent(),
     required String createdAt,
     required String updatedAt,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
         slug = Value(slug),
@@ -6416,6 +6722,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
     Expression<String>? fazail,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -6425,6 +6732,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
       if (fazail != null) 'fazail': fazail,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -6435,7 +6743,8 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
       Value<String>? masail,
       Value<String?>? fazail,
       Value<String>? createdAt,
-      Value<String>? updatedAt}) {
+      Value<String>? updatedAt,
+      Value<int>? rowid}) {
     return NamazTimesCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -6444,6 +6753,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
       fazail: fazail ?? this.fazail,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -6471,6 +6781,9 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<String>(updatedAt.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -6483,18 +6796,18 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
           ..write('masail: $masail, ')
           ..write('fazail: $fazail, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $NamazTimesTable extends NamazTimes
-    with TableInfo<$NamazTimesTable, NamazTime> {
+class $PagesTable extends Pages with TableInfo<$PagesTable, Page> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $NamazTimesTable(this.attachedDatabase, [this._alias]);
+  $PagesTable(this.attachedDatabase, [this._alias]);
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
@@ -6508,13 +6821,15 @@ class $NamazTimesTable extends NamazTimes
       'slug', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> masail = GeneratedColumn<String>(
-      'masail', aliasedName, false,
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+      'body', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> fazail = GeneratedColumn<String>(
-      'fazail', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      imageData = GeneratedColumn<String>('image_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>(
+              $PagesTable.$converterimageDatan);
   @override
   late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
@@ -6525,38 +6840,44 @@ class $NamazTimesTable extends NamazTimes
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, title, slug, masail, fazail, createdAt, updatedAt];
+      [id, title, slug, body, imageData, createdAt, updatedAt];
   @override
-  String get aliasedName => _alias ?? 'namaz_times';
+  String get aliasedName => _alias ?? 'pages';
   @override
-  String get actualTableName => 'namaz_times';
+  String get actualTableName => 'pages';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  NamazTime map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Page map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return NamazTime(
-      id: attachedDatabase.options.types
+    return Page(
+      id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      title: attachedDatabase.options.types
+      title: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      slug: attachedDatabase.options.types
+      slug: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
-      masail: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}masail'])!,
-      fazail: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}fazail']),
-      createdAt: attachedDatabase.options.types
+      body: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}body'])!,
+      imageData: $PagesTable.$converterimageDatan.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}image_data'])),
+      createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
+      updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
     );
   }
 
   @override
-  $NamazTimesTable createAlias(String alias) {
-    return $NamazTimesTable(attachedDatabase, alias);
+  $PagesTable createAlias(String alias) {
+    return $PagesTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<Map<dynamic, dynamic>, String> $converterimageData =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converterimageDatan =
+      NullAwareTypeConverter.wrap($converterimageData);
 }
 
 class Page extends DataClass implements Insertable<Page> {
@@ -6583,7 +6904,7 @@ class Page extends DataClass implements Insertable<Page> {
     map['slug'] = Variable<String>(slug);
     map['body'] = Variable<String>(body);
     if (!nullToAbsent || imageData != null) {
-      final converter = $PagesTable.$converter0n;
+      final converter = $PagesTable.$converterimageDatan;
       map['image_data'] = Variable<String>(converter.toSql(imageData));
     }
     map['created_at'] = Variable<String>(createdAt);
@@ -6673,6 +6994,7 @@ class PagesCompanion extends UpdateCompanion<Page> {
   final Value<Map<dynamic, dynamic>?> imageData;
   final Value<String> createdAt;
   final Value<String> updatedAt;
+  final Value<int> rowid;
   const PagesCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -6681,6 +7003,7 @@ class PagesCompanion extends UpdateCompanion<Page> {
     this.imageData = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   PagesCompanion.insert({
     required String id,
@@ -6690,6 +7013,7 @@ class PagesCompanion extends UpdateCompanion<Page> {
     this.imageData = const Value.absent(),
     required String createdAt,
     required String updatedAt,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
         slug = Value(slug),
@@ -6704,6 +7028,7 @@ class PagesCompanion extends UpdateCompanion<Page> {
     Expression<String>? imageData,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -6713,6 +7038,7 @@ class PagesCompanion extends UpdateCompanion<Page> {
       if (imageData != null) 'image_data': imageData,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -6723,7 +7049,8 @@ class PagesCompanion extends UpdateCompanion<Page> {
       Value<String>? body,
       Value<Map<dynamic, dynamic>?>? imageData,
       Value<String>? createdAt,
-      Value<String>? updatedAt}) {
+      Value<String>? updatedAt,
+      Value<int>? rowid}) {
     return PagesCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
@@ -6732,6 +7059,7 @@ class PagesCompanion extends UpdateCompanion<Page> {
       imageData: imageData ?? this.imageData,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -6751,7 +7079,7 @@ class PagesCompanion extends UpdateCompanion<Page> {
       map['body'] = Variable<String>(body.value);
     }
     if (imageData.present) {
-      final converter = $PagesTable.$converter0n;
+      final converter = $PagesTable.$converterimageDatan;
       map['image_data'] = Variable<String>(converter.toSql(imageData.value));
     }
     if (createdAt.present) {
@@ -6759,6 +7087,9 @@ class PagesCompanion extends UpdateCompanion<Page> {
     }
     if (updatedAt.present) {
       map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -6772,85 +7103,11 @@ class PagesCompanion extends UpdateCompanion<Page> {
           ..write('body: $body, ')
           ..write('imageData: $imageData, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
-}
-
-class $PagesTable extends Pages with TableInfo<$PagesTable, Page> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $PagesTable(this.attachedDatabase, [this._alias]);
-  @override
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-      'id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumn<String> title = GeneratedColumn<String>(
-      'title', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
-      'slug', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumn<String> body = GeneratedColumn<String>(
-      'body', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
-      imageData = GeneratedColumn<String>('image_data', aliasedName, true,
-              type: DriftSqlType.string, requiredDuringInsert: false)
-          .withConverter<Map<dynamic, dynamic>?>($PagesTable.$converter0n);
-  @override
-  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
-      'created_at', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
-      'updated_at', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  List<GeneratedColumn> get $columns =>
-      [id, title, slug, body, imageData, createdAt, updatedAt];
-  @override
-  String get aliasedName => _alias ?? 'pages';
-  @override
-  String get actualTableName => 'pages';
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  Page map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Page(
-      id: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      title: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      slug: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
-      body: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}body'])!,
-      imageData: $PagesTable.$converter0n.fromSql(attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}image_data'])),
-      createdAt: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.options.types
-          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
-    );
-  }
-
-  @override
-  $PagesTable createAlias(String alias) {
-    return $PagesTable(attachedDatabase, alias);
-  }
-
-  static TypeConverter<Map<dynamic, dynamic>, String> $converter0 =
-      const FileData();
-  static TypeConverter<Map<dynamic, dynamic>?, String?> $converter0n =
-      NullAwareTypeConverter.wrap($converter0);
 }
 
 abstract class _$LocalDatabase extends GeneratedDatabase {
@@ -6878,7 +7135,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $NamazTimesTable namazTimes = $NamazTimesTable(this);
   late final $PagesTable pages = $PagesTable(this);
   @override
-  Iterable<TableInfo<Table, dynamic>> get allTables =>
+  Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
