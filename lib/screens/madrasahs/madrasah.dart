@@ -46,6 +46,7 @@ class Madrasah extends ConsumerWidget {
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
         return AppScaffold(
+          onBackPressed: () async => await QR.to('madrasahs'),
           title: Text(locales.madrasah),
           body: StatefulMadrasah(madrasah: resource),
           bottomBar: BottomBar(

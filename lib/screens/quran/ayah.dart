@@ -55,7 +55,7 @@ class Ayah extends ConsumerWidget {
                       return Text(
                         ayah.title,
                         textDirection: TextDirection.rtl,
-                        style: textTheme.headlineMedium?.copyWith(
+                        style: textTheme.labelLarge?.copyWith(
                           fontSize: 20 * ratio,
                         ),
                       );

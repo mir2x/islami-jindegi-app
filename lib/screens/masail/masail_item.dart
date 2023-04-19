@@ -46,6 +46,7 @@ class MasailItem extends ConsumerWidget {
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
         return AppScaffold(
+          onBackPressed: () async => await QR.to('masail'),
           title: Text(locales.masail),
           body: ItemContent(
             children: [

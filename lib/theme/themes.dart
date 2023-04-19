@@ -23,6 +23,7 @@ ThemeData darkTheme(preferences) {
       titleLarge: TextStyle(
         color: ThemeColors.color4,
         fontSize: 20,
+        fontWeight: FontWeight.normal,
       ),
       titleMedium: TextStyle(
         color: ThemeColors.color4,
@@ -31,6 +32,7 @@ ThemeData darkTheme(preferences) {
       bodyLarge: TextStyle(
         color: ThemeColors.color3,
         fontSize: 20,
+        fontWeight: FontWeight.normal,
       ),
       bodyMedium: TextStyle(
         color: ThemeColors.color3,
@@ -43,6 +45,7 @@ ThemeData darkTheme(preferences) {
       labelLarge: TextStyle(
         color: ThemeColors.color3,
         fontSize: 20,
+        fontWeight: FontWeight.normal,
       ),
       labelMedium: TextStyle(
         color: ThemeColors.color3,

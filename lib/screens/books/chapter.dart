@@ -40,6 +40,7 @@ class Chapter extends ConsumerWidget {
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
         return AppScaffold(
+          onBackPressed: () async => await QR.to('books/$bookId'),
           title: Text(locales.book),
           body: ItemContent(
             children: [

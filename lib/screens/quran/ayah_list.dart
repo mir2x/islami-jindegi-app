@@ -58,6 +58,8 @@ class AyahList extends ConsumerWidget {
                     child: Bismillah(
                       chapter: chapter,
                       preferences: preferences,
+                      arabicFontSizeRatio: arabicFontSizeRatio,
+                      banglaFontSizeRatio: banglaFontSizeRatio,
                     ),
                   ),
                   Expanded(

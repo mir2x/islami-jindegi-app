@@ -50,9 +50,8 @@ class BismillahTafseer extends ConsumerWidget {
                     return Text(
                       'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ',
                       textDirection: TextDirection.rtl,
-                      softWrap: false,
-                      style: textTheme.headlineLarge?.copyWith(
-                        fontSize: 24 * ratio,
+                      style: textTheme.labelLarge?.copyWith(
+                        fontSize: 20 * ratio,
                       ),
                     );
                   },

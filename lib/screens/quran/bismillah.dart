@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/providers/quran_settings.dart';
 
 class Bismillah extends ConsumerWidget {
@@ -9,10 +10,14 @@ class Bismillah extends ConsumerWidget {
     super.key,
     required this.chapter,
     required this.preferences,
+    required this.arabicFontSizeRatio,
+    required this.banglaFontSizeRatio,
   });
 
   final dynamic chapter;
   final dynamic preferences;
+  final FontSizeRatio arabicFontSizeRatio;
+  final FontSizeRatio banglaFontSizeRatio;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,11 +40,17 @@ class Bismillah extends ConsumerWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: Text(
-                    'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ',
-                    textDirection: TextDirection.rtl,
-                    softWrap: false,
-                    style: textTheme.headlineLarge,
+                  child: ValueListenableBuilder<double>(
+                    valueListenable: arabicFontSizeRatio,
+                    builder: (context, ratio, child) {
+                      return Text(
+                        'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ',
+                        textDirection: TextDirection.rtl,
+                        style: textTheme.labelLarge?.copyWith(
+                          fontSize: 20 * ratio,
+                        ),
+                      );
+                    },
                   ),
                 ),
                 if (chapterType != 'Para') ...[
@@ -72,7 +83,17 @@ class Bismillah extends ConsumerWidget {
               qSettings['translation']) ...[
             Container(
               padding: const EdgeInsets.only(bottom: 5, left: 15, right: 15),
-              child: Text(locales.bismillah),
+              child: ValueListenableBuilder<double>(
+                valueListenable: banglaFontSizeRatio,
+                builder: (context, ratio, child) {
+                  return Text(
+                    locales.bismillah,
+                    style: textTheme.labelMedium?.copyWith(
+                      fontSize: 17 * ratio,
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ],

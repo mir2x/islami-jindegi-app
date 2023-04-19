@@ -43,6 +43,7 @@ class Subchapter extends ConsumerWidget {
         var chapterId = resource.chapter.value.id;
 
         return AppScaffold(
+          onBackPressed: () async => await QR.to('books/$bookId'),
           title: Text(locales.book),
           body: ItemContent(
             children: [

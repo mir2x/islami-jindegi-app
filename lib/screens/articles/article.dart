@@ -40,6 +40,7 @@ class Article extends ConsumerWidget {
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
         return AppScaffold(
+          onBackPressed: () async => await QR.to('articles'),
           title: Text(locales.article),
           body: ItemContent(
             children: [

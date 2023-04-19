@@ -43,6 +43,7 @@ class Bayan extends ConsumerWidget {
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
         return AppScaffold(
+          onBackPressed: () async => await QR.to('bayans'),
           title: Text(locales.bayan),
           body: ItemContent(
             children: [

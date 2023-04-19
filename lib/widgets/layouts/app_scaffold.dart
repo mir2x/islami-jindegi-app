@@ -12,6 +12,7 @@ class AppScaffold extends StatelessWidget {
     required this.body,
     this.drawer,
     this.bottomBar,
+    this.onBackPressed,
     this.scaffoldKey,
     this.isHome = false,
   });
@@ -20,6 +21,7 @@ class AppScaffold extends StatelessWidget {
   final Widget body;
   final Widget? drawer;
   final Widget? bottomBar;
+  final Function? onBackPressed;
   final GlobalKey<ScaffoldState>? scaffoldKey;
   final bool isHome;
 
@@ -46,7 +48,9 @@ class AppScaffold extends StatelessWidget {
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () async {
                     try {
-                      await QR.back();
+                      onBackPressed != null
+                          ? await onBackPressed!()
+                          : await QR.back();
                     } catch (error) {
                       await QR.navigator.replaceAll('/');
                     }

@@ -40,6 +40,7 @@ class NewsItem extends ConsumerWidget {
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
         return AppScaffold(
+          onBackPressed: () async => await QR.to('news'),
           title: Text(locales.news),
           body: ItemContent(
             children: [
