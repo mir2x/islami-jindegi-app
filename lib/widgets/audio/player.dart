@@ -208,6 +208,31 @@ class _AudioPlayerState extends State<StatefulAudioPlayer> {
             },
           ),
         ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.fast_rewind),
+              onPressed: () async {
+                int tenSecondBehind = position.inSeconds - 10;
+
+                if (tenSecondBehind >= 0) {
+                  await widget.player.seek(Duration(seconds: tenSecondBehind));
+                }
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.fast_forward),
+              onPressed: () async {
+                int tenSecondForward = position.inSeconds + 10;
+
+                if (tenSecondForward <= duration.inSeconds) {
+                  await widget.player.seek(Duration(seconds: tenSecondForward));
+                }
+              },
+            ),
+          ],
+        ),
       ],
     );
   }
