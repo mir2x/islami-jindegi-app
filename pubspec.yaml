@@ -42,7 +42,7 @@ dependencies:
   # widgets
   infinite_scroll_pagination: ^3.2.0
   carousel_slider: ^4.1.1
-  audioplayers: ^1.1.0
+  audioplayers: ^4.0.1
   pdfx: ^2.3.0
 
   # text
