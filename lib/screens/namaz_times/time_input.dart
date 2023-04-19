@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:idkit_inputformatters/idkit_inputformatters.dart';
-import 'package:easy_debounce/easy_debounce.dart';
 import 'package:native_app/widgets/inputs/input_field.dart';
 import 'package:native_app/theme/colors.dart';
 
-class TimeInput extends StatelessWidget {
+class TimeInput extends StatefulWidget {
   const TimeInput({
     super.key,
     required this.initialValue,
@@ -13,7 +12,20 @@ class TimeInput extends StatelessWidget {
   });
 
   final String initialValue;
-  final void Function(String) onChanged;
+  final void Function(String?) onChanged;
+
+  @override
+  State<TimeInput> createState() => _TimeInputState();
+}
+
+class _TimeInputState extends State<TimeInput> {
+  String? inputText;
+
+  updateInputText(value) {
+    setState(() {
+      inputText = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +38,10 @@ class TimeInput extends StatelessWidget {
         Row(
           children: [
             Container(
-              width: 100,
+              width: 130,
               margin: const EdgeInsets.only(right: 15),
               child: InputField(
-                initialValue: initialValue,
+                initialValue: widget.initialValue,
                 keyboardType: TextInputType.number,
                 inputFormatters: [
                   IDKitNumeralTextInputFormatter.range(
@@ -38,23 +50,36 @@ class TimeInput extends StatelessWidget {
                     decimalPoint: false,
                   )
                 ],
-                decoration: const InputDecoration(
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                  enabledBorder: UnderlineInputBorder(
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 15),
+                  enabledBorder: const UnderlineInputBorder(
                     borderSide: BorderSide(
                       color: ThemeColors.border,
                     ),
                   ),
-                  constraints: BoxConstraints(maxHeight: 45),
+                  constraints: const BoxConstraints(maxHeight: 45),
+                  suffix: TextButton(
+                    child:
+                        (inputText != null && inputText != widget.initialValue)
+                            ? Text(
+                                locales.save,
+                                style: textTheme.labelSmall,
+                              )
+                            : Container(
+                                padding: const EdgeInsets.only(bottom: 5),
+                                child: const Icon(
+                                  Icons.done,
+                                  color: ThemeColors.color3,
+                                  size: 15,
+                                ),
+                              ),
+                    onPressed: () {
+                      widget.onChanged(inputText);
+                      inputText = null;
+                    },
+                  ),
                 ),
-                onChanged: (value) {
-                  EasyDebounce.debounce(
-                    'search-debouncer',
-                    const Duration(milliseconds: 2000),
-                    () => onChanged(value),
-                  );
-                },
+                onChanged: updateInputText,
               ),
             ),
             Text(locales.minutes),

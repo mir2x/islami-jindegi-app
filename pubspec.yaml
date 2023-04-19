@@ -3,7 +3,7 @@ description: Islami Dars Native App
 
 publish_to: 'none'
 
-version: 1.0.0+18
+version: 1.0.0+19
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
@@ -37,7 +37,6 @@ dependencies:
   date_field: ^3.0.2
   dropdown_button2: ^1.9.2
   idkit_inputformatters: ^0.0.1
-  easy_debounce: ^2.0.2+1
 
   # widgets
   infinite_scroll_pagination: ^3.2.0
