@@ -165,7 +165,7 @@ class Articles extends ConsumerWidget {
                           ),
                           if (item.articleAuthor.value != null) ...[
                             Container(
-                              margin: const EdgeInsets.only(top: 10),
+                              margin: const EdgeInsets.only(top: 5),
                               child: Text(
                                 item.articleAuthor.value.name,
                                 style: textTheme.labelSmall,

@@ -158,7 +158,7 @@ class Bayans extends ConsumerWidget {
                             style: textTheme.titleMedium,
                           ),
                           Container(
-                            margin: const EdgeInsets.only(top: 10),
+                            margin: const EdgeInsets.only(top: 5),
                             child: Text(
                               formatDate(item.publishedAt, currentLang),
                               style: textTheme.labelSmall,

@@ -222,7 +222,7 @@ class Malfuzat extends ConsumerWidget {
                           ),
                           if (item.malfuzatAuthor.value != null) ...[
                             Container(
-                              margin: const EdgeInsets.only(top: 10),
+                              margin: const EdgeInsets.only(top: 5),
                               child: Text(
                                 item.malfuzatAuthor.value.name,
                                 style: textTheme.labelSmall,
