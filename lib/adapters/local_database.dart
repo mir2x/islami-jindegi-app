@@ -67,8 +67,14 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
 
       // run decode/encode because `json_api`'s `toJson()`
       // DOES NOT return nested Map<String, dynamic>s as expected
-      var data = json.decode(json.encode(outbound)) as Map<String, dynamic>;
+      var jData = json.decode(json.encode(outbound)) as Map<String, dynamic>;
       label ??= DataRequestLabel('findAll', type: internalType);
+
+      final data = DataResponse(
+        body: jData,
+        statusCode: 200,
+        headers: {'content-type': 'application/vnd.api+json'},
+      );
 
       onSuccess ??= (data, label, _) => this.onSuccess<List<T>>(data, label);
       return onSuccess.call(data, label, this);
@@ -148,8 +154,14 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
 
       // run decode/encode because `json_api`'s `toJson()`
       // DOES NOT return nested Map<String, dynamic>s as expected
-      var data = json.decode(json.encode(outbound)) as Map<String, dynamic>;
+      var jData = json.decode(json.encode(outbound)) as Map<String, dynamic>;
       label ??= DataRequestLabel('findOne', type: internalType);
+
+      final data = DataResponse(
+        body: jData,
+        statusCode: 200,
+        headers: {'content-type': 'application/vnd.api+json'},
+      );
 
       onSuccess ??= (data, label, _) => this.onSuccess<T>(data, label);
       return onSuccess.call(data, label, this);
