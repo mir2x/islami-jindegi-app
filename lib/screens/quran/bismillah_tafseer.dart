@@ -11,6 +11,7 @@ import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 
 class BismillahTafseer extends ConsumerWidget {
@@ -37,6 +38,8 @@ class BismillahTafseer extends ConsumerWidget {
       },
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (item) {
+        String arabicBismillah = 'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ';
+
         return AppScaffold(
           title: Text(locales.tafseer),
           body: ItemContent(
@@ -48,7 +51,7 @@ class BismillahTafseer extends ConsumerWidget {
                   valueListenable: fontSizeRatio,
                   builder: (context, ratio, child) {
                     return Text(
-                      'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ',
+                      arabicBismillah,
                       textDirection: TextDirection.rtl,
                       style: textTheme.labelLarge?.copyWith(
                         fontSize: 20 * ratio,
@@ -67,11 +70,13 @@ class BismillahTafseer extends ConsumerWidget {
             ],
           ),
           bottomBar: BottomBar(
+            alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                margin: const EdgeInsets.only(left: 15),
-                child: FontResizer(fontSizeRatio: fontSizeRatio),
+              SocialShare(
+                title: arabicBismillah,
+                body: item.body,
               ),
+              FontResizer(fontSizeRatio: fontSizeRatio),
             ],
           ),
         );

@@ -12,6 +12,7 @@ import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/widgets/page/title.dart';
 import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 
@@ -42,14 +43,14 @@ class MadrasahInfo extends ConsumerWidget {
       },
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
+        String resourceLabel = contextualTranslation(
+          locale: currentLang,
+          enText: resource.label,
+          bnText: resource.labelBn,
+        );
+
         return AppScaffold(
-          title: Text(
-            contextualTranslation(
-              locale: currentLang,
-              enText: resource.label,
-              bnText: resource.labelBn,
-            ),
-          ),
+          title: Text(resourceLabel),
           body: ItemContent(
             children: [
               Container(
@@ -69,11 +70,13 @@ class MadrasahInfo extends ConsumerWidget {
             ],
           ),
           bottomBar: BottomBar(
+            alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                margin: const EdgeInsets.only(left: 15),
-                child: FontResizer(fontSizeRatio: fontSizeRatio),
+              SocialShare(
+                title: resourceLabel,
+                body: resource.info,
               ),
+              FontResizer(fontSizeRatio: fontSizeRatio),
             ],
           ),
         );

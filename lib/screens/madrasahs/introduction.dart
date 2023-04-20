@@ -14,6 +14,7 @@ import 'package:native_app/widgets/page/title.dart';
 import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/helpers/file_utils.dart';
 
@@ -63,11 +64,13 @@ class MadrasahIntroduction extends ConsumerWidget {
             ],
           ),
           bottomBar: BottomBar(
+            alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                margin: const EdgeInsets.only(left: 15),
-                child: FontResizer(fontSizeRatio: fontSizeRatio),
+              SocialShare(
+                title: resource.title,
+                body: resource.introduction,
               ),
+              FontResizer(fontSizeRatio: fontSizeRatio),
             ],
           ),
         );
