@@ -40,6 +40,9 @@ import '../screens/news/news_item.dart';
 
 import '../screens/madrasahs/index.dart';
 import '../screens/madrasahs/madrasah.dart';
+import '../screens/madrasahs/introduction.dart';
+import '../screens/madrasahs/gallery.dart';
+import '../screens/madrasahs/info.dart';
 
 import '../screens/namaz_times/index.dart';
 import '../screens/namaz_times/namaz_time.dart';
@@ -170,7 +173,24 @@ class AppRoutes {
       path: '/madrasahs',
       builder: () => const Madrasahs(),
       children: [
-        QRoute(path: '/:id', builder: () => const Madrasah()),
+        QRoute(
+          path: '/:id',
+          builder: () => const Madrasah(),
+          children: [
+            QRoute(
+              path: '/introduction',
+              builder: () => const MadrasahIntroduction(),
+            ),
+            QRoute(
+              path: '/gallery',
+              builder: () => const MadrasahGallery(),
+            ),
+            QRoute(
+              path: '/infos/:info_id',
+              builder: () => const MadrasahInfo(),
+            ),
+          ],
+        ),
       ],
     ),
     QRoute(
