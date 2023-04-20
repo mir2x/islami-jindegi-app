@@ -6,10 +6,12 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/widgets/calendar/hijri_date.dart';
+import 'package:native_app/widgets/calendar/gregorian_date.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/objects/prayer_time.dart';
+import 'package:native_app/theme/colors.dart';
 import 'hijri_date_calendar.dart';
 import 'item.dart';
 
@@ -36,20 +38,43 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
     var textTheme = Theme.of(context).textTheme;
     var dataP = ref.watch(preferencesAndGeolocationProvider);
 
+    DateTime? currentGregorianDate;
+
+    if (selectedHijriDate != null) {
+      currentGregorianDate = HijriCalendar().hijriToGregorian(
+        selectedHijriDate!.hYear,
+        selectedHijriDate!.hMonth,
+        selectedHijriDate!.hDay,
+      );
+    }
+
     return AppScaffold(
       title: Text(locales.namazTime),
       body: ItemContent(
         children: [
-          HijriDateCalendar(
-            onUpdate: updateHijriDate,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                HijriDate(currentDate: selectedHijriDate),
-                const SizedBox(width: 15),
-                const Icon(Icons.calendar_month),
-              ],
-            ),
+          Column(
+            children: [
+              HijriDateCalendar(
+                onUpdate: updateHijriDate,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    HijriDate(currentDate: selectedHijriDate),
+                    const SizedBox(width: 15),
+                    const Icon(Icons.calendar_month),
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GregorianDate(currentDate: currentGregorianDate),
+                  ],
+                ),
+              ),
+            ],
           ),
           dataP.when(
             loading: () => Container(
@@ -62,69 +87,65 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
             data: (Map data) {
               Map coordinates = data['geolocation']['coordinates'];
 
-              DateTime? today;
-
-              if (selectedHijriDate != null) {
-                today = HijriCalendar().hijriToGregorian(
-                  selectedHijriDate!.hYear,
-                  selectedHijriDate!.hMonth,
-                  selectedHijriDate!.hDay,
-                );
-              }
-
               PrayerTime prayerTime = PrayerTime(
                 coordinates: Coordinates(
                   coordinates['latitude'],
                   coordinates['longitude'],
                 ),
                 preferences: data['preferences'],
-                currentDate: today,
+                currentDate: currentGregorianDate,
               );
 
               Map prayerTimes = prayerTime.getTimes(locales, currentLang);
 
               return Column(
                 children: [
-                  Container(
-                    margin: const EdgeInsets.only(top: 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (!data['geolocation']['isGeolocated']) ...[
-                          Row(
-                            children: [
-                              Text(locales.dhaka),
-                              Container(
-                                margin: const EdgeInsets.only(
-                                  left: 10,
-                                  right: 5,
-                                ),
-                                child: GestureDetector(
-                                  onTap: () => ref
-                                      .read(geolocationProvider.notifier)
-                                      .updateCoordinates(),
-                                  child: SvgPicture.asset(
-                                    'assets/images/icons/location.svg',
-                                    fit: BoxFit.scaleDown,
-                                    width: 40,
-                                    height: 30,
-                                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (!data['geolocation']['isGeolocated']) ...[
+                        Row(
+                          children: [
+                            Text(locales.dhaka),
+                            Container(
+                              margin: const EdgeInsets.only(
+                                left: 10,
+                                right: 5,
+                              ),
+                              child: GestureDetector(
+                                onTap: () => ref
+                                    .read(geolocationProvider.notifier)
+                                    .updateCoordinates(),
+                                child: SvgPicture.asset(
+                                  'assets/images/icons/location.svg',
+                                  fit: BoxFit.scaleDown,
+                                  width: 40,
+                                  height: 30,
                                 ),
                               ),
-                              Text(locales.setLocation)
-                            ],
-                          ),
-                          const SizedBox(width: 30),
-                        ],
-                        TextButton(
-                          child: Text(
-                            locales.settings,
-                            style: textTheme.titleLarge,
-                          ),
-                          onPressed: () => QR.to('namaz-times/settings'),
+                            ),
+                            Text(locales.setLocation)
+                          ],
                         ),
+                        const SizedBox(width: 30),
                       ],
-                    ),
+                      TextButton(
+                        child: Row(
+                          children: [
+                            Text(
+                              locales.settings,
+                              style: textTheme.labelLarge,
+                            ),
+                            const SizedBox(width: 8),
+                            const Icon(
+                              Icons.settings,
+                              color: ThemeColors.color4,
+                            ),
+                          ],
+                        ),
+                        onPressed: () => QR.to('namaz-times/settings'),
+                      ),
+                    ],
                   ),
                   Column(
                     children: [
