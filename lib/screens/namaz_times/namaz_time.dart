@@ -13,7 +13,10 @@ import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/widgets/page/title.dart';
 import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
+import 'package:native_app/widgets/buttons/previous_next.dart';
+import 'package:native_app/helpers/contextual_translation.dart';
 
 class NamazTime extends ConsumerWidget {
   const NamazTime({super.key});
@@ -21,6 +24,7 @@ class NamazTime extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
+    String currentLang = Localizations.localeOf(context).languageCode;
     var fontSizeRatio = FontSizeRatio();
 
     var query = AllModelsQuery(
@@ -42,8 +46,15 @@ class NamazTime extends ConsumerWidget {
       data: (resources) {
         var item = resources[0];
 
+        String itemTitle = contextualTranslation(
+          locale: currentLang,
+          enText: item.title,
+          bnText: item.titleBn,
+        );
+
         return AppScaffold(
-          title: Text(item.title),
+          onBackPressed: () async => await QR.to('namaz-times'),
+          title: Text(itemTitle),
           body: ItemContent(
             children: [
               Container(
@@ -79,10 +90,44 @@ class NamazTime extends ConsumerWidget {
             ],
           ),
           bottomBar: BottomBar(
+            alignment: MainAxisAlignment.spaceBetween,
             children: [
+              SocialShare(
+                title: itemTitle,
+                body: '${item.masail}${item.fazail}',
+              ),
               Container(
-                margin: const EdgeInsets.only(left: 15),
+                margin: const EdgeInsets.only(left: 30),
                 child: FontResizer(fontSizeRatio: fontSizeRatio),
+              ),
+              PreviousNext(
+                onPrevious: () async {
+                  var previousResources = await ref.namazTimes.findAll(
+                        params: {
+                          'quantity': 1,
+                          'position': item.position - 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (previousResources.isNotEmpty) {
+                    await QR.to('namaz-times/${previousResources.first.slug}');
+                  }
+                },
+                onNext: () async {
+                  var nextResources = await ref.namazTimes.findAll(
+                        params: {
+                          'quantity': 1,
+                          'position': item.position + 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (nextResources.isNotEmpty) {
+                    await QR.to('namaz-times/${nextResources.first.slug}');
+                  }
+                },
+                previousDisabled: item.position == 1,
               ),
             ],
           ),
