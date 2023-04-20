@@ -65,9 +65,11 @@ extension NamazTimeRelationshipGraphNodeX on RelationshipGraphNode<NamazTime> {}
 NamazTime _$NamazTimeFromJson(Map<String, dynamic> json) => NamazTime(
       id: json['id'] as String?,
       title: json['title'] as String,
+      titleBn: json['title-bn'] as String?,
       slug: json['slug'] as String,
       masail: json['masail'] as String,
       fazail: json['fazail'] as String?,
+      position: json['position'] as int?,
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
     );
@@ -75,9 +77,11 @@ NamazTime _$NamazTimeFromJson(Map<String, dynamic> json) => NamazTime(
 Map<String, dynamic> _$NamazTimeToJson(NamazTime instance) => <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
+      'title-bn': instance.titleBn,
       'slug': instance.slug,
       'masail': instance.masail,
       'fazail': instance.fazail,
+      'position': instance.position,
       'created-at': instance.createdAt,
       'updated-at': instance.updatedAt,
     };

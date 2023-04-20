@@ -12,18 +12,22 @@ class NamazTime extends DataModel<NamazTime> {
   @override
   final String? id;
   final String title;
+  final String? titleBn;
   final String slug;
   final String masail;
   final String? fazail;
+  final int? position;
   final String? createdAt;
   final String? updatedAt;
 
   NamazTime({
     this.id,
     required this.title,
+    this.titleBn,
     required this.slug,
     required this.masail,
     this.fazail,
+    this.position,
     this.createdAt,
     this.updatedAt,
   });
