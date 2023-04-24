@@ -60,7 +60,7 @@ class QuranBooks extends ConsumerWidget {
                         Container(
                           margin: const EdgeInsets.only(top: 10),
                           child: InkWell(
-                            onTap: () => QR.to('books/${item.id}'),
+                            onTap: () => QR.to('quran/books/${item.id}'),
                             child: Text(
                               contextualTranslation(
                                 locale: currentLang,
