@@ -39,12 +39,12 @@ class MadrasahGallery extends ConsumerWidget {
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
         return AppScaffold(
-          title: Text(locales.gallery),
+          title: Text(resource.title),
           body: ItemContent(
             children: [
               Container(
                 margin: const EdgeInsets.only(bottom: 25),
-                child: Text(resource.title, style: textTheme.labelLarge),
+                child: Text(locales.gallery, style: textTheme.labelLarge),
               ),
               ...resource.madrasahPhotos.map((photo) {
                 return Container(

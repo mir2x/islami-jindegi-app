@@ -38,13 +38,13 @@ class MadrasahIntroduction extends ConsumerWidget {
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
         return AppScaffold(
-          title: Text(locales.introduction),
+          title: Text(resource.title),
           body: ItemContent(
             children: [
               Container(
                 margin: const EdgeInsets.only(bottom: 15),
                 child: PageTitle(
-                  text: resource.title,
+                  text: locales.introduction,
                   fontSizeRatio: fontSizeRatio,
                 ),
               ),

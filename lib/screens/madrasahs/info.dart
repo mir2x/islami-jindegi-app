@@ -50,13 +50,13 @@ class MadrasahInfo extends ConsumerWidget {
         );
 
         return AppScaffold(
-          title: Text(resourceLabel),
+          title: Text(resource.madrasah.value.title),
           body: ItemContent(
             children: [
               Container(
                 margin: const EdgeInsets.only(bottom: 15),
                 child: PageTitle(
-                  text: resource.madrasah.value.title,
+                  text: resourceLabel,
                   fontSizeRatio: fontSizeRatio,
                 ),
               ),
