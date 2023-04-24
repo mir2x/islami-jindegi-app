@@ -19,6 +19,7 @@ import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
+import 'package:native_app/widgets/buttons/previous_next.dart';
 
 class Bayan extends ConsumerWidget {
   const Bayan({super.key});
@@ -130,6 +131,7 @@ class Bayan extends ConsumerWidget {
             ],
           ),
           bottomBar: BottomBar(
+            alignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
@@ -144,6 +146,34 @@ class Bayan extends ConsumerWidget {
                     link: 'bayans/${resource.id}',
                   ),
                 ],
+              ),
+              PreviousNext(
+                onPrevious: () async {
+                  var previousResources = await ref.bayans.findAll(
+                        params: {
+                          'quantity': 1,
+                          'gtPublishedAt': resource.publishedAt,
+                        },
+                      ) ??
+                      [];
+
+                  if (previousResources.isNotEmpty) {
+                    await QR.to('bayans/${previousResources.first.id}');
+                  }
+                },
+                onNext: () async {
+                  var nextResources = await ref.bayans.findAll(
+                        params: {
+                          'quantity': 1,
+                          'ltPublishedAt': resource.publishedAt,
+                        },
+                      ) ??
+                      [];
+
+                  if (nextResources.isNotEmpty) {
+                    await QR.to('bayans/${nextResources.first.id}');
+                  }
+                },
               ),
             ],
           ),

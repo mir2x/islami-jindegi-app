@@ -18,6 +18,7 @@ import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
+import 'package:native_app/widgets/buttons/previous_next.dart';
 
 class NewsItem extends ConsumerWidget {
   const NewsItem({super.key});
@@ -85,6 +86,34 @@ class NewsItem extends ConsumerWidget {
                 ],
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
+              PreviousNext(
+                onPrevious: () async {
+                  var previousResources = await ref.news.findAll(
+                        params: {
+                          'quantity': 1,
+                          'gtCreatedAt': resource.createdAt,
+                        },
+                      ) ??
+                      [];
+
+                  if (previousResources.isNotEmpty) {
+                    await QR.to('news/${previousResources.first.id}');
+                  }
+                },
+                onNext: () async {
+                  var nextResources = await ref.news.findAll(
+                        params: {
+                          'quantity': 1,
+                          'ltCreatedAt': resource.createdAt,
+                        },
+                      ) ??
+                      [];
+
+                  if (nextResources.isNotEmpty) {
+                    await QR.to('news/${nextResources.first.id}');
+                  }
+                },
+              ),
             ],
           ),
         );
