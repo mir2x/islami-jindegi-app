@@ -74,5 +74,84 @@ ThemeData darkTheme(preferences) {
     popupMenuTheme: const PopupMenuThemeData(
       color: ThemeColors.color5,
     ),
+    dialogBackgroundColor: ThemeColors.color1,
+  );
+}
+
+ThemeData lightTheme(preferences) {
+  return ThemeData(
+    fontFamily: preferences.getString('banglaFont') ?? 'bangla/solaimanlipi',
+    fontFamilyFallback: [
+      preferences.getString('arabicFont') ?? 'arabic/al-qalam-quran-majeed',
+    ],
+    textTheme: const TextTheme(
+      headlineLarge: TextStyle(
+        color: ThemeColors.color2,
+        fontSize: 24,
+      ),
+      headlineMedium: TextStyle(
+        color: ThemeColors.color2,
+        fontSize: 20,
+      ),
+      headlineSmall: TextStyle(
+        color: ThemeColors.color2,
+        fontSize: 17,
+      ),
+      titleLarge: TextStyle(
+        color: ThemeColors.color8,
+        fontSize: 20,
+        fontWeight: FontWeight.normal,
+      ),
+      titleMedium: TextStyle(
+        color: ThemeColors.color8,
+        fontSize: 17,
+      ),
+      bodyLarge: TextStyle(
+        color: ThemeColors.color2,
+        fontSize: 20,
+        fontWeight: FontWeight.normal,
+      ),
+      bodyMedium: TextStyle(
+        color: ThemeColors.color2,
+        fontSize: 17,
+      ),
+      bodySmall: TextStyle(
+        color: ThemeColors.color2,
+        fontSize: 14,
+      ),
+      labelLarge: TextStyle(
+        color: ThemeColors.color2,
+        fontSize: 20,
+        fontWeight: FontWeight.normal,
+      ),
+      labelMedium: TextStyle(
+        color: ThemeColors.color2,
+        fontSize: 17,
+      ),
+      labelSmall: TextStyle(
+        color: ThemeColors.color2,
+        fontSize: 14,
+      ),
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: ThemeColors.color3,
+      foregroundColor: ThemeColors.color8,
+    ),
+    drawerTheme: const DrawerThemeData(
+      backgroundColor: ThemeColors.color3,
+    ),
+    listTileTheme: const ListTileThemeData(
+      tileColor: ThemeColors.color3,
+    ),
+    iconTheme: const IconThemeData(
+      color: ThemeColors.color8,
+    ),
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
+      color: ThemeColors.color8,
+    ),
+    popupMenuTheme: const PopupMenuThemeData(
+      color: ThemeColors.color3,
+    ),
+    dialogBackgroundColor: ThemeColors.color3,
   );
 }

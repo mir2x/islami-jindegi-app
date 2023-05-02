@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:native_app/providers/preferences.dart';
 
-class PlaceholderScaffold extends StatelessWidget {
+class PlaceholderScaffold extends ConsumerWidget {
   const PlaceholderScaffold({
     super.key,
     required this.body,
@@ -13,7 +15,9 @@ class PlaceholderScaffold extends StatelessWidget {
   final Widget? bottomBar;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    var prefs = ref.watch(preferencesProvider);
+
     return Scaffold(
       appBar: AppBar(
         leading: Padding(
@@ -41,16 +45,29 @@ class PlaceholderScaffold extends StatelessWidget {
           ),
         ],
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image:
-                AssetImage('assets/images/icons/background-pattern-dark.png'),
-            repeat: ImageRepeat.repeat,
-          ),
-        ),
-        constraints: const BoxConstraints.expand(),
-        child: body,
+      body: prefs.when(
+        loading: () => const SizedBox.shrink(),
+        error: (error, _) => Text(error.toString()),
+        data: (preferences) {
+          String theme = preferences.getString('theme') ?? 'dark';
+
+          return Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: theme == 'dark'
+                    ? const AssetImage(
+                        'assets/images/icons/background-pattern-dark.png',
+                      )
+                    : const AssetImage(
+                        'assets/images/icons/background-pattern-light.png',
+                      ),
+                repeat: ImageRepeat.repeat,
+              ),
+            ),
+            constraints: const BoxConstraints.expand(),
+            child: body,
+          );
+        },
       ),
       bottomNavigationBar: bottomBar,
     );

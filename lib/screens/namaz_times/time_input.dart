@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:idkit_inputformatters/idkit_inputformatters.dart';
 import 'package:native_app/widgets/inputs/input_field.dart';
 import 'package:native_app/theme/colors.dart';
 
-class TimeInput extends StatefulWidget {
+class TimeInput extends ConsumerStatefulWidget {
   const TimeInput({
     super.key,
     required this.initialValue,
@@ -15,10 +17,10 @@ class TimeInput extends StatefulWidget {
   final void Function(String?) onChanged;
 
   @override
-  State<TimeInput> createState() => _TimeInputState();
+  ConsumerState<TimeInput> createState() => _TimeInputState();
 }
 
-class _TimeInputState extends State<TimeInput> {
+class _TimeInputState extends ConsumerState<TimeInput> {
   String? inputText;
 
   updateInputText(value) {
@@ -31,6 +33,7 @@ class _TimeInputState extends State<TimeInput> {
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    var prefs = ref.watch(preferencesProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,7 +72,7 @@ class _TimeInputState extends State<TimeInput> {
                                 padding: const EdgeInsets.only(bottom: 5),
                                 child: const Icon(
                                   Icons.done,
-                                  color: ThemeColors.color3,
+                                  color: ThemeColors.color4,
                                   size: 15,
                                 ),
                               ),
@@ -87,11 +90,19 @@ class _TimeInputState extends State<TimeInput> {
         ),
         Container(
           margin: const EdgeInsets.only(top: 10),
-          child: Text(
-            locales.minutesHint,
-            style: textTheme.labelSmall?.copyWith(
-              color: ThemeColors.placeholder,
-            ),
+          child: prefs.when(
+            loading: () => const SizedBox.shrink(),
+            error: (error, _) => Text(error.toString()),
+            data: (preferences) {
+              String theme = preferences.getString('theme') ?? 'dark';
+
+              return Text(
+                locales.minutesHint,
+                style: textTheme.labelSmall?.copyWith(
+                  color: theme == 'dark' ? ThemeColors.placeholder : null,
+                ),
+              );
+            },
           ),
         )
       ],

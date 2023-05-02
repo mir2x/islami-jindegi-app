@@ -98,7 +98,6 @@ class QuranDownload extends ConsumerWidget {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                backgroundColor: ThemeColors.color1,
                                 title: Text(locales.errorTitle),
                                 content: Text(
                                   locales.downloadErrorMsg,

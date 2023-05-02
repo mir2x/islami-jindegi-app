@@ -37,7 +37,11 @@ class QuranBookmarks extends ConsumerWidget {
 
               return Container(
                 decoration: const BoxDecoration(
-                  color: ThemeColors.color7,
+                  border: Border(
+                    bottom: BorderSide(
+                      color: ThemeColors.color4,
+                    ),
+                  ),
                 ),
                 padding: const EdgeInsets.only(top: 15, bottom: 20),
                 child: Column(

@@ -17,36 +17,38 @@ class CurrentPrayers extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
     var dataP = ref.watch(preferencesAndGeolocationProvider);
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        color: ThemeColors.color2,
-      ),
-      child: dataP.when(
-        loading: () => Container(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 15),
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
+    return dataP.when(
+      loading: () => Container(
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 15),
+        child: const Center(
+          child: CircularProgressIndicator(),
         ),
-        error: (error, _) => Text(error.toString()),
-        data: (Map data) {
-          Map coordinates = data['geolocation']['coordinates'];
+      ),
+      error: (error, _) => Text(error.toString()),
+      data: (Map data) {
+        Map coordinates = data['geolocation']['coordinates'];
 
-          PrayerTime prayerTime = PrayerTime(
-            coordinates: Coordinates(
-              coordinates['latitude'],
-              coordinates['longitude'],
-            ),
-            preferences: data['preferences'],
-          );
+        PrayerTime prayerTime = PrayerTime(
+          coordinates: Coordinates(
+            coordinates['latitude'],
+            coordinates['longitude'],
+          ),
+          preferences: data['preferences'],
+        );
 
-          Map prayerTimes = prayerTime.getCurrentAndNextPrayers(
-            locales,
-            currentLang,
-          );
+        Map prayerTimes = prayerTime.getCurrentAndNextPrayers(
+          locales,
+          currentLang,
+        );
 
-          return Container(
+        String theme = data['preferences'].getString('theme') ?? 'dark';
+
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            color: theme == 'dark' ? ThemeColors.color2 : ThemeColors.color3,
+          ),
+          child: Container(
             padding: data['geolocation']['isGeolocated']
                 ? const EdgeInsets.symmetric(vertical: 17, horizontal: 15)
                 : const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
@@ -103,9 +105,9 @@ class CurrentPrayers extends ConsumerWidget {
                 ),
               ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hijri_picker/hijri_picker.dart';
 import 'package:hijri/hijri_calendar.dart';
-import 'package:native_app/theme/colors.dart';
 
 class HijriDateCalendar extends ConsumerWidget {
   const HijriDateCalendar({
@@ -22,7 +21,6 @@ class HijriDateCalendar extends ConsumerWidget {
           context: context,
           builder: (BuildContext context) {
             return Dialog(
-              backgroundColor: ThemeColors.color1,
               child: Container(
                 padding: const EdgeInsets.all(10),
                 child: HijriMonthPicker(

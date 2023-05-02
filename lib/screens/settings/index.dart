@@ -35,10 +35,10 @@ class Settings extends ConsumerWidget {
     }
   ];
 
-  /* final List<Map<String, String>> themes = const [ */
-  /*   {'label': 'Dark', 'value': 'dark'}, */
-  /*   {'label': 'Light', 'value': 'light'} */
-  /* ]; */
+  final List<Map<String, String>> themes = const [
+    {'label': 'Dark', 'value': 'dark'},
+    {'label': 'Light', 'value': 'light'}
+  ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -71,11 +71,11 @@ class Settings extends ConsumerWidget {
                   }) ??
                   'bangla/solaimanlipi';
 
-          /* String selectedTheme = */
-          /*     themes.map((i) => i['value']).firstWhereOrNull((i) { */
-          /*           return i == preferences.getString('theme'); */
-          /*         }) ?? */
-          /*         'dark'; */
+          String selectedTheme =
+              themes.map((i) => i['value']).firstWhereOrNull((i) {
+                    return i == preferences.getString('theme');
+                  }) ??
+                  'dark';
 
           return ItemContent(
             children: [
@@ -175,24 +175,24 @@ class Settings extends ConsumerWidget {
                   ],
                 ),
               ),
-              /* Container( */
-              /*   margin: const EdgeInsets.only(bottom: 40), */
-              /*   child: Column( */
-              /*     crossAxisAlignment: CrossAxisAlignment.stretch, */
-              /*     children: [ */
-              /*       SectionTitle(title: locales.theme), */
-              /*       Dropdown( */
-              /*         items: themes, */
-              /*         selectedValue: selectedTheme, */
-              /*         updateItem: (value) { */
-              /*           ref */
-              /*               .read(preferencesProvider.notifier) */
-              /*               .updateTheme(value); */
-              /*         }, */
-              /*       ), */
-              /*     ], */
-              /*   ), */
-              /* ), */
+              Container(
+                margin: const EdgeInsets.only(bottom: 40),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SectionTitle(title: locales.theme),
+                    Dropdown(
+                      items: themes,
+                      selectedValue: selectedTheme,
+                      updateItem: (value) {
+                        ref
+                            .read(preferencesProvider.notifier)
+                            .updateTheme(value);
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ],
           );
         },

@@ -248,7 +248,6 @@ class AyahList extends ConsumerWidget {
                     context: context,
                     builder: (BuildContext context) {
                       return Dialog(
-                        backgroundColor: ThemeColors.color1,
                         child: SizedBox(
                           width: 200,
                           height: 100,

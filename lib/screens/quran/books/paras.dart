@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/all_models.dart';
+import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/theme/colors.dart';
@@ -104,6 +105,7 @@ class _ParasState extends ConsumerState<StatefulParas> {
     String currentLang = Localizations.localeOf(context).languageCode;
     var numFormatter = NumberFormat('#', currentLang);
     var textTheme = Theme.of(context).textTheme;
+    var prefs = ref.watch(preferencesProvider);
 
     return Expanded(
       child: Row(
@@ -116,36 +118,46 @@ class _ParasState extends ConsumerState<StatefulParas> {
                   left: BorderSide(color: ThemeColors.color7, width: 0.5),
                 ),
               ),
-              child: ListView.builder(
-                itemCount: widget.bookParas.length,
-                itemBuilder: (BuildContext context, int index) {
-                  var bookPara = widget.bookParas[index];
-                  var para = bookPara.para.value;
+              child: prefs.when(
+                loading: () => const SizedBox.shrink(),
+                error: (error, _) => Text(error.toString()),
+                data: (preferences) {
+                  String theme = preferences.getString('theme') ?? 'dark';
 
-                  String paraTitle = contextualTranslation(
-                    locale: currentLang,
-                    enText: para.title,
-                    bnText: para.titleBn,
-                  );
+                  return ListView.builder(
+                    itemCount: widget.bookParas.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      var bookPara = widget.bookParas[index];
+                      var para = bookPara.para.value;
 
-                  return GestureDetector(
-                    onTap: () => updateSelectedBookPara(bookPara),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: selectedBookPara.id == bookPara.id
-                            ? ThemeColors.color7
-                            : null,
-                      ),
-                      child: Row(
-                        children: [
-                          Text(paraTitle, style: textTheme.titleMedium),
-                        ],
-                      ),
-                    ),
+                      String paraTitle = contextualTranslation(
+                        locale: currentLang,
+                        enText: para.title,
+                        bnText: para.titleBn,
+                      );
+
+                      return GestureDetector(
+                        onTap: () => updateSelectedBookPara(bookPara),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            color: selectedBookPara.id == bookPara.id
+                                ? theme == 'dark'
+                                    ? ThemeColors.color7
+                                    : ThemeColors.color9
+                                : null,
+                          ),
+                          child: Row(
+                            children: [
+                              Text(paraTitle, style: textTheme.titleMedium),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),

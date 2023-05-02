@@ -67,7 +67,6 @@ class DateFilter extends ConsumerWidget {
             var qParamsNotifier = ref.read(queryParamsProvider.notifier);
 
             return Dialog(
-              backgroundColor: ThemeColors.color1,
               child: Container(
                 width: screenWidth,
                 height: screenHeight * 0.6,

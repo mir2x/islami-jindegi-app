@@ -50,12 +50,15 @@ class MyApp extends ConsumerWidget {
       loading: () => const FullScreen(),
       error: (error, _) => Text(error.toString()),
       data: (preferences) {
+        String theme = preferences.getString('theme') ?? 'dark';
+
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           routeInformationParser: const QRouteInformationParser(),
           routerDelegate: QRouterDelegate(AppRoutes().routes),
+          theme: lightTheme(preferences),
           darkTheme: darkTheme(preferences),
-          themeMode: ThemeMode.dark,
+          themeMode: theme == 'dark' ? ThemeMode.dark : ThemeMode.light,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: Locale(preferences.getString('locale') ?? 'bn'),
