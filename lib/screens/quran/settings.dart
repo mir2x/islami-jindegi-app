@@ -16,6 +16,7 @@ class QuranSettings extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
+
     var qSettings = ref.watch(quranSettingsProvider);
     var qNotifier = ref.read(quranSettingsProvider.notifier);
 
@@ -65,6 +66,7 @@ class QuranSettings extends ConsumerWidget {
                     return Dropdown(
                       items: qitabs,
                       selectedValue: selectedQitab,
+                      hint: Text(locales.selectQitab),
                       allowClear: true,
                       updateItem: (value) {
                         qNotifier.updateSettings('qitab', value!);
@@ -103,6 +105,7 @@ class QuranSettings extends ConsumerWidget {
                     return Dropdown(
                       items: qaris,
                       selectedValue: selectedQari,
+                      hint: Text(locales.selectQari),
                       allowClear: true,
                       updateItem: (value) {
                         qNotifier.updateSettings('qari', value!);

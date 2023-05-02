@@ -143,12 +143,7 @@ class TafseerDisplay extends ConsumerWidget {
               }
             },
           ),
-        ] else ...[
-          Container(
-            margin: const EdgeInsets.only(top: 15),
-            child: Text(locales.selectTafseer),
-          ),
-        ]
+        ],
       ],
     );
   }
@@ -197,6 +192,7 @@ class SelectQitab extends ConsumerWidget {
                 return Dropdown(
                   items: qitabs,
                   selectedValue: selectedQitab,
+                  hint: Text(locales.selectQitab),
                   updateItem: (value) {
                     qNotifier.updateSettings('qitab', value!);
                   },

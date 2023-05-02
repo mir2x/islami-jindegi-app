@@ -73,7 +73,7 @@ class FilterButton extends ConsumerWidget {
                     : locales.filter,
                 style: textTheme.labelMedium,
               ),
-              const Icon(Icons.arrow_drop_down),
+              const Icon(Icons.arrow_drop_down, color: ThemeColors.color4),
             ],
           ),
         );
