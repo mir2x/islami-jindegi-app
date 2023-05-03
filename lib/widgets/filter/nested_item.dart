@@ -8,12 +8,14 @@ import 'package:native_app/theme/colors.dart';
 class FilterNestedItem extends ConsumerStatefulWidget {
   const FilterNestedItem({
     super.key,
+    required this.itemId,
     required this.itemTitle,
     required this.paramKey,
     required this.subitems,
     required this.subitemBuilder,
   });
 
+  final String itemId;
   final String itemTitle;
   final String paramKey;
   final HasMany subitems;
@@ -30,6 +32,12 @@ class FilterNestedItemState extends ConsumerState<FilterNestedItem> {
   toggleOpen() {
     setState(() {
       isOpen = !isOpen;
+
+      if (isOpen) {
+        Scrollable.ensureVisible(
+          GlobalObjectKey(widget.itemId).currentContext!,
+        );
+      }
     });
   }
 
@@ -75,6 +83,7 @@ class FilterNestedItemState extends ConsumerState<FilterNestedItem> {
             ),
           ] else ...[
             InkWell(
+              key: GlobalObjectKey(widget.itemId),
               onTap: toggleOpen,
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 10),

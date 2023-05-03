@@ -226,6 +226,12 @@ class SubchaptersState extends ConsumerState<Subchapters> {
   toggleOpen() {
     setState(() {
       isOpen = !isOpen;
+
+      if (isOpen) {
+        Scrollable.ensureVisible(
+          GlobalObjectKey(widget.chapter.id).currentContext!,
+        );
+      }
     });
   }
 
@@ -246,6 +252,7 @@ class SubchaptersState extends ConsumerState<Subchapters> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InkWell(
+            key: GlobalObjectKey(widget.chapter.id),
             onTap: toggleOpen,
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 15),

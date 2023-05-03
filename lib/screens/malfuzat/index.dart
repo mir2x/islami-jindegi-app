@@ -77,6 +77,7 @@ class Malfuzat extends ConsumerWidget {
                                       if (item.malfuzatSubcategories.length >
                                           0) {
                                         return FilterNestedItem(
+                                          itemId: item.id,
                                           itemTitle: item.title,
                                           paramKey: 'malfuzatSubcategoryId',
                                           subitems: item.malfuzatSubcategories,

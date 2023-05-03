@@ -72,6 +72,7 @@ class Books extends ConsumerWidget {
                                 itemBuilder: (_, item, __) {
                                   if (item.bookSubcategories.length > 0) {
                                     return FilterNestedItem(
+                                      itemId: item.id,
                                       itemTitle: item.title,
                                       paramKey: 'bookSubcategoryId',
                                       subitems: item.bookSubcategories,
