@@ -61,6 +61,9 @@ class HtmlText extends StatelessWidget {
         '.tiptap-md-font': bodyMedium,
         '.tiptap-lg-font': bodyLarge,
         '.tiptap-xl-font': bodyExtraLarge,
+        '[dir="rtl"]': Style(
+          direction: TextDirection.rtl,
+        ),
       },
     );
   }

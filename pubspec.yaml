@@ -48,10 +48,7 @@ dependencies:
   intl: ^0.17.0
   flutter_localizations:
     sdk: flutter
-  flutter_html:
-    git:
-      url: https://github.com/Sub6Resources/flutter_html
-      ref: master
+  flutter_html: '^3.0.0-beta.1'
   inflection3: ^0.5.3+2
   recase: ^4.1.0
   html: ^0.15.2
