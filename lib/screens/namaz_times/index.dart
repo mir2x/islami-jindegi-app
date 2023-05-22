@@ -38,72 +38,72 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
     var textTheme = Theme.of(context).textTheme;
     var dataP = ref.watch(preferencesAndGeolocationProvider);
 
-    DateTime? currentGregorianDate;
-
-    if (selectedHijriDate != null) {
-      currentGregorianDate = HijriCalendar().hijriToGregorian(
-        selectedHijriDate!.hYear,
-        selectedHijriDate!.hMonth,
-        selectedHijriDate!.hDay,
-      );
-    }
-
     return AppScaffold(
       title: Text(locales.namazTime),
-      body: ItemContent(
-        children: [
-          Column(
-            children: [
-              HijriDateCalendar(
-                onUpdate: updateHijriDate,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    HijriDate(currentDate: selectedHijriDate),
-                    const SizedBox(width: 15),
-                    const Icon(Icons.calendar_month),
-                  ],
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GregorianDate(currentDate: currentGregorianDate),
-                  ],
-                ),
-              ),
-            ],
+      body: dataP.when(
+        loading: () => Container(
+          margin: const EdgeInsets.only(top: 100),
+          child: const Center(
+            child: CircularProgressIndicator(),
           ),
-          dataP.when(
-            loading: () => Container(
-              margin: const EdgeInsets.only(top: 100),
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
+        ),
+        error: (error, _) => Text(error.toString()),
+        data: (Map data) {
+          final prefs = data['preferences'];
+          Map geolocation = data['geolocation'];
+
+          DateTime? currentGregorianDate;
+
+          if (selectedHijriDate != null) {
+            int adjustment = prefs.getInt('hijriAdjustment') ?? 0;
+
+            currentGregorianDate = HijriCalendar().hijriToGregorian(
+              selectedHijriDate!.hYear,
+              selectedHijriDate!.hMonth,
+              selectedHijriDate!.hDay - adjustment,
+            );
+          }
+
+          PrayerTime prayerTime = PrayerTime(
+            coordinates: Coordinates(
+              geolocation['coordinates']['latitude'],
+              geolocation['coordinates']['longitude'],
             ),
-            error: (error, _) => Text(error.toString()),
-            data: (Map data) {
-              Map coordinates = data['geolocation']['coordinates'];
+            preferences: prefs,
+            currentDate: currentGregorianDate,
+          );
 
-              PrayerTime prayerTime = PrayerTime(
-                coordinates: Coordinates(
-                  coordinates['latitude'],
-                  coordinates['longitude'],
-                ),
-                preferences: data['preferences'],
-                currentDate: currentGregorianDate,
-              );
+          Map prayerTimes = prayerTime.getTimes(locales, currentLang);
 
-              Map prayerTimes = prayerTime.getTimes(locales, currentLang);
-
-              return Column(
+          return ItemContent(
+            children: [
+              Column(
                 children: [
+                  HijriDateCalendar(
+                    currentDate: selectedHijriDate,
+                    onUpdate: updateHijriDate,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        HijriDate(currentDate: selectedHijriDate),
+                        const SizedBox(width: 15),
+                        const Icon(Icons.calendar_month),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GregorianDate(currentDate: currentGregorianDate),
+                      ],
+                    ),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if (!data['geolocation']['isGeolocated']) ...[
+                      if (!geolocation['isGeolocated']) ...[
                         Row(
                           children: [
                             Text(locales.dhaka),
@@ -232,10 +232,10 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                     ],
                   ),
                 ],
-              );
-            },
-          ),
-        ],
+              ),
+            ],
+          );
+        },
       ),
     );
   }
