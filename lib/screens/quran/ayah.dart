@@ -14,6 +14,7 @@ import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/widgets/audio/qirat.dart';
 import 'package:native_app/providers/ayah_bookmarks.dart';
+import 'package:native_app/widgets/page/html_body.dart';
 
 class Ayah extends ConsumerWidget {
   const Ayah({
@@ -200,17 +201,10 @@ class Ayah extends ConsumerWidget {
               ayah.ayahTranslations.isNotEmpty) ...[
             Container(
               width: double.infinity,
-              margin: const EdgeInsets.only(top: 10, right: 15),
-              child: ValueListenableBuilder<double>(
-                valueListenable: banglaFontSizeRatio,
-                builder: (context, ratio, child) {
-                  return Text(
-                    ayah.ayahTranslations.first.body,
-                    style: textTheme.labelMedium?.copyWith(
-                      fontSize: 17 * ratio,
-                    ),
-                  );
-                },
+              margin: const EdgeInsets.only(right: 15),
+              child: PageHtmlBody(
+                text: ayah.ayahTranslations.first.body,
+                fontSizeRatio: banglaFontSizeRatio,
               ),
             ),
           ],
