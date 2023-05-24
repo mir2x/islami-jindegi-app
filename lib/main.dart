@@ -1,5 +1,6 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -12,6 +13,11 @@ import 'screens/error_pages/page_404.dart';
 import 'main.data.dart';
 
 Future main() async {
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   await dotenv.load(fileName: '.env');
 
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
