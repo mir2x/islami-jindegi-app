@@ -173,7 +173,7 @@ class AyahList extends ConsumerWidget {
                           ),
                         ],
                         Container(
-                          margin: const EdgeInsets.only(left: 4, bottom: 1),
+                          margin: const EdgeInsets.only(left: 2, bottom: 1),
                           child: Text(
                             locales.translation,
                             style: textTheme.labelMedium,
@@ -216,7 +216,7 @@ class AyahList extends ConsumerWidget {
                         ),
                       ],
                       Container(
-                        margin: const EdgeInsets.only(left: 4, bottom: 1),
+                        margin: const EdgeInsets.only(left: 2, bottom: 1),
                         child: Text(
                           locales.tilawat,
                           style: textTheme.labelMedium,
@@ -275,11 +275,8 @@ class AyahList extends ConsumerWidget {
               ),
               Container(
                 margin: const EdgeInsets.only(right: 2),
-                child: TextButton(
-                  child: Text(
-                    locales.settings,
-                    style: textTheme.titleMedium,
-                  ),
+                child: IconButton(
+                  icon: const Icon(Icons.settings),
                   onPressed: () => QR.to('quran/settings'),
                 ),
               ),

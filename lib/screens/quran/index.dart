@@ -178,32 +178,30 @@ class QuranState extends ConsumerState<Quran> {
               onPressed: () => QR.to('quran/books'),
             ),
           ),
-          connectivity.when(
-            loading: () => const CircularProgressIndicator(),
-            error: (error, stackTrace) => Text(error.toString()),
-            data: (connectivityResult) {
-              if (connectivityResult != ConnectivityResult.none) {
-                return TextButton(
-                  child: Text(
-                    locales.search,
-                    style: textTheme.titleMedium,
-                  ),
-                  onPressed: () => QR.to('quran/search'),
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            },
-          ),
-          Container(
-            margin: const EdgeInsets.only(right: 4),
-            child: TextButton(
-              child: Text(
-                locales.savedAyahs,
-                style: textTheme.titleMedium,
+          Row(
+            children: [
+              connectivity.when(
+                loading: () => const CircularProgressIndicator(),
+                error: (error, stackTrace) => Text(error.toString()),
+                data: (connectivityResult) {
+                  if (connectivityResult != ConnectivityResult.none) {
+                    return IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () => QR.to('quran/search'),
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
               ),
-              onPressed: () => QR.to('quran/bookmarks'),
-            ),
+              Container(
+                margin: const EdgeInsets.only(right: 4),
+                child: IconButton(
+                  icon: const Icon(Icons.bookmarks),
+                  onPressed: () => QR.to('quran/bookmarks'),
+                ),
+              ),
+            ],
           ),
         ],
       ),
