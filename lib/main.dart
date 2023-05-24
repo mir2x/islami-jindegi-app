@@ -13,15 +13,14 @@ import 'screens/error_pages/page_404.dart';
 import 'main.data.dart';
 
 Future main() async {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
   ]);
 
   await dotenv.load(fileName: '.env');
-
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   QR.settings.pagesType = const QSlidePage();
   QR.settings.notFoundPage = QRoute(
