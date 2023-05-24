@@ -6,6 +6,7 @@ ThemeData darkTheme(preferences) {
     fontFamily: preferences.getString('banglaFont') ?? 'bangla/solaimanlipi',
     fontFamilyFallback: [
       preferences.getString('arabicFont') ?? 'arabic/al-qalam-quran-majeed',
+      'Roboto',
     ],
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
@@ -83,6 +84,7 @@ ThemeData lightTheme(preferences) {
     fontFamily: preferences.getString('banglaFont') ?? 'bangla/solaimanlipi',
     fontFamilyFallback: [
       preferences.getString('arabicFont') ?? 'arabic/al-qalam-quran-majeed',
+      'Roboto',
     ],
     textTheme: const TextTheme(
       headlineLarge: TextStyle(

@@ -117,6 +117,12 @@ flutter:
     - assets/db/init.sqlite3
 
   fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto-Bold.ttf
+          weight: 700
+
     - family: bangla/solaimanlipi
       fonts:
         - asset: assets/fonts/solaimanlipi.ttf
