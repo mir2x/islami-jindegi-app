@@ -29,10 +29,10 @@ class Resource extends StatelessWidget {
             height: 42,
           ),
           Container(
-            margin: const EdgeInsets.only(top: 5),
+            margin: const EdgeInsets.only(top: 7),
             child: Text(
-              title.toUpperCase(),
-              style: textTheme.labelMedium,
+              title,
+              style: textTheme.labelMedium?.copyWith(height: 1),
               textAlign: TextAlign.center,
             ),
           ),

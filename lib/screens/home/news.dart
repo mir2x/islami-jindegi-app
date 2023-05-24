@@ -44,6 +44,7 @@ class News extends ConsumerWidget {
               locales.newsAndUpdates,
               style: textTheme.labelMedium?.copyWith(
                 color: ThemeColors.color2,
+                height: 1.2,
               ),
               textAlign: TextAlign.center,
             ),
@@ -96,6 +97,7 @@ class News extends ConsumerWidget {
                                   resources[index].title,
                                   style: textTheme.titleMedium?.copyWith(
                                     color: ThemeColors.color2,
+                                    height: 1.3,
                                   ),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,

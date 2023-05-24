@@ -13,6 +13,7 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     var locales = AppLocalizations.of(context)!;
 
@@ -53,12 +54,12 @@ class Home extends StatelessWidget {
             GridView.count(
               crossAxisCount: 3,
               padding: EdgeInsets.only(
-                left: 15,
-                right: 15,
+                left: screenWidth * 0.02,
+                right: screenWidth * 0.02,
                 top: screenHeight * 0.05,
                 bottom: screenHeight * 0.06,
               ),
-              childAspectRatio: 1.55,
+              childAspectRatio: 1.6,
               crossAxisSpacing: 5,
               mainAxisSpacing: screenHeight * 0.025,
               shrinkWrap: true,
