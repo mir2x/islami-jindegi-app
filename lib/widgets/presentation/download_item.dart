@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
-import 'package:open_file/open_file.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/providers/connectivity_result.dart';
@@ -62,7 +62,7 @@ class DownloadItem extends ConsumerWidget {
                             : await getApplicationSupportDirectory();
 
                         if (downloadDir != null) {
-                          await OpenFile.open(
+                          await OpenFilex.open(
                             p.join(downloadDir.path, filePath),
                           );
                         }
