@@ -42,7 +42,7 @@ class QuranBooks extends ConsumerWidget {
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 15,
-                  mainAxisExtent: 350,
+                  mainAxisExtent: 380,
                 ),
                 itemBuilder: (_, item, __) {
                   return Container(
@@ -53,7 +53,7 @@ class QuranBooks extends ConsumerWidget {
                           onTap: () => QR.to('quran/books/${item.id}'),
                           child: ResponsiveImage(
                             image: item.image,
-                            model: 'book',
+                            model: 'quranBookQitab',
                             vwset: const {'xs': 50},
                           ),
                         ),
