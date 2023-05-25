@@ -3,7 +3,7 @@ description: Islami Dars Native App
 
 publish_to: 'none'
 
-version: 1.0.0+30
+version: 1.0.0+31
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
@@ -112,7 +112,7 @@ flutter:
     - assets/images/logos/
     - assets/images/icons/
     - assets/images/books/
-    - assets/db/init.sqlite3
+    - assets/db/offline_data.sqlite3
 
   fonts:
     - family: Roboto

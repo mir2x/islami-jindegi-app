@@ -41,11 +41,11 @@ class LocalDatabase extends _$LocalDatabase {
             // put the database file, called db.sqlite here, into the documents folder
             // for your app.
             final dbFolder = await getApplicationDocumentsDirectory();
-            final file = File(p.join(dbFolder.path, 'init.sqlite3'));
+            final file = File(p.join(dbFolder.path, 'offline_data.sqlite3'));
 
             if (!await file.exists()) {
               // Extract the pre-populated database file from assets
-              final blob = await rootBundle.load('assets/db/init.sqlite3');
+              final blob = await rootBundle.load('assets/db/offline_data.sqlite3');
               await file.writeAsBytes(
                 blob.buffer.asUint8List(blob.offsetInBytes, blob.lengthInBytes),
               );
