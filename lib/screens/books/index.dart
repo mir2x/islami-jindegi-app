@@ -157,48 +157,45 @@ class Books extends ConsumerWidget {
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 15,
-                  mainAxisExtent: 400,
+                  mainAxisExtent: 410,
                 ),
                 itemBuilder: (_, item, __) {
-                  return Container(
-                    padding: const EdgeInsets.only(bottom: 40),
-                    child: Column(
-                      children: [
-                        InkWell(
+                  return Column(
+                    children: [
+                      InkWell(
+                        onTap: () => QR.to('books/${item.id}'),
+                        child: ResponsiveImage(
+                          image: item.image,
+                          model: 'book',
+                          vwset: const {'xs': 50},
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(top: 10),
+                        child: InkWell(
                           onTap: () => QR.to('books/${item.id}'),
-                          child: ResponsiveImage(
-                            image: item.image,
-                            model: 'book',
-                            vwset: const {'xs': 50},
+                          child: Text(
+                            item.title,
+                            style: textTheme.titleMedium,
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                        Container(
-                          margin: const EdgeInsets.only(top: 10),
-                          child: InkWell(
-                            onTap: () => QR.to('books/${item.id}'),
-                            child: Text(
-                              item.title,
-                              style: textTheme.titleMedium,
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(top: 5),
+                        child: CommaSeparatedList(
+                          resources: item.authors.map((e) => e).toList(),
+                          alignment: WrapAlignment.center,
+                          builder: (_, author, __) {
+                            return Text(
+                              author.name,
                               textAlign: TextAlign.center,
-                            ),
-                          ),
+                              style: textTheme.labelSmall,
+                            );
+                          },
                         ),
-                        Container(
-                          margin: const EdgeInsets.only(top: 5),
-                          child: CommaSeparatedList(
-                            resources: item.authors.map((e) => e).toList(),
-                            alignment: WrapAlignment.center,
-                            builder: (_, author, __) {
-                              return Text(
-                                author.name,
-                                textAlign: TextAlign.center,
-                                style: textTheme.labelSmall,
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   );
                 },
               ),
