@@ -142,6 +142,10 @@ class LocalDatabase extends _$LocalDatabase {
   Future<List<Surah>> querySurah(Map params) {
     var query = select(surahs);
 
+    if (params.containsKey('slug')) {
+      query.where((t) => t.slug.equals(params['slug'].toString()));
+    }
+
     if (params.containsKey('page') && params.containsKey('per_page')) {
       query.limit(
         params['per_page'],
@@ -161,6 +165,10 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<List<Para>> queryPara(Map params) {
     var query = select(paras);
+
+    if (params.containsKey('slug')) {
+      query.where((t) => t.slug.equals(params['slug'].toString()));
+    }
 
     if (params.containsKey('page') && params.containsKey('per_page')) {
       query.limit(
