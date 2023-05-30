@@ -42,6 +42,7 @@ ThemeData darkTheme(preferences) {
       bodySmall: TextStyle(
         color: ThemeColors.color3,
         fontSize: 14,
+        letterSpacing: 0,
       ),
       labelLarge: TextStyle(
         color: ThemeColors.color3,
@@ -55,6 +56,7 @@ ThemeData darkTheme(preferences) {
       labelSmall: TextStyle(
         color: ThemeColors.color3,
         fontSize: 14,
+        letterSpacing: 0,
       ),
     ),
     appBarTheme: const AppBarTheme(
@@ -120,6 +122,7 @@ ThemeData lightTheme(preferences) {
       bodySmall: TextStyle(
         color: ThemeColors.color2,
         fontSize: 14,
+        letterSpacing: 0,
       ),
       labelLarge: TextStyle(
         color: ThemeColors.color2,
@@ -133,6 +136,7 @@ ThemeData lightTheme(preferences) {
       labelSmall: TextStyle(
         color: ThemeColors.color2,
         fontSize: 14,
+        letterSpacing: 0,
       ),
     ),
     appBarTheme: const AppBarTheme(

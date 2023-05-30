@@ -11,7 +11,6 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/objects/prayer_time.dart';
-import 'package:native_app/theme/colors.dart';
 import 'hijri_date_calendar.dart';
 import 'item.dart';
 
@@ -103,10 +102,12 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if (!geolocation['isGeolocated']) ...[
-                        Row(
-                          children: [
-                            Text(locales.dhaka),
+                      Row(
+                        children: [
+                          Text(
+                            "${geolocation['location']['city']}, ${geolocation['location']['country']}",
+                          ),
+                          if (!geolocation['isGeolocated']) ...[
                             Container(
                               margin: const EdgeInsets.only(
                                 left: 10,
@@ -126,23 +127,11 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                             ),
                             Text(locales.setLocation)
                           ],
-                        ),
-                        const SizedBox(width: 30),
-                      ],
-                      TextButton(
-                        child: Row(
-                          children: [
-                            Text(
-                              locales.settings,
-                              style: textTheme.labelLarge,
-                            ),
-                            const SizedBox(width: 8),
-                            const Icon(
-                              Icons.settings,
-                              color: ThemeColors.color4,
-                            ),
-                          ],
-                        ),
+                        ],
+                      ),
+                      const SizedBox(width: 20),
+                      IconButton(
+                        icon: const Icon(Icons.settings),
                         onPressed: () => QR.to('namaz-times/settings'),
                       ),
                     ],

@@ -26,7 +26,8 @@ class CurrentPrayers extends ConsumerWidget {
       ),
       error: (error, _) => Text(error.toString()),
       data: (Map data) {
-        Map coordinates = data['geolocation']['coordinates'];
+        Map geolocation = data['geolocation'];
+        Map coordinates = geolocation['coordinates'];
 
         PrayerTime prayerTime = PrayerTime(
           coordinates: Coordinates(
@@ -49,16 +50,19 @@ class CurrentPrayers extends ConsumerWidget {
             color: theme == 'dark' ? ThemeColors.color2 : ThemeColors.color3,
           ),
           child: Container(
-            padding: data['geolocation']['isGeolocated']
+            padding: geolocation['isGeolocated']
                 ? const EdgeInsets.symmetric(vertical: 17, horizontal: 15)
                 : const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (!data['geolocation']['isGeolocated']) ...[
-                  Row(
-                    children: [
-                      Text(locales.dhaka, style: textTheme.labelSmall),
+                Row(
+                  children: [
+                    Text(
+                      "${geolocation['location']['city']}, ${geolocation['location']['country']}",
+                      style: textTheme.labelSmall,
+                    ),
+                    if (!geolocation['isGeolocated']) ...[
                       Container(
                         margin: const EdgeInsets.only(left: 15, right: 3),
                         child: GestureDetector(
@@ -75,8 +79,8 @@ class CurrentPrayers extends ConsumerWidget {
                       ),
                       Text(locales.setLocation, style: textTheme.labelSmall),
                     ],
-                  ),
-                ],
+                  ],
+                ),
                 if (prayerTimes.containsKey('current')) ...[
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,7 +100,7 @@ class CurrentPrayers extends ConsumerWidget {
                     ],
                   ),
                 ],
-                if (data['geolocation']['isGeolocated']) ...[
+                if (geolocation['isGeolocated']) ...[
                   const SizedBox(height: 5),
                 ],
                 Text(

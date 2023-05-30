@@ -29,10 +29,10 @@ class Qiblah extends ConsumerWidget {
             child: CircularProgressIndicator(),
           ),
           error: (error, _) => Text(error.toString()),
-          data: (Map data) {
+          data: (Map geolocation) {
             Coordinates coordinates = Coordinates(
-              data['coordinates']['latitude'],
-              data['coordinates']['longitude'],
+              geolocation['coordinates']['latitude'],
+              geolocation['coordinates']['longitude'],
             );
 
             final qibla = Qibla(coordinates);
@@ -40,11 +40,13 @@ class Qiblah extends ConsumerWidget {
             return Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (!data['isGeolocated']) ...[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(locales.dhaka),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "${geolocation['location']['city']}, ${geolocation['location']['country']}",
+                    ),
+                    if (!geolocation['isGeolocated']) ...[
                       Container(
                         margin: const EdgeInsets.only(left: 20, right: 5),
                         child: GestureDetector(
@@ -61,8 +63,8 @@ class Qiblah extends ConsumerWidget {
                       ),
                       Text(locales.setLocation)
                     ],
-                  ),
-                ],
+                  ],
+                ),
                 SmoothCompass(
                   height: 320,
                   width: 320,
