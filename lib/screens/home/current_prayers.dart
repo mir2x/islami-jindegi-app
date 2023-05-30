@@ -44,6 +44,11 @@ class CurrentPrayers extends ConsumerWidget {
 
         String theme = data['preferences'].getString('theme') ?? 'dark';
 
+        String location = geolocation['location']
+            .values
+            .where((v) => v is String && v.isNotEmpty)
+            .join(', ');
+
         return Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
@@ -58,10 +63,7 @@ class CurrentPrayers extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      "${geolocation['location']['city']}, ${geolocation['location']['country']}",
-                      style: textTheme.labelSmall,
-                    ),
+                    Text(location, style: textTheme.labelSmall),
                     if (!geolocation['isGeolocated']) ...[
                       Container(
                         margin: const EdgeInsets.only(left: 15, right: 3),

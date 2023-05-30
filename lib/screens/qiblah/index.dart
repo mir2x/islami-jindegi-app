@@ -36,6 +36,10 @@ class Qiblah extends ConsumerWidget {
             );
 
             final qibla = Qibla(coordinates);
+            String location = geolocation['location']
+                .values
+                .where((v) => v is String && v.isNotEmpty)
+                .join(', ');
 
             return Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -43,9 +47,7 @@ class Qiblah extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      "${geolocation['location']['city']}, ${geolocation['location']['country']}",
-                    ),
+                    Text(location),
                     if (!geolocation['isGeolocated']) ...[
                       Container(
                         margin: const EdgeInsets.only(left: 20, right: 5),

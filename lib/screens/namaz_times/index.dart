@@ -73,6 +73,10 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
           );
 
           Map prayerTimes = prayerTime.getTimes(locales, currentLang);
+          String location = geolocation['location']
+              .values
+              .where((v) => v is String && v.isNotEmpty)
+              .join(', ');
 
           return ItemContent(
             children: [
@@ -104,9 +108,7 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            "${geolocation['location']['city']}, ${geolocation['location']['country']}",
-                          ),
+                          Text(location),
                           if (!geolocation['isGeolocated']) ...[
                             Container(
                               margin: const EdgeInsets.only(
