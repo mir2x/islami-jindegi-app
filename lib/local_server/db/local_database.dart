@@ -45,7 +45,8 @@ class LocalDatabase extends _$LocalDatabase {
 
             if (!await file.exists()) {
               // Extract the pre-populated database file from assets
-              final blob = await rootBundle.load('assets/db/offline_data.sqlite3');
+              final blob =
+                  await rootBundle.load('assets/db/offline_data.sqlite3');
               await file.writeAsBytes(
                 blob.buffer.asUint8List(blob.offsetInBytes, blob.lengthInBytes),
               );
@@ -233,7 +234,7 @@ class LocalDatabase extends _$LocalDatabase {
         return {
           'ayahs': idToAyahs[id],
           'relationships': {
-            'ayahTranslations': idToTranslations[id] ?? [],
+            'ayah-translations': idToTranslations[id] ?? [],
           }
         };
       }).toList();
@@ -485,7 +486,7 @@ class LocalDatabase extends _$LocalDatabase {
         return {
           'malfuzats': item,
           'relationships': {
-            'malfuzatAuthor': idToAuthors[item.malfuzatAuthorId],
+            'malfuzat-author': idToAuthors[item.malfuzatAuthorId],
           }
         };
       }).toList();
@@ -509,7 +510,7 @@ class LocalDatabase extends _$LocalDatabase {
       var malfuzatWithAuthor = {
         'malfuzats': malfuzat,
         'relationships': {
-          'malfuzatAuthor': author,
+          'malfuzat-author': author,
         }
       };
 
@@ -610,7 +611,7 @@ class LocalDatabase extends _$LocalDatabase {
         return {
           'articles': item,
           'relationships': {
-            'articleAuthor': idToAuthors[item.articleAuthorId],
+            'article-author': idToAuthors[item.articleAuthorId],
           }
         };
       }).toList();
@@ -634,7 +635,7 @@ class LocalDatabase extends _$LocalDatabase {
       var articleWithAuthor = {
         'articles': article,
         'relationships': {
-          'articleAuthor': author,
+          'article-author': author,
         }
       };
 
