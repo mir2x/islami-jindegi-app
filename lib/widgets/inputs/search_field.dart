@@ -68,7 +68,13 @@ class _SearchState extends ConsumerState<SearchField> {
               icon: const Icon(Icons.search, color: ThemeColors.color4),
             ),
           ),
-          onChanged: updateSearchText,
+          onChanged: (value) {
+            updateSearchText(value);
+
+            if (value.isEmpty) {
+              widget.onUpdate(value);
+            }
+          },
           style: textTheme.labelMedium,
         );
       },
