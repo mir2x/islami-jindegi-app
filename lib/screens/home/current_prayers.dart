@@ -55,9 +55,7 @@ class CurrentPrayers extends ConsumerWidget {
             color: theme == 'dark' ? ThemeColors.color2 : ThemeColors.color3,
           ),
           child: Container(
-            padding: geolocation['isGeolocated']
-                ? const EdgeInsets.symmetric(vertical: 17, horizontal: 15)
-                : const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
+            padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 15),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -101,9 +99,6 @@ class CurrentPrayers extends ConsumerWidget {
                       )
                     ],
                   ),
-                ],
-                if (geolocation['isGeolocated']) ...[
-                  const SizedBox(height: 5),
                 ],
                 Text(
                   '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}',
