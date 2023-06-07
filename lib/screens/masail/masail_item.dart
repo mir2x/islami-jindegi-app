@@ -23,7 +23,8 @@ import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
-import 'package:native_app/widgets/buttons/previous_next.dart';
+import 'package:native_app/widgets/buttons/previous.dart';
+import 'package:native_app/widgets/buttons/next.dart';
 
 class MasailItem extends ConsumerWidget {
   const MasailItem({super.key});
@@ -127,6 +128,22 @@ class MasailItem extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
+              Previous(
+                onPrevious: () async {
+                  var previousResources = await ref.masails.findAll(
+                        params: {
+                          'quantity': 1,
+                          'position': resource.position - 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (previousResources.isNotEmpty) {
+                    await QR.to('masail/${previousResources.first.id}');
+                  }
+                },
+                previousDisabled: resource.position == 1,
+              ),
               Row(
                 children: [
                   SocialShare(
@@ -143,20 +160,7 @@ class MasailItem extends ConsumerWidget {
                 ],
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
-              PreviousNext(
-                onPrevious: () async {
-                  var previousResources = await ref.masails.findAll(
-                        params: {
-                          'quantity': 1,
-                          'position': resource.position - 1,
-                        },
-                      ) ??
-                      [];
-
-                  if (previousResources.isNotEmpty) {
-                    await QR.to('masail/${previousResources.first.id}');
-                  }
-                },
+              Next(
                 onNext: () async {
                   var nextResources = await ref.masails.findAll(
                         params: {
@@ -170,7 +174,6 @@ class MasailItem extends ConsumerWidget {
                     await QR.to('masail/${nextResources.first.id}');
                   }
                 },
-                previousDisabled: resource.position == 1,
               ),
             ],
           ),

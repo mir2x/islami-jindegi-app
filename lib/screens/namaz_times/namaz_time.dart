@@ -15,7 +15,8 @@ import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
-import 'package:native_app/widgets/buttons/previous_next.dart';
+import 'package:native_app/widgets/buttons/previous.dart';
+import 'package:native_app/widgets/buttons/next.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 
 class NamazTime extends ConsumerWidget {
@@ -92,15 +93,7 @@ class NamazTime extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              SocialShare(
-                title: itemTitle,
-                body: '${item.masail}${item.fazail}',
-              ),
-              Container(
-                margin: const EdgeInsets.only(left: 30),
-                child: FontResizer(fontSizeRatio: fontSizeRatio),
-              ),
-              PreviousNext(
+              Previous(
                 onPrevious: () async {
                   var previousResources = await ref.namazTimes.findAll(
                         params: {
@@ -114,6 +107,17 @@ class NamazTime extends ConsumerWidget {
                     await QR.to('namaz-times/${previousResources.first.slug}');
                   }
                 },
+                previousDisabled: item.position == 1,
+              ),
+              SocialShare(
+                title: itemTitle,
+                body: '${item.masail}${item.fazail}',
+              ),
+              Container(
+                margin: const EdgeInsets.only(left: 30),
+                child: FontResizer(fontSizeRatio: fontSizeRatio),
+              ),
+              Next(
                 onNext: () async {
                   var nextResources = await ref.namazTimes.findAll(
                         params: {
@@ -127,7 +131,6 @@ class NamazTime extends ConsumerWidget {
                     await QR.to('namaz-times/${nextResources.first.slug}');
                   }
                 },
-                previousDisabled: item.position == 1,
               ),
             ],
           ),

@@ -13,7 +13,8 @@ import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
-import 'package:native_app/widgets/buttons/previous_next.dart';
+import 'package:native_app/widgets/buttons/previous.dart';
+import 'package:native_app/widgets/buttons/next.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 
 class Madrasah extends ConsumerWidget {
@@ -92,6 +93,22 @@ class Madrasah extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
+              Previous(
+                onPrevious: () async {
+                  var previousResources = await ref.madrasahs.findAll(
+                        params: {
+                          'quantity': 1,
+                          'position': resource.position - 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (previousResources.isNotEmpty) {
+                    await QR.to('madrasahs/${previousResources.first.id}');
+                  }
+                },
+                previousDisabled: resource.position == 1,
+              ),
               Row(
                 children: [
                   SocialShare(
@@ -106,20 +123,7 @@ class Madrasah extends ConsumerWidget {
                   ),
                 ],
               ),
-              PreviousNext(
-                onPrevious: () async {
-                  var previousResources = await ref.madrasahs.findAll(
-                        params: {
-                          'quantity': 1,
-                          'position': resource.position - 1,
-                        },
-                      ) ??
-                      [];
-
-                  if (previousResources.isNotEmpty) {
-                    await QR.to('madrasahs/${previousResources.first.id}');
-                  }
-                },
+              Next(
                 onNext: () async {
                   var nextResources = await ref.madrasahs.findAll(
                         params: {
@@ -133,7 +137,6 @@ class Madrasah extends ConsumerWidget {
                     await QR.to('madrasahs/${nextResources.first.id}');
                   }
                 },
-                previousDisabled: resource.position == 1,
               ),
             ],
           ),

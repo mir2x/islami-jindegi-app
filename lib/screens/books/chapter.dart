@@ -16,7 +16,8 @@ import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
-import 'package:native_app/widgets/buttons/previous_next.dart';
+import 'package:native_app/widgets/buttons/previous.dart';
+import 'package:native_app/widgets/buttons/next.dart';
 
 class Chapter extends ConsumerWidget {
   const Chapter({super.key});
@@ -63,22 +64,7 @@ class Chapter extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  SocialShare(
-                    title: resource.title,
-                    body: resource.body,
-                    link: 'books/$bookId/chapters/${resource.id}',
-                  ),
-                  BookmarkButton(
-                    type: 'Book Chapter',
-                    title: resource.title,
-                    link: 'books/$bookId/chapters/${resource.id}',
-                  ),
-                ],
-              ),
-              FontResizer(fontSizeRatio: fontSizeRatio),
-              PreviousNext(
+              Previous(
                 onPrevious: () async {
                   var previousResources = await ref.chapters.findAll(
                         params: {
@@ -106,6 +92,24 @@ class Chapter extends ConsumerWidget {
                     }
                   }
                 },
+                previousDisabled: resource.position == 1,
+              ),
+              Row(
+                children: [
+                  SocialShare(
+                    title: resource.title,
+                    body: resource.body,
+                    link: 'books/$bookId/chapters/${resource.id}',
+                  ),
+                  BookmarkButton(
+                    type: 'Book Chapter',
+                    title: resource.title,
+                    link: 'books/$bookId/chapters/${resource.id}',
+                  ),
+                ],
+              ),
+              FontResizer(fontSizeRatio: fontSizeRatio),
+              Next(
                 onNext: () async {
                   var nextResources = await ref.chapters.findAll(
                         params: {
@@ -131,7 +135,6 @@ class Chapter extends ConsumerWidget {
                     }
                   }
                 },
-                previousDisabled: resource.position == 1,
               ),
             ],
           ),

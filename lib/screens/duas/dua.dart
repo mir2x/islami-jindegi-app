@@ -22,7 +22,8 @@ import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
-import 'package:native_app/widgets/buttons/previous_next.dart';
+import 'package:native_app/widgets/buttons/previous.dart';
+import 'package:native_app/widgets/buttons/next.dart';
 
 class Dua extends ConsumerWidget {
   const Dua({super.key});
@@ -107,6 +108,22 @@ class Dua extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
+              Previous(
+                onPrevious: () async {
+                  var previousResources = await ref.duas.findAll(
+                        params: {
+                          'quantity': 1,
+                          'position': resource.position - 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (previousResources.isNotEmpty) {
+                    await QR.to('duas/${previousResources.first.id}');
+                  }
+                },
+                previousDisabled: resource.position == 1,
+              ),
               Row(
                 children: [
                   SocialShare(
@@ -122,20 +139,7 @@ class Dua extends ConsumerWidget {
                 ],
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
-              PreviousNext(
-                onPrevious: () async {
-                  var previousResources = await ref.duas.findAll(
-                        params: {
-                          'quantity': 1,
-                          'position': resource.position - 1,
-                        },
-                      ) ??
-                      [];
-
-                  if (previousResources.isNotEmpty) {
-                    await QR.to('duas/${previousResources.first.id}');
-                  }
-                },
+              Next(
                 onNext: () async {
                   var nextResources = await ref.duas.findAll(
                         params: {
@@ -149,7 +153,6 @@ class Dua extends ConsumerWidget {
                     await QR.to('duas/${nextResources.first.id}');
                   }
                 },
-                previousDisabled: resource.position == 1,
               ),
             ],
           ),

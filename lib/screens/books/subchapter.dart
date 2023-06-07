@@ -16,7 +16,8 @@ import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
-import 'package:native_app/widgets/buttons/previous_next.dart';
+import 'package:native_app/widgets/buttons/previous.dart';
+import 'package:native_app/widgets/buttons/next.dart';
 
 class Subchapter extends ConsumerWidget {
   const Subchapter({super.key});
@@ -66,22 +67,7 @@ class Subchapter extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  SocialShare(
-                    title: resource.title,
-                    body: resource.body,
-                    link: 'books/$bookId/subchapters/${resource.id}',
-                  ),
-                  BookmarkButton(
-                    type: 'Book Subchapter',
-                    title: resource.title,
-                    link: 'books/$bookId/subchapters/${resource.id}',
-                  ),
-                ],
-              ),
-              FontResizer(fontSizeRatio: fontSizeRatio),
-              PreviousNext(
+              Previous(
                 onPrevious: () async {
                   var previousResources = await ref.subchapters.findAll(
                         params: {
@@ -128,6 +114,23 @@ class Subchapter extends ConsumerWidget {
                     }
                   }
                 },
+              ),
+              Row(
+                children: [
+                  SocialShare(
+                    title: resource.title,
+                    body: resource.body,
+                    link: 'books/$bookId/subchapters/${resource.id}',
+                  ),
+                  BookmarkButton(
+                    type: 'Book Subchapter',
+                    title: resource.title,
+                    link: 'books/$bookId/subchapters/${resource.id}',
+                  ),
+                ],
+              ),
+              FontResizer(fontSizeRatio: fontSizeRatio),
+              Next(
                 onNext: () async {
                   var nextResources = await ref.subchapters.findAll(
                         params: {

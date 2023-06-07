@@ -19,7 +19,8 @@ import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
-import 'package:native_app/widgets/buttons/previous_next.dart';
+import 'package:native_app/widgets/buttons/previous.dart';
+import 'package:native_app/widgets/buttons/next.dart';
 
 class Bayan extends ConsumerWidget {
   const Bayan({super.key});
@@ -133,6 +134,21 @@ class Bayan extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
+              Previous(
+                onPrevious: () async {
+                  var previousResources = await ref.bayans.findAll(
+                        params: {
+                          'quantity': 1,
+                          'gtPublishedAt': resource.publishedAt,
+                        },
+                      ) ??
+                      [];
+
+                  if (previousResources.isNotEmpty) {
+                    await QR.to('bayans/${previousResources.first.id}');
+                  }
+                },
+              ),
               Row(
                 children: [
                   SocialShare(
@@ -147,20 +163,7 @@ class Bayan extends ConsumerWidget {
                   ),
                 ],
               ),
-              PreviousNext(
-                onPrevious: () async {
-                  var previousResources = await ref.bayans.findAll(
-                        params: {
-                          'quantity': 1,
-                          'gtPublishedAt': resource.publishedAt,
-                        },
-                      ) ??
-                      [];
-
-                  if (previousResources.isNotEmpty) {
-                    await QR.to('bayans/${previousResources.first.id}');
-                  }
-                },
+              Next(
                 onNext: () async {
                   var nextResources = await ref.bayans.findAll(
                         params: {

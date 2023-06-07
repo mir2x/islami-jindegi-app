@@ -17,7 +17,8 @@ import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
-import 'package:native_app/widgets/buttons/previous_next.dart';
+import 'package:native_app/widgets/buttons/previous.dart';
+import 'package:native_app/widgets/buttons/next.dart';
 
 class Article extends ConsumerWidget {
   const Article({super.key});
@@ -72,6 +73,22 @@ class Article extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
+              Previous(
+                onPrevious: () async {
+                  var previousResources = await ref.articles.findAll(
+                        params: {
+                          'quantity': 1,
+                          'include': 'article-author',
+                          'position': resource.position + 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (previousResources.isNotEmpty) {
+                    await QR.to('articles/${previousResources.first.id}');
+                  }
+                },
+              ),
               Row(
                 children: [
                   SocialShare(
@@ -88,21 +105,7 @@ class Article extends ConsumerWidget {
                 ],
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
-              PreviousNext(
-                onPrevious: () async {
-                  var previousResources = await ref.articles.findAll(
-                        params: {
-                          'quantity': 1,
-                          'include': 'article-author',
-                          'position': resource.position + 1,
-                        },
-                      ) ??
-                      [];
-
-                  if (previousResources.isNotEmpty) {
-                    await QR.to('articles/${previousResources.first.id}');
-                  }
-                },
+              Next(
                 onNext: () async {
                   var nextResources = await ref.articles.findAll(
                         params: {
