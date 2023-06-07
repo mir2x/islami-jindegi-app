@@ -242,7 +242,7 @@ class AyahList extends ConsumerWidget {
           Row(
             children: [
               TextButton(
-                child: Text(locales.fontSize, style: textTheme.titleMedium),
+                child: Text(locales.font, style: textTheme.titleMedium),
                 onPressed: () {
                   showDialog(
                     context: context,

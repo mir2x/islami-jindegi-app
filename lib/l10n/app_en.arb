@@ -144,7 +144,7 @@
   "dateFrom": "Date From",
   "dateTo": "Date To",
 
-  "fontSize": "Font Size",
+  "font": "Font",
   "bookmarkAdded": "Bookmark added",
   "bookmarkDeleted": "Bookmark deleted",
 

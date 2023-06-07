@@ -20,7 +20,7 @@ class FontResizer extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(text ?? locales.fontSize, style: textTheme.labelMedium),
+        Text(text ?? locales.font, style: textTheme.labelMedium),
         IconButton(
           icon: const Icon(Icons.add),
           padding: const EdgeInsets.only(
