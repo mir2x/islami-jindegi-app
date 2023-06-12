@@ -14,6 +14,8 @@ import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
+import 'package:native_app/widgets/buttons/previous.dart';
+import 'package:native_app/widgets/buttons/next.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 
 class MadrasahInfo extends ConsumerWidget {
@@ -72,11 +74,57 @@ class MadrasahInfo extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
+              Previous(
+                onPrevious: () async {
+                  if (resource.position > 1) {
+                    var previousResources = await ref.madrasahInfos.findAll(
+                          params: {
+                            'madrasahId': resource.madrasah.value.id,
+                            'quantity': 1,
+                            'position': resource.position - 1,
+                          },
+                        ) ??
+                        [];
+
+                    if (previousResources.isNotEmpty) {
+                      await QR.to(
+                        'madrasahs/${resource.madrasah.value.id}/infos/${previousResources.first.id}',
+                      );
+                    }
+                  } else {
+                    await QR.to(
+                      'madrasahs/${resource.madrasah.value.id}/introduction',
+                    );
+                  }
+                },
+              ),
               SocialShare(
                 title: resourceLabel,
                 body: resource.info,
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
+              Next(
+                onNext: () async {
+                  var nextResources = await ref.madrasahInfos.findAll(
+                        params: {
+                          'madrasahId': resource.madrasah.value.id,
+                          'quantity': 1,
+                          'position': resource.position + 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (nextResources.isNotEmpty) {
+                    await QR.to(
+                      'madrasahs/${resource.madrasah.value.id}/infos/${nextResources.first.id}',
+                    );
+                  } else {
+                    await QR.to(
+                      'madrasahs/${resource.madrasah.value.id}/gallery',
+                    );
+                  }
+                },
+              ),
             ],
           ),
         );

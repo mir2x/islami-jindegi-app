@@ -10,6 +10,9 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/responsive/image.dart';
+import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/buttons/previous.dart';
+import 'package:native_app/widgets/buttons/next.dart';
 
 class MadrasahGallery extends ConsumerWidget {
   const MadrasahGallery({super.key});
@@ -55,6 +58,35 @@ class MadrasahGallery extends ConsumerWidget {
                   ),
                 );
               }),
+            ],
+          ),
+          bottomBar: BottomBar(
+            alignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Previous(
+                onPrevious: () async {
+                  var previousResources = await ref.madrasahInfos.findAll(
+                        params: {
+                          'madrasahId': resource.id,
+                          'sort': '-position',
+                          'quantity': 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (previousResources.isNotEmpty) {
+                    await QR.to(
+                      'madrasahs/${resource.id}/infos/${previousResources.first.id}',
+                    );
+                  } else {
+                    await QR.to('madrasahs/${resource.id}/introduction');
+                  }
+                },
+              ),
+              Next(
+                onNext: () async {},
+                nextDisabled: true,
+              ),
             ],
           ),
         );

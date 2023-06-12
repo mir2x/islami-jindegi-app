@@ -16,6 +16,8 @@ import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
+import 'package:native_app/widgets/buttons/previous.dart';
+import 'package:native_app/widgets/buttons/next.dart';
 import 'package:native_app/helpers/file_utils.dart';
 
 class MadrasahIntroduction extends ConsumerWidget {
@@ -66,11 +68,35 @@ class MadrasahIntroduction extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
+              Previous(
+                onPrevious: () async {},
+                previousDisabled: true,
+              ),
               SocialShare(
                 title: resource.title,
                 body: resource.introduction,
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
+              Next(
+                onNext: () async {
+                  var nextResources = await ref.madrasahInfos.findAll(
+                        params: {
+                          'madrasahId': resource.id,
+                          'quantity': 1,
+                          'position': 1,
+                        },
+                      ) ??
+                      [];
+
+                  if (nextResources.isNotEmpty) {
+                    await QR.to(
+                      'madrasahs/${resource.id}/infos/${nextResources.first.id}',
+                    );
+                  } else {
+                    await QR.to('madrasahs/${resource.id}/gallery');
+                  }
+                },
+              ),
             ],
           ),
         );
