@@ -56,7 +56,7 @@ class NewsItem extends ConsumerWidget {
               Container(
                 margin: const EdgeInsets.only(bottom: 15),
                 child: PageSubtitle(
-                  text: formatDate(resource.createdAt!, currentLang),
+                  text: formatDate(resource.publishedAt!, currentLang),
                   fontSizeRatio: fontSizeRatio,
                 ),
               ),
@@ -77,7 +77,7 @@ class NewsItem extends ConsumerWidget {
                   var previousResources = await ref.news.findAll(
                         params: {
                           'quantity': 1,
-                          'gtCreatedAt': resource.createdAt,
+                          'gtPublishedAt': resource.publishedAt,
                         },
                       ) ??
                       [];
@@ -107,7 +107,7 @@ class NewsItem extends ConsumerWidget {
                   var nextResources = await ref.news.findAll(
                         params: {
                           'quantity': 1,
-                          'ltCreatedAt': resource.createdAt,
+                          'ltPublishedAt': resource.publishedAt,
                         },
                       ) ??
                       [];

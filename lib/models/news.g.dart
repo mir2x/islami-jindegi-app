@@ -63,7 +63,8 @@ News _$NewsFromJson(Map<String, dynamic> json) => News(
       body: json['body'] as String,
       excerpt: json['excerpt'] as String?,
       language: json['language'] as String,
-      publishedAt: json['published-at'] as String?,
+      published: json['published'] as bool?,
+      publishedAt: json['published-at'] as String,
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
     );
@@ -75,6 +76,7 @@ Map<String, dynamic> _$NewsToJson(News instance) => <String, dynamic>{
       'body': instance.body,
       'excerpt': instance.excerpt,
       'language': instance.language,
+      'published': instance.published,
       'published-at': instance.publishedAt,
       'created-at': instance.createdAt,
       'updated-at': instance.updatedAt,

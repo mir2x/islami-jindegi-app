@@ -58,7 +58,7 @@ class News extends ConsumerWidget {
                 resourceFetcher: (Map<String, dynamic> params) async {
                   AllModelsQuery query = AllModelsQuery(
                     repository: ref.news,
-                    params: params,
+                    params: {...params, 'published': true},
                   );
 
                   return await ref.read(allModelsProvider(query).future);
@@ -77,7 +77,7 @@ class News extends ConsumerWidget {
                           Container(
                             margin: const EdgeInsets.only(top: 5),
                             child: Text(
-                              formatDate(item.createdAt, currentLang),
+                              formatDate(item.publishedAt, currentLang),
                               style: textTheme.labelSmall,
                             ),
                           ),

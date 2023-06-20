@@ -15,7 +15,8 @@ class News extends DataModel<News> {
   final String body;
   final String? excerpt;
   final String language;
-  final String? publishedAt;
+  final bool? published;
+  final String publishedAt;
   final String? createdAt;
   final String? updatedAt;
 
@@ -26,7 +27,8 @@ class News extends DataModel<News> {
     required this.body,
     this.excerpt,
     required this.language,
-    this.publishedAt,
+    this.published,
+    required this.publishedAt,
     this.createdAt,
     this.updatedAt,
   });
