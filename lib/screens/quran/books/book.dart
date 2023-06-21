@@ -65,6 +65,7 @@ class QuranBookItem extends ConsumerWidget {
                 scaffoldKey: sKey,
                 title: Text(qitabTitle),
                 body: PdfView(
+                  reverse: true,
                   controller: pdfController,
                   builders: PdfViewBuilders<DefaultBuilderOptions>(
                     options: const DefaultBuilderOptions(),

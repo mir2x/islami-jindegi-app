@@ -7,7 +7,7 @@ import Foundation
 
 import audioplayers_darwin
 import connectivity_plus
-import device_info_plus_macos
+import device_info_plus
 import geolocator_apple
 import isar_flutter_libs
 import location

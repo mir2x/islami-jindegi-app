@@ -42,7 +42,11 @@ dependencies:
   infinite_scroll_pagination: ^3.2.0
   carousel_slider: ^4.1.1
   audioplayers: ^4.0.1
-  pdfx: ^2.3.0
+  pdfx:
+    git:
+      url: https://github.com/musaffa/packages.flutter.git
+      ref: add-reverse-option-to-pdfx
+      path: packages/pdfx
 
   # text
   intl: ^0.17.0
