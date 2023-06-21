@@ -11,11 +11,13 @@ class SearchField extends ConsumerStatefulWidget {
     required this.onUpdate,
     this.value,
     this.labelText,
+    this.reverse = false,
   });
 
   final String? value;
   final Function onUpdate;
   final String? labelText;
+  final bool reverse;
 
   @override
   ConsumerState<SearchField> createState() => _SearchState();
@@ -43,39 +45,48 @@ class _SearchState extends ConsumerState<SearchField> {
       data: (preferences) {
         String theme = preferences.getString('theme') ?? 'dark';
 
-        return InputField(
-          initialValue: widget.value,
-          decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color:
-                    theme == 'dark' ? ThemeColors.color3 : ThemeColors.color9,
+        return Directionality(
+          textDirection: widget.reverse ? TextDirection.rtl : TextDirection.ltr,
+          child: InputField(
+            initialValue: widget.value,
+            decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color:
+                      theme == 'dark' ? ThemeColors.color3 : ThemeColors.color9,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color:
+                      theme == 'dark' ? ThemeColors.color3 : ThemeColors.color9,
+                ),
+              ),
+              labelText: widget.labelText ?? locales.search,
+              labelStyle: textTheme.labelMedium,
+              constraints: const BoxConstraints(maxHeight: 45),
+              contentPadding: EdgeInsets.only(
+                top: 0,
+                bottom: 0,
+                left: widget.reverse ? 0 : 10,
+                right: widget.reverse ? 10 : 0,
+              ),
+              suffixIcon: IconButton(
+                onPressed: () {
+                  widget.onUpdate(searchText);
+                },
+                icon: const Icon(Icons.search, color: ThemeColors.color4),
               ),
             ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color:
-                    theme == 'dark' ? ThemeColors.color3 : ThemeColors.color9,
-              ),
-            ),
-            labelText: widget.labelText ?? locales.search,
-            labelStyle: textTheme.labelMedium,
-            constraints: const BoxConstraints(maxHeight: 45),
-            suffixIcon: IconButton(
-              onPressed: () {
-                widget.onUpdate(searchText);
-              },
-              icon: const Icon(Icons.search, color: ThemeColors.color4),
-            ),
-          ),
-          onChanged: (value) {
-            updateSearchText(value);
+            onChanged: (value) {
+              updateSearchText(value);
 
-            if (value.isEmpty) {
-              widget.onUpdate(value);
-            }
-          },
-          style: textTheme.labelMedium,
+              if (value.isEmpty) {
+                widget.onUpdate(value);
+              }
+            },
+            style: textTheme.labelMedium,
+          ),
         );
       },
     );

@@ -132,6 +132,8 @@
   "searchInArabic": "আরবীতে সার্চ করুন",
   "quranSearchNoMatch": "আপনার সার্চের সাথে মিলে এমন কোন আয়াত পাওয়া যায়নি",
   "quranSearchPlaceholder": "আরবীতে কোন শব্দ বা বাক্য লিখুন",
+  "quranSearchErrorMessage": "সার্চ টেক্সট ১০০টি বর্ণের বেশি হতে পারবে না",
+
   "categories": "শ্রেণীবিভাগ",
 
   "filterByDate": "দিন ফিল্টার",

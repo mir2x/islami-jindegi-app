@@ -131,6 +131,7 @@
   "searchInArabic": "Search in Arabic",
   "quranSearchNoMatch": "There is no ayah which matches your query.",
   "quranSearchPlaceholder": "Type a word or sentence in arabic",
+  "quranSearchErrorMessage": "Search text cannot exceed 100 letters",
   "categories": "Categories",
 
   "filterByDate": "Filter By Date",

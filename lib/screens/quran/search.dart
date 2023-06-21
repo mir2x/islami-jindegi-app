@@ -25,18 +25,34 @@ class QuranSearch extends ConsumerWidget {
         children: [
           Container(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
-            child: SearchField(
-              value: qParams['search'],
-              labelText: locales.searchInArabic,
-              onUpdate: (value) {
-                ref
-                    .read(queryParamsProvider.notifier)
-                    .updateParams('search', value);
-              },
+            child: Column(
+              children: [
+                SearchField(
+                  value: qParams['search'],
+                  labelText: locales.searchInArabic,
+                  reverse: true,
+                  onUpdate: (value) {
+                    ref
+                        .read(queryParamsProvider.notifier)
+                        .updateParams('search', value);
+                  },
+                ),
+                if (qParams.containsKey('search') &&
+                    qParams['search'].length > 100) ...[
+                  Container(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text(
+                      locales.quranSearchErrorMessage,
+                      style: textTheme.labelSmall,
+                    ),
+                  )
+                ]
+              ],
             ),
           ),
           if (qParams.containsKey('search') &&
-              qParams['search'].length > 2) ...[
+              qParams['search'].length > 2 &&
+              qParams['search'].length <= 100) ...[
             Expanded(
               child: Container(
                 padding: const EdgeInsets.only(
@@ -81,7 +97,7 @@ class QuranSearch extends ConsumerWidget {
                             margin: const EdgeInsets.only(top: 10),
                             child: Text(
                               ayah.title,
-                              textAlign: TextAlign.right,
+                              textDirection: TextDirection.rtl,
                               style: textTheme.headlineMedium,
                             ),
                           ),
