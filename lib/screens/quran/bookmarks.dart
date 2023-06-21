@@ -5,6 +5,7 @@ import 'package:intl/intl.dart' hide TextDirection;
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/ayah_bookmarks.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
+import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/theme/colors.dart';
 
 class QuranBookmarks extends ConsumerWidget {
@@ -43,7 +44,7 @@ class QuranBookmarks extends ConsumerWidget {
                     ),
                   ),
                 ),
-                padding: const EdgeInsets.only(top: 15, bottom: 20),
+                padding: const EdgeInsets.only(top: 15, bottom: 10),
                 child: Column(
                   children: [
                     Row(
@@ -94,11 +95,8 @@ class QuranBookmarks extends ConsumerWidget {
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(horizontal: 15),
-                        margin: const EdgeInsets.only(top: 10),
-                        child: Text(
-                          item.translation,
-                          style: textTheme.labelMedium,
-                        ),
+                        margin: const EdgeInsets.only(top: 5),
+                        child: HtmlText(text: item.translation),
                       ),
                     ],
                   ],
