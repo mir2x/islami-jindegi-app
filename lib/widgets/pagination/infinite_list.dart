@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:infinite_scroll_pagination/src/ui/default_indicators/first_page_exception_indicator.dart';
+import 'package:infinite_scroll_pagination/src/ui/default_indicators/footer_tile.dart';
 
 class InfiniteList<ItemType> extends StatefulWidget {
   const InfiniteList({
@@ -79,6 +82,13 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
         pagingController: pController,
         builderDelegate: PagedChildBuilderDelegate<ItemType>(
           itemBuilder: widget.itemBuilder,
+          firstPageErrorIndicatorBuilder: (_) => FirstPageErrorIndicator(
+            onTryAgain: () => pController.refresh(),
+          ),
+          newPageErrorIndicatorBuilder: (_) => NewPageErrorIndicator(
+            onTap: () => pController.retryLastFailedRequest(),
+          ),
+          noItemsFoundIndicatorBuilder: (_) => const NoItemsFoundIndicator(),
         ),
         gridDelegate: widget.gridDelegate!,
         padding: EdgeInsets.symmetric(vertical: widget.padding),
@@ -88,9 +98,80 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
         pagingController: pController,
         builderDelegate: PagedChildBuilderDelegate<ItemType>(
           itemBuilder: widget.itemBuilder,
+          firstPageErrorIndicatorBuilder: (_) => FirstPageErrorIndicator(
+            onTryAgain: () => pController.refresh(),
+          ),
+          newPageErrorIndicatorBuilder: (_) => NewPageErrorIndicator(
+            onTap: () => pController.retryLastFailedRequest(),
+          ),
+          noItemsFoundIndicatorBuilder: (_) => const NoItemsFoundIndicator(),
         ),
         padding: EdgeInsets.symmetric(vertical: widget.padding),
       );
     }
+  }
+}
+
+class NoItemsFoundIndicator extends StatelessWidget {
+  const NoItemsFoundIndicator({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
+
+    return FirstPageExceptionIndicator(
+      title: locales.noItemsTitle,
+      message: locales.noItemsMsg,
+    );
+  }
+}
+
+class FirstPageErrorIndicator extends StatelessWidget {
+  const FirstPageErrorIndicator({
+    this.onTryAgain,
+    Key? key,
+  }) : super(key: key);
+
+  final VoidCallback? onTryAgain;
+
+  @override
+  Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
+
+    return FirstPageExceptionIndicator(
+      title: locales.applicationErrorTitle,
+      message: locales.applicationErrorMsg,
+      onTryAgain: onTryAgain,
+    );
+  }
+}
+
+class NewPageErrorIndicator extends StatelessWidget {
+  const NewPageErrorIndicator({
+    Key? key,
+    this.onTap,
+  }) : super(key: key);
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
+
+    return InkWell(
+      onTap: onTap,
+      child: FooterTile(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              locales.newPageErrorTitle,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            const Icon(Icons.refresh, size: 16),
+          ],
+        ),
+      ),
+    );
   }
 }

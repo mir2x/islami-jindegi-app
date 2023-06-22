@@ -171,7 +171,6 @@
   "goBack": "Go Back",
   "remove": "Remove",
   "noContent": "No content yet",
-  "noItemFound": "No item found",
   "display": "Display",
   "dontDisplay": "Don't Display",
   "downloading": "Downloading ...",
@@ -184,8 +183,13 @@
   "websiteLink": "Website Link",
 
   "errorTitle": "Error!",
-  "notFoundErrorTitle": "Page Not Found",
-  "notFoundErrorMsg": "We cannot seem to find the page you are looking for.",
+  "pageNotFoundTitle": "Page Not Found",
+  "pageNotFoundMsg": "We cannot seem to find the page you are looking for.",
+  "noItemsTitle": "No items found",
+  "noItemsMsg": "The list is currently empty.\nIf you are using any filter, please try with other filter options.",
+  "applicationErrorTitle": "Something went wrong",
+  "applicationErrorMsg": "The application has encountered an unknown error.\n Please try again later.",
+  "newPageErrorTitle": "Something went wrong. Tap to try again.",
   "downloadErrorMsg": "There has been a problem while downloading the file. Please check your network connection and try again.",
   "connectToInternetMsg": "Please connect to the Internet"
 }

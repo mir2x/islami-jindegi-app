@@ -109,7 +109,7 @@ class News extends ConsumerWidget {
                       } else {
                         return Center(
                           child: Text(
-                            locales.noItemFound,
+                            locales.noItemsTitle,
                             style: textTheme.titleMedium?.copyWith(
                               color: ThemeColors.color2,
                             ),

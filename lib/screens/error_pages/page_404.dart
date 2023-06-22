@@ -10,8 +10,8 @@ class Page404 extends StatelessWidget {
     var locales = AppLocalizations.of(context)!;
 
     return ErrorPage(
-      title: locales.notFoundErrorTitle,
-      subtitle: locales.notFoundErrorMsg,
+      title: locales.pageNotFoundTitle,
+      subtitle: locales.pageNotFoundMsg,
     );
   }
 }
