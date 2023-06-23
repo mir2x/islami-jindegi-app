@@ -53,11 +53,9 @@ class Home extends StatelessWidget {
             ),
             GridView.count(
               crossAxisCount: 3,
-              padding: EdgeInsets.only(
-                left: screenWidth * 0.02,
-                right: screenWidth * 0.02,
-                top: screenHeight * 0.05,
-                bottom: screenHeight * 0.06,
+              padding: EdgeInsets.symmetric(
+                vertical: screenHeight * 0.05,
+                horizontal: screenWidth * 0.02,
               ),
               childAspectRatio: 1.6,
               crossAxisSpacing: 5,
