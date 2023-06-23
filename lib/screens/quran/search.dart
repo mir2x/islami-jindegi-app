@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/providers/all_models.dart';
@@ -9,6 +10,7 @@ import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
+import 'package:native_app/helpers/contextual_translation.dart';
 
 class QuranSearch extends ConsumerWidget {
   const QuranSearch({super.key});
@@ -16,6 +18,8 @@ class QuranSearch extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
+    String currentLang = Localizations.localeOf(context).languageCode;
+    var numFormatter = NumberFormat('#', currentLang);
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(queryParamsProvider);
 
@@ -86,11 +90,17 @@ class QuranSearch extends ConsumerWidget {
                                 onTap: () =>
                                     QR.to('quran/surah/${ayah.surah.value.id}'),
                                 child: Text(
-                                  ayah.surah.value.title,
+                                  contextualTranslation(
+                                    locale: currentLang,
+                                    enText: ayah.surah.value.title,
+                                    bnText: ayah.surah.value.titleBn,
+                                  ),
                                   style: textTheme.titleMedium,
                                 ),
                               ),
-                              Text(', ${locales.ayah}: ${ayah.surahPosition}')
+                              Text(
+                                ', ${locales.ayah}: ${numFormatter.format(ayah.surahPosition)}',
+                              )
                             ],
                           ),
                           Container(
