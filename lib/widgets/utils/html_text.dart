@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HtmlText extends StatelessWidget {
   const HtmlText({
@@ -49,6 +50,12 @@ class HtmlText extends StatelessWidget {
 
     return Html(
       data: text,
+      onLinkTap: (String? strUrl, attributes, __) async {
+        if (strUrl != null) {
+          final url = Uri.parse(strUrl);
+          await launchUrl(url, mode: LaunchMode.externalApplication);
+        }
+      },
       style: {
         'body': bodyMedium,
         'h6': bodyMedium,
