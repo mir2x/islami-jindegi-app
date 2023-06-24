@@ -17,6 +17,8 @@ class News extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var prefs = ref.watch(preferencesProvider);
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isMobile = screenWidth < 768;
 
     var query = AllModelsQuery(
       repository: ref.news,
@@ -33,12 +35,10 @@ class News extends ConsumerWidget {
       child: Row(
         children: [
           Container(
-            width: 100,
-            padding: const EdgeInsets.only(
-              top: 10,
-              bottom: 10,
-              left: 10,
-              right: 10,
+            width: isMobile ? 100 : 150,
+            padding: EdgeInsets.symmetric(
+              vertical: isMobile ? 10 : 20,
+              horizontal: isMobile ? 10 : 30,
             ),
             child: Text(
               locales.newsAndUpdates,
@@ -57,7 +57,7 @@ class News extends ConsumerWidget {
                 String theme = preferences.getString('theme') ?? 'dark';
 
                 return Container(
-                  height: 75,
+                  height: isMobile ? 75 : 95,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(

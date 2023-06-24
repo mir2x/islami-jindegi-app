@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
-import 'package:native_app/widgets/calendar/hijri_date.dart';
-import 'package:native_app/widgets/calendar/bangali_date.dart';
-import 'package:native_app/widgets/calendar/gregorian_date.dart';
-import 'current_prayers.dart';
+import 'dates_prayers.dart';
 import 'resource.dart';
 import 'news.dart';
 
@@ -13,9 +10,10 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    var locales = AppLocalizations.of(context)!;
+    bool isMobile = screenWidth < 768;
 
     return AppScaffold(
       isHome: true,
@@ -25,31 +23,11 @@ class Home extends StatelessWidget {
           children: [
             Container(
               margin: EdgeInsets.only(
-                left: 20,
-                right: 20,
-                top: screenHeight * 0.02,
+                left: isMobile ? 20 : 40,
+                right: isMobile ? 20 : 40,
+                top: isMobile ? screenHeight * 0.02 : screenHeight * 0.05,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.only(
-                      left: 15,
-                      right: 15,
-                      bottom: 8,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        HijriDate(),
-                        BangaliDate(),
-                        GregorianDate(),
-                      ],
-                    ),
-                  ),
-                  const CurrentPrayers(),
-                ],
-              ),
+              child: const DatesPrayers(),
             ),
             GridView.count(
               crossAxisCount: 3,
@@ -57,7 +35,7 @@ class Home extends StatelessWidget {
                 vertical: screenHeight * 0.05,
                 horizontal: screenWidth * 0.02,
               ),
-              childAspectRatio: 1.6,
+              childAspectRatio: isMobile ? 1.6 : 1.75,
               crossAxisSpacing: 5,
               mainAxisSpacing: screenHeight * 0.025,
               shrinkWrap: true,
@@ -127,9 +105,9 @@ class Home extends StatelessWidget {
             ),
             Container(
               margin: EdgeInsets.only(
-                bottom: screenHeight * 0.02,
-                left: 20,
-                right: 20,
+                left: isMobile ? 20 : 40,
+                right: isMobile ? 20 : 40,
+                bottom: isMobile ? screenHeight * 0.02 : screenHeight * 0.05,
               ),
               child: const News(),
             )

@@ -5,7 +5,6 @@ import 'package:adhan/adhan.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/objects/prayer_time.dart';
-import 'package:native_app/theme/colors.dart';
 
 class CurrentPrayers extends ConsumerWidget {
   const CurrentPrayers({super.key});
@@ -16,6 +15,8 @@ class CurrentPrayers extends ConsumerWidget {
     String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
     var dataP = ref.watch(preferencesAndGeolocationProvider);
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isMobile = screenWidth < 768;
 
     return dataP.when(
       loading: () => Container(
@@ -42,71 +43,67 @@ class CurrentPrayers extends ConsumerWidget {
           currentLang,
         );
 
-        String theme = data['preferences'].getString('theme') ?? 'dark';
-
         String location = geolocation['location']
             .values
             .where((v) => v is String && v.isNotEmpty)
             .join(', ');
 
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            color: theme == 'dark' ? ThemeColors.color2 : ThemeColors.color3,
-          ),
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(location, style: textTheme.labelSmall),
-                    if (!geolocation['isGeolocated']) ...[
-                      Container(
-                        margin: const EdgeInsets.only(left: 15, right: 3),
-                        child: GestureDetector(
-                          onTap: () => ref
-                              .read(geolocationProvider.notifier)
-                              .updateCoordinates(),
-                          child: SvgPicture.asset(
-                            'assets/images/icons/location.svg',
-                            fit: BoxFit.scaleDown,
-                            width: 30,
-                            height: 23,
-                          ),
+        return Column(
+          crossAxisAlignment:
+              isMobile ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+          children: [
+            Container(
+              margin: EdgeInsets.only(bottom: isMobile ? 0 : 5),
+              child: Row(
+                children: [
+                  Text(location, style: textTheme.labelSmall),
+                  if (!geolocation['isGeolocated']) ...[
+                    Container(
+                      margin: const EdgeInsets.only(left: 15, right: 3),
+                      child: GestureDetector(
+                        onTap: () => ref
+                            .read(geolocationProvider.notifier)
+                            .updateCoordinates(),
+                        child: SvgPicture.asset(
+                          'assets/images/icons/location.svg',
+                          fit: BoxFit.scaleDown,
+                          width: 30,
+                          height: 23,
                         ),
                       ),
-                      Text(locales.setLocation, style: textTheme.labelSmall),
-                    ],
+                    ),
+                    Text(locales.setLocation, style: textTheme.labelSmall),
+                  ],
+                ],
+              ),
+            ),
+            if (prayerTimes.containsKey('current')) ...[
+              Container(
+                margin: EdgeInsets.only(bottom: isMobile ? 0 : 5),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${prayerTimes['current']['title']}',
+                      style: textTheme.titleLarge,
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      margin: const EdgeInsets.only(top: 3),
+                      child: Text(
+                        '${prayerTimes['current']['time']}',
+                        style: textTheme.titleMedium,
+                      ),
+                    )
                   ],
                 ),
-                if (prayerTimes.containsKey('current')) ...[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${prayerTimes['current']['title']}',
-                        style: textTheme.titleLarge,
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        margin: const EdgeInsets.only(top: 3),
-                        child: Text(
-                          '${prayerTimes['current']['time']}',
-                          style: textTheme.titleMedium,
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-                Text(
-                  '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}',
-                  style: textTheme.labelSmall,
-                ),
-              ],
+              ),
+            ],
+            Text(
+              '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}',
+              style: textTheme.labelSmall,
             ),
-          ),
+          ],
         );
       },
     );

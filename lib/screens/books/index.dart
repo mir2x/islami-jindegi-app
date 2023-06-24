@@ -28,6 +28,8 @@ class Books extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(queryParamsProvider);
     var connectivity = ref.watch(connectivityResultProvider);
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isMobile = screenWidth < 768;
 
     return AppScaffold(
       title: Text(locales.books),
@@ -154,10 +156,10 @@ class Books extends ConsumerWidget {
 
                   return await ref.read(allModelsProvider(query).future);
                 },
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 15,
-                  mainAxisExtent: 410,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: isMobile ? 2 : 3,
+                  crossAxisSpacing: isMobile ? 15 : 20,
+                  mainAxisExtent: isMobile ? 410 : 500,
                 ),
                 itemBuilder: (_, item, __) {
                   return Column(

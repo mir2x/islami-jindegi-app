@@ -65,7 +65,23 @@ class PlaceholderScaffold extends ConsumerWidget {
               ),
             ),
             constraints: const BoxConstraints.expand(),
-            child: body,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                if (constraints.maxWidth < 768) {
+                  return body;
+                } else {
+                  double screenWidth = MediaQuery.of(context).size.width;
+
+                  return Container(
+                    padding: EdgeInsets.only(
+                      left: screenWidth * 0.06,
+                      right: screenWidth * 0.06,
+                    ),
+                    child: body,
+                  );
+                }
+              },
+            ),
           );
         },
       ),

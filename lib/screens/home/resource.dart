@@ -17,6 +17,8 @@ class Resource extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isMobile = screenWidth < 768;
 
     return GestureDetector(
       onTap: () => QR.to(route),
@@ -24,12 +26,12 @@ class Resource extends StatelessWidget {
         children: [
           SvgPicture.asset(
             'assets/images/icons/$icon.svg',
-            fit: BoxFit.scaleDown,
-            width: 42,
-            height: 42,
+            fit: BoxFit.contain,
+            width: isMobile ? 42 : 80,
+            height: isMobile ? 42 : 80,
           ),
           Container(
-            margin: const EdgeInsets.only(top: 7),
+            margin: EdgeInsets.only(top: isMobile ? 7 : 15),
             child: Text(
               title,
               style: textTheme.labelMedium?.copyWith(height: 1),
