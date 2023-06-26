@@ -7,7 +7,7 @@ class Next extends StatelessWidget {
     this.nextDisabled = false,
   });
 
-  final void Function() onNext;
+  final Future? Function() onNext;
   final bool nextDisabled;
 
   @override

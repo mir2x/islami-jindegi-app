@@ -8,6 +8,7 @@ import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
+import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/widgets/page/title.dart';
@@ -43,78 +44,127 @@ class Subchapter extends ConsumerWidget {
       data: (resource) {
         var chapterId = resource.chapter.value.id;
 
+        Future? previousPage() async {
+          var previousResources = await ref.subchapters.findAll(
+                params: {
+                  'quantity': 1,
+                  'chapterId': chapterId,
+                  'position': resource.position - 1,
+                },
+              ) ??
+              [];
+
+          if (previousResources.isNotEmpty) {
+            await QR.to(
+              'books/$bookId/subchapters/${previousResources.first.id}',
+            );
+          } else {
+            var currentChapter = await ref.chapters.findOne(chapterId);
+
+            if (currentChapter != null) {
+              var previousChapters = await ref.chapters.findAll(
+                    params: {
+                      'quantity': 1,
+                      'include': 'subchapters',
+                      'bookId': bookId,
+                      'position': currentChapter.position! - 1,
+                    },
+                  ) ??
+                  [];
+
+              if (previousChapters.isNotEmpty) {
+                var subchapters = previousChapters.first.subchapters;
+
+                if (subchapters != null && subchapters.isNotEmpty) {
+                  var lastSubchapter = subchapters.map((a) => a).last;
+
+                  await QR.to(
+                    'books/$bookId/subchapters/${lastSubchapter.id}',
+                  );
+                } else {
+                  await QR.to(
+                    'books/$bookId/chapters/${previousChapters.first.id}',
+                  );
+                }
+              }
+            }
+          }
+        }
+
+        Future? nextPage() async {
+          var nextResources = await ref.subchapters.findAll(
+                params: {
+                  'quantity': 1,
+                  'chapterId': chapterId,
+                  'position': resource.position + 1,
+                },
+              ) ??
+              [];
+
+          if (nextResources.isNotEmpty) {
+            await QR.to(
+              'books/$bookId/subchapters/${nextResources.first.id}',
+            );
+          } else {
+            var currentChapter = await ref.chapters.findOne(chapterId);
+
+            if (currentChapter != null) {
+              var nextChapters = await ref.chapters.findAll(
+                    params: {
+                      'quantity': 1,
+                      'include': 'subchapters',
+                      'bookId': bookId,
+                      'position': currentChapter.position! + 1,
+                    },
+                  ) ??
+                  [];
+
+              if (nextChapters.isNotEmpty) {
+                var subchapters = nextChapters.first.subchapters;
+
+                if (subchapters != null && subchapters.isNotEmpty) {
+                  await QR.to(
+                    'books/$bookId/subchapters/${subchapters.first.id}',
+                  );
+                } else {
+                  await QR.to(
+                    'books/$bookId/chapters/${nextChapters.first.id}',
+                  );
+                }
+              }
+            }
+          }
+        }
+
         return AppScaffold(
           onBackPressed: () async => await QR.to('books/$bookId'),
           title: Text(locales.book),
-          body: ItemContent(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 15),
-                child: PageTitle(
-                  text: resource.title,
-                  fontSizeRatio: fontSizeRatio,
+          body: NextPageSwipe(
+            onPrevious: previousPage,
+            onNext: nextPage,
+            child: ItemContent(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(bottom: 15),
+                  child: PageTitle(
+                    text: resource.title,
+                    fontSizeRatio: fontSizeRatio,
+                  ),
                 ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 30),
-                child: PageHtmlBody(
-                  text: resource.body,
-                  fontSizeRatio: fontSizeRatio,
+                Container(
+                  margin: const EdgeInsets.only(bottom: 30),
+                  child: PageHtmlBody(
+                    text: resource.body,
+                    fontSizeRatio: fontSizeRatio,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Previous(
-                onPrevious: () async {
-                  var previousResources = await ref.subchapters.findAll(
-                        params: {
-                          'quantity': 1,
-                          'chapterId': chapterId,
-                          'position': resource.position - 1,
-                        },
-                      ) ??
-                      [];
-
-                  if (previousResources.isNotEmpty) {
-                    await QR.to(
-                      'books/$bookId/subchapters/${previousResources.first.id}',
-                    );
-                  } else {
-                    var currentChapter = await ref.chapters.findOne(chapterId);
-
-                    if (currentChapter != null) {
-                      var previousChapters = await ref.chapters.findAll(
-                            params: {
-                              'quantity': 1,
-                              'include': 'subchapters',
-                              'bookId': bookId,
-                              'position': currentChapter.position! - 1,
-                            },
-                          ) ??
-                          [];
-
-                      if (previousChapters.isNotEmpty) {
-                        var subchapters = previousChapters.first.subchapters;
-
-                        if (subchapters != null && subchapters.isNotEmpty) {
-                          var lastSubchapter = subchapters.map((a) => a).last;
-
-                          await QR.to(
-                            'books/$bookId/subchapters/${lastSubchapter.id}',
-                          );
-                        } else {
-                          await QR.to(
-                            'books/$bookId/chapters/${previousChapters.first.id}',
-                          );
-                        }
-                      }
-                    }
-                  }
-                },
-              ),
+              Previous(onPrevious: previousPage),
               Row(
                 children: [
                   SocialShare(
@@ -130,52 +180,7 @@ class Subchapter extends ConsumerWidget {
                 ],
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
-              Next(
-                onNext: () async {
-                  var nextResources = await ref.subchapters.findAll(
-                        params: {
-                          'quantity': 1,
-                          'chapterId': chapterId,
-                          'position': resource.position + 1,
-                        },
-                      ) ??
-                      [];
-
-                  if (nextResources.isNotEmpty) {
-                    await QR.to(
-                      'books/$bookId/subchapters/${nextResources.first.id}',
-                    );
-                  } else {
-                    var currentChapter = await ref.chapters.findOne(chapterId);
-
-                    if (currentChapter != null) {
-                      var nextChapters = await ref.chapters.findAll(
-                            params: {
-                              'quantity': 1,
-                              'include': 'subchapters',
-                              'bookId': bookId,
-                              'position': currentChapter.position! + 1,
-                            },
-                          ) ??
-                          [];
-
-                      if (nextChapters.isNotEmpty) {
-                        var subchapters = nextChapters.first.subchapters;
-
-                        if (subchapters != null && subchapters.isNotEmpty) {
-                          await QR.to(
-                            'books/$bookId/subchapters/${subchapters.first.id}',
-                          );
-                        } else {
-                          await QR.to(
-                            'books/$bookId/chapters/${nextChapters.first.id}',
-                          );
-                        }
-                      }
-                    }
-                  }
-                },
-              ),
+              Next(onNext: nextPage),
             ],
           ),
         );

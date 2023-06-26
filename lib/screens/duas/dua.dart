@@ -8,6 +8,7 @@ import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
+import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/description_item.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
@@ -45,83 +46,105 @@ class Dua extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
+        Future? previousPage() async {
+          var previousResources = await ref.duas.findAll(
+                params: {
+                  'quantity': 1,
+                  'position': resource.position - 1,
+                },
+              ) ??
+              [];
+
+          if (previousResources.isNotEmpty) {
+            await QR.to('duas/${previousResources.first.id}');
+          }
+        }
+
+        Future? nextPage() async {
+          var nextResources = await ref.duas.findAll(
+                params: {
+                  'quantity': 1,
+                  'position': resource.position + 1,
+                },
+              ) ??
+              [];
+
+          if (nextResources.isNotEmpty) {
+            await QR.to('duas/${nextResources.first.id}');
+          }
+        }
+
         return AppScaffold(
           onBackPressed: () async => await QR.to('duas'),
           title: Text(locales.duaDurud),
-          body: ItemContent(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 15),
-                child: PageTitle(
-                  text: resource.title,
-                  fontSizeRatio: fontSizeRatio,
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 30),
-                child: PageHtmlBody(
-                  text: resource.body,
-                  fontSizeRatio: fontSizeRatio,
-                ),
-              ),
-              if (resource.audio != null) ...[
+          body: NextPageSwipe(
+            onPrevious: previousPage,
+            onNext: nextPage,
+            child: ItemContent(
+              children: [
                 Container(
-                  margin: const EdgeInsets.only(top: 30),
-                  child: AudioPlayerWidget(
-                    audio: resource.audio,
+                  margin: const EdgeInsets.only(bottom: 15),
+                  child: PageTitle(
+                    text: resource.title,
+                    fontSizeRatio: fontSizeRatio,
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(bottom: 30),
+                  child: PageHtmlBody(
+                    text: resource.body,
+                    fontSizeRatio: fontSizeRatio,
+                  ),
+                ),
+                if (resource.audio != null) ...[
+                  Container(
+                    margin: const EdgeInsets.only(top: 30),
+                    child: AudioPlayerWidget(
+                      audio: resource.audio,
+                    ),
+                  ),
+                ],
+                Container(
+                  margin: const EdgeInsets.only(top: 40),
+                  child: Column(
+                    children: [
+                      if (resource.audio?['metadata']?['duration'] != null) ...[
+                        DescriptionItem(
+                          title: '${locales.audioDuration}:',
+                          description: Text(
+                            playDuration(
+                              resource.audio['metadata']['duration'],
+                            ),
+                            style: textTheme.labelMedium,
+                          ),
+                        ),
+                      ],
+                      if (resource.audio?['metadata']?['size'] != null) ...[
+                        DescriptionItem(
+                          title: '${locales.audioSize}:',
+                          description: Text(
+                            fileSize(resource.audio['metadata']['size']),
+                            style: textTheme.labelMedium,
+                          ),
+                        ),
+                      ],
+                      if (resource.audio != null) ...[
+                        DownloadItem(
+                          filePath: resource.audio['id'],
+                          fileUrl: fileSrcUrl(resource.audio),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               ],
-              Container(
-                margin: const EdgeInsets.only(top: 40),
-                child: Column(
-                  children: [
-                    if (resource.audio?['metadata']?['duration'] != null) ...[
-                      DescriptionItem(
-                        title: '${locales.audioDuration}:',
-                        description: Text(
-                          playDuration(resource.audio['metadata']['duration']),
-                          style: textTheme.labelMedium,
-                        ),
-                      ),
-                    ],
-                    if (resource.audio?['metadata']?['size'] != null) ...[
-                      DescriptionItem(
-                        title: '${locales.audioSize}:',
-                        description: Text(
-                          fileSize(resource.audio['metadata']['size']),
-                          style: textTheme.labelMedium,
-                        ),
-                      ),
-                    ],
-                    if (resource.audio != null) ...[
-                      DownloadItem(
-                        filePath: resource.audio['id'],
-                        fileUrl: fileSrcUrl(resource.audio),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
               Previous(
-                onPrevious: () async {
-                  var previousResources = await ref.duas.findAll(
-                        params: {
-                          'quantity': 1,
-                          'position': resource.position - 1,
-                        },
-                      ) ??
-                      [];
-
-                  if (previousResources.isNotEmpty) {
-                    await QR.to('duas/${previousResources.first.id}');
-                  }
-                },
+                onPrevious: previousPage,
                 previousDisabled: resource.position == 1,
               ),
               Row(
@@ -139,21 +162,7 @@ class Dua extends ConsumerWidget {
                 ],
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
-              Next(
-                onNext: () async {
-                  var nextResources = await ref.duas.findAll(
-                        params: {
-                          'quantity': 1,
-                          'position': resource.position + 1,
-                        },
-                      ) ??
-                      [];
-
-                  if (nextResources.isNotEmpty) {
-                    await QR.to('duas/${nextResources.first.id}');
-                  }
-                },
-              ),
+              Next(onNext: nextPage),
             ],
           ),
         );

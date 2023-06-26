@@ -7,7 +7,7 @@ class Previous extends StatelessWidget {
     this.previousDisabled = false,
   });
 
-  final void Function() onPrevious;
+  final Future? Function() onPrevious;
   final bool previousDisabled;
 
   @override

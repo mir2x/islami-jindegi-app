@@ -8,6 +8,7 @@ import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
+import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/responsive/image.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
@@ -41,50 +42,56 @@ class MadrasahGallery extends ConsumerWidget {
       },
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
+        Future? previousPage() async {
+          var previousResources = await ref.madrasahInfos.findAll(
+                params: {
+                  'madrasahId': resource.id,
+                  'sort': '-position',
+                  'quantity': 1,
+                },
+              ) ??
+              [];
+
+          if (previousResources.isNotEmpty) {
+            await QR.to(
+              'madrasahs/${resource.id}/infos/${previousResources.first.id}',
+            );
+          } else {
+            await QR.to('madrasahs/${resource.id}/introduction');
+          }
+        }
+
+        Future? nextPage() async {}
+
         return AppScaffold(
           title: Text(resource.title),
-          body: ItemContent(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 25),
-                child: Text(locales.gallery, style: textTheme.labelLarge),
-              ),
-              ...resource.madrasahPhotos.map((photo) {
-                return Container(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: ResponsiveImage(
-                    image: photo.image,
-                    model: 'madrasahPhoto',
-                  ),
-                );
-              }),
-            ],
+          body: NextPageSwipe(
+            onPrevious: previousPage,
+            onNext: nextPage,
+            child: ItemContent(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(bottom: 25),
+                  child: Text(locales.gallery, style: textTheme.labelLarge),
+                ),
+                ...resource.madrasahPhotos.map((photo) {
+                  return Container(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: ResponsiveImage(
+                      image: photo.image,
+                      model: 'madrasahPhoto',
+                    ),
+                  );
+                }),
+              ],
+            ),
           ),
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Previous(
-                onPrevious: () async {
-                  var previousResources = await ref.madrasahInfos.findAll(
-                        params: {
-                          'madrasahId': resource.id,
-                          'sort': '-position',
-                          'quantity': 1,
-                        },
-                      ) ??
-                      [];
-
-                  if (previousResources.isNotEmpty) {
-                    await QR.to(
-                      'madrasahs/${resource.id}/infos/${previousResources.first.id}',
-                    );
-                  } else {
-                    await QR.to('madrasahs/${resource.id}/introduction');
-                  }
-                },
-              ),
+              Previous(onPrevious: previousPage),
               Next(
-                onNext: () async {},
+                onNext: nextPage,
                 nextDisabled: true,
               ),
             ],

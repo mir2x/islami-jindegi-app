@@ -8,6 +8,7 @@ import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
+import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/widgets/page/title.dart';
@@ -41,52 +42,70 @@ class NewsItem extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
+        Future? previousPage() async {
+          var previousResources = await ref.news.findAll(
+                params: {
+                  'quantity': 1,
+                  'gtPublishedAt': resource.publishedAt,
+                },
+              ) ??
+              [];
+
+          if (previousResources.isNotEmpty) {
+            await QR.to('news/${previousResources.first.id}');
+          }
+        }
+
+        Future? nextPage() async {
+          var nextResources = await ref.news.findAll(
+                params: {
+                  'quantity': 1,
+                  'ltPublishedAt': resource.publishedAt,
+                },
+              ) ??
+              [];
+
+          if (nextResources.isNotEmpty) {
+            await QR.to('news/${nextResources.first.id}');
+          }
+        }
+
         return AppScaffold(
           onBackPressed: () async => await QR.to('news'),
           title: Text(locales.news),
-          body: ItemContent(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 15),
-                child: PageTitle(
-                  text: resource.title,
-                  fontSizeRatio: fontSizeRatio,
+          body: NextPageSwipe(
+            onPrevious: previousPage,
+            onNext: nextPage,
+            child: ItemContent(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(bottom: 15),
+                  child: PageTitle(
+                    text: resource.title,
+                    fontSizeRatio: fontSizeRatio,
+                  ),
                 ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 15),
-                child: PageSubtitle(
-                  text: formatDate(resource.publishedAt!, currentLang),
-                  fontSizeRatio: fontSizeRatio,
+                Container(
+                  margin: const EdgeInsets.only(bottom: 15),
+                  child: PageSubtitle(
+                    text: formatDate(resource.publishedAt!, currentLang),
+                    fontSizeRatio: fontSizeRatio,
+                  ),
                 ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 30),
-                child: PageHtmlBody(
-                  text: resource.body,
-                  fontSizeRatio: fontSizeRatio,
+                Container(
+                  margin: const EdgeInsets.only(bottom: 30),
+                  child: PageHtmlBody(
+                    text: resource.body,
+                    fontSizeRatio: fontSizeRatio,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Previous(
-                onPrevious: () async {
-                  var previousResources = await ref.news.findAll(
-                        params: {
-                          'quantity': 1,
-                          'gtPublishedAt': resource.publishedAt,
-                        },
-                      ) ??
-                      [];
-
-                  if (previousResources.isNotEmpty) {
-                    await QR.to('news/${previousResources.first.id}');
-                  }
-                },
-              ),
+              Previous(onPrevious: previousPage),
               Row(
                 children: [
                   SocialShare(
@@ -102,21 +121,7 @@ class NewsItem extends ConsumerWidget {
                 ],
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
-              Next(
-                onNext: () async {
-                  var nextResources = await ref.news.findAll(
-                        params: {
-                          'quantity': 1,
-                          'ltPublishedAt': resource.publishedAt,
-                        },
-                      ) ??
-                      [];
-
-                  if (nextResources.isNotEmpty) {
-                    await QR.to('news/${nextResources.first.id}');
-                  }
-                },
-              ),
+              Next(onNext: nextPage),
             ],
           ),
         );

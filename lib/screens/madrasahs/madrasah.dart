@@ -8,6 +8,7 @@ import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
+import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
@@ -45,68 +46,88 @@ class Madrasah extends ConsumerWidget {
       },
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
+        Future? previousPage() async {
+          var previousResources = await ref.madrasahs.findAll(
+                params: {
+                  'quantity': 1,
+                  'position': resource.position - 1,
+                },
+              ) ??
+              [];
+
+          if (previousResources.isNotEmpty) {
+            await QR.to('madrasahs/${previousResources.first.id}');
+          }
+        }
+
+        Future? nextPage() async {
+          var nextResources = await ref.madrasahs.findAll(
+                params: {
+                  'quantity': 1,
+                  'position': resource.position + 1,
+                },
+              ) ??
+              [];
+
+          if (nextResources.isNotEmpty) {
+            await QR.to('madrasahs/${nextResources.first.id}');
+          }
+        }
+
         return AppScaffold(
           onBackPressed: () async => await QR.to('madrasahs'),
           title: Text(locales.madrasah),
-          body: ItemContent(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 25),
-                child: Text(resource.title, style: textTheme.labelLarge),
-              ),
-              InkWell(
-                onTap: () => QR.to('madrasahs/${resource.id}/introduction'),
-                child: ListItem(
-                  item: Text(
-                    locales.introduction,
-                    style: textTheme.titleMedium,
-                  ),
+          body: NextPageSwipe(
+            onPrevious: previousPage,
+            onNext: nextPage,
+            child: ItemContent(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(bottom: 25),
+                  child: Text(resource.title, style: textTheme.labelLarge),
                 ),
-              ),
-              ...resource.madrasahInfos.map((info) {
-                return InkWell(
-                  onTap: () =>
-                      QR.to('madrasahs/${resource.id}/infos/${info.id}'),
+                InkWell(
+                  onTap: () => QR.to('madrasahs/${resource.id}/introduction'),
                   child: ListItem(
                     item: Text(
-                      contextualTranslation(
-                        locale: currentLang,
-                        enText: info.label,
-                        bnText: info.labelBn,
-                      ),
+                      locales.introduction,
                       style: textTheme.titleMedium,
                     ),
                   ),
-                );
-              }),
-              InkWell(
-                onTap: () => QR.to('madrasahs/${resource.id}/gallery'),
-                child: ListItem(
-                  item: Text(
-                    locales.gallery,
-                    style: textTheme.titleMedium,
+                ),
+                ...resource.madrasahInfos.map((info) {
+                  return InkWell(
+                    onTap: () =>
+                        QR.to('madrasahs/${resource.id}/infos/${info.id}'),
+                    child: ListItem(
+                      item: Text(
+                        contextualTranslation(
+                          locale: currentLang,
+                          enText: info.label,
+                          bnText: info.labelBn,
+                        ),
+                        style: textTheme.titleMedium,
+                      ),
+                    ),
+                  );
+                }),
+                InkWell(
+                  onTap: () => QR.to('madrasahs/${resource.id}/gallery'),
+                  child: ListItem(
+                    item: Text(
+                      locales.gallery,
+                      style: textTheme.titleMedium,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
               Previous(
-                onPrevious: () async {
-                  var previousResources = await ref.madrasahs.findAll(
-                        params: {
-                          'quantity': 1,
-                          'position': resource.position - 1,
-                        },
-                      ) ??
-                      [];
-
-                  if (previousResources.isNotEmpty) {
-                    await QR.to('madrasahs/${previousResources.first.id}');
-                  }
-                },
+                onPrevious: previousPage,
                 previousDisabled: resource.position == 1,
               ),
               Row(
@@ -123,21 +144,7 @@ class Madrasah extends ConsumerWidget {
                   ),
                 ],
               ),
-              Next(
-                onNext: () async {
-                  var nextResources = await ref.madrasahs.findAll(
-                        params: {
-                          'quantity': 1,
-                          'position': resource.position + 1,
-                        },
-                      ) ??
-                      [];
-
-                  if (nextResources.isNotEmpty) {
-                    await QR.to('madrasahs/${nextResources.first.id}');
-                  }
-                },
-              ),
+              Next(onNext: nextPage),
             ],
           ),
         );

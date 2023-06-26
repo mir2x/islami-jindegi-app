@@ -8,6 +8,7 @@ import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
+import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/widgets/page/title.dart';
@@ -39,37 +40,62 @@ class MadrasahIntroduction extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
+        Future? previousPage() async {}
+
+        Future? nextPage() async {
+          var nextResources = await ref.madrasahInfos.findAll(
+                params: {
+                  'madrasahId': resource.id,
+                  'quantity': 1,
+                  'position': 1,
+                },
+              ) ??
+              [];
+
+          if (nextResources.isNotEmpty) {
+            await QR.to(
+              'madrasahs/${resource.id}/infos/${nextResources.first.id}',
+            );
+          } else {
+            await QR.to('madrasahs/${resource.id}/gallery');
+          }
+        }
+
         return AppScaffold(
           title: Text(resource.title),
-          body: ItemContent(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 15),
-                child: PageTitle(
-                  text: locales.introduction,
-                  fontSizeRatio: fontSizeRatio,
+          body: NextPageSwipe(
+            onPrevious: previousPage,
+            onNext: nextPage,
+            child: ItemContent(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(bottom: 15),
+                  child: PageTitle(
+                    text: locales.introduction,
+                    fontSizeRatio: fontSizeRatio,
+                  ),
                 ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 30),
-                child: PageHtmlBody(
-                  text: resource.introduction,
-                  fontSizeRatio: fontSizeRatio,
+                Container(
+                  margin: const EdgeInsets.only(bottom: 30),
+                  child: PageHtmlBody(
+                    text: resource.introduction,
+                    fontSizeRatio: fontSizeRatio,
+                  ),
                 ),
-              ),
-              if (resource.document != null) ...[
-                DownloadItem(
-                  filePath: resource.document['id'],
-                  fileUrl: fileSrcUrl(resource.document),
-                ),
-              ]
-            ],
+                if (resource.document != null) ...[
+                  DownloadItem(
+                    filePath: resource.document['id'],
+                    fileUrl: fileSrcUrl(resource.document),
+                  ),
+                ]
+              ],
+            ),
           ),
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
               Previous(
-                onPrevious: () async {},
+                onPrevious: previousPage,
                 previousDisabled: true,
               ),
               SocialShare(
@@ -77,26 +103,7 @@ class MadrasahIntroduction extends ConsumerWidget {
                 body: resource.introduction,
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
-              Next(
-                onNext: () async {
-                  var nextResources = await ref.madrasahInfos.findAll(
-                        params: {
-                          'madrasahId': resource.id,
-                          'quantity': 1,
-                          'position': 1,
-                        },
-                      ) ??
-                      [];
-
-                  if (nextResources.isNotEmpty) {
-                    await QR.to(
-                      'madrasahs/${resource.id}/infos/${nextResources.first.id}',
-                    );
-                  } else {
-                    await QR.to('madrasahs/${resource.id}/gallery');
-                  }
-                },
-              ),
+              Next(onNext: nextPage),
             ],
           ),
         );

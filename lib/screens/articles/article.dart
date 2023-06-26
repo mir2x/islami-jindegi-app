@@ -8,6 +8,7 @@ import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
+import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/widgets/page/title.dart';
@@ -40,55 +41,74 @@ class Article extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
+        Future? previousPage() async {
+          var previousResources = await ref.articles.findAll(
+                params: {
+                  'quantity': 1,
+                  'include': 'article-author',
+                  'position': resource.position + 1,
+                },
+              ) ??
+              [];
+
+          if (previousResources.isNotEmpty) {
+            await QR.to('articles/${previousResources.first.id}');
+          }
+        }
+
+        Future? nextPage() async {
+          var nextResources = await ref.articles.findAll(
+                params: {
+                  'quantity': 1,
+                  'include': 'article-author',
+                  'position': resource.position - 1,
+                },
+              ) ??
+              [];
+
+          if (nextResources.isNotEmpty) {
+            await QR.to('articles/${nextResources.first.id}');
+          }
+        }
+
         return AppScaffold(
           onBackPressed: () async => await QR.to('articles'),
           title: Text(locales.article),
-          body: ItemContent(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 15),
-                child: PageTitle(
-                  text: resource.title,
-                  fontSizeRatio: fontSizeRatio,
-                ),
-              ),
-              if (resource.articleAuthor.value != null) ...[
+          body: NextPageSwipe(
+            onPrevious: previousPage,
+            onNext: nextPage,
+            child: ItemContent(
+              children: [
                 Container(
                   margin: const EdgeInsets.only(bottom: 15),
-                  child: PageSubtitle(
-                    text: resource.articleAuthor.value.name,
+                  child: PageTitle(
+                    text: resource.title,
+                    fontSizeRatio: fontSizeRatio,
+                  ),
+                ),
+                if (resource.articleAuthor.value != null) ...[
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 15),
+                    child: PageSubtitle(
+                      text: resource.articleAuthor.value.name,
+                      fontSizeRatio: fontSizeRatio,
+                    ),
+                  ),
+                ],
+                Container(
+                  margin: const EdgeInsets.only(bottom: 30),
+                  child: PageHtmlBody(
+                    text: resource.body,
                     fontSizeRatio: fontSizeRatio,
                   ),
                 ),
               ],
-              Container(
-                margin: const EdgeInsets.only(bottom: 30),
-                child: PageHtmlBody(
-                  text: resource.body,
-                  fontSizeRatio: fontSizeRatio,
-                ),
-              ),
-            ],
+            ),
           ),
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Previous(
-                onPrevious: () async {
-                  var previousResources = await ref.articles.findAll(
-                        params: {
-                          'quantity': 1,
-                          'include': 'article-author',
-                          'position': resource.position + 1,
-                        },
-                      ) ??
-                      [];
-
-                  if (previousResources.isNotEmpty) {
-                    await QR.to('articles/${previousResources.first.id}');
-                  }
-                },
-              ),
+              Previous(onPrevious: previousPage),
               Row(
                 children: [
                   SocialShare(
@@ -106,20 +126,7 @@ class Article extends ConsumerWidget {
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
               Next(
-                onNext: () async {
-                  var nextResources = await ref.articles.findAll(
-                        params: {
-                          'quantity': 1,
-                          'include': 'article-author',
-                          'position': resource.position - 1,
-                        },
-                      ) ??
-                      [];
-
-                  if (nextResources.isNotEmpty) {
-                    await QR.to('articles/${nextResources.first.id}');
-                  }
-                },
+                onNext: nextPage,
                 nextDisabled: resource.position == 1,
               ),
             ],
