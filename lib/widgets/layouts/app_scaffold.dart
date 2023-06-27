@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -112,8 +113,11 @@ class AppScaffold extends ConsumerWidget {
                           ),
                         ],
                         onSelected: (int item) {
-                          const appLink =
+                          const androidAppLink =
                               'https://play.google.com/store/apps/details?id=com.islamidars';
+
+                          const iOSAppLink =
+                              'https://apps.apple.com/app/islami-dars/id6447244518';
 
                           switch (item) {
                             case 0:
@@ -123,16 +127,18 @@ class AppScaffold extends ConsumerWidget {
                               QR.to('contact-us');
                               break;
                             case 2:
-                              Share.share(appLink);
+                              if (Platform.isAndroid) {
+                                Share.share(androidAppLink);
+                              } else if (Platform.isIOS) {
+                                Share.share(iOSAppLink);
+                              }
                               break;
                             case 3:
-                              final Uri url = Uri.parse(appLink);
+                              final Uri url = Uri.parse(androidAppLink);
                               launchUrl(url);
                               break;
                             case 4:
-                              final Uri url = Uri.parse(
-                                'https://apps.apple.com/us/app/islamidars/id6447244518',
-                              );
+                              final Uri url = Uri.parse(iOSAppLink);
                               launchUrl(url);
                               break;
                             case 5:
