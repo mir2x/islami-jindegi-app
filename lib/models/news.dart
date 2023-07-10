@@ -11,7 +11,6 @@ class News extends DataModel<News> {
   @override
   final String? id;
   final String title;
-  final String slug;
   final String body;
   final String? excerpt;
   final String language;
@@ -23,7 +22,6 @@ class News extends DataModel<News> {
   News({
     this.id,
     required this.title,
-    required this.slug,
     required this.body,
     this.excerpt,
     required this.language,

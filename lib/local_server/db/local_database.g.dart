@@ -1462,10 +1462,6 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
       'title', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
-      'slug', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
   late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
       'excerpt', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
@@ -1513,7 +1509,6 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
   List<GeneratedColumn> get $columns => [
         id,
         title,
-        slug,
         excerpt,
         publisher,
         price,
@@ -1539,8 +1534,6 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       title: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      slug: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
       excerpt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
       publisher: attachedDatabase.typeMapping
@@ -1585,7 +1578,6 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
 class Book extends DataClass implements Insertable<Book> {
   final String id;
   final String title;
-  final String slug;
   final String? excerpt;
   final String? publisher;
   final String? price;
@@ -1599,7 +1591,6 @@ class Book extends DataClass implements Insertable<Book> {
   const Book(
       {required this.id,
       required this.title,
-      required this.slug,
       this.excerpt,
       this.publisher,
       this.price,
@@ -1615,7 +1606,6 @@ class Book extends DataClass implements Insertable<Book> {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
-    map['slug'] = Variable<String>(slug);
     if (!nullToAbsent || excerpt != null) {
       map['excerpt'] = Variable<String>(excerpt);
     }
@@ -1649,7 +1639,6 @@ class Book extends DataClass implements Insertable<Book> {
     return Book(
       id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
-      slug: serializer.fromJson<String>(json['slug']),
       excerpt: serializer.fromJson<String?>(json['excerpt']),
       publisher: serializer.fromJson<String?>(json['publisher']),
       price: serializer.fromJson<String?>(json['price']),
@@ -1669,7 +1658,6 @@ class Book extends DataClass implements Insertable<Book> {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
-      'slug': serializer.toJson<String>(slug),
       'excerpt': serializer.toJson<String?>(excerpt),
       'publisher': serializer.toJson<String?>(publisher),
       'price': serializer.toJson<String?>(price),
@@ -1686,7 +1674,6 @@ class Book extends DataClass implements Insertable<Book> {
   Book copyWith(
           {String? id,
           String? title,
-          String? slug,
           Value<String?> excerpt = const Value.absent(),
           Value<String?> publisher = const Value.absent(),
           Value<String?> price = const Value.absent(),
@@ -1700,7 +1687,6 @@ class Book extends DataClass implements Insertable<Book> {
       Book(
         id: id ?? this.id,
         title: title ?? this.title,
-        slug: slug ?? this.slug,
         excerpt: excerpt.present ? excerpt.value : this.excerpt,
         publisher: publisher.present ? publisher.value : this.publisher,
         price: price.present ? price.value : this.price,
@@ -1718,7 +1704,6 @@ class Book extends DataClass implements Insertable<Book> {
     return (StringBuffer('Book(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('slug: $slug, ')
           ..write('excerpt: $excerpt, ')
           ..write('publisher: $publisher, ')
           ..write('price: $price, ')
@@ -1737,7 +1722,6 @@ class Book extends DataClass implements Insertable<Book> {
   int get hashCode => Object.hash(
       id,
       title,
-      slug,
       excerpt,
       publisher,
       price,
@@ -1754,7 +1738,6 @@ class Book extends DataClass implements Insertable<Book> {
       (other is Book &&
           other.id == this.id &&
           other.title == this.title &&
-          other.slug == this.slug &&
           other.excerpt == this.excerpt &&
           other.publisher == this.publisher &&
           other.price == this.price &&
@@ -1770,7 +1753,6 @@ class Book extends DataClass implements Insertable<Book> {
 class BooksCompanion extends UpdateCompanion<Book> {
   final Value<String> id;
   final Value<String> title;
-  final Value<String> slug;
   final Value<String?> excerpt;
   final Value<String?> publisher;
   final Value<String?> price;
@@ -1785,7 +1767,6 @@ class BooksCompanion extends UpdateCompanion<Book> {
   const BooksCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
-    this.slug = const Value.absent(),
     this.excerpt = const Value.absent(),
     this.publisher = const Value.absent(),
     this.price = const Value.absent(),
@@ -1801,7 +1782,6 @@ class BooksCompanion extends UpdateCompanion<Book> {
   BooksCompanion.insert({
     required String id,
     required String title,
-    required String slug,
     this.excerpt = const Value.absent(),
     this.publisher = const Value.absent(),
     this.price = const Value.absent(),
@@ -1815,7 +1795,6 @@ class BooksCompanion extends UpdateCompanion<Book> {
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
-        slug = Value(slug),
         language = Value(language),
         position = Value(position),
         createdAt = Value(createdAt),
@@ -1823,7 +1802,6 @@ class BooksCompanion extends UpdateCompanion<Book> {
   static Insertable<Book> custom({
     Expression<String>? id,
     Expression<String>? title,
-    Expression<String>? slug,
     Expression<String>? excerpt,
     Expression<String>? publisher,
     Expression<String>? price,
@@ -1839,7 +1817,6 @@ class BooksCompanion extends UpdateCompanion<Book> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
-      if (slug != null) 'slug': slug,
       if (excerpt != null) 'excerpt': excerpt,
       if (publisher != null) 'publisher': publisher,
       if (price != null) 'price': price,
@@ -1857,7 +1834,6 @@ class BooksCompanion extends UpdateCompanion<Book> {
   BooksCompanion copyWith(
       {Value<String>? id,
       Value<String>? title,
-      Value<String>? slug,
       Value<String?>? excerpt,
       Value<String?>? publisher,
       Value<String?>? price,
@@ -1872,7 +1848,6 @@ class BooksCompanion extends UpdateCompanion<Book> {
     return BooksCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
-      slug: slug ?? this.slug,
       excerpt: excerpt ?? this.excerpt,
       publisher: publisher ?? this.publisher,
       price: price ?? this.price,
@@ -1895,9 +1870,6 @@ class BooksCompanion extends UpdateCompanion<Book> {
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
-    }
-    if (slug.present) {
-      map['slug'] = Variable<String>(slug.value);
     }
     if (excerpt.present) {
       map['excerpt'] = Variable<String>(excerpt.value);
@@ -1943,7 +1915,6 @@ class BooksCompanion extends UpdateCompanion<Book> {
     return (StringBuffer('BooksCompanion(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('slug: $slug, ')
           ..write('excerpt: $excerpt, ')
           ..write('publisher: $publisher, ')
           ..write('price: $price, ')
@@ -4497,10 +4468,6 @@ class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
       'title', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
-      'slug', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
   late final GeneratedColumn<String> question = GeneratedColumn<String>(
       'question', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
@@ -4555,7 +4522,6 @@ class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
   List<GeneratedColumn> get $columns => [
         id,
         title,
-        slug,
         question,
         answer,
         language,
@@ -4581,8 +4547,6 @@ class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       title: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      slug: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
       question: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}question'])!,
       answer: attachedDatabase.typeMapping
@@ -4627,7 +4591,6 @@ class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
 class Masail extends DataClass implements Insertable<Masail> {
   final String id;
   final String title;
-  final String slug;
   final String question;
   final String? answer;
   final String language;
@@ -4641,7 +4604,6 @@ class Masail extends DataClass implements Insertable<Masail> {
   const Masail(
       {required this.id,
       required this.title,
-      required this.slug,
       required this.question,
       this.answer,
       required this.language,
@@ -4657,7 +4619,6 @@ class Masail extends DataClass implements Insertable<Masail> {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
-    map['slug'] = Variable<String>(slug);
     map['question'] = Variable<String>(question);
     if (!nullToAbsent || answer != null) {
       map['answer'] = Variable<String>(answer);
@@ -4687,7 +4648,6 @@ class Masail extends DataClass implements Insertable<Masail> {
     return Masail(
       id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
-      slug: serializer.fromJson<String>(json['slug']),
       question: serializer.fromJson<String>(json['question']),
       answer: serializer.fromJson<String?>(json['answer']),
       language: serializer.fromJson<String>(json['language']),
@@ -4707,7 +4667,6 @@ class Masail extends DataClass implements Insertable<Masail> {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
-      'slug': serializer.toJson<String>(slug),
       'question': serializer.toJson<String>(question),
       'answer': serializer.toJson<String?>(answer),
       'language': serializer.toJson<String>(language),
@@ -4724,7 +4683,6 @@ class Masail extends DataClass implements Insertable<Masail> {
   Masail copyWith(
           {String? id,
           String? title,
-          String? slug,
           String? question,
           Value<String?> answer = const Value.absent(),
           String? language,
@@ -4738,7 +4696,6 @@ class Masail extends DataClass implements Insertable<Masail> {
       Masail(
         id: id ?? this.id,
         title: title ?? this.title,
-        slug: slug ?? this.slug,
         question: question ?? this.question,
         answer: answer.present ? answer.value : this.answer,
         language: language ?? this.language,
@@ -4756,7 +4713,6 @@ class Masail extends DataClass implements Insertable<Masail> {
     return (StringBuffer('Masail(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('slug: $slug, ')
           ..write('question: $question, ')
           ..write('answer: $answer, ')
           ..write('language: $language, ')
@@ -4775,7 +4731,6 @@ class Masail extends DataClass implements Insertable<Masail> {
   int get hashCode => Object.hash(
       id,
       title,
-      slug,
       question,
       answer,
       language,
@@ -4792,7 +4747,6 @@ class Masail extends DataClass implements Insertable<Masail> {
       (other is Masail &&
           other.id == this.id &&
           other.title == this.title &&
-          other.slug == this.slug &&
           other.question == this.question &&
           other.answer == this.answer &&
           other.language == this.language &&
@@ -4808,7 +4762,6 @@ class Masail extends DataClass implements Insertable<Masail> {
 class MasailsCompanion extends UpdateCompanion<Masail> {
   final Value<String> id;
   final Value<String> title;
-  final Value<String> slug;
   final Value<String> question;
   final Value<String?> answer;
   final Value<String> language;
@@ -4823,7 +4776,6 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
   const MasailsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
-    this.slug = const Value.absent(),
     this.question = const Value.absent(),
     this.answer = const Value.absent(),
     this.language = const Value.absent(),
@@ -4839,7 +4791,6 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
   MasailsCompanion.insert({
     required String id,
     required String title,
-    required String slug,
     required String question,
     this.answer = const Value.absent(),
     required String language,
@@ -4853,7 +4804,6 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
-        slug = Value(slug),
         question = Value(question),
         language = Value(language),
         position = Value(position),
@@ -4862,7 +4812,6 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
   static Insertable<Masail> custom({
     Expression<String>? id,
     Expression<String>? title,
-    Expression<String>? slug,
     Expression<String>? question,
     Expression<String>? answer,
     Expression<String>? language,
@@ -4878,7 +4827,6 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
-      if (slug != null) 'slug': slug,
       if (question != null) 'question': question,
       if (answer != null) 'answer': answer,
       if (language != null) 'language': language,
@@ -4896,7 +4844,6 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
   MasailsCompanion copyWith(
       {Value<String>? id,
       Value<String>? title,
-      Value<String>? slug,
       Value<String>? question,
       Value<String?>? answer,
       Value<String>? language,
@@ -4911,7 +4858,6 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
     return MasailsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
-      slug: slug ?? this.slug,
       question: question ?? this.question,
       answer: answer ?? this.answer,
       language: language ?? this.language,
@@ -4934,9 +4880,6 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
-    }
-    if (slug.present) {
-      map['slug'] = Variable<String>(slug.value);
     }
     if (question.present) {
       map['question'] = Variable<String>(question.value);
@@ -4982,7 +4925,6 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
     return (StringBuffer('MasailsCompanion(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('slug: $slug, ')
           ..write('question: $question, ')
           ..write('answer: $answer, ')
           ..write('language: $language, ')
@@ -5697,10 +5639,6 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
       'title', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
-      'slug', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
   late final GeneratedColumn<String> body = GeneratedColumn<String>(
       'body', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
@@ -5745,7 +5683,6 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
   List<GeneratedColumn> get $columns => [
         id,
         title,
-        slug,
         body,
         excerpt,
         language,
@@ -5770,8 +5707,6 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       title: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      slug: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
       body: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}body'])!,
       excerpt: attachedDatabase.typeMapping
@@ -5809,7 +5744,6 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
 class Article extends DataClass implements Insertable<Article> {
   final String id;
   final String title;
-  final String slug;
   final String body;
   final String? excerpt;
   final String language;
@@ -5822,7 +5756,6 @@ class Article extends DataClass implements Insertable<Article> {
   const Article(
       {required this.id,
       required this.title,
-      required this.slug,
       required this.body,
       this.excerpt,
       required this.language,
@@ -5837,7 +5770,6 @@ class Article extends DataClass implements Insertable<Article> {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
-    map['slug'] = Variable<String>(slug);
     map['body'] = Variable<String>(body);
     if (!nullToAbsent || excerpt != null) {
       map['excerpt'] = Variable<String>(excerpt);
@@ -5863,7 +5795,6 @@ class Article extends DataClass implements Insertable<Article> {
     return Article(
       id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
-      slug: serializer.fromJson<String>(json['slug']),
       body: serializer.fromJson<String>(json['body']),
       excerpt: serializer.fromJson<String?>(json['excerpt']),
       language: serializer.fromJson<String>(json['language']),
@@ -5882,7 +5813,6 @@ class Article extends DataClass implements Insertable<Article> {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
-      'slug': serializer.toJson<String>(slug),
       'body': serializer.toJson<String>(body),
       'excerpt': serializer.toJson<String?>(excerpt),
       'language': serializer.toJson<String>(language),
@@ -5898,7 +5828,6 @@ class Article extends DataClass implements Insertable<Article> {
   Article copyWith(
           {String? id,
           String? title,
-          String? slug,
           String? body,
           Value<String?> excerpt = const Value.absent(),
           String? language,
@@ -5911,7 +5840,6 @@ class Article extends DataClass implements Insertable<Article> {
       Article(
         id: id ?? this.id,
         title: title ?? this.title,
-        slug: slug ?? this.slug,
         body: body ?? this.body,
         excerpt: excerpt.present ? excerpt.value : this.excerpt,
         language: language ?? this.language,
@@ -5928,7 +5856,6 @@ class Article extends DataClass implements Insertable<Article> {
     return (StringBuffer('Article(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('slug: $slug, ')
           ..write('body: $body, ')
           ..write('excerpt: $excerpt, ')
           ..write('language: $language, ')
@@ -5946,7 +5873,6 @@ class Article extends DataClass implements Insertable<Article> {
   int get hashCode => Object.hash(
       id,
       title,
-      slug,
       body,
       excerpt,
       language,
@@ -5962,7 +5888,6 @@ class Article extends DataClass implements Insertable<Article> {
       (other is Article &&
           other.id == this.id &&
           other.title == this.title &&
-          other.slug == this.slug &&
           other.body == this.body &&
           other.excerpt == this.excerpt &&
           other.language == this.language &&
@@ -5977,7 +5902,6 @@ class Article extends DataClass implements Insertable<Article> {
 class ArticlesCompanion extends UpdateCompanion<Article> {
   final Value<String> id;
   final Value<String> title;
-  final Value<String> slug;
   final Value<String> body;
   final Value<String?> excerpt;
   final Value<String> language;
@@ -5991,7 +5915,6 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
   const ArticlesCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
-    this.slug = const Value.absent(),
     this.body = const Value.absent(),
     this.excerpt = const Value.absent(),
     this.language = const Value.absent(),
@@ -6006,7 +5929,6 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
   ArticlesCompanion.insert({
     required String id,
     required String title,
-    required String slug,
     required String body,
     this.excerpt = const Value.absent(),
     required String language,
@@ -6019,7 +5941,6 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
-        slug = Value(slug),
         body = Value(body),
         language = Value(language),
         position = Value(position),
@@ -6029,7 +5950,6 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
   static Insertable<Article> custom({
     Expression<String>? id,
     Expression<String>? title,
-    Expression<String>? slug,
     Expression<String>? body,
     Expression<String>? excerpt,
     Expression<String>? language,
@@ -6044,7 +5964,6 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
-      if (slug != null) 'slug': slug,
       if (body != null) 'body': body,
       if (excerpt != null) 'excerpt': excerpt,
       if (language != null) 'language': language,
@@ -6061,7 +5980,6 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
   ArticlesCompanion copyWith(
       {Value<String>? id,
       Value<String>? title,
-      Value<String>? slug,
       Value<String>? body,
       Value<String?>? excerpt,
       Value<String>? language,
@@ -6075,7 +5993,6 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
     return ArticlesCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
-      slug: slug ?? this.slug,
       body: body ?? this.body,
       excerpt: excerpt ?? this.excerpt,
       language: language ?? this.language,
@@ -6097,9 +6014,6 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
-    }
-    if (slug.present) {
-      map['slug'] = Variable<String>(slug.value);
     }
     if (body.present) {
       map['body'] = Variable<String>(body.value);
@@ -6141,7 +6055,6 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
     return (StringBuffer('ArticlesCompanion(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('slug: $slug, ')
           ..write('body: $body, ')
           ..write('excerpt: $excerpt, ')
           ..write('language: $language, ')

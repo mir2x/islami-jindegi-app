@@ -11,7 +11,6 @@ class TafseerQitab extends DataModel<TafseerQitab> {
   @override
   final String? id;
   final String title;
-  final String slug;
   final String author;
   final int? position;
   final String? createdAt;
@@ -20,7 +19,6 @@ class TafseerQitab extends DataModel<TafseerQitab> {
   TafseerQitab({
     this.id,
     required this.title,
-    required this.slug,
     required this.author,
     this.position,
     this.createdAt,

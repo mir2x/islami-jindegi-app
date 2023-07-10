@@ -80,7 +80,6 @@ extension ArticleRelationshipGraphNodeX on RelationshipGraphNode<Article> {
 Article _$ArticleFromJson(Map<String, dynamic> json) => Article(
       id: json['id'] as String?,
       title: json['title'] as String,
-      slug: json['slug'] as String,
       body: json['body'] as String,
       excerpt: json['excerpt'] as String?,
       language: json['language'] as String,
@@ -98,7 +97,6 @@ Article _$ArticleFromJson(Map<String, dynamic> json) => Article(
 Map<String, dynamic> _$ArticleToJson(Article instance) => <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
-      'slug': instance.slug,
       'body': instance.body,
       'excerpt': instance.excerpt,
       'language': instance.language,

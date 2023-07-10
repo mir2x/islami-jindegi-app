@@ -65,7 +65,6 @@ extension MasailRelationshipGraphNodeX on RelationshipGraphNode<Masail> {}
 Masail _$MasailFromJson(Map<String, dynamic> json) => Masail(
       id: json['id'] as String?,
       title: json['title'] as String,
-      slug: json['slug'] as String?,
       question: json['question'] as String,
       answer: json['answer'] as String?,
       language: json['language'] as String,
@@ -81,7 +80,6 @@ Masail _$MasailFromJson(Map<String, dynamic> json) => Masail(
 Map<String, dynamic> _$MasailToJson(Masail instance) => <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
-      'slug': instance.slug,
       'question': instance.question,
       'answer': instance.answer,
       'language': instance.language,

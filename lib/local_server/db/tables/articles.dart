@@ -5,7 +5,6 @@ import '../types/file_data.dart';
 class Articles extends Table {
   TextColumn get id => text()();
   TextColumn get title => text()();
-  TextColumn get slug => text()();
   TextColumn get body => text()();
   TextColumn get excerpt => text().nullable()();
   TextColumn get language => text()();

@@ -78,7 +78,6 @@ extension BookRelationshipGraphNodeX on RelationshipGraphNode<Book> {
 Book _$BookFromJson(Map<String, dynamic> json) => Book(
       id: json['id'] as String?,
       title: json['title'] as String,
-      slug: json['slug'] as String,
       excerpt: json['excerpt'] as String?,
       publisher: json['publisher'] as String?,
       price: json['price'] as String?,
@@ -97,7 +96,6 @@ Book _$BookFromJson(Map<String, dynamic> json) => Book(
 Map<String, dynamic> _$BookToJson(Book instance) => <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
-      'slug': instance.slug,
       'excerpt': instance.excerpt,
       'publisher': instance.publisher,
       'price': instance.price,

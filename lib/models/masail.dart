@@ -12,7 +12,6 @@ class Masail extends DataModel<Masail> {
   @override
   final String? id;
   final String title;
-  final String? slug;
   final String question;
   final String? answer;
   final String language;
@@ -27,7 +26,6 @@ class Masail extends DataModel<Masail> {
   Masail({
     this.id,
     required this.title,
-    this.slug,
     required this.question,
     this.answer,
     required this.language,

@@ -12,7 +12,6 @@ class MalfuzatSubcategory extends DataModel<MalfuzatSubcategory> {
   @override
   final String? id;
   final String title;
-  final String slug;
   final int? position;
   final String? createdAt;
   final String? updatedAt;
@@ -22,7 +21,6 @@ class MalfuzatSubcategory extends DataModel<MalfuzatSubcategory> {
   MalfuzatSubcategory({
     this.id,
     required this.title,
-    required this.slug,
     this.position,
     this.createdAt,
     this.updatedAt,

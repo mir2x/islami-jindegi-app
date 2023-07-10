@@ -4,7 +4,6 @@ import '../types/file_data.dart';
 class Books extends Table {
   TextColumn get id => text()();
   TextColumn get title => text()();
-  TextColumn get slug => text()();
   TextColumn get excerpt => text().nullable()();
   TextColumn get publisher => text().nullable()();
   TextColumn get price => text().nullable()();

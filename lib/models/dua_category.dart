@@ -11,7 +11,6 @@ class DuaCategory extends DataModel<DuaCategory> {
   @override
   final String? id;
   final String title;
-  final String slug;
   final int? position;
   final String? createdAt;
   final String? updatedAt;
@@ -19,7 +18,6 @@ class DuaCategory extends DataModel<DuaCategory> {
   DuaCategory({
     this.id,
     required this.title,
-    required this.slug,
     this.position,
     this.createdAt,
     this.updatedAt,

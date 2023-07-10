@@ -13,7 +13,6 @@ class Book extends DataModel<Book> {
   @override
   final String? id;
   final String title;
-  final String slug;
   final String? excerpt;
   final String? publisher;
   final String? price;
@@ -30,7 +29,6 @@ class Book extends DataModel<Book> {
   Book({
     this.id,
     required this.title,
-    required this.slug,
     this.excerpt,
     this.publisher,
     this.price,

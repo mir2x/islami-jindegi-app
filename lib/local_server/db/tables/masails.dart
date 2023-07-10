@@ -4,7 +4,6 @@ import '../types/file_data.dart';
 class Masails extends Table {
   TextColumn get id => text()();
   TextColumn get title => text()();
-  TextColumn get slug => text()();
   TextColumn get question => text()();
   TextColumn get answer => text().nullable()();
   TextColumn get language => text()();

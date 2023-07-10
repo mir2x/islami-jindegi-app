@@ -13,7 +13,6 @@ class Article extends DataModel<Article> {
   @override
   final String? id;
   final String title;
-  final String slug;
   final String body;
   final String? excerpt;
   final String language;
@@ -28,7 +27,6 @@ class Article extends DataModel<Article> {
   Article({
     this.id,
     required this.title,
-    required this.slug,
     required this.body,
     this.excerpt,
     required this.language,

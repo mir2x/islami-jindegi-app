@@ -63,7 +63,6 @@ extension TafseerQitabRelationshipGraphNodeX
 TafseerQitab _$TafseerQitabFromJson(Map<String, dynamic> json) => TafseerQitab(
       id: json['id'] as String?,
       title: json['title'] as String,
-      slug: json['slug'] as String,
       author: json['author'] as String,
       position: json['position'] as int?,
       createdAt: json['created-at'] as String?,
@@ -74,7 +73,6 @@ Map<String, dynamic> _$TafseerQitabToJson(TafseerQitab instance) =>
     <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
-      'slug': instance.slug,
       'author': instance.author,
       'position': instance.position,
       'created-at': instance.createdAt,

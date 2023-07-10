@@ -85,7 +85,6 @@ MalfuzatSubcategory _$MalfuzatSubcategoryFromJson(Map<String, dynamic> json) =>
     MalfuzatSubcategory(
       id: json['id'] as String?,
       title: json['title'] as String,
-      slug: json['slug'] as String,
       position: json['position'] as int?,
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
@@ -100,7 +99,6 @@ Map<String, dynamic> _$MalfuzatSubcategoryToJson(
     <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
-      'slug': instance.slug,
       'position': instance.position,
       'created-at': instance.createdAt,
       'updated-at': instance.updatedAt,
