@@ -6,11 +6,13 @@ class DescriptionItem extends StatelessWidget {
     required this.title,
     required this.description,
     this.alignment = CrossAxisAlignment.start,
+    this.textWidth = 125,
   });
 
   final String title;
   final Widget description;
   final CrossAxisAlignment alignment;
+  final double textWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +23,8 @@ class DescriptionItem extends StatelessWidget {
       child: Row(
         crossAxisAlignment: alignment,
         children: [
-          Expanded(
-            flex: 2,
+          SizedBox(
+            width: textWidth,
             child: Text(
               title,
               style: textTheme.labelLarge?.copyWith(
@@ -31,7 +33,6 @@ class DescriptionItem extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: 3,
             child: Container(
               margin: const EdgeInsets.only(top: 2),
               child: description,

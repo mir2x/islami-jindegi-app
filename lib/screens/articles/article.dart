@@ -10,10 +10,12 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
+import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/widgets/page/title.dart';
 import 'package:native_app/widgets/page/subtitle.dart';
 import 'package:native_app/widgets/page/html_body.dart';
+import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
@@ -93,6 +95,14 @@ class Article extends ConsumerWidget {
                       text: resource.articleAuthor.value.name,
                       fontSizeRatio: fontSizeRatio,
                     ),
+                  ),
+                ],
+                if (resource.document != null) ...[
+                  DownloadItem(
+                    filePath: resource.document['id'],
+                    fileUrl: fileSrcUrl(resource.document),
+                    textWidth: 95,
+                    downloadedTextWidth: 120,
                   ),
                 ],
                 Container(

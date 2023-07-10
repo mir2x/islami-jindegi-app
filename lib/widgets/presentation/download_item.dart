@@ -19,10 +19,14 @@ class DownloadItem extends ConsumerWidget {
     super.key,
     required this.filePath,
     required this.fileUrl,
+    this.textWidth = 120,
+    this.downloadedTextWidth,
   });
 
   final String filePath;
   final String fileUrl;
+  final double textWidth;
+  final double? downloadedTextWidth;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -93,6 +97,7 @@ class DownloadItem extends ConsumerWidget {
               ),
             ),
             alignment: CrossAxisAlignment.center,
+            textWidth: downloadedTextWidth ?? textWidth,
           );
         } else {
           var connectivity = ref.watch(connectivityResultProvider);
@@ -160,6 +165,7 @@ class DownloadItem extends ConsumerWidget {
                     ),
                   ),
                   alignment: CrossAxisAlignment.center,
+                  textWidth: textWidth,
                 );
               } else {
                 return const SizedBox.shrink();
