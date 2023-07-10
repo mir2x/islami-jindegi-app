@@ -97,6 +97,8 @@ class MadrasahInfo extends ConsumerWidget {
         );
 
         return AppScaffold(
+          onBackPressed: () async =>
+              await QR.to('madrasahs/${resource.madrasah.value.id}'),
           title: Text(resource.madrasah.value.title),
           body: NextPageSwipe(
             onPrevious: previousPage,

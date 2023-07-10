@@ -64,6 +64,7 @@ class MadrasahGallery extends ConsumerWidget {
         Future? nextPage() async {}
 
         return AppScaffold(
+          onBackPressed: () async => await QR.to('madrasahs/${resource.id}'),
           title: Text(resource.title),
           body: NextPageSwipe(
             onPrevious: previousPage,
