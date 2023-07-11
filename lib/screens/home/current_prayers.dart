@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -6,11 +7,34 @@ import 'package:flutter_svg/svg.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/objects/prayer_time.dart';
 
-class CurrentPrayers extends ConsumerWidget {
+class CurrentPrayers extends ConsumerStatefulWidget {
   const CurrentPrayers({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  CurrentPrayersState createState() => CurrentPrayersState();
+}
+
+class CurrentPrayersState extends ConsumerState<CurrentPrayers> {
+  Timer? timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    timer = Timer.periodic(
+      const Duration(minutes: 1),
+      (Timer t) => setState(() {}),
+    );
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
