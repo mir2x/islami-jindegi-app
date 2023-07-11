@@ -131,7 +131,7 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                           ],
                         ],
                       ),
-                      const SizedBox(width: 20),
+                      const SizedBox(width: 10),
                       IconButton(
                         icon: const Icon(Icons.settings),
                         onPressed: () => QR.to('namaz-times/settings'),
