@@ -85,6 +85,7 @@ class PrayerTime {
           currentLang,
         ),
         'endTime': _formatTime(prayerTimes.isha.subtract(oneMin), currentLang),
+        'startDateTime': prayerTimes.maghrib,
       },
       'isha': {
         'title': locales.isha,
@@ -96,7 +97,7 @@ class PrayerTime {
 
   Map getCurrentAndNextPrayers(AppLocalizations locales, String currentLang) {
     Map times = getTimes(locales, currentLang);
-    Map prayers = _currentAndNextPrayerNames();
+    Map prayers = currentAndNextPrayerNames();
     var currentPrayer = prayers['currentPrayer'];
     var nextPrayer = prayers['nextPrayer'];
 
@@ -114,6 +115,10 @@ class PrayerTime {
         'time': times[nextPrayer]['startTime'],
       },
     };
+  }
+
+  DateTime getDateStartTime() {
+    return prayerTimes.maghrib;
   }
 
   String _formatTime(DateTime time, String locale) {
@@ -135,7 +140,7 @@ class PrayerTime {
     return params;
   }
 
-  Map<String, String> _currentAndNextPrayerNames() {
+  Map<String, String> currentAndNextPrayerNames() {
     DateTime currentTime = DateTime.now();
 
     String currentPrayer =

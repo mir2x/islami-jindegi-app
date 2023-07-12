@@ -7,6 +7,109 @@ import 'package:flutter_svg/svg.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/objects/prayer_time.dart';
 
+class CurrentLocationPrayers extends StatelessWidget {
+  const CurrentLocationPrayers({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isMobile = screenWidth < 768;
+
+    return Column(
+      crossAxisAlignment:
+          isMobile ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+      children: const [
+        CurrentLocation(),
+        CurrentPrayers(),
+      ],
+    );
+  }
+}
+
+class CurrentLocation extends ConsumerStatefulWidget {
+  const CurrentLocation({super.key});
+
+  @override
+  CurrentLocationState createState() => CurrentLocationState();
+}
+
+class CurrentLocationState extends ConsumerState<CurrentLocation> {
+  Timer? timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    timer = Timer.periodic(
+      const Duration(minutes: 30),
+      (Timer t) => setState(() {}),
+    );
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
+    var textTheme = Theme.of(context).textTheme;
+    var geoData = ref.watch(geolocationProvider);
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isMobile = screenWidth < 768;
+
+    return geoData.when(
+      loading: () => Container(
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 15),
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (error, _) => Text(error.toString()),
+      data: (Map geolocation) {
+        String location = geolocation['location']
+            .values
+            .where((v) => v is String && v.isNotEmpty)
+            .join(', ');
+
+        return Column(
+          crossAxisAlignment:
+              isMobile ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+          children: [
+            Container(
+              margin: EdgeInsets.only(bottom: isMobile ? 0 : 5),
+              child: Row(
+                children: [
+                  Text(location, style: textTheme.labelSmall),
+                  if (!geolocation['isGeolocated']) ...[
+                    Container(
+                      margin: const EdgeInsets.only(left: 15, right: 3),
+                      child: GestureDetector(
+                        onTap: () => ref
+                            .read(geolocationProvider.notifier)
+                            .updateCoordinates(),
+                        child: SvgPicture.asset(
+                          'assets/images/icons/location.svg',
+                          fit: BoxFit.scaleDown,
+                          width: 30,
+                          height: 23,
+                        ),
+                      ),
+                    ),
+                    Text(locales.setLocation, style: textTheme.labelSmall),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
 class CurrentPrayers extends ConsumerStatefulWidget {
   const CurrentPrayers({super.key});
 
@@ -67,40 +170,10 @@ class CurrentPrayersState extends ConsumerState<CurrentPrayers> {
           currentLang,
         );
 
-        String location = geolocation['location']
-            .values
-            .where((v) => v is String && v.isNotEmpty)
-            .join(', ');
-
         return Column(
           crossAxisAlignment:
               isMobile ? CrossAxisAlignment.start : CrossAxisAlignment.end,
           children: [
-            Container(
-              margin: EdgeInsets.only(bottom: isMobile ? 0 : 5),
-              child: Row(
-                children: [
-                  Text(location, style: textTheme.labelSmall),
-                  if (!geolocation['isGeolocated']) ...[
-                    Container(
-                      margin: const EdgeInsets.only(left: 15, right: 3),
-                      child: GestureDetector(
-                        onTap: () => ref
-                            .read(geolocationProvider.notifier)
-                            .updateCoordinates(),
-                        child: SvgPicture.asset(
-                          'assets/images/icons/location.svg',
-                          fit: BoxFit.scaleDown,
-                          width: 30,
-                          height: 23,
-                        ),
-                      ),
-                    ),
-                    Text(locales.setLocation, style: textTheme.labelSmall),
-                  ],
-                ],
-              ),
-            ),
             if (prayerTimes.containsKey('current')) ...[
               Container(
                 margin: EdgeInsets.only(bottom: isMobile ? 0 : 5),

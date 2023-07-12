@@ -8,11 +8,13 @@ class NamazTimeItem extends ConsumerWidget {
     super.key,
     required this.label,
     required this.value,
+    required this.isActive,
     required this.onSelected,
   });
 
   final String label;
   final String value;
+  final bool isActive;
   final void Function() onSelected;
 
   @override
@@ -35,7 +37,7 @@ class NamazTimeItem extends ConsumerWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
-                    color: ThemeColors.color7,
+                    color: isActive ? ThemeColors.color5 : ThemeColors.color7,
                   ),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 15,

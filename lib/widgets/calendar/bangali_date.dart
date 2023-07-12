@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:native_app/objects/bongabdo.dart';
 
 class BangaliDate extends StatelessWidget {
-  const BangaliDate({super.key});
+  const BangaliDate({
+    super.key,
+    this.count,
+  });
+
+  final int? count;
 
   @override
   Widget build(BuildContext context) {

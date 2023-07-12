@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hijri_picker/hijri_picker.dart';
 import 'package:hijri/hijri_calendar.dart';
-import 'package:native_app/providers/preferences.dart';
+import 'package:native_app/providers/geolocation.dart';
+import 'package:native_app/helpers/adjusted_hijri_date.dart';
 
 class HijriDateCalendar extends ConsumerWidget {
   const HijriDateCalendar({
@@ -18,12 +19,12 @@ class HijriDateCalendar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var preferences = ref.watch(preferencesProvider);
+    var dataP = ref.watch(preferencesAndGeolocationProvider);
 
-    return preferences.when(
+    return dataP.when(
       loading: () => const CircularProgressIndicator(),
       error: (error, _) => Text(error.toString()),
-      data: (prefs) {
+      data: (data) {
         return GestureDetector(
           onTap: () {
             HijriCalendar today;
@@ -31,12 +32,7 @@ class HijriDateCalendar extends ConsumerWidget {
             if (currentDate != null) {
               today = currentDate!;
             } else {
-              int adjustment = prefs.getInt('hijriAdjustment') ?? 0;
-              final DateTime date = DateTime.now();
-              DateTime adjustedToday =
-                  DateTime(date.year, date.month, date.day + adjustment);
-
-              today = HijriCalendar.fromDate(adjustedToday);
+              today = adjustedHijriDate(data);
             }
 
             showDialog(

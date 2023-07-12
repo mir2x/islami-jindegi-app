@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/providers/preferences.dart';
-import 'package:native_app/widgets/calendar/hijri_date.dart';
-import 'package:native_app/widgets/calendar/bangali_date.dart';
-import 'package:native_app/widgets/calendar/gregorian_date.dart';
 import 'package:native_app/theme/colors.dart';
-import 'current_prayers.dart';
+import 'current_dates.dart';
+import 'current_location_prayers.dart';
 
 class DatesPrayers extends ConsumerWidget {
   const DatesPrayers({super.key});
@@ -32,14 +30,7 @@ class DatesPrayers extends ConsumerWidget {
                   right: 15,
                   bottom: 8,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    HijriDate(),
-                    BangaliDate(),
-                    GregorianDate(),
-                  ],
-                ),
+                child: const CurrentDates(),
               ),
               Container(
                 decoration: BoxDecoration(
@@ -51,7 +42,7 @@ class DatesPrayers extends ConsumerWidget {
                   vertical: 9,
                   horizontal: 15,
                 ),
-                child: const CurrentPrayers(),
+                child: const CurrentLocationPrayers(),
               ),
             ],
           );
@@ -64,18 +55,9 @@ class DatesPrayers extends ConsumerWidget {
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    HijriDate(),
-                    SizedBox(height: 5),
-                    BangaliDate(),
-                    SizedBox(height: 5),
-                    GregorianDate(),
-                  ],
-                ),
-                const CurrentPrayers(),
+              children: const [
+                CurrentDates(),
+                CurrentLocationPrayers(),
               ],
             ),
           );

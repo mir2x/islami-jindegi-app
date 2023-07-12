@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -23,6 +24,17 @@ class NamazTimes extends ConsumerStatefulWidget {
 
 class NamazTimesState extends ConsumerState<NamazTimes> {
   HijriCalendar? selectedHijriDate;
+  Timer? timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    timer = Timer.periodic(
+      const Duration(minutes: 1),
+      (Timer t) => setState(() {}),
+    );
+  }
 
   updateHijriDate(HijriCalendar value) {
     setState(() {
@@ -31,10 +43,15 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
   }
 
   @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
-    var textTheme = Theme.of(context).textTheme;
     var dataP = ref.watch(preferencesAndGeolocationProvider);
 
     return AppScaffold(
@@ -73,6 +90,9 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
           );
 
           Map prayerTimes = prayerTime.getTimes(locales, currentLang);
+          String currentPrayer =
+              prayerTime.currentAndNextPrayerNames()['currentPrayer']!;
+
           String location = geolocation['location']
               .values
               .where((v) => v is String && v.isNotEmpty)
@@ -145,6 +165,7 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                         child: NamazTimeItem(
                           label: prayerTimes['tahajjud']['title'],
                           value: prayerTimes['tahajjud']['endTime'],
+                          isActive: currentPrayer == 'tahajjud',
                           onSelected: () => QR.to('namaz-times/tahajjud'),
                         ),
                       ),
@@ -153,6 +174,7 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                         child: NamazTimeItem(
                           label: prayerTimes['fajr']['title'],
                           value: prayerTimes['fajr']['startTime'],
+                          isActive: currentPrayer == 'fajr',
                           onSelected: () => QR.to('namaz-times/fajr'),
                         ),
                       ),
@@ -161,6 +183,7 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                         child: NamazTimeItem(
                           label: prayerTimes['sunrise']['title'],
                           value: prayerTimes['sunrise']['time'],
+                          isActive: false,
                           onSelected: () => QR.to('namaz-times/sunrise'),
                         ),
                       ),
@@ -169,6 +192,7 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                         child: NamazTimeItem(
                           label: prayerTimes['ishraq']['title'],
                           value: prayerTimes['ishraq']['startTime'],
+                          isActive: currentPrayer == 'ishraq',
                           onSelected: () => QR.to('namaz-times/ishraq'),
                         ),
                       ),
@@ -177,6 +201,7 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                         child: NamazTimeItem(
                           label: prayerTimes['midday']['title'],
                           value: prayerTimes['midday']['time'],
+                          isActive: false,
                           onSelected: () => QR.to('namaz-times/midday'),
                         ),
                       ),
@@ -185,6 +210,7 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                         child: NamazTimeItem(
                           label: prayerTimes['dhuhr']['title'],
                           value: prayerTimes['dhuhr']['startTime'],
+                          isActive: currentPrayer == 'dhuhr',
                           onSelected: () => QR.to('namaz-times/zuhr'),
                         ),
                       ),
@@ -193,6 +219,7 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                         child: NamazTimeItem(
                           label: prayerTimes['asr']['title'],
                           value: prayerTimes['asr']['startTime'],
+                          isActive: currentPrayer == 'asr',
                           onSelected: () => QR.to('namaz-times/asr'),
                         ),
                       ),
@@ -201,6 +228,7 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                         child: NamazTimeItem(
                           label: prayerTimes['sunset']['title'],
                           value: prayerTimes['sunset']['time'],
+                          isActive: false,
                           onSelected: () => QR.to('namaz-times/sunset'),
                         ),
                       ),
@@ -209,6 +237,7 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                         child: NamazTimeItem(
                           label: prayerTimes['maghrib']['title'],
                           value: prayerTimes['maghrib']['startTime'],
+                          isActive: currentPrayer == 'maghrib',
                           onSelected: () => QR.to('namaz-times/maghrib'),
                         ),
                       ),
@@ -217,6 +246,7 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                         child: NamazTimeItem(
                           label: prayerTimes['isha']['title'],
                           value: prayerTimes['isha']['startTime'],
+                          isActive: currentPrayer == 'isha',
                           onSelected: () => QR.to('namaz-times/isha'),
                         ),
                       ),
