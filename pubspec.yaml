@@ -85,7 +85,8 @@ dependencies:
   hijri: ^3.0.0
   hijri_picker:
     git:
-      url: https://github.com/ahmedoid/hijri_picker.git
+      url: https://github.com/musaffa/hijri_picker.git
+      ref: pass-weekday-number
   adhan: ^2.0.0-nullsafety.2
   smooth_compass: ^2.0.12
 

@@ -28,12 +28,21 @@ class HijriDateCalendar extends ConsumerWidget {
         return GestureDetector(
           onTap: () {
             HijriCalendar today;
+            int adjustedWeekdayNumber = 0;
 
             if (currentDate != null) {
               today = currentDate!;
             } else {
               today = adjustedHijriDate(data);
+
+              if (isAfterDateStartTime(DateTime.now(), data)) {
+                adjustedWeekdayNumber -= 1;
+              }
             }
+
+            int hijriAdjustment =
+                data['preferences'].getInt('hijriAdjustment') ?? 0;
+            adjustedWeekdayNumber -= hijriAdjustment;
 
             showDialog(
               context: context,
@@ -42,6 +51,19 @@ class HijriDateCalendar extends ConsumerWidget {
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     child: HijriMonthPicker(
+                      builders: HijriCalendarBuilders(
+                        weekdayBuilder: (context, day, number) {
+                          MaterialLocalizations localizations =
+                              MaterialLocalizations.of(context);
+                          int num = (number + adjustedWeekdayNumber) % 7;
+                          final String weekday =
+                              localizations.narrowWeekdays[num];
+
+                          return Center(
+                            child: Text(weekday),
+                          );
+                        },
+                      ),
                       selectedDate: today,
                       firstDate: HijriCalendar()
                         ..hYear = 1400

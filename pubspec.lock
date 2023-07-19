@@ -689,9 +689,9 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: HEAD
-      resolved-ref: "84575c9615555fabdd750ff6adb79db8789065c3"
-      url: "https://github.com/ahmedoid/hijri_picker.git"
+      ref: pass-weekday-number
+      resolved-ref: "87b57655e6d8f8ee60042a69eda3e3490d764f26"
+      url: "https://github.com/musaffa/hijri_picker.git"
     source: git
     version: "4.0.0"
   hive:
