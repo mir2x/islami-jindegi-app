@@ -28,7 +28,7 @@ class HijriDate extends ConsumerWidget {
         child: const SizedBox(
           width: 15,
           height: 15,
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(strokeWidth: 2),
         ),
       ),
       error: (error, _) => Text(error.toString()),
