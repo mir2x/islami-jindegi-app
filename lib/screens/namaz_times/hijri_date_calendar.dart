@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hijri_picker/hijri_picker.dart';
 import 'package:hijri/hijri_calendar.dart';
-import 'package:native_app/providers/geolocation.dart';
+import 'package:native_app/providers/hijri_date_settings.dart';
 import 'package:native_app/helpers/adjusted_hijri_date.dart';
 
 class HijriDateCalendar extends ConsumerWidget {
@@ -19,30 +19,36 @@ class HijriDateCalendar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var dataProvider = ref.watch(preferencesAndGeolocationProvider);
+    var settingsProvider = ref.watch(hijriDateSettingsProvider);
 
-    return dataProvider.when(
+    return settingsProvider.when(
       loading: () => const CircularProgressIndicator(),
       error: (error, _) => Text(error.toString()),
-      data: (data) {
+      data: (settings) {
         return GestureDetector(
           onTap: () {
             HijriCalendar today;
             int adjustedWeekdayNumber = 0;
+            int localAdjustment =
+                settings['preferences'].getInt('hijriAdjustment') ?? 0;
 
             if (currentDate != null) {
               today = currentDate!;
+              adjustedWeekdayNumber -= localAdjustment;
             } else {
-              today = adjustedHijriDate(data);
+              today = adjustedHijriDate(settings);
 
-              if (isAfterDateStartTime(DateTime.now(), data)) {
+              if (isAfterDateStartTime(DateTime.now(), settings)) {
                 adjustedWeekdayNumber -= 1;
               }
-            }
 
-            int hijriAdjustment =
-                data['preferences'].getInt('hijriAdjustment') ?? 0;
-            adjustedWeekdayNumber -= hijriAdjustment;
+              if (localAdjustment != 0) {
+                adjustedWeekdayNumber -= localAdjustment;
+              } else {
+                int adminAdjustment = settings['adminHijriAdjustment'];
+                adjustedWeekdayNumber -= adminAdjustment;
+              }
+            }
 
             showDialog(
               context: context,
