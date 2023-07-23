@@ -62,7 +62,7 @@ class CurrentLocationState extends ConsumerState<CurrentLocation> {
 
     return geoData.when(
       loading: () => Container(
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 15),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         child: const Center(
           child: CircularProgressIndicator(),
         ),
@@ -72,6 +72,8 @@ class CurrentLocationState extends ConsumerState<CurrentLocation> {
         String location = geolocation['location']
             .values
             .where((v) => v is String && v.isNotEmpty)
+            .toList()
+            .sublist(0, 2)
             .join(', ');
 
         return Column(
@@ -141,17 +143,12 @@ class CurrentPrayersState extends ConsumerState<CurrentPrayers> {
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
-    var dataP = ref.watch(preferencesAndGeolocationProvider);
+    var dataProvider = ref.watch(preferencesAndGeolocationProvider);
     double screenWidth = MediaQuery.of(context).size.width;
     bool isMobile = screenWidth < 768;
 
-    return dataP.when(
-      loading: () => Container(
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 15),
-        child: const Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
+    return dataProvider.when(
+      loading: () => const SizedBox.shrink(),
       error: (error, _) => Text(error.toString()),
       data: (Map data) {
         Map geolocation = data['geolocation'];

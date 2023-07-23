@@ -21,6 +21,7 @@ import 'package:native_app/models/book.dart';
 import 'package:native_app/models/chapter.dart';
 import 'package:native_app/models/dua_category.dart';
 import 'package:native_app/models/dua.dart';
+import 'package:native_app/models/hijri_adjustment.dart';
 import 'package:native_app/models/madrasah_info.dart';
 import 'package:native_app/models/madrasah_photo.dart';
 import 'package:native_app/models/madrasah.dart';
@@ -85,6 +86,7 @@ final repositoryProviders = <String, Provider<Repository<DataModel>>>{
   'chapters': chaptersRepositoryProvider,
   'duaCategories': duaCategoriesRepositoryProvider,
   'duas': duasRepositoryProvider,
+  'hijriAdjustments': hijriAdjustmentsRepositoryProvider,
   'madrasahInfos': madrasahInfosRepositoryProvider,
   'madrasahPhotos': madrasahPhotosRepositoryProvider,
   'madrasahs': madrasahsRepositoryProvider,
@@ -129,6 +131,7 @@ final repositoryInitializerProvider =
   DataHelpers.setInternalType<Chapter>('chapters');
   DataHelpers.setInternalType<DuaCategory>('duaCategories');
   DataHelpers.setInternalType<Dua>('duas');
+  DataHelpers.setInternalType<HijriAdjustment>('hijriAdjustments');
   DataHelpers.setInternalType<MadrasahInfo>('madrasahInfos');
   DataHelpers.setInternalType<MadrasahPhoto>('madrasahPhotos');
   DataHelpers.setInternalType<Madrasah>('madrasahs');
@@ -174,6 +177,8 @@ final repositoryInitializerProvider =
     'chapters': ref.watch(internalChaptersRemoteAdapterProvider),
     'duaCategories': ref.watch(internalDuaCategoriesRemoteAdapterProvider),
     'duas': ref.watch(internalDuasRemoteAdapterProvider),
+    'hijriAdjustments':
+        ref.watch(internalHijriAdjustmentsRemoteAdapterProvider),
     'madrasahInfos': ref.watch(internalMadrasahInfosRemoteAdapterProvider),
     'madrasahPhotos': ref.watch(internalMadrasahPhotosRemoteAdapterProvider),
     'madrasahs': ref.watch(internalMadrasahsRemoteAdapterProvider),
@@ -220,6 +225,7 @@ final repositoryInitializerProvider =
     'chapters': true,
     'duaCategories': true,
     'duas': true,
+    'hijriAdjustments': true,
     'madrasahInfos': true,
     'madrasahPhotos': true,
     'madrasahs': true,
@@ -302,6 +308,9 @@ extension RepositoryWidgetRefX on WidgetRef {
         ..remoteAdapter.internalWatch = watch;
   Repository<Dua> get duas =>
       watch(duasRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<HijriAdjustment> get hijriAdjustments =>
+      watch(hijriAdjustmentsRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
   Repository<MadrasahInfo> get madrasahInfos =>
       watch(madrasahInfosRepositoryProvider)
         ..remoteAdapter.internalWatch = watch;
@@ -405,6 +414,9 @@ extension RepositoryRefX on Ref {
         ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Dua> get duas => watch(duasRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<HijriAdjustment> get hijriAdjustments =>
+      watch(hijriAdjustmentsRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<MadrasahInfo> get madrasahInfos =>
       watch(madrasahInfosRepositoryProvider)
         ..remoteAdapter.internalWatch = watch as Watcher;

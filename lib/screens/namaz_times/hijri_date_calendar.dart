@@ -19,9 +19,9 @@ class HijriDateCalendar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var dataP = ref.watch(preferencesAndGeolocationProvider);
+    var dataProvider = ref.watch(preferencesAndGeolocationProvider);
 
-    return dataP.when(
+    return dataProvider.when(
       loading: () => const CircularProgressIndicator(),
       error: (error, _) => Text(error.toString()),
       data: (data) {

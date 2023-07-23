@@ -2,26 +2,30 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:adhan/adhan.dart';
 import 'package:native_app/objects/prayer_time.dart';
 
-HijriCalendar adjustedHijriDate(Map data) {
+HijriCalendar adjustedHijriDate(Map settings) {
   DateTime date = DateTime.now();
+  DateTime adjustedToday;
 
-  if (isAfterDateStartTime(date, data)) {
+  if (isAfterDateStartTime(date, settings)) {
     date = DateTime(date.year, date.month, date.day + 1);
   }
 
-  dynamic preferences = data['preferences'];
-  int adjustment = preferences.getInt('hijriAdjustment') ?? 0;
+  dynamic preferences = settings['preferences'];
+  int localAdjustment = preferences.getInt('hijriAdjustment') ?? 0;
 
-  DateTime adjustedToday =
-      DateTime(date.year, date.month, date.day + adjustment);
+  if (localAdjustment != 0) {
+    adjustedToday = DateTime(date.year, date.month, date.day + localAdjustment);
+  } else {
+    int adminAdjustment = settings['adminHijriAdjustment'];
+    adjustedToday = DateTime(date.year, date.month, date.day + adminAdjustment);
+  }
 
   return HijriCalendar.fromDate(adjustedToday);
 }
 
-bool isAfterDateStartTime(DateTime date, Map data) {
-  Map geolocation = data['geolocation'];
-  dynamic preferences = data['preferences'];
-  Map coordinates = geolocation['coordinates'];
+bool isAfterDateStartTime(DateTime date, Map settings) {
+  dynamic preferences = settings['preferences'];
+  Map coordinates = settings['coordinates'];
 
   PrayerTime prayerTime = PrayerTime(
     coordinates: Coordinates(

@@ -53,9 +53,9 @@ class DatesPrayers extends ConsumerWidget {
               borderRadius: BorderRadius.circular(15),
               color: theme == 'dark' ? ThemeColors.color2 : ThemeColors.color3,
             ),
-            child: Row(
+            child: const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
+              children: [
                 CurrentDates(),
                 CurrentLocationPrayers(),
               ],

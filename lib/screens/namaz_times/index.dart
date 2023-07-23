@@ -50,13 +50,14 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
 
   @override
   Widget build(BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
-    var dataP = ref.watch(preferencesAndGeolocationProvider);
+    var dataProvider = ref.watch(preferencesAndGeolocationProvider);
 
     return AppScaffold(
       title: Text(locales.namazTime),
-      body: dataP.when(
+      body: dataProvider.when(
         loading: () => Container(
           margin: const EdgeInsets.only(top: 100),
           child: const Center(
@@ -96,6 +97,8 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
           String location = geolocation['location']
               .values
               .where((v) => v is String && v.isNotEmpty)
+              .toList()
+              .sublist(0, 2)
               .join(', ');
 
           return ItemContent(
@@ -128,7 +131,7 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                     children: [
                       Row(
                         children: [
-                          Text(location),
+                          Text(location, style: textTheme.labelSmall),
                           if (!geolocation['isGeolocated']) ...[
                             Container(
                               margin: const EdgeInsets.only(
@@ -147,7 +150,10 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                                 ),
                               ),
                             ),
-                            Text(locales.setLocation)
+                            Text(
+                              locales.setLocation,
+                              style: textTheme.labelSmall,
+                            ),
                           ],
                         ],
                       ),

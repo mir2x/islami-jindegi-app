@@ -1,0 +1,25 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/geolocation.dart';
+import 'package:native_app/providers/all_models.dart';
+import 'package:native_app/objects/all_models_query.dart';
+import 'package:native_app/main.data.dart';
+
+final hijriDateSettingsProvider = FutureProvider((ref) async {
+  final data = await ref.read(preferencesAndGeolocationProvider.future);
+  String countryCode = data['geolocation']['location']['countryCode'];
+
+  var hijriQuery = AllModelsQuery(
+    repository: ref.hijriAdjustments,
+    params: {'country-code': countryCode, 'quantity': 1},
+  );
+
+  final hijriAdjustment = await ref.read(allModelsProvider(hijriQuery).future);
+  int adminHijriAdjustment =
+      hijriAdjustment.isNotEmpty ? hijriAdjustment.first.adjustment : 0;
+
+  return {
+    'preferences': data['preferences'],
+    'coordinates': data['geolocation']['coordinates'],
+    'adminHijriAdjustment': adminHijriAdjustment,
+  };
+});

@@ -37,10 +37,12 @@ Future<Map> getFailSafeLocation() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
 
   if (preferences.getString('city') != null &&
-      preferences.getString('country') != null) {
+      preferences.getString('country') != null &&
+      preferences.getString('countryCode') != null) {
     return {
       'city': preferences.getString('city'),
       'country': preferences.getString('country'),
+      'countryCode': preferences.getString('countryCode'),
     };
   } else {
     String locale = preferences.getString('locale') ?? 'bn';
@@ -48,6 +50,7 @@ Future<Map> getFailSafeLocation() async {
     return {
       'city': locale == 'bn' ? 'ঢাকা' : 'Dhaka',
       'country': locale == 'bn' ? 'বাংলাদেশ' : 'Bangladesh',
+      'countryCode': 'BD',
     };
   }
 }
@@ -76,8 +79,9 @@ Future<Map> getLocation(Position position) async {
     }
 
     return {
-      'city': placemarks.first.locality,
+      'city': placemark.locality,
       'country': country,
+      'countryCode': placemark.isoCountryCode,
     };
   } catch (error) {
     return await getFailSafeLocation();

@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart';
-import 'package:native_app/providers/geolocation.dart';
+import 'package:native_app/providers/hijri_date_settings.dart';
 import 'package:native_app/helpers/adjusted_hijri_date.dart';
 
 class HijriDate extends ConsumerWidget {
@@ -20,12 +20,19 @@ class HijriDate extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
-    var dataP = ref.watch(preferencesAndGeolocationProvider);
+    var settingsProvider = ref.watch(hijriDateSettingsProvider);
 
-    return dataP.when(
-      loading: () => const CircularProgressIndicator(),
+    return settingsProvider.when(
+      loading: () => Container(
+        padding: const EdgeInsets.only(bottom: 5),
+        child: const SizedBox(
+          width: 15,
+          height: 15,
+          child: CircularProgressIndicator(),
+        ),
+      ),
       error: (error, _) => Text(error.toString()),
-      data: (Map data) {
+      data: (Map settings) {
         final Map months = {
           '1': locales.muharrom,
           '2': locales.safar,
@@ -46,7 +53,7 @@ class HijriDate extends ConsumerWidget {
         if (currentDate != null) {
           today = currentDate!;
         } else {
-          today = adjustedHijriDate(data);
+          today = adjustedHijriDate(settings);
         }
 
         var numFormatter = NumberFormat('#', currentLang);
