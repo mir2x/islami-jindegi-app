@@ -157,6 +157,24 @@ class Bayans extends ConsumerWidget {
                             item.title,
                             style: textTheme.titleMedium,
                           ),
+                          if (item.speaker.value != null) ...[
+                            Container(
+                              margin: const EdgeInsets.only(top: 5),
+                              child: Text(
+                                item.speaker.value.name,
+                                style: textTheme.labelMedium,
+                              ),
+                            ),
+                          ],
+                          if (item.location != null) ...[
+                            Container(
+                              margin: const EdgeInsets.only(top: 5),
+                              child: Text(
+                                item.location,
+                                style: textTheme.labelSmall,
+                              ),
+                            ),
+                          ],
                           Container(
                             margin: const EdgeInsets.only(top: 5),
                             child: Text(
