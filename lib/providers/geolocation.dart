@@ -106,6 +106,10 @@ Future updatePreferences(Position position, Map location) async {
   if (preferences.getString('country') != location['country']) {
     preferences.setString('country', location['country']);
   }
+
+  if (preferences.getString('countryCode') != location['countryCode']) {
+    preferences.setString('countryCode', location['countryCode']);
+  }
 }
 
 class GeolocationNotifier extends AsyncNotifier<Map> {

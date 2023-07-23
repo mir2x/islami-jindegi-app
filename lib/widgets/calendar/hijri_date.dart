@@ -24,7 +24,7 @@ class HijriDate extends ConsumerWidget {
 
     return settingsProvider.when(
       loading: () => Container(
-        padding: const EdgeInsets.only(bottom: 5),
+        padding: const EdgeInsets.only(bottom: 8),
         child: const SizedBox(
           width: 15,
           height: 15,

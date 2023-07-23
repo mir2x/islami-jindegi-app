@@ -6,16 +6,23 @@ import 'package:native_app/main.data.dart';
 
 final hijriDateSettingsProvider = FutureProvider((ref) async {
   final data = await ref.read(preferencesAndGeolocationProvider.future);
-  String countryCode = data['geolocation']['location']['countryCode'];
 
-  var hijriQuery = AllModelsQuery(
-    repository: ref.hijriAdjustments,
-    params: {'country-code': countryCode, 'quantity': 1},
-  );
+  int adminHijriAdjustment = 0;
 
-  final hijriAdjustment = await ref.read(allModelsProvider(hijriQuery).future);
-  int adminHijriAdjustment =
-      hijriAdjustment.isNotEmpty ? hijriAdjustment.first.adjustment : 0;
+  String? countryCode = data['geolocation']['location']['countryCode'];
+
+  if (countryCode != null) {
+    var query = AllModelsQuery(
+      repository: ref.hijriAdjustments,
+      params: {'country-code': countryCode, 'quantity': 1},
+    );
+
+    final hijriAdjustment = await ref.read(allModelsProvider(query).future);
+
+    if (hijriAdjustment.isNotEmpty) {
+      adminHijriAdjustment = hijriAdjustment.first.adjustment;
+    }
+  }
 
   return {
     'preferences': data['preferences'],
