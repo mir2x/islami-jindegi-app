@@ -94,12 +94,10 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
           String currentPrayer =
               prayerTime.currentAndNextPrayerNames()['currentPrayer']!;
 
-          String location = geolocation['location']
-              .values
-              .where((v) => v is String && v.isNotEmpty)
-              .toList()
-              .sublist(0, 2)
-              .join(', ');
+          String location = [
+            geolocation['location']['city'],
+            geolocation['location']['country']
+          ].where((v) => v is String && v.isNotEmpty).join(', ');
 
           return ItemContent(
             children: [

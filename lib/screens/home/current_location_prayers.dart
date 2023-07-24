@@ -69,12 +69,10 @@ class CurrentLocationState extends ConsumerState<CurrentLocation> {
       ),
       error: (error, _) => Text(error.toString()),
       data: (Map geolocation) {
-        String location = geolocation['location']
-            .values
-            .where((v) => v is String && v.isNotEmpty)
-            .toList()
-            .sublist(0, 2)
-            .join(', ');
+        String location = [
+          geolocation['location']['city'],
+          geolocation['location']['country']
+        ].where((v) => v is String && v.isNotEmpty).join(', ');
 
         return Column(
           crossAxisAlignment:
