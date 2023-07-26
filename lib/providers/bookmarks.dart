@@ -1,10 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:native_app/models/bookmark.dart';
 
 final bookmarksStoreProvider = FutureProvider((ref) async {
+  final dir = await getApplicationDocumentsDirectory();
+
   return Isar.getInstance('bookmarks') ??
-      await Isar.open([BookmarkSchema], name: 'bookmarks');
+      await Isar.open([BookmarkSchema], directory: dir.path, name: 'bookmarks');
 });
 
 class BookmarkNotifier

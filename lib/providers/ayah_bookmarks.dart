@@ -1,10 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:native_app/models/ayah_bookmark.dart';
 
 final ayahBookmarksStoreProvider = FutureProvider((ref) async {
+  final dir = await getApplicationDocumentsDirectory();
+
   return Isar.getInstance('ayahBookmarks') ??
-      await Isar.open([AyahBookmarkSchema], name: 'ayahBookmarks');
+      await Isar.open(
+        [AyahBookmarkSchema],
+        directory: dir.path,
+        name: 'ayahBookmarks',
+      );
 });
 
 class AyahBookmarkNotifier

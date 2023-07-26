@@ -70,7 +70,7 @@ ConfigureRepositoryLocalStorage configureRepositoryLocalStorage = (
   );
 };
 
-final repositoryProviders = <String, Provider<Repository<DataModel>>>{
+final repositoryProviders = <String, Provider<Repository<DataModelMixin>>>{
   'articleAuthors': articleAuthorsRepositoryProvider,
   'articleCategories': articleCategoriesRepositoryProvider,
   'articleSubcategories': articleSubcategoriesRepositoryProvider,

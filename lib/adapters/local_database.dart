@@ -7,7 +7,7 @@ import 'package:native_app/providers/local_database.dart';
 
 mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
   @override
-  Future<List<T>?> findAll({
+  Future<List<T>> findAll({
     bool? remote,
     bool? background,
     Map<String, dynamic>? params,
@@ -77,7 +77,7 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
       );
 
       onSuccess ??= (data, label, _) => this.onSuccess<List<T>>(data, label);
-      return onSuccess.call(data, label, this);
+      return await onSuccess.call(data, label, this) ?? <T>[];
     } else {
       return super.findAll(
         remote: remote,
