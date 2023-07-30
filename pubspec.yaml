@@ -90,12 +90,19 @@ dependencies:
   adhan: ^2.0.0-nullsafety.2
   smooth_compass: ^2.0.12
 
+  # widget
+  home_widget: ^0.3.0
+
+  # firebase
+  firebase_core: ^2.15.0
+  firebase_messaging: ^14.6.5
+  flutter_local_notifications: ^15.1.0+1
+
   # assets
   flutter_svg: ^1.1.1+1
   cached_network_image: ^3.2.3
   transparent_image: ^2.0.0
   flutter_native_splash: ^2.2.16
-  home_widget: ^0.3.0
 
 dev_dependencies:
   flutter_test:

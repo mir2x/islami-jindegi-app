@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "218822188400",
+    "project_id": "islami-dars",
+    "storage_bucket": "islami-dars.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:218822188400:android:e9e14d5f642582f43303b5",
+        "android_client_info": {
+          "package_name": "com.islamidars"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "218822188400-1f2t86a17k0a2oi2k0pbthn74rcr1d23.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_O8C49nb3AAQ0hWrq49StW5hrwn0borQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "218822188400-1f2t86a17k0a2oi2k0pbthn74rcr1d23.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "218822188400-slp8vtnej8op5dj5b6fu4g1eseg7pm42.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.islamidars"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

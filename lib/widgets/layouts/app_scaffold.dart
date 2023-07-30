@@ -6,6 +6,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:native_app/providers/push_notifications.dart';
 import 'package:native_app/providers/preferences.dart';
 
 class AppScaffold extends ConsumerWidget {
@@ -32,7 +33,10 @@ class AppScaffold extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+
+    ref.read(pushNotificationProvider);
     var prefs = ref.watch(preferencesProvider);
+
     final GlobalKey<ScaffoldState> sKey =
         scaffoldKey ?? GlobalKey<ScaffoldState>();
 

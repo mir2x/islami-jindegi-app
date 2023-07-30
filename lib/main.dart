@@ -4,12 +4,14 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/theme/themes.dart';
 import 'package:native_app/widgets/utils/full_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'routes/index.dart';
 import 'screens/error_pages/page_404.dart';
+import 'firebase_options.dart';
 import 'main.data.dart';
 
 Future main() async {
@@ -21,6 +23,10 @@ Future main() async {
   ]);
 
   await dotenv.load(fileName: '.env');
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   QR.settings.pagesType = const QSlidePage();
   QR.settings.notFoundPage = QRoute(
