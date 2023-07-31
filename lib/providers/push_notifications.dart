@@ -22,7 +22,7 @@ Future initLocalNotifications(androidChannel) async {
   final localNotifications = FlutterLocalNotificationsPlugin();
 
   const androidSettings =
-      AndroidInitializationSettings('@mipmap/launcher_icon');
+      AndroidInitializationSettings('@drawable/launcher_icon');
 
   final DarwinInitializationSettings iOSSettings = DarwinInitializationSettings(
     onDidReceiveLocalNotification: (_, __, ___, payload) {
@@ -104,7 +104,7 @@ final pushNotificationProvider = FutureProvider((ref) async {
             android: AndroidNotificationDetails(
               androidChannel.id,
               androidChannel.name,
-              icon: '@mipmap/launcher_icon',
+              icon: '@drawable/launcher_icon',
             ),
             iOS: DarwinNotificationDetails(subtitle: notification.title),
           ),
