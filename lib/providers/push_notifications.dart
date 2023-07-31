@@ -60,11 +60,12 @@ final pushNotificationProvider = FutureProvider((ref) async {
     badge: true,
     carPlay: false,
     criticalAlert: false,
-    provisional: false,
+    provisional: true,
     sound: true,
   );
 
-  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+  if (settings.authorizationStatus == AuthorizationStatus.provisional ||
+      settings.authorizationStatus == AuthorizationStatus.authorized) {
     /* try { */
     /*   final fCMToken = await messaging.getToken(); */
     /* } catch (error) { */
