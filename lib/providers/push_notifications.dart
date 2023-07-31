@@ -18,7 +18,7 @@ Future<void> handleMessage(RemoteMessage? message) async {
   }
 }
 
-Future initLocalNotifications(androidChannel) async {
+Future initLocalNotifications() async {
   final localNotifications = FlutterLocalNotificationsPlugin();
 
   const androidSettings =
@@ -48,11 +48,6 @@ Future initLocalNotifications(androidChannel) async {
     },
   );
 
-  final platform = localNotifications.resolvePlatformSpecificImplementation<
-      AndroidFlutterLocalNotificationsPlugin>();
-
-  await platform?.createNotificationChannel(androidChannel);
-
   return localNotifications;
 }
 
@@ -76,13 +71,7 @@ final pushNotificationProvider = FutureProvider((ref) async {
     /*   // connection error */
     /* } */
 
-    const androidChannel = AndroidNotificationChannel(
-      'push_notification_channel',
-      'Push Notifications',
-      importance: Importance.defaultImportance,
-    );
-
-    final localNotifications = await initLocalNotifications(androidChannel);
+    final localNotifications = await initLocalNotifications();
 
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
@@ -90,6 +79,10 @@ final pushNotificationProvider = FutureProvider((ref) async {
       badge: true,
       sound: true,
     );
+
+    FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
+    FirebaseMessaging.instance.getInitialMessage().then(handleMessage);
+    FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
@@ -101,10 +94,13 @@ final pushNotificationProvider = FutureProvider((ref) async {
           notification.title,
           notification.body,
           NotificationDetails(
-            android: AndroidNotificationDetails(
-              androidChannel.id,
-              androidChannel.name,
+            android: const AndroidNotificationDetails(
+              'push_notification_channel',
+              'Push Notifications',
               icon: '@drawable/launcher_icon',
+              priority: Priority.max,
+              importance: Importance.max,
+              enableVibration: true,
             ),
             iOS: DarwinNotificationDetails(subtitle: notification.title),
           ),
@@ -112,8 +108,5 @@ final pushNotificationProvider = FutureProvider((ref) async {
         );
       }
     });
-
-    FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
-    FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
   }
 });

@@ -63,8 +63,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '218822188400',
     projectId: 'islami-dars',
     storageBucket: 'islami-dars.appspot.com',
-    iosClientId:
-        '218822188400-slp8vtnej8op5dj5b6fu4g1eseg7pm42.apps.googleusercontent.com',
+    iosClientId: '218822188400-slp8vtnej8op5dj5b6fu4g1eseg7pm42.apps.googleusercontent.com',
     iosBundleId: 'com.islamidars',
   );
 }
