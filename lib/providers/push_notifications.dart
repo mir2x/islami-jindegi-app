@@ -74,6 +74,18 @@ final pushNotificationProvider = FutureProvider((ref) async {
 
     final localNotifications = await initLocalNotifications();
 
+    const AndroidNotificationChannel androidChannel =
+        AndroidNotificationChannel(
+      'push_notification_channel',
+      'Push Notifications',
+      importance: Importance.max,
+    );
+
+    await localNotifications
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(androidChannel);
+
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
       alert: true,
@@ -87,20 +99,18 @@ final pushNotificationProvider = FutureProvider((ref) async {
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
 
-      if (notification != null && android != null) {
+      if (notification != null) {
         localNotifications.show(
           notification.hashCode,
           notification.title,
           notification.body,
           NotificationDetails(
-            android: const AndroidNotificationDetails(
-              'push_notification_channel',
-              'Push Notifications',
+            android: AndroidNotificationDetails(
+              androidChannel.id,
+              androidChannel.name,
               icon: '@drawable/launcher_icon',
               priority: Priority.max,
-              importance: Importance.max,
               enableVibration: true,
             ),
             iOS: DarwinNotificationDetails(subtitle: notification.title),
