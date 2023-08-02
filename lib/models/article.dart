@@ -18,6 +18,7 @@ class Article extends DataModel<Article> {
   final String language;
   final Map<dynamic, dynamic>? document;
   final int? position;
+  final bool? published;
   final String? publishedAt;
   final String? createdAt;
   final String? updatedAt;
@@ -32,6 +33,7 @@ class Article extends DataModel<Article> {
     required this.language,
     this.document,
     this.position,
+    this.published,
     this.publishedAt,
     this.createdAt,
     this.updatedAt,

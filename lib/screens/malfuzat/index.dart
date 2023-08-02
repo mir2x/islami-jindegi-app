@@ -204,6 +204,7 @@ class Malfuzat extends ConsumerWidget {
                     repository: ref.malfuzats,
                     params: {
                       ...params,
+                      'published': true,
                       'include': 'malfuzat-author',
                     },
                   );

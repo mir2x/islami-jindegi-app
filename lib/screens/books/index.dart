@@ -150,6 +150,7 @@ class Books extends ConsumerWidget {
                     repository: ref.books,
                     params: {
                       ...params,
+                      'published': true,
                       'include': 'authors',
                     },
                   );

@@ -20,6 +20,7 @@ class Book extends DataModel<Book> {
   final Map<dynamic, dynamic>? image;
   final Map<dynamic, dynamic>? document;
   final int? position;
+  final bool? published;
   final String? publishedAt;
   final String? createdAt;
   final String? updatedAt;
@@ -36,6 +37,7 @@ class Book extends DataModel<Book> {
     this.image,
     this.document,
     this.position,
+    this.published,
     this.publishedAt,
     this.createdAt,
     this.updatedAt,

@@ -18,6 +18,7 @@ class Dua extends DataModel<Dua> {
   final Map<dynamic, dynamic>? audio;
   final Map<dynamic, dynamic>? document;
   final int? position;
+  final bool? published;
   final String? createdAt;
   final String? updatedAt;
 
@@ -30,6 +31,7 @@ class Dua extends DataModel<Dua> {
     this.audio,
     this.document,
     this.position,
+    this.published,
     this.createdAt,
     this.updatedAt,
   });

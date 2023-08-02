@@ -180,7 +180,7 @@ class Masail extends ConsumerWidget {
                 resourceFetcher: (Map<String, dynamic> params) async {
                   AllModelsQuery query = AllModelsQuery(
                     repository: ref.masails,
-                    params: params,
+                    params: {...params, 'published': true},
                   );
 
                   return await ref.read(allModelsProvider(query).future);

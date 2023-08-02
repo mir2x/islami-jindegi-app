@@ -140,6 +140,7 @@ class Bayans extends ConsumerWidget {
                     repository: ref.bayans,
                     params: {
                       ...params,
+                      'published': true,
                       'include': 'speaker',
                     },
                   );

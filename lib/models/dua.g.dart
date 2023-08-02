@@ -68,6 +68,7 @@ Dua _$DuaFromJson(Map<String, dynamic> json) => Dua(
       audio: json['audio'] as Map<dynamic, dynamic>?,
       document: json['document'] as Map<dynamic, dynamic>?,
       position: json['position'] as int?,
+      published: json['published'] as bool?,
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
     );
@@ -81,6 +82,7 @@ Map<String, dynamic> _$DuaToJson(Dua instance) => <String, dynamic>{
       'audio': instance.audio,
       'document': instance.document,
       'position': instance.position,
+      'published': instance.published,
       'created-at': instance.createdAt,
       'updated-at': instance.updatedAt,
     };

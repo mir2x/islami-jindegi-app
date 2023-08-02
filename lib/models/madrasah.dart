@@ -18,6 +18,7 @@ class Madrasah extends DataModel<Madrasah> {
   final String? excerpt;
   final Map<dynamic, dynamic>? document;
   final int? position;
+  final bool? published;
   final String? createdAt;
   final String? updatedAt;
 
@@ -31,6 +32,7 @@ class Madrasah extends DataModel<Madrasah> {
     this.excerpt,
     this.document,
     this.position,
+    this.published,
     this.createdAt,
     this.updatedAt,
     this.madrasahInfos,

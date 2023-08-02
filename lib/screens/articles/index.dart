@@ -147,6 +147,7 @@ class Articles extends ConsumerWidget {
                     repository: ref.articles,
                     params: {
                       ...params,
+                      'published': true,
                       'include': 'article-author',
                     },
                   );

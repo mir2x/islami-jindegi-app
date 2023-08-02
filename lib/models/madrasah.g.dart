@@ -100,6 +100,7 @@ Madrasah _$MadrasahFromJson(Map<String, dynamic> json) => Madrasah(
       excerpt: json['excerpt'] as String?,
       document: json['document'] as Map<dynamic, dynamic>?,
       position: json['position'] as int?,
+      published: json['published'] as bool?,
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
       madrasahInfos: json['madrasah-infos'] == null
@@ -119,6 +120,7 @@ Map<String, dynamic> _$MadrasahToJson(Madrasah instance) => <String, dynamic>{
       'excerpt': instance.excerpt,
       'document': instance.document,
       'position': instance.position,
+      'published': instance.published,
       'created-at': instance.createdAt,
       'updated-at': instance.updatedAt,
       'madrasah-infos': instance.madrasahInfos,

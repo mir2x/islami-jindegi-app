@@ -17,6 +17,7 @@ class Bayan extends DataModel<Bayan> {
   final String language;
   final String? location;
   final Map<dynamic, dynamic>? audio;
+  final bool? published;
   final String publishedAt;
   final String? createdAt;
   final String? updatedAt;
@@ -30,6 +31,7 @@ class Bayan extends DataModel<Bayan> {
     required this.language,
     this.location,
     this.audio,
+    this.published,
     required this.publishedAt,
     this.createdAt,
     this.updatedAt,
