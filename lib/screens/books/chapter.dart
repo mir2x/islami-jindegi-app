@@ -43,16 +43,17 @@ class Chapter extends ConsumerWidget {
       data: (resource) {
         Future? previousPage() async {
           var previousResources = await ref.chapters.findAll(
-                params: {
-                  'quantity': 1,
-                  'include': 'subchapters',
-                  'bookId': bookId,
-                  'position': resource.position - 1,
-                },
-              ) ??
-              [];
+            params: {
+              'quantity': 1,
+              'include': 'subchapters',
+              'bookId': bookId,
+              'position': resource.position - 1,
+            },
+          );
 
-          if (previousResources.isNotEmpty) {
+          if (previousResources.isEmpty) {
+            await QR.to('books/$bookId');
+          } else {
             var subchapters = previousResources.first.subchapters;
 
             if (subchapters != null && subchapters.isNotEmpty) {
@@ -71,14 +72,13 @@ class Chapter extends ConsumerWidget {
 
         Future? nextPage() async {
           var nextResources = await ref.chapters.findAll(
-                params: {
-                  'quantity': 1,
-                  'include': 'subchapters',
-                  'bookId': bookId,
-                  'position': resource.position + 1,
-                },
-              ) ??
-              [];
+            params: {
+              'quantity': 1,
+              'include': 'subchapters',
+              'bookId': bookId,
+              'position': resource.position + 1,
+            },
+          );
 
           if (nextResources.isNotEmpty) {
             var subchapters = nextResources.first.subchapters;
@@ -123,10 +123,7 @@ class Chapter extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Previous(
-                onPrevious: previousPage,
-                previousDisabled: resource.position == 1,
-              ),
+              Previous(onPrevious: previousPage),
               Row(
                 children: [
                   SocialShare(

@@ -44,26 +44,26 @@ class NewsItem extends ConsumerWidget {
       data: (resource) {
         Future? previousPage() async {
           var previousResources = await ref.news.findAll(
-                params: {
-                  'quantity': 1,
-                  'gtPublishedAt': resource.publishedAt,
-                },
-              ) ??
-              [];
+            params: {
+              'quantity': 1,
+              'gtPublishedAt': resource.publishedAt,
+            },
+          );
 
-          if (previousResources.isNotEmpty) {
+          if (previousResources.isEmpty) {
+            await QR.to('news');
+          } else {
             await QR.to('news/${previousResources.first.id}');
           }
         }
 
         Future? nextPage() async {
           var nextResources = await ref.news.findAll(
-                params: {
-                  'quantity': 1,
-                  'ltPublishedAt': resource.publishedAt,
-                },
-              ) ??
-              [];
+            params: {
+              'quantity': 1,
+              'ltPublishedAt': resource.publishedAt,
+            },
+          );
 
           if (nextResources.isNotEmpty) {
             await QR.to('news/${nextResources.first.id}');

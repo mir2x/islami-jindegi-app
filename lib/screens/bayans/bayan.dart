@@ -47,26 +47,26 @@ class Bayan extends ConsumerWidget {
       data: (resource) {
         Future? previousPage() async {
           var previousResources = await ref.bayans.findAll(
-                params: {
-                  'quantity': 1,
-                  'gtPublishedAt': resource.publishedAt,
-                },
-              ) ??
-              [];
+            params: {
+              'quantity': 1,
+              'gtPublishedAt': resource.publishedAt,
+            },
+          );
 
-          if (previousResources.isNotEmpty) {
+          if (previousResources.isEmpty) {
+            await QR.to('bayans');
+          } else {
             await QR.to('bayans/${previousResources.first.id}');
           }
         }
 
         Future? nextPage() async {
           var nextResources = await ref.bayans.findAll(
-                params: {
-                  'quantity': 1,
-                  'ltPublishedAt': resource.publishedAt,
-                },
-              ) ??
-              [];
+            params: {
+              'quantity': 1,
+              'ltPublishedAt': resource.publishedAt,
+            },
+          );
 
           if (nextResources.isNotEmpty) {
             await QR.to('bayans/${nextResources.first.id}');

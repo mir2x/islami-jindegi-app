@@ -40,17 +40,18 @@ class MadrasahIntroduction extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
-        Future? previousPage() async {}
+        Future? previousPage() async {
+          await QR.to('madrasahs/${resource.id}');
+        }
 
         Future? nextPage() async {
           var nextResources = await ref.madrasahInfos.findAll(
-                params: {
-                  'madrasahId': resource.id,
-                  'quantity': 1,
-                  'position': 1,
-                },
-              ) ??
-              [];
+            params: {
+              'madrasahId': resource.id,
+              'quantity': 1,
+              'position': 1,
+            },
+          );
 
           if (nextResources.isNotEmpty) {
             await QR.to(
@@ -95,10 +96,7 @@ class MadrasahIntroduction extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Previous(
-                onPrevious: previousPage,
-                previousDisabled: true,
-              ),
+              Previous(onPrevious: previousPage),
               SocialShare(
                 title: resource.title,
                 body: resource.introduction,

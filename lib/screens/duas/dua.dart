@@ -48,26 +48,26 @@ class Dua extends ConsumerWidget {
       data: (resource) {
         Future? previousPage() async {
           var previousResources = await ref.duas.findAll(
-                params: {
-                  'quantity': 1,
-                  'position': resource.position - 1,
-                },
-              ) ??
-              [];
+            params: {
+              'quantity': 1,
+              'position': resource.position - 1,
+            },
+          );
 
-          if (previousResources.isNotEmpty) {
+          if (previousResources.isEmpty) {
+            await QR.to('duas');
+          } else {
             await QR.to('duas/${previousResources.first.id}');
           }
         }
 
         Future? nextPage() async {
           var nextResources = await ref.duas.findAll(
-                params: {
-                  'quantity': 1,
-                  'position': resource.position + 1,
-                },
-              ) ??
-              [];
+            params: {
+              'quantity': 1,
+              'position': resource.position + 1,
+            },
+          );
 
           if (nextResources.isNotEmpty) {
             await QR.to('duas/${nextResources.first.id}');
@@ -143,10 +143,7 @@ class Dua extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Previous(
-                onPrevious: previousPage,
-                previousDisabled: resource.position == 1,
-              ),
+              Previous(onPrevious: previousPage),
               Row(
                 children: [
                   SocialShare(

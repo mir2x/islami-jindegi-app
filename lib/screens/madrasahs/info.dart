@@ -49,13 +49,12 @@ class MadrasahInfo extends ConsumerWidget {
         Future? previousPage() async {
           if (resource.position > 1) {
             var previousResources = await ref.madrasahInfos.findAll(
-                  params: {
-                    'madrasahId': resource.madrasah.value.id,
-                    'quantity': 1,
-                    'position': resource.position - 1,
-                  },
-                ) ??
-                [];
+              params: {
+                'madrasahId': resource.madrasah.value.id,
+                'quantity': 1,
+                'position': resource.position - 1,
+              },
+            );
 
             if (previousResources.isNotEmpty) {
               await QR.to(
@@ -71,13 +70,12 @@ class MadrasahInfo extends ConsumerWidget {
 
         Future? nextPage() async {
           var nextResources = await ref.madrasahInfos.findAll(
-                params: {
-                  'madrasahId': resource.madrasah.value.id,
-                  'quantity': 1,
-                  'position': resource.position + 1,
-                },
-              ) ??
-              [];
+            params: {
+              'madrasahId': resource.madrasah.value.id,
+              'quantity': 1,
+              'position': resource.position + 1,
+            },
+          );
 
           if (nextResources.isNotEmpty) {
             await QR.to(

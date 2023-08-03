@@ -46,13 +46,12 @@ class Subchapter extends ConsumerWidget {
 
         Future? previousPage() async {
           var previousResources = await ref.subchapters.findAll(
-                params: {
-                  'quantity': 1,
-                  'chapterId': chapterId,
-                  'position': resource.position - 1,
-                },
-              ) ??
-              [];
+            params: {
+              'quantity': 1,
+              'chapterId': chapterId,
+              'position': resource.position - 1,
+            },
+          );
 
           if (previousResources.isNotEmpty) {
             await QR.to(
@@ -63,16 +62,17 @@ class Subchapter extends ConsumerWidget {
 
             if (currentChapter != null) {
               var previousChapters = await ref.chapters.findAll(
-                    params: {
-                      'quantity': 1,
-                      'include': 'subchapters',
-                      'bookId': bookId,
-                      'position': currentChapter.position! - 1,
-                    },
-                  ) ??
-                  [];
+                params: {
+                  'quantity': 1,
+                  'include': 'subchapters',
+                  'bookId': bookId,
+                  'position': currentChapter.position! - 1,
+                },
+              );
 
-              if (previousChapters.isNotEmpty) {
+              if (previousChapters.isEmpty) {
+                await QR.to('books/$bookId');
+              } else {
                 var subchapters = previousChapters.first.subchapters;
 
                 if (subchapters != null && subchapters.isNotEmpty) {
@@ -93,13 +93,12 @@ class Subchapter extends ConsumerWidget {
 
         Future? nextPage() async {
           var nextResources = await ref.subchapters.findAll(
-                params: {
-                  'quantity': 1,
-                  'chapterId': chapterId,
-                  'position': resource.position + 1,
-                },
-              ) ??
-              [];
+            params: {
+              'quantity': 1,
+              'chapterId': chapterId,
+              'position': resource.position + 1,
+            },
+          );
 
           if (nextResources.isNotEmpty) {
             await QR.to(
@@ -110,14 +109,13 @@ class Subchapter extends ConsumerWidget {
 
             if (currentChapter != null) {
               var nextChapters = await ref.chapters.findAll(
-                    params: {
-                      'quantity': 1,
-                      'include': 'subchapters',
-                      'bookId': bookId,
-                      'position': currentChapter.position! + 1,
-                    },
-                  ) ??
-                  [];
+                params: {
+                  'quantity': 1,
+                  'include': 'subchapters',
+                  'bookId': bookId,
+                  'position': currentChapter.position! + 1,
+                },
+              );
 
               if (nextChapters.isNotEmpty) {
                 var subchapters = nextChapters.first.subchapters;

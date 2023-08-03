@@ -56,12 +56,11 @@ class NamazTime extends ConsumerWidget {
 
         Future? previousPage() async {
           var previousResources = await ref.namazTimes.findAll(
-                params: {
-                  'quantity': 1,
-                  'position': item.position - 1,
-                },
-              ) ??
-              [];
+            params: {
+              'quantity': 1,
+              'position': item.position - 1,
+            },
+          );
 
           if (previousResources.isNotEmpty) {
             await QR.to('namaz-times/${previousResources.first.slug}');
@@ -70,12 +69,11 @@ class NamazTime extends ConsumerWidget {
 
         Future? nextPage() async {
           var nextResources = await ref.namazTimes.findAll(
-                params: {
-                  'quantity': 1,
-                  'position': item.position + 1,
-                },
-              ) ??
-              [];
+            params: {
+              'quantity': 1,
+              'position': item.position + 1,
+            },
+          );
 
           if (nextResources.isNotEmpty) {
             await QR.to('namaz-times/${nextResources.first.slug}');

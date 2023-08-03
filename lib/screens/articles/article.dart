@@ -45,28 +45,28 @@ class Article extends ConsumerWidget {
       data: (resource) {
         Future? previousPage() async {
           var previousResources = await ref.articles.findAll(
-                params: {
-                  'quantity': 1,
-                  'include': 'article-author',
-                  'position': resource.position + 1,
-                },
-              ) ??
-              [];
+            params: {
+              'quantity': 1,
+              'include': 'article-author',
+              'position': resource.position + 1,
+            },
+          );
 
-          if (previousResources.isNotEmpty) {
+          if (previousResources.isEmpty) {
+            await QR.to('articles');
+          } else {
             await QR.to('articles/${previousResources.first.id}');
           }
         }
 
         Future? nextPage() async {
           var nextResources = await ref.articles.findAll(
-                params: {
-                  'quantity': 1,
-                  'include': 'article-author',
-                  'position': resource.position - 1,
-                },
-              ) ??
-              [];
+            params: {
+              'quantity': 1,
+              'include': 'article-author',
+              'position': resource.position - 1,
+            },
+          );
 
           if (nextResources.isNotEmpty) {
             await QR.to('articles/${nextResources.first.id}');

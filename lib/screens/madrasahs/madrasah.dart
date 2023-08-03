@@ -48,26 +48,26 @@ class Madrasah extends ConsumerWidget {
       data: (resource) {
         Future? previousPage() async {
           var previousResources = await ref.madrasahs.findAll(
-                params: {
-                  'quantity': 1,
-                  'position': resource.position - 1,
-                },
-              ) ??
-              [];
+            params: {
+              'quantity': 1,
+              'position': resource.position - 1,
+            },
+          );
 
-          if (previousResources.isNotEmpty) {
+          if (previousResources.isEmpty) {
+            await QR.to('madrasahs');
+          } else {
             await QR.to('madrasahs/${previousResources.first.id}');
           }
         }
 
         Future? nextPage() async {
           var nextResources = await ref.madrasahs.findAll(
-                params: {
-                  'quantity': 1,
-                  'position': resource.position + 1,
-                },
-              ) ??
-              [];
+            params: {
+              'quantity': 1,
+              'position': resource.position + 1,
+            },
+          );
 
           if (nextResources.isNotEmpty) {
             await QR.to('madrasahs/${nextResources.first.id}');
@@ -126,10 +126,7 @@ class Madrasah extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Previous(
-                onPrevious: previousPage,
-                previousDisabled: resource.position == 1,
-              ),
+              Previous(onPrevious: previousPage),
               Row(
                 children: [
                   SocialShare(

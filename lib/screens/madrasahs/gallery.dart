@@ -44,13 +44,12 @@ class MadrasahGallery extends ConsumerWidget {
       data: (resource) {
         Future? previousPage() async {
           var previousResources = await ref.madrasahInfos.findAll(
-                params: {
-                  'madrasahId': resource.id,
-                  'sort': '-position',
-                  'quantity': 1,
-                },
-              ) ??
-              [];
+            params: {
+              'madrasahId': resource.id,
+              'sort': '-position',
+              'quantity': 1,
+            },
+          );
 
           if (previousResources.isNotEmpty) {
             await QR.to(
