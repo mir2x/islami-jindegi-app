@@ -1,14 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'local_file.dart';
 
-class CheckDownloadedFileNotifier extends FamilyAsyncNotifier<bool, String> {
+class CheckDownloadedFileNotifier
+    extends AutoDisposeFamilyAsyncNotifier<bool, String> {
   @override
   Future<bool> build(String arg) async {
     return _checkFile(arg);
   }
 
-  Future<void> check(String arg) async {
-    state = AsyncValue.data(await _checkFile(arg));
+  Future<void> check(String path) async {
+    await ref.read(localFileProvider(path).notifier).check(path);
+    state = AsyncValue.data(await _checkFile(path));
   }
 
   Future<bool> _checkFile(String path) async {
@@ -17,7 +19,7 @@ class CheckDownloadedFileNotifier extends FamilyAsyncNotifier<bool, String> {
   }
 }
 
-final checkDownloadedFileProvider =
-    AsyncNotifierProvider.family<CheckDownloadedFileNotifier, bool, String>(
+final checkDownloadedFileProvider = AsyncNotifierProvider.autoDispose
+    .family<CheckDownloadedFileNotifier, bool, String>(
   CheckDownloadedFileNotifier.new,
 );
