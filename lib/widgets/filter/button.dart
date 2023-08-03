@@ -8,16 +8,19 @@ class FilterButton extends ConsumerWidget {
   const FilterButton({
     super.key,
     required this.children,
+    this.label,
     this.active = false,
   });
 
   final List<Widget> children;
+  final String? label;
   final bool active;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    String filterLabel = label ?? locales.filter;
 
     var prefs = ref.watch(preferencesProvider);
 
@@ -68,9 +71,7 @@ class FilterButton extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                active == true
-                    ? '${locales.filter} (${locales.active})'
-                    : locales.filter,
+                filterLabel,
                 style: textTheme.labelMedium,
               ),
               const Icon(Icons.arrow_drop_down, color: ThemeColors.color4),

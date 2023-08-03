@@ -46,17 +46,41 @@ class Bayans extends ConsumerWidget {
                           const EdgeInsets.only(top: 20, left: 15, right: 15),
                       child: Row(
                         children: [
+                          const Expanded(
+                            child: DateFilter(),
+                          ),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          Expanded(
+                            child: SearchField(
+                              value: qParams['search'],
+                              onUpdate: (value) {
+                                ref
+                                    .read(queryParamsProvider.notifier)
+                                    .updateParams('search', value);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      padding:
+                          const EdgeInsets.only(top: 10, left: 15, right: 15),
+                      child: Row(
+                        children: [
                           Expanded(
                             child: FilterButton(
-                              active: qParams.keys.any(
-                                (k) => ['bayanCategoryId', 'speakerId']
-                                    .contains(k),
-                              ),
+                              label: locales.categories,
+                              active: qParams.containsKey('bayanCategoryId'),
                               children: [
                                 Expanded(
                                   child: FilterList(
                                     title: locales.categories,
                                     paramKeys: const ['bayanCategoryId'],
+                                    pageSize: 16,
                                     queryBuilder:
                                         (Map<String, dynamic> params) {
                                       return AllModelsQuery(
@@ -73,11 +97,22 @@ class Bayans extends ConsumerWidget {
                                     },
                                   ),
                                 ),
-                                const SizedBox(height: 40),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          Expanded(
+                            child: FilterButton(
+                              label: locales.speakers,
+                              active: qParams.containsKey('speakerId'),
+                              children: [
                                 Expanded(
                                   child: FilterList(
                                     title: locales.speakers,
                                     paramKeys: const ['speakerId'],
+                                    pageSize: 16,
                                     queryBuilder:
                                         (Map<String, dynamic> params) {
                                       return AllModelsQuery(
@@ -97,30 +132,8 @@ class Bayans extends ConsumerWidget {
                               ],
                             ),
                           ),
-                          const SizedBox(
-                            width: 15,
-                          ),
-                          Expanded(
-                            child: SearchField(
-                              value: qParams['search'],
-                              onUpdate: (value) {
-                                ref
-                                    .read(queryParamsProvider.notifier)
-                                    .updateParams('search', value);
-                              },
-                            ),
-                          ),
                         ],
                       ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.only(
-                        left: 15,
-                        right: 15,
-                        top: 10,
-                        bottom: 5,
-                      ),
-                      child: const DateFilter(),
                     ),
                   ],
                 );

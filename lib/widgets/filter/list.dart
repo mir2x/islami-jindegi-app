@@ -10,12 +10,14 @@ class FilterList extends ConsumerWidget {
     super.key,
     required this.title,
     required this.paramKeys,
+    this.pageSize = 8,
     required this.queryBuilder,
     required this.itemBuilder,
   });
 
   final String title;
   final List<String> paramKeys;
+  final int pageSize;
   final Function queryBuilder;
   final ItemWidgetBuilder itemBuilder;
 
@@ -56,7 +58,7 @@ class FilterList extends ConsumerWidget {
         ),
         Expanded(
           child: InfiniteList(
-            pageSize: 8,
+            pageSize: pageSize,
             padding: 2,
             resourceFetcher: (Map<String, dynamic> params) async {
               var query = queryBuilder(params);
