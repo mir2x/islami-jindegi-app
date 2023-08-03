@@ -14,7 +14,7 @@ class Downloader {
     // requests permission for downloading the file
     var result = await Permission.storage.request();
     if (result != PermissionStatus.granted) {
-      if (await Permission.speech.isPermanentlyDenied) {
+      if (result == PermissionStatus.permanentlyDenied) {
         openAppSettings();
       }
 
