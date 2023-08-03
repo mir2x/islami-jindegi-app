@@ -43,7 +43,7 @@ class SocialShare extends StatelessWidget {
             text += '\n\n';
             for (var p in pList) {
               if (p.text != '') {
-                text += '${p.text}\n';
+                text += '${p.text}\n\n';
               }
             }
           }
