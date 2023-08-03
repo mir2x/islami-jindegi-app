@@ -68,41 +68,43 @@ class Qiblah extends ConsumerWidget {
                   ],
                 ),
                 SmoothCompass(
-                  height: 320,
-                  width: 320,
                   compassBuilder: (context, snapshot, child) {
-                    return AnimatedRotation(
-                      duration: const Duration(milliseconds: 800),
-                      turns: snapshot?.data?.turns ?? 0,
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            child: SvgPicture.asset(
-                              'assets/images/icons/compass.svg',
-                              fit: BoxFit.scaleDown,
-                            ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            child: AnimatedRotation(
-                              duration: const Duration(milliseconds: 500),
-                              turns: qibla.direction / 360,
+                    return SizedBox(
+                      height: 320,
+                      width: 320,
+                      child: AnimatedRotation(
+                        duration: const Duration(milliseconds: 800),
+                        turns: snapshot?.data?.turns ?? 0,
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
                               child: SvgPicture.asset(
-                                'assets/images/icons/kaaba.svg',
+                                'assets/images/icons/compass.svg',
                                 fit: BoxFit.scaleDown,
-                                width: 320,
-                                height: 320,
                               ),
                             ),
-                          ),
-                        ],
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              child: AnimatedRotation(
+                                duration: const Duration(milliseconds: 500),
+                                turns: qibla.direction / 360,
+                                child: SvgPicture.asset(
+                                  'assets/images/icons/kaaba.svg',
+                                  fit: BoxFit.scaleDown,
+                                  width: 320,
+                                  height: 320,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },
