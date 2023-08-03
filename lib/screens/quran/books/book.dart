@@ -135,7 +135,6 @@ class QuranBookItem extends ConsumerWidget {
                   ),
                 ),
                 bottomBar: BottomBar(
-                  alignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
