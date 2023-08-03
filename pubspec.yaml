@@ -159,6 +159,10 @@ flutter:
       fonts:
         - asset: assets/fonts/al-qalam-kolkatta-quranic-regular.ttf
 
+    - family: arabic/al-mushaf
+      fonts:
+        - asset: assets/fonts/al-mushaf-quran.ttf
+
 flutter_icons:
   android: "launcher_icon"
   ios: true

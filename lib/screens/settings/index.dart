@@ -32,6 +32,10 @@ class Settings extends ConsumerWidget {
     {
       'label': 'Al Qalam Kolkatta Quran Majeed',
       'value': 'arabic/al-qalam-kolkatta'
+    },
+    {
+      'label': 'Al Mushaf Quran',
+      'value': 'arabic/al-mushaf',
     }
   ];
 
