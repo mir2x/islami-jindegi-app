@@ -20,7 +20,7 @@ class Resource extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isMobile = screenWidth < 768;
 
-    return GestureDetector(
+    return InkWell(
       onTap: () => QR.to(route),
       child: Column(
         children: [

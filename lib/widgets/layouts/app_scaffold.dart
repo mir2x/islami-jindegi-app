@@ -173,7 +173,7 @@ class AppScaffold extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 30),
               children: [
-                GestureDetector(
+                InkWell(
                   onTap: () {
                     Navigator.of(context).pop();
                     QR.navigator.replaceAll('/');
@@ -259,7 +259,7 @@ class DrawerLink extends StatelessWidget {
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
 
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         Navigator.of(context).pop();
         QR.to(route);

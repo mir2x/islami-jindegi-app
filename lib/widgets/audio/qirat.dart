@@ -92,7 +92,7 @@ class _QiratPlayerState extends State<StatefulQiratPlayer> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        GestureDetector(
+        InkWell(
           onTap: () async {
             if (isPlaying) {
               await widget.player.pause();

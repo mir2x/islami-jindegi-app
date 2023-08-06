@@ -40,9 +40,8 @@ class ErrorPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                GestureDetector(
+                InkWell(
                   onTap: QR.back,
-                  behavior: HitTestBehavior.opaque,
                   child: Container(
                     padding: const EdgeInsets.all(15),
                     margin: const EdgeInsets.only(right: 15),
@@ -52,9 +51,8 @@ class ErrorPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                GestureDetector(
+                InkWell(
                   onTap: () async => await QR.navigator.replaceAll('/'),
-                  behavior: HitTestBehavior.opaque,
                   child: Container(
                     padding: const EdgeInsets.all(15),
                     child: Text(

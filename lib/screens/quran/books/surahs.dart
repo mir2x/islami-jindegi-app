@@ -162,7 +162,7 @@ class _SurahsState extends ConsumerState<StatefulSurahs> {
               itemBuilder: (BuildContext context, int index) {
                 var number = index + 1;
 
-                return GestureDetector(
+                return InkWell(
                   onTap: () async {
                     var query = AllModelsQuery(
                       repository: ref.quranBookPages,

@@ -25,7 +25,7 @@ class HijriDateCalendar extends ConsumerWidget {
       loading: () => const CircularProgressIndicator(),
       error: (error, _) => Text(error.toString()),
       data: (settings) {
-        return GestureDetector(
+        return InkWell(
           onTap: () {
             HijriCalendar today;
             int adjustedWeekdayNumber = 0;
