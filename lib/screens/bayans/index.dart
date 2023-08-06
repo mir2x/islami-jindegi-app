@@ -43,34 +43,41 @@ class Bayans extends ConsumerWidget {
                     Container(
                       width: double.infinity,
                       padding:
-                          const EdgeInsets.only(top: 20, left: 15, right: 15),
+                          const EdgeInsets.only(top: 10, left: 15, right: 15),
                       child: Row(
                         children: [
-                          const Expanded(
-                            child: DateFilter(),
+                          Expanded(
+                            child: FilterButton(
+                              label: locales.speakers,
+                              active: qParams.containsKey('speakerId'),
+                              children: [
+                                Expanded(
+                                  child: FilterList(
+                                    title: locales.speakers,
+                                    paramKeys: const ['speakerId'],
+                                    pageSize: 16,
+                                    queryBuilder:
+                                        (Map<String, dynamic> params) {
+                                      return AllModelsQuery(
+                                        repository: ref.speakers,
+                                        params: params,
+                                      );
+                                    },
+                                    itemBuilder: (_, item, __) {
+                                      return FilterItem(
+                                        itemId: item.id,
+                                        itemTitle: item.name,
+                                        paramKey: 'speakerId',
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                           const SizedBox(
                             width: 15,
                           ),
-                          Expanded(
-                            child: SearchField(
-                              value: qParams['search'],
-                              onUpdate: (value) {
-                                ref
-                                    .read(queryParamsProvider.notifier)
-                                    .updateParams('search', value);
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      padding:
-                          const EdgeInsets.only(top: 10, left: 15, right: 15),
-                      child: Row(
-                        children: [
                           Expanded(
                             child: FilterButton(
                               label: locales.categories,
@@ -100,36 +107,29 @@ class Bayans extends ConsumerWidget {
                               ],
                             ),
                           ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      padding:
+                          const EdgeInsets.only(top: 20, left: 15, right: 15),
+                      child: Row(
+                        children: [
+                          const Expanded(
+                            child: DateFilter(),
+                          ),
                           const SizedBox(
                             width: 15,
                           ),
                           Expanded(
-                            child: FilterButton(
-                              label: locales.speakers,
-                              active: qParams.containsKey('speakerId'),
-                              children: [
-                                Expanded(
-                                  child: FilterList(
-                                    title: locales.speakers,
-                                    paramKeys: const ['speakerId'],
-                                    pageSize: 16,
-                                    queryBuilder:
-                                        (Map<String, dynamic> params) {
-                                      return AllModelsQuery(
-                                        repository: ref.speakers,
-                                        params: params,
-                                      );
-                                    },
-                                    itemBuilder: (_, item, __) {
-                                      return FilterItem(
-                                        itemId: item.id,
-                                        itemTitle: item.name,
-                                        paramKey: 'speakerId',
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
+                            child: SearchField(
+                              value: qParams['search'],
+                              onUpdate: (value) {
+                                ref
+                                    .read(queryParamsProvider.notifier)
+                                    .updateParams('search', value);
+                              },
                             ),
                           ),
                         ],
