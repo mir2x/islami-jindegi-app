@@ -6,6 +6,7 @@ import 'package:adhan/adhan.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/geolocation.dart';
+import 'package:native_app/widgets/location/index.dart';
 
 class Qiblah extends ConsumerWidget {
   const Qiblah({super.key});
@@ -36,37 +37,11 @@ class Qiblah extends ConsumerWidget {
             );
 
             final qibla = Qibla(coordinates);
-            String location = geolocation['location']
-                .values
-                .where((v) => v is String && v.isNotEmpty)
-                .join(', ');
 
             return Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(location),
-                    if (!geolocation['isGeolocated']) ...[
-                      Container(
-                        margin: const EdgeInsets.only(left: 20, right: 5),
-                        child: GestureDetector(
-                          onTap: () => ref
-                              .read(geolocationProvider.notifier)
-                              .updateCoordinates(),
-                          child: SvgPicture.asset(
-                            'assets/images/icons/location.svg',
-                            fit: BoxFit.scaleDown,
-                            width: 40,
-                            height: 30,
-                          ),
-                        ),
-                      ),
-                      Text(locales.setLocation)
-                    ],
-                  ],
-                ),
+                const CurrentLocation(alignment: MainAxisAlignment.center),
                 SmoothCompass(
                   compassBuilder: (context, snapshot, child) {
                     return SizedBox(
