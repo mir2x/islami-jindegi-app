@@ -17,9 +17,14 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     OnErrorAll<T>? onError,
     DataRequestLabel? label,
   }) async {
-    final connectivityResult = await Connectivity().checkConnectivity();
+    bool hasOneItem = params != null &&
+        params.containsKey('quantity') &&
+        params['quantity'] == 1;
 
-    if (connectivityResult == ConnectivityResult.none) {
+    bool hasNoConnection =
+        await Connectivity().checkConnectivity() == ConnectivityResult.none;
+
+    if (hasOneItem || hasNoConnection) {
       final database = ref.read(localDatabaseProvider);
       final resources = await database.query(internalType, params: params);
       List<Resource> included = [];
@@ -77,19 +82,24 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
       );
 
       onSuccess ??= (data, label, _) => this.onSuccess<List<T>>(data, label);
-      return await onSuccess.call(data, label, this) ?? <T>[];
-    } else {
-      return super.findAll(
-        remote: remote,
-        background: background,
-        params: params,
-        headers: headers,
-        syncLocal: syncLocal,
-        onSuccess: onSuccess,
-        onError: onError,
-        label: label,
-      );
+
+      List<T> items = await onSuccess.call(data, label, this) ?? <T>[];
+
+      if (items.isNotEmpty || hasNoConnection) {
+        return items;
+      }
     }
+
+    return super.findAll(
+      remote: remote,
+      background: background,
+      params: params,
+      headers: headers,
+      syncLocal: syncLocal,
+      onSuccess: onSuccess,
+      onError: onError,
+      label: label,
+    );
   }
 
   @override
@@ -103,16 +113,14 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     OnErrorOne<T>? onError,
     DataRequestLabel? label,
   }) async {
-    final connectivityResult = await (Connectivity().checkConnectivity());
+    final database = ref.read(localDatabaseProvider);
+    final item = await database.findById(
+      internalType,
+      id.toString(),
+      params: params,
+    );
 
-    if (connectivityResult == ConnectivityResult.none) {
-      final database = ref.read(localDatabaseProvider);
-      final item = await database.findById(
-        internalType,
-        id.toString(),
-        params: params,
-      );
-
+    if (item != null) {
       Map resourceMap;
       Map<String, Relationship> relationships = {};
       List<Resource> included = [];

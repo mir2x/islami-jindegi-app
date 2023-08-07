@@ -160,8 +160,8 @@ class LocalDatabase extends _$LocalDatabase {
     return query.get();
   }
 
-  Future<Surah> findSurahById(String id) {
-    return (select(surahs)..where((t) => t.id.equals(id))).getSingle();
+  Future<Surah?> findSurahById(String id) {
+    return (select(surahs)..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
   Future<List<Para>> queryPara(Map params) {
@@ -184,8 +184,8 @@ class LocalDatabase extends _$LocalDatabase {
     return query.get();
   }
 
-  Future<Para> findParaById(String id) {
-    return (select(paras)..where((t) => t.id.equals(id))).getSingle();
+  Future<Para?> findParaById(String id) {
+    return (select(paras)..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
   Future<List> queryAyah(Map params) async {
@@ -245,13 +245,13 @@ class LocalDatabase extends _$LocalDatabase {
     }
   }
 
-  Future<Ayah> findAyahById(String id) {
-    return (select(ayahs)..where((t) => t.id.equals(id))).getSingle();
+  Future<Ayah?> findAyahById(String id) {
+    return (select(ayahs)..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
-  Future<AyahTranslation> findAyahTranslationById(String id) {
+  Future<AyahTranslation?> findAyahTranslationById(String id) {
     return (select(ayahTranslations)..where((t) => t.id.equals(id)))
-        .getSingle();
+        .getSingleOrNull();
   }
 
   Future<List> queryBook(Map params) async {
@@ -309,8 +309,8 @@ class LocalDatabase extends _$LocalDatabase {
     }
   }
 
-  Future<Book> findBookById(String id) {
-    return (select(books)..where((t) => t.id.equals(id))).getSingle();
+  Future<Book?> findBookById(String id) {
+    return (select(books)..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
   Future<List> queryChapter(Map params) async {
@@ -365,8 +365,8 @@ class LocalDatabase extends _$LocalDatabase {
     }
   }
 
-  Future<Chapter> findChapterById(String id) {
-    return (select(chapters)..where((t) => t.id.equals(id))).getSingle();
+  Future<Chapter?> findChapterById(String id) {
+    return (select(chapters)..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
   Future<List<Subchapter>> querySubchapter(Map params) {
@@ -393,16 +393,17 @@ class LocalDatabase extends _$LocalDatabase {
     return query.get();
   }
 
-  Future<Subchapter> findSubchapterById(String id) {
-    return (select(subchapters)..where((t) => t.id.equals(id))).getSingle();
+  Future<Subchapter?> findSubchapterById(String id) {
+    return (select(subchapters)..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
   }
 
-  Future<Author> findAuthorById(String id) {
-    return (select(authors)..where((t) => t.id.equals(id))).getSingle();
+  Future<Author?> findAuthorById(String id) {
+    return (select(authors)..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
-  Future<Speaker> findSpeakerById(String id) {
-    return (select(speakers)..where((t) => t.id.equals(id))).getSingle();
+  Future<Speaker?> findSpeakerById(String id) {
+    return (select(speakers)..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
   Future<List<Bayan>> queryBayan(Map params) {
@@ -420,14 +421,32 @@ class LocalDatabase extends _$LocalDatabase {
     query.orderBy([
       (t) => OrderingTerm(expression: t.publishedAt, mode: OrderingMode.desc),
     ]);
+
+    if (params.containsKey('gtPublishedAt')) {
+      query.where(
+        (r) => r.publishedAt.isBiggerThanValue(params['gtPublishedAt']),
+      );
+      query.orderBy([
+        (t) => OrderingTerm(expression: t.publishedAt, mode: OrderingMode.asc),
+      ]);
+    }
+
+    if (params.containsKey('ltPublishedAt')) {
+      query.where(
+        (r) => r.publishedAt.isSmallerThanValue(params['ltPublishedAt']),
+      );
+    }
+
     return query.get();
   }
 
   Future<dynamic> findBayanById(String id, Map params) async {
     var bayan =
-        await (select(bayans)..where((t) => t.id.equals(id))).getSingle();
+        await (select(bayans)..where((t) => t.id.equals(id))).getSingleOrNull();
 
-    if (params.containsKey('include') && params['include'] == 'speaker') {
+    if (bayan != null &&
+        params.containsKey('include') &&
+        params['include'] == 'speaker') {
       var speaker = await (select(speakers)
             ..where((s) => s.id.equals(bayan.speakerId)))
           .getSingle();
@@ -445,8 +464,9 @@ class LocalDatabase extends _$LocalDatabase {
     }
   }
 
-  Future<MalfuzatAuthor> findMalfuzatAuthorById(String id) {
-    return (select(malfuzatAuthors)..where((t) => t.id.equals(id))).getSingle();
+  Future<MalfuzatAuthor?> findMalfuzatAuthorById(String id) {
+    return (select(malfuzatAuthors)..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
   }
 
   Future<List> queryMalfuzat(Map params) async {
@@ -498,10 +518,11 @@ class LocalDatabase extends _$LocalDatabase {
   }
 
   Future<dynamic> findMalfuzatById(String id, Map params) async {
-    var malfuzat =
-        await (select(malfuzats)..where((t) => t.id.equals(id))).getSingle();
+    var malfuzat = await (select(malfuzats)..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
 
-    if (params.containsKey('include') &&
+    if (malfuzat != null &&
+        params.containsKey('include') &&
         params['include'] == 'malfuzat-author') {
       var author = await (select(malfuzatAuthors)
             ..where((s) => s.id.equals(malfuzat.malfuzatAuthorId)))
@@ -540,8 +561,8 @@ class LocalDatabase extends _$LocalDatabase {
     return query.get();
   }
 
-  Future<Masail> findMasailById(String id) {
-    return (select(masails)..where((t) => t.id.equals(id))).getSingle();
+  Future<Masail?> findMasailById(String id) {
+    return (select(masails)..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
   Future<List<Dua>> queryDua(Map params) {
@@ -564,12 +585,13 @@ class LocalDatabase extends _$LocalDatabase {
     return query.get();
   }
 
-  Future<Dua> findDuaById(String id) {
-    return (select(duas)..where((t) => t.id.equals(id))).getSingle();
+  Future<Dua?> findDuaById(String id) {
+    return (select(duas)..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
-  Future<ArticleAuthor> findArticleAuthorById(String id) {
-    return (select(articleAuthors)..where((t) => t.id.equals(id))).getSingle();
+  Future<ArticleAuthor?> findArticleAuthorById(String id) {
+    return (select(articleAuthors)..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
   }
 
   Future<List> queryArticle(Map params) async {
@@ -623,10 +645,11 @@ class LocalDatabase extends _$LocalDatabase {
   }
 
   Future<dynamic> findArticleById(String id, Map params) async {
-    var article =
-        await (select(articles)..where((t) => t.id.equals(id))).getSingle();
+    var article = await (select(articles)..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
 
-    if (params.containsKey('include') &&
+    if (article != null &&
+        params.containsKey('include') &&
         params['include'] == 'article-author') {
       var author = await (select(articleAuthors)
             ..where((s) => s.id.equals(article.articleAuthorId)))
@@ -665,8 +688,8 @@ class LocalDatabase extends _$LocalDatabase {
     return query.get();
   }
 
-  Future<Madrasah> findMadrasahById(String id) {
-    return (select(madrasahs)..where((t) => t.id.equals(id))).getSingle();
+  Future<Madrasah?> findMadrasahById(String id) {
+    return (select(madrasahs)..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
   Future<List<Page>> queryPage(Map params) {
@@ -681,8 +704,8 @@ class LocalDatabase extends _$LocalDatabase {
     return query.get();
   }
 
-  Future<Page> findPageById(String id) {
-    return (select(pages)..where((t) => t.id.equals(id))).getSingle();
+  Future<Page?> findPageById(String id) {
+    return (select(pages)..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
   Future<List<NamazTime>> queryNamazTime(Map params) {
@@ -697,7 +720,8 @@ class LocalDatabase extends _$LocalDatabase {
     return query.get();
   }
 
-  Future<NamazTime> findNamazTimeById(String id) {
-    return (select(namazTimes)..where((t) => t.id.equals(id))).getSingle();
+  Future<NamazTime?> findNamazTimeById(String id) {
+    return (select(namazTimes)..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
   }
 }
