@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:native_app/widgets/utils/comma_separated_list.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/main.data.dart';
@@ -18,6 +17,7 @@ import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/nested_item.dart';
 import 'package:native_app/widgets/filter/subitem.dart';
 import 'package:native_app/widgets/responsive/image.dart';
+import 'package:native_app/widgets/utils/comma_separated_list.dart';
 
 class Books extends ConsumerWidget {
   const Books({super.key});
