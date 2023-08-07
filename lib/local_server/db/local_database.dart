@@ -754,6 +754,10 @@ class LocalDatabase extends _$LocalDatabase {
       query.where((t) => t.slug.equals(params['slug'].toString()));
     }
 
+    if (params.containsKey('position')) {
+      query.where((r) => r.position.equals(params['position']));
+    }
+
     query.limit(params['quantity'] ?? 20);
 
     return query.get();

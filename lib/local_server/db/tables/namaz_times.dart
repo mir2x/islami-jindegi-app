@@ -6,6 +6,7 @@ class NamazTimes extends Table {
   TextColumn get slug => text()();
   TextColumn get masail => text()();
   TextColumn get fazail => text().nullable()();
+  IntColumn get position => integer()();
   TextColumn get createdAt => text()();
   TextColumn get updatedAt => text()();
 

@@ -6445,6 +6445,10 @@ class $NamazTimesTable extends NamazTimes
       'fazail', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
   late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
       'created_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
@@ -6454,7 +6458,7 @@ class $NamazTimesTable extends NamazTimes
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, title, slug, masail, fazail, createdAt, updatedAt];
+      [id, title, slug, masail, fazail, position, createdAt, updatedAt];
   @override
   String get aliasedName => _alias ?? 'namaz_times';
   @override
@@ -6475,6 +6479,8 @@ class $NamazTimesTable extends NamazTimes
           .read(DriftSqlType.string, data['${effectivePrefix}masail'])!,
       fazail: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}fazail']),
+      position: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
@@ -6494,6 +6500,7 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
   final String slug;
   final String masail;
   final String? fazail;
+  final int position;
   final String createdAt;
   final String updatedAt;
   const NamazTime(
@@ -6502,6 +6509,7 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
       required this.slug,
       required this.masail,
       this.fazail,
+      required this.position,
       required this.createdAt,
       required this.updatedAt});
   @override
@@ -6514,6 +6522,7 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
     if (!nullToAbsent || fazail != null) {
       map['fazail'] = Variable<String>(fazail);
     }
+    map['position'] = Variable<int>(position);
     map['created_at'] = Variable<String>(createdAt);
     map['updated_at'] = Variable<String>(updatedAt);
     return map;
@@ -6528,6 +6537,7 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
       slug: serializer.fromJson<String>(json['slug']),
       masail: serializer.fromJson<String>(json['masail']),
       fazail: serializer.fromJson<String?>(json['fazail']),
+      position: serializer.fromJson<int>(json['position']),
       createdAt: serializer.fromJson<String>(json['createdAt']),
       updatedAt: serializer.fromJson<String>(json['updatedAt']),
     );
@@ -6541,6 +6551,7 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
       'slug': serializer.toJson<String>(slug),
       'masail': serializer.toJson<String>(masail),
       'fazail': serializer.toJson<String?>(fazail),
+      'position': serializer.toJson<int>(position),
       'createdAt': serializer.toJson<String>(createdAt),
       'updatedAt': serializer.toJson<String>(updatedAt),
     };
@@ -6552,6 +6563,7 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
           String? slug,
           String? masail,
           Value<String?> fazail = const Value.absent(),
+          int? position,
           String? createdAt,
           String? updatedAt}) =>
       NamazTime(
@@ -6560,6 +6572,7 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
         slug: slug ?? this.slug,
         masail: masail ?? this.masail,
         fazail: fazail.present ? fazail.value : this.fazail,
+        position: position ?? this.position,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
@@ -6571,6 +6584,7 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
           ..write('slug: $slug, ')
           ..write('masail: $masail, ')
           ..write('fazail: $fazail, ')
+          ..write('position: $position, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -6578,8 +6592,8 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, title, slug, masail, fazail, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+      id, title, slug, masail, fazail, position, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -6589,6 +6603,7 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
           other.slug == this.slug &&
           other.masail == this.masail &&
           other.fazail == this.fazail &&
+          other.position == this.position &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -6599,6 +6614,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
   final Value<String> slug;
   final Value<String> masail;
   final Value<String?> fazail;
+  final Value<int> position;
   final Value<String> createdAt;
   final Value<String> updatedAt;
   final Value<int> rowid;
@@ -6608,6 +6624,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
     this.slug = const Value.absent(),
     this.masail = const Value.absent(),
     this.fazail = const Value.absent(),
+    this.position = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -6618,6 +6635,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
     required String slug,
     required String masail,
     this.fazail = const Value.absent(),
+    required int position,
     required String createdAt,
     required String updatedAt,
     this.rowid = const Value.absent(),
@@ -6625,6 +6643,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
         title = Value(title),
         slug = Value(slug),
         masail = Value(masail),
+        position = Value(position),
         createdAt = Value(createdAt),
         updatedAt = Value(updatedAt);
   static Insertable<NamazTime> custom({
@@ -6633,6 +6652,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
     Expression<String>? slug,
     Expression<String>? masail,
     Expression<String>? fazail,
+    Expression<int>? position,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
     Expression<int>? rowid,
@@ -6643,6 +6663,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
       if (slug != null) 'slug': slug,
       if (masail != null) 'masail': masail,
       if (fazail != null) 'fazail': fazail,
+      if (position != null) 'position': position,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -6655,6 +6676,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
       Value<String>? slug,
       Value<String>? masail,
       Value<String?>? fazail,
+      Value<int>? position,
       Value<String>? createdAt,
       Value<String>? updatedAt,
       Value<int>? rowid}) {
@@ -6664,6 +6686,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
       slug: slug ?? this.slug,
       masail: masail ?? this.masail,
       fazail: fazail ?? this.fazail,
+      position: position ?? this.position,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -6688,6 +6711,9 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
     if (fazail.present) {
       map['fazail'] = Variable<String>(fazail.value);
     }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<String>(createdAt.value);
     }
@@ -6708,6 +6734,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
           ..write('slug: $slug, ')
           ..write('masail: $masail, ')
           ..write('fazail: $fazail, ')
+          ..write('position: $position, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
