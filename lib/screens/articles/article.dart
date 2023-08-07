@@ -48,7 +48,7 @@ class Article extends ConsumerWidget {
             params: {
               'quantity': 1,
               'include': 'article-author',
-              'position': resource.position + 1,
+              'position': resource.position - 1,
             },
           );
 
@@ -64,7 +64,7 @@ class Article extends ConsumerWidget {
             params: {
               'quantity': 1,
               'include': 'article-author',
-              'position': resource.position - 1,
+              'position': resource.position + 1,
             },
           );
 
@@ -135,10 +135,7 @@ class Article extends ConsumerWidget {
                 ],
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),
-              Next(
-                onNext: nextPage,
-                nextDisabled: resource.position == 1,
-              ),
+              Next(onNext: nextPage),
             ],
           ),
         );

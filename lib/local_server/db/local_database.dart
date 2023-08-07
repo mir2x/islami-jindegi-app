@@ -271,9 +271,7 @@ class LocalDatabase extends _$LocalDatabase {
       query.limit(params['quantity'] ?? 20);
     }
 
-    query.orderBy([
-      (t) => OrderingTerm(expression: t.position, mode: OrderingMode.desc),
-    ]);
+    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
 
     var bookItems = await query.get();
 
@@ -615,9 +613,7 @@ class LocalDatabase extends _$LocalDatabase {
       query.limit(params['quantity'] ?? 20);
     }
 
-    query.orderBy([
-      (t) => OrderingTerm(expression: t.position, mode: OrderingMode.desc),
-    ]);
+    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
 
     var articleItems = await query.get();
 
