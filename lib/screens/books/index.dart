@@ -28,7 +28,9 @@ class Books extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(queryParamsProvider);
     var connectivity = ref.watch(connectivityResultProvider);
-    double screenWidth = MediaQuery.of(context).size.width;
+    // MediaQuery.of(context) refreshes the screen when search input is focused.
+    double screenWidth =
+        View.of(context).physicalSize.width / View.of(context).devicePixelRatio;
     bool isMobile = screenWidth < 768;
 
     return AppScaffold(
