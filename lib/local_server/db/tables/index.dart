@@ -17,4 +17,5 @@ export 'article_authors.dart';
 export 'articles.dart';
 export 'madrasahs.dart';
 export 'namaz_times.dart';
+export 'news.dart';
 export 'pages.dart';

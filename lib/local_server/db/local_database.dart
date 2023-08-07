@@ -31,6 +31,7 @@ part 'local_database.g.dart';
     Articles,
     Madrasahs,
     NamazTimes,
+    News,
     Pages,
   ],
 )
@@ -88,6 +89,8 @@ class LocalDatabase extends _$LocalDatabase {
         return queryMadrasah(params);
       case 'namazTimes':
         return queryNamazTime(params);
+      case 'news':
+        return queryNews(params);
       case 'pages':
         return queryPage(params);
       default:
@@ -133,6 +136,8 @@ class LocalDatabase extends _$LocalDatabase {
         return findMadrasahById(id);
       case 'namazTimes':
         return findNamazTimeById(id);
+      case 'news':
+        return findNewsById(id);
       case 'pages':
         return findPageById(id);
       default:
@@ -690,6 +695,44 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<Madrasah?> findMadrasahById(String id) {
     return (select(madrasahs)..where((t) => t.id.equals(id))).getSingleOrNull();
+  }
+
+  Future<List<New>> queryNews(Map params) {
+    var query = select(news);
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    } else {
+      query.limit(params['quantity'] ?? 20);
+    }
+
+    query.orderBy([
+      (t) => OrderingTerm(expression: t.publishedAt, mode: OrderingMode.desc),
+    ]);
+
+    if (params.containsKey('gtPublishedAt')) {
+      query.where(
+        (r) => r.publishedAt.isBiggerThanValue(params['gtPublishedAt']),
+      );
+      query.orderBy([
+        (t) => OrderingTerm(expression: t.publishedAt, mode: OrderingMode.asc),
+      ]);
+    }
+
+    if (params.containsKey('ltPublishedAt')) {
+      query.where(
+        (r) => r.publishedAt.isSmallerThanValue(params['ltPublishedAt']),
+      );
+    }
+
+    return query.get();
+  }
+
+  Future<New?> findNewsById(String id) {
+    return (select(news)..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
   Future<List<Page>> queryPage(Map params) {

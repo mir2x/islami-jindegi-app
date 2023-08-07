@@ -6716,6 +6716,330 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
   }
 }
 
+class $NewsTable extends News with TableInfo<$NewsTable, New> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $NewsTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+      'body', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> excerpt = GeneratedColumn<String>(
+      'excerpt', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> language = GeneratedColumn<String>(
+      'language', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> publishedAt = GeneratedColumn<String>(
+      'published_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, title, body, excerpt, language, publishedAt, createdAt, updatedAt];
+  @override
+  String get aliasedName => _alias ?? 'news';
+  @override
+  String get actualTableName => 'news';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  New map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return New(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      body: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}body'])!,
+      excerpt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}excerpt']),
+      language: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}language'])!,
+      publishedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}published_at'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $NewsTable createAlias(String alias) {
+    return $NewsTable(attachedDatabase, alias);
+  }
+}
+
+class New extends DataClass implements Insertable<New> {
+  final String id;
+  final String title;
+  final String body;
+  final String? excerpt;
+  final String language;
+  final String publishedAt;
+  final String createdAt;
+  final String updatedAt;
+  const New(
+      {required this.id,
+      required this.title,
+      required this.body,
+      this.excerpt,
+      required this.language,
+      required this.publishedAt,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    map['body'] = Variable<String>(body);
+    if (!nullToAbsent || excerpt != null) {
+      map['excerpt'] = Variable<String>(excerpt);
+    }
+    map['language'] = Variable<String>(language);
+    map['published_at'] = Variable<String>(publishedAt);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    return map;
+  }
+
+  factory New.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return New(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      body: serializer.fromJson<String>(json['body']),
+      excerpt: serializer.fromJson<String?>(json['excerpt']),
+      language: serializer.fromJson<String>(json['language']),
+      publishedAt: serializer.fromJson<String>(json['publishedAt']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'body': serializer.toJson<String>(body),
+      'excerpt': serializer.toJson<String?>(excerpt),
+      'language': serializer.toJson<String>(language),
+      'publishedAt': serializer.toJson<String>(publishedAt),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+    };
+  }
+
+  New copyWith(
+          {String? id,
+          String? title,
+          String? body,
+          Value<String?> excerpt = const Value.absent(),
+          String? language,
+          String? publishedAt,
+          String? createdAt,
+          String? updatedAt}) =>
+      New(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        body: body ?? this.body,
+        excerpt: excerpt.present ? excerpt.value : this.excerpt,
+        language: language ?? this.language,
+        publishedAt: publishedAt ?? this.publishedAt,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('New(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('body: $body, ')
+          ..write('excerpt: $excerpt, ')
+          ..write('language: $language, ')
+          ..write('publishedAt: $publishedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id, title, body, excerpt, language, publishedAt, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is New &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.body == this.body &&
+          other.excerpt == this.excerpt &&
+          other.language == this.language &&
+          other.publishedAt == this.publishedAt &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class NewsCompanion extends UpdateCompanion<New> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<String> body;
+  final Value<String?> excerpt;
+  final Value<String> language;
+  final Value<String> publishedAt;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  final Value<int> rowid;
+  const NewsCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.body = const Value.absent(),
+    this.excerpt = const Value.absent(),
+    this.language = const Value.absent(),
+    this.publishedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  NewsCompanion.insert({
+    required String id,
+    required String title,
+    required String body,
+    this.excerpt = const Value.absent(),
+    required String language,
+    required String publishedAt,
+    required String createdAt,
+    required String updatedAt,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        title = Value(title),
+        body = Value(body),
+        language = Value(language),
+        publishedAt = Value(publishedAt),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<New> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<String>? body,
+    Expression<String>? excerpt,
+    Expression<String>? language,
+    Expression<String>? publishedAt,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (body != null) 'body': body,
+      if (excerpt != null) 'excerpt': excerpt,
+      if (language != null) 'language': language,
+      if (publishedAt != null) 'published_at': publishedAt,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  NewsCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? title,
+      Value<String>? body,
+      Value<String?>? excerpt,
+      Value<String>? language,
+      Value<String>? publishedAt,
+      Value<String>? createdAt,
+      Value<String>? updatedAt,
+      Value<int>? rowid}) {
+    return NewsCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      body: body ?? this.body,
+      excerpt: excerpt ?? this.excerpt,
+      language: language ?? this.language,
+      publishedAt: publishedAt ?? this.publishedAt,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
+    if (excerpt.present) {
+      map['excerpt'] = Variable<String>(excerpt.value);
+    }
+    if (language.present) {
+      map['language'] = Variable<String>(language.value);
+    }
+    if (publishedAt.present) {
+      map['published_at'] = Variable<String>(publishedAt.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NewsCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('body: $body, ')
+          ..write('excerpt: $excerpt, ')
+          ..write('language: $language, ')
+          ..write('publishedAt: $publishedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $PagesTable extends Pages with TableInfo<$PagesTable, Page> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -7046,6 +7370,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $ArticlesTable articles = $ArticlesTable(this);
   late final $MadrasahsTable madrasahs = $MadrasahsTable(this);
   late final $NamazTimesTable namazTimes = $NamazTimesTable(this);
+  late final $NewsTable news = $NewsTable(this);
   late final $PagesTable pages = $PagesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
@@ -7071,6 +7396,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
         articles,
         madrasahs,
         namazTimes,
+        news,
         pages
       ];
   @override
