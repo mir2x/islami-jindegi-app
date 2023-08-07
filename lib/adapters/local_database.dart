@@ -17,9 +17,8 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     OnErrorAll<T>? onError,
     DataRequestLabel? label,
   }) async {
-    bool onlyLocal = params != null &&
-        params.containsKey('offline') &&
-        params['offline'];
+    bool onlyLocal =
+        params != null && params.containsKey('offline') && params['offline'];
 
     bool hasOneItem = params != null &&
         params.containsKey('quantity') &&
@@ -89,7 +88,7 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
 
       List<T> items = await onSuccess.call(data, label, this) ?? <T>[];
 
-      if (items.isNotEmpty || hasNoConnection) {
+      if (items.isNotEmpty || onlyLocal || hasNoConnection) {
         return items;
       }
     }
