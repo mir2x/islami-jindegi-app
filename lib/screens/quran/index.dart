@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/filter/switch_button.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
-import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/connectivity_result.dart';
 import 'package:native_app/objects/all_models_query.dart';
@@ -45,12 +44,28 @@ class QuranState extends ConsumerState<Quran> {
     var textTheme = Theme.of(context).textTheme;
     var connectivity = ref.watch(connectivityResultProvider);
 
+    AllModelsQuery query;
+
+    if (isSurahSelected) {
+      query = AllModelsQuery(
+        repository: ref.surahs,
+        params: const {'quantity': 114, 'offline': true},
+      );
+    } else {
+      query = AllModelsQuery(
+        repository: ref.paras,
+        params: const {'quantity': 30, 'offline': true},
+      );
+    }
+
+    var modelQuery = ref.watch(allModelsProvider(query));
+
     return AppScaffold(
       title: Text(locales.quran),
       body: Column(
         children: [
           Container(
-            padding: const EdgeInsets.only(left: 15, right: 15, top: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
             child: SwitchButton(
               firstLabel: locales.surah,
               secondLabel: locales.para,
@@ -63,17 +78,20 @@ class QuranState extends ConsumerState<Quran> {
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: isSurahSelected
-                  ? InfiniteList(
-                      resourceFetcher: (Map<String, dynamic> params) async {
-                        AllModelsQuery query = AllModelsQuery(
-                          repository: ref.surahs,
-                          params: params,
-                        );
+              child: modelQuery.when(
+                loading: () {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+                error: (error, _) => Text(error.toString()),
+                data: (resources) {
+                  if (isSurahSelected) {
+                    return ListView.builder(
+                      itemCount: resources.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        var item = resources[index];
 
-                        return await ref.read(allModelsProvider(query).future);
-                      },
-                      itemBuilder: (_, item, __) {
                         String? location;
 
                         if (item.location == 'Makkah') {
@@ -126,17 +144,13 @@ class QuranState extends ConsumerState<Quran> {
                           ),
                         );
                       },
-                    )
-                  : InfiniteList(
-                      resourceFetcher: (Map<String, dynamic> params) async {
-                        AllModelsQuery query = AllModelsQuery(
-                          repository: ref.paras,
-                          params: params,
-                        );
+                    );
+                  } else {
+                    return ListView.builder(
+                      itemCount: resources.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        var item = resources[index];
 
-                        return await ref.read(allModelsProvider(query).future);
-                      },
-                      itemBuilder: (_, item, __) {
                         return InkWell(
                           onTap: () => QR.to('quran/para/${item.slug}'),
                           child: ListItem(
@@ -160,7 +174,10 @@ class QuranState extends ConsumerState<Quran> {
                           ),
                         );
                       },
-                    ),
+                    );
+                  }
+                },
+              ),
             ),
           ),
         ],

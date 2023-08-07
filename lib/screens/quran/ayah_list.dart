@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
-import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/providers/quran_settings.dart';
@@ -50,25 +49,28 @@ class AyahList extends ConsumerWidget {
         loading: () => const SizedBox.shrink(),
         error: (error, _) => Text(error.toString()),
         data: (preferences) {
-          if (qSettings.containsKey('tilawat') && qSettings['tilawat']) {
-            var query = AllModelsQuery(
-              repository: ref.ayahs,
-              params: {
-                ...filterParams,
-                'quantity': chapter.totalAyat,
-              },
-            );
+          var query = AllModelsQuery(
+            repository: ref.ayahs,
+            params: {
+              ...filterParams,
+              'quantity': chapter.totalAyat,
+              'offline': true,
+              if (qSettings.containsKey('translation') &&
+                  qSettings['translation']) ...{'include': 'ayah-translations'}
+            },
+          );
 
-            var modelQuery = ref.watch(allModelsProvider(query));
+          var modelQuery = ref.watch(allModelsProvider(query));
 
-            return modelQuery.when(
-              loading: () {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
-              error: (error, _) => Text(error.toString()),
-              data: (resources) {
+          return modelQuery.when(
+            loading: () {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+            error: (error, _) => Text(error.toString()),
+            data: (resources) {
+              if (qSettings.containsKey('tilawat') && qSettings['tilawat']) {
                 String ayahs = resources.map((a) => a.title).join(' ');
 
                 return ValueListenableBuilder<double>(
@@ -99,51 +101,37 @@ class AyahList extends ConsumerWidget {
                     );
                   },
                 );
-              },
-            );
-          } else {
-            return Column(
-              children: [
-                InkWell(
-                  onTap: () => QR.to('quran/bismillah-tafseer'),
-                  child: Bismillah(
-                    chapter: chapter,
-                    preferences: preferences,
-                    arabicFontSizeRatio: arabicFontSizeRatio,
-                    banglaFontSizeRatio: banglaFontSizeRatio,
-                  ),
-                ),
-                Expanded(
-                  child: InfiniteList(
-                    resourceFetcher: (Map<String, dynamic> params) async {
-                      AllModelsQuery query = AllModelsQuery(
-                        repository: ref.ayahs,
-                        params: {
-                          ...params,
-                          ...filterParams,
-                          if (qSettings.containsKey('translation') &&
-                              qSettings['translation']) ...{
-                            'include': 'ayah-translations'
-                          }
-                        },
-                      );
-
-                      return await ref.read(allModelsProvider(query).future);
-                    },
-                    itemBuilder: (_, ayah, __) {
-                      return Ayah(
-                        ayah: ayah,
+              } else {
+                return Column(
+                  children: [
+                    InkWell(
+                      onTap: () => QR.to('quran/bismillah-tafseer'),
+                      child: Bismillah(
                         chapter: chapter,
                         preferences: preferences,
                         arabicFontSizeRatio: arabicFontSizeRatio,
                         banglaFontSizeRatio: banglaFontSizeRatio,
-                      );
-                    },
-                  ),
-                ),
-              ],
-            );
-          }
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: resources.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Ayah(
+                            ayah: resources[index],
+                            chapter: chapter,
+                            preferences: preferences,
+                            arabicFontSizeRatio: arabicFontSizeRatio,
+                            banglaFontSizeRatio: banglaFontSizeRatio,
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              }
+            },
+          );
         },
       ),
       bottomBar: BottomBar(
@@ -151,7 +139,50 @@ class AyahList extends ConsumerWidget {
         children: [
           Row(
             children: [
-              if (qSettings['tilawat'] == null || !qSettings['tilawat']) ...[
+              Container(
+                margin: const EdgeInsets.only(left: 2),
+                child: TextButton(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (qSettings.containsKey('tilawat') &&
+                          qSettings['tilawat']) ...[
+                        const Icon(
+                          Icons.check_box,
+                          color: ThemeColors.color4,
+                          size: 20,
+                        ),
+                      ] else ...[
+                        const Icon(
+                          Icons.check_box_outline_blank,
+                          color: ThemeColors.color4,
+                          size: 20,
+                        ),
+                      ],
+                      Container(
+                        margin: const EdgeInsets.only(left: 2, bottom: 1),
+                        child: Text(
+                          locales.tilawat,
+                          style: textTheme.labelMedium,
+                        ),
+                      )
+                    ],
+                  ),
+                  onPressed: () {
+                    bool selectedTranslationOption =
+                        qSettings.containsKey('tilawat')
+                            ? qSettings['tilawat']
+                            : false;
+
+                    ref.read(quranSettingsProvider.notifier).updateSettings(
+                          'tilawat',
+                          !selectedTranslationOption,
+                        );
+                  },
+                ),
+              ),
+              if (!(qSettings.containsKey('tilawat') &&
+                  qSettings['tilawat'])) ...[
                 Container(
                   margin: const EdgeInsets.only(left: 2),
                   child: TextButton(
@@ -195,48 +226,6 @@ class AyahList extends ConsumerWidget {
                   ),
                 ),
               ],
-              Container(
-                margin: const EdgeInsets.only(left: 2),
-                child: TextButton(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (qSettings.containsKey('tilawat') &&
-                          qSettings['tilawat']) ...[
-                        const Icon(
-                          Icons.check_box,
-                          color: ThemeColors.color4,
-                          size: 20,
-                        ),
-                      ] else ...[
-                        const Icon(
-                          Icons.check_box_outline_blank,
-                          color: ThemeColors.color4,
-                          size: 20,
-                        ),
-                      ],
-                      Container(
-                        margin: const EdgeInsets.only(left: 2, bottom: 1),
-                        child: Text(
-                          locales.tilawat,
-                          style: textTheme.labelMedium,
-                        ),
-                      )
-                    ],
-                  ),
-                  onPressed: () {
-                    bool selectedTranslationOption =
-                        qSettings.containsKey('tilawat')
-                            ? qSettings['tilawat']
-                            : false;
-
-                    ref.read(quranSettingsProvider.notifier).updateSettings(
-                          'tilawat',
-                          !selectedTranslationOption,
-                        );
-                  },
-                ),
-              ),
             ],
           ),
           Row(
