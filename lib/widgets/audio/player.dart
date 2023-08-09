@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/providers/audio_player.dart';
 import 'package:native_app/providers/connectivity_result.dart';
+import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/objects/audio_source.dart';
 import 'package:native_app/widgets/presentation/connect_to_internet.dart';
 import 'package:native_app/helpers/play_time.dart';
@@ -80,7 +81,7 @@ class AudioPlayerWidget extends ConsumerWidget {
   }
 }
 
-class StatefulAudioPlayer extends StatefulWidget {
+class StatefulAudioPlayer extends ConsumerStatefulWidget {
   const StatefulAudioPlayer({
     super.key,
     required this.player,
@@ -91,10 +92,10 @@ class StatefulAudioPlayer extends StatefulWidget {
   final LinkedHashMap audio;
 
   @override
-  State<StatefulAudioPlayer> createState() => _AudioPlayerState();
+  ConsumerState<StatefulAudioPlayer> createState() => _AudioPlayerState();
 }
 
-class _AudioPlayerState extends State<StatefulAudioPlayer> {
+class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
   PlayerState _playerState = PlayerState.stopped;
 
   StreamSubscription? _durationSubscription;
@@ -149,91 +150,107 @@ class _AudioPlayerState extends State<StatefulAudioPlayer> {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
+    var prefs = ref.watch(preferencesProvider);
 
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: () async {
-            if (isPlaying) {
-              await widget.player.pause();
-            } else {
-              await widget.player.resume();
-            }
-          },
-          child: isPlaying
-              ? SvgPicture.asset(
-                  'assets/images/icons/pause.svg',
-                  width: 80,
-                  height: 80,
-                )
-              : SvgPicture.asset(
-                  'assets/images/icons/play.svg',
-                  width: 80,
-                  height: 80,
-                ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 15, bottom: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                playTime(position.inSeconds),
-                style: textTheme.labelMedium?.copyWith(
-                  color: ThemeColors.color4,
-                ),
-              ),
-              Text(
-                playTime(duration.inSeconds),
-                style: textTheme.labelMedium?.copyWith(
-                  color: ThemeColors.color4,
-                ),
-              ),
-            ],
-          ),
-        ),
-        SliderTheme(
-          data: SliderThemeData(
-            overlayShape: SliderComponentShape.noThumb,
-          ),
-          child: Slider(
-            activeColor: ThemeColors.color4,
-            inactiveColor: ThemeColors.color3,
-            value: position.inSeconds.toDouble(),
-            min: 0,
-            max: duration.inSeconds.toDouble(),
-            onChanged: (double value) async {
-              await widget.player.seek(Duration(seconds: value.toInt()));
-              value = value;
-            },
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return prefs.when(
+      loading: () => const SizedBox.shrink(),
+      error: (error, _) => Text(error.toString()),
+      data: (preferences) {
+        String theme = preferences.getString('theme') ?? 'dark';
+
+        return Column(
           children: [
-            IconButton(
-              icon: const Icon(Icons.fast_rewind),
-              onPressed: () async {
-                int tenSecondBehind = position.inSeconds - 10;
-
-                if (tenSecondBehind >= 0) {
-                  await widget.player.seek(Duration(seconds: tenSecondBehind));
+            GestureDetector(
+              onTap: () async {
+                if (isPlaying) {
+                  await widget.player.pause();
+                } else {
+                  await widget.player.resume();
                 }
               },
+              child: isPlaying
+                  ? SvgPicture.asset(
+                      'assets/images/icons/pause.svg',
+                      width: 80,
+                      height: 80,
+                    )
+                  : SvgPicture.asset(
+                      'assets/images/icons/play.svg',
+                      width: 80,
+                      height: 80,
+                    ),
             ),
-            IconButton(
-              icon: const Icon(Icons.fast_forward),
-              onPressed: () async {
-                int tenSecondForward = position.inSeconds + 10;
+            Container(
+              margin: const EdgeInsets.only(top: 15, bottom: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    playTime(position.inSeconds),
+                    style: textTheme.labelMedium?.copyWith(
+                      color: theme == 'dark'
+                          ? ThemeColors.color4
+                          : ThemeColors.color8,
+                    ),
+                  ),
+                  Text(
+                    playTime(duration.inSeconds),
+                    style: textTheme.labelMedium?.copyWith(
+                      color: theme == 'dark'
+                          ? ThemeColors.color4
+                          : ThemeColors.color8,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SliderTheme(
+              data: SliderThemeData(
+                overlayShape: SliderComponentShape.noThumb,
+              ),
+              child: Slider(
+                activeColor:
+                    theme == 'dark' ? ThemeColors.color4 : ThemeColors.color8,
+                inactiveColor: ThemeColors.color3,
+                value: position.inSeconds.toDouble(),
+                min: 0,
+                max: duration.inSeconds.toDouble(),
+                onChanged: (double value) async {
+                  await widget.player.seek(Duration(seconds: value.toInt()));
+                  value = value;
+                },
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.fast_rewind),
+                  onPressed: () async {
+                    int tenSecondBehind = position.inSeconds - 10;
 
-                if (tenSecondForward <= duration.inSeconds) {
-                  await widget.player.seek(Duration(seconds: tenSecondForward));
-                }
-              },
+                    if (tenSecondBehind >= 0) {
+                      await widget.player
+                          .seek(Duration(seconds: tenSecondBehind));
+                    }
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.fast_forward),
+                  onPressed: () async {
+                    int tenSecondForward = position.inSeconds + 10;
+
+                    if (tenSecondForward <= duration.inSeconds) {
+                      await widget.player
+                          .seek(Duration(seconds: tenSecondForward));
+                    }
+                  },
+                ),
+              ],
             ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 }
