@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'notification_status.dart';
 
 Future<void> handleBackgroundMessage(RemoteMessage message) async {}
 
@@ -54,7 +55,7 @@ Future initLocalNotifications() async {
 final pushNotificationProvider = FutureProvider((ref) async {
   final messaging = FirebaseMessaging.instance;
 
-  var settings = await messaging.requestPermission(
+  var permission = await messaging.requestPermission(
     alert: true,
     announcement: false,
     badge: true,
@@ -64,13 +65,15 @@ final pushNotificationProvider = FutureProvider((ref) async {
     sound: true,
   );
 
-  if (settings.authorizationStatus == AuthorizationStatus.provisional ||
-      settings.authorizationStatus == AuthorizationStatus.authorized) {
+  if (permission.authorizationStatus == AuthorizationStatus.provisional ||
+      permission.authorizationStatus == AuthorizationStatus.authorized) {
     /* try { */
     /*   final fCMToken = await messaging.getToken(); */
     /* } catch (error) { */
     /*   // connection error */
     /* } */
+
+    await ref.read(notificationStatusProvider.notifier).updateStatus();
 
     final localNotifications = await initLocalNotifications();
 

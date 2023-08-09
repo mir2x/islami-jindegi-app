@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:native_app/providers/push_notifications.dart';
 import 'package:native_app/providers/preferences.dart';
+import 'package:native_app/providers/notification_status.dart';
 
 class AppScaffold extends ConsumerWidget {
   const AppScaffold({
@@ -81,10 +84,17 @@ class AppScaffold extends ConsumerWidget {
             title: title,
             centerTitle: true,
             actions: <Widget>[
+              const NotificationButton(),
               Padding(
-                padding: EdgeInsets.only(right: isHome ? 5 : 20),
+                padding: const EdgeInsets.only(right: 5),
                 child: isHome
                     ? PopupMenuButton<int>(
+                        child: const SizedBox(
+                          width: 40,
+                          child: Icon(
+                            Icons.more_vert,
+                          ),
+                        ),
                         itemBuilder: (BuildContext context) =>
                             <PopupMenuEntry<int>>[
                           PopupMenuItem<int>(
@@ -156,13 +166,16 @@ class AppScaffold extends ConsumerWidget {
                           }
                         },
                       )
-                    : GestureDetector(
+                    : InkWell(
                         onTap: () => sKey.currentState!.openEndDrawer(),
-                        child: SvgPicture.asset(
-                          'assets/images/icons/menu.svg',
-                          fit: BoxFit.scaleDown,
-                          width: 30,
-                          height: 30,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: SvgPicture.asset(
+                            'assets/images/icons/menu.svg',
+                            fit: BoxFit.scaleDown,
+                            width: 30,
+                            height: 30,
+                          ),
                         ),
                       ),
               ),
@@ -272,6 +285,55 @@ class DrawerLink extends StatelessWidget {
           textAlign: TextAlign.right,
         ),
       ),
+    );
+  }
+}
+
+class NotificationButton extends ConsumerWidget {
+  const NotificationButton({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var statusProvider = ref.watch(notificationStatusProvider);
+
+    return statusProvider.when(
+      loading: () => const SizedBox.shrink(),
+      error: (error, _) => Text(error.toString()),
+      data: (PermissionStatus status) {
+        if (status.isGranted || status.isProvisional) {
+          return const SizedBox.shrink();
+        } else {
+          return IconButton(
+            icon: const Icon(Icons.notification_add),
+            onPressed: () async {
+              final messaging = FirebaseMessaging.instance;
+
+              var permission = await messaging.requestPermission(
+                alert: true,
+                announcement: false,
+                badge: true,
+                carPlay: false,
+                criticalAlert: false,
+                provisional: true,
+                sound: true,
+              );
+
+              var permissionStatus = permission.authorizationStatus;
+
+              if (permissionStatus == AuthorizationStatus.authorized ||
+                  permissionStatus == AuthorizationStatus.provisional) {
+                await ref
+                    .read(notificationStatusProvider.notifier)
+                    .updateStatus();
+              }
+
+              if (permissionStatus == AuthorizationStatus.denied) {
+                openAppSettings();
+              }
+            },
+          );
+        }
+      },
     );
   }
 }
