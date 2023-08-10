@@ -64,6 +64,8 @@ class NamazTime extends ConsumerWidget {
 
           if (previousResources.isNotEmpty) {
             await QR.to('namaz-times/${previousResources.first.slug}');
+          } else {
+            await QR.to('namaz-times');
           }
         }
 
@@ -124,10 +126,7 @@ class NamazTime extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Previous(
-                onPrevious: previousPage,
-                previousDisabled: item.position == 1,
-              ),
+              Previous(onPrevious: previousPage),
               SocialShare(
                 title: itemTitle,
                 body: '${item.masail}${item.fazail}',
