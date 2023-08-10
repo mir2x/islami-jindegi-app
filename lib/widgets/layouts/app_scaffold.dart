@@ -288,8 +288,11 @@ class DrawerLink extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.of(context).pop();
-        QR.to(route);
+        Scaffold.of(context).closeEndDrawer();
+
+        if (QR.currentPath.substring(1) != route) {
+          QR.to(route);
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
