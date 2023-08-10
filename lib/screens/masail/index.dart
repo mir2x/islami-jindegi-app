@@ -5,7 +5,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
-import 'package:native_app/widgets/inputs/search_field.dart';
+import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/query_params.dart';
@@ -105,7 +105,7 @@ class Masail extends ConsumerWidget {
                             width: 15,
                           ),
                           Expanded(
-                            child: SearchField(
+                            child: SearchButtonField(
                               value: qParams['search'],
                               onUpdate: (value) {
                                 ref

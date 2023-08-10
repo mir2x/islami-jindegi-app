@@ -8,7 +8,7 @@ import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
-import 'package:native_app/widgets/inputs/search_field.dart';
+import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 
@@ -31,7 +31,7 @@ class QuranSearch extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
             child: Column(
               children: [
-                SearchField(
+                SearchButtonField(
                   value: qParams['search'],
                   labelText: locales.searchInArabic,
                   reverse: true,

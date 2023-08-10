@@ -5,8 +5,8 @@ import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/theme/colors.dart';
 import 'input_field.dart';
 
-class SearchField extends ConsumerStatefulWidget {
-  const SearchField({
+class SearchButtonField extends ConsumerStatefulWidget {
+  const SearchButtonField({
     super.key,
     required this.onUpdate,
     this.value,
@@ -22,10 +22,10 @@ class SearchField extends ConsumerStatefulWidget {
   final bool autofocus;
 
   @override
-  ConsumerState<SearchField> createState() => _SearchState();
+  ConsumerState<SearchButtonField> createState() => _SearchState();
 }
 
-class _SearchState extends ConsumerState<SearchField> {
+class _SearchState extends ConsumerState<SearchButtonField> {
   String? searchText;
 
   updateSearchText(value) {
