@@ -7,6 +7,7 @@ class InputField extends StatefulWidget {
     required this.onChanged,
     this.initialValue,
     this.keyboardType,
+    this.autofocus = false,
     this.inputFormatters,
     this.decoration,
     this.style,
@@ -15,6 +16,7 @@ class InputField extends StatefulWidget {
   final String? initialValue;
   final void Function(String)? onChanged;
   final TextInputType? keyboardType;
+  final bool autofocus;
   final List<TextInputFormatter>? inputFormatters;
   final InputDecoration? decoration;
   final TextStyle? style;
@@ -37,6 +39,7 @@ class InputFieldState extends State<InputField> {
     return TextField(
       controller: _controller,
       keyboardType: widget.keyboardType,
+      autofocus: widget.autofocus,
       inputFormatters: widget.inputFormatters,
       decoration: widget.decoration,
       onChanged: widget.onChanged,

@@ -12,12 +12,14 @@ class SearchField extends ConsumerStatefulWidget {
     this.value,
     this.labelText,
     this.reverse = false,
+    this.autofocus = false,
   });
 
   final String? value;
   final Function onUpdate;
   final String? labelText;
   final bool reverse;
+  final bool autofocus;
 
   @override
   ConsumerState<SearchField> createState() => _SearchState();
@@ -49,6 +51,7 @@ class _SearchState extends ConsumerState<SearchField> {
           textDirection: widget.reverse ? TextDirection.rtl : TextDirection.ltr,
           child: InputField(
             initialValue: widget.value,
+            autofocus: widget.autofocus,
             decoration: InputDecoration(
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
