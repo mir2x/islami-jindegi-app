@@ -61,6 +61,9 @@ class QuranBookItem extends ConsumerWidget {
             data: (pdfController) {
               final GlobalKey<ScaffoldState> sKey = GlobalKey<ScaffoldState>();
 
+              double screenWidth = MediaQuery.of(context).size.width;
+              double screenHeight = MediaQuery.of(context).size.height;
+
               return AppScaffold(
                 scaffoldKey: sKey,
                 title: Text(qitabTitle),
@@ -96,6 +99,10 @@ class QuranBookItem extends ConsumerWidget {
                         child: CircularProgressIndicator(),
                       );
                     },
+                  ),
+                  renderer: (PdfPage page) => page.render(
+                    width: screenWidth,
+                    height: screenHeight - 160,
                   ),
                   onPageChanged: (page) async {
                     var scaffoldMessenger = ScaffoldMessenger.of(context);
