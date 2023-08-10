@@ -12,12 +12,10 @@ class QuranDrawer extends ConsumerStatefulWidget {
     super.key,
     required this.book,
     required this.pdfController,
-    required this.closeDrawer,
   });
 
   final dynamic book;
   final PdfController pdfController;
-  final Function closeDrawer;
 
   @override
   ConsumerState<QuranDrawer> createState() => _QuranDrawerState();
@@ -142,13 +140,13 @@ class _QuranDrawerState extends ConsumerState<QuranDrawer> {
                 QuranBookSurahs(
                   book: widget.book,
                   pdfController: widget.pdfController,
-                  closeDrawer: widget.closeDrawer,
+                  closeDrawer: () => Scaffold.of(context).closeDrawer(),
                 ),
               ] else ...[
                 QuranBookParas(
                   book: widget.book,
                   pdfController: widget.pdfController,
-                  closeDrawer: widget.closeDrawer,
+                  closeDrawer: () => Scaffold.of(context).closeDrawer(),
                 ),
               ]
             ],
