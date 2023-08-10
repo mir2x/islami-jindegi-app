@@ -50,12 +50,34 @@ class Malfuzat extends ConsumerWidget {
                             child: FilterButton(
                               active: qParams.keys.any(
                                 (k) => [
-                                  'malfuzatCategoryId',
-                                  'malfuzatSubcategoryId',
                                   'malfuzatAuthorId'
+                                      'malfuzatCategoryId',
+                                  'malfuzatSubcategoryId',
                                 ].contains(k),
                               ),
                               children: [
+                                Expanded(
+                                  child: FilterList(
+                                    title: locales.authors,
+                                    paramKeys: const ['malfuzatAuthorId'],
+                                    searchEnabled: true,
+                                    queryBuilder:
+                                        (Map<String, dynamic> params) {
+                                      return AllModelsQuery(
+                                        repository: ref.malfuzatAuthors,
+                                        params: params,
+                                      );
+                                    },
+                                    itemBuilder: (_, item, __) {
+                                      return FilterItem(
+                                        itemId: item.id,
+                                        itemTitle: item.name,
+                                        paramKey: 'malfuzatAuthorId',
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 40),
                                 Expanded(
                                   child: FilterList(
                                     title: locales.categories,
@@ -96,27 +118,6 @@ class Malfuzat extends ConsumerWidget {
                                           paramKey: 'malfuzatCategoryId',
                                         );
                                       }
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(height: 40),
-                                Expanded(
-                                  child: FilterList(
-                                    title: locales.authors,
-                                    paramKeys: const ['malfuzatAuthorId'],
-                                    queryBuilder:
-                                        (Map<String, dynamic> params) {
-                                      return AllModelsQuery(
-                                        repository: ref.malfuzatAuthors,
-                                        params: params,
-                                      );
-                                    },
-                                    itemBuilder: (_, item, __) {
-                                      return FilterItem(
-                                        itemId: item.id,
-                                        itemTitle: item.name,
-                                        paramKey: 'malfuzatAuthorId',
-                                      );
                                     },
                                   ),
                                 ),

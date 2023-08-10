@@ -56,6 +56,7 @@ class Bayans extends ConsumerWidget {
                                     title: locales.speakers,
                                     paramKeys: const ['speakerId'],
                                     pageSize: 16,
+                                    searchEnabled: true,
                                     queryBuilder:
                                         (Map<String, dynamic> params) {
                                       return AllModelsQuery(

@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:native_app/providers/query_params.dart';
+import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 
-class FilterList extends ConsumerWidget {
+class FilterList extends ConsumerStatefulWidget {
   const FilterList({
     super.key,
     required this.title,
     required this.paramKeys,
     this.pageSize = 8,
+    this.searchEnabled = false,
     required this.queryBuilder,
     required this.itemBuilder,
   });
@@ -18,11 +20,25 @@ class FilterList extends ConsumerWidget {
   final String title;
   final List<String> paramKeys;
   final int pageSize;
+  final bool searchEnabled;
   final Function queryBuilder;
   final ItemWidgetBuilder itemBuilder;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<FilterList> createState() => _FilterListState();
+}
+
+class _FilterListState extends ConsumerState<FilterList> {
+  String? searchText;
+
+  updateSearchText(value) {
+    setState(() {
+      searchText = value;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     var qParams = ref.watch(queryParamsProvider);
 
     return Column(
@@ -33,41 +49,64 @@ class FilterList extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(title),
-              if (qParams.keys.any((k) => paramKeys.contains(k))) ...[
-                IconButton(
-                  constraints: const BoxConstraints(
-                    maxHeight: 40,
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(widget.title),
+                    if (qParams.keys
+                        .any((k) => widget.paramKeys.contains(k))) ...[
+                      IconButton(
+                        constraints: const BoxConstraints(
+                          maxHeight: 40,
+                        ),
+                        splashRadius: 24,
+                        icon: const Icon(
+                          Icons.close,
+                        ),
+                        onPressed: () {
+                          var qParamsNotifier =
+                              ref.read(queryParamsProvider.notifier);
+                          for (var k in widget.paramKeys) {
+                            qParamsNotifier.updateParams(k, '');
+                          }
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    ],
+                  ],
+                ),
+              ),
+              if (widget.searchEnabled) ...[
+                Expanded(
+                  child: SearchField(
+                    value: searchText,
+                    maxHeight: 35,
+                    onUpdate: updateSearchText,
                   ),
-                  splashRadius: 24,
-                  icon: const Icon(
-                    Icons.close,
-                  ),
-                  onPressed: () {
-                    var qParamsNotifier =
-                        ref.read(queryParamsProvider.notifier);
-                    for (var k in paramKeys) {
-                      qParamsNotifier.updateParams(k, '');
-                    }
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
+                ),
+              ]
             ],
           ),
         ),
         Expanded(
           child: InfiniteList(
-            pageSize: pageSize,
+            pageSize: widget.pageSize,
             padding: 2,
             resourceFetcher: (Map<String, dynamic> params) async {
-              var query = queryBuilder(params);
+              if (widget.searchEnabled &&
+                  searchText != null &&
+                  searchText!.isNotEmpty) {
+                params = {...params, 'search': searchText};
+              }
+
+              var query = widget.queryBuilder(params);
 
               return await ref.read(
                 allModelsProvider(query).future,
               );
             },
-            itemBuilder: itemBuilder,
+            itemBuilder: widget.itemBuilder,
           ),
         ),
       ],

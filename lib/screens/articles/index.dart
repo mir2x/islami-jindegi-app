@@ -46,12 +46,33 @@ class Articles extends ConsumerWidget {
                         child: FilterButton(
                           active: qParams.keys.any(
                             (k) => [
+                              'articleAuthorId',
                               'articleCategoryId',
                               'articleSubcategoryId',
-                              'articleAuthorId'
                             ].contains(k),
                           ),
                           children: [
+                            Expanded(
+                              child: FilterList(
+                                title: locales.authors,
+                                paramKeys: const ['articleAuthorId'],
+                                searchEnabled: true,
+                                queryBuilder: (Map<String, dynamic> params) {
+                                  return AllModelsQuery(
+                                    repository: ref.articleAuthors,
+                                    params: params,
+                                  );
+                                },
+                                itemBuilder: (_, item, __) {
+                                  return FilterItem(
+                                    itemId: item.id,
+                                    itemTitle: item.name,
+                                    paramKey: 'articleAuthorId',
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 40),
                             Expanded(
                               child: FilterList(
                                 title: locales.categories,
@@ -90,26 +111,6 @@ class Articles extends ConsumerWidget {
                                       paramKey: 'articleCategoryId',
                                     );
                                   }
-                                },
-                              ),
-                            ),
-                            const SizedBox(height: 40),
-                            Expanded(
-                              child: FilterList(
-                                title: locales.authors,
-                                paramKeys: const ['articleAuthorId'],
-                                queryBuilder: (Map<String, dynamic> params) {
-                                  return AllModelsQuery(
-                                    repository: ref.articleAuthors,
-                                    params: params,
-                                  );
-                                },
-                                itemBuilder: (_, item, __) {
-                                  return FilterItem(
-                                    itemId: item.id,
-                                    itemTitle: item.name,
-                                    paramKey: 'articleAuthorId',
-                                  );
                                 },
                               ),
                             ),
