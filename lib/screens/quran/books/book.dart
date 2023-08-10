@@ -59,13 +59,10 @@ class QuranBookItem extends ConsumerWidget {
             },
             error: (error, stackTrace) => Text(error.toString()),
             data: (pdfController) {
-              final GlobalKey<ScaffoldState> sKey = GlobalKey<ScaffoldState>();
-
               double screenWidth = MediaQuery.of(context).size.width;
               double screenHeight = MediaQuery.of(context).size.height;
 
               return AppScaffold(
-                scaffoldKey: sKey,
                 title: Text(qitabTitle),
                 body: PdfView(
                   reverse: true,
@@ -137,27 +134,12 @@ class QuranBookItem extends ConsumerWidget {
                     child: QuranDrawer(
                       book: book,
                       pdfController: pdfController,
-                      closeDrawer: () => sKey.currentState!.closeDrawer(),
                     ),
                   ),
                 ),
                 bottomBar: BottomBar(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 10,
-                      ),
-                      child: GestureDetector(
-                        onTap: () => sKey.currentState!.openDrawer(),
-                        child: SvgPicture.asset(
-                          'assets/images/icons/menu.svg',
-                          fit: BoxFit.scaleDown,
-                          width: 30,
-                          height: 30,
-                        ),
-                      ),
-                    ),
+                    const QuranMenuButton(),
                     QuranDownload(
                       filePath: qitab.document['id'],
                       fileUrl: fileSrcUrl(qitab.document),
@@ -176,6 +158,29 @@ class QuranBookItem extends ConsumerWidget {
           );
         }
       },
+    );
+  }
+}
+
+class QuranMenuButton extends StatelessWidget {
+  const QuranMenuButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 15,
+        vertical: 10,
+      ),
+      child: GestureDetector(
+        onTap: () => Scaffold.of(context).openDrawer(),
+        child: SvgPicture.asset(
+          'assets/images/icons/menu.svg',
+          fit: BoxFit.scaleDown,
+          width: 30,
+          height: 30,
+        ),
+      ),
     );
   }
 }

@@ -20,7 +20,6 @@ class AppScaffold extends ConsumerWidget {
     this.drawer,
     this.bottomBar,
     this.onBackPressed,
-    this.scaffoldKey,
     this.isHome = false,
   });
 
@@ -29,7 +28,6 @@ class AppScaffold extends ConsumerWidget {
   final Widget? drawer;
   final Widget? bottomBar;
   final Function? onBackPressed;
-  final GlobalKey<ScaffoldState>? scaffoldKey;
   final bool isHome;
 
   @override
@@ -39,9 +37,6 @@ class AppScaffold extends ConsumerWidget {
 
     ref.read(pushNotificationProvider);
     var prefs = ref.watch(preferencesProvider);
-
-    final GlobalKey<ScaffoldState> sKey =
-        scaffoldKey ?? GlobalKey<ScaffoldState>();
 
     return prefs.when(
       loading: () => const SizedBox.shrink(),
@@ -59,7 +54,6 @@ class AppScaffold extends ConsumerWidget {
             }
           },
           child: Scaffold(
-            key: sKey,
             appBar: AppBar(
               leading: Padding(
                 padding: const EdgeInsets.only(left: 15),
@@ -175,18 +169,7 @@ class AppScaffold extends ConsumerWidget {
                             }
                           },
                         )
-                      : InkWell(
-                          onTap: () => sKey.currentState!.openEndDrawer(),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: SvgPicture.asset(
-                              'assets/images/icons/menu.svg',
-                              fit: BoxFit.scaleDown,
-                              width: 30,
-                              height: 30,
-                            ),
-                          ),
-                        ),
+                      : const MenuButton(),
                 ),
               ],
             ),
@@ -265,6 +248,26 @@ class AppScaffold extends ConsumerWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class MenuButton extends StatelessWidget {
+  const MenuButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => Scaffold.of(context).openEndDrawer(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: SvgPicture.asset(
+          'assets/images/icons/menu.svg',
+          fit: BoxFit.scaleDown,
+          width: 30,
+          height: 30,
+        ),
+      ),
     );
   }
 }
