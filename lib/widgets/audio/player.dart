@@ -113,9 +113,13 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
     super.initState();
 
     if (widget.audio['metadata']?['duration'] != null) {
-      duration = Duration(
-        seconds: int.parse(widget.audio['metadata']['duration']),
-      );
+      dynamic seconds = widget.audio['metadata']?['duration'];
+
+      if (seconds is String) {
+        seconds = int.parse(seconds);
+      }
+
+      duration = Duration(seconds: seconds);
     }
 
     _durationSubscription =
