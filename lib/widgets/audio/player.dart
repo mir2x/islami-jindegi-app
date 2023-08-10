@@ -113,7 +113,9 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
     super.initState();
 
     if (widget.audio['metadata']?['duration'] != null) {
-      duration = Duration(seconds: widget.audio['metadata']['duration']);
+      duration = Duration(
+        seconds: int.parse(widget.audio['metadata']['duration']),
+      );
     }
 
     _durationSubscription =

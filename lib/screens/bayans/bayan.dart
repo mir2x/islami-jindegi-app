@@ -73,6 +73,8 @@ class Bayan extends ConsumerWidget {
           }
         }
 
+        print(resource.audio['metadata']['duration']);
+
         return AppScaffold(
           onBackPressed: () async => await QR.to('bayans'),
           title: Text(locales.bayan),
@@ -139,7 +141,7 @@ class Bayan extends ConsumerWidget {
                           title: '${locales.audioDuration}:',
                           description: Text(
                             playDuration(
-                              resource.audio['metadata']['duration'],
+                              int.parse(resource.audio['metadata']['duration']),
                             ),
                             style: textTheme.labelMedium,
                           ),
