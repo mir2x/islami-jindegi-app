@@ -78,7 +78,6 @@ extension MadrasahInfoRelationshipGraphNodeX
 MadrasahInfo _$MadrasahInfoFromJson(Map<String, dynamic> json) => MadrasahInfo(
       id: json['id'] as String?,
       label: json['label'] as String,
-      labelBn: json['label-bn'] as String?,
       info: json['info'] as String,
       position: json['position'] as int?,
       createdAt: json['created-at'] as String?,
@@ -93,7 +92,6 @@ Map<String, dynamic> _$MadrasahInfoToJson(MadrasahInfo instance) =>
     <String, dynamic>{
       'id': instance.id,
       'label': instance.label,
-      'label-bn': instance.labelBn,
       'info': instance.info,
       'position': instance.position,
       'created-at': instance.createdAt,

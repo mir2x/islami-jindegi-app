@@ -128,7 +128,6 @@ class Ayah extends ConsumerWidget {
                         repository: ref.ayahs,
                         id: ayah.id,
                         params: const {'include': 'surah,ayah-translations'},
-                        remote: true,
                       );
 
                       var reloadedAyah = await ref.read(
@@ -158,7 +157,6 @@ class Ayah extends ConsumerWidget {
                         repository: ref.ayahs,
                         id: ayah.id,
                         params: const {'include': 'surah,ayah-translations'},
-                        remote: true,
                       );
 
                       var reloadedAyah = await ref.read(

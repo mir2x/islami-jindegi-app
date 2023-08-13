@@ -16,7 +16,6 @@ import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
-import 'package:native_app/helpers/contextual_translation.dart';
 
 class Madrasah extends ConsumerWidget {
   const Madrasah({super.key});
@@ -24,14 +23,12 @@ class Madrasah extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
 
     var query = SingleModelQuery(
       repository: ref.madrasahs,
       id: QR.params['id'].toString(),
       params: const {'include': 'madrasah-infos'},
-      remote: true,
     );
 
     var modelQuery = ref.watch(singleModelProvider(query));
@@ -101,11 +98,7 @@ class Madrasah extends ConsumerWidget {
                         QR.to('madrasahs/${resource.id}/infos/${info.id}'),
                     child: ListItem(
                       item: Text(
-                        contextualTranslation(
-                          locale: currentLang,
-                          enText: info.label,
-                          bnText: info.labelBn,
-                        ),
+                        info.label,
                         style: textTheme.titleMedium,
                       ),
                     ),

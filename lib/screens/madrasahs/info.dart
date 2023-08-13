@@ -17,21 +17,18 @@ import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
-import 'package:native_app/helpers/contextual_translation.dart';
 
 class MadrasahInfo extends ConsumerWidget {
   const MadrasahInfo({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    String currentLang = Localizations.localeOf(context).languageCode;
     var fontSizeRatio = FontSizeRatio();
 
     var query = SingleModelQuery(
       repository: ref.madrasahInfos,
       id: QR.params['info_id'].toString(),
       params: const {'include': 'madrasah'},
-      remote: true,
     );
 
     var modelQuery = ref.watch(singleModelProvider(query));
@@ -88,12 +85,6 @@ class MadrasahInfo extends ConsumerWidget {
           }
         }
 
-        String resourceLabel = contextualTranslation(
-          locale: currentLang,
-          enText: resource.label,
-          bnText: resource.labelBn,
-        );
-
         return AppScaffold(
           onBackPressed: () async =>
               await QR.to('madrasahs/${resource.madrasah.value.id}'),
@@ -106,7 +97,7 @@ class MadrasahInfo extends ConsumerWidget {
                 Container(
                   margin: const EdgeInsets.only(bottom: 15),
                   child: PageTitle(
-                    text: resourceLabel,
+                    text: resource.label,
                     fontSizeRatio: fontSizeRatio,
                   ),
                 ),
@@ -125,7 +116,7 @@ class MadrasahInfo extends ConsumerWidget {
             children: [
               Previous(onPrevious: previousPage),
               SocialShare(
-                title: resourceLabel,
+                title: resource.label,
                 body: resource.info,
               ),
               FontResizer(fontSizeRatio: fontSizeRatio),

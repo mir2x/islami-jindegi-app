@@ -12,7 +12,6 @@ class MadrasahInfo extends DataModel<MadrasahInfo> {
   @override
   final String? id;
   final String label;
-  final String? labelBn;
   final String info;
   final int? position;
   final String? createdAt;
@@ -23,7 +22,6 @@ class MadrasahInfo extends DataModel<MadrasahInfo> {
   MadrasahInfo({
     this.id,
     required this.label,
-    this.labelBn,
     required this.info,
     this.position,
     this.createdAt,

@@ -16,6 +16,7 @@ export 'duas.dart';
 export 'article_authors.dart';
 export 'articles.dart';
 export 'madrasahs.dart';
+export 'madrasah_infos.dart';
 export 'namaz_times.dart';
 export 'news.dart';
 export 'pages.dart';

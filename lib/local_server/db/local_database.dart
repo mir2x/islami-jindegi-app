@@ -30,6 +30,7 @@ part 'local_database.g.dart';
     ArticleAuthors,
     Articles,
     Madrasahs,
+    MadrasahInfos,
     NamazTimes,
     News,
     Pages,
@@ -87,6 +88,8 @@ class LocalDatabase extends _$LocalDatabase {
         return queryArticle(params);
       case 'madrasahs':
         return queryMadrasah(params);
+      case 'madrasahInfos':
+        return queryMadrasahInfo(params);
       case 'namazTimes':
         return queryNamazTime(params);
       case 'news':
@@ -105,7 +108,7 @@ class LocalDatabase extends _$LocalDatabase {
       case 'paras':
         return findParaById(id);
       case 'ayahs':
-        return findAyahById(id);
+        return findAyahById(id, params);
       case 'ayahTranslations':
         return findAyahTranslationById(id);
       case 'books':
@@ -133,7 +136,9 @@ class LocalDatabase extends _$LocalDatabase {
       case 'articles':
         return findArticleById(id, params);
       case 'madrasahs':
-        return findMadrasahById(id);
+        return findMadrasahById(id, params);
+      case 'madrasahInfos':
+        return findMadrasahInfoById(id, params);
       case 'namazTimes':
         return findNamazTimeById(id);
       case 'news':
@@ -250,8 +255,33 @@ class LocalDatabase extends _$LocalDatabase {
     }
   }
 
-  Future<Ayah?> findAyahById(String id) {
-    return (select(ayahs)..where((t) => t.id.equals(id))).getSingleOrNull();
+  Future<dynamic> findAyahById(String id, Map params) async {
+    var ayah =
+        await (select(ayahs)..where((t) => t.id.equals(id))).getSingleOrNull();
+
+    if (ayah != null &&
+        params.containsKey('include') &&
+        params['include'] == 'surah,ayah-translations') {
+      var surah = await (select(surahs)
+            ..where((s) => s.id.equals(ayah.surahId)))
+          .getSingle();
+
+      var translations = await (select(ayahTranslations)
+            ..where((s) => s.ayahId.equals(ayah.id)))
+          .get();
+
+      var ayahWithRelations = {
+        'ayahs': ayah,
+        'relationships': {
+          'surah': surah,
+          'ayah-translations': translations,
+        }
+      };
+
+      return ayahWithRelations;
+    } else {
+      return ayah;
+    }
   }
 
   Future<AyahTranslation?> findAyahTranslationById(String id) {
@@ -689,8 +719,76 @@ class LocalDatabase extends _$LocalDatabase {
     return query.get();
   }
 
-  Future<Madrasah?> findMadrasahById(String id) {
-    return (select(madrasahs)..where((t) => t.id.equals(id))).getSingleOrNull();
+  Future<dynamic> findMadrasahById(String id, Map params) async {
+    var madrasah = await (select(madrasahs)..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
+
+    if (madrasah != null &&
+        params.containsKey('include') &&
+        params['include'] == 'madrasah-infos') {
+      var infos = await (select(madrasahInfos)
+            ..where((s) => s.madrasahId.equals(madrasah.id)))
+          .get();
+
+      var madrasahWithInfos = {
+        'madrasahs': madrasah,
+        'relationships': {
+          'madrasah-infos': infos,
+        }
+      };
+
+      return madrasahWithInfos;
+    } else {
+      return madrasah;
+    }
+  }
+
+  Future<List<MadrasahInfo>> queryMadrasahInfo(Map params) {
+    var query = select(madrasahInfos);
+
+    if (params.containsKey('position')) {
+      query.where((r) => r.position.equals(params['position']));
+    }
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    } else {
+      query.limit(params['quantity'] ?? 20);
+    }
+
+    if (params.containsKey('madrasahId')) {
+      query.where((r) => r.madrasahId.equals(params['madrasahId']));
+    }
+
+    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
+    return query.get();
+  }
+
+  Future<dynamic> findMadrasahInfoById(String id, Map params) async {
+    var info = await (select(madrasahInfos)..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
+
+    if (info != null &&
+        params.containsKey('include') &&
+        params['include'] == 'madrasah') {
+      var madrasah = await (select(madrasahs)
+            ..where((s) => s.id.equals(info.madrasahId)))
+          .getSingle();
+
+      var infoWithMadrasah = {
+        'madrasahInfo': info,
+        'relationships': {
+          'madrasah': madrasah,
+        }
+      };
+
+      return infoWithMadrasah;
+    } else {
+      return info;
+    }
   }
 
   Future<List<New>> queryNews(Map params) {

@@ -36,7 +36,6 @@ class Bayan extends ConsumerWidget {
       repository: ref.bayans,
       id: QR.params['id'].toString(),
       params: const {'include': 'speaker'},
-      remote: true,
     );
 
     var modelQuery = ref.watch(singleModelProvider(query));
@@ -138,7 +137,9 @@ class Bayan extends ConsumerWidget {
                         DescriptionItem(
                           title: '${locales.audioDuration}:',
                           description: Text(
-                            playDuration(resource.audio['metadata']['duration']),
+                            playDuration(
+                              resource.audio['metadata']['duration'],
+                            ),
                             style: textTheme.labelMedium,
                           ),
                         ),

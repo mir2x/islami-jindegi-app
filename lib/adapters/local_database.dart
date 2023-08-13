@@ -27,7 +27,7 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     bool hasNoConnection =
         await Connectivity().checkConnectivity() == ConnectivityResult.none;
 
-    if (onlyLocal || hasOneItem || hasNoConnection) {
+    if (onlyLocal || hasOneItem || hasNoConnection || remote != true) {
       final database = ref.read(localDatabaseProvider);
       final resources = await database.query(internalType, params: params);
       List<Resource> included = [];
@@ -116,78 +116,80 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     OnErrorOne<T>? onError,
     DataRequestLabel? label,
   }) async {
-    final database = ref.read(localDatabaseProvider);
-    final item = await database.findById(
-      internalType,
-      id.toString(),
-      params: params,
-    );
+    if (remote != true) {
+      final database = ref.read(localDatabaseProvider);
+      final item = await database.findById(
+        internalType,
+        id.toString(),
+        params: params,
+      );
 
-    if (item != null) {
-      Map resourceMap;
-      Map<String, Relationship> relationships = {};
-      List<Resource> included = [];
+      if (item != null) {
+        Map resourceMap;
+        Map<String, Relationship> relationships = {};
+        List<Resource> included = [];
 
-      if (item is Map) {
-        resourceMap = json.decode(json.encode(item[internalType]));
+        if (item is Map) {
+          resourceMap = json.decode(json.encode(item[internalType]));
 
-        for (final relEntry in item['relationships'].entries) {
-          final key = relEntry.key;
-          final value = relEntry.value;
+          for (final relEntry in item['relationships'].entries) {
+            final key = relEntry.key;
+            final value = relEntry.value;
 
-          if (value is Iterable) {
-            final identifiers = value.map((subitem) {
-              return Identifier(key, subitem.id.toString());
-            }).toList();
-            relationships[key] = ToMany(identifiers);
+            if (value is Iterable) {
+              final identifiers = value.map((subitem) {
+                return Identifier(key, subitem.id.toString());
+              }).toList();
+              relationships[key] = ToMany(identifiers);
 
-            for (final subitem in value) {
-              var includedResourceMap = json.decode(json.encode(subitem));
+              for (final subitem in value) {
+                var includedResourceMap = json.decode(json.encode(subitem));
+                included.add(mapToResource(includedResourceMap, key));
+              }
+            } else if (value != null) {
+              relationships[key] = ToOne(Identifier(key, value.id.toString()));
+              var includedResourceMap = json.decode(json.encode(value));
               included.add(mapToResource(includedResourceMap, key));
             }
-          } else if (value != null) {
-            relationships[key] = ToOne(Identifier(key, value.id.toString()));
-            var includedResourceMap = json.decode(json.encode(value));
-            included.add(mapToResource(includedResourceMap, key));
           }
+        } else {
+          resourceMap = json.decode(json.encode(item));
         }
-      } else {
-        resourceMap = json.decode(json.encode(item));
+
+        Resource resource = mapToResource(resourceMap, internalType);
+        resource.relationships.addAll(relationships);
+
+        final outboundData = OutboundDataDocument.resource(resource);
+        outboundData.included.addAll(included);
+
+        var outbound = outboundData.toJson();
+
+        // run decode/encode because `json_api`'s `toJson()`
+        // DOES NOT return nested Map<String, dynamic>s as expected
+        var jData = json.decode(json.encode(outbound)) as Map<String, dynamic>;
+        label ??= DataRequestLabel('findOne', type: internalType);
+
+        final data = DataResponse(
+          body: jData,
+          statusCode: 200,
+          headers: {'content-type': 'application/vnd.api+json'},
+        );
+
+        onSuccess ??= (data, label, _) => this.onSuccess<T>(data, label);
+        return onSuccess.call(data, label, this);
       }
-
-      Resource resource = mapToResource(resourceMap, internalType);
-      resource.relationships.addAll(relationships);
-
-      final outboundData = OutboundDataDocument.resource(resource);
-      outboundData.included.addAll(included);
-
-      var outbound = outboundData.toJson();
-
-      // run decode/encode because `json_api`'s `toJson()`
-      // DOES NOT return nested Map<String, dynamic>s as expected
-      var jData = json.decode(json.encode(outbound)) as Map<String, dynamic>;
-      label ??= DataRequestLabel('findOne', type: internalType);
-
-      final data = DataResponse(
-        body: jData,
-        statusCode: 200,
-        headers: {'content-type': 'application/vnd.api+json'},
-      );
-
-      onSuccess ??= (data, label, _) => this.onSuccess<T>(data, label);
-      return onSuccess.call(data, label, this);
-    } else {
-      return super.findOne(
-        id,
-        remote: remote,
-        background: background,
-        params: params,
-        headers: headers,
-        onSuccess: onSuccess,
-        onError: onError,
-        label: label,
-      );
     }
+
+    return super.findOne(
+      id,
+      remote: remote,
+      background: background,
+      params: params,
+      headers: headers,
+      onSuccess: onSuccess,
+      onError: onError,
+      label: label,
+    );
   }
 
   Resource mapToResource(Map resourceMap, String type) {

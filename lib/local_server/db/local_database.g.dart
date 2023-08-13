@@ -6418,6 +6418,306 @@ class MadrasahsCompanion extends UpdateCompanion<Madrasah> {
   }
 }
 
+class $MadrasahInfosTable extends MadrasahInfos
+    with TableInfo<$MadrasahInfosTable, MadrasahInfo> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MadrasahInfosTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> label = GeneratedColumn<String>(
+      'label', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> info = GeneratedColumn<String>(
+      'info', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> madrasahId = GeneratedColumn<String>(
+      'madrasah_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES madrasahs (id)'));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, label, info, position, createdAt, updatedAt, madrasahId];
+  @override
+  String get aliasedName => _alias ?? 'madrasah_infos';
+  @override
+  String get actualTableName => 'madrasah_infos';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  MadrasahInfo map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MadrasahInfo(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      label: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}label'])!,
+      info: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}info'])!,
+      position: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      madrasahId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}madrasah_id'])!,
+    );
+  }
+
+  @override
+  $MadrasahInfosTable createAlias(String alias) {
+    return $MadrasahInfosTable(attachedDatabase, alias);
+  }
+}
+
+class MadrasahInfo extends DataClass implements Insertable<MadrasahInfo> {
+  final String id;
+  final String label;
+  final String info;
+  final int position;
+  final String createdAt;
+  final String updatedAt;
+  final String madrasahId;
+  const MadrasahInfo(
+      {required this.id,
+      required this.label,
+      required this.info,
+      required this.position,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.madrasahId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['label'] = Variable<String>(label);
+    map['info'] = Variable<String>(info);
+    map['position'] = Variable<int>(position);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    map['madrasah_id'] = Variable<String>(madrasahId);
+    return map;
+  }
+
+  factory MadrasahInfo.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MadrasahInfo(
+      id: serializer.fromJson<String>(json['id']),
+      label: serializer.fromJson<String>(json['label']),
+      info: serializer.fromJson<String>(json['info']),
+      position: serializer.fromJson<int>(json['position']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+      madrasahId: serializer.fromJson<String>(json['madrasahId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'label': serializer.toJson<String>(label),
+      'info': serializer.toJson<String>(info),
+      'position': serializer.toJson<int>(position),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+      'madrasahId': serializer.toJson<String>(madrasahId),
+    };
+  }
+
+  MadrasahInfo copyWith(
+          {String? id,
+          String? label,
+          String? info,
+          int? position,
+          String? createdAt,
+          String? updatedAt,
+          String? madrasahId}) =>
+      MadrasahInfo(
+        id: id ?? this.id,
+        label: label ?? this.label,
+        info: info ?? this.info,
+        position: position ?? this.position,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        madrasahId: madrasahId ?? this.madrasahId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('MadrasahInfo(')
+          ..write('id: $id, ')
+          ..write('label: $label, ')
+          ..write('info: $info, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('madrasahId: $madrasahId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, label, info, position, createdAt, updatedAt, madrasahId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MadrasahInfo &&
+          other.id == this.id &&
+          other.label == this.label &&
+          other.info == this.info &&
+          other.position == this.position &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.madrasahId == this.madrasahId);
+}
+
+class MadrasahInfosCompanion extends UpdateCompanion<MadrasahInfo> {
+  final Value<String> id;
+  final Value<String> label;
+  final Value<String> info;
+  final Value<int> position;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  final Value<String> madrasahId;
+  final Value<int> rowid;
+  const MadrasahInfosCompanion({
+    this.id = const Value.absent(),
+    this.label = const Value.absent(),
+    this.info = const Value.absent(),
+    this.position = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.madrasahId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MadrasahInfosCompanion.insert({
+    required String id,
+    required String label,
+    required String info,
+    required int position,
+    required String createdAt,
+    required String updatedAt,
+    required String madrasahId,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        label = Value(label),
+        info = Value(info),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt),
+        madrasahId = Value(madrasahId);
+  static Insertable<MadrasahInfo> custom({
+    Expression<String>? id,
+    Expression<String>? label,
+    Expression<String>? info,
+    Expression<int>? position,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+    Expression<String>? madrasahId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (label != null) 'label': label,
+      if (info != null) 'info': info,
+      if (position != null) 'position': position,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (madrasahId != null) 'madrasah_id': madrasahId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MadrasahInfosCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? label,
+      Value<String>? info,
+      Value<int>? position,
+      Value<String>? createdAt,
+      Value<String>? updatedAt,
+      Value<String>? madrasahId,
+      Value<int>? rowid}) {
+    return MadrasahInfosCompanion(
+      id: id ?? this.id,
+      label: label ?? this.label,
+      info: info ?? this.info,
+      position: position ?? this.position,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      madrasahId: madrasahId ?? this.madrasahId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (label.present) {
+      map['label'] = Variable<String>(label.value);
+    }
+    if (info.present) {
+      map['info'] = Variable<String>(info.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (madrasahId.present) {
+      map['madrasah_id'] = Variable<String>(madrasahId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MadrasahInfosCompanion(')
+          ..write('id: $id, ')
+          ..write('label: $label, ')
+          ..write('info: $info, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('madrasahId: $madrasahId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $NamazTimesTable extends NamazTimes
     with TableInfo<$NamazTimesTable, NamazTime> {
   @override
@@ -7396,6 +7696,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $ArticleAuthorsTable articleAuthors = $ArticleAuthorsTable(this);
   late final $ArticlesTable articles = $ArticlesTable(this);
   late final $MadrasahsTable madrasahs = $MadrasahsTable(this);
+  late final $MadrasahInfosTable madrasahInfos = $MadrasahInfosTable(this);
   late final $NamazTimesTable namazTimes = $NamazTimesTable(this);
   late final $NewsTable news = $NewsTable(this);
   late final $PagesTable pages = $PagesTable(this);
@@ -7422,6 +7723,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
         articleAuthors,
         articles,
         madrasahs,
+        madrasahInfos,
         namazTimes,
         news,
         pages
