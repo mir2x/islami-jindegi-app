@@ -1,4 +1,4 @@
-package com.example.native_app
+package com.islamidars.native_app
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,0 +1,97 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/widget_container"
+  style="@style/Widget.Android.AppWidget.Container"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@drawable/widget_background"
+  android:theme="@style/Theme.Android.AppWidgetContainer">
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+      android:id="@+id/dates"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="15dp"
+      android:layout_marginTop="10dp"
+      android:layout_marginEnd="10dp"
+      android:layout_marginBottom="10dp"
+      android:orientation="vertical">
+
+      <ImageView
+        android:id="@+id/hijriDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/hijri_date"
+        android:scaleType="fitStart" />
+
+      <ImageView
+        android:id="@+id/bangaliDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:contentDescription="@string/bangali_date"
+        android:scaleType="fitStart" />
+
+      <ImageView
+        android:id="@+id/gregorianDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:contentDescription="@string/gregorian_date"
+        android:scaleType="fitStart" />
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/prayer"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@drawable/app_widget_inner_view_background"
+      android:orientation="vertical"
+      android:paddingStart="10dp"
+      android:paddingTop="10dp"
+      android:paddingEnd="10dp"
+      android:paddingBottom="10dp">
+
+      <ImageView
+        android:id="@+id/location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/current_location"
+        android:scaleType="fitStart" />
+
+      <LinearLayout
+        android:id="@+id/currentPrayer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+          android:id="@+id/currentPrayerTitle"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:contentDescription="@string/current_prayer"
+          android:scaleType="fitStart" />
+
+        <ImageView
+          android:id="@+id/currentPrayerTime"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="5dp"
+          android:layout_marginTop="6dp"
+          android:contentDescription="@string/time"
+          android:scaleType="fitStart" />
+      </LinearLayout>
+
+      <ImageView
+        android:id="@+id/nextPrayer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/next_prayer"
+        android:scaleType="fitStart" />
+    </LinearLayout>
+  </LinearLayout>
+</RelativeLayout>

@@ -6,6 +6,7 @@ import 'package:adhan/adhan.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/widgets/location/index.dart';
 import 'package:native_app/objects/prayer_time.dart';
+import 'package:native_app/helpers/update_app_widget.dart';
 
 class CurrentLocationPrayers extends StatelessWidget {
   const CurrentLocationPrayers({super.key});
@@ -90,6 +91,23 @@ class CurrentPrayersState extends ConsumerState<CurrentPrayers> {
           currentLang,
         );
 
+        String nextPrayer =
+            '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}';
+
+        if (prayerTimes.containsKey('current')) {
+          updateAppWidget({
+            'currentPrayerTitle': prayerTimes['current']['title'],
+            'currentPrayerTime': prayerTimes['current']['time'],
+            'nextPrayer': nextPrayer,
+          });
+        } else {
+          updateAppWidget({
+            'currentPrayerTitle': '',
+            'currentPrayerTime': '',
+            'nextPrayer': nextPrayer,
+          });
+        }
+
         return Column(
           crossAxisAlignment:
               isMobile ? CrossAxisAlignment.start : CrossAxisAlignment.end,
@@ -116,10 +134,7 @@ class CurrentPrayersState extends ConsumerState<CurrentPrayers> {
                 ),
               ),
             ],
-            Text(
-              '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}',
-              style: textTheme.labelSmall,
-            ),
+            Text(nextPrayer, style: textTheme.labelSmall),
           ],
         );
       },

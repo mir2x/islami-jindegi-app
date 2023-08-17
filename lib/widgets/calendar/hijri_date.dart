@@ -5,6 +5,7 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:native_app/providers/hijri_date_settings.dart';
 import 'package:native_app/helpers/adjusted_hijri_date.dart';
+import 'package:native_app/helpers/update_app_widget.dart';
 
 class HijriDate extends ConsumerWidget {
   const HijriDate({
@@ -60,8 +61,11 @@ class HijriDate extends ConsumerWidget {
         var day = numFormatter.format(today.hDay);
         String month = months[today.hMonth.toString()];
         var year = numFormatter.format(today.hYear);
+        String hijriDate = '$day $month, $year ${locales.hijri}';
 
-        return Text('$day $month, $year ${locales.hijri}');
+        updateAppWidget({'hijriDate': hijriDate});
+
+        return Text(hijriDate);
       },
     );
   }
