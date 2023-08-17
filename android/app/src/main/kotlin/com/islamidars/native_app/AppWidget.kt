@@ -54,31 +54,31 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
     setImageViewBitmap(
       R.id.bangaliDate,
       getFontBitmap(context, bangaliDate
-        ?: "Bangali Date", themeColor3, 13f),
+        ?: "Bangali Date", themeColor3, 12f),
     )
     setImageViewBitmap(
       R.id.gregorianDate,
       getFontBitmap(context, gregorianDate
-        ?: "Gregorian Date", themeColor3, 13f),
+        ?: "Gregorian Date", themeColor3, 12f),
     )
     setImageViewBitmap(
       R.id.location,
-      getFontBitmap(context, location ?: "", themeColor3, 13f),
+      getFontBitmap(context, location ?: "", themeColor3, 12f),
     )
     setImageViewBitmap(
       R.id.currentPrayerTitle,
       getFontBitmap(context, currentPrayerTitle
-        ?: "", themeColor4, 22f),
+        ?: "", themeColor4, 18f),
     )
     setImageViewBitmap(
       R.id.currentPrayerTime,
       getFontBitmap(context, currentPrayerTime
-        ?: "", themeColor4, 16f),
+        ?: "", themeColor4, 15f),
     )
     setImageViewBitmap(
       R.id.nextPrayer,
       getFontBitmap(context, nextPrayer
-        ?: "Next Prayer", themeColor3, 13f),
+        ?: "Next Prayer", themeColor3, 12f),
     )
   }
 

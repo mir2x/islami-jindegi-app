@@ -8,4 +8,10 @@
     <string name="current_prayer">Current Prayer</string>
     <string name="next_prayer">Next Prayer</string>
     <string name="time">Time</string>
+    <string name="quran">Quran</string>
+    <string name="books">Books</string>
+    <string name="bayans">Bayans</string>
+    <string name="malfuzat">Malfuzat</string>
+    <string name="masail">Masail</string>
+    <string name="dua">Dua Durud</string>
 </resources>

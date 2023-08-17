@@ -16,9 +16,9 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginStart="15dp"
-      android:layout_marginTop="10dp"
-      android:layout_marginEnd="10dp"
-      android:layout_marginBottom="10dp"
+      android:layout_marginEnd="15dp"
+      android:layout_marginTop="5dp"
+      android:layout_marginBottom="5dp"
       android:orientation="vertical">
 
       <ImageView
@@ -32,7 +32,6 @@
         android:id="@+id/bangaliDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
         android:contentDescription="@string/bangali_date"
         android:scaleType="fitStart" />
 
@@ -40,7 +39,6 @@
         android:id="@+id/gregorianDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
         android:contentDescription="@string/gregorian_date"
         android:scaleType="fitStart" />
     </LinearLayout>
@@ -51,10 +49,10 @@
       android:layout_height="wrap_content"
       android:background="@drawable/app_widget_inner_view_background"
       android:orientation="vertical"
-      android:paddingStart="10dp"
-      android:paddingTop="10dp"
-      android:paddingEnd="10dp"
-      android:paddingBottom="10dp">
+      android:paddingStart="15dp"
+      android:paddingEnd="15dp"
+      android:paddingTop="8dp"
+      android:paddingBottom="8dp">
 
       <ImageView
         android:id="@+id/location"
@@ -81,7 +79,7 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginStart="5dp"
-          android:layout_marginTop="6dp"
+          android:layout_marginTop="4dp"
           android:contentDescription="@string/time"
           android:scaleType="fitStart" />
       </LinearLayout>
@@ -92,6 +90,74 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/next_prayer"
         android:scaleType="fitStart" />
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/links"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="10dp"
+      android:orientation="horizontal">
+
+      <ImageView
+        android:id="@+id/quran"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_weight="1.2"
+        android:contentDescription="@string/quran"
+        android:src="@drawable/quran" />
+
+      <ImageView
+        android:id="@+id/book"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_weight="1.2"
+        android:contentDescription="@string/books"
+        android:src="@drawable/book" />
+
+      <ImageView
+        android:id="@+id/bayan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_weight="0.6"
+        android:contentDescription="@string/bayans"
+        android:src="@drawable/bayan" />
+
+      <ImageView
+        android:id="@+id/malfuzat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_weight="0.9"
+        android:contentDescription="@string/malfuzat"
+        android:src="@drawable/malfuzat" />
+
+      <ImageView
+        android:id="@+id/masail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_weight="1.1"
+        android:contentDescription="@string/masail"
+        android:src="@drawable/masail" />
+
+      <ImageView
+        android:id="@+id/dua"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_weight="1.1"
+        android:contentDescription="@string/dua"
+        android:src="@drawable/dua" />
     </LinearLayout>
   </LinearLayout>
 </RelativeLayout>
