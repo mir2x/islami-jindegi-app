@@ -95,6 +95,22 @@ class PrayerTime {
     };
   }
 
+  Map getSunriseSunset(AppLocalizations locales, String currentLang) {
+    return {
+      'sunrise': {
+        'title': locales.sunrise,
+        'time': _formatTime(prayerTimes.sunrise, currentLang),
+      },
+      'sunset': {
+        'title': locales.sunset,
+        'time': _formatTime(
+          prayerTimes.maghrib.subtract(threeMins),
+          currentLang,
+        ),
+      },
+    };
+  }
+
   Map getCurrentAndNextPrayers(AppLocalizations locales, String currentLang) {
     Map times = getTimes(locales, currentLang);
     Map prayers = currentAndNextPrayerNames();

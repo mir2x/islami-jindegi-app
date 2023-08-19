@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:native_app/helpers/update_app_widget.dart';
+import 'package:native_app/helpers/get_gregorian_date.dart';
 
 class GregorianDate extends StatelessWidget {
   const GregorianDate({
@@ -17,13 +16,8 @@ class GregorianDate extends StatelessWidget {
     String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
 
-    final DateTime today = currentDate ?? DateTime.now();
-    String date = DateFormat('EEEE, dd MMMM, yyyy', currentLang).format(today);
-
-    updateAppWidget({'gregorianDate': date});
-
     return Text(
-      date,
+      getGregorianDate(currentLang, currentDate),
       style: textTheme.labelSmall,
     );
   }

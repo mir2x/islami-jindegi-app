@@ -4,7 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
-import 'package:native_app/providers/preferences.dart';
+import 'package:native_app/providers/hijri_date_settings.dart';
 import 'package:native_app/widgets/location/index.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'calendar_dates.dart';
@@ -29,11 +29,11 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
   @override
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
-    var prefs = ref.watch(preferencesProvider);
+    var settingsProvider = ref.watch(hijriDateSettingsProvider);
 
     return AppScaffold(
       title: Text(locales.namazTime),
-      body: prefs.when(
+      body: settingsProvider.when(
         loading: () => Container(
           margin: const EdgeInsets.only(top: 100),
           child: const Center(
@@ -41,11 +41,11 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
           ),
         ),
         error: (error, _) => Text(error.toString()),
-        data: (preferences) {
+        data: (settings) {
           DateTime? currentGregorianDate;
 
           if (selectedHijriDate != null) {
-            int adjustment = preferences.getInt('hijriAdjustment') ?? 0;
+            int adjustment = settings['hijriAdjustment'];
 
             currentGregorianDate = HijriCalendar().hijriToGregorian(
               selectedHijriDate!.hYear,

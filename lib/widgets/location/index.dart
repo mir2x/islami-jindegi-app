@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/providers/geolocation.dart';
-import 'package:native_app/helpers/update_app_widget.dart';
+import 'package:native_app/helpers/get_location_name.dart';
 
 class CurrentLocation extends ConsumerStatefulWidget {
   const CurrentLocation({
@@ -52,12 +52,7 @@ class CurrentLocationState extends ConsumerState<CurrentLocation> {
       ),
       error: (error, _) => Text(error.toString()),
       data: (Map geolocation) {
-        String location = [
-          geolocation['location']['city'],
-          geolocation['location']['country']
-        ].where((v) => v is String && v.isNotEmpty).join(', ');
-
-        updateAppWidget({'location': location});
+        String location = getLocationName(geolocation['location']);
 
         return Row(
           mainAxisAlignment: widget.alignment,

@@ -7,9 +7,9 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
     return await SharedPreferences.getInstance();
   }
 
-  Future<dynamic> updateHijriAdjustment(int value) async {
+  Future<dynamic> updateHijriLocalAdjustment(int value) async {
     var prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('hijriAdjustment', value);
+    await prefs.setInt('hijriLocalAdjustment', value);
     state = AsyncValue.data(prefs);
   }
 

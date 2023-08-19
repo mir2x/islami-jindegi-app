@@ -4,7 +4,9 @@
     <string name="hijri_date">Hijri Date</string>
     <string name="bangali_date">Bangali Date</string>
     <string name="gregorian_date">Gregorian Date</string>
-    <string name="current_location">Current Location</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+    <string name="location">Location</string>
     <string name="current_prayer">Current Prayer</string>
     <string name="next_prayer">Next Prayer</string>
     <string name="time">Time</string>

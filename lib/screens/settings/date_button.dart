@@ -34,7 +34,9 @@ class DateButton extends ConsumerWidget {
         ),
       ),
       onPressed: () {
-        ref.read(preferencesProvider.notifier).updateHijriAdjustment(value);
+        ref
+            .read(preferencesProvider.notifier)
+            .updateHijriLocalAdjustment(value);
       },
     );
   }

@@ -10,15 +10,8 @@ HijriCalendar adjustedHijriDate(Map settings) {
     date = DateTime(date.year, date.month, date.day + 1);
   }
 
-  dynamic preferences = settings['preferences'];
-  int localAdjustment = preferences.getInt('hijriAdjustment') ?? 0;
-
-  if (localAdjustment != 0) {
-    adjustedToday = DateTime(date.year, date.month, date.day + localAdjustment);
-  } else {
-    int adminAdjustment = settings['adminHijriAdjustment'];
-    adjustedToday = DateTime(date.year, date.month, date.day + adminAdjustment);
-  }
+  int adjustment = settings['hijriAdjustment'];
+  adjustedToday = DateTime(date.year, date.month, date.day + adjustment);
 
   return HijriCalendar.fromDate(adjustedToday);
 }

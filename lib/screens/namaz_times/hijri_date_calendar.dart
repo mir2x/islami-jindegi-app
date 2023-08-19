@@ -29,24 +29,17 @@ class HijriDateCalendar extends ConsumerWidget {
           onTap: () {
             HijriCalendar today;
             int adjustedWeekdayNumber = 0;
-            int localAdjustment =
-                settings['preferences'].getInt('hijriAdjustment') ?? 0;
+
+            int adjustment = settings['hijriAdjustment'];
+            adjustedWeekdayNumber -= adjustment;
 
             if (currentDate != null) {
               today = currentDate!;
-              adjustedWeekdayNumber -= localAdjustment;
             } else {
               today = adjustedHijriDate(settings);
 
               if (isAfterDateStartTime(DateTime.now(), settings)) {
                 adjustedWeekdayNumber -= 1;
-              }
-
-              if (localAdjustment != 0) {
-                adjustedWeekdayNumber -= localAdjustment;
-              } else {
-                int adminAdjustment = settings['adminHijriAdjustment'];
-                adjustedWeekdayNumber -= adminAdjustment;
               }
             }
 

@@ -13,9 +13,11 @@ import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/theme/themes.dart';
 import 'package:native_app/widgets/utils/full_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:workmanager/workmanager.dart';
 import 'routes/index.dart';
 import 'screens/error_pages/page_404.dart';
 import 'firebase_options.dart';
+import 'app_widget_task.dart';
 import 'main.data.dart';
 
 Future main() async {
@@ -56,6 +58,9 @@ Future main() async {
   );
 
   await container.read(repositoryInitializerProvider.future);
+
+  Workmanager().initialize(callbackDispatcher);
+  Workmanager().registerPeriodicTask('app-widget-task', 'appWidgetTask');
 
   runApp(
     UncontrolledProviderScope(

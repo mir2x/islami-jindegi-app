@@ -55,7 +55,8 @@ class Settings extends ConsumerWidget {
         loading: () => const FullScreenLoader(),
         error: (error, _) => Text(error.toString()),
         data: (preferences) {
-          int selectedHijriAdj = preferences.getInt('hijriAdjustment') ?? 0;
+          int selectedHijriAdj =
+              preferences.getInt('hijriLocalAdjustment') ?? 0;
 
           String selectedLocale =
               languages.map((i) => i['value']).firstWhereOrNull((i) {
