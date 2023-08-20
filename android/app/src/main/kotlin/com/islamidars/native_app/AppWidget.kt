@@ -5,7 +5,10 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Typeface
 import android.net.Uri
 import android.util.TypedValue
 import android.widget.RemoteViews
@@ -37,75 +40,110 @@ class AppWidget : AppWidgetProvider() {
 
 internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
   val widgetData = HomeWidgetPlugin.getData(context)
-  val themeColor3 = ContextCompat.getColor(context, R.color.theme_color_3)
-  val themeColor4 = ContextCompat.getColor(context, R.color.theme_color_4)
+  var textColor: Int
+  var highlightTextColor: Int
 
   val views = RemoteViews(context.packageName, R.layout.app_widget).apply {
-    val hijriDate = widgetData.getString("hijriDate", null)
-    val bangaliDate = widgetData.getString("bangaliDate", null)
-    val gregorianDate = widgetData.getString("gregorianDate", null)
-    val sunriseTitle = widgetData.getString("sunriseTitle", null)
-    val sunriseTime = widgetData.getString("sunriseTime", null)
-    val sunsetTitle = widgetData.getString("sunsetTitle", null)
-    val sunsetTime = widgetData.getString("sunsetTime", null)
-    val location = widgetData.getString("location", null)
-    val currentPrayerTitle = widgetData.getString("currentPrayerTitle", null)
-    val currentPrayerTime = widgetData.getString("currentPrayerTime", null)
-    val nextPrayer = widgetData.getString("nextPrayer", null)
+    val theme = widgetData.getString("theme", "dark")
+    val hijriDate = widgetData.getString("hijriDate", "Hijri Date")
+    val bangaliDate = widgetData.getString("bangaliDate", "Bangali Date")
+    val gregorianDate = widgetData.getString("gregorianDate", "Gregorian Date")
+    val sunriseTitle = widgetData.getString("sunriseTitle", "Sunrise")
+    val sunriseTime = widgetData.getString("sunriseTime", "")
+    val sunsetTitle = widgetData.getString("sunsetTitle", "Sunset")
+    val sunsetTime = widgetData.getString("sunsetTime", "")
+    val location = widgetData.getString("location", "Location")
+    val currentPrayerTitle = widgetData.getString("currentPrayerTitle", "Current Prayer")
+    val currentPrayerTime = widgetData.getString("currentPrayerTime", "")
+    val nextPrayer = widgetData.getString("nextPrayer", "Next Prayer")
+
+    if (theme == "light") {
+      setInt(
+        R.id.widget_container,
+        "setBackgroundResource",
+        R.drawable.widget_light_background,
+      )
+
+      setInt(
+        R.id.dates,
+        "setBackgroundResource",
+        R.drawable.container_light_background,
+      )
+
+      setInt(
+        R.id.sunriseSunset,
+        "setBackgroundResource",
+        R.drawable.container_light_background,
+      )
+
+      textColor = ContextCompat.getColor(context, R.color.theme_color_2)
+      highlightTextColor = ContextCompat.getColor(context, R.color.theme_color_8)
+    } else {
+      setInt(
+        R.id.widget_container,
+        "setBackgroundResource",
+        R.drawable.widget_dark_background,
+      )
+
+      setInt(
+        R.id.dates,
+        "setBackgroundResource",
+        R.drawable.container_dark_background,
+      )
+
+      setInt(
+        R.id.sunriseSunset,
+        "setBackgroundResource",
+        R.drawable.container_dark_background,
+      )
+
+      textColor = ContextCompat.getColor(context, R.color.theme_color_3)
+      highlightTextColor = ContextCompat.getColor(context, R.color.theme_color_4)
+    }
 
     setImageViewBitmap(
       R.id.hijriDate,
-      getFontBitmap(context, hijriDate
-        ?: "Hijri Date", themeColor3, 18f),
+      getFontBitmap(context, hijriDate, textColor, 18f),
     )
     setImageViewBitmap(
       R.id.bangaliDate,
-      getFontBitmap(context, bangaliDate
-        ?: "Bangali Date", themeColor3, 13f),
+      getFontBitmap(context, bangaliDate, textColor, 13f),
     )
     setImageViewBitmap(
       R.id.gregorianDate,
-      getFontBitmap(context, gregorianDate
-        ?: "Gregorian Date", themeColor3, 13f),
+      getFontBitmap(context, gregorianDate, textColor, 13f),
     )
     setImageViewBitmap(
       R.id.sunriseTitle,
-      getFontBitmap(context, sunriseTitle
-        ?: "Sunrise", themeColor3, 13f),
+      getFontBitmap(context, sunriseTitle, textColor, 13f),
     )
     setImageViewBitmap(
       R.id.sunriseTime,
-      getFontBitmap(context, sunriseTime
-        ?: "", themeColor3, 13f),
+      getFontBitmap(context, sunriseTime, textColor, 13f),
     )
     setImageViewBitmap(
       R.id.sunsetTitle,
-      getFontBitmap(context, sunsetTitle
-        ?: "Sunset", themeColor3, 13f),
+      getFontBitmap(context, sunsetTitle, textColor, 13f),
     )
     setImageViewBitmap(
       R.id.sunsetTime,
-      getFontBitmap(context, sunsetTime
-        ?: "", themeColor3, 13f),
+      getFontBitmap(context, sunsetTime, textColor, 13f),
     )
     setImageViewBitmap(
       R.id.location,
-      getFontBitmap(context, location ?: "Location", themeColor4, 13f),
+      getFontBitmap(context, location, highlightTextColor, 13f),
     )
     setImageViewBitmap(
       R.id.currentPrayerTitle,
-      getFontBitmap(context, currentPrayerTitle
-        ?: "Current Prayer", themeColor4, 18f),
+      getFontBitmap(context, currentPrayerTitle, highlightTextColor, 18f),
     )
     setImageViewBitmap(
       R.id.currentPrayerTime,
-      getFontBitmap(context, currentPrayerTime
-        ?: "", themeColor4, 15f),
+      getFontBitmap(context, currentPrayerTime, highlightTextColor, 15f),
     )
     setImageViewBitmap(
       R.id.nextPrayer,
-      getFontBitmap(context, nextPrayer
-        ?: "Next Prayer", themeColor3, 14f),
+      getFontBitmap(context, nextPrayer, textColor, 14f),
     )
 
     setOnClickPendingIntent(R.id.quran, openLink(context, "quran"))

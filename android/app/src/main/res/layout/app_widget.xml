@@ -3,7 +3,6 @@
   style="@style/Widget.Android.AppWidget.Container"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:background="@drawable/widget_dark_background"
   android:theme="@style/Theme.Android.AppWidgetContainer">
 
   <LinearLayout
@@ -23,7 +22,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="@drawable/app_widget_inner_view_background"
         android:paddingStart="9dp"
         android:paddingEnd="9dp"
         android:paddingTop="8dp"
@@ -59,7 +57,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1.7"
-        android:background="@drawable/app_widget_inner_view_background"
         android:layout_marginStart="5dp"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
