@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_widget_description">Islami Jindegi Widget</string>
+    <string name="add_widget">Hijri date, prayer times and shortcuts</string>
     <string name="hijri_date">Hijri Date</string>
     <string name="bangali_date">Bangali Date</string>
     <string name="gregorian_date">Gregorian Date</string>
