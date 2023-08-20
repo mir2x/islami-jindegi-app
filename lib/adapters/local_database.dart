@@ -27,7 +27,7 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     bool hasNoConnection =
         await Connectivity().checkConnectivity() == ConnectivityResult.none;
 
-    if (onlyLocal || hasOneItem || hasNoConnection || remote != true) {
+    if (onlyLocal || hasOneItem || hasNoConnection) {
       final database = ref.read(localDatabaseProvider);
       final resources = await database.query(internalType, params: params);
       List<Resource> included = [];
