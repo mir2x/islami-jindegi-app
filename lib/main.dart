@@ -60,7 +60,11 @@ Future main() async {
   await container.read(repositoryInitializerProvider.future);
 
   Workmanager().initialize(callbackDispatcher);
-  Workmanager().registerPeriodicTask('app-widget-task', 'appWidgetTask');
+  Workmanager().registerPeriodicTask(
+    'app-widget-task',
+    'appWidgetTask',
+    frequency: const Duration(minutes: 15),
+  );
 
   runApp(
     UncontrolledProviderScope(
