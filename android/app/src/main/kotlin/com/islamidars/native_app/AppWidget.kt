@@ -105,7 +105,7 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
     setImageViewBitmap(
       R.id.nextPrayer,
       getFontBitmap(context, nextPrayer
-        ?: "Next Prayer", themeColor3, 12f),
+        ?: "Next Prayer", themeColor3, 14f),
     )
 
     setOnClickPendingIntent(R.id.quran, openLink(context, "quran"))
