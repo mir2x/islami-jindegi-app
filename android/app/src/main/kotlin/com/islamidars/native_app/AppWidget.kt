@@ -1,13 +1,16 @@
 package com.islamidars.native_app
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.graphics.*
+import android.net.Uri
 import android.util.TypedValue
 import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
+import es.antonborri.home_widget.HomeWidgetLaunchIntent
 import es.antonborri.home_widget.HomeWidgetPlugin
 
 class AppWidget : AppWidgetProvider() {
@@ -104,6 +107,13 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
       getFontBitmap(context, nextPrayer
         ?: "Next Prayer", themeColor3, 12f),
     )
+
+    setOnClickPendingIntent(R.id.quran, openLink(context, "quran"))
+    setOnClickPendingIntent(R.id.books, openLink(context, "books"))
+    setOnClickPendingIntent(R.id.bayans, openLink(context, "bayans"))
+    setOnClickPendingIntent(R.id.malfuzat, openLink(context, "malfuzat"))
+    setOnClickPendingIntent(R.id.masail, openLink(context, "masail"))
+    setOnClickPendingIntent(R.id.duas, openLink(context, "duas"))
   }
 
   appWidgetManager.updateAppWidget(appWidgetId, views)
@@ -128,4 +138,12 @@ fun getFontBitmap(context: Context, text: String?, color: Int, fontSizeSP: Float
 
 fun convertDipToPix(context: Context, dip: Float): Float {
   return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dip, context.resources.displayMetrics)
+}
+
+fun openLink(context: Context, message: String): PendingIntent {
+  return HomeWidgetLaunchIntent.getActivity(
+    context,
+    MainActivity::class.java,
+    Uri.parse("appWidget://message?route=$message")
+  )
 }

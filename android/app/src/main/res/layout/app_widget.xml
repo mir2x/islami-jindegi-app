@@ -185,7 +185,7 @@
         android:src="@drawable/quran" />
 
       <ImageView
-        android:id="@+id/book"
+        android:id="@+id/books"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
@@ -195,7 +195,7 @@
         android:src="@drawable/book" />
 
       <ImageView
-        android:id="@+id/bayan"
+        android:id="@+id/bayans"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
@@ -225,13 +225,13 @@
         android:src="@drawable/masail" />
 
       <ImageView
-        android:id="@+id/dua"
+        android:id="@+id/duas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
         android:layout_weight="1.1"
-        android:contentDescription="@string/dua"
+        android:contentDescription="@string/duas"
         android:src="@drawable/dua" />
     </LinearLayout>
   </LinearLayout>
