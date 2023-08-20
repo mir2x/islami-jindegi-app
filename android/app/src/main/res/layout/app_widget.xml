@@ -24,7 +24,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="@drawable/app_widget_inner_view_background"
-        android:paddingStart="10dp"
+        android:paddingStart="9dp"
         android:paddingEnd="10dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
@@ -41,6 +41,7 @@
           android:id="@+id/bangaliDate"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
+          android:layout_marginStart="1dp"
           android:layout_marginTop="2dp"
           android:contentDescription="@string/bangali_date"
           android:scaleType="fitStart" />
@@ -49,6 +50,7 @@
           android:id="@+id/gregorianDate"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
+          android:layout_marginStart="1dp"
           android:layout_marginTop="2dp"
           android:contentDescription="@string/gregorian_date"
           android:scaleType="fitStart" />
@@ -127,15 +129,15 @@
       android:id="@+id/prayer"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:orientation="horizontal"
+      android:orientation="vertical"
       android:layout_marginStart="10dp"
       android:layout_marginEnd="10dp"
-      android:layout_marginTop="20dp"
+      android:layout_marginTop="10dp"
       android:layout_marginBottom="15dp">
 
       <LinearLayout
         android:id="@+id/currentPrayer"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
@@ -150,7 +152,7 @@
           android:id="@+id/currentPrayerTime"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginStart="3dp"
+          android:layout_marginStart="2dp"
           android:layout_marginTop="3dp"
           android:contentDescription="@string/time"
           android:scaleType="fitStart" />
@@ -158,10 +160,9 @@
 
       <ImageView
         android:id="@+id/nextPrayer"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="2dp"
         android:contentDescription="@string/next_prayer"
         android:scaleType="fitStart" />
     </LinearLayout>
