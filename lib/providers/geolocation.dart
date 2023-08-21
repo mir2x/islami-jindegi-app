@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
@@ -66,7 +68,7 @@ Future<Map> getLocation(Position position) async {
       position.latitude,
       position.longitude,
       localeIdentifier: locale,
-    );
+    ).timeout(const Duration(seconds: 30));
 
     Placemark placemark = placemarks.first;
     String? country = placemark.country;
@@ -135,7 +137,15 @@ class GeolocationNotifier extends AsyncNotifier<Map> {
       return await getFailSafeGeolocation();
     }
 
-    var position = await Geolocator.getCurrentPosition();
+    Position position;
+
+    try {
+      position = await Geolocator.getCurrentPosition()
+          .timeout(const Duration(seconds: 30));
+    } catch (error) {
+      return await getFailSafeGeolocation();
+    }
+
     var location = await getLocation(position);
 
     await updatePreferences(position, location);
@@ -182,9 +192,16 @@ class GeolocationNotifier extends AsyncNotifier<Map> {
       return;
     }
 
-    // When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
-    var position = await Geolocator.getCurrentPosition();
+    Position position;
+
+    try {
+      position = await Geolocator.getCurrentPosition()
+          .timeout(const Duration(seconds: 30));
+    } catch (error) {
+      state = AsyncValue.data(await getFailSafeGeolocation());
+      return;
+    }
+
     var location = await getLocation(position);
 
     await updatePreferences(position, location);
