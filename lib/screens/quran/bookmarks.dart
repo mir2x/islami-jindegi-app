@@ -84,18 +84,17 @@ class QuranBookmarks extends ConsumerWidget {
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(horizontal: 15),
-                      margin: const EdgeInsets.only(top: 3),
                       child: Text(
                         item.title,
                         textDirection: TextDirection.rtl,
-                        style: textTheme.headlineMedium,
+                        style: textTheme.headlineLarge,
                       ),
                     ),
                     if (item.translation != null) ...[
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(horizontal: 15),
-                        margin: const EdgeInsets.only(top: 5),
+                        margin: const EdgeInsets.only(top: 3),
                         child: HtmlText(text: item.translation),
                       ),
                     ],

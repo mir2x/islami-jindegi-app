@@ -47,7 +47,7 @@ class Bismillah extends ConsumerWidget {
                         'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ',
                         textDirection: TextDirection.rtl,
                         style: textTheme.labelLarge?.copyWith(
-                          fontSize: 20 * ratio,
+                          fontSize: 22 * ratio,
                         ),
                       );
                     },
