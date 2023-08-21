@@ -180,7 +180,7 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
       }
     }
 
-    return super.findOne(
+    final item = await super.findOne(
       id,
       remote: remote,
       background: background,
@@ -190,6 +190,21 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
       onError: onError,
       label: label,
     );
+
+    if (item != null) {
+      return item;
+    } else {
+      return super.findOne(
+        id,
+        remote: true,
+        background: background,
+        params: params,
+        headers: headers,
+        onSuccess: onSuccess,
+        onError: onError,
+        label: label,
+      );
+    }
   }
 
   Resource mapToResource(Map resourceMap, String type) {
