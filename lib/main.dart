@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -34,18 +34,20 @@ Future main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
-  FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(!kDebugMode);
+  FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kReleaseMode);
+  FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(kReleaseMode);
 
-  FlutterError.onError = (errorDetails) {
-    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  };
-  // Pass all uncaught asynchronous errors that aren't handled by the Flutter
-  // framework to Crashlytics
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
+  if (kReleaseMode) {
+    FlutterError.onError = (errorDetails) {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+    };
+    // Pass all uncaught asynchronous errors that aren't handled by the Flutter
+    // framework to Crashlytics
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+  }
 
   QR.settings.pagesType = const QSlidePage();
   QR.settings.notFoundPage = QRoute(
