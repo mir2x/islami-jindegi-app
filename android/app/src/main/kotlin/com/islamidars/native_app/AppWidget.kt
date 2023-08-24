@@ -55,7 +55,7 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
     val location = widgetData.getString("location", "Location")
     val currentPrayerTitle = widgetData.getString("currentPrayerTitle", "")
     val currentPrayerTime = widgetData.getString("currentPrayerTime", "")
-    val nextPrayer = widgetData.getString("nextPrayer", "Next Prayer")
+    val nextPrayer = widgetData.getString("nextPrayer", "Prayers")
 
     if (theme == "light") {
       setInt(
@@ -107,31 +107,31 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
     )
     setImageViewBitmap(
       R.id.bangaliDate,
-      getFontBitmap(context, bangaliDate, textColor, 13f),
+      getFontBitmap(context, bangaliDate, textColor, 14f),
     )
     setImageViewBitmap(
       R.id.gregorianDate,
-      getFontBitmap(context, gregorianDate, textColor, 13f),
+      getFontBitmap(context, gregorianDate, textColor, 14f),
     )
     setImageViewBitmap(
       R.id.sunriseTitle,
-      getFontBitmap(context, sunriseTitle, textColor, 13f),
+      getFontBitmap(context, sunriseTitle, textColor, 14f),
     )
     setImageViewBitmap(
       R.id.sunriseTime,
-      getFontBitmap(context, sunriseTime, textColor, 13f),
+      getFontBitmap(context, sunriseTime, textColor, 14f),
     )
     setImageViewBitmap(
       R.id.sunsetTitle,
-      getFontBitmap(context, sunsetTitle, textColor, 13f),
+      getFontBitmap(context, sunsetTitle, textColor, 14f),
     )
     setImageViewBitmap(
       R.id.sunsetTime,
-      getFontBitmap(context, sunsetTime, textColor, 13f),
+      getFontBitmap(context, sunsetTime, textColor, 14f),
     )
     setImageViewBitmap(
       R.id.location,
-      getFontBitmap(context, location, highlightTextColor, 13f),
+      getFontBitmap(context, location, highlightTextColor, 14f),
     )
     setImageViewBitmap(
       R.id.currentPrayerTitle,
