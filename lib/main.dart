@@ -66,7 +66,7 @@ Future main() async {
     'app-widget-task',
     'appWidgetTask',
     frequency: const Duration(minutes: 15),
-    initialDelay: const Duration(seconds: 15),
+    initialDelay: const Duration(seconds: 35),
   );
 
   runApp(

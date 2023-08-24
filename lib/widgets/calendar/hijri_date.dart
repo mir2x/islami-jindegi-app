@@ -40,7 +40,7 @@ class HijriDate extends ConsumerWidget {
                 String? hijriDate = preferences.getString('hijriDate');
 
                 if (hijriDate != null) {
-                  return Text(hijriDate);
+                  return Text('$hijriDate ${locales.hijri}');
                 } else {
                   HijriCalendar date = HijriCalendar.now();
 
