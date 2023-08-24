@@ -32,8 +32,8 @@ class HijriDate extends ConsumerWidget {
           children: [
             prefs.when(
               loading: () => const SizedBox(
-                width: 15,
-                height: 15,
+                width: 12,
+                height: 12,
               ),
               error: (error, _) => Text(error.toString()),
               data: (preferences) {
@@ -54,8 +54,8 @@ class HijriDate extends ConsumerWidget {
             ),
             const SizedBox(width: 10),
             const SizedBox(
-              width: 15,
-              height: 15,
+              width: 12,
+              height: 12,
               child: CircularProgressIndicator(strokeWidth: 2),
             ),
           ],

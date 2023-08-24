@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/providers/geolocation.dart';
+import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/helpers/get_location_name.dart';
 
 class CurrentLocation extends ConsumerStatefulWidget {
@@ -44,12 +45,40 @@ class CurrentLocationState extends ConsumerState<CurrentLocation> {
     var geoData = ref.watch(geolocationProvider);
 
     return geoData.when(
-      loading: () => Container(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-        child: const Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
+      loading: () {
+        var prefs = ref.watch(preferencesProvider);
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            prefs.when(
+              loading: () => const SizedBox(
+                width: 10,
+                height: 10,
+              ),
+              error: (error, _) => Text(error.toString()),
+              data: (preferences) {
+                String? location = preferences.getString('location');
+
+                if (location != null) {
+                  return Text(location, style: textTheme.labelSmall);
+                } else {
+                  return Text(
+                    '${locales.dhaka}, ${locales.bangladesh}',
+                    style: textTheme.labelSmall,
+                  );
+                }
+              },
+            ),
+            const SizedBox(width: 10),
+            const SizedBox(
+              width: 10,
+              height: 10,
+              child: CircularProgressIndicator(strokeWidth: 1),
+            ),
+          ],
+        );
+      },
       error: (error, _) => Text(error.toString()),
       data: (Map geolocation) {
         String location = getLocationName(geolocation['location']);

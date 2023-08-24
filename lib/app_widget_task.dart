@@ -25,14 +25,16 @@ void callbackDispatcher() {
 
     Map coordinates = await getFailSafeCoordinates();
     Map location = await getFailSafeLocation();
+    String locationName = getLocationName(location);
 
-    HijriCalendar hijriDate = adjustedHijriDate({
+    HijriCalendar hijri = adjustedHijriDate({
       'preferences': preferences,
       'coordinates': coordinates,
       'hijriAdjustment': preferences.getInt('hijriAdjustment') ?? 0,
     });
 
-    Map h = splitHijriDate(hijriDate, locales, currentLang);
+    Map h = splitHijriDate(hijri, locales, currentLang);
+    String hijriDate = '${h['day']} ${h['month']}, ${h['year']}';
 
     PrayerTime prayerTime = PrayerTime(
       coordinates: Coordinates(
@@ -53,22 +55,37 @@ void callbackDispatcher() {
         '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}';
 
     updateAppWidget({
-      'hijriDate': '${h['day']} ${h['month']}, ${h['year']}',
+      'hijriDate': hijriDate,
       'bangaliDate': getBangaliDate(),
       'gregorianDate': getGregorianDate(currentLang, null),
       'sunriseTitle': sunriseSunset['sunrise']['title'],
       'sunriseTime': sunriseSunset['sunrise']['time'],
       'sunsetTitle': sunriseSunset['sunset']['title'],
       'sunsetTime': sunriseSunset['sunset']['time'],
-      'location': getLocationName(location),
-      if (prayerTimes.containsKey('current')) ...{
-        'currentPrayerTitle': prayerTimes['current']['title']
-      },
-      if (prayerTimes.containsKey('current')) ...{
+      'location': locationName,
+      if (prayerTimes.containsKey('current') &&
+          prayerTimes['current'] != null) ...{
+        'currentPrayerTitle': prayerTimes['current']['title'],
         'currentPrayerTime': prayerTimes['current']['time']
       },
       'nextPrayer': nextPrayer,
     });
+
+    await preferences.setString('hijriDate', hijriDate);
+    await preferences.setString('location', locationName);
+
+    if (prayerTimes.containsKey('current') && prayerTimes['current'] != null) {
+      await preferences.setString(
+        'currentPrayerTitle',
+        prayerTimes['current']['title'],
+      );
+      await preferences.setString(
+        'currentPrayerTime',
+        prayerTimes['current']['time'],
+      );
+    }
+
+    await preferences.setString('nextPrayer', nextPrayer);
 
     return Future.value(true);
   });

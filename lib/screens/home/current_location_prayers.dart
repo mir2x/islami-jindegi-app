@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:adhan/adhan.dart';
 import 'package:native_app/providers/geolocation.dart';
+import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/widgets/location/index.dart';
 import 'package:native_app/objects/prayer_time.dart';
 
@@ -65,13 +66,43 @@ class CurrentPrayersState extends ConsumerState<CurrentPrayers> {
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
-    var textTheme = Theme.of(context).textTheme;
     var dataProvider = ref.watch(preferencesAndGeolocationProvider);
-    double screenWidth = MediaQuery.of(context).size.width;
-    bool isMobile = screenWidth < 768;
 
     return dataProvider.when(
-      loading: () => const SizedBox.shrink(),
+      loading: () {
+        var prefs = ref.watch(preferencesProvider);
+
+        return prefs.when(
+          loading: () => const SizedBox(
+            width: 15,
+            height: 15,
+          ),
+          error: (error, _) => Text(error.toString()),
+          data: (preferences) {
+            String? currentPrayerTitle =
+                preferences.getString('currentPrayerTitle');
+            String? currentPrayerTime =
+                preferences.getString('currentPrayerTime');
+            String? nextPrayer = preferences.getString('nextPrayer');
+
+            if (currentPrayerTitle != null &&
+                currentPrayerTime != null &&
+                nextPrayer != null) {
+              return Prayers(
+                prayerTimes: {
+                  'current': {
+                    'title': currentPrayerTitle,
+                    'time': currentPrayerTime,
+                  },
+                  'next': nextPrayer,
+                },
+              );
+            } else {
+              return const SizedBox(height: 45);
+            }
+          },
+        );
+      },
       error: (error, _) => Text(error.toString()),
       data: (Map data) {
         Map geolocation = data['geolocation'];
@@ -90,39 +121,61 @@ class CurrentPrayersState extends ConsumerState<CurrentPrayers> {
           currentLang,
         );
 
-        return Column(
-          crossAxisAlignment:
-              isMobile ? CrossAxisAlignment.start : CrossAxisAlignment.end,
-          children: [
-            if (prayerTimes.containsKey('current')) ...[
-              Container(
-                margin: EdgeInsets.only(bottom: isMobile ? 0 : 5),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${prayerTimes['current']['title']}',
-                      style: textTheme.titleLarge,
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      margin: const EdgeInsets.only(top: 3),
-                      child: Text(
-                        '${prayerTimes['current']['time']}',
-                        style: textTheme.titleMedium,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
-            Text(
-              '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}',
-              style: textTheme.labelSmall,
-            ),
-          ],
+        return Prayers(
+          prayerTimes: {
+            'current': prayerTimes['current'],
+            'next':
+                '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}',
+          },
         );
       },
+    );
+  }
+}
+
+class Prayers extends StatelessWidget {
+  const Prayers({
+    super.key,
+    required this.prayerTimes,
+  });
+
+  final Map prayerTimes;
+
+  @override
+  Widget build(BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isMobile = screenWidth < 768;
+
+    return Column(
+      crossAxisAlignment:
+          isMobile ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+      children: [
+        if (prayerTimes.containsKey('current') &&
+            prayerTimes['current'] != null) ...[
+          Container(
+            margin: EdgeInsets.only(bottom: isMobile ? 0 : 5),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${prayerTimes['current']['title']}',
+                  style: textTheme.titleLarge,
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  margin: const EdgeInsets.only(top: 3),
+                  child: Text(
+                    '${prayerTimes['current']['time']}',
+                    style: textTheme.titleMedium,
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
+        Text(prayerTimes['next'], style: textTheme.labelSmall),
+      ],
     );
   }
 }
