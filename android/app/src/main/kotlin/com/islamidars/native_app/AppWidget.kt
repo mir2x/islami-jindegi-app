@@ -53,7 +53,7 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
     val sunsetTitle = widgetData.getString("sunsetTitle", "Sunset")
     val sunsetTime = widgetData.getString("sunsetTime", "")
     val location = widgetData.getString("location", "Location")
-    val currentPrayerTitle = widgetData.getString("currentPrayerTitle", "Current Prayer")
+    val currentPrayerTitle = widgetData.getString("currentPrayerTitle", "")
     val currentPrayerTime = widgetData.getString("currentPrayerTime", "")
     val nextPrayer = widgetData.getString("nextPrayer", "Next Prayer")
 
