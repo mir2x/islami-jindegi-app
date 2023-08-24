@@ -114,7 +114,7 @@ class Bayans extends ConsumerWidget {
                     Container(
                       width: double.infinity,
                       padding:
-                          const EdgeInsets.only(top: 20, left: 15, right: 15),
+                          const EdgeInsets.only(top: 10, left: 15, right: 15),
                       child: Row(
                         children: [
                           const Expanded(
@@ -174,7 +174,7 @@ class Bayans extends ConsumerWidget {
                           ),
                           if (item.speaker.value != null) ...[
                             Container(
-                              margin: const EdgeInsets.only(top: 5),
+                              margin: const EdgeInsets.only(top: 3),
                               child: Text(
                                 item.speaker.value.name,
                                 style: textTheme.labelMedium,
@@ -183,7 +183,7 @@ class Bayans extends ConsumerWidget {
                           ],
                           if (item.location != null) ...[
                             Container(
-                              margin: const EdgeInsets.only(top: 5),
+                              margin: const EdgeInsets.only(top: 2),
                               child: Text(
                                 item.location,
                                 style: textTheme.labelSmall,
@@ -191,7 +191,7 @@ class Bayans extends ConsumerWidget {
                             ),
                           ],
                           Container(
-                            margin: const EdgeInsets.only(top: 5),
+                            margin: const EdgeInsets.only(top: 2),
                             child: Text(
                               formatDate(item.publishedAt, currentLang),
                               style: textTheme.labelSmall,
