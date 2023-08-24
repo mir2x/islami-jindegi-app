@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hijri/hijri_calendar.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/hijri_date_settings.dart';
@@ -65,19 +66,53 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                   ),
                   const SizedBox(height: 10),
                   const CurrentLocation(alignment: MainAxisAlignment.center),
-                  const SizedBox(height: 15),
-                  InkWell(
-                    onTap: () => QR.to('namaz-times/settings'),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(locales.settings),
-                        const SizedBox(width: 10),
-                        const Icon(Icons.settings),
-                      ],
-                    ),
+                  const SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      InkWell(
+                        onTap: () => QR.to('qiblah'),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 7,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(locales.qiblah),
+                              const SizedBox(width: 8),
+                              SvgPicture.asset(
+                                'assets/images/icons/kaaba.svg',
+                                fit: BoxFit.scaleDown,
+                                width: 20,
+                                height: 20,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      InkWell(
+                        onTap: () => QR.to('namaz-times/settings'),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 7,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(locales.settings),
+                              const SizedBox(width: 6),
+                              const Icon(Icons.settings),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5),
                   NamazTimeItems(currentDate: currentGregorianDate),
                 ],
               ),

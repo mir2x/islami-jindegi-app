@@ -71,7 +71,7 @@ class Qiblah extends ConsumerWidget {
                                 duration: const Duration(milliseconds: 500),
                                 turns: qibla.direction / 360,
                                 child: SvgPicture.asset(
-                                  'assets/images/icons/kaaba.svg',
+                                  'assets/images/icons/kaaba-compass.svg',
                                   fit: BoxFit.scaleDown,
                                   width: 320,
                                   height: 320,
