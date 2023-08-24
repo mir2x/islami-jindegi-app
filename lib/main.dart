@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -61,13 +62,15 @@ Future main() async {
 
   await container.read(repositoryInitializerProvider.future);
 
-  Workmanager().initialize(callbackDispatcher);
-  Workmanager().registerPeriodicTask(
-    'app-widget-task',
-    'appWidgetTask',
-    frequency: const Duration(minutes: 15),
-    initialDelay: const Duration(seconds: 35),
-  );
+  if (Platform.isAndroid) {
+    Workmanager().initialize(callbackDispatcher);
+    Workmanager().registerPeriodicTask(
+      'app-widget-task',
+      'appWidgetTask',
+      frequency: const Duration(minutes: 15),
+      initialDelay: const Duration(seconds: 35),
+    );
+  }
 
   runApp(
     UncontrolledProviderScope(
