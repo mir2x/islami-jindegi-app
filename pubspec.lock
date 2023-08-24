@@ -586,10 +586,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_data
-      sha256: "55bfab68298f48bf07e6565b6d1a5c6d1cdde7f5949dabddc9d54c2ae4a61c83"
+      sha256: de1a214a03bec74c09c0430cf721a54fb0badbbda7875195457a24d605768a64
       url: "https://pub.dev"
     source: hosted
-    version: "1.5.12"
+    version: "1.5.13"
   flutter_data_json_api_adapter:
     dependency: "direct main"
     description:
