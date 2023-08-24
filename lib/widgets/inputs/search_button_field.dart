@@ -80,7 +80,11 @@ class _SearchState extends ConsumerState<SearchButtonField> {
                 onPressed: () {
                   widget.onUpdate(searchText);
                 },
-                icon: const Icon(Icons.search, color: ThemeColors.color4),
+                icon: Icon(
+                  Icons.search,
+                  color:
+                      theme == 'dark' ? ThemeColors.color4 : ThemeColors.color8,
+                ),
               ),
             ),
             onChanged: (value) {

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:collection/collection.dart';
 import 'package:date_field/date_field.dart';
 import 'package:intl/intl.dart';
+import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/theme/colors.dart';
 
@@ -44,6 +45,7 @@ class DateFilter extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    var prefs = ref.watch(preferencesProvider);
     var qParams = ref.watch(queryParamsProvider);
 
     final List<Map> options = [
@@ -57,89 +59,106 @@ class DateFilter extends ConsumerWidget {
 
     String selectedLabel = selectedDate(qParams, options, locales);
 
-    return OutlinedButton(
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            double screenWidth = MediaQuery.of(context).size.width;
-            double screenHeight = MediaQuery.of(context).size.height;
-            var qParamsNotifier = ref.read(queryParamsProvider.notifier);
+    return prefs.when(
+      loading: () => const SizedBox.shrink(),
+      error: (error, _) => Text(error.toString()),
+      data: (preferences) {
+        String theme = preferences.getString('theme') ?? 'dark';
 
-            return Dialog(
-              child: Container(
-                width: screenWidth,
-                height: screenHeight * 0.6,
-                padding: const EdgeInsets.only(
-                  top: 15,
-                  bottom: 25,
-                  left: 15,
-                  right: 15,
-                ),
-                child: Column(
-                  children: [
-                    ...options.map((option) {
-                      return InkWell(
-                        onTap: () {
-                          qParamsNotifier.updateParams(
-                            'dateRange',
-                            option['value'],
+        return OutlinedButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                double screenWidth = MediaQuery.of(context).size.width;
+                double screenHeight = MediaQuery.of(context).size.height;
+                var qParamsNotifier = ref.read(queryParamsProvider.notifier);
+
+                return Dialog(
+                  child: Container(
+                    width: screenWidth,
+                    height: screenHeight * 0.6,
+                    padding: const EdgeInsets.only(
+                      top: 15,
+                      bottom: 25,
+                      left: 15,
+                      right: 15,
+                    ),
+                    child: Column(
+                      children: [
+                        ...options.map((option) {
+                          return InkWell(
+                            onTap: () {
+                              qParamsNotifier.updateParams(
+                                'dateRange',
+                                option['value'],
+                              );
+
+                              for (var k in ['dateFrom', 'dateTo']) {
+                                qParamsNotifier.updateParams(k, '');
+                              }
+
+                              Navigator.of(context).pop();
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Text(
+                                option['label'],
+                                style: (qParams.containsKey('dateRange') &&
+                                        qParams['dateRange'] == option['value'])
+                                    ? textTheme.labelMedium
+                                    : textTheme.titleMedium,
+                              ),
+                            ),
                           );
-
-                          for (var k in ['dateFrom', 'dateTo']) {
-                            qParamsNotifier.updateParams(k, '');
-                          }
-
-                          Navigator.of(context).pop();
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
+                        }),
+                        Container(
+                          margin: const EdgeInsets.only(top: 30, bottom: 15),
                           child: Text(
-                            option['label'],
-                            style: (qParams.containsKey('dateRange') &&
-                                    qParams['dateRange'] == option['value'])
+                            locales.customDate,
+                            style: qParams.containsKey('dateFrom') ||
+                                    qParams.containsKey('dateTo')
                                 ? textTheme.labelMedium
                                 : textTheme.titleMedium,
                           ),
                         ),
-                      );
-                    }),
-                    Container(
-                      margin: const EdgeInsets.only(top: 30, bottom: 15),
-                      child: Text(
-                        locales.customDate,
-                        style: qParams.containsKey('dateFrom') ||
-                                qParams.containsKey('dateTo')
-                            ? textTheme.labelMedium
-                            : textTheme.titleMedium,
-                      ),
+                        CustomDateField(
+                          field: 'dateFrom',
+                          label: locales.dateFrom,
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        CustomDateField(field: 'dateTo', label: locales.dateTo),
+                      ],
                     ),
-                    CustomDateField(field: 'dateFrom', label: locales.dateFrom),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    CustomDateField(field: 'dateTo', label: locales.dateTo),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             );
           },
+          style: OutlinedButton.styleFrom(
+            side: BorderSide(
+              color: theme == 'dark' ? ThemeColors.color3 : ThemeColors.color9,
+            ),
+            minimumSize: const Size.fromHeight(45),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                selectedLabel,
+                style: textTheme.labelMedium,
+              ),
+              Icon(
+                Icons.arrow_drop_down,
+                color:
+                    theme == 'dark' ? ThemeColors.color4 : ThemeColors.color8,
+              ),
+            ],
+          ),
         );
       },
-      style: OutlinedButton.styleFrom(
-        side: const BorderSide(color: ThemeColors.color3),
-        minimumSize: const Size.fromHeight(45),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            selectedLabel,
-            style: textTheme.labelMedium,
-          ),
-          const Icon(Icons.arrow_drop_down, color: ThemeColors.color4),
-        ],
-      ),
     );
   }
 }

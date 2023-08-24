@@ -74,7 +74,11 @@ class FilterButton extends ConsumerWidget {
                 filterLabel,
                 style: textTheme.labelMedium,
               ),
-              const Icon(Icons.arrow_drop_down, color: ThemeColors.color4),
+              Icon(
+                Icons.arrow_drop_down,
+                color:
+                    theme == 'dark' ? ThemeColors.color4 : ThemeColors.color8,
+              ),
             ],
           ),
         );

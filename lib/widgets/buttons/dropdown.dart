@@ -29,6 +29,8 @@ class Dropdown extends ConsumerWidget {
       error: (error, _) => Text(error.toString()),
       data: (preferences) {
         String theme = preferences.getString('theme') ?? 'dark';
+        Color iconColor =
+            theme == 'dark' ? ThemeColors.color4 : ThemeColors.color8;
 
         return DropdownButton2<dynamic>(
           hint: hint,
@@ -43,13 +45,13 @@ class Dropdown extends ConsumerWidget {
           iconEnabledColor: ThemeColors.color3,
           icon: allowClear
               ? selectedValue == null
-                  ? const Icon(Icons.arrow_drop_down, color: ThemeColors.color4)
+                  ? Icon(Icons.arrow_drop_down, color: iconColor)
                   : IconButton(
-                      icon: const Icon(Icons.clear_outlined),
+                      icon: Icon(Icons.clear_outlined, color: iconColor),
                       iconSize: 15,
                       onPressed: () => updateItem(''),
                     )
-              : const Icon(Icons.arrow_drop_down, color: ThemeColors.color4),
+              : Icon(Icons.arrow_drop_down, color: iconColor),
           dropdownDecoration: BoxDecoration(
             color: theme == 'dark' ? ThemeColors.color6 : ThemeColors.color3,
           ),
