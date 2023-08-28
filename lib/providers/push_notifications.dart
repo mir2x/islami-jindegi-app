@@ -80,7 +80,7 @@ final pushNotificationProvider = FutureProvider((ref) async {
     const AndroidNotificationChannel androidChannel =
         AndroidNotificationChannel(
       'push_notification_channel',
-      'Push Notifications',
+      'Updates',
       importance: Importance.max,
     );
 
