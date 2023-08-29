@@ -6,8 +6,8 @@
   android:theme="@style/Theme.Android.AppWidgetContainer">
 
   <LinearLayout
-    android:layout_width="330dp"
-    android:layout_height="180dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:layout_centerInParent="true"
     android:orientation="vertical">
 
@@ -196,6 +196,8 @@
         android:paddingTop="4dp"
         android:paddingBottom="2dp"
         android:layout_weight="1.2"
+        android:adjustViewBounds="true"
+        android:maxWidth="80dp"
         android:contentDescription="@string/quran"
         android:src="@drawable/quran" />
 
@@ -208,6 +210,8 @@
         android:paddingTop="4dp"
         android:paddingBottom="2dp"
         android:layout_weight="1.2"
+        android:adjustViewBounds="true"
+        android:maxWidth="80dp"
         android:contentDescription="@string/books"
         android:src="@drawable/book" />
 
@@ -220,6 +224,8 @@
         android:paddingTop="4dp"
         android:paddingBottom="2dp"
         android:layout_weight="0.6"
+        android:adjustViewBounds="true"
+        android:maxWidth="80dp"
         android:contentDescription="@string/bayans"
         android:src="@drawable/bayan" />
 
@@ -232,6 +238,8 @@
         android:paddingTop="4dp"
         android:paddingBottom="2dp"
         android:layout_weight="0.9"
+        android:adjustViewBounds="true"
+        android:maxWidth="80dp"
         android:contentDescription="@string/malfuzat"
         android:src="@drawable/malfuzat" />
 
@@ -244,6 +252,8 @@
         android:paddingTop="4dp"
         android:paddingBottom="2dp"
         android:layout_weight="1.1"
+        android:adjustViewBounds="true"
+        android:maxWidth="80dp"
         android:contentDescription="@string/masail"
         android:src="@drawable/masail" />
 
@@ -256,6 +266,8 @@
         android:paddingTop="4dp"
         android:paddingBottom="2dp"
         android:layout_weight="1.1"
+        android:adjustViewBounds="true"
+        android:maxWidth="80dp"
         android:contentDescription="@string/duas"
         android:src="@drawable/dua" />
     </LinearLayout>

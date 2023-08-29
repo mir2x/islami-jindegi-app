@@ -15,6 +15,8 @@ import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
 import es.antonborri.home_widget.HomeWidgetLaunchIntent
 import es.antonborri.home_widget.HomeWidgetPlugin
+import kotlin.math.max
+import kotlin.math.min
 
 class AppWidget : AppWidgetProvider() {
   override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
@@ -42,6 +44,7 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
   val widgetData = HomeWidgetPlugin.getData(context)
   var textColor: Int
   var highlightTextColor: Int
+  val ratio = getRatio(context)
 
   val views = RemoteViews(context.packageName, R.layout.app_widget).apply {
     val theme = widgetData.getString("theme", "dark")
@@ -103,47 +106,47 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
 
     setImageViewBitmap(
       R.id.hijriDate,
-      getFontBitmap(context, hijriDate, textColor, 18f),
+      getFontBitmap(context, hijriDate, textColor, ratio, 18f),
     )
     setImageViewBitmap(
       R.id.bangaliDate,
-      getFontBitmap(context, bangaliDate, textColor, 14f),
+      getFontBitmap(context, bangaliDate, textColor, ratio, 14f),
     )
     setImageViewBitmap(
       R.id.gregorianDate,
-      getFontBitmap(context, gregorianDate, textColor, 14f),
+      getFontBitmap(context, gregorianDate, textColor, ratio, 14f),
     )
     setImageViewBitmap(
       R.id.sunriseTitle,
-      getFontBitmap(context, sunriseTitle, textColor, 14f),
+      getFontBitmap(context, sunriseTitle, textColor, ratio, 14f),
     )
     setImageViewBitmap(
       R.id.sunriseTime,
-      getFontBitmap(context, sunriseTime, textColor, 14f),
+      getFontBitmap(context, sunriseTime, textColor, ratio, 14f),
     )
     setImageViewBitmap(
       R.id.sunsetTitle,
-      getFontBitmap(context, sunsetTitle, textColor, 14f),
+      getFontBitmap(context, sunsetTitle, textColor, ratio, 14f),
     )
     setImageViewBitmap(
       R.id.sunsetTime,
-      getFontBitmap(context, sunsetTime, textColor, 14f),
+      getFontBitmap(context, sunsetTime, textColor, ratio, 14f),
     )
     setImageViewBitmap(
       R.id.location,
-      getFontBitmap(context, location, highlightTextColor, 14f),
+      getFontBitmap(context, location, highlightTextColor, ratio, 14f),
     )
     setImageViewBitmap(
       R.id.currentPrayerTitle,
-      getFontBitmap(context, currentPrayerTitle, highlightTextColor, 18f),
+      getFontBitmap(context, currentPrayerTitle, highlightTextColor, ratio, 18f),
     )
     setImageViewBitmap(
       R.id.currentPrayerTime,
-      getFontBitmap(context, currentPrayerTime, highlightTextColor, 15f),
+      getFontBitmap(context, currentPrayerTime, highlightTextColor, ratio, 15f),
     )
     setImageViewBitmap(
       R.id.nextPrayer,
-      getFontBitmap(context, nextPrayer, textColor, 14f),
+      getFontBitmap(context, nextPrayer, textColor, ratio, 14f),
     )
 
     setOnClickPendingIntent(R.id.quran, openLink(context, "quran"))
@@ -157,8 +160,8 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
   appWidgetManager.updateAppWidget(appWidgetId, views)
 }
 
-fun getFontBitmap(context: Context, text: String?, color: Int, fontSizeSP: Float): Bitmap? {
-  val fontSizePX = convertDipToPix(context, fontSizeSP)
+fun getFontBitmap(context: Context, text: String?, color: Int, ratio: Float, fontSizeSP: Float): Bitmap? {
+  val fontSizePX = ratio * convertDipToPix(context, fontSizeSP)
   val pad = fontSizePX / 9
   val paint = Paint()
   val typeface = Typeface.createFromAsset(context.assets, "fonts/solaimanlipi.ttf")
@@ -176,6 +179,20 @@ fun getFontBitmap(context: Context, text: String?, color: Int, fontSizeSP: Float
 
 fun convertDipToPix(context: Context, dip: Float): Float {
   return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dip, context.resources.displayMetrics)
+}
+
+fun getRatio(context: Context): Float {
+  val metrics = context.resources.displayMetrics
+  val densityRatio = metrics.density / 3.00f
+  val dimensionRatio = metrics.widthPixels / 1080f
+
+  val ratio = if (densityRatio > 1 && dimensionRatio > 1) {
+    min(densityRatio, dimensionRatio)
+  } else {
+    max(densityRatio, dimensionRatio)
+  }
+
+  return max(ratio, 1.0f)
 }
 
 fun openLink(context: Context, message: String): PendingIntent {
