@@ -50,7 +50,7 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
   }
 
   Future<dynamic> updateFajr(value) async {
-    if (int.tryParse(value) != null) {
+    if (value != null && int.tryParse(value) != null) {
       int intValue = int.parse(value);
       var prefs = await SharedPreferences.getInstance();
       await prefs.setInt('fajr', intValue);
@@ -59,7 +59,7 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
   }
 
   Future<dynamic> updateSunrise(value) async {
-    if (int.tryParse(value) != null) {
+    if (value != null && int.tryParse(value) != null) {
       int intValue = int.parse(value);
       var prefs = await SharedPreferences.getInstance();
       await prefs.setInt('sunrise', intValue);
@@ -68,7 +68,7 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
   }
 
   Future<dynamic> updateDhuhr(value) async {
-    if (int.tryParse(value) != null) {
+    if (value != null && int.tryParse(value) != null) {
       int intValue = int.parse(value);
       var prefs = await SharedPreferences.getInstance();
       await prefs.setInt('dhuhr', intValue);
@@ -77,7 +77,7 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
   }
 
   Future<dynamic> updateAsr(value) async {
-    if (int.tryParse(value) != null) {
+    if (value != null && int.tryParse(value) != null) {
       int intValue = int.parse(value);
       var prefs = await SharedPreferences.getInstance();
       await prefs.setInt('asr', intValue);
@@ -86,7 +86,7 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
   }
 
   Future<dynamic> updateMaghrib(value) async {
-    if (int.tryParse(value) != null) {
+    if (value != null && int.tryParse(value) != null) {
       int intValue = int.parse(value);
       var prefs = await SharedPreferences.getInstance();
       await prefs.setInt('maghrib', intValue);
@@ -95,7 +95,7 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
   }
 
   Future<dynamic> updateIsha(value) async {
-    if (int.tryParse(value) != null) {
+    if (value != null && int.tryParse(value) != null) {
       int intValue = int.parse(value);
       var prefs = await SharedPreferences.getInstance();
       await prefs.setInt('isha', intValue);
