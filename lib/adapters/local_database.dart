@@ -215,7 +215,7 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
       (k, v) => MapEntry<String, Object?>(ReCase(k).paramCase, v),
     );
 
-    final resource = Resource(type, id.toString());
+    final resource = Resource(ReCase(type).snakeCase, id.toString());
     resource.attributes.addAll(attributes);
     return resource;
   }
