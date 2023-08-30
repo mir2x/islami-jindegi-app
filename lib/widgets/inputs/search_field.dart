@@ -18,7 +18,7 @@ class SearchField extends ConsumerWidget {
   });
 
   final String? value;
-  final Function onUpdate;
+  final Function(String) onUpdate;
   final String? labelText;
   final bool reverse;
   final bool autofocus;

@@ -17,7 +17,7 @@ class SearchButtonField extends ConsumerStatefulWidget {
   });
 
   final String? value;
-  final Function onUpdate;
+  final Function(String) onUpdate;
   final String? labelText;
   final bool reverse;
   final bool autofocus;
@@ -78,7 +78,9 @@ class _SearchState extends ConsumerState<SearchButtonField> {
               ),
               suffixIcon: IconButton(
                 onPressed: () {
-                  widget.onUpdate(searchText);
+                  if (searchText != null) {
+                    widget.onUpdate(searchText!);
+                  }
                 },
                 icon: Icon(
                   Icons.search,
