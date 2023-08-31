@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:native_app/providers/pdf_controller.dart';
+import 'pdf_builders.dart';
 
 class PDFReader extends ConsumerWidget {
   const PDFReader({
@@ -13,6 +15,7 @@ class PDFReader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var pdfCtrl = ref.watch(pdfControllerProvider(document));
 
@@ -66,14 +69,8 @@ class PDFReader extends ConsumerWidget {
             Expanded(
               child: PdfView(
                 controller: pdfController,
-                builders: PdfViewBuilders<DefaultBuilderOptions>(
-                  options: const DefaultBuilderOptions(),
-                  documentLoaderBuilder: (BuildContext context) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
-                ),
+                builders: PdfBuilders(locales: locales, textTheme: textTheme)
+                    .getViewBuilders(),
               ),
             ),
           ],

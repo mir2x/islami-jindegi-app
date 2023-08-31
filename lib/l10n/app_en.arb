@@ -197,5 +197,6 @@
   "applicationErrorMsg": "The application has encountered an unknown error.\n Please try again later.",
   "newPageErrorTitle": "Something went wrong. Tap to try again.",
   "downloadErrorMsg": "There has been a problem while downloading the file. Please check your network connection and try again.",
+  "documentLoadErrorMsg": "There has been a problem loading the document. Please try again.",
   "connectToInternetMsg": "Please connect to the Internet"
 }

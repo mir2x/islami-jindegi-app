@@ -12,6 +12,7 @@ import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
+import 'package:native_app/widgets/document/pdf_builders.dart';
 import 'package:native_app/widgets/utils/full_screen.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
@@ -67,36 +68,8 @@ class QuranBookItem extends ConsumerWidget {
                 body: PdfView(
                   reverse: true,
                   controller: pdfController,
-                  builders: PdfViewBuilders<DefaultBuilderOptions>(
-                    options: const DefaultBuilderOptions(),
-                    documentLoaderBuilder: (_) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const CircularProgressIndicator(),
-                          Container(
-                            margin: const EdgeInsets.symmetric(vertical: 25),
-                            child: Text(
-                              locales.downloading,
-                              style: textTheme.labelLarge,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(
-                              locales.downloadTips,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                    pageLoaderBuilder: (_) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    },
-                  ),
+                  builders: PdfBuilders(locales: locales, textTheme: textTheme)
+                      .getViewBuilders(),
                   renderer: (PdfPage page) => page.render(
                     width: screenWidth,
                     height: screenHeight - 160,
