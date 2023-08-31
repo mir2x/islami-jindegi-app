@@ -17,6 +17,12 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        // update smooth_compass to remove the configuration below
+        configurations.all {
+            resolutionStrategy {
+                force "com.google.android.gms:play-services-location:21.0.1"
+            }
+        }
     }
 }
 
