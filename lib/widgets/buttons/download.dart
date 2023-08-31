@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dio/dio.dart';
+import 'package:native_app/providers/downloader.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
-import 'package:native_app/objects/downloader.dart';
+import 'package:native_app/objects/progress_percentage.dart';
+import 'package:native_app/objects/download_params.dart';
 import 'package:native_app/theme/colors.dart';
 
 class DownloadButton extends ConsumerWidget {
@@ -20,7 +22,7 @@ class DownloadButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    var downloader = Downloader();
+    var progressNotifier = ProgressPercentage();
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -29,12 +31,17 @@ class DownloadButton extends ConsumerWidget {
           iconSize: 35,
           icon: const Icon(Icons.download),
           onPressed: () async {
-            var response = await downloader.download(
+            var params = DownloadParams(
               url: fileUrl,
               savePath: filePath,
+              downloadProgress: progressNotifier,
             );
 
-            if (response is Response && response.statusCode == 200) {
+            Response? response = await ref.watch(
+              downloaderProvider(params).future,
+            );
+
+            if (response != null && response.statusCode == 200) {
               await ref
                   .read(checkDownloadedFileProvider(filePath).notifier)
                   .check(filePath);
@@ -58,7 +65,7 @@ class DownloadButton extends ConsumerWidget {
           width: 100,
           margin: const EdgeInsets.only(left: 15),
           child: ValueListenableBuilder<double>(
-            valueListenable: downloader.progressNotifier,
+            valueListenable: progressNotifier,
             builder: (context, percent, child) {
               if (percent > 0) {
                 return LinearProgressIndicator(
