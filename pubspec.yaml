@@ -16,7 +16,7 @@ dependencies:
   flutter_dotenv: ^5.0.2
 
   # state management
-  flutter_riverpod: ^2.1.3
+  flutter_riverpod: ^2.3.10
 
   # routing
   qlevar_router: ^1.7.1
