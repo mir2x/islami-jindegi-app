@@ -75,7 +75,7 @@ class ResponsiveImage extends ConsumerWidget {
   }
 
   String? selectWidth(image, double vwsetWidth) {
-    Iterable<String> widths = image.keys.where((k) => k != 'original');
+    List<String> widths = image.keys.where((k) => k != 'original').toList();
     return widths.firstWhereOrNull((w) => int.parse(w) >= vwsetWidth) ??
         widths.lastWhereOrNull((w) => int.parse(w) < vwsetWidth);
   }
