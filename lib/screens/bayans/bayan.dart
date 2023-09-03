@@ -48,7 +48,8 @@ class Bayan extends ConsumerWidget {
           var previousResources = await ref.bayans.findAll(
             params: {
               'quantity': 1,
-              'gtPublishedAt': resource.publishedAt,
+              'include': 'speaker',
+              'position': resource.position + 1,
             },
           );
 
@@ -63,7 +64,8 @@ class Bayan extends ConsumerWidget {
           var nextResources = await ref.bayans.findAll(
             params: {
               'quantity': 1,
-              'ltPublishedAt': resource.publishedAt,
+              'include': 'speaker',
+              'position': resource.position - 1,
             },
           );
 

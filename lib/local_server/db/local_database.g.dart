@@ -3291,6 +3291,10 @@ class $BayansTable extends Bayans with TableInfo<$BayansTable, Bayan> {
           .withConverter<Map<dynamic, dynamic>?>(
               $BayansTable.$converteraudioDatan);
   @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
   late final GeneratedColumn<String> publishedAt = GeneratedColumn<String>(
       'published_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
@@ -3317,6 +3321,7 @@ class $BayansTable extends Bayans with TableInfo<$BayansTable, Bayan> {
         language,
         location,
         audioData,
+        position,
         publishedAt,
         createdAt,
         updatedAt,
@@ -3345,6 +3350,8 @@ class $BayansTable extends Bayans with TableInfo<$BayansTable, Bayan> {
       audioData: $BayansTable.$converteraudioDatan.fromSql(attachedDatabase
           .typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}audio_data'])),
+      position: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
       publishedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}published_at'])!,
       createdAt: attachedDatabase.typeMapping
@@ -3374,6 +3381,7 @@ class Bayan extends DataClass implements Insertable<Bayan> {
   final String language;
   final String? location;
   final Map<dynamic, dynamic>? audioData;
+  final int position;
   final String publishedAt;
   final String createdAt;
   final String updatedAt;
@@ -3385,6 +3393,7 @@ class Bayan extends DataClass implements Insertable<Bayan> {
       required this.language,
       this.location,
       this.audioData,
+      required this.position,
       required this.publishedAt,
       required this.createdAt,
       required this.updatedAt,
@@ -3405,6 +3414,7 @@ class Bayan extends DataClass implements Insertable<Bayan> {
       final converter = $BayansTable.$converteraudioDatan;
       map['audio_data'] = Variable<String>(converter.toSql(audioData));
     }
+    map['position'] = Variable<int>(position);
     map['published_at'] = Variable<String>(publishedAt);
     map['created_at'] = Variable<String>(createdAt);
     map['updated_at'] = Variable<String>(updatedAt);
@@ -3422,6 +3432,7 @@ class Bayan extends DataClass implements Insertable<Bayan> {
       language: serializer.fromJson<String>(json['language']),
       location: serializer.fromJson<String?>(json['location']),
       audioData: serializer.fromJson<Map<dynamic, dynamic>?>(json['audio']),
+      position: serializer.fromJson<int>(json['position']),
       publishedAt: serializer.fromJson<String>(json['publishedAt']),
       createdAt: serializer.fromJson<String>(json['createdAt']),
       updatedAt: serializer.fromJson<String>(json['updatedAt']),
@@ -3438,6 +3449,7 @@ class Bayan extends DataClass implements Insertable<Bayan> {
       'language': serializer.toJson<String>(language),
       'location': serializer.toJson<String?>(location),
       'audio': serializer.toJson<Map<dynamic, dynamic>?>(audioData),
+      'position': serializer.toJson<int>(position),
       'publishedAt': serializer.toJson<String>(publishedAt),
       'createdAt': serializer.toJson<String>(createdAt),
       'updatedAt': serializer.toJson<String>(updatedAt),
@@ -3452,6 +3464,7 @@ class Bayan extends DataClass implements Insertable<Bayan> {
           String? language,
           Value<String?> location = const Value.absent(),
           Value<Map<dynamic, dynamic>?> audioData = const Value.absent(),
+          int? position,
           String? publishedAt,
           String? createdAt,
           String? updatedAt,
@@ -3463,6 +3476,7 @@ class Bayan extends DataClass implements Insertable<Bayan> {
         language: language ?? this.language,
         location: location.present ? location.value : this.location,
         audioData: audioData.present ? audioData.value : this.audioData,
+        position: position ?? this.position,
         publishedAt: publishedAt ?? this.publishedAt,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
@@ -3477,6 +3491,7 @@ class Bayan extends DataClass implements Insertable<Bayan> {
           ..write('language: $language, ')
           ..write('location: $location, ')
           ..write('audioData: $audioData, ')
+          ..write('position: $position, ')
           ..write('publishedAt: $publishedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
@@ -3487,7 +3502,7 @@ class Bayan extends DataClass implements Insertable<Bayan> {
 
   @override
   int get hashCode => Object.hash(id, title, excerpt, language, location,
-      audioData, publishedAt, createdAt, updatedAt, speakerId);
+      audioData, position, publishedAt, createdAt, updatedAt, speakerId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3498,6 +3513,7 @@ class Bayan extends DataClass implements Insertable<Bayan> {
           other.language == this.language &&
           other.location == this.location &&
           other.audioData == this.audioData &&
+          other.position == this.position &&
           other.publishedAt == this.publishedAt &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
@@ -3511,6 +3527,7 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
   final Value<String> language;
   final Value<String?> location;
   final Value<Map<dynamic, dynamic>?> audioData;
+  final Value<int> position;
   final Value<String> publishedAt;
   final Value<String> createdAt;
   final Value<String> updatedAt;
@@ -3523,6 +3540,7 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
     this.language = const Value.absent(),
     this.location = const Value.absent(),
     this.audioData = const Value.absent(),
+    this.position = const Value.absent(),
     this.publishedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -3536,6 +3554,7 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
     required String language,
     this.location = const Value.absent(),
     this.audioData = const Value.absent(),
+    required int position,
     required String publishedAt,
     required String createdAt,
     required String updatedAt,
@@ -3544,6 +3563,7 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
   })  : id = Value(id),
         title = Value(title),
         language = Value(language),
+        position = Value(position),
         publishedAt = Value(publishedAt),
         createdAt = Value(createdAt),
         updatedAt = Value(updatedAt),
@@ -3555,6 +3575,7 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
     Expression<String>? language,
     Expression<String>? location,
     Expression<String>? audioData,
+    Expression<int>? position,
     Expression<String>? publishedAt,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
@@ -3568,6 +3589,7 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
       if (language != null) 'language': language,
       if (location != null) 'location': location,
       if (audioData != null) 'audio_data': audioData,
+      if (position != null) 'position': position,
       if (publishedAt != null) 'published_at': publishedAt,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -3583,6 +3605,7 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
       Value<String>? language,
       Value<String?>? location,
       Value<Map<dynamic, dynamic>?>? audioData,
+      Value<int>? position,
       Value<String>? publishedAt,
       Value<String>? createdAt,
       Value<String>? updatedAt,
@@ -3595,6 +3618,7 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
       language: language ?? this.language,
       location: location ?? this.location,
       audioData: audioData ?? this.audioData,
+      position: position ?? this.position,
       publishedAt: publishedAt ?? this.publishedAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -3625,6 +3649,9 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
       final converter = $BayansTable.$converteraudioDatan;
       map['audio_data'] = Variable<String>(converter.toSql(audioData.value));
     }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
     if (publishedAt.present) {
       map['published_at'] = Variable<String>(publishedAt.value);
     }
@@ -3652,6 +3679,7 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
           ..write('language: $language, ')
           ..write('location: $location, ')
           ..write('audioData: $audioData, ')
+          ..write('position: $position, ')
           ..write('publishedAt: $publishedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')

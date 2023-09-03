@@ -440,8 +440,12 @@ class LocalDatabase extends _$LocalDatabase {
     return (select(speakers)..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
-  Future<List<Bayan>> queryBayan(Map params) {
+  Future<List> queryBayan(Map params) async {
     var query = select(bayans);
+
+    if (params.containsKey('position')) {
+      query.where((r) => r.position.equals(params['position']));
+    }
 
     if (params.containsKey('page') && params.containsKey('per_page')) {
       query.limit(
@@ -452,26 +456,35 @@ class LocalDatabase extends _$LocalDatabase {
       query.limit(params['quantity'] ?? 20);
     }
 
-    query.orderBy([
-      (t) => OrderingTerm(expression: t.publishedAt, mode: OrderingMode.desc),
-    ]);
+    query.orderBy([(t) => OrderingTerm(expression: t.position, mode: OrderingMode.desc,)]);
 
-    if (params.containsKey('gtPublishedAt')) {
-      query.where(
-        (r) => r.publishedAt.isBiggerThanValue(params['gtPublishedAt']),
-      );
-      query.orderBy([
-        (t) => OrderingTerm(expression: t.publishedAt, mode: OrderingMode.asc),
-      ]);
+    var bayanItems = await query.get();
+
+    if (params.containsKey('include') &&
+        params['include'] == 'speaker') {
+      var speakerIds = bayanItems.map((item) => item.speakerId).toSet().toList();
+
+      var speakerItems = await (select(speakers)
+            ..where((s) => s.id.isIn(speakerIds)))
+          .get();
+
+      Map<String, Speaker> idToSpeakers = <String, Speaker>{
+        for (var v in speakerItems) v.id: v
+      };
+
+      var bayansWithSpeaker = bayanItems.map((item) {
+        return {
+          'bayans': item,
+          'relationships': {
+            'speaker': idToSpeakers[item.speakerId],
+          }
+        };
+      }).toList();
+
+      return bayansWithSpeaker;
+    } else {
+      return bayanItems;
     }
-
-    if (params.containsKey('ltPublishedAt')) {
-      query.where(
-        (r) => r.publishedAt.isSmallerThanValue(params['ltPublishedAt']),
-      );
-    }
-
-    return query.get();
   }
 
   Future<dynamic> findBayanById(String id, Map params) async {

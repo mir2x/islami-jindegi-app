@@ -12,6 +12,7 @@ class Bayans extends Table {
   @JsonKey('audio')
   TextColumn get audioData => text().map(const FileData()).nullable()();
 
+  IntColumn get position => integer()();
   TextColumn get publishedAt => text()();
   TextColumn get createdAt => text()();
   TextColumn get updatedAt => text()();

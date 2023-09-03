@@ -84,6 +84,7 @@ Bayan _$BayanFromJson(Map<String, dynamic> json) => Bayan(
       audio: json['audio'] as Map<dynamic, dynamic>?,
       published: json['published'] as bool?,
       publishedAt: json['published-at'] as String,
+      position: json['position'] as int?,
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
       speaker: json['speaker'] == null
@@ -101,6 +102,7 @@ Map<String, dynamic> _$BayanToJson(Bayan instance) => <String, dynamic>{
       'audio': instance.audio,
       'published': instance.published,
       'published-at': instance.publishedAt,
+      'position': instance.position,
       'created-at': instance.createdAt,
       'updated-at': instance.updatedAt,
       'speaker': instance.speaker,
