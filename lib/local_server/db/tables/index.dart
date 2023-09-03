@@ -11,6 +11,7 @@ export 'speakers.dart';
 export 'bayans.dart';
 export 'malfuzat_authors.dart';
 export 'malfuzats.dart';
+export 'masail_authors.dart';
 export 'masails.dart';
 export 'duas.dart';
 export 'article_authors.dart';

@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'masail_authors.dart';
 import '../types/file_data.dart';
 
 class Masails extends Table {
@@ -19,6 +20,8 @@ class Masails extends Table {
   TextColumn get publishedAt => text().nullable()();
   TextColumn get createdAt => text()();
   TextColumn get updatedAt => text()();
+
+  TextColumn get masailAuthorId => text().references(MasailAuthors, #id).nullable()();
 
   @override
   Set<Column> get primaryKey => {id};

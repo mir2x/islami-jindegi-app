@@ -4454,6 +4454,277 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
   }
 }
 
+class $MasailAuthorsTable extends MasailAuthors
+    with TableInfo<$MasailAuthorsTable, MasailAuthor> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MasailAuthorsTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> info = GeneratedColumn<String>(
+      'info', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, name, info, position, createdAt, updatedAt];
+  @override
+  String get aliasedName => _alias ?? 'masail_authors';
+  @override
+  String get actualTableName => 'masail_authors';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  MasailAuthor map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MasailAuthor(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      info: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}info']),
+      position: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $MasailAuthorsTable createAlias(String alias) {
+    return $MasailAuthorsTable(attachedDatabase, alias);
+  }
+}
+
+class MasailAuthor extends DataClass implements Insertable<MasailAuthor> {
+  final String id;
+  final String name;
+  final String? info;
+  final int position;
+  final String createdAt;
+  final String updatedAt;
+  const MasailAuthor(
+      {required this.id,
+      required this.name,
+      this.info,
+      required this.position,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || info != null) {
+      map['info'] = Variable<String>(info);
+    }
+    map['position'] = Variable<int>(position);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    return map;
+  }
+
+  factory MasailAuthor.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MasailAuthor(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      info: serializer.fromJson<String?>(json['info']),
+      position: serializer.fromJson<int>(json['position']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'info': serializer.toJson<String?>(info),
+      'position': serializer.toJson<int>(position),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+    };
+  }
+
+  MasailAuthor copyWith(
+          {String? id,
+          String? name,
+          Value<String?> info = const Value.absent(),
+          int? position,
+          String? createdAt,
+          String? updatedAt}) =>
+      MasailAuthor(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        info: info.present ? info.value : this.info,
+        position: position ?? this.position,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('MasailAuthor(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('info: $info, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, name, info, position, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MasailAuthor &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.info == this.info &&
+          other.position == this.position &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class MasailAuthorsCompanion extends UpdateCompanion<MasailAuthor> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<String?> info;
+  final Value<int> position;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  final Value<int> rowid;
+  const MasailAuthorsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.info = const Value.absent(),
+    this.position = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MasailAuthorsCompanion.insert({
+    required String id,
+    required String name,
+    this.info = const Value.absent(),
+    required int position,
+    required String createdAt,
+    required String updatedAt,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        name = Value(name),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<MasailAuthor> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<String>? info,
+    Expression<int>? position,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (info != null) 'info': info,
+      if (position != null) 'position': position,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MasailAuthorsCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? name,
+      Value<String?>? info,
+      Value<int>? position,
+      Value<String>? createdAt,
+      Value<String>? updatedAt,
+      Value<int>? rowid}) {
+    return MasailAuthorsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      info: info ?? this.info,
+      position: position ?? this.position,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (info.present) {
+      map['info'] = Variable<String>(info.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MasailAuthorsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('info: $info, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -4519,6 +4790,13 @@ class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
       'updated_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
+  late final GeneratedColumn<String> masailAuthorId = GeneratedColumn<String>(
+      'masail_author_id', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES masail_authors (id)'));
+  @override
   List<GeneratedColumn> get $columns => [
         id,
         title,
@@ -4531,7 +4809,8 @@ class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
         position,
         publishedAt,
         createdAt,
-        updatedAt
+        updatedAt,
+        masailAuthorId
       ];
   @override
   String get aliasedName => _alias ?? 'masails';
@@ -4569,6 +4848,8 @@ class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
           .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      masailAuthorId: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}masail_author_id']),
     );
   }
 
@@ -4601,6 +4882,7 @@ class Masail extends DataClass implements Insertable<Masail> {
   final String? publishedAt;
   final String createdAt;
   final String updatedAt;
+  final String? masailAuthorId;
   const Masail(
       {required this.id,
       required this.title,
@@ -4613,7 +4895,8 @@ class Masail extends DataClass implements Insertable<Masail> {
       required this.position,
       this.publishedAt,
       required this.createdAt,
-      required this.updatedAt});
+      required this.updatedAt,
+      this.masailAuthorId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -4639,6 +4922,9 @@ class Masail extends DataClass implements Insertable<Masail> {
     }
     map['created_at'] = Variable<String>(createdAt);
     map['updated_at'] = Variable<String>(updatedAt);
+    if (!nullToAbsent || masailAuthorId != null) {
+      map['masail_author_id'] = Variable<String>(masailAuthorId);
+    }
     return map;
   }
 
@@ -4659,6 +4945,7 @@ class Masail extends DataClass implements Insertable<Masail> {
       publishedAt: serializer.fromJson<String?>(json['publishedAt']),
       createdAt: serializer.fromJson<String>(json['createdAt']),
       updatedAt: serializer.fromJson<String>(json['updatedAt']),
+      masailAuthorId: serializer.fromJson<String?>(json['masailAuthorId']),
     );
   }
   @override
@@ -4677,6 +4964,7 @@ class Masail extends DataClass implements Insertable<Masail> {
       'publishedAt': serializer.toJson<String?>(publishedAt),
       'createdAt': serializer.toJson<String>(createdAt),
       'updatedAt': serializer.toJson<String>(updatedAt),
+      'masailAuthorId': serializer.toJson<String?>(masailAuthorId),
     };
   }
 
@@ -4692,7 +4980,8 @@ class Masail extends DataClass implements Insertable<Masail> {
           int? position,
           Value<String?> publishedAt = const Value.absent(),
           String? createdAt,
-          String? updatedAt}) =>
+          String? updatedAt,
+          Value<String?> masailAuthorId = const Value.absent()}) =>
       Masail(
         id: id ?? this.id,
         title: title ?? this.title,
@@ -4707,6 +4996,8 @@ class Masail extends DataClass implements Insertable<Masail> {
         publishedAt: publishedAt.present ? publishedAt.value : this.publishedAt,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
+        masailAuthorId:
+            masailAuthorId.present ? masailAuthorId.value : this.masailAuthorId,
       );
   @override
   String toString() {
@@ -4722,7 +5013,8 @@ class Masail extends DataClass implements Insertable<Masail> {
           ..write('position: $position, ')
           ..write('publishedAt: $publishedAt, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('masailAuthorId: $masailAuthorId')
           ..write(')'))
         .toString();
   }
@@ -4740,7 +5032,8 @@ class Masail extends DataClass implements Insertable<Masail> {
       position,
       publishedAt,
       createdAt,
-      updatedAt);
+      updatedAt,
+      masailAuthorId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -4756,7 +5049,8 @@ class Masail extends DataClass implements Insertable<Masail> {
           other.position == this.position &&
           other.publishedAt == this.publishedAt &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.masailAuthorId == this.masailAuthorId);
 }
 
 class MasailsCompanion extends UpdateCompanion<Masail> {
@@ -4772,6 +5066,7 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
   final Value<String?> publishedAt;
   final Value<String> createdAt;
   final Value<String> updatedAt;
+  final Value<String?> masailAuthorId;
   final Value<int> rowid;
   const MasailsCompanion({
     this.id = const Value.absent(),
@@ -4786,6 +5081,7 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
     this.publishedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.masailAuthorId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   MasailsCompanion.insert({
@@ -4801,6 +5097,7 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
     this.publishedAt = const Value.absent(),
     required String createdAt,
     required String updatedAt,
+    this.masailAuthorId = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
@@ -4822,6 +5119,7 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
     Expression<String>? publishedAt,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
+    Expression<String>? masailAuthorId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4837,6 +5135,7 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
       if (publishedAt != null) 'published_at': publishedAt,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (masailAuthorId != null) 'masail_author_id': masailAuthorId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4854,6 +5153,7 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
       Value<String?>? publishedAt,
       Value<String>? createdAt,
       Value<String>? updatedAt,
+      Value<String?>? masailAuthorId,
       Value<int>? rowid}) {
     return MasailsCompanion(
       id: id ?? this.id,
@@ -4868,6 +5168,7 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
       publishedAt: publishedAt ?? this.publishedAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      masailAuthorId: masailAuthorId ?? this.masailAuthorId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4914,6 +5215,9 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<String>(updatedAt.value);
     }
+    if (masailAuthorId.present) {
+      map['masail_author_id'] = Variable<String>(masailAuthorId.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4935,6 +5239,7 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
           ..write('publishedAt: $publishedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('masailAuthorId: $masailAuthorId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -7691,6 +7996,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $MalfuzatAuthorsTable malfuzatAuthors =
       $MalfuzatAuthorsTable(this);
   late final $MalfuzatsTable malfuzats = $MalfuzatsTable(this);
+  late final $MasailAuthorsTable masailAuthors = $MasailAuthorsTable(this);
   late final $MasailsTable masails = $MasailsTable(this);
   late final $DuasTable duas = $DuasTable(this);
   late final $ArticleAuthorsTable articleAuthors = $ArticleAuthorsTable(this);
@@ -7718,6 +8024,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
         bayans,
         malfuzatAuthors,
         malfuzats,
+        masailAuthors,
         masails,
         duas,
         articleAuthors,

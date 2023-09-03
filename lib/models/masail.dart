@@ -3,6 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter_data_json_api_adapter/flutter_data_json_api_adapter.dart';
 import 'package:native_app/adapters/application.dart';
 import 'package:native_app/adapters/local_database.dart';
+import 'masail_author.dart';
 
 part 'masail.g.dart';
 
@@ -24,6 +25,8 @@ class Masail extends DataModel<Masail> {
   final String? createdAt;
   final String? updatedAt;
 
+  final BelongsTo<MasailAuthor>? masailAuthor;
+
   Masail({
     this.id,
     required this.title,
@@ -38,5 +41,6 @@ class Masail extends DataModel<Masail> {
     this.publishedAt,
     this.createdAt,
     this.updatedAt,
+    this.masailAuthor,
   });
 }

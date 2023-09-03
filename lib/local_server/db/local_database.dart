@@ -25,6 +25,7 @@ part 'local_database.g.dart';
     Bayans,
     MalfuzatAuthors,
     Malfuzats,
+    MasailAuthors,
     Masails,
     Duas,
     ArticleAuthors,

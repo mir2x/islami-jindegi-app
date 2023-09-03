@@ -39,6 +39,7 @@ class MasailItem extends ConsumerWidget {
     var query = SingleModelQuery(
       repository: ref.masails,
       id: QR.params['id'].toString(),
+      params: const {'include': 'masail-author'},
     );
 
     var modelQuery = ref.watch(singleModelProvider(query));
@@ -117,46 +118,68 @@ class MasailItem extends ConsumerWidget {
                   ),
                 ],
                 if (resource.audio != null) ...[
-                  Container(
-                    margin: const EdgeInsets.only(top: 30),
-                    child: AudioPlayerWidget(
-                      audio: resource.audio,
-                    ),
-                  ),
-                ],
-                Container(
-                  margin: const EdgeInsets.only(top: 40),
-                  child: Column(
+                  Column(
                     children: [
-                      if (resource.audio?['metadata']?['duration'] != null) ...[
-                        DescriptionItem(
-                          title: '${locales.audioDuration}:',
-                          description: Text(
-                            playDuration(
-                              resource.audio['metadata']['duration'],
-                            ),
-                            style: textTheme.labelMedium,
-                          ),
+                      Container(
+                        margin: const EdgeInsets.only(top: 30),
+                        child: AudioPlayerWidget(
+                          audio: resource.audio,
                         ),
-                      ],
-                      if (resource.audio?['metadata']?['size'] != null) ...[
-                        DescriptionItem(
-                          title: '${locales.audioSize}:',
-                          description: Text(
-                            fileSize(resource.audio['metadata']['size']),
-                            style: textTheme.labelMedium,
-                          ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(top: 40),
+                        child: Column(
+                          children: [
+                            if (resource.audio?['metadata']?['duration'] != null) ...[
+                              DescriptionItem(
+                                title: '${locales.audioDuration}:',
+                                description: Text(
+                                  playDuration(
+                                    resource.audio['metadata']['duration'],
+                                  ),
+                                  style: textTheme.labelMedium,
+                                ),
+                              ),
+                            ],
+                            if (resource.audio?['metadata']?['size'] != null) ...[
+                              DescriptionItem(
+                                title: '${locales.audioSize}:',
+                                description: Text(
+                                  fileSize(resource.audio['metadata']['size']),
+                                  style: textTheme.labelMedium,
+                                ),
+                              ),
+                            ],
+                            if (resource.audio != null) ...[
+                              DownloadItem(
+                                filePath: resource.audio['id'],
+                                fileUrl: fileSrcUrl(resource.audio),
+                              ),
+                            ],
+                          ],
                         ),
-                      ],
-                      if (resource.audio != null) ...[
-                        DownloadItem(
-                          filePath: resource.audio['id'],
-                          fileUrl: fileSrcUrl(resource.audio),
-                        ),
-                      ],
+                      ),
                     ],
                   ),
-                ),
+                ],
+                if (resource.masailAuthor != null && resource.masailAuthor.value != null) ...[
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      PageSubtitle(
+                        text: locales.author,
+                        fontSizeRatio: fontSizeRatio,
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(top: 10),
+                        child: PageSubtitle(
+                          text: resource.masailAuthor.value.name,
+                          fontSizeRatio: fontSizeRatio,
+                        ),
+                      ),
+                    ],
+                  ),
+                ]
               ],
             ),
           ),
