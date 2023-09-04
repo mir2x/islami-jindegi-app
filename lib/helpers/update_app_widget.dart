@@ -14,6 +14,7 @@ void updateAppWidget(Map params) {
   HomeWidget.updateWidget(
     name: 'AppWidget',
     androidName: 'AppWidget',
+    iOSName: 'AppWidget',
     qualifiedAndroidName: 'com.islamidars.native_app.AppWidget',
   );
 }
