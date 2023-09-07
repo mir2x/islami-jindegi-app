@@ -41,15 +41,29 @@ class LocalDatabase extends _$LocalDatabase {
   LocalDatabase()
       : super(
           LazyDatabase(() async {
-            // put the database file, called db.sqlite here, into the documents folder
-            // for your app.
+            int dataVersion = 1;
+
             final dbFolder = await getApplicationDocumentsDirectory();
-            final file = File(p.join(dbFolder.path, 'offline_data.sqlite3'));
+            final file = File(
+              p.join(dbFolder.path, 'offline_data_$dataVersion.sqlite3'),
+            );
 
             if (!await file.exists()) {
-              // Extract the pre-populated database file from assets
-              final blob =
-                  await rootBundle.load('assets/db/offline_data.sqlite3');
+              // delete previous file
+              final previousFile = File(
+                p.join(
+                  dbFolder.path,
+                  'offline_data_${dataVersion - 1}.sqlite3',
+                ),
+              );
+
+              if (await previousFile.exists()) {
+                await previousFile.delete();
+              }
+
+              // load current file
+              final blob = await rootBundle
+                  .load('assets/db/offline_data_$dataVersion.sqlite3');
               await file.writeAsBytes(
                 blob.buffer.asUint8List(blob.offsetInBytes, blob.lengthInBytes),
               );
@@ -456,17 +470,21 @@ class LocalDatabase extends _$LocalDatabase {
       query.limit(params['quantity'] ?? 20);
     }
 
-    query.orderBy([(t) => OrderingTerm(expression: t.position, mode: OrderingMode.desc,)]);
+    query.orderBy([
+      (t) => OrderingTerm(
+            expression: t.position,
+            mode: OrderingMode.desc,
+          )
+    ]);
 
     var bayanItems = await query.get();
 
-    if (params.containsKey('include') &&
-        params['include'] == 'speaker') {
-      var speakerIds = bayanItems.map((item) => item.speakerId).toSet().toList();
+    if (params.containsKey('include') && params['include'] == 'speaker') {
+      var speakerIds =
+          bayanItems.map((item) => item.speakerId).toSet().toList();
 
-      var speakerItems = await (select(speakers)
-            ..where((s) => s.id.isIn(speakerIds)))
-          .get();
+      var speakerItems =
+          await (select(speakers)..where((s) => s.id.isIn(speakerIds))).get();
 
       Map<String, Speaker> idToSpeakers = <String, Speaker>{
         for (var v in speakerItems) v.id: v

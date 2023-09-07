@@ -130,7 +130,8 @@ class MasailItem extends ConsumerWidget {
                         margin: const EdgeInsets.only(top: 40),
                         child: Column(
                           children: [
-                            if (resource.audio?['metadata']?['duration'] != null) ...[
+                            if (resource.audio?['metadata']?['duration'] !=
+                                null) ...[
                               DescriptionItem(
                                 title: '${locales.audioDuration}:',
                                 description: Text(
@@ -141,7 +142,8 @@ class MasailItem extends ConsumerWidget {
                                 ),
                               ),
                             ],
-                            if (resource.audio?['metadata']?['size'] != null) ...[
+                            if (resource.audio?['metadata']?['size'] !=
+                                null) ...[
                               DescriptionItem(
                                 title: '${locales.audioSize}:',
                                 description: Text(
@@ -162,7 +164,8 @@ class MasailItem extends ConsumerWidget {
                     ],
                   ),
                 ],
-                if (resource.masailAuthor != null && resource.masailAuthor.value != null) ...[
+                if (resource.masailAuthor != null &&
+                    resource.masailAuthor.value != null) ...[
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

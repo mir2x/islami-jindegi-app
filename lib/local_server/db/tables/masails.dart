@@ -21,7 +21,8 @@ class Masails extends Table {
   TextColumn get createdAt => text()();
   TextColumn get updatedAt => text()();
 
-  TextColumn get masailAuthorId => text().references(MasailAuthors, #id).nullable()();
+  TextColumn get masailAuthorId =>
+      text().references(MasailAuthors, #id).nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
