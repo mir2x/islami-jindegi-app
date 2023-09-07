@@ -1,4 +1,4 @@
-package com.islamidars.native_app
+package com.islami_jindegi.native_app
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager

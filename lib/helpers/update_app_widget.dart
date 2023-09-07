@@ -1,7 +1,7 @@
 import 'package:home_widget/home_widget.dart';
 
 void updateAppWidget(Map params) {
-  HomeWidget.setAppGroupId('group.islamidars');
+  HomeWidget.setAppGroupId('group.islami_jindegi');
 
   params.forEach((key, value) {
     if (value is int) {
@@ -15,6 +15,6 @@ void updateAppWidget(Map params) {
     name: 'AppWidget',
     androidName: 'AppWidget',
     iOSName: 'AppWidget',
-    qualifiedAndroidName: 'com.islamidars.native_app.AppWidget',
+    qualifiedAndroidName: 'com.islami_jindegi.native_app.AppWidget',
   );
 }

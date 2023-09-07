@@ -26,7 +26,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -50,21 +53,10 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyA_O8C49nb3AAQ0hWrq49StW5hrwn0borQ',
-    appId: '1:218822188400:android:e9e14d5f642582f43303b5',
-    messagingSenderId: '218822188400',
-    projectId: 'islami-dars',
-    storageBucket: 'islami-dars.appspot.com',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAOOQXi7n3CQ8pxCDwikpeXzL3A2dVNUFM',
-    appId: '1:218822188400:ios:d06da2bb080629ce3303b5',
-    messagingSenderId: '218822188400',
-    projectId: 'islami-dars',
-    storageBucket: 'islami-dars.appspot.com',
-    iosClientId:
-        '218822188400-slp8vtnej8op5dj5b6fu4g1eseg7pm42.apps.googleusercontent.com',
-    iosBundleId: 'com.islamidars',
+    apiKey: 'AIzaSyDdJ2vieOggxI_hYsm7YEKh5DJc3pSznQI',
+    appId: '1:651923265740:android:5aaa9e91f8525553cd8a69',
+    messagingSenderId: '651923265740',
+    projectId: 'islami-jindegi-bd',
+    storageBucket: 'islami-jindegi-bd.appspot.com',
   );
 }

@@ -133,10 +133,10 @@ class AppScaffold extends ConsumerWidget {
                           ],
                           onSelected: (int item) {
                             const androidAppLink =
-                                'https://play.google.com/store/apps/details?id=com.islamidars';
+                                'https://play.google.com/store/apps/details?id=com.islami_jindegi';
 
                             const iOSAppLink =
-                                'https://apps.apple.com/app/islami-dars/id6447244518';
+                                'https://apps.apple.com/us/app/islami-jindegi/id1271205014';
 
                             switch (item) {
                               case 0:

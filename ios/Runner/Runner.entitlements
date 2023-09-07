@@ -6,7 +6,7 @@
 	<string>development</string>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.islamidars</string>
+		<string>group.islami_jindegi</string>
 	</array>
 </dict>
 </plist>
