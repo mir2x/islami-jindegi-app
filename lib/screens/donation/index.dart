@@ -39,7 +39,7 @@ class Donation extends ConsumerWidget {
       },
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resources) {
-        var item = resources[0];
+        var item = resources.first;
 
         return AppScaffold(
           title: Text(locales.donation),

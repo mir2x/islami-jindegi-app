@@ -129,7 +129,7 @@ class TafseerDisplay extends ConsumerWidget {
             error: (error, _) => Text(error.toString()),
             data: (resources) {
               if (resources.isNotEmpty) {
-                var item = resources[0];
+                var item = resources.first;
 
                 return Container(
                   margin: const EdgeInsets.only(bottom: 30),

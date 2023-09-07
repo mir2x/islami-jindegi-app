@@ -10,5 +10,5 @@ final firstModelProvider = FutureProvider.autoDispose
     throw Exception('Record not found');
   }
 
-  return resources[0];
+  return resources.first;
 });
