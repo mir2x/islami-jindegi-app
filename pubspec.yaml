@@ -74,6 +74,7 @@ dependencies:
 
   # utility
   path: '^1.8.3'
+  glob: ^2.1.2
 
   # extensions
   collection: ^1.16.0

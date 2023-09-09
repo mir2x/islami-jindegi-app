@@ -4,6 +4,8 @@ import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path/path.dart' as p;
+import 'package:glob/glob.dart';
+import 'package:glob/list_local_fs.dart';
 import 'package:collection/collection.dart';
 import 'tables/index.dart';
 import 'types/file_data.dart';
@@ -50,14 +52,10 @@ class LocalDatabase extends _$LocalDatabase {
 
             if (!await file.exists()) {
               // delete previous file
-              final previousFile = File(
-                p.join(
-                  dbFolder.path,
-                  'offline_data_${dataVersion - 1}.sqlite3',
-                ),
+              final previousFiles = Glob(
+                p.join(dbFolder.path, 'offline_data_*.sqlite3'),
               );
-
-              if (await previousFile.exists()) {
+              for (var previousFile in previousFiles.listSync()) {
                 await previousFile.delete();
               }
 
