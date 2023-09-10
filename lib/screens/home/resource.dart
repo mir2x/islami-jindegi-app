@@ -20,6 +20,18 @@ class Resource extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isMobile = screenWidth < 768;
 
+    double iconSize;
+
+    if (isMobile) {
+      if (screenWidth < 340) {
+        iconSize = 36;
+      } else {
+        iconSize = 42;
+      }
+    } else {
+      iconSize = 80;
+    }
+
     return InkWell(
       onTap: () => QR.to(route),
       child: Column(
@@ -27,8 +39,8 @@ class Resource extends StatelessWidget {
           SvgPicture.asset(
             'assets/images/icons/$icon.svg',
             fit: BoxFit.contain,
-            width: isMobile ? 42 : 80,
-            height: isMobile ? 42 : 80,
+            width: iconSize,
+            height: iconSize,
           ),
           Container(
             margin: EdgeInsets.only(top: isMobile ? 7 : 15),
