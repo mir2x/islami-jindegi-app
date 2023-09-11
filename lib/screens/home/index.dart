@@ -18,11 +18,7 @@ class Home extends StatelessWidget {
     double sideMargin;
 
     if (isMobile) {
-      if (screenWidth < 340) {
-        sideMargin = 12;
-      } else {
-        sideMargin = 20;
-      }
+      sideMargin = screenWidth < 340 ? 12 : 20;
     } else {
       sideMargin = 40;
     }
