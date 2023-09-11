@@ -146,6 +146,7 @@ class Prayers extends StatelessWidget {
     var textTheme = Theme.of(context).textTheme;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isMobile = screenWidth < 768;
+    bool isSmallMobile = screenWidth < 340;
 
     return Column(
       crossAxisAlignment:
@@ -160,11 +161,13 @@ class Prayers extends StatelessWidget {
               children: [
                 Text(
                   '${prayerTimes['current']['title']}',
-                  style: textTheme.titleLarge,
+                  style: isSmallMobile
+                      ? textTheme.titleMedium?.copyWith(fontSize: 17)
+                      : textTheme.titleLarge,
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  margin: const EdgeInsets.only(top: 3),
+                  margin: EdgeInsets.only(top: isSmallMobile ? 1 : 3),
                   child: Text(
                     '${prayerTimes['current']['time']}',
                     style: textTheme.titleMedium,

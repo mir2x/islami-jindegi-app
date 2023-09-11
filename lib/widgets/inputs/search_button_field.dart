@@ -40,6 +40,9 @@ class _SearchState extends ConsumerState<SearchButtonField> {
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallMobile = screenWidth < 340;
+    double sidePadding = isSmallMobile ? 13 : 16;
 
     var prefs = ref.watch(preferencesProvider);
 
@@ -73,8 +76,8 @@ class _SearchState extends ConsumerState<SearchButtonField> {
               contentPadding: EdgeInsets.only(
                 top: 0,
                 bottom: 0,
-                left: widget.reverse ? 0 : 10,
-                right: widget.reverse ? 10 : 0,
+                left: widget.reverse ? 0 : sidePadding,
+                right: widget.reverse ? sidePadding : 0,
               ),
               suffixIcon: IconButton(
                 onPressed: () {

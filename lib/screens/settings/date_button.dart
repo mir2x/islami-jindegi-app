@@ -18,26 +18,31 @@ class DateButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallMobile = screenWidth < 340;
 
-    return TextButton(
-      style: TextButton.styleFrom(
-        backgroundColor:
-            selectedValue == value ? ThemeColors.color1 : ThemeColors.color3,
-        padding: const EdgeInsets.all(12),
-        shape: const CircleBorder(),
-      ),
-      child: Text(
-        label,
-        style: textTheme.labelLarge?.copyWith(
-          color:
-              selectedValue == value ? ThemeColors.color3 : ThemeColors.color1,
+    return Expanded(
+      child: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor:
+              selectedValue == value ? ThemeColors.color1 : ThemeColors.color3,
+          padding: EdgeInsets.all(isSmallMobile ? 9 : 12),
+          shape: const CircleBorder(),
         ),
+        child: Text(
+          label,
+          style: textTheme.labelLarge?.copyWith(
+            color: selectedValue == value
+                ? ThemeColors.color3
+                : ThemeColors.color1,
+          ),
+        ),
+        onPressed: () {
+          ref
+              .read(preferencesProvider.notifier)
+              .updateHijriLocalAdjustment(value);
+        },
       ),
-      onPressed: () {
-        ref
-            .read(preferencesProvider.notifier)
-            .updateHijriLocalAdjustment(value);
-      },
     );
   }
 }

@@ -15,6 +15,18 @@ class Home extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     bool isMobile = screenWidth < 768;
 
+    double sideMargin;
+
+    if (isMobile) {
+      if (screenWidth < 340) {
+        sideMargin = 12;
+      } else {
+        sideMargin = 20;
+      }
+    } else {
+      sideMargin = 40;
+    }
+
     return AppScaffold(
       isHome: true,
       title: Text(locales.siteFullName),
@@ -23,8 +35,8 @@ class Home extends StatelessWidget {
           children: [
             Container(
               margin: EdgeInsets.only(
-                left: isMobile ? 20 : 40,
-                right: isMobile ? 20 : 40,
+                left: sideMargin,
+                right: sideMargin,
                 top: isMobile ? screenHeight * 0.02 : screenHeight * 0.05,
               ),
               child: const DatesPrayers(),
@@ -105,12 +117,12 @@ class Home extends StatelessWidget {
             ),
             Container(
               margin: EdgeInsets.only(
-                left: isMobile ? 20 : 40,
-                right: isMobile ? 20 : 40,
+                left: sideMargin,
+                right: sideMargin,
                 bottom: isMobile ? screenHeight * 0.02 : screenHeight * 0.05,
               ),
               child: const News(),
-            )
+            ),
           ],
         ),
       ),

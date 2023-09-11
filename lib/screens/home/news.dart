@@ -19,6 +19,17 @@ class News extends ConsumerWidget {
     var prefs = ref.watch(preferencesProvider);
     double screenWidth = MediaQuery.of(context).size.width;
     bool isMobile = screenWidth < 768;
+    bool isSmallMobile = screenWidth < 340;
+
+    final fontStyle = isSmallMobile
+        ? textTheme.labelSmall?.copyWith(
+            color: ThemeColors.color2,
+            height: 1.2,
+          )
+        : textTheme.labelMedium?.copyWith(
+            color: ThemeColors.color2,
+            height: 1.2,
+          );
 
     var query = AllModelsQuery(
       repository: ref.news,
@@ -42,10 +53,7 @@ class News extends ConsumerWidget {
             ),
             child: Text(
               locales.newsAndUpdates,
-              style: textTheme.labelMedium?.copyWith(
-                color: ThemeColors.color2,
-                height: 1.2,
-              ),
+              style: fontStyle,
               textAlign: TextAlign.center,
             ),
           ),
@@ -55,9 +63,16 @@ class News extends ConsumerWidget {
               error: (error, _) => Text(error.toString()),
               data: (preferences) {
                 String theme = preferences.getString('theme') ?? 'dark';
+                double height;
+
+                if (isMobile) {
+                  height = isSmallMobile ? 60 : 75;
+                } else {
+                  height = 95;
+                }
 
                 return Container(
-                  height: isMobile ? 75 : 95,
+                  height: height,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(
@@ -95,10 +110,7 @@ class News extends ConsumerWidget {
                               child: Center(
                                 child: Text(
                                   resources[index].title,
-                                  style: textTheme.titleMedium?.copyWith(
-                                    color: ThemeColors.color2,
-                                    height: 1.3,
-                                  ),
+                                  style: fontStyle,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -110,9 +122,7 @@ class News extends ConsumerWidget {
                         return Center(
                           child: Text(
                             locales.noItemsTitle,
-                            style: textTheme.titleMedium?.copyWith(
-                              color: ThemeColors.color2,
-                            ),
+                            style: fontStyle,
                           ),
                         );
                       }

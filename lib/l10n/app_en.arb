@@ -134,7 +134,6 @@
   "quranSearchErrorMessage": "Search text cannot exceed 100 letters",
   "categories": "Categories",
 
-  "filterByDate": "Filter By Date",
   "anyTime": "Any Time",
   "pastWeek": "Past Week",
   "pastMonth": "Past Month",

@@ -20,6 +20,8 @@ class FilterButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallMobile = screenWidth < 340;
     String filterLabel = label ?? locales.filter;
 
     var prefs = ref.watch(preferencesProvider);
@@ -65,6 +67,7 @@ class FilterButton extends ConsumerWidget {
                     ? ThemeColors.color1
                     : ThemeColors.color3
                 : null,
+            padding: EdgeInsets.symmetric(horizontal: isSmallMobile ? 13 : 16),
             minimumSize: const Size.fromHeight(45),
           ),
           child: Row(

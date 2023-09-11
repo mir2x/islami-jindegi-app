@@ -38,13 +38,15 @@ class DateFilter extends ConsumerWidget {
       }
     }
 
-    return locales.filterByDate;
+    return locales.date;
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallMobile = screenWidth < 340;
     var prefs = ref.watch(preferencesProvider);
     var qParams = ref.watch(queryParamsProvider);
 
@@ -70,14 +72,18 @@ class DateFilter extends ConsumerWidget {
             showDialog(
               context: context,
               builder: (BuildContext context) {
+                var qParamsNotifier = ref.read(queryParamsProvider.notifier);
                 double screenWidth = MediaQuery.of(context).size.width;
                 double screenHeight = MediaQuery.of(context).size.height;
-                var qParamsNotifier = ref.read(queryParamsProvider.notifier);
+
+                bool isSmallMobile = screenHeight < 600;
 
                 return Dialog(
                   child: Container(
                     width: screenWidth,
-                    height: screenHeight * 0.6,
+                    height: isSmallMobile
+                        ? screenHeight * 0.85
+                        : screenHeight * 0.6,
                     padding: const EdgeInsets.only(
                       top: 15,
                       bottom: 25,
@@ -101,7 +107,9 @@ class DateFilter extends ConsumerWidget {
                               Navigator.of(context).pop();
                             },
                             child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              padding: EdgeInsets.symmetric(
+                                vertical: isSmallMobile ? 6 : 10,
+                              ),
                               child: Text(
                                 option['label'],
                                 style: (qParams.containsKey('dateRange') &&
@@ -113,7 +121,10 @@ class DateFilter extends ConsumerWidget {
                           );
                         }),
                         Container(
-                          margin: const EdgeInsets.only(top: 30, bottom: 15),
+                          margin: EdgeInsets.only(
+                            top: isSmallMobile ? 15 : 30,
+                            bottom: isSmallMobile ? 10 : 15,
+                          ),
                           child: Text(
                             locales.customDate,
                             style: qParams.containsKey('dateFrom') ||
@@ -126,8 +137,8 @@ class DateFilter extends ConsumerWidget {
                           field: 'dateFrom',
                           label: locales.dateFrom,
                         ),
-                        const SizedBox(
-                          height: 15,
+                        SizedBox(
+                          height: isSmallMobile ? 10 : 15,
                         ),
                         CustomDateField(field: 'dateTo', label: locales.dateTo),
                       ],
@@ -141,6 +152,7 @@ class DateFilter extends ConsumerWidget {
             side: BorderSide(
               color: theme == 'dark' ? ThemeColors.color3 : ThemeColors.color9,
             ),
+            padding: EdgeInsets.symmetric(horizontal: isSmallMobile ? 13 : 16),
             minimumSize: const Size.fromHeight(45),
           ),
           child: Row(

@@ -19,15 +19,12 @@ class Resource extends StatelessWidget {
     var textTheme = Theme.of(context).textTheme;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isMobile = screenWidth < 768;
+    bool isSmallMobile = screenWidth < 340;
 
     double iconSize;
 
     if (isMobile) {
-      if (screenWidth < 340) {
-        iconSize = 36;
-      } else {
-        iconSize = 42;
-      }
+      iconSize = isSmallMobile ? 36 : 42;
     } else {
       iconSize = 80;
     }
@@ -46,7 +43,9 @@ class Resource extends StatelessWidget {
             margin: EdgeInsets.only(top: isMobile ? 7 : 15),
             child: Text(
               title,
-              style: textTheme.labelMedium?.copyWith(height: 1),
+              style: isSmallMobile
+                  ? textTheme.labelSmall?.copyWith(height: 1)
+                  : textTheme.labelMedium?.copyWith(height: 1),
               textAlign: TextAlign.center,
             ),
           ),

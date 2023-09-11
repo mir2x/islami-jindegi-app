@@ -32,6 +32,8 @@ class AyahList extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallMobile = screenWidth < 340;
     var arabicFontSizeRatio = FontSizeRatio();
     var banglaFontSizeRatio = FontSizeRatio();
     var prefs = ref.watch(preferencesProvider);
@@ -140,7 +142,7 @@ class AyahList extends ConsumerWidget {
           Row(
             children: [
               Container(
-                margin: const EdgeInsets.only(left: 2),
+                margin: EdgeInsets.only(left: isSmallMobile ? 0 : 2),
                 child: TextButton(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -163,7 +165,9 @@ class AyahList extends ConsumerWidget {
                         margin: const EdgeInsets.only(left: 2, bottom: 1),
                         child: Text(
                           locales.tilawat,
-                          style: textTheme.labelMedium,
+                          style: isSmallMobile
+                              ? textTheme.labelSmall
+                              : textTheme.labelMedium,
                         ),
                       ),
                     ],
@@ -207,7 +211,9 @@ class AyahList extends ConsumerWidget {
                           margin: const EdgeInsets.only(left: 2, bottom: 1),
                           child: Text(
                             locales.translation,
-                            style: textTheme.labelMedium,
+                            style: isSmallMobile
+                                ? textTheme.labelSmall
+                                : textTheme.labelMedium,
                           ),
                         ),
                       ],
@@ -263,7 +269,7 @@ class AyahList extends ConsumerWidget {
                 },
               ),
               Container(
-                margin: const EdgeInsets.only(right: 2),
+                margin: EdgeInsets.only(right: isSmallMobile ? 0 : 2),
                 child: IconButton(
                   icon: const Icon(Icons.settings),
                   onPressed: () => QR.to('quran/settings'),

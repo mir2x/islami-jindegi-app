@@ -15,15 +15,18 @@ class Qiblah extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallMobile = screenWidth < 340;
+    double compassSize = isSmallMobile ? 230 : 320;
     var geoData = ref.watch(geolocationProvider);
 
     return AppScaffold(
       title: Text(locales.qiblah),
       body: Container(
-        margin: const EdgeInsets.only(
+        margin: EdgeInsets.only(
           left: 20,
           right: 20,
-          top: 50,
+          top: isSmallMobile ? 25 : 60,
         ),
         child: geoData.when(
           loading: () => const Center(
@@ -45,8 +48,8 @@ class Qiblah extends ConsumerWidget {
                 SmoothCompass(
                   compassBuilder: (context, snapshot, child) {
                     return SizedBox(
-                      height: 320,
-                      width: 320,
+                      height: compassSize,
+                      width: compassSize,
                       child: AnimatedRotation(
                         duration: const Duration(milliseconds: 800),
                         turns: snapshot?.data?.turns ?? 0,
@@ -73,8 +76,8 @@ class Qiblah extends ConsumerWidget {
                                 child: SvgPicture.asset(
                                   'assets/images/icons/kaaba-compass.svg',
                                   fit: BoxFit.scaleDown,
-                                  width: 320,
-                                  height: 320,
+                                  width: compassSize,
+                                  height: compassSize,
                                 ),
                               ),
                             ),
@@ -86,7 +89,7 @@ class Qiblah extends ConsumerWidget {
                 ),
                 Container(
                   width: 250,
-                  margin: const EdgeInsets.only(bottom: 40),
+                  margin: EdgeInsets.only(bottom: isSmallMobile ? 20 : 40),
                   child: Text(
                     locales.qiblahInstruction,
                     style: textTheme.labelMedium,
