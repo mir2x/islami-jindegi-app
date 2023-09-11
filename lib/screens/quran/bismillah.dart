@@ -75,7 +75,7 @@ class Bismillah extends ConsumerWidget {
                       }
                     },
                   ),
-                ]
+                ],
               ],
             ),
           ),

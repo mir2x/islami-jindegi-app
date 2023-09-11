@@ -83,7 +83,7 @@ class Malfuzat extends ConsumerWidget {
                                     title: locales.categories,
                                     paramKeys: const [
                                       'malfuzatCategoryId',
-                                      'malfuzatSubcategoryId'
+                                      'malfuzatSubcategoryId',
                                     ],
                                     queryBuilder:
                                         (Map<String, dynamic> params) {
@@ -91,7 +91,7 @@ class Malfuzat extends ConsumerWidget {
                                         repository: ref.malfuzatCategories,
                                         params: {
                                           ...params,
-                                          'include': 'malfuzat-subcategories'
+                                          'include': 'malfuzat-subcategories',
                                         },
                                       );
                                     },

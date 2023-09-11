@@ -141,7 +141,7 @@ class Ayah extends ConsumerWidget {
                         'title': ayah.title,
                         if (ayah.ayahTranslations.isNotEmpty) ...{
                           'translation':
-                              reloadedAyah.ayahTranslations.first.body
+                              reloadedAyah.ayahTranslations.first.body,
                         },
                         'position': ayah.surahPosition,
                         'surahTitle': reloadedAyah.surah.value.title,

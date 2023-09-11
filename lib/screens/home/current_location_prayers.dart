@@ -169,7 +169,7 @@ class Prayers extends StatelessWidget {
                     '${prayerTimes['current']['time']}',
                     style: textTheme.titleMedium,
                   ),
-                )
+                ),
               ],
             ),
           ),

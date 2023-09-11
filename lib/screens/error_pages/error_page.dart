@@ -62,7 +62,7 @@ class ErrorPage extends StatelessWidget {
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),

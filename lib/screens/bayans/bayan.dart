@@ -163,7 +163,7 @@ class Bayan extends ConsumerWidget {
                       ],
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),

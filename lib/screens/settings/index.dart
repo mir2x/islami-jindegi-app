@@ -15,13 +15,13 @@ class Settings extends ConsumerWidget {
 
   final List<Map<String, String>> languages = const [
     {'label': 'Bangla', 'value': 'bn'},
-    {'label': 'English', 'value': 'en'}
+    {'label': 'English', 'value': 'en'},
   ];
 
   final List<Map<String, String>> banglaFonts = const [
     {'label': 'Solaiman Lipi', 'value': 'bangla/solaimanlipi'},
     {'label': 'Siyam Rupali', 'value': 'bangla/siyamrupali'},
-    {'label': 'Kalpurush', 'value': 'bangla/kalpurush'}
+    {'label': 'Kalpurush', 'value': 'bangla/kalpurush'},
   ];
 
   final List<Map<String, String>> arabicFonts = const [
@@ -31,7 +31,7 @@ class Settings extends ConsumerWidget {
     },
     {
       'label': 'Al Qalam Kolkatta Quran Majeed',
-      'value': 'arabic/al-qalam-kolkatta'
+      'value': 'arabic/al-qalam-kolkatta',
     },
     {
       'label': 'Al Mushaf Quran',
@@ -41,7 +41,7 @@ class Settings extends ConsumerWidget {
 
   final List<Map<String, String>> themes = const [
     {'label': 'Dark', 'value': 'dark'},
-    {'label': 'Light', 'value': 'light'}
+    {'label': 'Light', 'value': 'light'},
   ];
 
   @override

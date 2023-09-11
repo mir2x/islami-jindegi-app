@@ -72,7 +72,7 @@ class _FilterListState extends ConsumerState<FilterList> {
                           }
                           Navigator.of(context).pop();
                         },
-                      )
+                      ),
                     ],
                   ],
                 ),
@@ -85,7 +85,7 @@ class _FilterListState extends ConsumerState<FilterList> {
                     onUpdate: updateSearchText,
                   ),
                 ),
-              ]
+              ],
             ],
           ),
         ),

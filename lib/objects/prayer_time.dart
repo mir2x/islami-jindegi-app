@@ -91,7 +91,7 @@ class PrayerTime {
         'title': locales.isha,
         'startTime': _formatTime(prayerTimes.isha, currentLang),
         'endTime': _formatTime(prayerTimes.fajr.subtract(tenMins), currentLang),
-      }
+      },
     };
   }
 

@@ -129,7 +129,7 @@ class FilterNestedItemState extends ConsumerState<FilterNestedItem> {
                     children: [
                       ...widget.subitems.map((subitem) {
                         return widget.subitemBuilder(subitem);
-                      })
+                      }),
                     ],
                   ),
                 ),

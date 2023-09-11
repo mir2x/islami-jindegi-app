@@ -15,7 +15,7 @@ class NamazSettings extends ConsumerWidget {
 
   final List<Map<String, String>> madhabs = const [
     {'label': 'Hanafi', 'value': 'hanafi'},
-    {'label': 'Shafi / Maliki / Hanbali', 'value': 'shafi'}
+    {'label': 'Shafi / Maliki / Hanbali', 'value': 'shafi'},
   ];
 
   final List<Map<String, String>> methods = const [
@@ -24,7 +24,7 @@ class NamazSettings extends ConsumerWidget {
     {'label': 'Umm Al-Qura, Makka', 'value': 'UmmAlQura'},
     {
       'label': 'Moonsighting Committee (North America and UK)',
-      'value': 'MoonsightingCommittee'
+      'value': 'MoonsightingCommittee',
     },
     {'label': 'Egyptian', 'value': 'Egyptian'},
     {'label': 'Dubai', 'value': 'Dubai'},
@@ -33,7 +33,7 @@ class NamazSettings extends ConsumerWidget {
     {'label': 'Singapore, Malaysia and Indonesia', 'value': 'Singapore'},
     {'label': 'Turkey', 'value': 'Turkey'},
     {'label': 'Tehran', 'value': 'Tehran'},
-    {'label': 'North America (ISNA)', 'value': 'NorthAmerica'}
+    {'label': 'North America (ISNA)', 'value': 'NorthAmerica'},
   ];
 
   @override

@@ -148,7 +148,7 @@ class _QuranDrawerState extends ConsumerState<QuranDrawer> {
                   pdfController: widget.pdfController,
                   closeDrawer: () => Scaffold.of(context).closeDrawer(),
                 ),
-              ]
+              ],
             ],
           ),
         );

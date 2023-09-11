@@ -56,7 +56,7 @@ class AyahList extends ConsumerWidget {
               'quantity': chapter.totalAyat,
               'offline': true,
               if (qSettings.containsKey('translation') &&
-                  qSettings['translation']) ...{'include': 'ayah-translations'}
+                  qSettings['translation']) ...{'include': 'ayah-translations'},
             },
           );
 
@@ -165,7 +165,7 @@ class AyahList extends ConsumerWidget {
                           locales.tilawat,
                           style: textTheme.labelMedium,
                         ),
-                      )
+                      ),
                     ],
                   ),
                   onPressed: () {
@@ -209,7 +209,7 @@ class AyahList extends ConsumerWidget {
                             locales.translation,
                             style: textTheme.labelMedium,
                           ),
-                        )
+                        ),
                       ],
                     ),
                     onPressed: () {

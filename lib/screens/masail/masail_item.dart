@@ -182,7 +182,7 @@ class MasailItem extends ConsumerWidget {
                       ),
                     ],
                   ),
-                ]
+                ],
               ],
             ),
           ),

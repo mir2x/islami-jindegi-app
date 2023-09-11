@@ -116,7 +116,7 @@ class QuranBookItem extends ConsumerWidget {
                     QuranDownload(
                       filePath: qitab.document['id'],
                       fileUrl: fileSrcUrl(qitab.document),
-                    )
+                    ),
                   ],
                 ),
               );

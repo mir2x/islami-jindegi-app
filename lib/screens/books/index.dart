@@ -83,14 +83,14 @@ class Books extends ConsumerWidget {
                                 title: locales.categories,
                                 paramKeys: const [
                                   'bookCategoryId',
-                                  'bookSubcategoryId'
+                                  'bookSubcategoryId',
                                 ],
                                 queryBuilder: (Map<String, dynamic> params) {
                                   return AllModelsQuery(
                                     repository: ref.bookCategories,
                                     params: {
                                       ...params,
-                                      'include': 'book-subcategories'
+                                      'include': 'book-subcategories',
                                     },
                                   );
                                 },

@@ -242,7 +242,7 @@ class LocalDatabase extends _$LocalDatabase {
     if (params.containsKey('include') &&
         params['include'] == 'ayah-translations') {
       Map<String, Ayah> idToAyahs = <String, Ayah>{
-        for (var v in ayahItems) v.id: v
+        for (var v in ayahItems) v.id: v,
       };
       var ids = idToAyahs.keys;
 
@@ -258,7 +258,7 @@ class LocalDatabase extends _$LocalDatabase {
           'ayahs': idToAyahs[id],
           'relationships': {
             'ayah-translations': idToTranslations[id] ?? [],
-          }
+          },
         };
       }).toList();
 
@@ -288,7 +288,7 @@ class LocalDatabase extends _$LocalDatabase {
         'relationships': {
           'surah': surah,
           'ayah-translations': translations,
-        }
+        },
       };
 
       return ayahWithRelations;
@@ -320,7 +320,7 @@ class LocalDatabase extends _$LocalDatabase {
 
     if (params.containsKey('include') && params['include'] == 'authors') {
       Map<String, Book> idToBooks = <String, Book>{
-        for (var v in bookItems) v.id: v
+        for (var v in bookItems) v.id: v,
       };
       var ids = idToBooks.keys;
 
@@ -331,7 +331,7 @@ class LocalDatabase extends _$LocalDatabase {
           .map((row) {
         return {
           'bookId': row.readTable(booksAuthors).bookId,
-          'author': row.readTable(authors)
+          'author': row.readTable(authors),
         };
       }).get();
 
@@ -345,7 +345,7 @@ class LocalDatabase extends _$LocalDatabase {
           'books': idToBooks[id],
           'relationships': {
             'authors': idToAuthors[id] ?? [],
-          }
+          },
         };
       }).toList();
 
@@ -385,7 +385,7 @@ class LocalDatabase extends _$LocalDatabase {
 
     if (params.containsKey('include') && params['include'] == 'subchapters') {
       Map<String, Chapter> idToChapters = <String, Chapter>{
-        for (var v in chapterItems) v.id: v
+        for (var v in chapterItems) v.id: v,
       };
       var ids = idToChapters.keys;
 
@@ -401,7 +401,7 @@ class LocalDatabase extends _$LocalDatabase {
           'chapters': idToChapters[id],
           'relationships': {
             'subchapters': idToSubchapters[id] ?? [],
-          }
+          },
         };
       }).toList();
 
@@ -472,7 +472,7 @@ class LocalDatabase extends _$LocalDatabase {
       (t) => OrderingTerm(
             expression: t.position,
             mode: OrderingMode.desc,
-          )
+          ),
     ]);
 
     var bayanItems = await query.get();
@@ -485,7 +485,7 @@ class LocalDatabase extends _$LocalDatabase {
           await (select(speakers)..where((s) => s.id.isIn(speakerIds))).get();
 
       Map<String, Speaker> idToSpeakers = <String, Speaker>{
-        for (var v in speakerItems) v.id: v
+        for (var v in speakerItems) v.id: v,
       };
 
       var bayansWithSpeaker = bayanItems.map((item) {
@@ -493,7 +493,7 @@ class LocalDatabase extends _$LocalDatabase {
           'bayans': item,
           'relationships': {
             'speaker': idToSpeakers[item.speakerId],
-          }
+          },
         };
       }).toList();
 
@@ -518,7 +518,7 @@ class LocalDatabase extends _$LocalDatabase {
         'bayans': bayan,
         'relationships': {
           'speaker': speaker,
-        }
+        },
       };
 
       return bayanWithSpeaker;
@@ -562,7 +562,7 @@ class LocalDatabase extends _$LocalDatabase {
           .get();
 
       Map<String, MalfuzatAuthor> idToAuthors = <String, MalfuzatAuthor>{
-        for (var v in authorItems) v.id: v
+        for (var v in authorItems) v.id: v,
       };
 
       var malfuzatsWithAuthor = malfuzatItems.map((item) {
@@ -570,7 +570,7 @@ class LocalDatabase extends _$LocalDatabase {
           'malfuzats': item,
           'relationships': {
             'malfuzat-author': idToAuthors[item.malfuzatAuthorId],
-          }
+          },
         };
       }).toList();
 
@@ -595,7 +595,7 @@ class LocalDatabase extends _$LocalDatabase {
         'malfuzats': malfuzat,
         'relationships': {
           'malfuzat-author': author,
-        }
+        },
       };
 
       return malfuzatWithAuthor;
@@ -687,7 +687,7 @@ class LocalDatabase extends _$LocalDatabase {
           .get();
 
       Map<String, ArticleAuthor> idToAuthors = <String, ArticleAuthor>{
-        for (var v in authorItems) v.id: v
+        for (var v in authorItems) v.id: v,
       };
 
       var articlesWithAuthor = articleItems.map((item) {
@@ -695,7 +695,7 @@ class LocalDatabase extends _$LocalDatabase {
           'articles': item,
           'relationships': {
             'article-author': idToAuthors[item.articleAuthorId],
-          }
+          },
         };
       }).toList();
 
@@ -720,7 +720,7 @@ class LocalDatabase extends _$LocalDatabase {
         'articles': article,
         'relationships': {
           'article-author': author,
-        }
+        },
       };
 
       return articleWithAuthor;
@@ -764,7 +764,7 @@ class LocalDatabase extends _$LocalDatabase {
         'madrasahs': madrasah,
         'relationships': {
           'madrasah-infos': infos,
-        }
+        },
       };
 
       return madrasahWithInfos;
@@ -812,7 +812,7 @@ class LocalDatabase extends _$LocalDatabase {
         'madrasahInfo': info,
         'relationships': {
           'madrasah': madrasah,
-        }
+        },
       };
 
       return infoWithMadrasah;

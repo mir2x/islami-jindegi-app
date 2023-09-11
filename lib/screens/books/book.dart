@@ -355,7 +355,7 @@ class SubchaptersState extends ConsumerState<Subchapters> {
                 ),
               ),
             ),
-          ]
+          ],
         ],
       ),
     );

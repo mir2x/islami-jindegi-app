@@ -89,7 +89,7 @@ class MadrasahIntroduction extends ConsumerWidget {
                     filePath: resource.document['id'],
                     fileUrl: fileSrcUrl(resource.document),
                   ),
-                ]
+                ],
               ],
             ),
           ),

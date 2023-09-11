@@ -54,7 +54,7 @@ class DateFilter extends ConsumerWidget {
       {'value': 'now-1m', 'label': locales.pastMonth},
       {'value': 'now-1y', 'label': locales.pastYear},
       {'value': 'now-5y', 'label': locales.pastFiveYears},
-      {'value': 'now-10y', 'label': locales.pastTenYears}
+      {'value': 'now-10y', 'label': locales.pastTenYears},
     ];
 
     String selectedLabel = selectedDate(qParams, options, locales);

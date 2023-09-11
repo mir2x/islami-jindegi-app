@@ -78,14 +78,14 @@ class Articles extends ConsumerWidget {
                                 title: locales.categories,
                                 paramKeys: const [
                                   'articleCategoryId',
-                                  'articleSubcategoryId'
+                                  'articleSubcategoryId',
                                 ],
                                 queryBuilder: (Map<String, dynamic> params) {
                                   return AllModelsQuery(
                                     repository: ref.articleCategories,
                                     params: {
                                       ...params,
-                                      'include': 'article-subcategories'
+                                      'include': 'article-subcategories',
                                     },
                                   );
                                 },

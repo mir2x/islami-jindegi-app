@@ -51,7 +51,7 @@ class _TimeInputState extends ConsumerState<TimeInput> {
                     minValue: -60,
                     maxValue: 60,
                     decimalPoint: false,
-                  )
+                  ),
                 ],
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 15),
@@ -104,7 +104,7 @@ class _TimeInputState extends ConsumerState<TimeInput> {
               );
             },
           ),
-        )
+        ),
       ],
     );
   }

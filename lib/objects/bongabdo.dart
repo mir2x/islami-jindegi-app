@@ -10,7 +10,7 @@ final banglaMonths = [
   'পৌষ',
   'মাঘ',
   'ফাল্গুন',
-  'চৈত্র'
+  'চৈত্র',
 ];
 
 final Map<int, String> banglaWeekDays = {
@@ -20,7 +20,7 @@ final Map<int, String> banglaWeekDays = {
   3: 'বুধবার',
   4: 'বৃহস্পতিবার',
   5: 'শুক্রবার',
-  6: 'শনিবার'
+  6: 'শনিবার',
 };
 
 final banglaSeasons = ['গ্রীষ্ম', 'বর্ষা', 'শরৎ', 'হেমন্ত', 'শীত', 'বসন্ত'];

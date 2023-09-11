@@ -52,7 +52,7 @@ class Masail extends ConsumerWidget {
                               active: qParams.keys.any(
                                 (k) => [
                                   'masailCategoryId',
-                                  'masailSubcategoryId'
+                                  'masailSubcategoryId',
                                 ].contains(k),
                               ),
                               children: [
@@ -61,7 +61,7 @@ class Masail extends ConsumerWidget {
                                     title: locales.categories,
                                     paramKeys: const [
                                       'masailCategoryId',
-                                      'masailSubcategoryId'
+                                      'masailSubcategoryId',
                                     ],
                                     queryBuilder:
                                         (Map<String, dynamic> params) {
@@ -69,7 +69,7 @@ class Masail extends ConsumerWidget {
                                         repository: ref.masailCategories,
                                         params: {
                                           ...params,
-                                          'include': 'masail-subcategories'
+                                          'include': 'masail-subcategories',
                                         },
                                       );
                                     },

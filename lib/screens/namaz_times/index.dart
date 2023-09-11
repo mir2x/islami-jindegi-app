@@ -87,7 +87,7 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                                 fit: BoxFit.scaleDown,
                                 width: 20,
                                 height: 20,
-                              )
+                              ),
                             ],
                           ),
                         ),

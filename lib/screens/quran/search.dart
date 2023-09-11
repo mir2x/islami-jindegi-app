@@ -49,8 +49,8 @@ class QuranSearch extends ConsumerWidget {
                       locales.quranSearchErrorMessage,
                       style: textTheme.labelSmall,
                     ),
-                  )
-                ]
+                  ),
+                ],
               ],
             ),
           ),
@@ -100,7 +100,7 @@ class QuranSearch extends ConsumerWidget {
                               ),
                               Text(
                                 ', ${locales.ayah}: ${numFormatter.format(ayah.surahPosition)}',
-                              )
+                              ),
                             ],
                           ),
                           Container(

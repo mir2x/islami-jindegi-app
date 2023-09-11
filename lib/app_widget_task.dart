@@ -66,7 +66,7 @@ void callbackDispatcher() {
       if (prayerTimes.containsKey('current') &&
           prayerTimes['current'] != null) ...{
         'currentPrayerTitle': prayerTimes['current']['title'],
-        'currentPrayerTime': prayerTimes['current']['time']
+        'currentPrayerTime': prayerTimes['current']['time'],
       },
       'nextPrayer': nextPrayer,
     });
