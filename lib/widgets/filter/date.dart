@@ -91,6 +91,7 @@ class DateFilter extends ConsumerWidget {
                       right: 15,
                     ),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ...options.map((option) {
                           return InkWell(
