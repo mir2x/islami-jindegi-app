@@ -190,7 +190,7 @@ class QuranState extends ConsumerState<Quran> {
             child: TextButton(
               child: Text(
                 locales.pageBasedQuran,
-                style: textTheme.titleMedium,
+                style: textTheme.labelMedium,
               ),
               onPressed: () => QR.to('quran/books'),
             ),
