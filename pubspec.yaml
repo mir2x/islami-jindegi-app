@@ -103,7 +103,7 @@ dependencies:
   flutter_svg: ^2.0.7
   cached_network_image: ^3.2.3
   transparent_image: ^2.0.0
-  flutter_native_splash: ^2.2.16
+  flutter_native_splash: ^2.3.2
 
 dev_dependencies:
   flutter_test:
@@ -118,7 +118,7 @@ dev_dependencies:
   faker: ^2.0.0
   drift_dev: ^2.10.0
 
-  flutter_launcher_icons: "^0.10.0"
+  flutter_launcher_icons: "^0.13.1"
 
 flutter:
   generate: true
@@ -162,7 +162,7 @@ flutter:
       fonts:
         - asset: assets/fonts/al-mushaf-quran.ttf
 
-flutter_icons:
+flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   image_path: assets/images/logos/logo-icon.png
