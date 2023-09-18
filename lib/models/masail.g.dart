@@ -9,7 +9,14 @@ part of 'masail.dart';
 // ignore_for_file: non_constant_identifier_names, duplicate_ignore
 
 mixin $MasailLocalAdapter on LocalAdapter<Masail> {
-  static final Map<String, RelationshipMeta> _kMasailRelationshipMetas = {};
+  static final Map<String, RelationshipMeta> _kMasailRelationshipMetas = {
+    'masail-author': RelationshipMeta<MasailAuthor>(
+      name: 'masailAuthor',
+      type: 'masailAuthors',
+      kind: 'BelongsTo',
+      instance: (_) => (_ as Masail).masailAuthor,
+    )
+  };
 
   @override
   Map<String, RelationshipMeta> get relationshipMetas =>
@@ -37,7 +44,7 @@ class $MasailHiveLocalAdapter = HiveLocalAdapter<Masail>
 class $MasailRemoteAdapter = RemoteAdapter<Masail>
     with
         JSONAPIAdapter<Masail>,
-        LocalDatabaseAdapter<Masail>,
+        LocalResourceAdapter<Masail>,
         ApplicationAdapter<Masail>;
 
 final internalMasailsRemoteAdapterProvider = Provider<RemoteAdapter<Masail>>(
@@ -50,13 +57,20 @@ final masailsRepositoryProvider =
 extension MasailDataRepositoryX on Repository<Masail> {
   JSONAPIAdapter<Masail> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<Masail>;
-  LocalDatabaseAdapter<Masail> get localDatabaseAdapter =>
-      remoteAdapter as LocalDatabaseAdapter<Masail>;
+  LocalResourceAdapter<Masail> get localResourceAdapter =>
+      remoteAdapter as LocalResourceAdapter<Masail>;
   ApplicationAdapter<Masail> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<Masail>;
 }
 
-extension MasailRelationshipGraphNodeX on RelationshipGraphNode<Masail> {}
+extension MasailRelationshipGraphNodeX on RelationshipGraphNode<Masail> {
+  RelationshipGraphNode<MasailAuthor> get masailAuthor {
+    final meta = $MasailLocalAdapter._kMasailRelationshipMetas['masail-author']
+        as RelationshipMeta<MasailAuthor>;
+    return meta.clone(
+        parent: this is RelationshipMeta ? this as RelationshipMeta : null);
+  }
+}
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -76,6 +90,10 @@ Masail _$MasailFromJson(Map<String, dynamic> json) => Masail(
       publishedAt: json['published-at'] as String?,
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
+      masailAuthor: json['masail-author'] == null
+          ? null
+          : BelongsTo<MasailAuthor>.fromJson(
+              json['masail-author'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$MasailToJson(Masail instance) => <String, dynamic>{
@@ -92,4 +110,5 @@ Map<String, dynamic> _$MasailToJson(Masail instance) => <String, dynamic>{
       'published-at': instance.publishedAt,
       'created-at': instance.createdAt,
       'updated-at': instance.updatedAt,
+      'masail-author': instance.masailAuthor,
     };

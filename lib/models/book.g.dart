@@ -43,7 +43,7 @@ class $BookHiveLocalAdapter = HiveLocalAdapter<Book> with $BookLocalAdapter;
 class $BookRemoteAdapter = RemoteAdapter<Book>
     with
         JSONAPIAdapter<Book>,
-        LocalDatabaseAdapter<Book>,
+        LocalResourceAdapter<Book>,
         ApplicationAdapter<Book>;
 
 final internalBooksRemoteAdapterProvider = Provider<RemoteAdapter<Book>>(
@@ -56,8 +56,8 @@ final booksRepositoryProvider =
 extension BookDataRepositoryX on Repository<Book> {
   JSONAPIAdapter<Book> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<Book>;
-  LocalDatabaseAdapter<Book> get localDatabaseAdapter =>
-      remoteAdapter as LocalDatabaseAdapter<Book>;
+  LocalResourceAdapter<Book> get localResourceAdapter =>
+      remoteAdapter as LocalResourceAdapter<Book>;
   ApplicationAdapter<Book> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<Book>;
 }

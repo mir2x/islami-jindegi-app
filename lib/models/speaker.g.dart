@@ -37,7 +37,7 @@ class $SpeakerHiveLocalAdapter = HiveLocalAdapter<Speaker>
 class $SpeakerRemoteAdapter = RemoteAdapter<Speaker>
     with
         JSONAPIAdapter<Speaker>,
-        LocalDatabaseAdapter<Speaker>,
+        LocalResourceAdapter<Speaker>,
         ApplicationAdapter<Speaker>;
 
 final internalSpeakersRemoteAdapterProvider = Provider<RemoteAdapter<Speaker>>(
@@ -50,8 +50,8 @@ final speakersRepositoryProvider =
 extension SpeakerDataRepositoryX on Repository<Speaker> {
   JSONAPIAdapter<Speaker> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<Speaker>;
-  LocalDatabaseAdapter<Speaker> get localDatabaseAdapter =>
-      remoteAdapter as LocalDatabaseAdapter<Speaker>;
+  LocalResourceAdapter<Speaker> get localResourceAdapter =>
+      remoteAdapter as LocalResourceAdapter<Speaker>;
   ApplicationAdapter<Speaker> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<Speaker>;
 }

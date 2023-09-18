@@ -37,7 +37,7 @@ class $NamazTimeHiveLocalAdapter = HiveLocalAdapter<NamazTime>
 class $NamazTimeRemoteAdapter = RemoteAdapter<NamazTime>
     with
         JSONAPIAdapter<NamazTime>,
-        LocalDatabaseAdapter<NamazTime>,
+        LocalResourceAdapter<NamazTime>,
         ApplicationAdapter<NamazTime>;
 
 final internalNamazTimesRemoteAdapterProvider =
@@ -50,8 +50,8 @@ final namazTimesRepositoryProvider =
 extension NamazTimeDataRepositoryX on Repository<NamazTime> {
   JSONAPIAdapter<NamazTime> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<NamazTime>;
-  LocalDatabaseAdapter<NamazTime> get localDatabaseAdapter =>
-      remoteAdapter as LocalDatabaseAdapter<NamazTime>;
+  LocalResourceAdapter<NamazTime> get localResourceAdapter =>
+      remoteAdapter as LocalResourceAdapter<NamazTime>;
   ApplicationAdapter<NamazTime> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<NamazTime>;
 }

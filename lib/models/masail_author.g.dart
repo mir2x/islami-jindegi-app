@@ -38,7 +38,7 @@ class $MasailAuthorHiveLocalAdapter = HiveLocalAdapter<MasailAuthor>
 class $MasailAuthorRemoteAdapter = RemoteAdapter<MasailAuthor>
     with
         JSONAPIAdapter<MasailAuthor>,
-        LocalDatabaseAdapter<MasailAuthor>,
+        LocalResourceAdapter<MasailAuthor>,
         ApplicationAdapter<MasailAuthor>;
 
 final internalMasailAuthorsRemoteAdapterProvider =
@@ -52,8 +52,8 @@ final masailAuthorsRepositoryProvider =
 extension MasailAuthorDataRepositoryX on Repository<MasailAuthor> {
   JSONAPIAdapter<MasailAuthor> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<MasailAuthor>;
-  LocalDatabaseAdapter<MasailAuthor> get localDatabaseAdapter =>
-      remoteAdapter as LocalDatabaseAdapter<MasailAuthor>;
+  LocalResourceAdapter<MasailAuthor> get localResourceAdapter =>
+      remoteAdapter as LocalResourceAdapter<MasailAuthor>;
   ApplicationAdapter<MasailAuthor> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<MasailAuthor>;
 }

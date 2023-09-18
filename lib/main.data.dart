@@ -29,6 +29,7 @@ import 'package:native_app/models/malfuzat_author.dart';
 import 'package:native_app/models/malfuzat_category.dart';
 import 'package:native_app/models/malfuzat_subcategory.dart';
 import 'package:native_app/models/malfuzat.dart';
+import 'package:native_app/models/masail_author.dart';
 import 'package:native_app/models/masail_category.dart';
 import 'package:native_app/models/masail_subcategory.dart';
 import 'package:native_app/models/masail.dart';
@@ -94,6 +95,7 @@ final repositoryProviders = <String, Provider<Repository<DataModelMixin>>>{
   'malfuzatCategories': malfuzatCategoriesRepositoryProvider,
   'malfuzatSubcategories': malfuzatSubcategoriesRepositoryProvider,
   'malfuzats': malfuzatsRepositoryProvider,
+  'masailAuthors': masailAuthorsRepositoryProvider,
   'masailCategories': masailCategoriesRepositoryProvider,
   'masailSubcategories': masailSubcategoriesRepositoryProvider,
   'masails': masailsRepositoryProvider,
@@ -139,6 +141,7 @@ final repositoryInitializerProvider =
   DataHelpers.setInternalType<MalfuzatCategory>('malfuzatCategories');
   DataHelpers.setInternalType<MalfuzatSubcategory>('malfuzatSubcategories');
   DataHelpers.setInternalType<Malfuzat>('malfuzats');
+  DataHelpers.setInternalType<MasailAuthor>('masailAuthors');
   DataHelpers.setInternalType<MasailCategory>('masailCategories');
   DataHelpers.setInternalType<MasailSubcategory>('masailSubcategories');
   DataHelpers.setInternalType<Masail>('masails');
@@ -188,6 +191,7 @@ final repositoryInitializerProvider =
     'malfuzatSubcategories':
         ref.watch(internalMalfuzatSubcategoriesRemoteAdapterProvider),
     'malfuzats': ref.watch(internalMalfuzatsRemoteAdapterProvider),
+    'masailAuthors': ref.watch(internalMasailAuthorsRemoteAdapterProvider),
     'masailCategories':
         ref.watch(internalMasailCategoriesRemoteAdapterProvider),
     'masailSubcategories':
@@ -233,6 +237,7 @@ final repositoryInitializerProvider =
     'malfuzatCategories': true,
     'malfuzatSubcategories': true,
     'malfuzats': true,
+    'masailAuthors': true,
     'masailCategories': true,
     'masailSubcategories': true,
     'masails': true,
@@ -330,6 +335,9 @@ extension RepositoryWidgetRefX on WidgetRef {
         ..remoteAdapter.internalWatch = watch;
   Repository<Malfuzat> get malfuzats =>
       watch(malfuzatsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<MasailAuthor> get masailAuthors =>
+      watch(masailAuthorsRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch;
   Repository<MasailCategory> get masailCategories =>
       watch(masailCategoriesRepositoryProvider)
         ..remoteAdapter.internalWatch = watch;
@@ -436,6 +444,9 @@ extension RepositoryRefX on Ref {
         ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Malfuzat> get malfuzats => watch(malfuzatsRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<MasailAuthor> get masailAuthors =>
+      watch(masailAuthorsRepositoryProvider)
+        ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<MasailCategory> get masailCategories =>
       watch(masailCategoriesRepositoryProvider)
         ..remoteAdapter.internalWatch = watch as Watcher;

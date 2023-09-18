@@ -36,7 +36,7 @@ class $PageHiveLocalAdapter = HiveLocalAdapter<Page> with $PageLocalAdapter;
 class $PageRemoteAdapter = RemoteAdapter<Page>
     with
         JSONAPIAdapter<Page>,
-        LocalDatabaseAdapter<Page>,
+        LocalResourceAdapter<Page>,
         ApplicationAdapter<Page>;
 
 final internalPagesRemoteAdapterProvider = Provider<RemoteAdapter<Page>>(
@@ -49,8 +49,8 @@ final pagesRepositoryProvider =
 extension PageDataRepositoryX on Repository<Page> {
   JSONAPIAdapter<Page> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<Page>;
-  LocalDatabaseAdapter<Page> get localDatabaseAdapter =>
-      remoteAdapter as LocalDatabaseAdapter<Page>;
+  LocalResourceAdapter<Page> get localResourceAdapter =>
+      remoteAdapter as LocalResourceAdapter<Page>;
   ApplicationAdapter<Page> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<Page>;
 }

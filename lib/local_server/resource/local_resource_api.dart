@@ -10,7 +10,7 @@ import 'package:collection/collection.dart';
 import 'tables/index.dart';
 import 'types/file_data.dart';
 
-part 'local_database.g.dart';
+part 'local_resource_api.g.dart';
 
 @DriftDatabase(
   tables: [
@@ -39,8 +39,8 @@ part 'local_database.g.dart';
     Pages,
   ],
 )
-class LocalDatabase extends _$LocalDatabase {
-  LocalDatabase()
+class LocalResourceAPI extends _$LocalResourceAPI {
+  LocalResourceAPI()
       : super(
           LazyDatabase(() async {
             int dataVersion = 1;

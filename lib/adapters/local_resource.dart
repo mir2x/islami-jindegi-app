@@ -3,9 +3,9 @@ import 'package:flutter_data/flutter_data.dart' hide Relationship;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:json_api/document.dart';
 import 'package:recase/recase.dart';
-import 'package:native_app/providers/local_database.dart';
+import 'package:native_app/providers/local_resource.dart';
 
-mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
+mixin LocalResourceAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
   @override
   Future<List<T>> findAll({
     bool? remote,
@@ -28,8 +28,8 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
         await Connectivity().checkConnectivity() == ConnectivityResult.none;
 
     if (onlyLocal || hasOneItem || hasNoConnection) {
-      final database = ref.read(localDatabaseProvider);
-      final resources = await database.query(internalType, params: params);
+      final localResource = ref.read(localResourceProvider);
+      final resources = await localResource.query(internalType, params: params);
       List<Resource> included = [];
 
       final body = resources.map((item) {
@@ -117,8 +117,8 @@ mixin LocalDatabaseAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     DataRequestLabel? label,
   }) async {
     if (remote != true) {
-      final database = ref.read(localDatabaseProvider);
-      final item = await database.findById(
+      final localResource = ref.read(localResourceProvider);
+      final item = await localResource.findById(
         internalType,
         id.toString(),
         params: params,

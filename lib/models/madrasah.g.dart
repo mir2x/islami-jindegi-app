@@ -52,7 +52,7 @@ class $MadrasahHiveLocalAdapter = HiveLocalAdapter<Madrasah>
 class $MadrasahRemoteAdapter = RemoteAdapter<Madrasah>
     with
         JSONAPIAdapter<Madrasah>,
-        LocalDatabaseAdapter<Madrasah>,
+        LocalResourceAdapter<Madrasah>,
         ApplicationAdapter<Madrasah>;
 
 final internalMadrasahsRemoteAdapterProvider =
@@ -65,8 +65,8 @@ final madrasahsRepositoryProvider =
 extension MadrasahDataRepositoryX on Repository<Madrasah> {
   JSONAPIAdapter<Madrasah> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<Madrasah>;
-  LocalDatabaseAdapter<Madrasah> get localDatabaseAdapter =>
-      remoteAdapter as LocalDatabaseAdapter<Madrasah>;
+  LocalResourceAdapter<Madrasah> get localResourceAdapter =>
+      remoteAdapter as LocalResourceAdapter<Madrasah>;
   ApplicationAdapter<Madrasah> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<Madrasah>;
 }

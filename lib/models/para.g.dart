@@ -36,7 +36,7 @@ class $ParaHiveLocalAdapter = HiveLocalAdapter<Para> with $ParaLocalAdapter;
 class $ParaRemoteAdapter = RemoteAdapter<Para>
     with
         JSONAPIAdapter<Para>,
-        LocalDatabaseAdapter<Para>,
+        LocalResourceAdapter<Para>,
         ApplicationAdapter<Para>;
 
 final internalParasRemoteAdapterProvider = Provider<RemoteAdapter<Para>>(
@@ -49,8 +49,8 @@ final parasRepositoryProvider =
 extension ParaDataRepositoryX on Repository<Para> {
   JSONAPIAdapter<Para> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<Para>;
-  LocalDatabaseAdapter<Para> get localDatabaseAdapter =>
-      remoteAdapter as LocalDatabaseAdapter<Para>;
+  LocalResourceAdapter<Para> get localResourceAdapter =>
+      remoteAdapter as LocalResourceAdapter<Para>;
   ApplicationAdapter<Para> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<Para>;
 }

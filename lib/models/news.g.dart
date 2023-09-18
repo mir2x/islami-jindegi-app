@@ -36,7 +36,7 @@ class $NewsHiveLocalAdapter = HiveLocalAdapter<News> with $NewsLocalAdapter;
 class $NewsRemoteAdapter = RemoteAdapter<News>
     with
         JSONAPIAdapter<News>,
-        LocalDatabaseAdapter<News>,
+        LocalResourceAdapter<News>,
         ApplicationAdapter<News>;
 
 final internalNewsRemoteAdapterProvider = Provider<RemoteAdapter<News>>((ref) =>
@@ -49,8 +49,8 @@ final newsRepositoryProvider =
 extension NewsDataRepositoryX on Repository<News> {
   JSONAPIAdapter<News> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<News>;
-  LocalDatabaseAdapter<News> get localDatabaseAdapter =>
-      remoteAdapter as LocalDatabaseAdapter<News>;
+  LocalResourceAdapter<News> get localResourceAdapter =>
+      remoteAdapter as LocalResourceAdapter<News>;
   ApplicationAdapter<News> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<News>;
 }

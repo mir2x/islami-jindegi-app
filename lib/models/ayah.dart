@@ -2,7 +2,7 @@ import 'package:flutter_data/flutter_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter_data_json_api_adapter/flutter_data_json_api_adapter.dart';
 import 'package:native_app/adapters/application.dart';
-import 'package:native_app/adapters/local_database.dart';
+import 'package:native_app/adapters/local_resource.dart';
 import 'surah.dart';
 import 'para.dart';
 import 'ayah_translation.dart';
@@ -11,7 +11,7 @@ import 'tafseer.dart';
 part 'ayah.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.kebab)
-@DataRepository([JSONAPIAdapter, LocalDatabaseAdapter, ApplicationAdapter])
+@DataRepository([JSONAPIAdapter, LocalResourceAdapter, ApplicationAdapter])
 class Ayah extends DataModel<Ayah> {
   @override
   final String? id;

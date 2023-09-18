@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'local_database.dart';
+part of 'local_resource_api.dart';
 
 // ignore_for_file: type=lint
 class $SurahsTable extends Surahs with TableInfo<$SurahsTable, Surah> {
@@ -8007,8 +8007,8 @@ class PagesCompanion extends UpdateCompanion<Page> {
   }
 }
 
-abstract class _$LocalDatabase extends GeneratedDatabase {
-  _$LocalDatabase(QueryExecutor e) : super(e);
+abstract class _$LocalResourceAPI extends GeneratedDatabase {
+  _$LocalResourceAPI(QueryExecutor e) : super(e);
   late final $SurahsTable surahs = $SurahsTable(this);
   late final $ParasTable paras = $ParasTable(this);
   late final $AyahsTable ayahs = $AyahsTable(this);
