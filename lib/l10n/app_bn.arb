@@ -121,7 +121,14 @@
 
   "next": "পরবর্তীতে",
   "all": "সব",
+  
+  "country": "দেশ",
+  "city": "শহর",
   "setLocation": "স্থান সেট করুন",
+  "waysOfSettingLocation": "নিম্নোক্ত দুটি উপায়ের যেকোন একটি উপায়ে স্থান সেট করা যাবেঃ",
+  "withGeolocation": "১। জিওলোকেশনের মাধ্যমে",
+  "manualLocation": "২। ম্যানুয়াল লোকেশনের মাধ্যমে",
+  "giveGeolocationPermission": "জিওলোকেশনের অনুমতি দিন",
   "qiblahInstruction": "ভাল ফলাফল পেতে হলে ডিভাইসটি আনুভূমিকভাবে রাখুন",
 
   "filter": "ফিল্টার",

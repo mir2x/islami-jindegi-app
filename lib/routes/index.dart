@@ -48,6 +48,7 @@ import '../screens/namaz_times/index.dart';
 import '../screens/namaz_times/namaz_time.dart';
 import '../screens/namaz_times/settings.dart';
 
+import '../screens/location/index.dart';
 import '../screens/settings/index.dart';
 import '../screens/bookmarks/index.dart';
 import '../screens/donation/index.dart';
@@ -201,6 +202,7 @@ class AppRoutes {
         QRoute(path: '/settings', builder: () => const NamazSettings()),
       ],
     ),
+    QRoute(path: '/location', builder: () => const Location()),
     QRoute(path: '/settings', builder: () => const Settings()),
     QRoute(path: '/bookmarks', builder: () => const Bookmarks()),
     QRoute(path: '/donation', builder: () => const Donation()),

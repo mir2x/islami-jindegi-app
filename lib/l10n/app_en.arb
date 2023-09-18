@@ -120,7 +120,14 @@
 
   "next": "next",
   "all": "All",
+  
+  "country": "Country",
+  "city": "City",
   "setLocation": "Set Location",
+  "waysOfSettingLocation": "Location can be set by one of two following ways:",
+  "withGeolocation": "1. With Geo-location",
+  "manualLocation": "2. Manual Location",
+  "giveGeolocationPermission": "Give Geo-location Permission",
   "qiblahInstruction": "Set the device horizontally to get the best result.",
 
   "filter": "Filter",

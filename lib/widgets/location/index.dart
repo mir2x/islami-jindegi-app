@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/providers/preferences.dart';
@@ -91,9 +92,7 @@ class CurrentLocationState extends ConsumerState<CurrentLocation> {
               Container(
                 margin: const EdgeInsets.only(left: 15),
                 child: InkWell(
-                  onTap: () => ref
-                      .read(geolocationProvider.notifier)
-                      .updateCoordinates(),
+                  onTap: () => QR.to('location'),
                   child: Row(
                     children: [
                       SvgPicture.asset(
