@@ -19,6 +19,8 @@ import 'package:native_app/models/book_category.dart';
 import 'package:native_app/models/book_subcategory.dart';
 import 'package:native_app/models/book.dart';
 import 'package:native_app/models/chapter.dart';
+import 'package:native_app/models/city.dart';
+import 'package:native_app/models/country.dart';
 import 'package:native_app/models/dua_category.dart';
 import 'package:native_app/models/dua.dart';
 import 'package:native_app/models/hijri_adjustment.dart';
@@ -85,6 +87,8 @@ final repositoryProviders = <String, Provider<Repository<DataModelMixin>>>{
   'bookSubcategories': bookSubcategoriesRepositoryProvider,
   'books': booksRepositoryProvider,
   'chapters': chaptersRepositoryProvider,
+  'cities': citiesRepositoryProvider,
+  'countries': countriesRepositoryProvider,
   'duaCategories': duaCategoriesRepositoryProvider,
   'duas': duasRepositoryProvider,
   'hijriAdjustments': hijriAdjustmentsRepositoryProvider,
@@ -131,6 +135,8 @@ final repositoryInitializerProvider =
   DataHelpers.setInternalType<BookSubcategory>('bookSubcategories');
   DataHelpers.setInternalType<Book>('books');
   DataHelpers.setInternalType<Chapter>('chapters');
+  DataHelpers.setInternalType<City>('cities');
+  DataHelpers.setInternalType<Country>('countries');
   DataHelpers.setInternalType<DuaCategory>('duaCategories');
   DataHelpers.setInternalType<Dua>('duas');
   DataHelpers.setInternalType<HijriAdjustment>('hijriAdjustments');
@@ -178,6 +184,8 @@ final repositoryInitializerProvider =
         ref.watch(internalBookSubcategoriesRemoteAdapterProvider),
     'books': ref.watch(internalBooksRemoteAdapterProvider),
     'chapters': ref.watch(internalChaptersRemoteAdapterProvider),
+    'cities': ref.watch(internalCitiesRemoteAdapterProvider),
+    'countries': ref.watch(internalCountriesRemoteAdapterProvider),
     'duaCategories': ref.watch(internalDuaCategoriesRemoteAdapterProvider),
     'duas': ref.watch(internalDuasRemoteAdapterProvider),
     'hijriAdjustments':
@@ -227,6 +235,8 @@ final repositoryInitializerProvider =
     'bookSubcategories': true,
     'books': true,
     'chapters': true,
+    'cities': true,
+    'countries': true,
     'duaCategories': true,
     'duas': true,
     'hijriAdjustments': true,
@@ -308,6 +318,10 @@ extension RepositoryWidgetRefX on WidgetRef {
       watch(booksRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Chapter> get chapters =>
       watch(chaptersRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<City> get cities =>
+      watch(citiesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Country> get countries =>
+      watch(countriesRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<DuaCategory> get duaCategories =>
       watch(duaCategoriesRepositoryProvider)
         ..remoteAdapter.internalWatch = watch;
@@ -416,6 +430,10 @@ extension RepositoryRefX on Ref {
   Repository<Book> get books => watch(booksRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Chapter> get chapters => watch(chaptersRepositoryProvider)
+    ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<City> get cities => watch(citiesRepositoryProvider)
+    ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Country> get countries => watch(countriesRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<DuaCategory> get duaCategories =>
       watch(duaCategoriesRepositoryProvider)
