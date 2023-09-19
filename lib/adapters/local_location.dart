@@ -53,56 +53,6 @@ mixin LocalLocationAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     return items;
   }
 
-  @override
-  Future<T?> findOne(
-    Object id, {
-    bool? remote,
-    bool? background,
-    Map<String, dynamic>? params,
-    Map<String, String>? headers,
-    OnSuccessOne<T>? onSuccess,
-    OnErrorOne<T>? onError,
-    DataRequestLabel? label,
-  }) async {
-    final localLocation = ref.read(localLocationProvider);
-    final item = await localLocation.findById(
-      internalType,
-      id.toString(),
-      params: params,
-    );
-
-    if (item == null) {
-      return item;
-    }
-
-    Map resourceMap;
-    Map<String, Relationship> relationships = {};
-    List<Resource> included = [];
-
-    resourceMap = json.decode(json.encode(item));
-    Resource resource = mapToResource(resourceMap, internalType);
-    resource.relationships.addAll(relationships);
-
-    final outboundData = OutboundDataDocument.resource(resource);
-    outboundData.included.addAll(included);
-
-    var outbound = outboundData.toJson();
-
-    // run decode/encode because `json_api`'s `toJson()`
-    // DOES NOT return nested Map<String, dynamic>s as expected
-    var jData = json.decode(json.encode(outbound)) as Map<String, dynamic>;
-    label ??= DataRequestLabel('findOne', type: internalType);
-
-    final data = DataResponse(
-      body: jData,
-      statusCode: 200,
-      headers: {'content-type': 'application/vnd.api+json'},
-    );
-
-    onSuccess ??= (data, label, _) => this.onSuccess<T>(data, label);
-    return onSuccess.call(data, label, this);
-  }
-
   Resource mapToResource(Map resourceMap, String type) {
     final id = resourceMap.remove('id');
 

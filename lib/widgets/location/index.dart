@@ -88,26 +88,24 @@ class CurrentLocationState extends ConsumerState<CurrentLocation> {
           mainAxisAlignment: widget.alignment,
           children: [
             Text(location, style: textTheme.labelSmall),
-            if (!geolocation['isGeolocated']) ...[
-              Container(
-                margin: const EdgeInsets.only(left: 15),
-                child: InkWell(
-                  onTap: () => QR.to('location'),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        'assets/images/icons/location.svg',
-                        fit: BoxFit.scaleDown,
-                        width: 30,
-                        height: 23,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(locales.setLocation, style: textTheme.labelSmall),
-                    ],
-                  ),
+            Container(
+              margin: const EdgeInsets.only(left: 15),
+              child: InkWell(
+                onTap: () => QR.to('location'),
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/images/icons/location.svg',
+                      fit: BoxFit.scaleDown,
+                      width: 30,
+                      height: 23,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(locales.location, style: textTheme.labelSmall),
+                  ],
                 ),
               ),
-            ],
+            ),
           ],
         );
       },

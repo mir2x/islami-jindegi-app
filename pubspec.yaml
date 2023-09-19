@@ -130,6 +130,7 @@ flutter:
     - assets/images/icons/
     - assets/images/books/
     - assets/db/offline_data_1.sqlite3
+    - assets/db/offline_location_1.sqlite3
 
   fonts:
     - family: Roboto

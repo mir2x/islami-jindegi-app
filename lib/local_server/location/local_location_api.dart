@@ -63,38 +63,11 @@ class LocalLocationAPI extends _$LocalLocationAPI {
     }
   }
 
-  Future? findById(String tableName, String id, {params = const {}}) async {
-    switch (tableName) {
-      case 'countries':
-        return findCountryById(id);
-      case 'cities':
-        return findCityById(id);
-      default:
-        return null;
-    }
-  }
-
   Future<List<Country>> queryCountry(Map params) {
     var query = select(countries);
-
-    if (params.containsKey('code')) {
-      query.where((t) => t.code.equals(params['code'].toString()));
-    }
-
-    if (params.containsKey('page') && params.containsKey('per_page')) {
-      query.limit(
-        params['per_page'],
-        offset: (params['page'] - 1) * params['per_page'],
-      );
-    } else {
-      query.limit(params['quantity'] ?? 20);
-    }
+    query.orderBy([(t) => OrderingTerm(expression: t.name)]);
 
     return query.get();
-  }
-
-  Future<Country?> findCountryById(String id) {
-    return (select(countries)..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
   Future<List<City>> queryCity(Map params) {
@@ -106,19 +79,8 @@ class LocalLocationAPI extends _$LocalLocationAPI {
       );
     }
 
-    if (params.containsKey('page') && params.containsKey('per_page')) {
-      query.limit(
-        params['per_page'],
-        offset: (params['page'] - 1) * params['per_page'],
-      );
-    } else {
-      query.limit(params['quantity'] ?? 20);
-    }
+    query.orderBy([(t) => OrderingTerm(expression: t.name)]);
 
     return query.get();
-  }
-
-  Future<City?> findCityById(String id) {
-    return (select(cities)..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 }
