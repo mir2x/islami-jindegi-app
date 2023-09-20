@@ -130,6 +130,8 @@
   "manualLocation": "২। ম্যানুয়াল লোকেশনের মাধ্যমে",
   "giveGeolocationPermission": "জিওলোকেশনের অনুমতি দিন",
   "geolocationEnabled": "জিওলোকেশন সক্রিয় আছে",
+  "benefits": "সুবিধাসমূহ", 
+  "geolocationBenefits": "আপনার চলাচলের সাথে সাথে সংক্রিয়ভাবে লোকেশন আপডেট হবে",
   "qiblahInstruction": "ভাল ফলাফল পেতে হলে ডিভাইসটি আনুভূমিকভাবে রাখুন",
 
   "filter": "ফিল্টার",

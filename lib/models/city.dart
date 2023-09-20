@@ -12,6 +12,7 @@ class City extends DataModel<City> {
   final String id;
   final String name;
   final String countryCode;
+  final String countryName;
   final double latitude;
   final double longitude;
 
@@ -19,6 +20,7 @@ class City extends DataModel<City> {
     required this.id,
     required this.name,
     required this.countryCode,
+    required this.countryName,
     required this.latitude,
     required this.longitude,
   });

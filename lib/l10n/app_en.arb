@@ -129,6 +129,8 @@
   "manualLocation": "2. Manual Location",
   "giveGeolocationPermission": "Give Geo-location Permission",
   "geolocationEnabled": "Geo-location Enabled",
+  "benefits": "Benefits", 
+  "geolocationBenefits": "Location will automatically update as you move",
   "qiblahInstruction": "Set the device horizontally to get the best result.",
 
   "filter": "Filter",

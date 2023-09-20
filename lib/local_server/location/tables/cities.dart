@@ -5,6 +5,7 @@ class Cities extends Table {
   TextColumn get id => text()();
   TextColumn get name => text()();
   TextColumn get countryCode => text()();
+  TextColumn get countryName => text()();
   RealColumn get latitude => real()();
   RealColumn get longitude => real()();
 

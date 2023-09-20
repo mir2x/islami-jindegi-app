@@ -38,29 +38,12 @@ Future<Map> getFailSafeCoordinates() async {
 
 Future<Map> getFailSafeLocation() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
-  Map country = await getFailSafeCountry();
 
-  if (preferences.getString('city') != null) {
-    return {
-      'city': preferences.getString('city'),
-      ...country,
-    };
-  } else {
-    String locale = preferences.getString('locale') ?? 'bn';
-
-    return {
-      'city': locale == 'bn' ? 'ঢাকা' : 'Dhaka',
-      ...country,
-    };
-  }
-}
-
-Future<Map> getFailSafeCountry() async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-
-  if (preferences.getString('country') != null &&
+  if (preferences.getString('city') != null &&
+      preferences.getString('country') != null &&
       preferences.getString('countryCode') != null) {
     return {
+      'city': preferences.getString('city'),
       'country': preferences.getString('country'),
       'countryCode': preferences.getString('countryCode'),
     };
@@ -68,45 +51,10 @@ Future<Map> getFailSafeCountry() async {
     String locale = preferences.getString('locale') ?? 'bn';
 
     return {
+      'city': locale == 'bn' ? 'ঢাকা' : 'Dhaka',
       'country': locale == 'bn' ? 'বাংলাদেশ' : 'Bangladesh',
       'countryCode': 'BD',
     };
-  }
-}
-
-Future setCountry(Map location) async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-
-  if (preferences.getString('country') != location['country']) {
-    preferences.setString('country', location['country']);
-  }
-
-  if (preferences.getString('countryCode') != location['countryCode']) {
-    preferences.setString('countryCode', location['countryCode']);
-  }
-}
-
-Future setCity(Map location) async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-
-  if (preferences.getString('city') != location['city']) {
-    preferences.setString('city', location['city']);
-  }
-
-  if (preferences.getString('latitude') !=
-      location['coordinates']['latitude'].toString()) {
-    preferences.setString(
-      'latitude',
-      location['coordinates']['latitude'].toString(),
-    );
-  }
-
-  if (preferences.getString('longitude') !=
-      location['coordinates']['longitude'].toString()) {
-    preferences.setString(
-      'longitude',
-      location['coordinates']['longitude'].toString(),
-    );
   }
 }
 
@@ -143,13 +91,42 @@ Future<Map> getLocation(Position position) async {
   }
 }
 
+Future setLocation(Map location) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+
+  if (preferences.getString('country') != location['country']) {
+    preferences.setString('country', location['country']);
+  }
+
+  if (preferences.getString('countryCode') != location['countryCode']) {
+    preferences.setString('countryCode', location['countryCode']);
+  }
+
+  if (preferences.getString('city') != location['city']) {
+    preferences.setString('city', location['city']);
+  }
+
+  if (preferences.getString('latitude') !=
+      location['coordinates']['latitude'].toString()) {
+    preferences.setString(
+      'latitude',
+      location['coordinates']['latitude'].toString(),
+    );
+  }
+
+  if (preferences.getString('longitude') !=
+      location['coordinates']['longitude'].toString()) {
+    preferences.setString(
+      'longitude',
+      location['coordinates']['longitude'].toString(),
+    );
+  }
+}
+
 Future updatePreferences(Position position, Map location) async {
-  await setCountry({
+  await setLocation({
     'country': location['country'],
     'countryCode': location['countryCode'],
-  });
-
-  await setCity({
     'city': location['city'],
     'coordinates': {
       'latitude': position.latitude,
