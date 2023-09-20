@@ -73,11 +73,9 @@ class LocalLocationAPI extends _$LocalLocationAPI {
   Future<List<City>> queryCity(Map params) {
     var query = select(cities);
 
-    if (params.containsKey('country_code')) {
-      query.where(
-        (t) => t.countryCode.equals(params['country_code'].toString()),
-      );
-    }
+    query.where(
+      (t) => t.countryCode.equals(params['country_code'].toString()),
+    );
 
     query.orderBy([(t) => OrderingTerm(expression: t.name)]);
 
