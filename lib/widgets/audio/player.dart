@@ -217,7 +217,8 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
               child: Slider(
                 activeColor:
                     theme == 'dark' ? ThemeColors.color4 : ThemeColors.color8,
-                inactiveColor: ThemeColors.color3,
+                inactiveColor:
+                    theme == 'dark' ? ThemeColors.color3 : ThemeColors.color9,
                 value: position.inSeconds.toDouble(),
                 min: 0,
                 max: duration.inSeconds.toDouble(),

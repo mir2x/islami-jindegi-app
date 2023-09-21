@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dio/dio.dart';
 import 'package:native_app/providers/downloader.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
+import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/objects/progress_percentage.dart';
 import 'package:native_app/objects/download_params.dart';
 import 'package:native_app/theme/colors.dart';
@@ -23,6 +24,7 @@ class DownloadButton extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var progressNotifier = ProgressPercentage();
+    var prefs = ref.watch(preferencesProvider);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -61,22 +63,32 @@ class DownloadButton extends ConsumerWidget {
             }
           },
         ),
-        Container(
-          width: 100,
-          margin: const EdgeInsets.only(left: 15),
-          child: ValueListenableBuilder<double>(
-            valueListenable: progressNotifier,
-            builder: (context, percent, child) {
-              if (percent > 0) {
-                return LinearProgressIndicator(
-                  backgroundColor: ThemeColors.color3,
-                  value: percent,
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            },
-          ),
+        prefs.when(
+          loading: () => const SizedBox.shrink(),
+          error: (error, _) => Text(error.toString()),
+          data: (preferences) {
+            String theme = preferences.getString('theme') ?? 'dark';
+
+            return Container(
+              width: 100,
+              margin: const EdgeInsets.only(left: 15),
+              child: ValueListenableBuilder<double>(
+                valueListenable: progressNotifier,
+                builder: (context, percent, child) {
+                  if (percent > 0) {
+                    return LinearProgressIndicator(
+                      backgroundColor: theme == 'dark'
+                          ? ThemeColors.color3
+                          : ThemeColors.color9,
+                      value: percent,
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
+              ),
+            );
+          },
         ),
       ],
     );
