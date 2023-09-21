@@ -201,10 +201,6 @@ class $CitiesTable extends Cities with TableInfo<$CitiesTable, City> {
       'country_code', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<String> countryName = GeneratedColumn<String>(
-      'country_name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
   late final GeneratedColumn<double> latitude = GeneratedColumn<double>(
       'latitude', aliasedName, false,
       type: DriftSqlType.double, requiredDuringInsert: true);
@@ -214,7 +210,7 @@ class $CitiesTable extends Cities with TableInfo<$CitiesTable, City> {
       type: DriftSqlType.double, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, name, countryCode, countryName, latitude, longitude];
+      [id, name, countryCode, latitude, longitude];
   @override
   String get aliasedName => _alias ?? 'cities';
   @override
@@ -231,8 +227,6 @@ class $CitiesTable extends Cities with TableInfo<$CitiesTable, City> {
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       countryCode: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}country_code'])!,
-      countryName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}country_name'])!,
       latitude: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}latitude'])!,
       longitude: attachedDatabase.typeMapping
@@ -250,14 +244,12 @@ class City extends DataClass implements Insertable<City> {
   final String id;
   final String name;
   final String countryCode;
-  final String countryName;
   final double latitude;
   final double longitude;
   const City(
       {required this.id,
       required this.name,
       required this.countryCode,
-      required this.countryName,
       required this.latitude,
       required this.longitude});
   @override
@@ -266,7 +258,6 @@ class City extends DataClass implements Insertable<City> {
     map['id'] = Variable<String>(id);
     map['name'] = Variable<String>(name);
     map['country_code'] = Variable<String>(countryCode);
-    map['country_name'] = Variable<String>(countryName);
     map['latitude'] = Variable<double>(latitude);
     map['longitude'] = Variable<double>(longitude);
     return map;
@@ -279,7 +270,6 @@ class City extends DataClass implements Insertable<City> {
       id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       countryCode: serializer.fromJson<String>(json['countryCode']),
-      countryName: serializer.fromJson<String>(json['countryName']),
       latitude: serializer.fromJson<double>(json['latitude']),
       longitude: serializer.fromJson<double>(json['longitude']),
     );
@@ -291,7 +281,6 @@ class City extends DataClass implements Insertable<City> {
       'id': serializer.toJson<String>(id),
       'name': serializer.toJson<String>(name),
       'countryCode': serializer.toJson<String>(countryCode),
-      'countryName': serializer.toJson<String>(countryName),
       'latitude': serializer.toJson<double>(latitude),
       'longitude': serializer.toJson<double>(longitude),
     };
@@ -301,14 +290,12 @@ class City extends DataClass implements Insertable<City> {
           {String? id,
           String? name,
           String? countryCode,
-          String? countryName,
           double? latitude,
           double? longitude}) =>
       City(
         id: id ?? this.id,
         name: name ?? this.name,
         countryCode: countryCode ?? this.countryCode,
-        countryName: countryName ?? this.countryName,
         latitude: latitude ?? this.latitude,
         longitude: longitude ?? this.longitude,
       );
@@ -318,7 +305,6 @@ class City extends DataClass implements Insertable<City> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('countryCode: $countryCode, ')
-          ..write('countryName: $countryName, ')
           ..write('latitude: $latitude, ')
           ..write('longitude: $longitude')
           ..write(')'))
@@ -326,8 +312,7 @@ class City extends DataClass implements Insertable<City> {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, name, countryCode, countryName, latitude, longitude);
+  int get hashCode => Object.hash(id, name, countryCode, latitude, longitude);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -335,7 +320,6 @@ class City extends DataClass implements Insertable<City> {
           other.id == this.id &&
           other.name == this.name &&
           other.countryCode == this.countryCode &&
-          other.countryName == this.countryName &&
           other.latitude == this.latitude &&
           other.longitude == this.longitude);
 }
@@ -344,7 +328,6 @@ class CitiesCompanion extends UpdateCompanion<City> {
   final Value<String> id;
   final Value<String> name;
   final Value<String> countryCode;
-  final Value<String> countryName;
   final Value<double> latitude;
   final Value<double> longitude;
   final Value<int> rowid;
@@ -352,7 +335,6 @@ class CitiesCompanion extends UpdateCompanion<City> {
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.countryCode = const Value.absent(),
-    this.countryName = const Value.absent(),
     this.latitude = const Value.absent(),
     this.longitude = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -361,21 +343,18 @@ class CitiesCompanion extends UpdateCompanion<City> {
     required String id,
     required String name,
     required String countryCode,
-    required String countryName,
     required double latitude,
     required double longitude,
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         name = Value(name),
         countryCode = Value(countryCode),
-        countryName = Value(countryName),
         latitude = Value(latitude),
         longitude = Value(longitude);
   static Insertable<City> custom({
     Expression<String>? id,
     Expression<String>? name,
     Expression<String>? countryCode,
-    Expression<String>? countryName,
     Expression<double>? latitude,
     Expression<double>? longitude,
     Expression<int>? rowid,
@@ -384,7 +363,6 @@ class CitiesCompanion extends UpdateCompanion<City> {
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (countryCode != null) 'country_code': countryCode,
-      if (countryName != null) 'country_name': countryName,
       if (latitude != null) 'latitude': latitude,
       if (longitude != null) 'longitude': longitude,
       if (rowid != null) 'rowid': rowid,
@@ -395,7 +373,6 @@ class CitiesCompanion extends UpdateCompanion<City> {
       {Value<String>? id,
       Value<String>? name,
       Value<String>? countryCode,
-      Value<String>? countryName,
       Value<double>? latitude,
       Value<double>? longitude,
       Value<int>? rowid}) {
@@ -403,7 +380,6 @@ class CitiesCompanion extends UpdateCompanion<City> {
       id: id ?? this.id,
       name: name ?? this.name,
       countryCode: countryCode ?? this.countryCode,
-      countryName: countryName ?? this.countryName,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       rowid: rowid ?? this.rowid,
@@ -421,9 +397,6 @@ class CitiesCompanion extends UpdateCompanion<City> {
     }
     if (countryCode.present) {
       map['country_code'] = Variable<String>(countryCode.value);
-    }
-    if (countryName.present) {
-      map['country_name'] = Variable<String>(countryName.value);
     }
     if (latitude.present) {
       map['latitude'] = Variable<double>(latitude.value);
@@ -443,7 +416,6 @@ class CitiesCompanion extends UpdateCompanion<City> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('countryCode: $countryCode, ')
-          ..write('countryName: $countryName, ')
           ..write('latitude: $latitude, ')
           ..write('longitude: $longitude, ')
           ..write('rowid: $rowid')

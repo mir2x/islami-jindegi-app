@@ -60,7 +60,6 @@ City _$CityFromJson(Map<String, dynamic> json) => City(
       id: json['id'] as String,
       name: json['name'] as String,
       countryCode: json['country-code'] as String,
-      countryName: json['country-name'] as String,
       latitude: (json['latitude'] as num).toDouble(),
       longitude: (json['longitude'] as num).toDouble(),
     );
@@ -69,7 +68,6 @@ Map<String, dynamic> _$CityToJson(City instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'country-code': instance.countryCode,
-      'country-name': instance.countryName,
       'latitude': instance.latitude,
       'longitude': instance.longitude,
     };

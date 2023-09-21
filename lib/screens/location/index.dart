@@ -119,11 +119,11 @@ class ManualLocation extends ConsumerStatefulWidget {
 }
 
 class ManualLocationState extends ConsumerState<ManualLocation> {
-  String? selectedCountryCode;
+  dynamic selectedCountry;
 
-  void updateCountryCode(value) {
+  void updateCountry(value) {
     setState(() {
-      selectedCountryCode = value;
+      selectedCountry = value;
     });
   }
 
@@ -138,7 +138,10 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
       error: (error, _) => Text(error.toString()),
       data: (Map geolocation) {
         Map location = geolocation['location'];
-        String countryCode = selectedCountryCode ?? location['countryCode'];
+        Map country = {
+          'name': selectedCountry?.name ?? location['country'],
+          'code': selectedCountry?.code ?? location['countryCode'],
+        };
 
         var countryQuery = ref.watch(
           allModelsProvider(
@@ -152,7 +155,7 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
           allModelsProvider(
             AllModelsQuery(
               repository: ref.cities,
-              params: {'country_code': countryCode},
+              params: {'country_code': country['code']},
             ),
           ),
         );
@@ -184,9 +187,13 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
 
                       return Dropdown(
                         items: countries,
-                        selectedValue: countryCode,
+                        selectedValue: country['code'],
                         updateItem: (value) async {
-                          updateCountryCode(value);
+                          var selectedItem = resources.firstWhere(
+                            (o) => o.code == value,
+                          );
+
+                          updateCountry(selectedItem);
                         },
                       );
                     },
@@ -226,7 +233,7 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
                           );
 
                           await setLocation({
-                            'country': selectedItem.countryName,
+                            'country': country['name'],
                             'countryCode': selectedItem.countryCode,
                             'city': selectedItem.name,
                             'coordinates': {
