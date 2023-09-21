@@ -71,8 +71,9 @@ class QuranBookItem extends ConsumerWidget {
                   builders: PdfBuilders(locales: locales, textTheme: textTheme)
                       .getViewBuilders(),
                   renderer: (PdfPage page) => page.render(
-                    width: screenWidth * 2,
-                    height: (screenHeight - 160) * 2,
+                    width: screenWidth * 2.5,
+                    height: (screenHeight - 160) * 2.5,
+                    backgroundColor: '#FFFFFF',
                   ),
                   onPageChanged: (page) async {
                     var scaffoldMessenger = ScaffoldMessenger.of(context);
