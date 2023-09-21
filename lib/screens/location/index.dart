@@ -181,16 +181,20 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
                       var countries = resources.map((resource) {
                         return {
                           'label': resource.name,
-                          'value': resource.code,
+                          'value': resource.name,
                         };
                       }).toList();
 
                       return Dropdown(
                         items: countries,
-                        selectedValue: country['code'],
+                        selectedValue: countries.firstWhereOrNull(
+                          (o) => o['value'] == country['name'],
+                        )?['value'],
+                        searchEnabled: true,
+                        searchHint: '${locales.searchCountry} ...',
                         updateItem: (value) async {
                           var selectedItem = resources.firstWhere(
-                            (o) => o.code == value,
+                            (o) => o.name == value,
                           );
 
                           updateCountry(selectedItem);
@@ -227,6 +231,8 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
                         selectedValue: cities.firstWhereOrNull(
                           (o) => o['value'] == location['city'],
                         )?['value'],
+                        searchEnabled: true,
+                        searchHint: '${locales.searchCity} ...',
                         updateItem: (value) async {
                           var selectedItem = resources.firstWhere(
                             (o) => o.name == value,

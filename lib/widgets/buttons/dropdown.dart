@@ -4,13 +4,15 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/theme/colors.dart';
 
-class Dropdown extends ConsumerWidget {
+class Dropdown extends ConsumerStatefulWidget {
   const Dropdown({
     super.key,
     required this.items,
     required this.selectedValue,
     required this.updateItem,
     this.hint,
+    this.searchEnabled = false,
+    this.searchHint = 'Search for an item ...',
     this.allowClear = false,
   });
 
@@ -18,10 +20,26 @@ class Dropdown extends ConsumerWidget {
   final dynamic selectedValue;
   final Widget? hint;
   final void Function(dynamic) updateItem;
+  final bool searchEnabled;
+  final String searchHint;
   final bool allowClear;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  DropdownState createState() => DropdownState();
+}
+
+class DropdownState extends ConsumerState<Dropdown> {
+  final TextEditingController textEditingController = TextEditingController();
+
+  @override
+  void dispose() {
+    textEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
     var prefs = ref.watch(preferencesProvider);
 
     return prefs.when(
@@ -33,30 +51,75 @@ class Dropdown extends ConsumerWidget {
             theme == 'dark' ? ThemeColors.color4 : ThemeColors.color8;
 
         return DropdownButton2<dynamic>(
-          hint: hint,
-          value: selectedValue,
-          items: items.map<DropdownMenuItem<dynamic>>((Map item) {
+          isExpanded: true,
+          hint: widget.hint,
+          value: widget.selectedValue,
+          items: widget.items.map<DropdownMenuItem<dynamic>>((Map item) {
             return DropdownMenuItem<dynamic>(
               value: item['value'],
               child: Text(item['label']),
             );
           }).toList(),
-          isExpanded: true,
-          iconEnabledColor: ThemeColors.color3,
-          icon: allowClear
-              ? selectedValue == null
-                  ? Icon(Icons.arrow_drop_down, color: iconColor)
-                  : IconButton(
-                      icon: Icon(Icons.clear_outlined, color: iconColor),
-                      iconSize: 15,
-                      onPressed: () => updateItem(''),
-                    )
-              : Icon(Icons.arrow_drop_down, color: iconColor),
-          dropdownDecoration: BoxDecoration(
-            color: theme == 'dark' ? ThemeColors.color6 : ThemeColors.color3,
+          iconStyleData: IconStyleData(
+            icon: widget.allowClear
+                ? widget.selectedValue == null
+                    ? Icon(Icons.arrow_drop_down, color: iconColor)
+                    : IconButton(
+                        icon: Icon(Icons.clear_outlined, color: iconColor),
+                        iconSize: 15,
+                        onPressed: () => widget.updateItem(''),
+                      )
+                : Icon(Icons.arrow_drop_down, color: iconColor),
+            iconEnabledColor: ThemeColors.color3,
           ),
-          offset: const Offset(0, 5),
-          onChanged: updateItem,
+          dropdownStyleData: DropdownStyleData(
+            offset: const Offset(0, 5),
+            decoration: BoxDecoration(
+              color: theme == 'dark' ? ThemeColors.color6 : ThemeColors.color3,
+            ),
+          ),
+          dropdownSearchData: widget.searchEnabled
+              ? DropdownSearchData(
+                  searchController: textEditingController,
+                  searchInnerWidgetHeight: 60,
+                  searchInnerWidget: Container(
+                    height: 60,
+                    padding: const EdgeInsets.all(10),
+                    child: TextFormField(
+                      expands: true,
+                      maxLines: null,
+                      controller: textEditingController,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        contentPadding: const EdgeInsets.all(8),
+                        hintText: widget.searchHint,
+                        hintStyle: textTheme.labelMedium,
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: theme == 'dark'
+                                ? ThemeColors.color3
+                                : ThemeColors.color2,
+                          ),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: theme == 'dark'
+                                ? ThemeColors.color3
+                                : ThemeColors.color2,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  searchMatchFn: (item, searchValue) {
+                    return item.value
+                        .toString()
+                        .toLowerCase()
+                        .contains(searchValue.toLowerCase());
+                  },
+                )
+              : null,
+          onChanged: widget.updateItem,
         );
       },
     );

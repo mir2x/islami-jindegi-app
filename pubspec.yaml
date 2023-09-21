@@ -35,7 +35,7 @@ dependencies:
 
   # form
   date_field: ^3.0.2
-  dropdown_button2: ^1.9.2
+  dropdown_button2: ^2.3.9
   idkit_inputformatters: ^0.0.1
   easy_debounce: ^2.0.3
 
