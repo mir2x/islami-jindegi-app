@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/geolocation.dart';
@@ -44,7 +45,7 @@ class Location extends ConsumerWidget {
                   const SizedBox(height: 40),
                   Text(locales.withGeolocation, style: textTheme.labelMedium),
                   Container(
-                    margin: const EdgeInsets.only(top: 20),
+                    margin: const EdgeInsets.only(top: 15),
                     child: (!geolocation['isGeolocated'])
                         ? InkWell(
                             onTap: () => ref
@@ -54,8 +55,8 @@ class Location extends ConsumerWidget {
                               children: [
                                 SvgPicture.asset(
                                   'assets/images/icons/location.svg',
-                                  width: 70,
-                                  height: 53,
+                                  width: 75,
+                                  height: 57,
                                 ),
                                 const SizedBox(width: 10),
                                 if (!geolocation['isGeolocated']) ...[
@@ -76,13 +77,37 @@ class Location extends ConsumerWidget {
                             children: [
                               SvgPicture.asset(
                                 'assets/images/icons/location.svg',
-                                width: 70,
-                                height: 53,
+                                width: 75,
+                                height: 57,
                               ),
                               const SizedBox(width: 10),
-                              Text(
-                                locales.geolocationEnabled,
-                                style: textTheme.labelMedium,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.only(
+                                      top: 8,
+                                      left: 8,
+                                    ),
+                                    child: Text(
+                                      locales.geolocationEnabled,
+                                      style: textTheme.labelMedium,
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: openAppSettings,
+                                    style: TextButton.styleFrom(
+                                      minimumSize: Size.zero,
+                                      padding: const EdgeInsets.all(8),
+                                      tapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                    child: Text(
+                                      locales.disable,
+                                      style: textTheme.titleMedium,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),

@@ -129,6 +129,7 @@
   "manualLocation": "2. Manual Location",
   "giveGeolocationPermission": "Give Geo-location Permission",
   "geolocationEnabled": "Geo-location Enabled",
+  "disable": "Disable",
   "benefits": "Benefits",
   "geolocationBenefits": "Location will automatically update as you move",
   "searchCountry": "Search for a country",

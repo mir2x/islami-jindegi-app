@@ -130,6 +130,7 @@
   "manualLocation": "২। ম্যানুয়াল লোকেশনের মাধ্যমে",
   "giveGeolocationPermission": "জিওলোকেশনের অনুমতি দিন",
   "geolocationEnabled": "জিওলোকেশন সক্রিয় আছে",
+  "disable": "নিষ্ক্রিয় করুন",
   "benefits": "সুবিধাসমূহ", 
   "geolocationBenefits": "আপনার চলাচলের সাথে সাথে সংক্রিয়ভাবে লোকেশন আপডেট হবে",
   "searchCountry": "দেশের নাম দিয়ে সার্চ করুন",
