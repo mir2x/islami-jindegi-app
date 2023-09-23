@@ -15,7 +15,7 @@ class StaticImage extends ConsumerWidget {
     required this.height,
     this.extension = 'jpg',
     this.vwset = const {'xs': 100},
-    this.widths = const [1200, 800, 400, 200, 100],
+    this.widths = const [800, 600, 400, 300],
   });
 
   final String image;

@@ -185,40 +185,26 @@ class QuranState extends ConsumerState<Quran> {
       bottomBar: BottomBar(
         alignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            margin: const EdgeInsets.only(left: 3),
-            child: TextButton(
-              child: Text(
-                locales.pageBasedQuran,
-                style: textTheme.labelMedium,
-              ),
-              onPressed: () => QR.to('quran/books'),
-            ),
+          connectivity.when(
+            loading: () => const CircularProgressIndicator(),
+            error: (error, stackTrace) => Text(error.toString()),
+            data: (connectivityResult) {
+              if (connectivityResult != ConnectivityResult.none) {
+                return TextButton(
+                  child: Text(locales.search, style: textTheme.labelMedium),
+                  onPressed: () => QR.to('quran/search'),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
           ),
-          Row(
-            children: [
-              connectivity.when(
-                loading: () => const CircularProgressIndicator(),
-                error: (error, stackTrace) => Text(error.toString()),
-                data: (connectivityResult) {
-                  if (connectivityResult != ConnectivityResult.none) {
-                    return IconButton(
-                      icon: const Icon(Icons.search),
-                      onPressed: () => QR.to('quran/search'),
-                    );
-                  } else {
-                    return const SizedBox.shrink();
-                  }
-                },
-              ),
-              Container(
-                margin: const EdgeInsets.only(right: 4),
-                child: IconButton(
-                  icon: const Icon(Icons.bookmarks),
-                  onPressed: () => QR.to('quran/bookmarks'),
-                ),
-              ),
-            ],
+          Container(
+            margin: const EdgeInsets.only(right: 4),
+            child: TextButton(
+              child: Text(locales.savedAyahs, style: textTheme.labelMedium),
+              onPressed: () => QR.to('quran/bookmarks'),
+            ),
           ),
         ],
       ),

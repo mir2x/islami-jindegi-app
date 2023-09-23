@@ -1,50 +1,88 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
-import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/providers/all_models.dart';
+import 'package:native_app/widgets/image/static_image.dart';
 import 'package:native_app/widgets/responsive/image.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 
-class QuranBooks extends ConsumerWidget {
-  const QuranBooks({super.key});
+class QuranList extends ConsumerWidget {
+  const QuranList({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    var query = AllModelsQuery(
+      repository: ref.quranBookQitabs,
+      params: const {
+        'published': true,
+        'include': 'quran-book',
+      },
+    );
+
+    var modelQuery = ref.watch(allModelsProvider(query));
 
     return AppScaffold(
-      title: Text(locales.pageBasedQuran),
-      body: Column(
+      title: Text(locales.quran),
+      body: ItemContent(
         children: [
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: InfiniteList(
-                resourceFetcher: (Map<String, dynamic> params) async {
-                  AllModelsQuery query = AllModelsQuery(
-                    repository: ref.quranBookQitabs,
-                    params: {
-                      ...params,
-                      'published': true,
-                      'include': 'quran-book',
-                    },
-                  );
-
-                  return await ref.read(allModelsProvider(query).future);
-                },
+          InkWell(
+            onTap: () => QR.to('quran'),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(left: 5, bottom: 15),
+                  child: Text(
+                    '${locales.offline} ${locales.quran}',
+                    style: textTheme.labelLarge,
+                  ),
+                ),
+                SizedBox(
+                  width: screenWidth * 0.7,
+                  child: const StaticImage(
+                    image: 'assets/images/al-quran/cover/cover',
+                    extension: 'webp',
+                    width: 717,
+                    height: 934,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 60, left: 5, bottom: 20),
+            child: Text(locales.pageBasedQuran, style: textTheme.labelLarge),
+          ),
+          modelQuery.when(
+            loading: () {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+            error: (error, _) => Text(error.toString()),
+            data: (resources) {
+              return GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 15,
+                  crossAxisSpacing: 20,
                   mainAxisExtent: 380,
                 ),
-                itemBuilder: (_, item, __) {
+                itemCount: resources.length,
+                itemBuilder: (BuildContext context, int index) {
+                  var item = resources[index];
+
                   return Container(
                     padding: const EdgeInsets.only(bottom: 40),
                     child: Column(
@@ -76,8 +114,8 @@ class QuranBooks extends ConsumerWidget {
                     ),
                   );
                 },
-              ),
-            ),
+              );
+            },
           ),
         ],
       ),

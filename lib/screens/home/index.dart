@@ -50,7 +50,7 @@ class Home extends StatelessWidget {
               physics: const ScrollPhysics(),
               children: [
                 Resource(
-                  route: 'quran',
+                  route: 'qurans',
                   title: locales.quran,
                   icon: 'quran',
                 ),

@@ -20,8 +20,8 @@ import 'package:native_app/helpers/file_utils.dart';
 import 'download.dart';
 import 'drawer.dart';
 
-class QuranBookItem extends ConsumerWidget {
-  const QuranBookItem({super.key});
+class QuranBook extends ConsumerWidget {
+  const QuranBook({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

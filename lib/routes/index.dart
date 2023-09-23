@@ -2,6 +2,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 
 import '../screens/home/index.dart';
 
+import '../screens/quran/quran_list.dart';
 import '../screens/quran/index.dart';
 import '../screens/quran/surah.dart';
 import '../screens/quran/surah_description.dart';
@@ -11,8 +12,7 @@ import '../screens/quran/bismillah_tafseer.dart';
 import '../screens/quran/settings.dart';
 import '../screens/quran/bookmarks.dart';
 import '../screens/quran/search.dart';
-import '../screens/quran/books/index.dart';
-import '../screens/quran/books/book.dart';
+import '../screens/quran/book/book.dart';
 
 import '../screens/books/index.dart';
 import '../screens/books/book.dart';
@@ -60,6 +60,7 @@ import '../screens/important_matters/index.dart';
 class AppRoutes {
   final routes = [
     QRoute(path: '/', name: 'root', builder: () => const Home()),
+    QRoute(path: '/qurans', builder: () => const QuranList()),
     QRoute(
       path: '/quran',
       builder: () => const Quran(),
@@ -98,13 +99,7 @@ class AppRoutes {
           path: '/search',
           builder: () => const QuranSearch(),
         ),
-        QRoute(
-          path: '/books',
-          builder: () => const QuranBooks(),
-          children: [
-            QRoute(path: '/:id', builder: () => const QuranBookItem()),
-          ],
-        ),
+        QRoute(path: '/books/:id', builder: () => const QuranBook()),
       ],
     ),
     QRoute(

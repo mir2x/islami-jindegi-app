@@ -195,7 +195,7 @@ class AppScaffold extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  DrawerLink(title: locales.quran, route: 'quran'),
+                  DrawerLink(title: locales.quran, route: 'qurans'),
                   DrawerLink(title: locales.books, route: 'books'),
                   DrawerLink(title: locales.bayans, route: 'bayans'),
                   DrawerLink(title: locales.malfuzat, route: 'malfuzat'),
