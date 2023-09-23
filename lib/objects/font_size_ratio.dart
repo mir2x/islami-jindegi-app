@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 
 class FontSizeRatio extends ValueNotifier<double> {
-  FontSizeRatio() : super(1.0);
+  FontSizeRatio({double? value}) : super(value ?? 1.0);
 
-  void increment() {
-    if (value < 1.6) {
-      value += 0.2;
+  double increment() {
+    if (value < 1.5) {
+      value += 0.1;
     }
+
+    return value;
   }
 
-  void decrement() {
+  double decrement() {
     if (value > 0.8) {
-      value -= 0.2;
+      value -= 0.1;
     }
+
+    return value;
   }
 }

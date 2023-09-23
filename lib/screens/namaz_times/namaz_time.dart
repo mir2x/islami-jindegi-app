@@ -8,9 +8,9 @@ import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
+import 'package:native_app/widgets/presentation/resizable_font.dart';
 import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/widgets/page/title.dart';
 import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
@@ -27,7 +27,6 @@ class NamazTime extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
-    var fontSizeRatio = FontSizeRatio();
 
     var query = AllModelsQuery(
       repository: ref.namazTimes,
@@ -82,62 +81,70 @@ class NamazTime extends ConsumerWidget {
           }
         }
 
-        return AppScaffold(
-          onBackPressed: () async => await QR.to('namaz-times'),
-          title: Text(itemTitle),
-          body: NextPageSwipe(
-            onPrevious: previousPage,
-            onNext: nextPage,
-            child: ItemContent(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(bottom: 15),
-                  child: PageTitle(
-                    text: locales.masail,
-                    fontSizeRatio: fontSizeRatio,
-                  ),
+        return ResizableFont(
+          storeKey: 'namazTimeFontRatio',
+          builder: (context, fontSizeRatio) {
+            return AppScaffold(
+              onBackPressed: () async => await QR.to('namaz-times'),
+              title: Text(itemTitle),
+              body: NextPageSwipe(
+                onPrevious: previousPage,
+                onNext: nextPage,
+                child: ItemContent(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      child: PageTitle(
+                        text: locales.masail,
+                        fontSizeRatio: fontSizeRatio,
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 30),
+                      child: PageHtmlBody(
+                        text: item.masail,
+                        fontSizeRatio: fontSizeRatio,
+                      ),
+                    ),
+                    if (item.fazail != null) ...[
+                      Container(
+                        margin: const EdgeInsets.only(top: 30, bottom: 15),
+                        child: PageTitle(
+                          text: locales.fazail,
+                          fontSizeRatio: fontSizeRatio,
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 30),
+                        child: PageHtmlBody(
+                          text: item.fazail,
+                          fontSizeRatio: fontSizeRatio,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 30),
-                  child: PageHtmlBody(
-                    text: item.masail,
-                    fontSizeRatio: fontSizeRatio,
+              ),
+              bottomBar: BottomBar(
+                alignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Previous(onPrevious: previousPage),
+                  SocialShare(
+                    title: itemTitle,
+                    body: '${item.masail}${item.fazail}',
                   ),
-                ),
-                if (item.fazail != null) ...[
                   Container(
-                    margin: const EdgeInsets.only(top: 30, bottom: 15),
-                    child: PageTitle(
-                      text: locales.fazail,
+                    margin: const EdgeInsets.only(left: 30),
+                    child: FontResizer(
                       fontSizeRatio: fontSizeRatio,
+                      storeKey: 'namazTimeFontRatio',
                     ),
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 30),
-                    child: PageHtmlBody(
-                      text: item.fazail,
-                      fontSizeRatio: fontSizeRatio,
-                    ),
-                  ),
+                  Next(onNext: nextPage),
                 ],
-              ],
-            ),
-          ),
-          bottomBar: BottomBar(
-            alignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Previous(onPrevious: previousPage),
-              SocialShare(
-                title: itemTitle,
-                body: '${item.masail}${item.fazail}',
               ),
-              Container(
-                margin: const EdgeInsets.only(left: 30),
-                child: FontResizer(fontSizeRatio: fontSizeRatio),
-              ),
-              Next(onNext: nextPage),
-            ],
-          ),
+            );
+          },
         );
       },
     );

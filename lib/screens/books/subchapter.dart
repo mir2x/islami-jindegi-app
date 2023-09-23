@@ -8,9 +8,9 @@ import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
+import 'package:native_app/widgets/presentation/resizable_font.dart';
 import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/widgets/page/title.dart';
 import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
@@ -26,7 +26,6 @@ class Subchapter extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    var fontSizeRatio = FontSizeRatio();
 
     var query = SingleModelQuery(
       repository: ref.subchapters,
@@ -134,53 +133,61 @@ class Subchapter extends ConsumerWidget {
           }
         }
 
-        return AppScaffold(
-          onBackPressed: () async => await QR.to('books/$bookId'),
-          title: Text(locales.book),
-          body: NextPageSwipe(
-            onPrevious: previousPage,
-            onNext: nextPage,
-            child: ItemContent(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(bottom: 15),
-                  child: PageTitle(
-                    text: resource.title,
-                    fontSizeRatio: fontSizeRatio,
-                  ),
+        return ResizableFont(
+          storeKey: 'bookFontRatio',
+          builder: (context, fontSizeRatio) {
+            return AppScaffold(
+              onBackPressed: () async => await QR.to('books/$bookId'),
+              title: Text(locales.book),
+              body: NextPageSwipe(
+                onPrevious: previousPage,
+                onNext: nextPage,
+                child: ItemContent(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      child: PageTitle(
+                        text: resource.title,
+                        fontSizeRatio: fontSizeRatio,
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 30),
+                      child: PageHtmlBody(
+                        text: resource.body,
+                        fontSizeRatio: fontSizeRatio,
+                      ),
+                    ),
+                  ],
                 ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 30),
-                  child: PageHtmlBody(
-                    text: resource.body,
-                    fontSizeRatio: fontSizeRatio,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          bottomBar: BottomBar(
-            alignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Previous(onPrevious: previousPage),
-              Row(
+              ),
+              bottomBar: BottomBar(
+                alignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SocialShare(
-                    title: resource.title,
-                    body: resource.body,
-                    link: 'books/$bookId/subchapters/${resource.id}',
+                  Previous(onPrevious: previousPage),
+                  Row(
+                    children: [
+                      SocialShare(
+                        title: resource.title,
+                        body: resource.body,
+                        link: 'books/$bookId/subchapters/${resource.id}',
+                      ),
+                      BookmarkButton(
+                        type: 'Book Subchapter',
+                        title: resource.title,
+                        link: 'books/$bookId/subchapters/${resource.id}',
+                      ),
+                    ],
                   ),
-                  BookmarkButton(
-                    type: 'Book Subchapter',
-                    title: resource.title,
-                    link: 'books/$bookId/subchapters/${resource.id}',
+                  FontResizer(
+                    fontSizeRatio: fontSizeRatio,
+                    storeKey: 'bookFontRatio',
                   ),
+                  Next(onNext: nextPage),
                 ],
               ),
-              FontResizer(fontSizeRatio: fontSizeRatio),
-              Next(onNext: nextPage),
-            ],
-          ),
+            );
+          },
         );
       },
     );

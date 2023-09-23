@@ -7,8 +7,8 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
+import 'package:native_app/widgets/presentation/resizable_font.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
@@ -20,7 +20,6 @@ class ImportantMatters extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    var fontSizeRatio = FontSizeRatio();
 
     var query = AllModelsQuery(
       repository: ref.pages,
@@ -41,29 +40,37 @@ class ImportantMatters extends ConsumerWidget {
       data: (resources) {
         var item = resources.first;
 
-        return AppScaffold(
-          title: Text(locales.importantMatters),
-          body: ItemContent(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 30),
-                child: PageHtmlBody(
-                  text: item.body,
-                  fontSizeRatio: fontSizeRatio,
-                ),
+        return ResizableFont(
+          storeKey: 'importantMattersFontRatio',
+          builder: (context, fontSizeRatio) {
+            return AppScaffold(
+              title: Text(locales.importantMatters),
+              body: ItemContent(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 30),
+                    child: PageHtmlBody(
+                      text: item.body,
+                      fontSizeRatio: fontSizeRatio,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-          bottomBar: BottomBar(
-            alignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SocialShare(
-                title: item.title,
-                body: item.body,
+              bottomBar: BottomBar(
+                alignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SocialShare(
+                    title: item.title,
+                    body: item.body,
+                  ),
+                  FontResizer(
+                    fontSizeRatio: fontSizeRatio,
+                    storeKey: 'importantMattersFontRatio',
+                  ),
+                ],
               ),
-              FontResizer(fontSizeRatio: fontSizeRatio),
-            ],
-          ),
+            );
+          },
         );
       },
     );

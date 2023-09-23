@@ -34,37 +34,40 @@ class AyahList extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isSmallMobile = screenWidth < 340;
-    var arabicFontSizeRatio = FontSizeRatio();
-    var banglaFontSizeRatio = FontSizeRatio();
     var prefs = ref.watch(preferencesProvider);
     var qSettings = ref.watch(quranSettingsProvider);
 
-    return AppScaffold(
-      title: Text(
-        contextualTranslation(
-          locale: currentLang,
-          enText: chapter.title,
-          bnText: chapter.titleBn,
-        ),
-      ),
-      body: prefs.when(
-        loading: () => const SizedBox.shrink(),
-        error: (error, _) => Text(error.toString()),
-        data: (preferences) {
-          var query = AllModelsQuery(
-            repository: ref.ayahs,
-            params: {
-              ...filterParams,
-              'quantity': chapter.totalAyat,
-              'offline': true,
-              if (qSettings.containsKey('translation') &&
-                  qSettings['translation']) ...{'include': 'ayah-translations'},
-            },
-          );
+    return prefs.when(
+      loading: () => const SizedBox.shrink(),
+      error: (error, _) => Text(error.toString()),
+      data: (preferences) {
+        var arabicFontSizeRatio =
+            FontSizeRatio(value: preferences.getDouble('ayahFontRatio'));
+        var banglaFontSizeRatio =
+            FontSizeRatio(value: preferences.getDouble('translationFontRatio'));
 
-          var modelQuery = ref.watch(allModelsProvider(query));
+        var query = AllModelsQuery(
+          repository: ref.ayahs,
+          params: {
+            ...filterParams,
+            'quantity': chapter.totalAyat,
+            'offline': true,
+            if (qSettings.containsKey('translation') &&
+                qSettings['translation']) ...{'include': 'ayah-translations'},
+          },
+        );
 
-          return modelQuery.when(
+        var modelQuery = ref.watch(allModelsProvider(query));
+
+        return AppScaffold(
+          title: Text(
+            contextualTranslation(
+              locale: currentLang,
+              enText: chapter.title,
+              bnText: chapter.titleBn,
+            ),
+          ),
+          body: modelQuery.when(
             loading: () {
               return const Center(
                 child: CircularProgressIndicator(),
@@ -133,152 +136,156 @@ class AyahList extends ConsumerWidget {
                 );
               }
             },
-          );
-        },
-      ),
-      bottomBar: BottomBar(
-        alignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
+          ),
+          bottomBar: BottomBar(
+            alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                margin: EdgeInsets.only(left: isSmallMobile ? 0 : 2),
-                child: TextButton(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (qSettings.containsKey('tilawat') &&
-                          qSettings['tilawat']) ...[
-                        const Icon(
-                          Icons.check_box,
-                          color: ThemeColors.color4,
-                          size: 20,
-                        ),
-                      ] else ...[
-                        const Icon(
-                          Icons.check_box_outline_blank,
-                          color: ThemeColors.color4,
-                          size: 20,
-                        ),
-                      ],
-                      Container(
-                        margin: const EdgeInsets.only(left: 2, bottom: 1),
-                        child: Text(
-                          locales.tilawat,
-                          style: isSmallMobile
-                              ? textTheme.labelSmall
-                              : textTheme.labelMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                  onPressed: () {
-                    bool selectedTranslationOption =
-                        qSettings.containsKey('tilawat')
-                            ? qSettings['tilawat']
-                            : false;
-
-                    ref.read(quranSettingsProvider.notifier).updateSettings(
-                          'tilawat',
-                          !selectedTranslationOption,
-                        );
-                  },
-                ),
-              ),
-              if (!(qSettings.containsKey('tilawat') &&
-                  qSettings['tilawat'])) ...[
-                Container(
-                  margin: const EdgeInsets.only(left: 2),
-                  child: TextButton(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (qSettings.containsKey('translation') &&
-                            qSettings['translation']) ...[
-                          const Icon(
-                            Icons.check_box,
-                            color: ThemeColors.color4,
-                            size: 20,
-                          ),
-                        ] else ...[
-                          const Icon(
-                            Icons.check_box_outline_blank,
-                            color: ThemeColors.color4,
-                            size: 20,
+              Row(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: isSmallMobile ? 0 : 2),
+                    child: TextButton(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (qSettings.containsKey('tilawat') &&
+                              qSettings['tilawat']) ...[
+                            const Icon(
+                              Icons.check_box,
+                              color: ThemeColors.color4,
+                              size: 20,
+                            ),
+                          ] else ...[
+                            const Icon(
+                              Icons.check_box_outline_blank,
+                              color: ThemeColors.color4,
+                              size: 20,
+                            ),
+                          ],
+                          Container(
+                            margin: const EdgeInsets.only(left: 2, bottom: 1),
+                            child: Text(
+                              locales.tilawat,
+                              style: isSmallMobile
+                                  ? textTheme.labelSmall
+                                  : textTheme.labelMedium,
+                            ),
                           ),
                         ],
-                        Container(
-                          margin: const EdgeInsets.only(left: 2, bottom: 1),
-                          child: Text(
-                            locales.translation,
-                            style: isSmallMobile
-                                ? textTheme.labelSmall
-                                : textTheme.labelMedium,
-                          ),
-                        ),
-                      ],
-                    ),
-                    onPressed: () {
-                      bool selectedTranslationOption =
-                          qSettings.containsKey('translation')
-                              ? qSettings['translation']
-                              : false;
+                      ),
+                      onPressed: () {
+                        bool selectedTranslationOption =
+                            qSettings.containsKey('tilawat')
+                                ? qSettings['tilawat']
+                                : false;
 
-                      ref.read(quranSettingsProvider.notifier).updateSettings(
-                            'translation',
-                            !selectedTranslationOption,
-                          );
-                    },
+                        ref.read(quranSettingsProvider.notifier).updateSettings(
+                              'tilawat',
+                              !selectedTranslationOption,
+                            );
+                      },
+                    ),
                   ),
-                ),
-              ],
-            ],
-          ),
-          Row(
-            children: [
-              TextButton(
-                child: Text(locales.font, style: textTheme.titleMedium),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Dialog(
-                        child: SizedBox(
-                          width: 200,
-                          height: 100,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Center(
-                                child: FontResizer(
-                                  fontSizeRatio: arabicFontSizeRatio,
-                                  text: locales.arabicFont,
-                                ),
+                  if (!(qSettings.containsKey('tilawat') &&
+                      qSettings['tilawat'])) ...[
+                    Container(
+                      margin: const EdgeInsets.only(left: 2),
+                      child: TextButton(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (qSettings.containsKey('translation') &&
+                                qSettings['translation']) ...[
+                              const Icon(
+                                Icons.check_box,
+                                color: ThemeColors.color4,
+                                size: 20,
                               ),
-                              FontResizer(
-                                fontSizeRatio: banglaFontSizeRatio,
-                                text: locales.banglaFont,
+                            ] else ...[
+                              const Icon(
+                                Icons.check_box_outline_blank,
+                                color: ThemeColors.color4,
+                                size: 20,
                               ),
                             ],
-                          ),
+                            Container(
+                              margin: const EdgeInsets.only(left: 2, bottom: 1),
+                              child: Text(
+                                locales.translation,
+                                style: isSmallMobile
+                                    ? textTheme.labelSmall
+                                    : textTheme.labelMedium,
+                              ),
+                            ),
+                          ],
                         ),
+                        onPressed: () {
+                          bool selectedTranslationOption =
+                              qSettings.containsKey('translation')
+                                  ? qSettings['translation']
+                                  : false;
+
+                          ref
+                              .read(quranSettingsProvider.notifier)
+                              .updateSettings(
+                                'translation',
+                                !selectedTranslationOption,
+                              );
+                        },
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              Row(
+                children: [
+                  TextButton(
+                    child: Text(locales.font, style: textTheme.titleMedium),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Dialog(
+                            child: SizedBox(
+                              width: 200,
+                              height: 100,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Center(
+                                    child: FontResizer(
+                                      fontSizeRatio: arabicFontSizeRatio,
+                                      text: locales.arabicFont,
+                                      storeKey: 'ayahFontRatio',
+                                    ),
+                                  ),
+                                  FontResizer(
+                                    fontSizeRatio: banglaFontSizeRatio,
+                                    text: locales.banglaFont,
+                                    storeKey: 'translationFontRatio',
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       );
                     },
-                  );
-                },
-              ),
-              Container(
-                margin: EdgeInsets.only(right: isSmallMobile ? 0 : 2),
-                child: IconButton(
-                  icon: const Icon(Icons.settings),
-                  onPressed: () => QR.to('quran/settings'),
-                ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(right: isSmallMobile ? 0 : 2),
+                    child: IconButton(
+                      icon: const Icon(Icons.settings),
+                      onPressed: () => QR.to('quran/settings'),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

@@ -8,10 +8,10 @@ import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
+import 'package:native_app/widgets/presentation/resizable_font.dart';
 import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
-import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/widgets/page/title.dart';
 import 'package:native_app/widgets/page/subtitle.dart';
 import 'package:native_app/widgets/page/html_body.dart';
@@ -29,7 +29,6 @@ class Article extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    var fontSizeRatio = FontSizeRatio();
 
     var query = SingleModelQuery(
       repository: ref.articles,
@@ -73,71 +72,79 @@ class Article extends ConsumerWidget {
           }
         }
 
-        return AppScaffold(
-          onBackPressed: () async => await QR.to('articles'),
-          title: Text(locales.article),
-          body: NextPageSwipe(
-            onPrevious: previousPage,
-            onNext: nextPage,
-            child: ItemContent(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(bottom: 15),
-                  child: PageTitle(
-                    text: resource.title,
-                    fontSizeRatio: fontSizeRatio,
-                  ),
-                ),
-                if (resource.articleAuthor.value != null) ...[
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 15),
-                    child: PageSubtitle(
-                      text: resource.articleAuthor.value.name,
-                      fontSizeRatio: fontSizeRatio,
+        return ResizableFont(
+          storeKey: 'articleFontRatio',
+          builder: (context, fontSizeRatio) {
+            return AppScaffold(
+              onBackPressed: () async => await QR.to('articles'),
+              title: Text(locales.article),
+              body: NextPageSwipe(
+                onPrevious: previousPage,
+                onNext: nextPage,
+                child: ItemContent(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      child: PageTitle(
+                        text: resource.title,
+                        fontSizeRatio: fontSizeRatio,
+                      ),
                     ),
-                  ),
-                ],
-                if (resource.document != null) ...[
-                  DownloadItem(
-                    filePath: resource.document['id'],
-                    fileUrl: fileSrcUrl(resource.document),
-                    textWidth: 95,
-                    downloadedTextWidth: 120,
-                  ),
-                ],
-                Container(
-                  margin: const EdgeInsets.only(bottom: 30),
-                  child: PageHtmlBody(
-                    text: resource.body,
-                    fontSizeRatio: fontSizeRatio,
-                  ),
+                    if (resource.articleAuthor.value != null) ...[
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 15),
+                        child: PageSubtitle(
+                          text: resource.articleAuthor.value.name,
+                          fontSizeRatio: fontSizeRatio,
+                        ),
+                      ),
+                    ],
+                    if (resource.document != null) ...[
+                      DownloadItem(
+                        filePath: resource.document['id'],
+                        fileUrl: fileSrcUrl(resource.document),
+                        textWidth: 95,
+                        downloadedTextWidth: 120,
+                      ),
+                    ],
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 30),
+                      child: PageHtmlBody(
+                        text: resource.body,
+                        fontSizeRatio: fontSizeRatio,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          bottomBar: BottomBar(
-            alignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Previous(onPrevious: previousPage),
-              Row(
+              ),
+              bottomBar: BottomBar(
+                alignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SocialShare(
-                    title: resource.title,
-                    subtitle: resource.articleAuthor.value?.name,
-                    body: resource.body,
-                    link: 'articles/${resource.id}',
+                  Previous(onPrevious: previousPage),
+                  Row(
+                    children: [
+                      SocialShare(
+                        title: resource.title,
+                        subtitle: resource.articleAuthor.value?.name,
+                        body: resource.body,
+                        link: 'articles/${resource.id}',
+                      ),
+                      BookmarkButton(
+                        type: 'Article',
+                        title: resource.title,
+                        link: 'articles/${resource.id}',
+                      ),
+                    ],
                   ),
-                  BookmarkButton(
-                    type: 'Article',
-                    title: resource.title,
-                    link: 'articles/${resource.id}',
+                  FontResizer(
+                    fontSizeRatio: fontSizeRatio,
+                    storeKey: 'articleFontRatio',
                   ),
+                  Next(onNext: nextPage),
                 ],
               ),
-              FontResizer(fontSizeRatio: fontSizeRatio),
-              Next(onNext: nextPage),
-            ],
-          ),
+            );
+          },
         );
       },
     );

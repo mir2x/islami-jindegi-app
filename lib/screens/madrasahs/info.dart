@@ -7,9 +7,9 @@ import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
+import 'package:native_app/widgets/presentation/resizable_font.dart';
 import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/widgets/page/title.dart';
 import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
@@ -23,8 +23,6 @@ class MadrasahInfo extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var fontSizeRatio = FontSizeRatio();
-
     var query = SingleModelQuery(
       repository: ref.madrasahInfos,
       id: QR.params['info_id'].toString(),
@@ -85,44 +83,52 @@ class MadrasahInfo extends ConsumerWidget {
           }
         }
 
-        return AppScaffold(
-          onBackPressed: () async =>
-              await QR.to('madrasahs/${resource.madrasah.value.id}'),
-          title: Text(resource.madrasah.value.title),
-          body: NextPageSwipe(
-            onPrevious: previousPage,
-            onNext: nextPage,
-            child: ItemContent(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(bottom: 15),
-                  child: PageTitle(
-                    text: resource.label,
-                    fontSizeRatio: fontSizeRatio,
-                  ),
+        return ResizableFont(
+          storeKey: 'madrasahFontRatio',
+          builder: (context, fontSizeRatio) {
+            return AppScaffold(
+              onBackPressed: () async =>
+                  await QR.to('madrasahs/${resource.madrasah.value.id}'),
+              title: Text(resource.madrasah.value.title),
+              body: NextPageSwipe(
+                onPrevious: previousPage,
+                onNext: nextPage,
+                child: ItemContent(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      child: PageTitle(
+                        text: resource.label,
+                        fontSizeRatio: fontSizeRatio,
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 30),
+                      child: PageHtmlBody(
+                        text: resource.info,
+                        fontSizeRatio: fontSizeRatio,
+                      ),
+                    ),
+                  ],
                 ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 30),
-                  child: PageHtmlBody(
-                    text: resource.info,
-                    fontSizeRatio: fontSizeRatio,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          bottomBar: BottomBar(
-            alignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Previous(onPrevious: previousPage),
-              SocialShare(
-                title: resource.label,
-                body: resource.info,
               ),
-              FontResizer(fontSizeRatio: fontSizeRatio),
-              Next(onNext: nextPage),
-            ],
-          ),
+              bottomBar: BottomBar(
+                alignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Previous(onPrevious: previousPage),
+                  SocialShare(
+                    title: resource.label,
+                    body: resource.info,
+                  ),
+                  FontResizer(
+                    fontSizeRatio: fontSizeRatio,
+                    storeKey: 'madrasahFontRatio',
+                  ),
+                  Next(onNext: nextPage),
+                ],
+              ),
+            );
+          },
         );
       },
     );

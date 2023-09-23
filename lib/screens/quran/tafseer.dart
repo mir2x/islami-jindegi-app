@@ -11,6 +11,7 @@ import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
+import 'package:native_app/widgets/presentation/resizable_font.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/buttons/dropdown.dart';
 import 'package:native_app/widgets/presentation/section_title.dart';
@@ -27,7 +28,6 @@ class Tafseer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    var fontSizeRatio = FontSizeRatio();
 
     var query = SingleModelQuery(
       repository: ref.ayahs,
@@ -36,51 +36,59 @@ class Tafseer extends ConsumerWidget {
 
     var ayahQuery = ref.watch(singleModelProvider(query));
 
-    return AppScaffold(
-      title: Text(locales.tafseer),
-      body: ayahQuery.when(
-        loading: () => const FullScreenLoader(),
-        error: (error, _) => ModelExeptionHandler(error: error),
-        data: (ayah) {
-          return ItemContent(
+    return ResizableFont(
+      storeKey: 'tafseerFontRatio',
+      builder: (context, fontSizeRatio) {
+        return AppScaffold(
+          title: Text(locales.tafseer),
+          body: ayahQuery.when(
+            loading: () => const FullScreenLoader(),
+            error: (error, _) => ModelExeptionHandler(error: error),
+            data: (ayah) {
+              return ItemContent(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 5),
+                    child: PageTitle(
+                      text: locales.ayah,
+                      fontSizeRatio: fontSizeRatio,
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.only(bottom: 30),
+                    child: ValueListenableBuilder<double>(
+                      valueListenable: fontSizeRatio,
+                      builder: (context, ratio, child) {
+                        return Text(
+                          ayah.title,
+                          textDirection: TextDirection.rtl,
+                          style: textTheme.headlineMedium?.copyWith(
+                            fontSize: 20 * ratio,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SelectQitab(),
+                  TafseerDisplay(fontSizeRatio: fontSizeRatio),
+                ],
+              );
+            },
+          ),
+          bottomBar: BottomBar(
             children: [
               Container(
-                margin: const EdgeInsets.only(bottom: 5),
-                child: PageTitle(
-                  text: locales.ayah,
+                margin: const EdgeInsets.only(left: 15),
+                child: FontResizer(
                   fontSizeRatio: fontSizeRatio,
+                  storeKey: 'tafseerFontRatio',
                 ),
               ),
-              Container(
-                width: double.infinity,
-                margin: const EdgeInsets.only(bottom: 30),
-                child: ValueListenableBuilder<double>(
-                  valueListenable: fontSizeRatio,
-                  builder: (context, ratio, child) {
-                    return Text(
-                      ayah.title,
-                      textDirection: TextDirection.rtl,
-                      style: textTheme.headlineMedium?.copyWith(
-                        fontSize: 20 * ratio,
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SelectQitab(),
-              TafseerDisplay(fontSizeRatio: fontSizeRatio),
             ],
-          );
-        },
-      ),
-      bottomBar: BottomBar(
-        children: [
-          Container(
-            margin: const EdgeInsets.only(left: 15),
-            child: FontResizer(fontSizeRatio: fontSizeRatio),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

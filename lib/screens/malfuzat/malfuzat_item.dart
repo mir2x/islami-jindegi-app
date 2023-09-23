@@ -8,11 +8,11 @@ import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
+import 'package:native_app/widgets/presentation/resizable_font.dart';
 import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/description_item.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
-import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/widgets/page/title.dart';
 import 'package:native_app/widgets/page/subtitle.dart';
 import 'package:native_app/widgets/page/html_body.dart';
@@ -34,7 +34,6 @@ class MalfuzatItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    var fontSizeRatio = FontSizeRatio();
 
     var query = SingleModelQuery(
       repository: ref.malfuzats,
@@ -78,106 +77,115 @@ class MalfuzatItem extends ConsumerWidget {
           }
         }
 
-        return AppScaffold(
-          onBackPressed: () async => await QR.to('malfuzat'),
-          title: Text(locales.malfuzat),
-          body: NextPageSwipe(
-            onPrevious: previousPage,
-            onNext: nextPage,
-            child: ItemContent(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(bottom: 15),
-                  child: PageTitle(
-                    text: resource.title,
-                    fontSizeRatio: fontSizeRatio,
-                  ),
-                ),
-                if (resource.malfuzatAuthor.value != null) ...[
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 15),
-                    child: PageSubtitle(
-                      text: resource.malfuzatAuthor.value.name,
-                      fontSizeRatio: fontSizeRatio,
+        return ResizableFont(
+          storeKey: 'malfuzatFontRatio',
+          builder: (context, fontSizeRatio) {
+            return AppScaffold(
+              onBackPressed: () async => await QR.to('malfuzat'),
+              title: Text(locales.malfuzat),
+              body: NextPageSwipe(
+                onPrevious: previousPage,
+                onNext: nextPage,
+                child: ItemContent(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      child: PageTitle(
+                        text: resource.title,
+                        fontSizeRatio: fontSizeRatio,
+                      ),
                     ),
-                  ),
-                ],
-                if (resource.body != null) ...[
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 30),
-                    child: PageHtmlBody(
-                      text: resource.body,
-                      fontSizeRatio: fontSizeRatio,
-                    ),
-                  ),
-                ],
-                if (resource.audio != null) ...[
-                  Container(
-                    margin: const EdgeInsets.only(top: 30),
-                    child: AudioPlayerWidget(
-                      audio: resource.audio,
-                    ),
-                  ),
-                ],
-                Container(
-                  margin: const EdgeInsets.only(top: 40),
-                  child: Column(
-                    children: [
-                      if (resource.audio?['metadata']?['duration'] != null) ...[
-                        DescriptionItem(
-                          title: '${locales.audioDuration}:',
-                          description: Text(
-                            playDuration(
-                              resource.audio['metadata']['duration'],
+                    if (resource.malfuzatAuthor.value != null) ...[
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 15),
+                        child: PageSubtitle(
+                          text: resource.malfuzatAuthor.value.name,
+                          fontSizeRatio: fontSizeRatio,
+                        ),
+                      ),
+                    ],
+                    if (resource.body != null) ...[
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 30),
+                        child: PageHtmlBody(
+                          text: resource.body,
+                          fontSizeRatio: fontSizeRatio,
+                        ),
+                      ),
+                    ],
+                    if (resource.audio != null) ...[
+                      Container(
+                        margin: const EdgeInsets.only(top: 30),
+                        child: AudioPlayerWidget(
+                          audio: resource.audio,
+                        ),
+                      ),
+                    ],
+                    Container(
+                      margin: const EdgeInsets.only(top: 40),
+                      child: Column(
+                        children: [
+                          if (resource.audio?['metadata']?['duration'] !=
+                              null) ...[
+                            DescriptionItem(
+                              title: '${locales.audioDuration}:',
+                              description: Text(
+                                playDuration(
+                                  resource.audio['metadata']['duration'],
+                                ),
+                                style: textTheme.labelMedium,
+                              ),
                             ),
-                            style: textTheme.labelMedium,
-                          ),
-                        ),
-                      ],
-                      if (resource.audio?['metadata']?['size'] != null) ...[
-                        DescriptionItem(
-                          title: '${locales.audioSize}:',
-                          description: Text(
-                            fileSize(resource.audio['metadata']['size']),
-                            style: textTheme.labelMedium,
-                          ),
-                        ),
-                      ],
-                      if (resource.audio != null) ...[
-                        DownloadItem(
-                          filePath: resource.audio['id'],
-                          fileUrl: fileSrcUrl(resource.audio),
-                        ),
-                      ],
+                          ],
+                          if (resource.audio?['metadata']?['size'] != null) ...[
+                            DescriptionItem(
+                              title: '${locales.audioSize}:',
+                              description: Text(
+                                fileSize(resource.audio['metadata']['size']),
+                                style: textTheme.labelMedium,
+                              ),
+                            ),
+                          ],
+                          if (resource.audio != null) ...[
+                            DownloadItem(
+                              filePath: resource.audio['id'],
+                              fileUrl: fileSrcUrl(resource.audio),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              bottomBar: BottomBar(
+                alignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Previous(onPrevious: previousPage),
+                  Row(
+                    children: [
+                      SocialShare(
+                        title: resource.title,
+                        subtitle: resource.malfuzatAuthor.value?.name,
+                        body: resource.body,
+                        link: 'malfuzat/${resource.id}',
+                      ),
+                      BookmarkButton(
+                        type: 'Malfuzat',
+                        title: resource.title,
+                        link: 'malfuzat/${resource.id}',
+                      ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          ),
-          bottomBar: BottomBar(
-            alignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Previous(onPrevious: previousPage),
-              Row(
-                children: [
-                  SocialShare(
-                    title: resource.title,
-                    subtitle: resource.malfuzatAuthor.value?.name,
-                    body: resource.body,
-                    link: 'malfuzat/${resource.id}',
+                  FontResizer(
+                    fontSizeRatio: fontSizeRatio,
+                    storeKey: 'malfuzatFontRatio',
                   ),
-                  BookmarkButton(
-                    type: 'Malfuzat',
-                    title: resource.title,
-                    link: 'malfuzat/${resource.id}',
-                  ),
+                  Next(onNext: nextPage),
                 ],
               ),
-              FontResizer(fontSizeRatio: fontSizeRatio),
-              Next(onNext: nextPage),
-            ],
-          ),
+            );
+          },
         );
       },
     );

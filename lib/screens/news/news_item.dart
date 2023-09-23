@@ -8,9 +8,9 @@ import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
+import 'package:native_app/widgets/presentation/resizable_font.dart';
 import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/widgets/page/title.dart';
 import 'package:native_app/widgets/page/subtitle.dart';
 import 'package:native_app/widgets/page/html_body.dart';
@@ -29,7 +29,6 @@ class NewsItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
-    var fontSizeRatio = FontSizeRatio();
 
     var query = SingleModelQuery(
       repository: ref.news,
@@ -70,60 +69,68 @@ class NewsItem extends ConsumerWidget {
           }
         }
 
-        return AppScaffold(
-          onBackPressed: () async => await QR.to('news'),
-          title: Text(locales.news),
-          body: NextPageSwipe(
-            onPrevious: previousPage,
-            onNext: nextPage,
-            child: ItemContent(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(bottom: 15),
-                  child: PageTitle(
-                    text: resource.title,
-                    fontSizeRatio: fontSizeRatio,
-                  ),
+        return ResizableFont(
+          storeKey: 'newsFontRatio',
+          builder: (context, fontSizeRatio) {
+            return AppScaffold(
+              onBackPressed: () async => await QR.to('news'),
+              title: Text(locales.news),
+              body: NextPageSwipe(
+                onPrevious: previousPage,
+                onNext: nextPage,
+                child: ItemContent(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      child: PageTitle(
+                        text: resource.title,
+                        fontSizeRatio: fontSizeRatio,
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      child: PageSubtitle(
+                        text: formatDate(resource.publishedAt!, currentLang),
+                        fontSizeRatio: fontSizeRatio,
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 30),
+                      child: PageHtmlBody(
+                        text: resource.body,
+                        fontSizeRatio: fontSizeRatio,
+                      ),
+                    ),
+                  ],
                 ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 15),
-                  child: PageSubtitle(
-                    text: formatDate(resource.publishedAt!, currentLang),
-                    fontSizeRatio: fontSizeRatio,
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 30),
-                  child: PageHtmlBody(
-                    text: resource.body,
-                    fontSizeRatio: fontSizeRatio,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          bottomBar: BottomBar(
-            alignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Previous(onPrevious: previousPage),
-              Row(
+              ),
+              bottomBar: BottomBar(
+                alignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SocialShare(
-                    title: resource.title,
-                    body: resource.body,
-                    link: 'news/${resource.id}',
+                  Previous(onPrevious: previousPage),
+                  Row(
+                    children: [
+                      SocialShare(
+                        title: resource.title,
+                        body: resource.body,
+                        link: 'news/${resource.id}',
+                      ),
+                      BookmarkButton(
+                        type: 'News',
+                        title: resource.title,
+                        link: 'news/${resource.id}',
+                      ),
+                    ],
                   ),
-                  BookmarkButton(
-                    type: 'News',
-                    title: resource.title,
-                    link: 'news/${resource.id}',
+                  FontResizer(
+                    fontSizeRatio: fontSizeRatio,
+                    storeKey: 'newsFontRatio',
                   ),
+                  Next(onNext: nextPage),
                 ],
               ),
-              FontResizer(fontSizeRatio: fontSizeRatio),
-              Next(onNext: nextPage),
-            ],
-          ),
+            );
+          },
         );
       },
     );
