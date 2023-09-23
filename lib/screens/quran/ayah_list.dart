@@ -107,19 +107,21 @@ class AyahList extends ConsumerWidget {
                   },
                 );
               } else {
-                return Column(
-                  children: [
-                    InkWell(
-                      onTap: () => QR.to('quran/bismillah-tafseer'),
-                      child: Bismillah(
-                        chapter: chapter,
-                        preferences: preferences,
-                        arabicFontSizeRatio: arabicFontSizeRatio,
-                        banglaFontSizeRatio: banglaFontSizeRatio,
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      InkWell(
+                        onTap: () => QR.to('quran/bismillah-tafseer'),
+                        child: Bismillah(
+                          chapter: chapter,
+                          preferences: preferences,
+                          arabicFontSizeRatio: arabicFontSizeRatio,
+                          banglaFontSizeRatio: banglaFontSizeRatio,
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: ListView.builder(
+                      ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
                         itemCount: resources.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Ayah(
@@ -131,8 +133,8 @@ class AyahList extends ConsumerWidget {
                           );
                         },
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 );
               }
             },
