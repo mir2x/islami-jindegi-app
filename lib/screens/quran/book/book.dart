@@ -148,19 +148,20 @@ class QuranBook extends ConsumerWidget {
                       error: (error, stackTrace) => Text(error.toString()),
                       data: (connectivityResult) {
                         if (connectivityResult != ConnectivityResult.none) {
-                          return Row(
+                          return Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                '${locales.download} ${locales.quran}',
+                                locales.download,
                                 style: textTheme.labelLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(width: 10),
+                              const SizedBox(height: 10),
                               DownloadButton(
                                 filePath: filePath,
                                 fileUrl: fileUrl,
+                                direction: 'column',
                               ),
                             ],
                           );
