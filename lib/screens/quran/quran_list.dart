@@ -88,7 +88,7 @@ class QuranList extends ConsumerWidget {
                     child: Column(
                       children: [
                         InkWell(
-                          onTap: () => QR.to('quran/books/${item.id}'),
+                          onTap: () => QR.to('qurans/books/${item.id}'),
                           child: ResponsiveImage(
                             image: item.image,
                             model: 'quranBookQitab',

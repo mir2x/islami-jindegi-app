@@ -60,7 +60,13 @@ import '../screens/important_matters/index.dart';
 class AppRoutes {
   final routes = [
     QRoute(path: '/', name: 'root', builder: () => const Home()),
-    QRoute(path: '/qurans', builder: () => const QuranList()),
+    QRoute(
+      path: '/qurans',
+      builder: () => const QuranList(),
+      children: [
+        QRoute(path: '/books/:id', builder: () => const QuranBook()),
+      ],
+    ),
     QRoute(
       path: '/quran',
       builder: () => const Quran(),
@@ -99,7 +105,6 @@ class AppRoutes {
           path: '/search',
           builder: () => const QuranSearch(),
         ),
-        QRoute(path: '/books/:id', builder: () => const QuranBook()),
       ],
     ),
     QRoute(
