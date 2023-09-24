@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 
 import '../screens/home/index.dart';
@@ -57,6 +58,8 @@ import '../screens/about/index.dart';
 import '../screens/contact_us/index.dart';
 import '../screens/important_matters/index.dart';
 
+final PageStorageBucket _bucket = PageStorageBucket();
+
 class AppRoutes {
   final routes = [
     QRoute(path: '/', name: 'root', builder: () => const Home()),
@@ -73,7 +76,10 @@ class AppRoutes {
       children: [
         QRoute(
           path: '/surah/:slug',
-          builder: () => const Surah(),
+          builder: () => PageStorage(
+            bucket: _bucket,
+            child: const Surah(),
+          ),
           children: [
             QRoute(
               path: '/description',
@@ -83,7 +89,10 @@ class AppRoutes {
         ),
         QRoute(
           path: '/para/:slug',
-          builder: () => const Para(),
+          builder: () => PageStorage(
+            bucket: _bucket,
+            child: const Para(),
+          ),
         ),
         QRoute(
           path: '/tafseers/:ayah_id',

@@ -120,6 +120,7 @@ class AyahList extends ConsumerWidget {
                         ),
                       ),
                       ListView.builder(
+                        key: PageStorageKey<String>(chapter.id),
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: resources.length,
