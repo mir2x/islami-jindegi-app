@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/providers/all_models.dart';
-import 'package:native_app/widgets/image/static_image.dart';
 import 'package:native_app/widgets/responsive/image.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 
@@ -48,20 +48,17 @@ class QuranList extends ConsumerWidget {
                     style: textTheme.labelLarge,
                   ),
                 ),
-                FractionallySizedBox(
-                  widthFactor: isMobile ? 0.5 : 0.4,
-                  child: const StaticImage(
-                    image: 'assets/images/al-quran/cover/cover',
-                    extension: 'webp',
-                    width: 717,
-                    height: 934,
-                  ),
+                SvgPicture.asset(
+                  'assets/images/books/quran.svg',
+                  fit: BoxFit.contain,
+                  width: isMobile ? 175 : 250,
+                  height: isMobile ? 270 : 386,
                 ),
               ],
             ),
           ),
           Container(
-            margin: const EdgeInsets.only(top: 60, left: 5, bottom: 20),
+            margin: const EdgeInsets.only(top: 50, left: 5, bottom: 20),
             child: Text(locales.pageBasedQuran, style: textTheme.labelLarge),
           ),
           modelQuery.when(
