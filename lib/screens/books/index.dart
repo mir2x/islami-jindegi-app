@@ -17,7 +17,6 @@ import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/nested_item.dart';
 import 'package:native_app/widgets/filter/subitem.dart';
 import 'package:native_app/widgets/responsive/image.dart';
-import 'package:native_app/widgets/utils/comma_separated_list.dart';
 
 class Books extends ConsumerWidget {
   const Books({super.key});
@@ -163,45 +162,39 @@ class Books extends ConsumerWidget {
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: isMobile ? 2 : 3,
                   crossAxisSpacing: isMobile ? 15 : 20,
-                  mainAxisExtent: isMobile ? 410 : 500,
+                  mainAxisExtent: isMobile ? 330 : 400,
                 ),
                 itemBuilder: (_, item, __) {
-                  return Column(
-                    children: [
-                      InkWell(
-                        onTap: () => QR.to('books/${item.id}'),
-                        child: ResponsiveImage(
-                          image: item.image,
-                          model: 'book',
-                          vwset: const {'xs': 50},
+                  return InkWell(
+                    onTap: () => QR.to('books/${item.id}'),
+                    child: Column(
+                      children: [
+                        FractionallySizedBox(
+                          widthFactor: 0.7,
+                          child: ResponsiveImage(
+                            image: item.image,
+                            model: 'book',
+                            vwset: const {'xs': 50},
+                          ),
                         ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(top: 10),
-                        child: InkWell(
-                          onTap: () => QR.to('books/${item.id}'),
+                        Container(
+                          margin: const EdgeInsets.only(top: 10),
                           child: Text(
                             item.title,
                             style: textTheme.titleMedium,
                             textAlign: TextAlign.center,
                           ),
                         ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(top: 5),
-                        child: CommaSeparatedList(
-                          resources: item.authors.map((e) => e).toList(),
-                          alignment: WrapAlignment.center,
-                          builder: (_, author, __) {
-                            return Text(
-                              author.name,
-                              textAlign: TextAlign.center,
-                              style: textTheme.labelSmall,
-                            );
-                          },
+                        Container(
+                          margin: const EdgeInsets.only(top: 5),
+                          child: Text(
+                            item.authors.map((e) => e.name).toList().join(', '),
+                            textAlign: TextAlign.center,
+                            style: textTheme.labelSmall,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   );
                 },
               ),

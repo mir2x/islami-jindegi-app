@@ -20,6 +20,7 @@ class QuranList extends ConsumerWidget {
     String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
     double screenWidth = MediaQuery.of(context).size.width;
+    bool isMobile = screenWidth < 768;
 
     var query = AllModelsQuery(
       repository: ref.quranBookQitabs,
@@ -47,8 +48,8 @@ class QuranList extends ConsumerWidget {
                     style: textTheme.labelLarge,
                   ),
                 ),
-                SizedBox(
-                  width: screenWidth * 0.7,
+                FractionallySizedBox(
+                  widthFactor: isMobile ? 0.5 : 0.4,
                   child: const StaticImage(
                     image: 'assets/images/al-quran/cover/cover',
                     extension: 'webp',
@@ -74,10 +75,10 @@ class QuranList extends ConsumerWidget {
               return GridView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 20,
-                  mainAxisExtent: 380,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: isMobile ? 2 : 3,
+                  crossAxisSpacing: isMobile ? 15 : 20,
+                  mainAxisExtent: isMobile ? 325 : 400,
                 ),
                 itemCount: resources.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -89,10 +90,13 @@ class QuranList extends ConsumerWidget {
                       children: [
                         InkWell(
                           onTap: () => QR.to('qurans/books/${item.id}'),
-                          child: ResponsiveImage(
-                            image: item.image,
-                            model: 'quranBookQitab',
-                            vwset: const {'xs': 50},
+                          child: FractionallySizedBox(
+                            widthFactor: 0.8,
+                            child: ResponsiveImage(
+                              image: item.image,
+                              model: 'quranBookQitab',
+                              vwset: const {'xs': 50},
+                            ),
                           ),
                         ),
                         Container(
