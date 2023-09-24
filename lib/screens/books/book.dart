@@ -181,11 +181,7 @@ class BookItem extends ConsumerWidget {
                       ),
                     ),
                     if (book.document != null) ...[
-                      Container(
-                        height: 540,
-                        margin: const EdgeInsets.only(bottom: 40),
-                        child: PDFReader(document: book.document),
-                      ),
+                      PDFReader(document: book.document),
                     ] else ...[
                       Container(
                         margin: const EdgeInsets.only(bottom: 20),
@@ -225,9 +221,12 @@ class BookItem extends ConsumerWidget {
                       ),
                     ],
                     if (book.document != null) ...[
-                      DownloadItem(
-                        filePath: book.document['id'],
-                        fileUrl: fileSrcUrl(book.document),
+                      Container(
+                        margin: const EdgeInsets.only(top: 30),
+                        child: DownloadItem(
+                          filePath: book.document['id'],
+                          fileUrl: fileSrcUrl(book.document),
+                        ),
                       ),
                     ],
                   ],

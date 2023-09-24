@@ -1,7 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pdfx/pdfx.dart';
-import 'package:internet_file/internet_file.dart';
-import 'package:native_app/helpers/file_utils.dart';
 import 'local_file.dart';
 
 final pdfControllerProvider =
@@ -9,15 +7,7 @@ final pdfControllerProvider =
   var documentPath = document['id'];
   var localFile = await ref.read(localFileProvider(documentPath).future);
 
-  dynamic pdfDoc;
-
-  if (localFile != null) {
-    pdfDoc = PdfDocument.openFile(localFile.path);
-  } else {
-    pdfDoc = PdfDocument.openData(
-      InternetFile.get(fileSrcUrl(document)),
-    );
-  }
+  dynamic pdfDoc = PdfDocument.openFile(localFile!.path);
 
   var pdfController = PdfController(document: pdfDoc);
 

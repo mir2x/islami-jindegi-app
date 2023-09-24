@@ -14,25 +14,8 @@ class PdfBuilders {
     return PdfViewBuilders<DefaultBuilderOptions>(
       options: const DefaultBuilderOptions(),
       documentLoaderBuilder: (_) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const CircularProgressIndicator(),
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 25),
-              child: Text(
-                locales.downloading,
-                style: textTheme.labelLarge,
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                locales.downloadTips,
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
+        return const Center(
+          child: CircularProgressIndicator(),
         );
       },
       pageLoaderBuilder: (_) {
