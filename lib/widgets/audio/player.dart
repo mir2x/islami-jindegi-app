@@ -36,7 +36,7 @@ class AudioPlayerWidget extends ConsumerWidget {
           return audioPlayer.when(
             loading: () => Center(
               child: Container(
-                margin: const EdgeInsets.all(54),
+                margin: const EdgeInsets.only(top: 78, bottom: 77),
                 child: const CircularProgressIndicator(),
               ),
             ),
@@ -54,7 +54,7 @@ class AudioPlayerWidget extends ConsumerWidget {
           return audioPlayer.when(
             loading: () => Center(
               child: Container(
-                margin: const EdgeInsets.all(54),
+                margin: const EdgeInsets.only(top: 78, bottom: 77),
                 child: const CircularProgressIndicator(),
               ),
             ),
@@ -68,7 +68,7 @@ class AudioPlayerWidget extends ConsumerWidget {
               } else {
                 return Center(
                   child: Container(
-                    margin: const EdgeInsets.only(top: 27, bottom: 26),
+                    margin: const EdgeInsets.only(top: 49, bottom: 48),
                     child: const ConnectToInternet(),
                   ),
                 );
