@@ -7,6 +7,7 @@ import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/objects/progress_percentage.dart';
 import 'package:native_app/objects/download_params.dart';
+import 'package:native_app/helpers/file_size.dart';
 import 'package:native_app/theme/colors.dart';
 
 class DownloadButton extends ConsumerWidget {
@@ -46,7 +47,10 @@ class DownloadButton extends ConsumerWidget {
             fileUrl: fileUrl,
             progressNotifier: progressNotifier,
           ),
-          DownloadProgress(progressNotifier: progressNotifier),
+          Transform.translate(
+            offset: const Offset(0, -2),
+            child: DownloadProgress(progressNotifier: progressNotifier),
+          ),
         ],
       );
     }
@@ -117,6 +121,7 @@ class DownloadProgress extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var textTheme = Theme.of(context).textTheme;
     var prefs = ref.watch(preferencesProvider);
 
     return prefs.when(
@@ -125,22 +130,35 @@ class DownloadProgress extends ConsumerWidget {
       data: (preferences) {
         String theme = preferences.getString('theme') ?? 'dark';
 
-        return SizedBox(
-          width: 100,
-          child: ValueListenableBuilder<double>(
-            valueListenable: progressNotifier,
-            builder: (context, percent, child) {
-              if (percent > 0) {
-                return LinearProgressIndicator(
-                  backgroundColor:
-                      theme == 'dark' ? ThemeColors.color3 : ThemeColors.color9,
-                  value: percent,
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            },
-          ),
+        return ValueListenableBuilder<Map>(
+          valueListenable: progressNotifier,
+          builder: (context, progress, child) {
+            if (progress.isNotEmpty) {
+              int received = progress['received'];
+              int total = progress['total'];
+
+              return Column(
+                children: [
+                  Text(
+                    '${fileSize(received)}/${fileSize(total)}',
+                    style: textTheme.labelSmall,
+                  ),
+                  const SizedBox(height: 4),
+                  SizedBox(
+                    width: 110,
+                    child: LinearProgressIndicator(
+                      backgroundColor: theme == 'dark'
+                          ? ThemeColors.color3
+                          : ThemeColors.color9,
+                      value: received / total,
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          },
         );
       },
     );

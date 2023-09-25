@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class ProgressPercentage extends ValueNotifier<double> {
-  ProgressPercentage() : super(0);
+class ProgressPercentage extends ValueNotifier<Map> {
+  ProgressPercentage() : super({});
 
-  void update(double val) {
+  void update(Map val) {
     value = val;
   }
 }

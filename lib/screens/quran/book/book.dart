@@ -24,6 +24,7 @@ import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/download.dart';
 import 'package:native_app/widgets/buttons/delete.dart';
 import 'package:native_app/helpers/file_utils.dart';
+import 'package:native_app/helpers/file_size.dart';
 import 'drawer.dart';
 
 class QuranBook extends ConsumerWidget {
@@ -158,6 +159,8 @@ class QuranBook extends ConsumerWidget {
                       error: (error, stackTrace) => Text(error.toString()),
                       data: (connectivityResult) {
                         if (connectivityResult != ConnectivityResult.none) {
+                          int size = qitab.document['metadata']['size'];
+
                           return Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -166,6 +169,11 @@ class QuranBook extends ConsumerWidget {
                                 style: textTheme.labelLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                '${locales.fileSize}:  ${fileSize(size)}',
+                                style: textTheme.labelMedium,
                               ),
                               const SizedBox(height: 10),
                               DownloadButton(

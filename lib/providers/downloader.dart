@@ -24,7 +24,10 @@ final downloaderProvider = FutureProvider.autoDispose
       cancelToken: cancelToken,
       onReceiveProgress: (int received, int total) {
         if (total != -1) {
-          params.downloadProgress.update(received / total);
+          params.downloadProgress.update({
+            'received': received,
+            'total': total,
+          });
         }
       },
     );
