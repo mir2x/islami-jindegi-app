@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'colors.dart';
 
-ThemeData darkTheme(preferences) {
+ThemeData darkTheme(Map fonts) {
   return ThemeData(
-    fontFamily: preferences.getString('banglaFont') ?? 'bangla/solaimanlipi',
-    fontFamilyFallback: [
-      preferences.getString('arabicFont') ?? 'arabic/al-qalam-quran-majeed',
-      'Roboto',
-    ],
+    fontFamily: fonts['fontFamily'],
+    fontFamilyFallback: fonts['fontFamilyFallback'],
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
         color: ThemeColors.color3,
@@ -81,13 +78,10 @@ ThemeData darkTheme(preferences) {
   );
 }
 
-ThemeData lightTheme(preferences) {
+ThemeData lightTheme(Map fonts) {
   return ThemeData(
-    fontFamily: preferences.getString('banglaFont') ?? 'bangla/solaimanlipi',
-    fontFamilyFallback: [
-      preferences.getString('arabicFont') ?? 'arabic/al-qalam-quran-majeed',
-      'Roboto',
-    ],
+    fontFamily: fonts['fontFamily'],
+    fontFamilyFallback: fonts['fontFamilyFallback'],
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
         color: ThemeColors.color2,

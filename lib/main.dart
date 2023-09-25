@@ -94,13 +94,22 @@ class MyApp extends ConsumerWidget {
       error: (error, _) => Text(error.toString()),
       data: (preferences) {
         String theme = preferences.getString('theme') ?? 'dark';
+        String banglaFont =
+            preferences.getString('banglaFont') ?? 'bangla/solaimanlipi';
+        String arabicFont = preferences.getString('arabicFont') ??
+            'arabic/al-qalam-quran-majeed';
+
+        Map fonts = {
+          'fontFamily': banglaFont,
+          'fontFamilyFallback': [arabicFont, 'Roboto'],
+        };
 
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           routeInformationParser: const QRouteInformationParser(),
           routerDelegate: QRouterDelegate(AppRoutes().routes),
-          theme: lightTheme(preferences),
-          darkTheme: darkTheme(preferences),
+          theme: lightTheme(fonts),
+          darkTheme: darkTheme(fonts),
           themeMode: theme == 'dark' ? ThemeMode.dark : ThemeMode.light,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
