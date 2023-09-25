@@ -89,13 +89,10 @@ class Ayah extends ConsumerWidget {
                     ),
                     if (qSettings.containsKey('qari') &&
                         chapter.runtimeType.toString() == 'Surah') ...[
-                      Container(
-                        margin: const EdgeInsets.only(top: 8),
-                        child: Qirat(
-                          surah: chapter,
-                          ayah: ayah,
-                          qari: qSettings['qari'],
-                        ),
+                      QiratButton(
+                        surah: chapter,
+                        ayah: ayah,
+                        qari: qSettings['qari'],
                       ),
                     ],
                   ],
@@ -208,6 +205,53 @@ class Ayah extends ConsumerWidget {
           ],
         ],
       ),
+    );
+  }
+}
+
+class QiratButton extends StatefulWidget {
+  const QiratButton({
+    super.key,
+    required this.surah,
+    required this.ayah,
+    required this.qari,
+  });
+
+  final dynamic surah;
+  final dynamic ayah;
+  final String qari;
+
+  @override
+  State<QiratButton> createState() => _QiratButtonState();
+}
+
+class _QiratButtonState extends State<QiratButton> {
+  bool playerLoaded = false;
+
+  void loadPlayer() {
+    setState(() {
+      playerLoaded = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      child: playerLoaded
+          ? Qirat(
+              surah: widget.surah,
+              ayah: widget.ayah,
+              qari: widget.qari,
+            )
+          : InkWell(
+              onTap: loadPlayer,
+              child: SvgPicture.asset(
+                'assets/images/icons/play.svg',
+                width: 30,
+                height: 30,
+              ),
+            ),
     );
   }
 }

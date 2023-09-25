@@ -36,7 +36,11 @@ class Qirat extends ConsumerWidget {
           var audioPlayer = ref.watch(qiratPlayerProvider(src));
 
           return audioPlayer.when(
-            loading: () => const Icon(Icons.play_disabled, size: 30),
+            loading: () => SvgPicture.asset(
+              'assets/images/icons/pause.svg',
+              width: 30,
+              height: 30,
+            ),
             error: (error, _) {
               return const Icon(Icons.play_disabled, size: 30);
             },
@@ -74,6 +78,8 @@ class _QiratPlayerState extends State<StatefulQiratPlayer> {
   @override
   void initState() {
     super.initState();
+
+    _playerState = PlayerState.playing;
 
     _playerStateSubscription =
         widget.player.onPlayerStateChanged.listen((PlayerState s) {
