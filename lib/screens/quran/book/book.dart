@@ -5,6 +5,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/pdf_controller.dart';
 import 'package:native_app/providers/single_model.dart';
@@ -13,6 +14,7 @@ import 'package:native_app/providers/connectivity_result.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/objects/all_models_query.dart';
+import 'package:native_app/objects/pdf_source.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/document/pdf_builders.dart';
@@ -65,7 +67,12 @@ class QuranBook extends ConsumerWidget {
             error: (error, stackTrace) => Text(error.toString()),
             data: (isDownloaded) {
               if (isDownloaded) {
-                var pdfCtrl = ref.watch(pdfControllerProvider(qitab.document));
+                PdfSource params = PdfSource(
+                  resourceId: qitab.id,
+                  document: qitab.document,
+                );
+
+                var pdfCtrl = ref.watch(pdfControllerProvider(params));
 
                 return pdfCtrl.when(
                   loading: () {
@@ -107,6 +114,9 @@ class QuranBook extends ConsumerWidget {
                               await ref.read(allModelsProvider(query).future);
 
                           if (resources.isNotEmpty) {
+                            var prefs = await SharedPreferences.getInstance();
+                            await prefs.setInt('pdfResource-${qitab.id}', page);
+
                             scaffoldMessenger.showSnackBar(
                               SnackBar(
                                 content: Text(

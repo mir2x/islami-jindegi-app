@@ -181,7 +181,7 @@ class BookItem extends ConsumerWidget {
                       ),
                     ),
                     if (book.document != null) ...[
-                      PDFReader(document: book.document),
+                      PDFReader(resourceId: book.id, document: book.document),
                     ] else ...[
                       Container(
                         margin: const EdgeInsets.only(bottom: 20),

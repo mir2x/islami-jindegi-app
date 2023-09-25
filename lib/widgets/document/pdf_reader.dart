@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:pdfx/pdfx.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/providers/pdf_controller.dart';
+import 'package:native_app/objects/pdf_source.dart';
 import 'pdf_builders.dart';
 
 class PDFReader extends ConsumerWidget {
   const PDFReader({
     super.key,
+    required this.resourceId,
     required this.document,
   });
 
+  final String resourceId;
   final Map document;
 
   @override
@@ -28,7 +32,12 @@ class PDFReader extends ConsumerWidget {
       error: (error, stackTrace) => Text(error.toString()),
       data: (isDownloaded) {
         if (isDownloaded) {
-          var pdfCtrl = ref.watch(pdfControllerProvider(document));
+          PdfSource params = PdfSource(
+            resourceId: resourceId,
+            document: document,
+          );
+
+          var pdfCtrl = ref.watch(pdfControllerProvider(params));
 
           return Container(
             height: 540,
@@ -86,6 +95,10 @@ class PDFReader extends ConsumerWidget {
                         builders:
                             PdfBuilders(locales: locales, textTheme: textTheme)
                                 .getViewBuilders(),
+                        onPageChanged: (page) async {
+                          var prefs = await SharedPreferences.getInstance();
+                          await prefs.setInt('pdfResource-$resourceId', page);
+                        },
                       ),
                     ),
                   ],
