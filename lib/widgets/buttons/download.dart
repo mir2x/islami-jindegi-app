@@ -25,6 +25,7 @@ class DownloadButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var progressNotifier = ProgressPercentage();
+    final cancelToken = CancelToken();
 
     if (direction == 'column') {
       return Column(
@@ -33,9 +34,13 @@ class DownloadButton extends ConsumerWidget {
           DownloadIcon(
             filePath: filePath,
             fileUrl: fileUrl,
+            cancelToken: cancelToken,
             progressNotifier: progressNotifier,
           ),
-          DownloadProgress(progressNotifier: progressNotifier),
+          DownloadProgress(
+            cancelToken: cancelToken,
+            progressNotifier: progressNotifier,
+          ),
         ],
       );
     } else {
@@ -45,11 +50,15 @@ class DownloadButton extends ConsumerWidget {
           DownloadIcon(
             filePath: filePath,
             fileUrl: fileUrl,
+            cancelToken: cancelToken,
             progressNotifier: progressNotifier,
           ),
           Transform.translate(
             offset: const Offset(0, -2),
-            child: DownloadProgress(progressNotifier: progressNotifier),
+            child: DownloadProgress(
+              cancelToken: cancelToken,
+              progressNotifier: progressNotifier,
+            ),
           ),
         ],
       );
@@ -62,11 +71,13 @@ class DownloadIcon extends ConsumerWidget {
     super.key,
     required this.filePath,
     required this.fileUrl,
+    required this.cancelToken,
     required this.progressNotifier,
   });
 
   final String filePath;
   final String fileUrl;
+  final CancelToken cancelToken;
   final ProgressPercentage progressNotifier;
 
   @override
@@ -81,6 +92,7 @@ class DownloadIcon extends ConsumerWidget {
         var params = DownloadParams(
           url: fileUrl,
           savePath: filePath,
+          cancelToken: cancelToken,
           downloadProgress: progressNotifier,
         );
 
@@ -92,7 +104,7 @@ class DownloadIcon extends ConsumerWidget {
           await ref
               .read(checkDownloadedFileProvider(filePath).notifier)
               .check(filePath);
-        } else if (context.mounted) {
+        } else if (response == null && context.mounted) {
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -114,9 +126,11 @@ class DownloadIcon extends ConsumerWidget {
 class DownloadProgress extends ConsumerWidget {
   const DownloadProgress({
     super.key,
+    required this.cancelToken,
     required this.progressNotifier,
   });
 
+  final CancelToken cancelToken;
   final ProgressPercentage progressNotifier;
 
   @override
@@ -137,21 +151,30 @@ class DownloadProgress extends ConsumerWidget {
               int received = progress['received'];
               int total = progress['total'];
 
-              return Column(
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    '${fileSize(received)}/${fileSize(total)}',
-                    style: textTheme.labelSmall,
+                  Column(
+                    children: [
+                      Text(
+                        '${fileSize(received)}/${fileSize(total)}',
+                        style: textTheme.labelSmall,
+                      ),
+                      const SizedBox(height: 4),
+                      SizedBox(
+                        width: 110,
+                        child: LinearProgressIndicator(
+                          backgroundColor: theme == 'dark'
+                              ? ThemeColors.color3
+                              : ThemeColors.color9,
+                          value: received / total,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 4),
-                  SizedBox(
-                    width: 110,
-                    child: LinearProgressIndicator(
-                      backgroundColor: theme == 'dark'
-                          ? ThemeColors.color3
-                          : ThemeColors.color9,
-                      value: received / total,
-                    ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => cancelToken.cancel(),
                   ),
                 ],
               );

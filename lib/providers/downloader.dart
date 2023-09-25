@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/objects/download_params.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
+import 'local_file.dart';
+import 'check_downloaded_file.dart';
 
 final downloaderProvider = FutureProvider.autoDispose
     .family<Response?, DownloadParams>((ref, DownloadParams params) async {
@@ -12,8 +14,7 @@ final downloaderProvider = FutureProvider.autoDispose
 
   if (dir == null) return null;
 
-  final cancelToken = CancelToken();
-  ref.onDispose(() => cancelToken.cancel());
+  ref.onDispose(() => params.cancelToken.cancel());
 
   Response? response;
 
@@ -21,7 +22,7 @@ final downloaderProvider = FutureProvider.autoDispose
     response = await Dio().download(
       params.url,
       '${dir.path}/${params.savePath}',
-      cancelToken: cancelToken,
+      cancelToken: params.cancelToken,
       onReceiveProgress: (int received, int total) {
         if (total != -1) {
           params.downloadProgress.update({
@@ -32,8 +33,26 @@ final downloaderProvider = FutureProvider.autoDispose
       },
     );
   } on DioException catch (e) {
-    if (CancelToken.isCancel(e)) {}
-    return null;
+    if (CancelToken.isCancel(e)) {
+      var localFile = await ref.read(
+        localFileProvider(params.savePath).future,
+      );
+
+      if (localFile != null) {
+        await localFile.delete();
+        await ref
+            .read(checkDownloadedFileProvider(params.savePath).notifier)
+            .check(params.savePath);
+      }
+
+      return Response(
+        requestOptions: RequestOptions(),
+        statusCode: 408,
+        statusMessage: 'Request cancelled',
+      );
+    } else {
+      return null;
+    }
   }
 
   return response;
