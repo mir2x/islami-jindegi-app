@@ -22,6 +22,8 @@ class AppScaffold extends ConsumerWidget {
     this.bottomBar,
     this.onBackPressed,
     this.isHome = false,
+    this.showAppBar = true,
+    this.showBottomBar = true,
   });
 
   final Text title;
@@ -30,6 +32,8 @@ class AppScaffold extends ConsumerWidget {
   final Widget? bottomBar;
   final Function? onBackPressed;
   final bool isHome;
+  final bool showAppBar;
+  final bool showBottomBar;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -56,125 +60,127 @@ class AppScaffold extends ConsumerWidget {
             }
           },
           child: Scaffold(
-            appBar: AppBar(
-              leading: Padding(
-                padding: const EdgeInsets.only(left: 15),
-                child: isHome
-                    ? theme == 'dark'
-                        ? SvgPicture.asset(
-                            'assets/images/logos/logo.svg',
-                            fit: BoxFit.scaleDown,
-                            width: 40,
-                            height: 35,
-                          )
-                        : SvgPicture.asset(
-                            'assets/images/logos/logo-light.svg',
-                            fit: BoxFit.scaleDown,
-                            width: 40,
-                            height: 35,
-                          )
-                    : IconButton(
-                        icon: const Icon(Icons.arrow_back),
-                        onPressed: () async {
-                          try {
-                            onBackPressed != null
-                                ? await onBackPressed!()
-                                : await QR.back();
-                          } catch (error) {
-                            await QR.navigator.replaceAll('/');
-                          }
-                        },
-                      ),
-              ),
-              title: title,
-              centerTitle: true,
-              actions: <Widget>[
-                const NotificationButton(),
-                Padding(
-                  padding: const EdgeInsets.only(right: 5),
-                  child: isHome
-                      ? PopupMenuButton<int>(
-                          child: const SizedBox(
-                            width: 40,
-                            child: Icon(
-                              Icons.more_vert,
-                            ),
-                          ),
-                          itemBuilder: (BuildContext context) =>
-                              <PopupMenuEntry<int>>[
-                            PopupMenuItem<int>(
-                              value: 0,
-                              child: Text(locales.settings),
-                            ),
-                            PopupMenuItem<int>(
-                              value: 1,
-                              child: Text(locales.contactUs),
-                            ),
-                            PopupMenuItem<int>(
-                              value: 2,
-                              child: Text(locales.shareThisApp),
-                            ),
-                            PopupMenuItem<int>(
-                              value: 3,
-                              child: Text(locales.rateThisApp),
-                            ),
-                            PopupMenuItem<int>(
-                              value: 4,
-                              child: Text(locales.iphoneAppLink),
-                            ),
-                            PopupMenuItem<int>(
-                              value: 5,
-                              child: Text(locales.websiteLink),
-                            ),
-                            PopupMenuItem<int>(
-                              value: 6,
-                              child: Text(locales.importantMatters),
-                            ),
-                          ],
-                          onSelected: (int item) {
-                            const androidAppLink =
-                                'https://play.google.com/store/apps/details?id=com.islami_jindegi';
-
-                            const iOSAppLink =
-                                'https://apps.apple.com/us/app/islami-jindegi/id1271205014';
-
-                            switch (item) {
-                              case 0:
-                                QR.to('settings');
-                                break;
-                              case 1:
-                                QR.to('contact-us');
-                                break;
-                              case 2:
-                                if (Platform.isAndroid) {
-                                  Share.share(androidAppLink);
-                                } else if (Platform.isIOS) {
-                                  Share.share(iOSAppLink);
+            appBar: showAppBar
+                ? AppBar(
+                    leading: Padding(
+                      padding: const EdgeInsets.only(left: 15),
+                      child: isHome
+                          ? theme == 'dark'
+                              ? SvgPicture.asset(
+                                  'assets/images/logos/logo.svg',
+                                  fit: BoxFit.scaleDown,
+                                  width: 40,
+                                  height: 35,
+                                )
+                              : SvgPicture.asset(
+                                  'assets/images/logos/logo-light.svg',
+                                  fit: BoxFit.scaleDown,
+                                  width: 40,
+                                  height: 35,
+                                )
+                          : IconButton(
+                              icon: const Icon(Icons.arrow_back),
+                              onPressed: () async {
+                                try {
+                                  onBackPressed != null
+                                      ? await onBackPressed!()
+                                      : await QR.back();
+                                } catch (error) {
+                                  await QR.navigator.replaceAll('/');
                                 }
-                                break;
-                              case 3:
-                                final Uri url = Uri.parse(androidAppLink);
-                                launchUrl(url);
-                                break;
-                              case 4:
-                                final Uri url = Uri.parse(iOSAppLink);
-                                launchUrl(url);
-                                break;
-                              case 5:
-                                final Uri url =
-                                    Uri.parse('https://islamidars.com');
-                                launchUrl(url);
-                                break;
-                              case 6:
-                                QR.to('important-matters');
-                                break;
-                            }
-                          },
-                        )
-                      : const MenuButton(),
-                ),
-              ],
-            ),
+                              },
+                            ),
+                    ),
+                    title: title,
+                    centerTitle: true,
+                    actions: <Widget>[
+                      const NotificationButton(),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 5),
+                        child: isHome
+                            ? PopupMenuButton<int>(
+                                child: const SizedBox(
+                                  width: 40,
+                                  child: Icon(
+                                    Icons.more_vert,
+                                  ),
+                                ),
+                                itemBuilder: (BuildContext context) =>
+                                    <PopupMenuEntry<int>>[
+                                  PopupMenuItem<int>(
+                                    value: 0,
+                                    child: Text(locales.settings),
+                                  ),
+                                  PopupMenuItem<int>(
+                                    value: 1,
+                                    child: Text(locales.contactUs),
+                                  ),
+                                  PopupMenuItem<int>(
+                                    value: 2,
+                                    child: Text(locales.shareThisApp),
+                                  ),
+                                  PopupMenuItem<int>(
+                                    value: 3,
+                                    child: Text(locales.rateThisApp),
+                                  ),
+                                  PopupMenuItem<int>(
+                                    value: 4,
+                                    child: Text(locales.iphoneAppLink),
+                                  ),
+                                  PopupMenuItem<int>(
+                                    value: 5,
+                                    child: Text(locales.websiteLink),
+                                  ),
+                                  PopupMenuItem<int>(
+                                    value: 6,
+                                    child: Text(locales.importantMatters),
+                                  ),
+                                ],
+                                onSelected: (int item) {
+                                  const androidAppLink =
+                                      'https://play.google.com/store/apps/details?id=com.islami_jindegi';
+
+                                  const iOSAppLink =
+                                      'https://apps.apple.com/us/app/islami-jindegi/id1271205014';
+
+                                  switch (item) {
+                                    case 0:
+                                      QR.to('settings');
+                                      break;
+                                    case 1:
+                                      QR.to('contact-us');
+                                      break;
+                                    case 2:
+                                      if (Platform.isAndroid) {
+                                        Share.share(androidAppLink);
+                                      } else if (Platform.isIOS) {
+                                        Share.share(iOSAppLink);
+                                      }
+                                      break;
+                                    case 3:
+                                      final Uri url = Uri.parse(androidAppLink);
+                                      launchUrl(url);
+                                      break;
+                                    case 4:
+                                      final Uri url = Uri.parse(iOSAppLink);
+                                      launchUrl(url);
+                                      break;
+                                    case 5:
+                                      final Uri url =
+                                          Uri.parse('https://islamidars.com');
+                                      launchUrl(url);
+                                      break;
+                                    case 6:
+                                      QR.to('important-matters');
+                                      break;
+                                  }
+                                },
+                              )
+                            : const MenuButton(),
+                      ),
+                    ],
+                  )
+                : null,
             drawer: drawer,
             endDrawer: Drawer(
               child: ListView(
@@ -247,7 +253,7 @@ class AppScaffold extends ConsumerWidget {
                 },
               ),
             ),
-            bottomNavigationBar: bottomBar,
+            bottomNavigationBar: showBottomBar ? bottomBar : null,
           ),
         );
       },
