@@ -11,6 +11,7 @@ class City extends DataModel<City> {
   @override
   final String id;
   final String name;
+  final String? nameBn;
   final String countryCode;
   final double latitude;
   final double longitude;
@@ -18,6 +19,7 @@ class City extends DataModel<City> {
   City({
     required this.id,
     required this.name,
+    this.nameBn,
     required this.countryCode,
     required this.latitude,
     required this.longitude,

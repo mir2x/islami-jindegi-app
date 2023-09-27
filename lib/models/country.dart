@@ -11,11 +11,13 @@ class Country extends DataModel<Country> {
   @override
   final String id;
   final String name;
+  final String? nameBn;
   final String code;
 
   Country({
     required this.id,
     required this.name,
+    this.nameBn,
     required this.code,
   });
 }

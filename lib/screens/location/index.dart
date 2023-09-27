@@ -13,6 +13,7 @@ import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/helpers/get_location_name.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
+import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/theme/colors.dart';
 
 class Location extends ConsumerWidget {
@@ -245,6 +246,7 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
   @override
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
+    String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
     var geoData = ref.watch(geolocationProvider);
 
@@ -293,6 +295,12 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
                       return await ref.read(allModelsProvider(query).future);
                     },
                     itemBuilder: (_, item, __) {
+                      String countryName = contextualTranslation(
+                        locale: currentLang,
+                        enText: item.name,
+                        bnText: item.nameBn,
+                      );
+
                       return InkWell(
                         onTap: () {
                           updateCountry(item);
@@ -301,7 +309,7 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           child: Text(
-                            item.name,
+                            countryName,
                             style: textTheme.titleMedium,
                           ),
                         ),
@@ -321,7 +329,14 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
                     },
                     icon: const Icon(Icons.arrow_back),
                   ),
-                  Text(selectedCountry.name, style: textTheme.labelLarge),
+                  Text(
+                    contextualTranslation(
+                      locale: currentLang,
+                      enText: selectedCountry.name,
+                      bnText: selectedCountry.nameBn,
+                    ),
+                    style: textTheme.labelLarge,
+                  ),
                 ],
               ),
               Container(
@@ -354,6 +369,12 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
                       return await ref.read(allModelsProvider(query).future);
                     },
                     itemBuilder: (_, item, __) {
+                      String cityName = contextualTranslation(
+                        locale: currentLang,
+                        enText: item.name,
+                        bnText: item.nameBn,
+                      );
+
                       return InkWell(
                         onTap: () async {
                           Navigator.of(context).pop();
@@ -377,7 +398,7 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           child: Text(
-                            item.name,
+                            cityName,
                             style: textTheme.titleMedium,
                           ),
                         ),

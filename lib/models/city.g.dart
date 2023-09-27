@@ -59,6 +59,7 @@ extension CityRelationshipGraphNodeX on RelationshipGraphNode<City> {}
 City _$CityFromJson(Map<String, dynamic> json) => City(
       id: json['id'] as String,
       name: json['name'] as String,
+      nameBn: json['name-bn'] as String?,
       countryCode: json['country-code'] as String,
       latitude: (json['latitude'] as num).toDouble(),
       longitude: (json['longitude'] as num).toDouble(),
@@ -67,6 +68,7 @@ City _$CityFromJson(Map<String, dynamic> json) => City(
 Map<String, dynamic> _$CityToJson(City instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
+      'name-bn': instance.nameBn,
       'country-code': instance.countryCode,
       'latitude': instance.latitude,
       'longitude': instance.longitude,

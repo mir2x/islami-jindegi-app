@@ -67,7 +67,11 @@ class LocalLocationAPI extends _$LocalLocationAPI {
     var query = select(countries);
 
     if (params.containsKey('search')) {
-      query.where((t) => t.name.like('%${params['search']}%'));
+      query.where(
+        (t) =>
+            t.name.like('%${params['search']}%') |
+            t.nameBn.like('%${params['search']}%'),
+      );
     }
 
     if (params.containsKey('page') && params.containsKey('per_page')) {
@@ -92,7 +96,11 @@ class LocalLocationAPI extends _$LocalLocationAPI {
     );
 
     if (params.containsKey('search')) {
-      query.where((t) => t.name.like('%${params['search']}%'));
+      query.where(
+        (t) =>
+            t.name.like('%${params['search']}%') |
+            t.nameBn.like('%${params['search']}%'),
+      );
     }
 
     if (params.containsKey('page') && params.containsKey('per_page')) {

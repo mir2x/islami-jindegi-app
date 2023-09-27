@@ -60,11 +60,13 @@ extension CountryRelationshipGraphNodeX on RelationshipGraphNode<Country> {}
 Country _$CountryFromJson(Map<String, dynamic> json) => Country(
       id: json['id'] as String,
       name: json['name'] as String,
+      nameBn: json['name-bn'] as String?,
       code: json['code'] as String,
     );
 
 Map<String, dynamic> _$CountryToJson(Country instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
+      'name-bn': instance.nameBn,
       'code': instance.code,
     };

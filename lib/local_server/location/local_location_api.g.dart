@@ -18,11 +18,15 @@ class $CountriesTable extends Countries
       'name', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
+  late final GeneratedColumn<String> nameBn = GeneratedColumn<String>(
+      'name_bn', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
   late final GeneratedColumn<String> code = GeneratedColumn<String>(
       'code', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [id, name, code];
+  List<GeneratedColumn> get $columns => [id, name, nameBn, code];
   @override
   String get aliasedName => _alias ?? 'countries';
   @override
@@ -37,6 +41,8 @@ class $CountriesTable extends Countries
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      nameBn: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name_bn']),
       code: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}code'])!,
     );
@@ -51,13 +57,18 @@ class $CountriesTable extends Countries
 class Country extends DataClass implements Insertable<Country> {
   final String id;
   final String name;
+  final String? nameBn;
   final String code;
-  const Country({required this.id, required this.name, required this.code});
+  const Country(
+      {required this.id, required this.name, this.nameBn, required this.code});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['name'] = Variable<String>(name);
+    if (!nullToAbsent || nameBn != null) {
+      map['name_bn'] = Variable<String>(nameBn);
+    }
     map['code'] = Variable<String>(code);
     return map;
   }
@@ -68,6 +79,7 @@ class Country extends DataClass implements Insertable<Country> {
     return Country(
       id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
+      nameBn: serializer.fromJson<String?>(json['nameBn']),
       code: serializer.fromJson<String>(json['code']),
     );
   }
@@ -77,13 +89,20 @@ class Country extends DataClass implements Insertable<Country> {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'name': serializer.toJson<String>(name),
+      'nameBn': serializer.toJson<String?>(nameBn),
       'code': serializer.toJson<String>(code),
     };
   }
 
-  Country copyWith({String? id, String? name, String? code}) => Country(
+  Country copyWith(
+          {String? id,
+          String? name,
+          Value<String?> nameBn = const Value.absent(),
+          String? code}) =>
+      Country(
         id: id ?? this.id,
         name: name ?? this.name,
+        nameBn: nameBn.present ? nameBn.value : this.nameBn,
         code: code ?? this.code,
       );
   @override
@@ -91,36 +110,41 @@ class Country extends DataClass implements Insertable<Country> {
     return (StringBuffer('Country(')
           ..write('id: $id, ')
           ..write('name: $name, ')
+          ..write('nameBn: $nameBn, ')
           ..write('code: $code')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, code);
+  int get hashCode => Object.hash(id, name, nameBn, code);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Country &&
           other.id == this.id &&
           other.name == this.name &&
+          other.nameBn == this.nameBn &&
           other.code == this.code);
 }
 
 class CountriesCompanion extends UpdateCompanion<Country> {
   final Value<String> id;
   final Value<String> name;
+  final Value<String?> nameBn;
   final Value<String> code;
   final Value<int> rowid;
   const CountriesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
+    this.nameBn = const Value.absent(),
     this.code = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   CountriesCompanion.insert({
     required String id,
     required String name,
+    this.nameBn = const Value.absent(),
     required String code,
     this.rowid = const Value.absent(),
   })  : id = Value(id),
@@ -129,12 +153,14 @@ class CountriesCompanion extends UpdateCompanion<Country> {
   static Insertable<Country> custom({
     Expression<String>? id,
     Expression<String>? name,
+    Expression<String>? nameBn,
     Expression<String>? code,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
+      if (nameBn != null) 'name_bn': nameBn,
       if (code != null) 'code': code,
       if (rowid != null) 'rowid': rowid,
     });
@@ -143,11 +169,13 @@ class CountriesCompanion extends UpdateCompanion<Country> {
   CountriesCompanion copyWith(
       {Value<String>? id,
       Value<String>? name,
+      Value<String?>? nameBn,
       Value<String>? code,
       Value<int>? rowid}) {
     return CountriesCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
+      nameBn: nameBn ?? this.nameBn,
       code: code ?? this.code,
       rowid: rowid ?? this.rowid,
     );
@@ -161,6 +189,9 @@ class CountriesCompanion extends UpdateCompanion<Country> {
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
+    }
+    if (nameBn.present) {
+      map['name_bn'] = Variable<String>(nameBn.value);
     }
     if (code.present) {
       map['code'] = Variable<String>(code.value);
@@ -176,6 +207,7 @@ class CountriesCompanion extends UpdateCompanion<Country> {
     return (StringBuffer('CountriesCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
+          ..write('nameBn: $nameBn, ')
           ..write('code: $code, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -197,6 +229,10 @@ class $CitiesTable extends Cities with TableInfo<$CitiesTable, City> {
       'name', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
+  late final GeneratedColumn<String> nameBn = GeneratedColumn<String>(
+      'name_bn', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
   late final GeneratedColumn<String> countryCode = GeneratedColumn<String>(
       'country_code', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
@@ -210,7 +246,7 @@ class $CitiesTable extends Cities with TableInfo<$CitiesTable, City> {
       type: DriftSqlType.double, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, name, countryCode, latitude, longitude];
+      [id, name, nameBn, countryCode, latitude, longitude];
   @override
   String get aliasedName => _alias ?? 'cities';
   @override
@@ -225,6 +261,8 @@ class $CitiesTable extends Cities with TableInfo<$CitiesTable, City> {
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      nameBn: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name_bn']),
       countryCode: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}country_code'])!,
       latitude: attachedDatabase.typeMapping
@@ -243,12 +281,14 @@ class $CitiesTable extends Cities with TableInfo<$CitiesTable, City> {
 class City extends DataClass implements Insertable<City> {
   final String id;
   final String name;
+  final String? nameBn;
   final String countryCode;
   final double latitude;
   final double longitude;
   const City(
       {required this.id,
       required this.name,
+      this.nameBn,
       required this.countryCode,
       required this.latitude,
       required this.longitude});
@@ -257,6 +297,9 @@ class City extends DataClass implements Insertable<City> {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['name'] = Variable<String>(name);
+    if (!nullToAbsent || nameBn != null) {
+      map['name_bn'] = Variable<String>(nameBn);
+    }
     map['country_code'] = Variable<String>(countryCode);
     map['latitude'] = Variable<double>(latitude);
     map['longitude'] = Variable<double>(longitude);
@@ -269,6 +312,7 @@ class City extends DataClass implements Insertable<City> {
     return City(
       id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
+      nameBn: serializer.fromJson<String?>(json['nameBn']),
       countryCode: serializer.fromJson<String>(json['countryCode']),
       latitude: serializer.fromJson<double>(json['latitude']),
       longitude: serializer.fromJson<double>(json['longitude']),
@@ -280,6 +324,7 @@ class City extends DataClass implements Insertable<City> {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'name': serializer.toJson<String>(name),
+      'nameBn': serializer.toJson<String?>(nameBn),
       'countryCode': serializer.toJson<String>(countryCode),
       'latitude': serializer.toJson<double>(latitude),
       'longitude': serializer.toJson<double>(longitude),
@@ -289,12 +334,14 @@ class City extends DataClass implements Insertable<City> {
   City copyWith(
           {String? id,
           String? name,
+          Value<String?> nameBn = const Value.absent(),
           String? countryCode,
           double? latitude,
           double? longitude}) =>
       City(
         id: id ?? this.id,
         name: name ?? this.name,
+        nameBn: nameBn.present ? nameBn.value : this.nameBn,
         countryCode: countryCode ?? this.countryCode,
         latitude: latitude ?? this.latitude,
         longitude: longitude ?? this.longitude,
@@ -304,6 +351,7 @@ class City extends DataClass implements Insertable<City> {
     return (StringBuffer('City(')
           ..write('id: $id, ')
           ..write('name: $name, ')
+          ..write('nameBn: $nameBn, ')
           ..write('countryCode: $countryCode, ')
           ..write('latitude: $latitude, ')
           ..write('longitude: $longitude')
@@ -312,13 +360,15 @@ class City extends DataClass implements Insertable<City> {
   }
 
   @override
-  int get hashCode => Object.hash(id, name, countryCode, latitude, longitude);
+  int get hashCode =>
+      Object.hash(id, name, nameBn, countryCode, latitude, longitude);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is City &&
           other.id == this.id &&
           other.name == this.name &&
+          other.nameBn == this.nameBn &&
           other.countryCode == this.countryCode &&
           other.latitude == this.latitude &&
           other.longitude == this.longitude);
@@ -327,6 +377,7 @@ class City extends DataClass implements Insertable<City> {
 class CitiesCompanion extends UpdateCompanion<City> {
   final Value<String> id;
   final Value<String> name;
+  final Value<String?> nameBn;
   final Value<String> countryCode;
   final Value<double> latitude;
   final Value<double> longitude;
@@ -334,6 +385,7 @@ class CitiesCompanion extends UpdateCompanion<City> {
   const CitiesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
+    this.nameBn = const Value.absent(),
     this.countryCode = const Value.absent(),
     this.latitude = const Value.absent(),
     this.longitude = const Value.absent(),
@@ -342,6 +394,7 @@ class CitiesCompanion extends UpdateCompanion<City> {
   CitiesCompanion.insert({
     required String id,
     required String name,
+    this.nameBn = const Value.absent(),
     required String countryCode,
     required double latitude,
     required double longitude,
@@ -354,6 +407,7 @@ class CitiesCompanion extends UpdateCompanion<City> {
   static Insertable<City> custom({
     Expression<String>? id,
     Expression<String>? name,
+    Expression<String>? nameBn,
     Expression<String>? countryCode,
     Expression<double>? latitude,
     Expression<double>? longitude,
@@ -362,6 +416,7 @@ class CitiesCompanion extends UpdateCompanion<City> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
+      if (nameBn != null) 'name_bn': nameBn,
       if (countryCode != null) 'country_code': countryCode,
       if (latitude != null) 'latitude': latitude,
       if (longitude != null) 'longitude': longitude,
@@ -372,6 +427,7 @@ class CitiesCompanion extends UpdateCompanion<City> {
   CitiesCompanion copyWith(
       {Value<String>? id,
       Value<String>? name,
+      Value<String?>? nameBn,
       Value<String>? countryCode,
       Value<double>? latitude,
       Value<double>? longitude,
@@ -379,6 +435,7 @@ class CitiesCompanion extends UpdateCompanion<City> {
     return CitiesCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
+      nameBn: nameBn ?? this.nameBn,
       countryCode: countryCode ?? this.countryCode,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
@@ -394,6 +451,9 @@ class CitiesCompanion extends UpdateCompanion<City> {
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
+    }
+    if (nameBn.present) {
+      map['name_bn'] = Variable<String>(nameBn.value);
     }
     if (countryCode.present) {
       map['country_code'] = Variable<String>(countryCode.value);
@@ -415,6 +475,7 @@ class CitiesCompanion extends UpdateCompanion<City> {
     return (StringBuffer('CitiesCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
+          ..write('nameBn: $nameBn, ')
           ..write('countryCode: $countryCode, ')
           ..write('latitude: $latitude, ')
           ..write('longitude: $longitude, ')
