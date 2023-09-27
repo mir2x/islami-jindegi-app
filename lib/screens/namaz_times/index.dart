@@ -3,7 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:native_app/theme/colors.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/hijri_date_settings.dart';
 import 'package:native_app/widgets/location/index.dart';
@@ -20,6 +23,7 @@ class NamazTimes extends ConsumerStatefulWidget {
 
 class NamazTimesState extends ConsumerState<NamazTimes> {
   HijriCalendar? selectedHijriDate;
+  bool isStartTime = true;
 
   updateHijriDate(HijriCalendar value) {
     setState(() {
@@ -27,9 +31,16 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
     });
   }
 
+  toggleTime(bool value) {
+    setState(() {
+      isStartTime = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
+    var textTheme = Theme.of(context).textTheme;
     var settingsProvider = ref.watch(hijriDateSettingsProvider);
 
     return AppScaffold(
@@ -112,8 +123,60 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 5),
-                  NamazTimeItems(currentDate: currentGregorianDate),
+                  const SizedBox(height: 8),
+                  WithPreferences(
+                    builder: (context, preferences) {
+                      String theme = preferences.getString('theme') ?? 'dark';
+
+                      return AnimatedToggleSwitch<bool>.dual(
+                        current: isStartTime,
+                        first: true,
+                        second: false,
+                        spacing: 80,
+                        style: const ToggleStyle(
+                          borderColor: Colors.transparent,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              spreadRadius: 1,
+                              blurRadius: 2,
+                              offset: Offset(0, 1.5),
+                            ),
+                          ],
+                        ),
+                        borderWidth: 5,
+                        height: 36,
+                        onChanged: (b) => toggleTime(b),
+                        indicatorSize: const Size.fromWidth(26),
+                        styleBuilder: (b) => ToggleStyle(
+                          backgroundColor: theme == 'dark'
+                              ? ThemeColors.color2
+                              : ThemeColors.color3,
+                          indicatorColor: theme == 'dark'
+                              ? ThemeColors.color3
+                              : ThemeColors.color2,
+                        ),
+                        textBuilder: (value) => value
+                            ? Center(
+                                child: Text(
+                                  locales.waqtStarts,
+                                  style: textTheme.labelMedium,
+                                ),
+                              )
+                            : Center(
+                                child: Text(
+                                  locales.waqtEnds,
+                                  style: textTheme.labelMedium,
+                                ),
+                              ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  NamazTimeItems(
+                    currentDate: currentGregorianDate,
+                    isStartTime: isStartTime,
+                  ),
                 ],
               ),
             ],

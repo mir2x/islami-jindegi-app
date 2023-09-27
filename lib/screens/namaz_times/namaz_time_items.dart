@@ -13,9 +13,11 @@ class NamazTimeItems extends ConsumerStatefulWidget {
   const NamazTimeItems({
     super.key,
     required this.currentDate,
+    required this.isStartTime,
   });
 
   final DateTime? currentDate;
+  final bool isStartTime;
 
   @override
   NamazTimeItemsState createState() => NamazTimeItemsState();
@@ -71,6 +73,8 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
         String currentPrayer =
             prayerTime.currentAndNextPrayerNames()['currentPrayer']!;
 
+        String timinglabel = widget.isStartTime ? locales.starts : locales.ends;
+
         return Column(
           children: [
             Container(
@@ -85,8 +89,10 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
             Container(
               margin: const EdgeInsets.only(top: 15),
               child: NamazTimeItem(
-                label: prayerTimes['fajr']['title'],
-                value: prayerTimes['fajr']['startTime'],
+                label: '${prayerTimes['fajr']['title']} $timinglabel',
+                value: widget.isStartTime
+                    ? prayerTimes['fajr']['startTime']
+                    : prayerTimes['fajr']['endTime'],
                 isActive: currentPrayer == 'fajr',
                 onSelected: () => QR.to('namaz-times/fajr'),
               ),
@@ -103,8 +109,10 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
             Container(
               margin: const EdgeInsets.only(top: 15),
               child: NamazTimeItem(
-                label: prayerTimes['ishraq']['title'],
-                value: prayerTimes['ishraq']['startTime'],
+                label: '${prayerTimes['ishraq']['title']} $timinglabel',
+                value: widget.isStartTime
+                    ? prayerTimes['ishraq']['startTime']
+                    : prayerTimes['ishraq']['endTime'],
                 isActive: currentPrayer == 'ishraq',
                 onSelected: () => QR.to('namaz-times/ishraq'),
               ),
@@ -121,8 +129,10 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
             Container(
               margin: const EdgeInsets.only(top: 15),
               child: NamazTimeItem(
-                label: prayerTimes['dhuhr']['title'],
-                value: prayerTimes['dhuhr']['startTime'],
+                label: '${prayerTimes['dhuhr']['title']} $timinglabel',
+                value: widget.isStartTime
+                    ? prayerTimes['dhuhr']['startTime']
+                    : prayerTimes['dhuhr']['endTime'],
                 isActive: currentPrayer == 'dhuhr',
                 onSelected: () => QR.to('namaz-times/zuhr'),
               ),
@@ -130,8 +140,10 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
             Container(
               margin: const EdgeInsets.only(top: 15),
               child: NamazTimeItem(
-                label: prayerTimes['asr']['title'],
-                value: prayerTimes['asr']['startTime'],
+                label: '${prayerTimes['asr']['title']} $timinglabel',
+                value: widget.isStartTime
+                    ? prayerTimes['asr']['startTime']
+                    : prayerTimes['asr']['endTime'],
                 isActive: currentPrayer == 'asr',
                 onSelected: () => QR.to('namaz-times/asr'),
               ),
@@ -148,8 +160,10 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
             Container(
               margin: const EdgeInsets.only(top: 15),
               child: NamazTimeItem(
-                label: prayerTimes['maghrib']['title'],
-                value: prayerTimes['maghrib']['startTime'],
+                label: '${prayerTimes['maghrib']['title']} $timinglabel',
+                value: widget.isStartTime
+                    ? prayerTimes['maghrib']['startTime']
+                    : prayerTimes['maghrib']['endTime'],
                 isActive: currentPrayer == 'maghrib',
                 onSelected: () => QR.to('namaz-times/maghrib'),
               ),
@@ -157,8 +171,10 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
             Container(
               margin: const EdgeInsets.only(top: 15),
               child: NamazTimeItem(
-                label: prayerTimes['isha']['title'],
-                value: prayerTimes['isha']['startTime'],
+                label: '${prayerTimes['isha']['title']} $timinglabel',
+                value: widget.isStartTime
+                    ? prayerTimes['isha']['startTime']
+                    : prayerTimes['isha']['endTime'],
                 isActive: currentPrayer == 'isha',
                 onSelected: () => QR.to('namaz-times/isha'),
               ),
