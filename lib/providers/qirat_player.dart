@@ -4,6 +4,6 @@ import 'package:audioplayers/audioplayers.dart';
 final qiratPlayerProvider =
     FutureProvider.autoDispose.family((ref, String audioSrc) async {
   final AudioPlayer player = AudioPlayer(playerId: audioSrc);
-  await player.setSourceUrl(audioSrc);
+  await player.play(UrlSource(audioSrc));
   return player;
 });
