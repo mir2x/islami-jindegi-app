@@ -139,9 +139,11 @@ class Location extends ConsumerWidget {
                                 ),
                                 const SizedBox(width: 10),
                                 if (!geolocation['isGeolocated']) ...[
-                                  Text(
-                                    locales.giveGeolocationPermission,
-                                    style: textTheme.labelMedium,
+                                  Flexible(
+                                    child: Text(
+                                      locales.giveGeolocationPermission,
+                                      style: textTheme.labelMedium,
+                                    ),
                                   ),
                                 ] else ...[
                                   Text(
@@ -191,7 +193,7 @@ class Location extends ConsumerWidget {
                             ],
                           ),
                   ),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 20),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -269,6 +271,7 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: SearchField(
+                  key: const Key('country-search'),
                   value: countrySearchText,
                   maxHeight: 35,
                   onUpdate: updateCountrySearchText,
@@ -342,6 +345,7 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: SearchField(
+                  key: const Key('city-search'),
                   value: citySearchText,
                   maxHeight: 35,
                   onUpdate: updateCitySearchText,
