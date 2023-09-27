@@ -132,6 +132,7 @@
   "disable": "Disable",
   "benefits": "Benefits",
   "geolocationBenefits": "Location will automatically update as you move",
+  "selectCountry": "Select a Country",
   "searchCountry": "Search for a country",
   "searchCity": "Search for a city",
   "qiblahInstruction": "Set the device horizontally to get the best result.",

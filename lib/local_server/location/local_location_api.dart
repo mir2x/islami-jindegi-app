@@ -65,6 +65,20 @@ class LocalLocationAPI extends _$LocalLocationAPI {
 
   Future<List<Country>> queryCountry(Map params) {
     var query = select(countries);
+
+    if (params.containsKey('search')) {
+      query.where((t) => t.name.like('%${params['search']}%'));
+    }
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    } else {
+      query.limit(params['quantity'] ?? 20);
+    }
+
     query.orderBy([(t) => OrderingTerm(expression: t.name)]);
 
     return query.get();
@@ -76,6 +90,19 @@ class LocalLocationAPI extends _$LocalLocationAPI {
     query.where(
       (t) => t.countryCode.equals(params['country_code'].toString()),
     );
+
+    if (params.containsKey('search')) {
+      query.where((t) => t.name.like('%${params['search']}%'));
+    }
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    } else {
+      query.limit(params['quantity'] ?? 20);
+    }
 
     query.orderBy([(t) => OrderingTerm(expression: t.name)]);
 
