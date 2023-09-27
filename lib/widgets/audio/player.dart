@@ -221,7 +221,7 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
                     theme == 'dark' ? ThemeColors.color3 : ThemeColors.color9,
                 value: position.inSeconds.toDouble(),
                 min: 0,
-                max: duration.inSeconds.toDouble(),
+                max: duration.inSeconds.toDouble() + 2,
                 onChanged: (double value) async {
                   await widget.player.seek(Duration(seconds: value.toInt()));
                   value = value;
