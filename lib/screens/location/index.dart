@@ -44,88 +44,6 @@ class Location extends ConsumerWidget {
                     style: textTheme.labelMedium,
                   ),
                   const SizedBox(height: 40),
-                  Text(locales.withGeolocation, style: textTheme.labelMedium),
-                  Container(
-                    margin: const EdgeInsets.only(top: 15),
-                    child: (!geolocation['isGeolocated'])
-                        ? InkWell(
-                            onTap: () => ref
-                                .read(geolocationProvider.notifier)
-                                .updateCoordinates(),
-                            child: Row(
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/images/icons/location.svg',
-                                  width: 75,
-                                  height: 57,
-                                ),
-                                const SizedBox(width: 10),
-                                if (!geolocation['isGeolocated']) ...[
-                                  Text(
-                                    locales.giveGeolocationPermission,
-                                    style: textTheme.labelMedium,
-                                  ),
-                                ] else ...[
-                                  Text(
-                                    locales.geolocationEnabled,
-                                    style: textTheme.labelMedium,
-                                  ),
-                                ],
-                              ],
-                            ),
-                          )
-                        : Row(
-                            children: [
-                              SvgPicture.asset(
-                                'assets/images/icons/location.svg',
-                                width: 75,
-                                height: 57,
-                              ),
-                              const SizedBox(width: 10),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(
-                                      top: 8,
-                                      left: 8,
-                                    ),
-                                    child: Text(
-                                      locales.geolocationEnabled,
-                                      style: textTheme.labelMedium,
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: openAppSettings,
-                                    style: TextButton.styleFrom(
-                                      minimumSize: Size.zero,
-                                      padding: const EdgeInsets.all(8),
-                                      tapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                    ),
-                                    child: Text(
-                                      locales.disable,
-                                      style: textTheme.titleMedium,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                  ),
-                  const SizedBox(height: 15),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(locales.benefits, style: textTheme.titleMedium),
-                      const SizedBox(height: 5),
-                      Text(
-                        locales.geolocationBenefits,
-                        style: textTheme.labelSmall,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 50),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -199,6 +117,88 @@ class Location extends ConsumerWidget {
                             ),
                           );
                         },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 50),
+                  Text(locales.withGeolocation, style: textTheme.labelMedium),
+                  Container(
+                    margin: const EdgeInsets.only(top: 15),
+                    child: (!geolocation['isGeolocated'])
+                        ? InkWell(
+                            onTap: () => ref
+                                .read(geolocationProvider.notifier)
+                                .updateCoordinates(),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/images/icons/location.svg',
+                                  width: 60,
+                                  height: 46,
+                                ),
+                                const SizedBox(width: 10),
+                                if (!geolocation['isGeolocated']) ...[
+                                  Text(
+                                    locales.giveGeolocationPermission,
+                                    style: textTheme.labelMedium,
+                                  ),
+                                ] else ...[
+                                  Text(
+                                    locales.geolocationEnabled,
+                                    style: textTheme.labelMedium,
+                                  ),
+                                ],
+                              ],
+                            ),
+                          )
+                        : Row(
+                            children: [
+                              SvgPicture.asset(
+                                'assets/images/icons/location.svg',
+                                width: 75,
+                                height: 57,
+                              ),
+                              const SizedBox(width: 10),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.only(
+                                      top: 8,
+                                      left: 8,
+                                    ),
+                                    child: Text(
+                                      locales.geolocationEnabled,
+                                      style: textTheme.labelMedium,
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: openAppSettings,
+                                    style: TextButton.styleFrom(
+                                      minimumSize: Size.zero,
+                                      padding: const EdgeInsets.all(8),
+                                      tapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                    child: Text(
+                                      locales.disable,
+                                      style: textTheme.titleMedium,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                  ),
+                  const SizedBox(height: 15),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(locales.benefits, style: textTheme.titleMedium),
+                      const SizedBox(height: 5),
+                      Text(
+                        locales.geolocationBenefits,
+                        style: textTheme.labelSmall,
                       ),
                     ],
                   ),
