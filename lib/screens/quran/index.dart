@@ -92,6 +92,7 @@ class QuranState extends ConsumerState<Quran> {
                     builder: (context, preferences) {
                       if (isSurahSelected) {
                         return ListView.builder(
+                          key: const PageStorageKey<String>('surah'),
                           itemCount: resources.length,
                           itemBuilder: (BuildContext context, int index) {
                             var item = resources[index];
@@ -167,6 +168,7 @@ class QuranState extends ConsumerState<Quran> {
                         );
                       } else {
                         return ListView.builder(
+                          key: const PageStorageKey<String>('para'),
                           itemCount: resources.length,
                           itemBuilder: (BuildContext context, int index) {
                             var item = resources[index];
