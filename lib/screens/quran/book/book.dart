@@ -164,20 +164,20 @@ class QuranDisplay extends ConsumerStatefulWidget {
 }
 
 class _QuranDisplayState extends ConsumerState<QuranDisplay> {
-  bool isFullScreen = true;
+  bool isFullScreen = false;
 
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+    /* SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []); */
   }
 
   @override
   void dispose() {
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual,
-      overlays: SystemUiOverlay.values,
-    );
+    /* SystemChrome.setEnabledSystemUIMode( */
+    /*   SystemUiMode.manual, */
+    /*   overlays: SystemUiOverlay.values, */
+    /* ); */
     super.dispose();
   }
 
@@ -214,7 +214,7 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
       showBottomBar: !isFullScreen,
       title: Text(widget.qitabTitle),
       body: GestureDetector(
-        onTap: toggleFullScreen,
+        onTap: () => {},
         child: PdfView(
           reverse: true,
           controller: widget.pdfController,
