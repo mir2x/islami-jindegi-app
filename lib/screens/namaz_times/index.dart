@@ -152,9 +152,11 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                           backgroundColor: theme == 'dark'
                               ? ThemeColors.color2
                               : ThemeColors.color3,
-                          indicatorColor: theme == 'dark'
-                              ? ThemeColors.color3
-                              : ThemeColors.color2,
+                          indicatorColor: b
+                              ? theme == 'dark'
+                                  ? ThemeColors.color4
+                                  : ThemeColors.color8
+                              : ThemeColors.danger,
                         ),
                         textBuilder: (value) => value
                             ? Center(
