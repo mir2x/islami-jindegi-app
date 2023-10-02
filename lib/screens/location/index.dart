@@ -310,7 +310,7 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
                           updateCountrySearchText(null);
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.symmetric(vertical: 9),
                           child: Text(
                             countryName,
                             style: textTheme.titleMedium,
@@ -385,10 +385,16 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
 
                           updateCitySearchText(null);
 
+                          String countryName = contextualTranslation(
+                            locale: currentLang,
+                            enText: selectedCountry.name,
+                            bnText: selectedCountry.nameBn,
+                          );
+
                           await setLocation({
-                            'country': selectedCountry.name,
+                            'country': countryName,
                             'countryCode': item.countryCode,
-                            'city': item.name,
+                            'city': cityName,
                             'coordinates': {
                               'latitude': item.latitude,
                               'longitude': item.longitude,
@@ -400,7 +406,7 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
                               .updateGeolocation();
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.symmetric(vertical: 9),
                           child: Text(
                             cityName,
                             style: textTheme.titleMedium,
