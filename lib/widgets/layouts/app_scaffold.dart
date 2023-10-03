@@ -125,7 +125,11 @@ class AppScaffold extends ConsumerWidget {
                                   ),
                                   PopupMenuItem<int>(
                                     value: 4,
-                                    child: Text(locales.iphoneAppLink),
+                                    child: Text(
+                                      Platform.isAndroid
+                                          ? locales.iphoneAppLink
+                                          : locales.androidAppLink,
+                                    ),
                                   ),
                                   PopupMenuItem<int>(
                                     value: 5,
@@ -141,7 +145,11 @@ class AppScaffold extends ConsumerWidget {
                                       'https://play.google.com/store/apps/details?id=com.islami_jindegi';
 
                                   const iOSAppLink =
-                                      'https://apps.apple.com/us/app/islami-jindegi/id1271205014';
+                                      'https://apps.apple.com/app/islami-jindegi/id1271205014';
+
+                                  String appLink = Platform.isAndroid
+                                      ? androidAppLink
+                                      : iOSAppLink;
 
                                   switch (item) {
                                     case 0:
@@ -151,19 +159,22 @@ class AppScaffold extends ConsumerWidget {
                                       QR.to('contact-us');
                                       break;
                                     case 2:
-                                      if (Platform.isAndroid) {
-                                        Share.share(androidAppLink);
-                                      } else if (Platform.isIOS) {
-                                        Share.share(iOSAppLink);
-                                      }
+                                      Share.share(appLink);
                                       break;
                                     case 3:
-                                      final Uri url = Uri.parse(androidAppLink);
+                                      final Uri url = Uri.parse(appLink);
                                       launchUrl(url);
                                       break;
                                     case 4:
-                                      final Uri url = Uri.parse(iOSAppLink);
-                                      launchUrl(url);
+                                      if (Platform.isAndroid) {
+                                        final Uri url = Uri.parse(iOSAppLink);
+                                        launchUrl(url);
+                                      } else {
+                                        final Uri url = Uri.parse(
+                                          androidAppLink,
+                                        );
+                                        launchUrl(url);
+                                      }
                                       break;
                                     case 5:
                                       final Uri url =
