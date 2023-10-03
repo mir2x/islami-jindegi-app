@@ -6,7 +6,7 @@ class QuranSettingsNotifier extends Notifier<Map<String, dynamic>> {
     return {};
   }
 
-  void updateSettings(String key, dynamic value) {
+  void updateParams(String key, dynamic value) {
     state = {
       ...state,
       key: value,

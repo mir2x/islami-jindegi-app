@@ -11,18 +11,20 @@ class FilterList extends ConsumerStatefulWidget {
     super.key,
     required this.title,
     required this.paramKeys,
-    this.pageSize = 8,
-    this.searchEnabled = false,
     required this.queryBuilder,
     required this.itemBuilder,
+    this.pageSize = 8,
+    this.searchEnabled = false,
+    this.queryProvider,
   });
 
   final String title;
   final List<String> paramKeys;
-  final int pageSize;
-  final bool searchEnabled;
   final Function queryBuilder;
   final ItemWidgetBuilder itemBuilder;
+  final int pageSize;
+  final bool searchEnabled;
+  final dynamic queryProvider;
 
   @override
   ConsumerState<FilterList> createState() => _FilterListState();
@@ -39,7 +41,8 @@ class _FilterListState extends ConsumerState<FilterList> {
 
   @override
   Widget build(BuildContext context) {
-    var qParams = ref.watch(queryParamsProvider);
+    var paramsProvider = widget.queryProvider ?? queryParamsProvider;
+    var qParams = ref.watch(paramsProvider);
 
     return Column(
       children: [
@@ -66,7 +69,7 @@ class _FilterListState extends ConsumerState<FilterList> {
                         ),
                         onPressed: () {
                           var qParamsNotifier =
-                              ref.read(queryParamsProvider.notifier);
+                              ref.read(paramsProvider.notifier);
                           for (var k in widget.paramKeys) {
                             qParamsNotifier.updateParams(k, '');
                           }

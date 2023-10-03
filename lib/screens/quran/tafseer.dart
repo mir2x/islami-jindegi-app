@@ -163,6 +163,7 @@ class SelectQitab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
+    var textTheme = Theme.of(context).textTheme;
     var qSettings = ref.watch(quranSettingsProvider);
 
     var qNotifier = ref.read(quranSettingsProvider.notifier);
@@ -200,9 +201,12 @@ class SelectQitab extends ConsumerWidget {
                 return Dropdown(
                   items: qitabs,
                   selectedValue: selectedQitab,
-                  hint: Text(locales.selectQitab),
+                  hint: Text(
+                    locales.selectQitab,
+                    style: textTheme.titleMedium,
+                  ),
                   updateItem: (value) {
-                    qNotifier.updateSettings('qitab', value!);
+                    qNotifier.updateParams('qitab', value!);
                   },
                 );
               },

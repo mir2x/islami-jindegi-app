@@ -107,20 +107,27 @@ class Ayah extends ConsumerWidget {
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
                   PopupMenuItem<int>(
                     value: 0,
-                    child: Text(locales.saveAyah),
+                    child: Text(locales.readTafseer),
                   ),
                   PopupMenuItem<int>(
                     value: 1,
-                    child: Text(locales.copyAyah),
+                    child: Text(locales.saveAyah),
                   ),
                   PopupMenuItem<int>(
                     value: 2,
+                    child: Text(locales.copyAyah),
+                  ),
+                  PopupMenuItem<int>(
+                    value: 3,
                     child: Text(locales.share),
                   ),
                 ],
                 onSelected: (int item) async {
                   switch (item) {
                     case 0:
+                      QR.to('quran/tafseers/${ayah.id}');
+                      break;
+                    case 1:
                       var query = SingleModelQuery(
                         repository: ref.ayahs,
                         id: ayah.id,
@@ -146,10 +153,10 @@ class Ayah extends ConsumerWidget {
                       });
 
                       break;
-                    case 1:
+                    case 2:
                       await Clipboard.setData(ClipboardData(text: ayah.title));
                       break;
-                    case 2:
+                    case 3:
                       var query = SingleModelQuery(
                         repository: ref.ayahs,
                         id: ayah.id,
