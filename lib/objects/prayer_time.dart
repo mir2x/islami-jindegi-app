@@ -26,6 +26,7 @@ class PrayerTime {
   final Duration fourMins = const Duration(minutes: 4);
   final Duration fiveMins = const Duration(minutes: 5);
   final Duration tenMins = const Duration(minutes: 10);
+  final Duration fourteenMins = const Duration(minutes: 14);
   final Duration fifteenMins = const Duration(minutes: 15);
 
   Map getTimes(AppLocalizations locales, String currentLang) {
@@ -44,7 +45,11 @@ class PrayerTime {
       },
       'sunrise': {
         'title': locales.sunrise,
-        'time': _formatTime(prayerTimes.sunrise, currentLang),
+        'startTime': _formatTime(prayerTimes.sunrise, currentLang),
+        'endTime': _formatTime(
+          prayerTimes.sunrise.add(fourteenMins),
+          currentLang,
+        ),
       },
       'ishraq': {
         'title': locales.ishraqChasht,
@@ -56,7 +61,8 @@ class PrayerTime {
       },
       'midday': {
         'title': locales.midday,
-        'time': _formatTime(prayerTimes.dhuhr, currentLang),
+        'startTime': _formatTime(prayerTimes.dhuhr, currentLang),
+        'endTime': _formatTime(prayerTimes.dhuhr.add(fourMins), currentLang),
       },
       'dhuhr': {
         'title': locales.zuhrZawal,
@@ -73,8 +79,12 @@ class PrayerTime {
       },
       'sunset': {
         'title': locales.sunset,
-        'time': _formatTime(
+        'startTime': _formatTime(
           prayerTimes.maghrib.subtract(threeMins),
+          currentLang,
+        ),
+        'endTime': _formatTime(
+          prayerTimes.maghrib.subtract(oneMin),
           currentLang,
         ),
       },
