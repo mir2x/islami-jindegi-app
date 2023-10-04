@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:collection/collection.dart';
 import 'package:native_app/main.data.dart';
@@ -280,7 +279,7 @@ class AyahList extends ConsumerWidget {
                                       },
                                       itemBuilder: (_, item, __) {
                                         return FilterItem(
-                                          itemId: item.id,
+                                          itemId: item.slug,
                                           itemTitle: item.name,
                                           paramKey: 'qari',
                                           queryProvider: quranSettingsProvider,
@@ -317,9 +316,15 @@ class AyahList extends ConsumerWidget {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          var prefs = ref.watch(preferencesProvider);
                           String theme =
                               preferences.getString('theme') ?? 'dark';
+
+                          String selectedArabicFont = arabicFonts
+                                  .map((i) => i['value'])
+                                  .firstWhereOrNull((i) {
+                                return i == preferences.getString('arabicFont');
+                              }) ??
+                              'arabic/al-qalam-quran-majeed';
 
                           return Dialog(
                             child: Container(
@@ -348,43 +353,28 @@ class AyahList extends ConsumerWidget {
                                     MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  WithPreferences(
-                                    builder: (context, preferences) {
-                                      String selectedArabicFont = arabicFonts
-                                              .map((i) => i['value'])
-                                              .firstWhereOrNull((i) {
-                                            return i ==
-                                                preferences
-                                                    .getString('arabicFont');
-                                          }) ??
-                                          'arabic/al-qalam-quran-majeed';
-
-                                      return Container(
-                                        margin:
-                                            const EdgeInsets.only(bottom: 40),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          children: [
-                                            SectionTitle(
-                                              title: locales.arabicFont,
-                                            ),
-                                            Dropdown(
-                                              items: arabicFonts,
-                                              selectedValue: selectedArabicFont,
-                                              updateItem: (value) {
-                                                ref
-                                                    .read(
-                                                      preferencesProvider
-                                                          .notifier,
-                                                    )
-                                                    .updateArabicFont(value);
-                                              },
-                                            ),
-                                          ],
+                                  Container(
+                                    margin: const EdgeInsets.only(bottom: 40),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        SectionTitle(
+                                          title: locales.arabicFont,
                                         ),
-                                      );
-                                    },
+                                        Dropdown(
+                                          items: arabicFonts,
+                                          selectedValue: selectedArabicFont,
+                                          updateItem: (value) {
+                                            ref
+                                                .read(
+                                                  preferencesProvider.notifier,
+                                                )
+                                                .updateArabicFont(value);
+                                          },
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   Column(
                                     children: [
