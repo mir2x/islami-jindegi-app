@@ -44,11 +44,9 @@ dependencies:
   carousel_slider: ^4.1.1
   animated_toggle_switch: ^0.8.0
   audioplayers: ^5.1.0
-  pdfx: ^2.4.0
+  pdfx: 2.4.0
   # pdfx:
   #   path: /home/musaffa/projects/libraries/packages.flutter/packages/pdfx
-  #   # ref: add-reverse-option-to-pdfx
-  #   # path: packages/pdfx
 
   # text
   intl: ^0.18.0
