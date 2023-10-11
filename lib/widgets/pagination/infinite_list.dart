@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:infinite_scroll_pagination/src/ui/default_indicators/first_page_exception_indicator.dart';
-import 'package:infinite_scroll_pagination/src/ui/default_indicators/footer_tile.dart';
+import 'package:infinite_scroll_pagination/src/widgets/helpers/default_status_indicators/first_page_exception_indicator.dart';
+import 'package:infinite_scroll_pagination/src/widgets/helpers/default_status_indicators/footer_tile.dart';
 
 class InfiniteList<ItemType> extends StatefulWidget {
   const InfiniteList({
