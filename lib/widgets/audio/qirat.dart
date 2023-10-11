@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/providers/connectivity_result.dart';
@@ -69,22 +69,27 @@ class StatefulQiratPlayer extends StatefulWidget {
 }
 
 class _QiratPlayerState extends State<StatefulQiratPlayer> {
-  PlayerState _playerState = PlayerState.stopped;
+  bool isPlaying = true;
 
   StreamSubscription? _playerStateSubscription;
-
-  bool get isPlaying => _playerState == PlayerState.playing;
 
   @override
   void initState() {
     super.initState();
 
-    _playerState = PlayerState.playing;
-
     _playerStateSubscription =
-        widget.player.onPlayerStateChanged.listen((PlayerState s) {
-      setState(() => _playerState = s);
+        widget.player.playerStateStream.listen((PlayerState s) {
+      setState(() {
+        if (s.processingState == ProcessingState.completed) {
+          widget.player.pause();
+          widget.player.seek(const Duration(seconds: 0));
+        }
+
+        isPlaying = s.playing;
+      });
     });
+
+    widget.player.play();
   }
 
   @override
@@ -103,7 +108,7 @@ class _QiratPlayerState extends State<StatefulQiratPlayer> {
             if (isPlaying) {
               await widget.player.pause();
             } else {
-              await widget.player.resume();
+              await widget.player.play();
             }
           },
           child: isPlaying
