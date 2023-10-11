@@ -39,7 +39,7 @@ class ResponsiveImage extends ConsumerWidget {
           error: (error, stackTrace) => Text(error.toString()),
           data: (connectivityResult) {
             if (connectivityResult != ConnectivityResult.none) {
-              Map<String, dynamic> metadata = getImageMetadata(
+              Map<dynamic, dynamic> metadata = getImageMetadata(
                 image,
                 model,
                 attr,
@@ -80,7 +80,7 @@ class ResponsiveImage extends ConsumerWidget {
         widths.lastWhereOrNull((w) => int.parse(w) < vwsetWidth);
   }
 
-  Map<String, dynamic> getImageMetadata(image, String model, String attr) {
+  Map<dynamic, dynamic> getImageMetadata(image, String model, String attr) {
     Map<String, int> settings = imageSettings[model]![attr]!;
 
     return image[settings['width'].toString()]?['metadata'] ?? settings;
