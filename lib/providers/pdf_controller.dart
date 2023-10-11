@@ -9,7 +9,7 @@ final pdfControllerProvider = FutureProvider.autoDispose
   var resourceId = params.resourceId;
   var documentPath = params.document['id'];
 
-  var localFile = await ref.read(localFileProvider(documentPath).future);
+  var localFile = await ref.watch(localFileProvider(documentPath).future);
   dynamic pdfDoc = PdfDocument.openFile(localFile!.path);
 
   var prefs = await SharedPreferences.getInstance();

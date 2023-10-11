@@ -8,7 +8,7 @@ final audioPlayerProvider =
     FutureProvider.autoDispose.family((ref, AudioResource audioResource) async {
   final AudioPlayer player = AudioPlayer();
 
-  var localFile = await ref.read(localFileProvider(audioResource.id).future);
+  var localFile = await ref.watch(localFileProvider(audioResource.id).future);
 
   if (localFile != null) {
     await player.setFilePath(localFile.path);
@@ -29,7 +29,7 @@ final localAudioPlayerProvider =
     FutureProvider.autoDispose.family((ref, AudioResource audioResource) async {
   AudioPlayer player = AudioPlayer();
 
-  var localFile = await ref.read(localFileProvider(audioResource.id).future);
+  var localFile = await ref.watch(localFileProvider(audioResource.id).future);
 
   if (localFile != null) {
     await player.setFilePath(localFile.path);

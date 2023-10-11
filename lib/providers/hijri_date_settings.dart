@@ -6,7 +6,7 @@ import 'package:native_app/main.data.dart';
 import 'package:native_app/helpers/update_app_widget.dart';
 
 final hijriDateSettingsProvider = FutureProvider((ref) async {
-  final data = await ref.read(preferencesAndGeolocationProvider.future);
+  final data = await ref.watch(preferencesAndGeolocationProvider.future);
 
   String? countryCode = data['geolocation']['location']['countryCode'];
 

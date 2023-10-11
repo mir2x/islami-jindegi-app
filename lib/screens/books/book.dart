@@ -110,7 +110,7 @@ class BookItem extends ConsumerWidget {
                             );
 
                             return await ref
-                                .read(allModelsProvider(query).future);
+                                .watch(allModelsProvider(query).future);
                           },
                           itemBuilder: (_, chapter, __) {
                             if (chapter.subchapters.length > 0) {

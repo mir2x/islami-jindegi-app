@@ -105,7 +105,7 @@ class _FilterListState extends ConsumerState<FilterList> {
 
               var query = widget.queryBuilder(params);
 
-              return await ref.read(
+              return await ref.watch(
                 allModelsProvider(query).future,
               );
             },

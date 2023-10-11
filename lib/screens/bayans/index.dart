@@ -159,7 +159,7 @@ class Bayans extends ConsumerWidget {
                     },
                   );
 
-                  return await ref.read(allModelsProvider(query).future);
+                  return await ref.watch(allModelsProvider(query).future);
                 },
                 itemBuilder: (_, item, __) {
                   return InkWell(

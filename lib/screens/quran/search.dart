@@ -73,7 +73,7 @@ class QuranSearch extends ConsumerWidget {
                       params: {...params, 'include': 'surah'},
                     );
 
-                    return await ref.read(allModelsProvider(query).future);
+                    return await ref.watch(allModelsProvider(query).future);
                   },
                   itemBuilder: (_, ayah, __) {
                     return Container(

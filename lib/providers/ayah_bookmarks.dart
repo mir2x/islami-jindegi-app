@@ -18,14 +18,14 @@ class AyahBookmarkNotifier
     extends AutoDisposeFamilyAsyncNotifier<AyahBookmark?, String> {
   @override
   Future<AyahBookmark?> build(String arg) async {
-    final isar = await ref.read(ayahBookmarksStoreProvider.future);
+    final isar = await ref.watch(ayahBookmarksStoreProvider.future);
     final bookmark =
         await isar.ayahBookmarks.where().ayahIdEqualTo(arg).findFirst();
     return bookmark;
   }
 
   Future<dynamic> createItem(Map attrs) async {
-    final isar = await ref.read(ayahBookmarksStoreProvider.future);
+    final isar = await ref.watch(ayahBookmarksStoreProvider.future);
 
     var newBookmark = AyahBookmark()
       ..ayahId = attrs['ayahId']
@@ -48,7 +48,7 @@ class AyahBookmarkNotifier
   }
 
   Future<dynamic> deleteItem(id) async {
-    final isar = await ref.read(ayahBookmarksStoreProvider.future);
+    final isar = await ref.watch(ayahBookmarksStoreProvider.future);
 
     await isar.writeTxn(() async {
       await isar.ayahBookmarks.delete(id);
@@ -67,14 +67,14 @@ final ayahBookmarkProvider = AsyncNotifierProvider.autoDispose
 class AyahBookmarksNotifier extends AutoDisposeAsyncNotifier<List> {
   @override
   Future<List> build() async {
-    final isar = await ref.read(ayahBookmarksStoreProvider.future);
+    final isar = await ref.watch(ayahBookmarksStoreProvider.future);
     var allBookmarks =
         await isar.ayahBookmarks.where().sortByCreatedAtDesc().findAll();
     return allBookmarks;
   }
 
   Future<dynamic> deleteItem(id) async {
-    final isar = await ref.read(ayahBookmarksStoreProvider.future);
+    final isar = await ref.watch(ayahBookmarksStoreProvider.future);
 
     await isar.writeTxn(() async {
       await isar.ayahBookmarks.delete(id);

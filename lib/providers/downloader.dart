@@ -34,7 +34,7 @@ final downloaderProvider = FutureProvider.autoDispose
     );
   } on DioException catch (e) {
     if (CancelToken.isCancel(e)) {
-      var localFile = await ref.read(
+      var localFile = await ref.watch(
         localFileProvider(params.savePath).future,
       );
 

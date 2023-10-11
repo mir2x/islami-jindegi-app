@@ -41,7 +41,7 @@ class DeleteButton extends ConsumerWidget {
           onPressed: () async {
             Navigator.of(context).pop();
 
-            var localFile = await ref.read(
+            var localFile = await ref.watch(
               localFileProvider(filePath).future,
             );
 

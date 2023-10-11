@@ -239,7 +239,7 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
               },
             );
 
-            var resources = await ref.read(allModelsProvider(query).future);
+            var resources = await ref.watch(allModelsProvider(query).future);
 
             if (resources.isNotEmpty) {
               var prefs = await SharedPreferences.getInstance();

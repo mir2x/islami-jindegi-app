@@ -183,7 +183,7 @@ class _ParasState extends ConsumerState<StatefulParas> {
                     );
 
                     var resources =
-                        await ref.read(allModelsProvider(query).future);
+                        await ref.watch(allModelsProvider(query).future);
 
                     if (resources.isNotEmpty) {
                       var bookPage = resources.first;
