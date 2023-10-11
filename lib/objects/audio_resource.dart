@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
-class AudioSource extends Equatable {
-  const AudioSource({
+class AudioResource extends Equatable {
+  const AudioResource({
     required this.id,
     required this.storage,
   });

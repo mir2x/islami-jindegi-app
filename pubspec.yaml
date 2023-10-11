@@ -43,7 +43,6 @@ dependencies:
   infinite_scroll_pagination: ^3.2.0
   carousel_slider: ^4.1.1
   animated_toggle_switch: ^0.8.0
-  audioplayers: 5.1.0
   just_audio: ^0.9.35
   pdfx: 2.4.0
   # pdfx:

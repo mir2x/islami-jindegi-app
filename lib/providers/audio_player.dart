@@ -1,40 +1,38 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:audioplayers/audioplayers.dart';
-import 'package:native_app/objects/audio_source.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:native_app/objects/audio_resource.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'local_file.dart';
 
 final audioPlayerProvider =
-    FutureProvider.autoDispose.family((ref, AudioSource audioSource) async {
-  AudioPlayer player;
-  player = AudioPlayer(playerId: audioSource.id);
+    FutureProvider.autoDispose.family((ref, AudioResource audioResource) async {
+  final AudioPlayer player = AudioPlayer();
 
-  var localFile = await ref.read(localFileProvider(audioSource.id).future);
+  var localFile = await ref.read(localFileProvider(audioResource.id).future);
 
   if (localFile != null) {
-    await player.setSourceDeviceFile(localFile.path);
+    await player.setFilePath(localFile.path);
     return player;
   }
 
   String url = fileSrcUrl({
-    'id': audioSource.id,
-    'storage': audioSource.storage,
+    'id': audioResource.id,
+    'storage': audioResource.storage,
   });
 
-  await player.setSourceUrl(url);
+  await player.setUrl(url);
 
   return player;
 });
 
 final localAudioPlayerProvider =
-    FutureProvider.autoDispose.family((ref, AudioSource audioSource) async {
-  AudioPlayer player;
-  player = AudioPlayer(playerId: audioSource.id);
+    FutureProvider.autoDispose.family((ref, AudioResource audioResource) async {
+  AudioPlayer player = AudioPlayer();
 
-  var localFile = await ref.read(localFileProvider(audioSource.id).future);
+  var localFile = await ref.read(localFileProvider(audioResource.id).future);
 
   if (localFile != null) {
-    await player.setSourceDeviceFile(localFile.path);
+    await player.setFilePath(localFile.path);
     return player;
   }
 
