@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
+import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/query_params.dart';
-import 'package:native_app/providers/connectivity_result.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/list.dart';
@@ -28,17 +27,14 @@ class Masail extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(queryParamsProvider);
-    var connectivity = ref.watch(connectivityResultProvider);
 
     return AppScaffold(
       title: Text(locales.masail),
       body: Column(
         children: [
-          connectivity.when(
-            loading: () => const CircularProgressIndicator(),
-            error: (error, stackTrace) => Text(error.toString()),
-            data: (connectivityResult) {
-              if (connectivityResult != ConnectivityResult.none) {
+          WithConnectivity(
+            builder: (context, isConnected) {
+              if (isConnected) {
                 return Column(
                   children: [
                     Container(

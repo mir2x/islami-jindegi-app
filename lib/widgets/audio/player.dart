@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:native_app/providers/audio_player.dart';
-import 'package:native_app/providers/connectivity_result.dart';
+import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/providers/audio_player.dart';
 import 'package:native_app/objects/audio_resource.dart';
 import 'package:native_app/widgets/presentation/connect_to_internet.dart';
 import 'package:native_app/helpers/play_time.dart';
@@ -24,13 +23,10 @@ class AudioPlayerWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var audioSource = AudioResource(id: audio['id'], storage: audio['storage']);
-    var connectivity = ref.watch(connectivityResultProvider);
 
-    return connectivity.when(
-      loading: () => const CircularProgressIndicator(),
-      error: (error, stackTrace) => Text(error.toString()),
-      data: (connectivityResult) {
-        if (connectivityResult != ConnectivityResult.none) {
+    return WithConnectivity(
+      builder: (context, isConnected) {
+        if (isConnected) {
           var audioPlayer = ref.watch(audioPlayerProvider(audioSource));
 
           return audioPlayer.when(

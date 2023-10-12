@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/filter/switch_button.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
+import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/providers/all_models.dart';
-import 'package:native_app/providers/connectivity_result.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
@@ -44,7 +43,6 @@ class QuranState extends ConsumerState<Quran> {
     String currentLang = Localizations.localeOf(context).languageCode;
     var numFormatter = NumberFormat('#', currentLang);
     var textTheme = Theme.of(context).textTheme;
-    var connectivity = ref.watch(connectivityResultProvider);
 
     AllModelsQuery query;
 
@@ -228,11 +226,9 @@ class QuranState extends ConsumerState<Quran> {
       bottomBar: BottomBar(
         alignment: MainAxisAlignment.spaceBetween,
         children: [
-          connectivity.when(
-            loading: () => const CircularProgressIndicator(),
-            error: (error, stackTrace) => Text(error.toString()),
-            data: (connectivityResult) {
-              if (connectivityResult != ConnectivityResult.none) {
+          WithConnectivity(
+            builder: (context, isConnected) {
+              if (isConnected) {
                 return TextButton(
                   child: Text(locales.search, style: textTheme.labelMedium),
                   onPressed: () => QR.to('quran/search'),

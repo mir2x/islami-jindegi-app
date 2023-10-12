@@ -5,9 +5,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:open_filex/open_filex.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
-import 'package:native_app/providers/connectivity_result.dart';
+import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/buttons/delete.dart';
 import 'package:native_app/widgets/buttons/download.dart';
 import 'description_item.dart';
@@ -77,13 +76,9 @@ class DownloadItem extends ConsumerWidget {
             textWidth: downloadedTextWidth ?? textWidth,
           );
         } else {
-          var connectivity = ref.watch(connectivityResultProvider);
-
-          return connectivity.when(
-            loading: () => const CircularProgressIndicator(),
-            error: (error, stackTrace) => Text(error.toString()),
-            data: (connectivityResult) {
-              if (connectivityResult != ConnectivityResult.none) {
+          return WithConnectivity(
+            builder: (context, isConnected) {
+              if (isConnected) {
                 return DescriptionItem(
                   title: '${locales.download}:',
                   description: Align(

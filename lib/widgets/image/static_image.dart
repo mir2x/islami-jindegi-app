@@ -3,9 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:native_app/providers/connectivity_result.dart';
 import 'package:collection/collection.dart';
+import 'package:native_app/widgets/utils/with_connectivity.dart';
 
 class StaticImage extends ConsumerWidget {
   const StaticImage({
@@ -27,13 +26,9 @@ class StaticImage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var connectivity = ref.watch(connectivityResultProvider);
-
-    return connectivity.when(
-      loading: () => const CircularProgressIndicator(),
-      error: (error, stackTrace) => Text(error.toString()),
-      data: (connectivityResult) {
-        if (connectivityResult != ConnectivityResult.none) {
+    return WithConnectivity(
+      builder: (context, isConnected) {
+        if (isConnected) {
           double screenWidth = MediaQuery.of(context).size.width;
           double vwsetWidth = screenWidth * (vwset['xs']! / 100);
           int? selectedWidth = selectWidth(widths, vwsetWidth);

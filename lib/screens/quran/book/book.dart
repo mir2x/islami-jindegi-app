@@ -4,15 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:pdfx/pdfx.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/pdf_controller.dart';
 import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/providers/all_models.dart';
-import 'package:native_app/providers/connectivity_result.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
+import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/objects/pdf_source.dart';
@@ -91,16 +90,12 @@ class QuranBook extends ConsumerWidget {
                   },
                 );
               } else {
-                var connectivity = ref.watch(connectivityResultProvider);
-
                 return AppScaffold(
                   title: Text(qitabTitle),
                   body: Center(
-                    child: connectivity.when(
-                      loading: () => const CircularProgressIndicator(),
-                      error: (error, stackTrace) => Text(error.toString()),
-                      data: (connectivityResult) {
-                        if (connectivityResult != ConnectivityResult.none) {
+                    child: WithConnectivity(
+                      builder: (context, isConnected) {
+                        if (isConnected) {
                           int size = qitab.document['metadata']['size'];
                           double screenWidth =
                               MediaQuery.of(context).size.width;
