@@ -4,7 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dio/dio.dart';
 import 'package:native_app/providers/downloader.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
-import 'package:native_app/providers/preferences.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/objects/progress_percentage.dart';
 import 'package:native_app/objects/download_params.dart';
 import 'package:native_app/helpers/file_size.dart';
@@ -136,12 +136,9 @@ class DownloadProgress extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
-    var prefs = ref.watch(preferencesProvider);
 
-    return prefs.when(
-      loading: () => const SizedBox.shrink(),
-      error: (error, _) => Text(error.toString()),
-      data: (preferences) {
+    return WithPreferences(
+      builder: (context, preferences) {
         String theme = preferences.getString('theme') ?? 'dark';
 
         return ValueListenableBuilder<Map>(

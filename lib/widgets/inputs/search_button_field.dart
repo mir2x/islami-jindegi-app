@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:native_app/providers/preferences.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/theme/colors.dart';
 import 'input_field.dart';
 
@@ -44,12 +44,8 @@ class _SearchState extends ConsumerState<SearchButtonField> {
     bool isSmallMobile = screenWidth < 340;
     double sidePadding = isSmallMobile ? 13 : 16;
 
-    var prefs = ref.watch(preferencesProvider);
-
-    return prefs.when(
-      loading: () => const SizedBox.shrink(),
-      error: (error, _) => Text(error.toString()),
-      data: (preferences) {
+    return WithPreferences(
+      builder: (context, preferences) {
         String theme = preferences.getString('theme') ?? 'dark';
 
         return Directionality(

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:collection/collection.dart';
 import 'package:date_field/date_field.dart';
 import 'package:intl/intl.dart';
-import 'package:native_app/providers/preferences.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/theme/colors.dart';
 
@@ -47,7 +47,6 @@ class DateFilter extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isSmallMobile = screenWidth < 340;
-    var prefs = ref.watch(preferencesProvider);
     var qParams = ref.watch(queryParamsProvider);
 
     final List<Map> options = [
@@ -61,10 +60,8 @@ class DateFilter extends ConsumerWidget {
 
     String selectedLabel = selectedDate(qParams, options, locales);
 
-    return prefs.when(
-      loading: () => const SizedBox.shrink(),
-      error: (error, _) => Text(error.toString()),
-      data: (preferences) {
+    return WithPreferences(
+      builder: (context, preferences) {
         String theme = preferences.getString('theme') ?? 'dark';
 
         return OutlinedButton(

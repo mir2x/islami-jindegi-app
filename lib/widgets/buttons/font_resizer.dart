@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:native_app/providers/preferences.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
 
 class FontResizer extends ConsumerWidget {
@@ -20,12 +20,9 @@ class FontResizer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    var prefs = ref.watch(preferencesProvider);
 
-    return prefs.when(
-      loading: () => const SizedBox.shrink(),
-      error: (error, _) => Text(error.toString()),
-      data: (preferences) {
+    return WithPreferences(
+      builder: (context, preferences) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

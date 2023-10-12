@@ -10,7 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:native_app/providers/push_notifications.dart';
 import 'package:native_app/providers/app_widget_link.dart';
-import 'package:native_app/providers/preferences.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/notification_status.dart';
 
 class AppScaffold extends ConsumerWidget {
@@ -42,12 +42,9 @@ class AppScaffold extends ConsumerWidget {
 
     ref.read(pushNotificationProvider);
     ref.read(appWidgetLinkProvider);
-    var prefs = ref.watch(preferencesProvider);
 
-    return prefs.when(
-      loading: () => const SizedBox.shrink(),
-      error: (error, _) => Text(error.toString()),
-      data: (preferences) {
+    return WithPreferences(
+      builder: (context, preferences) {
         String theme = preferences.getString('theme') ?? 'dark';
 
         return BackButtonListener(

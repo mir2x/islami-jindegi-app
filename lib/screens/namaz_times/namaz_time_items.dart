@@ -5,7 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:adhan/adhan.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/providers/geolocation.dart';
-import 'package:native_app/providers/preferences.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/objects/prayer_time.dart';
 import 'package:native_app/theme/colors.dart';
 
@@ -209,16 +209,13 @@ class NamazTimeItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
-    var prefs = ref.watch(preferencesProvider);
 
     return Row(
       children: [
         Expanded(
           flex: 3,
-          child: prefs.when(
-            loading: () => const SizedBox.shrink(),
-            error: (error, _) => Text(error.toString()),
-            data: (preferences) {
+          child: WithPreferences(
+            builder: (context, preferences) {
               String theme = preferences.getString('theme') ?? 'dark';
 
               return InkWell(

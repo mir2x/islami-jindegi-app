@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:native_app/providers/preferences.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/theme/colors.dart';
 
 class Dropdown extends ConsumerStatefulWidget {
@@ -40,12 +40,9 @@ class DropdownState extends ConsumerState<Dropdown> {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
-    var prefs = ref.watch(preferencesProvider);
 
-    return prefs.when(
-      loading: () => const SizedBox.shrink(),
-      error: (error, _) => Text(error.toString()),
-      data: (preferences) {
+    return WithPreferences(
+      builder: (context, preferences) {
         String theme = preferences.getString('theme') ?? 'dark';
         Color iconColor =
             theme == 'dark' ? ThemeColors.color4 : ThemeColors.color8;

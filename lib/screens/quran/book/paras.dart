@@ -5,8 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/all_models.dart';
-import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/objects/all_models_query.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/theme/colors.dart';
 
@@ -105,7 +105,6 @@ class _ParasState extends ConsumerState<StatefulParas> {
     String currentLang = Localizations.localeOf(context).languageCode;
     var numFormatter = NumberFormat('#', currentLang);
     var textTheme = Theme.of(context).textTheme;
-    var prefs = ref.watch(preferencesProvider);
 
     return Expanded(
       child: Row(
@@ -118,10 +117,8 @@ class _ParasState extends ConsumerState<StatefulParas> {
                   left: BorderSide(color: ThemeColors.color7, width: 0.5),
                 ),
               ),
-              child: prefs.when(
-                loading: () => const SizedBox.shrink(),
-                error: (error, _) => Text(error.toString()),
-                data: (preferences) {
+              child: WithPreferences(
+                builder: (context, preferences) {
                   String theme = preferences.getString('theme') ?? 'dark';
 
                   return ListView.builder(

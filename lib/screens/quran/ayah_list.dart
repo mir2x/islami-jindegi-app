@@ -5,9 +5,10 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:collection/collection.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/all_models.dart';
-import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/providers/quran_settings.dart';
+import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/objects/all_models_query.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
@@ -40,13 +41,10 @@ class AyahList extends ConsumerWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     bool isSmallMobile = screenWidth < 340;
-    var prefs = ref.watch(preferencesProvider);
     var qSettings = ref.watch(quranSettingsProvider);
 
-    return prefs.when(
-      loading: () => const SizedBox.shrink(),
-      error: (error, _) => Text(error.toString()),
-      data: (preferences) {
+    return WithPreferences(
+      builder: (context, preferences) {
         var arabicFontSizeRatio =
             FontSizeRatio(value: preferences.getDouble('ayahFontRatio'));
         var banglaFontSizeRatio =

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:native_app/providers/preferences.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
 
 class PlaceholderScaffold extends ConsumerWidget {
   const PlaceholderScaffold({
@@ -16,8 +16,6 @@ class PlaceholderScaffold extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var prefs = ref.watch(preferencesProvider);
-
     return Scaffold(
       appBar: AppBar(
         leading: Padding(
@@ -45,10 +43,8 @@ class PlaceholderScaffold extends ConsumerWidget {
           ),
         ],
       ),
-      body: prefs.when(
-        loading: () => const SizedBox.shrink(),
-        error: (error, _) => Text(error.toString()),
-        data: (preferences) {
+      body: WithPreferences(
+        builder: (context, preferences) {
           String theme = preferences.getString('theme') ?? 'dark';
 
           return Container(
