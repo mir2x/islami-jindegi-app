@@ -22,6 +22,7 @@ import 'package:native_app/widgets/document/pdf_builders.dart';
 import 'package:native_app/widgets/utils/full_screen.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/responsive/image.dart';
 import 'package:native_app/widgets/buttons/download.dart';
 import 'package:native_app/widgets/buttons/delete.dart';
 import 'package:native_app/helpers/file_utils.dart';
@@ -101,10 +102,22 @@ class QuranBook extends ConsumerWidget {
                       data: (connectivityResult) {
                         if (connectivityResult != ConnectivityResult.none) {
                           int size = qitab.document['metadata']['size'];
+                          double screenWidth =
+                              MediaQuery.of(context).size.width;
 
                           return Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              Container(
+                                margin: const EdgeInsets.only(top: 20),
+                                width: screenWidth / 2,
+                                child: ResponsiveImage(
+                                  image: qitab.image,
+                                  model: 'book',
+                                  vwset: const {'xs': 50},
+                                ),
+                              ),
+                              const SizedBox(height: 15),
                               Text(
                                 locales.download,
                                 style: textTheme.labelLarge?.copyWith(
