@@ -243,7 +243,9 @@ class _QiratButtonState extends State<QiratButton> {
   @mustCallSuper
   void didUpdateWidget(covariant oldwidget) {
     super.didUpdateWidget(oldwidget);
-    setState(() => playerLoaded = false);
+    if (widget.qari != oldwidget.qari) {
+      setState(() => playerLoaded = false);
+    }
   }
 
   @override
