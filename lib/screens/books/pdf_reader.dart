@@ -6,23 +6,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/providers/pdf_controller.dart';
 import 'package:native_app/objects/pdf_source.dart';
-import 'pdf_builders.dart';
+import 'package:native_app/objects/pdf_builders.dart';
+import 'package:native_app/widgets/responsive/image.dart';
 
 class PDFReader extends ConsumerWidget {
   const PDFReader({
     super.key,
-    required this.resourceId,
-    required this.document,
+    required this.book,
   });
 
-  final String resourceId;
-  final Map document;
+  final dynamic book;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    String filePath = document['id'];
+    String filePath = book.document['id'];
 
     var checkFileProvider = checkDownloadedFileProvider(filePath);
     var checkDownloadedFile = ref.watch(checkFileProvider);
@@ -33,15 +32,15 @@ class PDFReader extends ConsumerWidget {
       data: (isDownloaded) {
         if (isDownloaded) {
           PdfSource params = PdfSource(
-            resourceId: resourceId,
-            document: document,
+            resourceId: book.id,
+            document: book.document,
           );
 
           var pdfCtrl = ref.watch(pdfControllerProvider(params));
 
           return Container(
             height: 540,
-            margin: const EdgeInsets.only(bottom: 10),
+            margin: const EdgeInsets.only(bottom: 30),
             child: pdfCtrl.when(
               loading: () {
                 return const Center(
@@ -97,7 +96,7 @@ class PDFReader extends ConsumerWidget {
                                 .getViewBuilders(),
                         onPageChanged: (page) async {
                           var prefs = await SharedPreferences.getInstance();
-                          await prefs.setInt('pdfResource-$resourceId', page);
+                          await prefs.setInt('pdfResource-${book.id}', page);
                         },
                       ),
                     ),
@@ -107,7 +106,19 @@ class PDFReader extends ConsumerWidget {
             ),
           );
         } else {
-          return const SizedBox.shrink();
+          double screenWidth = MediaQuery.of(context).size.width;
+
+          return Center(
+            child: Container(
+              margin: const EdgeInsets.only(top: 20, bottom: 30),
+              width: screenWidth / 2,
+              child: ResponsiveImage(
+                image: book.image,
+                model: 'book',
+                vwset: const {'xs': 50},
+              ),
+            ),
+          );
         }
       },
     );

@@ -15,11 +15,10 @@ import 'package:native_app/widgets/utils/full_screen.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/description_item.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
-import 'package:native_app/widgets/responsive/image.dart';
-import 'package:native_app/widgets/document/pdf_reader.dart';
 import 'package:native_app/widgets/utils/comma_separated_list.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/theme/colors.dart';
+import 'pdf_reader.dart';
 
 class BookItem extends ConsumerWidget {
   const BookItem({super.key});
@@ -148,8 +147,6 @@ class BookItem extends ConsumerWidget {
                   ],
                 );
               } else {
-                double screenWidth = MediaQuery.of(context).size.width;
-
                 return ItemContent(
                   children: [
                     Container(
@@ -181,17 +178,7 @@ class BookItem extends ConsumerWidget {
                       ),
                     ),
                     if (book.document != null) ...[
-                      PDFReader(resourceId: book.id, document: book.document),
-                    ] else ...[
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 20),
-                        width: screenWidth / 2,
-                        child: ResponsiveImage(
-                          image: book.image,
-                          model: 'book',
-                          vwset: const {'xs': 50},
-                        ),
-                      ),
+                      PDFReader(book: book),
                     ],
                     if (book.publisher != null) ...[
                       DescriptionItem(
@@ -221,12 +208,9 @@ class BookItem extends ConsumerWidget {
                       ),
                     ],
                     if (book.document != null) ...[
-                      Container(
-                        margin: const EdgeInsets.only(top: 30),
-                        child: DownloadItem(
-                          filePath: book.document['id'],
-                          fileUrl: fileSrcUrl(book.document),
-                        ),
+                      DownloadItem(
+                        filePath: book.document['id'],
+                        fileUrl: fileSrcUrl(book.document),
                       ),
                     ],
                   ],

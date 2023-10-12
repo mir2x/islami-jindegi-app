@@ -18,7 +18,7 @@ import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/objects/pdf_source.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
-import 'package:native_app/widgets/document/pdf_builders.dart';
+import 'package:native_app/objects/pdf_builders.dart';
 import 'package:native_app/widgets/utils/full_screen.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
