@@ -59,9 +59,9 @@ void callbackDispatcher() {
       'bangaliDate': getBangaliDate(),
       'gregorianDate': getGregorianDate(currentLang, null),
       'sunriseTitle': sunriseSunset['sunrise']['title'],
-      'sunriseTime': sunriseSunset['sunrise']['startTime'],
+      'sunriseTime': sunriseSunset['sunrise']['time'],
       'sunsetTitle': sunriseSunset['sunset']['title'],
-      'sunsetTime': sunriseSunset['sunset']['startTime'],
+      'sunsetTime': sunriseSunset['sunset']['time'],
       'location': locationName,
       if (prayerTimes.containsKey('current') &&
           prayerTimes['current'] != null) ...{
