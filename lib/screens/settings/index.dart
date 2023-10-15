@@ -50,7 +50,6 @@ class Settings extends ConsumerWidget {
     var prefs = ref.watch(preferencesProvider);
 
     return AppScaffold(
-      showPattern: false,
       title: Text(locales.settings),
       body: prefs.when(
         loading: () => const FullScreenLoader(),

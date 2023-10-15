@@ -42,7 +42,6 @@ class NamazSettings extends ConsumerWidget {
     var prefs = ref.watch(preferencesProvider);
 
     return AppScaffold(
-      showPattern: false,
       title: Text(locales.namazSettings),
       body: prefs.when(
         loading: () => const FullScreenLoader(),

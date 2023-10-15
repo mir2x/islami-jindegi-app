@@ -116,6 +116,18 @@ class DropdownState extends ConsumerState<Dropdown> {
                   },
                 )
               : null,
+          underline: Container(
+            height: 1.0,
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color:
+                      theme == 'dark' ? ThemeColors.color3 : ThemeColors.color2,
+                  width: 0.0,
+                ),
+              ),
+            ),
+          ),
           onChanged: widget.updateItem,
         );
       },
