@@ -3,16 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/theme/colors.dart';
 
 class PlaceholderScaffold extends ConsumerWidget {
   const PlaceholderScaffold({
     super.key,
     required this.body,
     this.bottomBar,
+    this.showPattern = false,
   });
 
   final Widget body;
   final Widget? bottomBar;
+  final bool showPattern;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -49,16 +52,23 @@ class PlaceholderScaffold extends ConsumerWidget {
 
           return Container(
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: theme == 'dark'
-                    ? const AssetImage(
-                        'assets/images/icons/background-pattern-dark.png',
-                      )
-                    : const AssetImage(
-                        'assets/images/icons/background-pattern-light.png',
-                      ),
-                repeat: ImageRepeat.repeat,
-              ),
+              image: showPattern
+                  ? DecorationImage(
+                      image: theme == 'dark'
+                          ? const AssetImage(
+                              'assets/images/icons/background-pattern-dark.png',
+                            )
+                          : const AssetImage(
+                              'assets/images/icons/background-pattern-light.png',
+                            ),
+                      repeat: ImageRepeat.repeat,
+                    )
+                  : null,
+              color: !showPattern
+                  ? theme == 'dark'
+                      ? ThemeColors.color2
+                      : ThemeColors.color3
+                  : null,
             ),
             constraints: const BoxConstraints.expand(),
             child: LayoutBuilder(
