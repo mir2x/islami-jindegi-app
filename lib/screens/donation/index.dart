@@ -44,6 +44,7 @@ class Donation extends ConsumerWidget {
           storeKey: 'donationFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
+              showPattern: false,
               title: Text(locales.donation),
               body: ItemContent(
                 children: [

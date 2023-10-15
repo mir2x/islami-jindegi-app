@@ -80,6 +80,7 @@ class MasailItem extends ConsumerWidget {
           builder: (context, fontSizeRatio) {
             return AppScaffold(
               onBackPressed: () async => await QR.to('masail'),
+              showPattern: false,
               title: Text(locales.masail),
               body: NextPageSwipe(
                 onPrevious: previousPage,

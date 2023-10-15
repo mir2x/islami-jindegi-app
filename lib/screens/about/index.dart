@@ -44,6 +44,7 @@ class About extends ConsumerWidget {
           storeKey: 'aboutFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
+              showPattern: false,
               title: Text(locales.aboutUs),
               body: ItemContent(
                 children: [

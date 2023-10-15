@@ -74,6 +74,7 @@ class NewsItem extends ConsumerWidget {
           builder: (context, fontSizeRatio) {
             return AppScaffold(
               onBackPressed: () async => await QR.to('news'),
+              showPattern: false,
               title: Text(locales.news),
               body: NextPageSwipe(
                 onPrevious: previousPage,

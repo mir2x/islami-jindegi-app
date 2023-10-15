@@ -78,6 +78,7 @@ class Dua extends ConsumerWidget {
           builder: (context, fontSizeRatio) {
             return AppScaffold(
               onBackPressed: () async => await QR.to('duas'),
+              showPattern: false,
               title: Text(locales.duaDurud),
               body: NextPageSwipe(
                 onPrevious: previousPage,

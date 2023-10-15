@@ -44,6 +44,7 @@ class ContactUs extends ConsumerWidget {
           storeKey: 'contactFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
+              showPattern: false,
               title: Text(locales.contactUs),
               body: ItemContent(
                 children: [

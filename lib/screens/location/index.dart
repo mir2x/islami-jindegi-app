@@ -26,6 +26,7 @@ class Location extends ConsumerWidget {
     var geoData = ref.watch(geolocationProvider);
 
     return AppScaffold(
+      showPattern: false,
       title: Text(locales.location),
       body: ItemContent(
         children: [

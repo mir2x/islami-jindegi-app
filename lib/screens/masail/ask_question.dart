@@ -14,6 +14,7 @@ class AskQuestion extends StatelessWidget {
     var textTheme = Theme.of(context).textTheme;
 
     return AppScaffold(
+      showPattern: false,
       title: Text(locales.askQuestion),
       body: ItemContent(
         children: [

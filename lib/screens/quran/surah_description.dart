@@ -40,6 +40,7 @@ class SurahDescription extends ConsumerWidget {
           storeKey: 'tafseerFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
+              showPattern: false,
               title: Text(
                 contextualTranslation(
                   locale: currentLang,

@@ -43,6 +43,7 @@ class BismillahTafseer extends ConsumerWidget {
           storeKey: 'tafseerFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
+              showPattern: false,
               title: Text(locales.tafseer),
               body: ItemContent(
                 children: [

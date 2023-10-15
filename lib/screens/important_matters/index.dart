@@ -44,6 +44,7 @@ class ImportantMatters extends ConsumerWidget {
           storeKey: 'importantMattersFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
+              showPattern: false,
               title: Text(locales.importantMatters),
               body: ItemContent(
                 children: [

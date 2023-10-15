@@ -24,6 +24,7 @@ class QuranSearch extends ConsumerWidget {
     var qParams = ref.watch(queryParamsProvider);
 
     return AppScaffold(
+      showPattern: false,
       title: Text(locales.searchInQuran),
       body: Column(
         children: [

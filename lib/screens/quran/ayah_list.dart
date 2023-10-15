@@ -64,6 +64,7 @@ class AyahList extends ConsumerWidget {
         var modelQuery = ref.watch(allModelsProvider(query));
 
         return AppScaffold(
+          showPattern: false,
           title: Text(
             contextualTranslation(
               locale: currentLang,

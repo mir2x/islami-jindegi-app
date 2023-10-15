@@ -99,6 +99,7 @@ class Chapter extends ConsumerWidget {
           builder: (context, fontSizeRatio) {
             return AppScaffold(
               onBackPressed: () async => await QR.to('books/$bookId'),
+              showPattern: false,
               title: Text(locales.book),
               body: NextPageSwipe(
                 onPrevious: previousPage,

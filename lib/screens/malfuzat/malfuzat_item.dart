@@ -82,6 +82,7 @@ class MalfuzatItem extends ConsumerWidget {
           builder: (context, fontSizeRatio) {
             return AppScaffold(
               onBackPressed: () async => await QR.to('malfuzat'),
+              showPattern: false,
               title: Text(locales.malfuzat),
               body: NextPageSwipe(
                 onPrevious: previousPage,

@@ -86,6 +86,7 @@ class NamazTime extends ConsumerWidget {
           builder: (context, fontSizeRatio) {
             return AppScaffold(
               onBackPressed: () async => await QR.to('namaz-times'),
+              showPattern: false,
               title: Text(itemTitle),
               body: NextPageSwipe(
                 onPrevious: previousPage,

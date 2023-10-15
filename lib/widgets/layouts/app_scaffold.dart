@@ -12,6 +12,7 @@ import 'package:native_app/providers/push_notifications.dart';
 import 'package:native_app/providers/app_widget_link.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/notification_status.dart';
+import 'package:native_app/theme/colors.dart';
 
 class AppScaffold extends ConsumerWidget {
   const AppScaffold({
@@ -24,6 +25,7 @@ class AppScaffold extends ConsumerWidget {
     this.isHome = false,
     this.showAppBar = true,
     this.showBottomBar = true,
+    this.showPattern = true,
   });
 
   final Text title;
@@ -34,6 +36,7 @@ class AppScaffold extends ConsumerWidget {
   final bool isHome;
   final bool showAppBar;
   final bool showBottomBar;
+  final bool showPattern;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -231,16 +234,23 @@ class AppScaffold extends ConsumerWidget {
             ),
             body: Container(
               decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: theme == 'dark'
-                      ? const AssetImage(
-                          'assets/images/icons/background-pattern-dark.png',
-                        )
-                      : const AssetImage(
-                          'assets/images/icons/background-pattern-light.png',
-                        ),
-                  repeat: ImageRepeat.repeat,
-                ),
+                image: showPattern
+                    ? DecorationImage(
+                        image: theme == 'dark'
+                            ? const AssetImage(
+                                'assets/images/icons/background-pattern-dark.png',
+                              )
+                            : const AssetImage(
+                                'assets/images/icons/background-pattern-light.png',
+                              ),
+                        repeat: ImageRepeat.repeat,
+                      )
+                    : null,
+                color: !showPattern
+                    ? theme == 'dark'
+                        ? ThemeColors.color2
+                        : ThemeColors.color3
+                    : null,
               ),
               constraints: const BoxConstraints.expand(),
               child: LayoutBuilder(

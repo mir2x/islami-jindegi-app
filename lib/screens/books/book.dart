@@ -48,6 +48,7 @@ class BookItem extends ConsumerWidget {
         var chapterQuery = ref.watch(allModelsProvider(cQuery));
 
         return AppScaffold(
+          showPattern: false,
           title: Text(locales.book),
           body: chapterQuery.when(
             loading: () => const SizedBox.shrink(),

@@ -76,6 +76,7 @@ class Bayan extends ConsumerWidget {
 
         return AppScaffold(
           onBackPressed: () async => await QR.to('bayans'),
+          showPattern: false,
           title: Text(locales.bayan),
           body: NextPageSwipe(
             onPrevious: previousPage,
