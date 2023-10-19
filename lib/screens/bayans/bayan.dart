@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/single_model.dart';
+import 'package:native_app/providers/downloaded_bayans.dart';
 import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
@@ -160,6 +161,25 @@ class Bayan extends ConsumerWidget {
                         DownloadItem(
                           filePath: resource.audio['id'],
                           fileUrl: fileSrcUrl(resource.audio),
+                          downloadCallback: () async {
+                            await ref
+                                .watch(downloadedBayanProvider.notifier)
+                                .createItem({
+                              'bayanId': resource.id,
+                              'link': 'bayans/${resource.id}',
+                              'title': resource.title,
+                              'speaker': resource.speaker.value.name,
+                              'audioFile': resource.audio['id'],
+                              'publishedAt': resource.publishedAt,
+                            });
+                          },
+                          deleteCallback: () async {
+                            await ref
+                                .watch(downloadedBayanProvider.notifier)
+                                .deleteItem(
+                                  resource.id,
+                                );
+                          },
                         ),
                       ],
                     ],

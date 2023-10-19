@@ -9,9 +9,11 @@ class DeleteButton extends ConsumerWidget {
   const DeleteButton({
     super.key,
     required this.filePath,
+    this.callback,
   });
 
   final String filePath;
+  final Future? Function()? callback;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -50,6 +52,10 @@ class DeleteButton extends ConsumerWidget {
               await ref
                   .read(checkDownloadedFileProvider(filePath).notifier)
                   .check(filePath);
+
+              if (callback != null) {
+                await callback!();
+              }
             }
           },
         );

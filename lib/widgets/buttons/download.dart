@@ -16,11 +16,13 @@ class DownloadButton extends ConsumerWidget {
     required this.filePath,
     required this.fileUrl,
     this.direction = 'row',
+    this.callback,
   });
 
   final String filePath;
   final String fileUrl;
   final String direction;
+  final Future? Function()? callback;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,6 +38,7 @@ class DownloadButton extends ConsumerWidget {
             fileUrl: fileUrl,
             cancelToken: cancelToken,
             progressNotifier: progressNotifier,
+            callback: callback,
           ),
           DownloadProgress(
             cancelToken: cancelToken,
@@ -52,6 +55,7 @@ class DownloadButton extends ConsumerWidget {
             fileUrl: fileUrl,
             cancelToken: cancelToken,
             progressNotifier: progressNotifier,
+            callback: callback,
           ),
           Transform.translate(
             offset: const Offset(0, -2),
@@ -73,12 +77,14 @@ class DownloadIcon extends ConsumerWidget {
     required this.fileUrl,
     required this.cancelToken,
     required this.progressNotifier,
+    this.callback,
   });
 
   final String filePath;
   final String fileUrl;
   final CancelToken cancelToken;
   final ProgressPercentage progressNotifier;
+  final Future? Function()? callback;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -104,6 +110,10 @@ class DownloadIcon extends ConsumerWidget {
           await ref
               .read(checkDownloadedFileProvider(filePath).notifier)
               .check(filePath);
+
+          if (callback != null) {
+            await callback!();
+          }
         } else if (response == null && context.mounted) {
           showDialog(
             context: context,

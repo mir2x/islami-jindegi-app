@@ -18,12 +18,16 @@ class DownloadItem extends ConsumerWidget {
     required this.fileUrl,
     this.textWidth = 120,
     this.downloadedTextWidth,
+    this.downloadCallback,
+    this.deleteCallback,
   });
 
   final String filePath;
   final String fileUrl;
   final double textWidth;
   final double? downloadedTextWidth;
+  final Future? Function()? downloadCallback;
+  final Future? Function()? deleteCallback;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -67,7 +71,7 @@ class DownloadItem extends ConsumerWidget {
                         }
                       },
                     ),
-                    DeleteButton(filePath: filePath),
+                    DeleteButton(filePath: filePath, callback: deleteCallback),
                   ],
                 ),
               ),
@@ -83,7 +87,11 @@ class DownloadItem extends ConsumerWidget {
                   title: '${locales.download}:',
                   description: Align(
                     alignment: Alignment.centerLeft,
-                    child: DownloadButton(filePath: filePath, fileUrl: fileUrl),
+                    child: DownloadButton(
+                      filePath: filePath,
+                      fileUrl: fileUrl,
+                      callback: downloadCallback,
+                    ),
                   ),
                   alignment: CrossAxisAlignment.center,
                   textWidth: textWidth,
