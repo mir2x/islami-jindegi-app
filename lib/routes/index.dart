@@ -18,6 +18,7 @@ import '../screens/books/index.dart';
 import '../screens/books/book.dart';
 import '../screens/books/chapter.dart';
 import '../screens/books/subchapter.dart';
+import '../screens/books/downloads.dart';
 
 import '../screens/bayans/index.dart';
 import '../screens/bayans/bayan.dart';
@@ -133,6 +134,7 @@ class AppRoutes {
             ),
           ],
         ),
+        QRoute(path: '/downloads', builder: () => const BookDownloads()),
       ],
     ),
     QRoute(

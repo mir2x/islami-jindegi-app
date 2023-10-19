@@ -7,6 +7,7 @@ import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/providers/all_models.dart';
+import 'package:native_app/providers/downloaded_books.dart';
 import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
@@ -212,6 +213,25 @@ class BookItem extends ConsumerWidget {
                       DownloadItem(
                         filePath: book.document['id'],
                         fileUrl: fileSrcUrl(book.document),
+                        downloadCallback: () async {
+                          await ref
+                              .watch(downloadedBookProvider.notifier)
+                              .createItem({
+                            'bookId': book.id,
+                            'link': 'books/${book.id}',
+                            'title': book.title,
+                            'author': book.authors
+                                .map((e) => e.name)
+                                .toList()
+                                .join(', '),
+                            'documentFile': book.document['id'],
+                          });
+                        },
+                        deleteCallback: () async {
+                          await ref
+                              .watch(downloadedBookProvider.notifier)
+                              .deleteItem(book.id);
+                        },
                       ),
                     ],
                   ],

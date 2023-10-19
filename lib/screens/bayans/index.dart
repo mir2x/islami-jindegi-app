@@ -205,16 +205,14 @@ class Bayans extends ConsumerWidget {
         ],
       ),
       bottomBar: BottomBar(
+        alignment: MainAxisAlignment.center,
         children: [
-          Container(
-            padding: const EdgeInsets.only(left: 5),
-            child: TextButton(
-              child: Text(
-                '${locales.downloaded} ${locales.bayans}',
-                style: textTheme.labelMedium,
-              ),
-              onPressed: () => QR.to('bayans/downloads'),
+          TextButton(
+            child: Text(
+              '${locales.downloaded} ${locales.bayans}',
+              style: textTheme.labelMedium,
             ),
+            onPressed: () => QR.to('bayans/downloads'),
           ),
         ],
       ),

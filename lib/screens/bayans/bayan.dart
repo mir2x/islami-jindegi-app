@@ -176,9 +176,7 @@ class Bayan extends ConsumerWidget {
                           deleteCallback: () async {
                             await ref
                                 .watch(downloadedBayanProvider.notifier)
-                                .deleteItem(
-                                  resource.id,
-                                );
+                                .deleteItem(resource.id);
                           },
                         ),
                       ],
