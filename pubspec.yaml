@@ -131,7 +131,7 @@ flutter:
     - assets/images/logos/
     - assets/images/icons/
     - assets/images/books/
-    - assets/db/offline_data_2.sqlite3
+    - assets/db/offline_data_3.sqlite3
     - assets/db/offline_location_1.sqlite3
 
   fonts:
