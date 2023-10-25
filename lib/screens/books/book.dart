@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -14,12 +15,11 @@ import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/widgets/presentation/description_item.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/utils/comma_separated_list.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/theme/colors.dart';
-import 'pdf_reader.dart';
+import 'display.dart';
 
 class BookItem extends ConsumerWidget {
   const BookItem({super.key});
@@ -179,58 +179,42 @@ class BookItem extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    if (book.document != null) ...[
-                      PDFReader(book: book),
-                    ],
-                    if (book.publisher != null) ...[
-                      DescriptionItem(
-                        title: '${locales.publisher}:',
-                        description: Text(
-                          book.publisher,
-                          style: textTheme.labelMedium,
-                        ),
-                      ),
-                    ],
-                    if (book.publishedAt != null) ...[
-                      DescriptionItem(
-                        title: '${locales.publicationDate}:',
-                        description: Text(
-                          book.publishedAt,
-                          style: textTheme.labelMedium,
-                        ),
-                      ),
-                    ],
-                    if (book.price != null) ...[
-                      DescriptionItem(
-                        title: '${locales.price}:',
-                        description: Text(
-                          book.price,
-                          style: textTheme.labelMedium,
-                        ),
-                      ),
-                    ],
+                    BookDisplay(
+                      id: book.id,
+                      title: book.title,
+                      excerpt: book.excerpt,
+                      publisher: book.publisher,
+                      price: book.price,
+                      image: book.image,
+                      document: book.document,
+                      publishedAt: book.publishedAt,
+                    ),
                     if (book.document != null) ...[
                       DownloadItem(
                         filePath: book.document['id'],
                         fileUrl: fileSrcUrl(book.document),
                         downloadCallback: () async {
-                          await ref
-                              .watch(downloadedBookProvider.notifier)
-                              .createItem({
-                            'bookId': book.id,
-                            'link': 'books/${book.id}',
-                            'title': book.title,
-                            'author': book.authors
-                                .map((e) => e.name)
-                                .toList()
-                                .join(', '),
-                            'documentFile': book.document['id'],
-                          });
+                          await ref.watch(
+                            createDownloadedBookProvider({
+                              'bookId': book.id,
+                              'title': book.title,
+                              'excerpt': book.excerpt,
+                              'publisher': book.publisher,
+                              'price': book.price,
+                              'image': json.encode(book.image),
+                              'document': json.encode(book.document),
+                              'authors': book.authors
+                                  .map((e) => e.name)
+                                  .toList()
+                                  .join(', '),
+                              'publishedAt': book.publishedAt,
+                            }).future,
+                          );
                         },
                         deleteCallback: () async {
-                          await ref
-                              .watch(downloadedBookProvider.notifier)
-                              .deleteItem(book.id);
+                          await ref.watch(
+                            deleteDownloadedBookProvider(book.id).future,
+                          );
                         },
                       ),
                     ],

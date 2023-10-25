@@ -28,8 +28,8 @@ class BookDownloads extends ConsumerWidget {
               return Material(
                 child: ListTile(
                   title: Text(item.title!),
-                  subtitle: Text(item.author!, style: textTheme.labelSmall),
-                  onTap: () => QR.to(item.link!),
+                  subtitle: Text(item.authors!, style: textTheme.labelSmall),
+                  onTap: () => QR.to('books/downloads/${item.id}'),
                 ),
               );
             },

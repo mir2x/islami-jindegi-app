@@ -12,16 +12,20 @@ import 'package:native_app/widgets/responsive/image.dart';
 class PDFReader extends ConsumerWidget {
   const PDFReader({
     super.key,
-    required this.book,
+    required this.bookId,
+    required this.image,
+    required this.document,
   });
 
-  final dynamic book;
+  final String bookId;
+  final Map? image;
+  final Map document;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    String filePath = book.document['id'];
+    String filePath = document['id'];
 
     var checkFileProvider = checkDownloadedFileProvider(filePath);
     var checkDownloadedFile = ref.watch(checkFileProvider);
@@ -32,8 +36,8 @@ class PDFReader extends ConsumerWidget {
       data: (isDownloaded) {
         if (isDownloaded) {
           PdfSource params = PdfSource(
-            resourceId: book.id,
-            document: book.document,
+            resourceId: bookId,
+            document: document,
           );
 
           var pdfCtrl = ref.watch(pdfControllerProvider(params));
@@ -96,7 +100,7 @@ class PDFReader extends ConsumerWidget {
                                 .getViewBuilders(),
                         onPageChanged: (page) async {
                           var prefs = await SharedPreferences.getInstance();
-                          await prefs.setInt('pdfResource-${book.id}', page);
+                          await prefs.setInt('pdfResource-$bookId', page);
                         },
                       ),
                     ),
@@ -113,7 +117,7 @@ class PDFReader extends ConsumerWidget {
               margin: const EdgeInsets.only(top: 20, bottom: 30),
               width: screenWidth / 2,
               child: ResponsiveImage(
-                image: book.image,
+                image: image,
                 model: 'book',
                 vwset: const {'xs': 50},
               ),

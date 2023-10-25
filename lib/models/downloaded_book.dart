@@ -11,12 +11,19 @@ class DownloadedBook {
 
   String? title;
 
-  String? author;
+  String? excerpt;
 
-  String? documentFile;
+  String? publisher;
 
-  @Index(unique: true, replace: true)
-  String? link;
+  String? price;
+
+  String? image;
+
+  String? document;
+
+  String? authors;
+
+  String? publishedAt;
 
   @Index()
   DateTime? createdAt;
