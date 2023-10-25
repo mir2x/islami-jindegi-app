@@ -14,51 +14,43 @@ final downloadedBayansStoreProvider = FutureProvider((ref) async {
       );
 });
 
-class DownloadedBayanNotifier
-    extends AutoDisposeAsyncNotifier<DownloadedBayan?> {
-  @override
-  Future<DownloadedBayan?> build() async {
-    return null;
-  }
+final getDownloadedBayanProvider =
+    FutureProvider.autoDispose.family<dynamic, int>((ref, int id) async {
+  final isar = await ref.watch(downloadedBayansStoreProvider.future);
+  return await isar.downloadedBayans.get(id);
+});
 
-  Future<dynamic> createItem(Map attrs) async {
-    final isar = await ref.watch(downloadedBayansStoreProvider.future);
+final createDownloadedBayanProvider =
+    FutureProvider.autoDispose.family<dynamic, Map>((ref, Map attrs) async {
+  final isar = await ref.watch(downloadedBayansStoreProvider.future);
 
-    var newResource = DownloadedBayan()
-      ..bayanId = attrs['bayanId']
-      ..link = attrs['link']
-      ..title = attrs['title']
-      ..speaker = attrs['speaker']
-      ..audioFile = attrs['audioFile']
-      ..publishedAt = attrs['publishedAt'];
+  var newResource = DownloadedBayan()
+    ..bayanId = attrs['bayanId']
+    ..title = attrs['title']
+    ..excerpt = attrs['excerpt']
+    ..location = attrs['location']
+    ..audio = attrs['audio']
+    ..speaker = attrs['speaker']
+    ..publishedAt = attrs['publishedAt'];
 
-    await isar.writeTxn(() async {
-      await isar.downloadedBayans.put(newResource);
+  return await isar.writeTxn(() async {
+    await isar.downloadedBayans.put(newResource);
+  });
+});
+
+final deleteDownloadedBayanProvider = FutureProvider.autoDispose
+    .family<dynamic, String>((ref, String bayanId) async {
+  final isar = await ref.watch(downloadedBayansStoreProvider.future);
+
+  final resource =
+      await isar.downloadedBayans.where().bayanIdEqualTo(bayanId).findFirst();
+
+  if (resource != null) {
+    return await isar.writeTxn(() async {
+      await isar.downloadedBayans.delete(resource.id);
     });
-
-    final createdResource = await isar.downloadedBayans
-        .where()
-        .bayanIdEqualTo(newResource.bayanId)
-        .findFirst();
-    state = AsyncValue.data(createdResource);
   }
-
-  Future<dynamic> deleteItem(id) async {
-    final isar = await ref.watch(downloadedBayansStoreProvider.future);
-
-    await isar.writeTxn(() async {
-      await isar.downloadedBayans.delete(id);
-    });
-
-    final deletedResource = await isar.downloadedBayans.get(id);
-    state = AsyncValue.data(deletedResource);
-  }
-}
-
-final downloadedBayanProvider = AsyncNotifierProvider.autoDispose<
-    DownloadedBayanNotifier, DownloadedBayan?>(
-  DownloadedBayanNotifier.new,
-);
+});
 
 class DownloadedBayansNotifier extends AutoDisposeAsyncNotifier<List> {
   @override
@@ -69,16 +61,21 @@ class DownloadedBayansNotifier extends AutoDisposeAsyncNotifier<List> {
     return allResources;
   }
 
-  Future<dynamic> deleteItem(id) async {
+  Future<dynamic> deleteItem(bayanId) async {
     final isar = await ref.watch(downloadedBayansStoreProvider.future);
 
-    await isar.writeTxn(() async {
-      await isar.downloadedBayans.delete(id);
-    });
+    final resource =
+        await isar.downloadedBayans.where().bayanIdEqualTo(bayanId).findFirst();
 
-    state = AsyncValue.data(
-      await isar.downloadedBayans.where().sortByPublishedAtDesc().findAll(),
-    );
+    if (resource != null) {
+      await isar.writeTxn(() async {
+        await isar.downloadedBayans.delete(resource.id);
+      });
+
+      state = AsyncValue.data(
+        await isar.downloadedBayans.where().sortByPublishedAtDesc().findAll(),
+      );
+    }
   }
 }
 

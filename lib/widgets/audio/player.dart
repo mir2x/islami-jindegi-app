@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,7 +17,7 @@ class AudioPlayerWidget extends ConsumerWidget {
     required this.audio,
   });
 
-  final LinkedHashMap audio;
+  final Map audio;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -85,7 +84,7 @@ class StatefulAudioPlayer extends ConsumerStatefulWidget {
   });
 
   final AudioPlayer player;
-  final LinkedHashMap audio;
+  final Map audio;
 
   @override
   ConsumerState<StatefulAudioPlayer> createState() => _AudioPlayerState();

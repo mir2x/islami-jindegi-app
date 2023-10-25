@@ -4,6 +4,8 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/downloaded_bayans.dart';
+import 'package:native_app/widgets/presentation/list_item.dart';
+import 'package:native_app/helpers/format_date.dart';
 
 class BayanDownloads extends ConsumerWidget {
   const BayanDownloads({super.key});
@@ -11,6 +13,7 @@ class BayanDownloads extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
+    String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
     var bayans = ref.watch(downloadedBayansProvider);
 
@@ -20,22 +23,54 @@ class BayanDownloads extends ConsumerWidget {
         loading: () => const CircularProgressIndicator(),
         error: (error, stackTrace) => Text(error.toString()),
         data: (resources) {
-          return ListView.separated(
-            itemCount: resources.length,
-            itemBuilder: (BuildContext context, int index) {
-              var item = resources[index];
+          return Container(
+            padding: const EdgeInsets.all(15),
+            child: ListView.builder(
+              itemCount: resources.length,
+              itemBuilder: (BuildContext context, int index) {
+                var item = resources[index];
 
-              return Material(
-                child: ListTile(
-                  title: Text(item.title!),
-                  subtitle: Text(item.speaker!, style: textTheme.labelSmall),
-                  onTap: () => QR.to(item.link!),
-                ),
-              );
-            },
-            separatorBuilder: (context, index) {
-              return const Divider(height: 2);
-            },
+                return InkWell(
+                  onTap: () => QR.to('bayans/downloads/${item.id}'),
+                  child: ListItem(
+                    item: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.title,
+                          style: textTheme.titleMedium,
+                        ),
+                        if (item.speaker != null) ...[
+                          Container(
+                            margin: const EdgeInsets.only(top: 3),
+                            child: Text(
+                              item.speaker,
+                              style: textTheme.labelMedium,
+                            ),
+                          ),
+                        ],
+                        if (item.location != null) ...[
+                          Container(
+                            margin: const EdgeInsets.only(top: 2),
+                            child: Text(
+                              item.location,
+                              style: textTheme.labelSmall,
+                            ),
+                          ),
+                        ],
+                        Container(
+                          margin: const EdgeInsets.only(top: 2),
+                          child: Text(
+                            formatDate(item.publishedAt, currentLang),
+                            style: textTheme.labelSmall,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
           );
         },
       ),

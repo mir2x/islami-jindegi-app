@@ -23,6 +23,7 @@ import '../screens/books/downloads.dart';
 import '../screens/bayans/index.dart';
 import '../screens/bayans/bayan.dart';
 import '../screens/bayans/downloads.dart';
+import '../screens/bayans/downloaded_bayan.dart';
 
 import '../screens/malfuzat/index.dart';
 import '../screens/malfuzat/malfuzat_item.dart';
@@ -142,7 +143,13 @@ class AppRoutes {
       builder: () => const Bayans(),
       children: [
         QRoute(path: '/:id', builder: () => const Bayan()),
-        QRoute(path: '/downloads', builder: () => const BayanDownloads()),
+        QRoute(
+          path: '/downloads',
+          builder: () => const BayanDownloads(),
+          children: [
+            QRoute(path: '/:id', builder: () => const DownloadedBayan()),
+          ],
+        ),
       ],
     ),
     QRoute(

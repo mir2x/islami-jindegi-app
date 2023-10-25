@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -10,19 +11,15 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/widgets/presentation/description_item.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
-import 'package:native_app/widgets/audio/player.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
-import 'package:native_app/helpers/format_date.dart';
-import 'package:native_app/helpers/file_size.dart';
-import 'package:native_app/helpers/play_duration.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
+import 'display.dart';
 
 class Bayan extends ConsumerWidget {
   const Bayan({super.key});
@@ -30,8 +27,6 @@ class Bayan extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    String currentLang = Localizations.localeOf(context).languageCode;
-    var textTheme = Theme.of(context).textTheme;
 
     var query = SingleModelQuery(
       repository: ref.bayans,
@@ -84,105 +79,38 @@ class Bayan extends ConsumerWidget {
             onNext: nextPage,
             child: ItemContent(
               children: [
-                Container(
-                  margin: const EdgeInsets.only(bottom: 15),
-                  child: Text(
-                    resource.title,
-                    style: textTheme.headlineMedium,
-                  ),
+                BayanDisplay(
+                  title: resource.title,
+                  excerpt: resource.excerpt,
+                  location: resource.location,
+                  audio: resource.audio,
+                  speaker: resource.speaker.value.name,
+                  publishedAt: resource.publishedAt,
                 ),
-                if (resource.speaker.value != null) ...[
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 15),
-                    child: Text(
-                      resource.speaker.value.name,
-                      style: textTheme.labelMedium,
-                    ),
-                  ),
-                ],
                 if (resource.audio != null) ...[
-                  Container(
-                    margin: const EdgeInsets.only(top: 30),
-                    child: AudioPlayerWidget(
-                      audio: resource.audio,
-                    ),
+                  DownloadItem(
+                    filePath: resource.audio['id'],
+                    fileUrl: fileSrcUrl(resource.audio),
+                    downloadCallback: () async {
+                      await ref.watch(
+                        createDownloadedBayanProvider({
+                          'bayanId': resource.id,
+                          'title': resource.title,
+                          'excerpt': resource.excerpt,
+                          'location': resource.location,
+                          'audio': json.encode(resource.audio),
+                          'speaker': resource.speaker.value.name,
+                          'publishedAt': resource.publishedAt,
+                        }).future,
+                      );
+                    },
+                    deleteCallback: () async {
+                      await ref.watch(
+                        deleteDownloadedBayanProvider(resource.id).future,
+                      );
+                    },
                   ),
                 ],
-                Container(
-                  margin: const EdgeInsets.only(top: 40),
-                  child: Column(
-                    children: [
-                      if (resource.location != null) ...[
-                        DescriptionItem(
-                          title: '${locales.location}:',
-                          description: Text(
-                            resource.location,
-                            style: textTheme.labelMedium,
-                          ),
-                        ),
-                      ],
-                      DescriptionItem(
-                        title: '${locales.date}:',
-                        description: Text(
-                          formatDate(resource.publishedAt, currentLang),
-                          style: textTheme.labelMedium,
-                        ),
-                      ),
-                      if (resource.excerpt != null) ...[
-                        DescriptionItem(
-                          title: '${locales.topic}:',
-                          description: Text(
-                            resource.excerpt,
-                            style: textTheme.labelMedium,
-                          ),
-                        ),
-                      ],
-                      if (resource.audio?['metadata']?['duration'] != null) ...[
-                        DescriptionItem(
-                          title: '${locales.audioDuration}:',
-                          description: Text(
-                            playDuration(
-                              resource.audio['metadata']['duration'],
-                            ),
-                            style: textTheme.labelMedium,
-                          ),
-                        ),
-                      ],
-                      if (resource.audio?['metadata']?['size'] != null) ...[
-                        DescriptionItem(
-                          title: '${locales.audioSize}:',
-                          description: Text(
-                            fileSize(resource.audio['metadata']['size']),
-                            style: textTheme.labelMedium,
-                          ),
-                        ),
-                      ],
-                      if (resource.audio != null) ...[
-                        DownloadItem(
-                          filePath: resource.audio['id'],
-                          fileUrl: fileSrcUrl(resource.audio),
-                          downloadCallback: () async {
-                            await ref
-                                .watch(downloadedBayanProvider.notifier)
-                                .createItem({
-                              'bayanId': resource.id,
-                              'link': 'bayans/${resource.id}',
-                              'title': resource.title,
-                              'speaker': resource.speaker.value.name,
-                              'audioFile': resource.audio['id'],
-                              'publishedAt': resource.publishedAt,
-                            });
-                          },
-                          deleteCallback: () async {
-                            await ref
-                                .watch(downloadedBayanProvider.notifier)
-                                .deleteItem(resource.id);
-                          },
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
               ],
             ),
           ),

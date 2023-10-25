@@ -17,9 +17,9 @@ const DownloadedBayanSchema = CollectionSchema(
   name: r'DownloadedBayan',
   id: 8432117747208889997,
   properties: {
-    r'audioFile': PropertySchema(
+    r'audio': PropertySchema(
       id: 0,
-      name: r'audioFile',
+      name: r'audio',
       type: IsarType.string,
     ),
     r'bayanId': PropertySchema(
@@ -32,23 +32,28 @@ const DownloadedBayanSchema = CollectionSchema(
       name: r'createdAt',
       type: IsarType.dateTime,
     ),
-    r'link': PropertySchema(
+    r'excerpt': PropertySchema(
       id: 3,
-      name: r'link',
+      name: r'excerpt',
+      type: IsarType.string,
+    ),
+    r'location': PropertySchema(
+      id: 4,
+      name: r'location',
       type: IsarType.string,
     ),
     r'publishedAt': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'publishedAt',
       type: IsarType.string,
     ),
     r'speaker': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'speaker',
       type: IsarType.string,
     ),
     r'title': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'title',
       type: IsarType.string,
     )
@@ -67,19 +72,6 @@ const DownloadedBayanSchema = CollectionSchema(
       properties: [
         IndexPropertySchema(
           name: r'bayanId',
-          type: IndexType.hash,
-          caseSensitive: true,
-        )
-      ],
-    ),
-    r'link': IndexSchema(
-      id: 1895339948848804316,
-      name: r'link',
-      unique: true,
-      replace: true,
-      properties: [
-        IndexPropertySchema(
-          name: r'link',
           type: IndexType.hash,
           caseSensitive: true,
         )
@@ -114,7 +106,7 @@ int _downloadedBayanEstimateSize(
 ) {
   var bytesCount = offsets.last;
   {
-    final value = object.audioFile;
+    final value = object.audio;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -126,7 +118,13 @@ int _downloadedBayanEstimateSize(
     }
   }
   {
-    final value = object.link;
+    final value = object.excerpt;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.location;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -158,13 +156,14 @@ void _downloadedBayanSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.audioFile);
+  writer.writeString(offsets[0], object.audio);
   writer.writeString(offsets[1], object.bayanId);
   writer.writeDateTime(offsets[2], object.createdAt);
-  writer.writeString(offsets[3], object.link);
-  writer.writeString(offsets[4], object.publishedAt);
-  writer.writeString(offsets[5], object.speaker);
-  writer.writeString(offsets[6], object.title);
+  writer.writeString(offsets[3], object.excerpt);
+  writer.writeString(offsets[4], object.location);
+  writer.writeString(offsets[5], object.publishedAt);
+  writer.writeString(offsets[6], object.speaker);
+  writer.writeString(offsets[7], object.title);
 }
 
 DownloadedBayan _downloadedBayanDeserialize(
@@ -174,14 +173,15 @@ DownloadedBayan _downloadedBayanDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = DownloadedBayan();
-  object.audioFile = reader.readStringOrNull(offsets[0]);
+  object.audio = reader.readStringOrNull(offsets[0]);
   object.bayanId = reader.readStringOrNull(offsets[1]);
   object.createdAt = reader.readDateTimeOrNull(offsets[2]);
+  object.excerpt = reader.readStringOrNull(offsets[3]);
   object.id = id;
-  object.link = reader.readStringOrNull(offsets[3]);
-  object.publishedAt = reader.readStringOrNull(offsets[4]);
-  object.speaker = reader.readStringOrNull(offsets[5]);
-  object.title = reader.readStringOrNull(offsets[6]);
+  object.location = reader.readStringOrNull(offsets[4]);
+  object.publishedAt = reader.readStringOrNull(offsets[5]);
+  object.speaker = reader.readStringOrNull(offsets[6]);
+  object.title = reader.readStringOrNull(offsets[7]);
   return object;
 }
 
@@ -205,6 +205,8 @@ P _downloadedBayanDeserializeProp<P>(
     case 5:
       return (reader.readStringOrNull(offset)) as P;
     case 6:
+      return (reader.readStringOrNull(offset)) as P;
+    case 7:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -276,59 +278,6 @@ extension DownloadedBayanByIndex on IsarCollection<DownloadedBayan> {
   List<Id> putAllByBayanIdSync(List<DownloadedBayan> objects,
       {bool saveLinks = true}) {
     return putAllByIndexSync(r'bayanId', objects, saveLinks: saveLinks);
-  }
-
-  Future<DownloadedBayan?> getByLink(String? link) {
-    return getByIndex(r'link', [link]);
-  }
-
-  DownloadedBayan? getByLinkSync(String? link) {
-    return getByIndexSync(r'link', [link]);
-  }
-
-  Future<bool> deleteByLink(String? link) {
-    return deleteByIndex(r'link', [link]);
-  }
-
-  bool deleteByLinkSync(String? link) {
-    return deleteByIndexSync(r'link', [link]);
-  }
-
-  Future<List<DownloadedBayan?>> getAllByLink(List<String?> linkValues) {
-    final values = linkValues.map((e) => [e]).toList();
-    return getAllByIndex(r'link', values);
-  }
-
-  List<DownloadedBayan?> getAllByLinkSync(List<String?> linkValues) {
-    final values = linkValues.map((e) => [e]).toList();
-    return getAllByIndexSync(r'link', values);
-  }
-
-  Future<int> deleteAllByLink(List<String?> linkValues) {
-    final values = linkValues.map((e) => [e]).toList();
-    return deleteAllByIndex(r'link', values);
-  }
-
-  int deleteAllByLinkSync(List<String?> linkValues) {
-    final values = linkValues.map((e) => [e]).toList();
-    return deleteAllByIndexSync(r'link', values);
-  }
-
-  Future<Id> putByLink(DownloadedBayan object) {
-    return putByIndex(r'link', object);
-  }
-
-  Id putByLinkSync(DownloadedBayan object, {bool saveLinks = true}) {
-    return putByIndexSync(r'link', object, saveLinks: saveLinks);
-  }
-
-  Future<List<Id>> putAllByLink(List<DownloadedBayan> objects) {
-    return putAllByIndex(r'link', objects);
-  }
-
-  List<Id> putAllByLinkSync(List<DownloadedBayan> objects,
-      {bool saveLinks = true}) {
-    return putAllByIndexSync(r'link', objects, saveLinks: saveLinks);
   }
 }
 
@@ -487,73 +436,6 @@ extension DownloadedBayanQueryWhere
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterWhereClause>
-      linkIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'link',
-        value: [null],
-      ));
-    });
-  }
-
-  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterWhereClause>
-      linkIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'link',
-        lower: [null],
-        includeLower: false,
-        upper: [],
-      ));
-    });
-  }
-
-  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterWhereClause> linkEqualTo(
-      String? link) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'link',
-        value: [link],
-      ));
-    });
-  }
-
-  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterWhereClause>
-      linkNotEqualTo(String? link) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'link',
-              lower: [],
-              upper: [link],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'link',
-              lower: [link],
-              includeLower: false,
-              upper: [],
-            ));
-      } else {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'link',
-              lower: [link],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'link',
-              lower: [],
-              upper: [link],
-              includeUpper: false,
-            ));
-      }
-    });
-  }
-
-  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterWhereClause>
       createdAtIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
@@ -672,31 +554,31 @@ extension DownloadedBayanQueryWhere
 extension DownloadedBayanQueryFilter
     on QueryBuilder<DownloadedBayan, DownloadedBayan, QFilterCondition> {
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      audioFileIsNull() {
+      audioIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'audioFile',
+        property: r'audio',
       ));
     });
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      audioFileIsNotNull() {
+      audioIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'audioFile',
+        property: r'audio',
       ));
     });
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      audioFileEqualTo(
+      audioEqualTo(
     String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'audioFile',
+        property: r'audio',
         value: value,
         caseSensitive: caseSensitive,
       ));
@@ -704,7 +586,7 @@ extension DownloadedBayanQueryFilter
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      audioFileGreaterThan(
+      audioGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -712,7 +594,7 @@ extension DownloadedBayanQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'audioFile',
+        property: r'audio',
         value: value,
         caseSensitive: caseSensitive,
       ));
@@ -720,7 +602,7 @@ extension DownloadedBayanQueryFilter
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      audioFileLessThan(
+      audioLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -728,7 +610,7 @@ extension DownloadedBayanQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'audioFile',
+        property: r'audio',
         value: value,
         caseSensitive: caseSensitive,
       ));
@@ -736,7 +618,7 @@ extension DownloadedBayanQueryFilter
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      audioFileBetween(
+      audioBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -745,7 +627,7 @@ extension DownloadedBayanQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'audioFile',
+        property: r'audio',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -756,13 +638,13 @@ extension DownloadedBayanQueryFilter
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      audioFileStartsWith(
+      audioStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'audioFile',
+        property: r'audio',
         value: value,
         caseSensitive: caseSensitive,
       ));
@@ -770,13 +652,13 @@ extension DownloadedBayanQueryFilter
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      audioFileEndsWith(
+      audioEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'audioFile',
+        property: r'audio',
         value: value,
         caseSensitive: caseSensitive,
       ));
@@ -784,10 +666,10 @@ extension DownloadedBayanQueryFilter
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      audioFileContains(String value, {bool caseSensitive = true}) {
+      audioContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
-        property: r'audioFile',
+        property: r'audio',
         value: value,
         caseSensitive: caseSensitive,
       ));
@@ -795,10 +677,10 @@ extension DownloadedBayanQueryFilter
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      audioFileMatches(String pattern, {bool caseSensitive = true}) {
+      audioMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
-        property: r'audioFile',
+        property: r'audio',
         wildcard: pattern,
         caseSensitive: caseSensitive,
       ));
@@ -806,20 +688,20 @@ extension DownloadedBayanQueryFilter
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      audioFileIsEmpty() {
+      audioIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'audioFile',
+        property: r'audio',
         value: '',
       ));
     });
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      audioFileIsNotEmpty() {
+      audioIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'audioFile',
+        property: r'audio',
         value: '',
       ));
     });
@@ -1054,6 +936,160 @@ extension DownloadedBayanQueryFilter
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
+      excerptIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'excerpt',
+      ));
+    });
+  }
+
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
+      excerptIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'excerpt',
+      ));
+    });
+  }
+
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
+      excerptEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'excerpt',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
+      excerptGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'excerpt',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
+      excerptLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'excerpt',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
+      excerptBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'excerpt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
+      excerptStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'excerpt',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
+      excerptEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'excerpt',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
+      excerptContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'excerpt',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
+      excerptMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'excerpt',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
+      excerptIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'excerpt',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
+      excerptIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'excerpt',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
       idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1110,31 +1146,31 @@ extension DownloadedBayanQueryFilter
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      linkIsNull() {
+      locationIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'link',
+        property: r'location',
       ));
     });
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      linkIsNotNull() {
+      locationIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'link',
+        property: r'location',
       ));
     });
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      linkEqualTo(
+      locationEqualTo(
     String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'link',
+        property: r'location',
         value: value,
         caseSensitive: caseSensitive,
       ));
@@ -1142,7 +1178,7 @@ extension DownloadedBayanQueryFilter
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      linkGreaterThan(
+      locationGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -1150,7 +1186,7 @@ extension DownloadedBayanQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'link',
+        property: r'location',
         value: value,
         caseSensitive: caseSensitive,
       ));
@@ -1158,7 +1194,7 @@ extension DownloadedBayanQueryFilter
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      linkLessThan(
+      locationLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -1166,7 +1202,7 @@ extension DownloadedBayanQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'link',
+        property: r'location',
         value: value,
         caseSensitive: caseSensitive,
       ));
@@ -1174,7 +1210,7 @@ extension DownloadedBayanQueryFilter
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      linkBetween(
+      locationBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -1183,7 +1219,7 @@ extension DownloadedBayanQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'link',
+        property: r'location',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -1194,13 +1230,13 @@ extension DownloadedBayanQueryFilter
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      linkStartsWith(
+      locationStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'link',
+        property: r'location',
         value: value,
         caseSensitive: caseSensitive,
       ));
@@ -1208,13 +1244,13 @@ extension DownloadedBayanQueryFilter
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      linkEndsWith(
+      locationEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'link',
+        property: r'location',
         value: value,
         caseSensitive: caseSensitive,
       ));
@@ -1222,10 +1258,10 @@ extension DownloadedBayanQueryFilter
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      linkContains(String value, {bool caseSensitive = true}) {
+      locationContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
-        property: r'link',
+        property: r'location',
         value: value,
         caseSensitive: caseSensitive,
       ));
@@ -1233,10 +1269,10 @@ extension DownloadedBayanQueryFilter
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      linkMatches(String pattern, {bool caseSensitive = true}) {
+      locationMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
-        property: r'link',
+        property: r'location',
         wildcard: pattern,
         caseSensitive: caseSensitive,
       ));
@@ -1244,20 +1280,20 @@ extension DownloadedBayanQueryFilter
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      linkIsEmpty() {
+      locationIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'link',
+        property: r'location',
         value: '',
       ));
     });
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterFilterCondition>
-      linkIsNotEmpty() {
+      locationIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'link',
+        property: r'location',
         value: '',
       ));
     });
@@ -1734,17 +1770,16 @@ extension DownloadedBayanQueryLinks
 
 extension DownloadedBayanQuerySortBy
     on QueryBuilder<DownloadedBayan, DownloadedBayan, QSortBy> {
-  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterSortBy>
-      sortByAudioFile() {
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterSortBy> sortByAudio() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'audioFile', Sort.asc);
+      return query.addSortBy(r'audio', Sort.asc);
     });
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterSortBy>
-      sortByAudioFileDesc() {
+      sortByAudioDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'audioFile', Sort.desc);
+      return query.addSortBy(r'audio', Sort.desc);
     });
   }
 
@@ -1775,16 +1810,30 @@ extension DownloadedBayanQuerySortBy
     });
   }
 
-  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterSortBy> sortByLink() {
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterSortBy> sortByExcerpt() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'link', Sort.asc);
+      return query.addSortBy(r'excerpt', Sort.asc);
     });
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterSortBy>
-      sortByLinkDesc() {
+      sortByExcerptDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'link', Sort.desc);
+      return query.addSortBy(r'excerpt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterSortBy>
+      sortByLocation() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'location', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterSortBy>
+      sortByLocationDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'location', Sort.desc);
     });
   }
 
@@ -1831,17 +1880,16 @@ extension DownloadedBayanQuerySortBy
 
 extension DownloadedBayanQuerySortThenBy
     on QueryBuilder<DownloadedBayan, DownloadedBayan, QSortThenBy> {
-  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterSortBy>
-      thenByAudioFile() {
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterSortBy> thenByAudio() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'audioFile', Sort.asc);
+      return query.addSortBy(r'audio', Sort.asc);
     });
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterSortBy>
-      thenByAudioFileDesc() {
+      thenByAudioDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'audioFile', Sort.desc);
+      return query.addSortBy(r'audio', Sort.desc);
     });
   }
 
@@ -1872,6 +1920,19 @@ extension DownloadedBayanQuerySortThenBy
     });
   }
 
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterSortBy> thenByExcerpt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'excerpt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterSortBy>
+      thenByExcerptDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'excerpt', Sort.desc);
+    });
+  }
+
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -1884,16 +1945,17 @@ extension DownloadedBayanQuerySortThenBy
     });
   }
 
-  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterSortBy> thenByLink() {
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterSortBy>
+      thenByLocation() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'link', Sort.asc);
+      return query.addSortBy(r'location', Sort.asc);
     });
   }
 
   QueryBuilder<DownloadedBayan, DownloadedBayan, QAfterSortBy>
-      thenByLinkDesc() {
+      thenByLocationDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'link', Sort.desc);
+      return query.addSortBy(r'location', Sort.desc);
     });
   }
 
@@ -1940,10 +2002,10 @@ extension DownloadedBayanQuerySortThenBy
 
 extension DownloadedBayanQueryWhereDistinct
     on QueryBuilder<DownloadedBayan, DownloadedBayan, QDistinct> {
-  QueryBuilder<DownloadedBayan, DownloadedBayan, QDistinct> distinctByAudioFile(
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QDistinct> distinctByAudio(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'audioFile', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'audio', caseSensitive: caseSensitive);
     });
   }
 
@@ -1961,10 +2023,17 @@ extension DownloadedBayanQueryWhereDistinct
     });
   }
 
-  QueryBuilder<DownloadedBayan, DownloadedBayan, QDistinct> distinctByLink(
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QDistinct> distinctByExcerpt(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'link', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'excerpt', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<DownloadedBayan, DownloadedBayan, QDistinct> distinctByLocation(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'location', caseSensitive: caseSensitive);
     });
   }
 
@@ -1998,9 +2067,9 @@ extension DownloadedBayanQueryProperty
     });
   }
 
-  QueryBuilder<DownloadedBayan, String?, QQueryOperations> audioFileProperty() {
+  QueryBuilder<DownloadedBayan, String?, QQueryOperations> audioProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'audioFile');
+      return query.addPropertyName(r'audio');
     });
   }
 
@@ -2017,9 +2086,15 @@ extension DownloadedBayanQueryProperty
     });
   }
 
-  QueryBuilder<DownloadedBayan, String?, QQueryOperations> linkProperty() {
+  QueryBuilder<DownloadedBayan, String?, QQueryOperations> excerptProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'link');
+      return query.addPropertyName(r'excerpt');
+    });
+  }
+
+  QueryBuilder<DownloadedBayan, String?, QQueryOperations> locationProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'location');
     });
   }
 

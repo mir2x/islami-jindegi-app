@@ -11,14 +11,15 @@ class DownloadedBayan {
 
   String? title;
 
+  String? excerpt;
+
+  String? location;
+
+  String? audio;
+
   String? speaker;
 
-  String? audioFile;
-
   String? publishedAt;
-
-  @Index(unique: true, replace: true)
-  String? link;
 
   @Index()
   DateTime? createdAt;
