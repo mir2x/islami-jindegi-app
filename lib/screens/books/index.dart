@@ -16,7 +16,6 @@ import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/nested_item.dart';
 import 'package:native_app/widgets/filter/subitem.dart';
 import 'package:native_app/widgets/responsive/image.dart';
-import 'package:native_app/widgets/presentation/bottom_bar.dart';
 
 class Books extends ConsumerWidget {
   const Books({super.key});
@@ -199,17 +198,17 @@ class Books extends ConsumerWidget {
           ),
         ],
       ),
-      bottomBar: BottomBar(
-        alignment: MainAxisAlignment.center,
-        children: [
-          TextButton(
-            child: Text(
-              '${locales.downloaded} ${locales.books}',
-              style: textTheme.labelMedium,
-            ),
-            onPressed: () => QR.to('books/downloads'),
+      floatingActionButton: SizedBox(
+        width: 180,
+        height: 40,
+        child: FloatingActionButton.extended(
+          onPressed: () => QR.to('books/downloads'),
+          icon: const Icon(Icons.download),
+          label: Text(
+            '${locales.downloaded} ${locales.books}',
+            style: textTheme.labelMedium,
           ),
-        ],
+        ),
       ),
     );
   }

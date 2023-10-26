@@ -22,6 +22,7 @@ class AppScaffold extends ConsumerWidget {
     this.drawer,
     this.bottomBar,
     this.onBackPressed,
+    this.floatingActionButton,
     this.isHome = false,
     this.showAppBar = true,
     this.showBottomBar = true,
@@ -33,6 +34,7 @@ class AppScaffold extends ConsumerWidget {
   final Widget? drawer;
   final Widget? bottomBar;
   final Function? onBackPressed;
+  final Widget? floatingActionButton;
   final bool isHome;
   final bool showAppBar;
   final bool showBottomBar;
@@ -271,6 +273,7 @@ class AppScaffold extends ConsumerWidget {
                 },
               ),
             ),
+            floatingActionButton: floatingActionButton,
             bottomNavigationBar: showBottomBar ? bottomBar : null,
           ),
         );

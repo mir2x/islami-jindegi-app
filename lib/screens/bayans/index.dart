@@ -16,7 +16,6 @@ import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/date.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/helpers/format_date.dart';
-import 'package:native_app/widgets/presentation/bottom_bar.dart';
 
 class Bayans extends ConsumerWidget {
   const Bayans({super.key});
@@ -204,17 +203,17 @@ class Bayans extends ConsumerWidget {
           ),
         ],
       ),
-      bottomBar: BottomBar(
-        alignment: MainAxisAlignment.center,
-        children: [
-          TextButton(
-            child: Text(
-              '${locales.downloaded} ${locales.bayans}',
-              style: textTheme.labelMedium,
-            ),
-            onPressed: () => QR.to('bayans/downloads'),
+      floatingActionButton: SizedBox(
+        width: 180,
+        height: 40,
+        child: FloatingActionButton.extended(
+          onPressed: () => QR.to('bayans/downloads'),
+          icon: const Icon(Icons.download),
+          label: Text(
+            '${locales.downloaded} ${locales.bayans}',
+            style: textTheme.labelMedium,
           ),
-        ],
+        ),
       ),
     );
   }

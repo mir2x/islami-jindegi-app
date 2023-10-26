@@ -68,6 +68,10 @@ ThemeData darkTheme(Map fonts) {
     iconTheme: const IconThemeData(
       color: ThemeColors.color4,
     ),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: ThemeColors.color5,
+      foregroundColor: ThemeColors.color4,
+    ),
     progressIndicatorTheme: const ProgressIndicatorThemeData(
       color: ThemeColors.color4,
     ),
@@ -145,6 +149,10 @@ ThemeData lightTheme(Map fonts) {
     ),
     iconTheme: const IconThemeData(
       color: ThemeColors.color8,
+    ),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: ThemeColors.color3,
+      foregroundColor: ThemeColors.color4,
     ),
     progressIndicatorTheme: const ProgressIndicatorThemeData(
       color: ThemeColors.color8,
