@@ -45,6 +45,7 @@ import 'package:native_app/models/quran_book_para.dart';
 import 'package:native_app/models/quran_book_qitab.dart';
 import 'package:native_app/models/quran_book_surah.dart';
 import 'package:native_app/models/quran_book.dart';
+import 'package:native_app/models/setting.dart';
 import 'package:native_app/models/speaker.dart';
 import 'package:native_app/models/subchapter.dart';
 import 'package:native_app/models/surah.dart';
@@ -113,6 +114,7 @@ final repositoryProviders = <String, Provider<Repository<DataModelMixin>>>{
   'quranBookQitabs': quranBookQitabsRepositoryProvider,
   'quranBookSurahs': quranBookSurahsRepositoryProvider,
   'quranBooks': quranBooksRepositoryProvider,
+  'settings': settingsRepositoryProvider,
   'speakers': speakersRepositoryProvider,
   'subchapters': subchaptersRepositoryProvider,
   'surahs': surahsRepositoryProvider,
@@ -161,6 +163,7 @@ final repositoryInitializerProvider =
   DataHelpers.setInternalType<QuranBookQitab>('quranBookQitabs');
   DataHelpers.setInternalType<QuranBookSurah>('quranBookSurahs');
   DataHelpers.setInternalType<QuranBook>('quranBooks');
+  DataHelpers.setInternalType<Setting>('settings');
   DataHelpers.setInternalType<Speaker>('speakers');
   DataHelpers.setInternalType<Subchapter>('subchapters');
   DataHelpers.setInternalType<Surah>('surahs');
@@ -215,6 +218,7 @@ final repositoryInitializerProvider =
     'quranBookQitabs': ref.watch(internalQuranBookQitabsRemoteAdapterProvider),
     'quranBookSurahs': ref.watch(internalQuranBookSurahsRemoteAdapterProvider),
     'quranBooks': ref.watch(internalQuranBooksRemoteAdapterProvider),
+    'settings': ref.watch(internalSettingsRemoteAdapterProvider),
     'speakers': ref.watch(internalSpeakersRemoteAdapterProvider),
     'subchapters': ref.watch(internalSubchaptersRemoteAdapterProvider),
     'surahs': ref.watch(internalSurahsRemoteAdapterProvider),
@@ -261,6 +265,7 @@ final repositoryInitializerProvider =
     'quranBookQitabs': true,
     'quranBookSurahs': true,
     'quranBooks': true,
+    'settings': true,
     'speakers': true,
     'subchapters': true,
     'surahs': true,
@@ -384,6 +389,8 @@ extension RepositoryWidgetRefX on WidgetRef {
         ..remoteAdapter.internalWatch = watch;
   Repository<QuranBook> get quranBooks =>
       watch(quranBooksRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Setting> get settings =>
+      watch(settingsRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Speaker> get speakers =>
       watch(speakersRepositoryProvider)..remoteAdapter.internalWatch = watch;
   Repository<Subchapter> get subchapters =>
@@ -496,6 +503,8 @@ extension RepositoryRefX on Ref {
       watch(quranBookSurahsRepositoryProvider)
         ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<QuranBook> get quranBooks => watch(quranBooksRepositoryProvider)
+    ..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Setting> get settings => watch(settingsRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;
   Repository<Speaker> get speakers => watch(speakersRepositoryProvider)
     ..remoteAdapter.internalWatch = watch as Watcher;

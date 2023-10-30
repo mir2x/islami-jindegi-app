@@ -3,13 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
+import 'package:native_app/providers/first_model.dart';
+import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/query_params.dart';
-import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
@@ -27,6 +28,13 @@ class Masail extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(queryParamsProvider);
+
+    var query = AllModelsQuery(
+      repository: ref.settings,
+      params: const {'quantity': 1},
+    );
+
+    var settingsQuery = ref.watch(firstModelProvider(query));
 
     return AppScaffold(
       title: Text(locales.masail),
@@ -197,24 +205,34 @@ class Masail extends ConsumerWidget {
           ),
         ],
       ),
-      floatingActionButton: SizedBox(
-        width: 170,
-        height: 40,
-        child: FloatingActionButton.extended(
-          onPressed: () => QR.to('masail/ask-question'),
-          icon: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: ThemeColors.color4),
-            ),
-            padding: const EdgeInsets.all(2),
-            child: const Icon(Icons.question_mark, size: 18),
-          ),
-          label: Text(
-            locales.askQuestion,
-            style: textTheme.labelMedium,
-          ),
-        ),
+      floatingActionButton: settingsQuery.when(
+        loading: () => const SizedBox.shrink(),
+        error: (error, _) => const SizedBox.shrink(),
+        data: (settings) {
+          if (settings.askQuestion) {
+            return SizedBox(
+              width: 170,
+              height: 40,
+              child: FloatingActionButton.extended(
+                onPressed: () => QR.to('masail/ask-question'),
+                icon: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: ThemeColors.color4),
+                  ),
+                  padding: const EdgeInsets.all(2),
+                  child: const Icon(Icons.question_mark, size: 18),
+                ),
+                label: Text(
+                  locales.askQuestion,
+                  style: textTheme.labelMedium,
+                ),
+              ),
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
       ),
     );
   }
