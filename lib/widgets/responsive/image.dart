@@ -40,7 +40,7 @@ class ResponsiveImage extends ConsumerWidget {
                 attr,
               );
 
-              Map<String, dynamic> img = image[selectedWidth];
+              Map<dynamic, dynamic> img = image[selectedWidth];
               String staticHostName = dotenv.env['STATIC_HOST_NAME']!;
               String imageSrc =
                   "$staticHostName/uploads/${img['storage']}/${img['id']}";
