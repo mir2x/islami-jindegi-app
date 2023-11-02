@@ -37,6 +37,11 @@ part 'local_resource_api.g.dart';
     NamazTimes,
     News,
     Pages,
+    QuranBooks,
+    QuranBookQitabs,
+    QuranBookPages,
+    QuranBookSurahs,
+    QuranBookParas,
   ],
 )
 class LocalResourceAPI extends _$LocalResourceAPI {
@@ -67,7 +72,7 @@ class LocalResourceAPI extends _$LocalResourceAPI {
               );
             }
 
-            return NativeDatabase(file);
+            return NativeDatabase(file, logStatements: true);
           }),
         );
 
@@ -109,6 +114,12 @@ class LocalResourceAPI extends _$LocalResourceAPI {
         return queryNews(params);
       case 'pages':
         return queryPage(params);
+      case 'quranBookQitabs':
+        return queryQuranBookQitab(params);
+      case 'quranBookPages':
+        return queryQuranBookPage(params);
+      case 'quranBookParas':
+        return queryQuranBookPara(params);
       default:
         return [];
     }
@@ -158,6 +169,8 @@ class LocalResourceAPI extends _$LocalResourceAPI {
         return findNewsById(id);
       case 'pages':
         return findPageById(id);
+      case 'quranBookQitabs':
+        return findQuranBookQitabById(id, params);
       default:
         return null;
     }
@@ -894,5 +907,175 @@ class LocalResourceAPI extends _$LocalResourceAPI {
   Future<NamazTime?> findNamazTimeById(String id) {
     return (select(namazTimes)..where((t) => t.id.equals(id)))
         .getSingleOrNull();
+  }
+
+  Future<List> queryQuranBookQitab(Map params) async {
+    var query = select(quranBookQitabs);
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    } else {
+      query.limit(params['quantity'] ?? 20);
+    }
+
+    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
+
+    var quranBookQitabItems = await query.get();
+
+    if (params.containsKey('include') && params['include'] == 'quran-book') {
+      var quranBookIds =
+          quranBookQitabItems.map((item) => item.quranBookId).toSet().toList();
+
+      var quranBookItems = await (select(quranBooks)
+            ..where((s) => s.id.isIn(quranBookIds)))
+          .get();
+
+      Map<String, QuranBook> idToQuranBooks = <String, QuranBook>{
+        for (var v in quranBookItems) v.id: v,
+      };
+
+      var qitabWithBooks = quranBookQitabItems.map((item) {
+        return {
+          'quranBookQitabs': item,
+          'relationships': {
+            'quran-book': idToQuranBooks[item.quranBookId],
+          },
+        };
+      }).toList();
+
+      return qitabWithBooks;
+    } else {
+      return quranBookQitabItems;
+    }
+  }
+
+  Future<dynamic> findQuranBookQitabById(String id, Map params) async {
+    var quranBookQitab = await (select(quranBookQitabs)
+          ..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
+
+    if (quranBookQitab != null &&
+        params.containsKey('include') &&
+        params['include'] == 'quran-book') {
+      var quranBook = await (select(quranBooks)
+            ..where((s) => s.id.equals(quranBookQitab.quranBookId)))
+          .getSingle();
+
+      var qitabWithBook = {
+        'quranBookQitabs': quranBookQitab,
+        'relationships': {
+          'quran-book': quranBook,
+        },
+      };
+
+      return qitabWithBook;
+    } else {
+      return quranBookQitab;
+    }
+  }
+
+  Future<List<QuranBookPage>> queryQuranBookPage(Map params) async {
+    var query = select(quranBookPages);
+
+    if (params.containsKey('position')) {
+      query.where((r) => r.position.equals(params['position']));
+    }
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    } else {
+      query.limit(params['quantity'] ?? 20);
+    }
+
+    if (params.containsKey('quranBookId')) {
+      query.where((r) => r.quranBookId.equals(params['quranBookId']));
+    }
+
+    if (params.containsKey('paraId')) {
+      query.where((r) => r.paraId.equals(params['paraId']));
+    }
+
+    if (params.containsKey('paraPage')) {
+      query.where((r) => r.paraPage.equals(params['paraPage']));
+    }
+
+    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
+
+    if (params.containsKey('surahId') && params.containsKey('ayahNo')) {
+      String surahId = params['surahId'];
+      int ayahNo = params['ayahNo'];
+
+      var rows = await (query.join(
+        [
+          innerJoin(
+            quranBookSurahs,
+            quranBookSurahs.quranBookPageId.equalsExp(quranBookPages.id),
+          ),
+        ],
+      )..where(
+              quranBookSurahs.surahId.equals(surahId) &
+                  quranBookSurahs.startAyah.isSmallerOrEqualValue(ayahNo) &
+                  quranBookSurahs.endAyah.isBiggerOrEqualValue(ayahNo),
+            ))
+          .get();
+
+      return Future.value(
+        rows.map((row) => row.readTable(quranBookPages)).toList(),
+      );
+    } else {
+      return query.get();
+    }
+  }
+
+  Future<List> queryQuranBookPara(Map params) async {
+    var query = select(quranBookParas);
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    } else {
+      query.limit(params['quantity'] ?? 20);
+    }
+
+    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
+
+    if (params.containsKey('quranBookId')) {
+      query.where((r) => r.quranBookId.equals(params['quranBookId']));
+    }
+
+    var quranBookParaItems = await query.get();
+
+    if (params.containsKey('include') && params['include'] == 'para') {
+      var paraIds =
+          quranBookParaItems.map((item) => item.paraId).toSet().toList();
+
+      var paraItems =
+          await (select(paras)..where((s) => s.id.isIn(paraIds))).get();
+
+      Map<String, Para> idToParas = <String, Para>{
+        for (var v in paraItems) v.id: v,
+      };
+
+      var pagesWithParas = quranBookParaItems.map((item) {
+        return {
+          'quranBookParas': item,
+          'relationships': {
+            'para': idToParas[item.paraId],
+          },
+        };
+      }).toList();
+
+      return pagesWithParas;
+    } else {
+      return quranBookParaItems;
+    }
   }
 }

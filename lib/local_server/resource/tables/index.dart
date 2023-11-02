@@ -21,3 +21,8 @@ export 'madrasah_infos.dart';
 export 'namaz_times.dart';
 export 'news.dart';
 export 'pages.dart';
+export 'quran_books.dart';
+export 'quran_book_qitabs.dart';
+export 'quran_book_pages.dart';
+export 'quran_book_surahs.dart';
+export 'quran_book_paras.dart';

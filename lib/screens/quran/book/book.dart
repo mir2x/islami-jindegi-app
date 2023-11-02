@@ -20,6 +20,7 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/objects/pdf_builders.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
+import 'package:native_app/widgets/presentation/connect_to_internet.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/responsive/image.dart';
 import 'package:native_app/widgets/buttons/download.dart';
@@ -133,7 +134,7 @@ class QuranBook extends ConsumerWidget {
                             ],
                           );
                         } else {
-                          return const SizedBox.shrink();
+                          return const ConnectToInternet();
                         }
                       },
                     ),

@@ -8007,6 +8007,1650 @@ class PagesCompanion extends UpdateCompanion<Page> {
   }
 }
 
+class $QuranBooksTable extends QuranBooks
+    with TableInfo<$QuranBooksTable, QuranBook> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $QuranBooksTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, title, position, createdAt, updatedAt];
+  @override
+  String get aliasedName => _alias ?? 'quran_books';
+  @override
+  String get actualTableName => 'quran_books';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  QuranBook map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return QuranBook(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      position: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $QuranBooksTable createAlias(String alias) {
+    return $QuranBooksTable(attachedDatabase, alias);
+  }
+}
+
+class QuranBook extends DataClass implements Insertable<QuranBook> {
+  final String id;
+  final String title;
+  final int position;
+  final String createdAt;
+  final String updatedAt;
+  const QuranBook(
+      {required this.id,
+      required this.title,
+      required this.position,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    map['position'] = Variable<int>(position);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    return map;
+  }
+
+  factory QuranBook.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return QuranBook(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      position: serializer.fromJson<int>(json['position']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'position': serializer.toJson<int>(position),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+    };
+  }
+
+  QuranBook copyWith(
+          {String? id,
+          String? title,
+          int? position,
+          String? createdAt,
+          String? updatedAt}) =>
+      QuranBook(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        position: position ?? this.position,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('QuranBook(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, title, position, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is QuranBook &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.position == this.position &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class QuranBooksCompanion extends UpdateCompanion<QuranBook> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<int> position;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  final Value<int> rowid;
+  const QuranBooksCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.position = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  QuranBooksCompanion.insert({
+    required String id,
+    required String title,
+    required int position,
+    required String createdAt,
+    required String updatedAt,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        title = Value(title),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<QuranBook> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<int>? position,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (position != null) 'position': position,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  QuranBooksCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? title,
+      Value<int>? position,
+      Value<String>? createdAt,
+      Value<String>? updatedAt,
+      Value<int>? rowid}) {
+    return QuranBooksCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      position: position ?? this.position,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('QuranBooksCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $QuranBookQitabsTable extends QuranBookQitabs
+    with TableInfo<$QuranBookQitabsTable, QuranBookQitab> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $QuranBookQitabsTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> titleBn = GeneratedColumn<String>(
+      'title_bn', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      imageData = GeneratedColumn<String>('image_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>(
+              $QuranBookQitabsTable.$converterimageDatan);
+  @override
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
+      documentData = GeneratedColumn<String>('document_data', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Map<dynamic, dynamic>?>(
+              $QuranBookQitabsTable.$converterdocumentDatan);
+  @override
+  late final GeneratedColumn<bool> published =
+      GeneratedColumn<bool>('published', aliasedName, false,
+          type: DriftSqlType.bool,
+          requiredDuringInsert: false,
+          defaultConstraints: GeneratedColumn.constraintsDependsOnDialect({
+            SqlDialect.sqlite: 'CHECK ("published" IN (0, 1))',
+            SqlDialect.mysql: '',
+            SqlDialect.postgres: '',
+          }),
+          defaultValue: const Constant(false));
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> quranBookId = GeneratedColumn<String>(
+      'quran_book_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES quran_books (id)'));
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        title,
+        titleBn,
+        imageData,
+        documentData,
+        published,
+        position,
+        createdAt,
+        updatedAt,
+        quranBookId
+      ];
+  @override
+  String get aliasedName => _alias ?? 'quran_book_qitabs';
+  @override
+  String get actualTableName => 'quran_book_qitabs';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  QuranBookQitab map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return QuranBookQitab(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      titleBn: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title_bn']),
+      imageData: $QuranBookQitabsTable.$converterimageDatan.fromSql(
+          attachedDatabase.typeMapping
+              .read(DriftSqlType.string, data['${effectivePrefix}image_data'])),
+      documentData: $QuranBookQitabsTable.$converterdocumentDatan.fromSql(
+          attachedDatabase.typeMapping.read(
+              DriftSqlType.string, data['${effectivePrefix}document_data'])),
+      published: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}published'])!,
+      position: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      quranBookId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}quran_book_id'])!,
+    );
+  }
+
+  @override
+  $QuranBookQitabsTable createAlias(String alias) {
+    return $QuranBookQitabsTable(attachedDatabase, alias);
+  }
+
+  static TypeConverter<Map<dynamic, dynamic>, String> $converterimageData =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>?, String?> $converterimageDatan =
+      NullAwareTypeConverter.wrap($converterimageData);
+  static TypeConverter<Map<dynamic, dynamic>, String> $converterdocumentData =
+      const FileData();
+  static TypeConverter<Map<dynamic, dynamic>?, String?>
+      $converterdocumentDatan =
+      NullAwareTypeConverter.wrap($converterdocumentData);
+}
+
+class QuranBookQitab extends DataClass implements Insertable<QuranBookQitab> {
+  final String id;
+  final String title;
+  final String? titleBn;
+  final Map<dynamic, dynamic>? imageData;
+  final Map<dynamic, dynamic>? documentData;
+  final bool published;
+  final int position;
+  final String createdAt;
+  final String updatedAt;
+  final String quranBookId;
+  const QuranBookQitab(
+      {required this.id,
+      required this.title,
+      this.titleBn,
+      this.imageData,
+      this.documentData,
+      required this.published,
+      required this.position,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.quranBookId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    if (!nullToAbsent || titleBn != null) {
+      map['title_bn'] = Variable<String>(titleBn);
+    }
+    if (!nullToAbsent || imageData != null) {
+      final converter = $QuranBookQitabsTable.$converterimageDatan;
+      map['image_data'] = Variable<String>(converter.toSql(imageData));
+    }
+    if (!nullToAbsent || documentData != null) {
+      final converter = $QuranBookQitabsTable.$converterdocumentDatan;
+      map['document_data'] = Variable<String>(converter.toSql(documentData));
+    }
+    map['published'] = Variable<bool>(published);
+    map['position'] = Variable<int>(position);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    map['quran_book_id'] = Variable<String>(quranBookId);
+    return map;
+  }
+
+  factory QuranBookQitab.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return QuranBookQitab(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      titleBn: serializer.fromJson<String?>(json['titleBn']),
+      imageData: serializer.fromJson<Map<dynamic, dynamic>?>(json['image']),
+      documentData:
+          serializer.fromJson<Map<dynamic, dynamic>?>(json['document']),
+      published: serializer.fromJson<bool>(json['published']),
+      position: serializer.fromJson<int>(json['position']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+      quranBookId: serializer.fromJson<String>(json['quranBookId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'titleBn': serializer.toJson<String?>(titleBn),
+      'image': serializer.toJson<Map<dynamic, dynamic>?>(imageData),
+      'document': serializer.toJson<Map<dynamic, dynamic>?>(documentData),
+      'published': serializer.toJson<bool>(published),
+      'position': serializer.toJson<int>(position),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+      'quranBookId': serializer.toJson<String>(quranBookId),
+    };
+  }
+
+  QuranBookQitab copyWith(
+          {String? id,
+          String? title,
+          Value<String?> titleBn = const Value.absent(),
+          Value<Map<dynamic, dynamic>?> imageData = const Value.absent(),
+          Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
+          bool? published,
+          int? position,
+          String? createdAt,
+          String? updatedAt,
+          String? quranBookId}) =>
+      QuranBookQitab(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        titleBn: titleBn.present ? titleBn.value : this.titleBn,
+        imageData: imageData.present ? imageData.value : this.imageData,
+        documentData:
+            documentData.present ? documentData.value : this.documentData,
+        published: published ?? this.published,
+        position: position ?? this.position,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        quranBookId: quranBookId ?? this.quranBookId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('QuranBookQitab(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('titleBn: $titleBn, ')
+          ..write('imageData: $imageData, ')
+          ..write('documentData: $documentData, ')
+          ..write('published: $published, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('quranBookId: $quranBookId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, title, titleBn, imageData, documentData,
+      published, position, createdAt, updatedAt, quranBookId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is QuranBookQitab &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.titleBn == this.titleBn &&
+          other.imageData == this.imageData &&
+          other.documentData == this.documentData &&
+          other.published == this.published &&
+          other.position == this.position &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.quranBookId == this.quranBookId);
+}
+
+class QuranBookQitabsCompanion extends UpdateCompanion<QuranBookQitab> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<String?> titleBn;
+  final Value<Map<dynamic, dynamic>?> imageData;
+  final Value<Map<dynamic, dynamic>?> documentData;
+  final Value<bool> published;
+  final Value<int> position;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  final Value<String> quranBookId;
+  final Value<int> rowid;
+  const QuranBookQitabsCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.titleBn = const Value.absent(),
+    this.imageData = const Value.absent(),
+    this.documentData = const Value.absent(),
+    this.published = const Value.absent(),
+    this.position = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.quranBookId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  QuranBookQitabsCompanion.insert({
+    required String id,
+    required String title,
+    this.titleBn = const Value.absent(),
+    this.imageData = const Value.absent(),
+    this.documentData = const Value.absent(),
+    this.published = const Value.absent(),
+    required int position,
+    required String createdAt,
+    required String updatedAt,
+    required String quranBookId,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        title = Value(title),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt),
+        quranBookId = Value(quranBookId);
+  static Insertable<QuranBookQitab> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<String>? titleBn,
+    Expression<String>? imageData,
+    Expression<String>? documentData,
+    Expression<bool>? published,
+    Expression<int>? position,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+    Expression<String>? quranBookId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (titleBn != null) 'title_bn': titleBn,
+      if (imageData != null) 'image_data': imageData,
+      if (documentData != null) 'document_data': documentData,
+      if (published != null) 'published': published,
+      if (position != null) 'position': position,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (quranBookId != null) 'quran_book_id': quranBookId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  QuranBookQitabsCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? title,
+      Value<String?>? titleBn,
+      Value<Map<dynamic, dynamic>?>? imageData,
+      Value<Map<dynamic, dynamic>?>? documentData,
+      Value<bool>? published,
+      Value<int>? position,
+      Value<String>? createdAt,
+      Value<String>? updatedAt,
+      Value<String>? quranBookId,
+      Value<int>? rowid}) {
+    return QuranBookQitabsCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      titleBn: titleBn ?? this.titleBn,
+      imageData: imageData ?? this.imageData,
+      documentData: documentData ?? this.documentData,
+      published: published ?? this.published,
+      position: position ?? this.position,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      quranBookId: quranBookId ?? this.quranBookId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (titleBn.present) {
+      map['title_bn'] = Variable<String>(titleBn.value);
+    }
+    if (imageData.present) {
+      final converter = $QuranBookQitabsTable.$converterimageDatan;
+      map['image_data'] = Variable<String>(converter.toSql(imageData.value));
+    }
+    if (documentData.present) {
+      final converter = $QuranBookQitabsTable.$converterdocumentDatan;
+      map['document_data'] =
+          Variable<String>(converter.toSql(documentData.value));
+    }
+    if (published.present) {
+      map['published'] = Variable<bool>(published.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (quranBookId.present) {
+      map['quran_book_id'] = Variable<String>(quranBookId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('QuranBookQitabsCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('titleBn: $titleBn, ')
+          ..write('imageData: $imageData, ')
+          ..write('documentData: $documentData, ')
+          ..write('published: $published, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('quranBookId: $quranBookId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $QuranBookPagesTable extends QuranBookPages
+    with TableInfo<$QuranBookPagesTable, QuranBookPage> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $QuranBookPagesTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> paraPage = GeneratedColumn<int>(
+      'para_page', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> quranBookId = GeneratedColumn<String>(
+      'quran_book_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES quran_books (id)'));
+  @override
+  late final GeneratedColumn<String> paraId = GeneratedColumn<String>(
+      'para_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES paras (id)'));
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        title,
+        paraPage,
+        position,
+        createdAt,
+        updatedAt,
+        quranBookId,
+        paraId
+      ];
+  @override
+  String get aliasedName => _alias ?? 'quran_book_pages';
+  @override
+  String get actualTableName => 'quran_book_pages';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  QuranBookPage map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return QuranBookPage(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      paraPage: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}para_page'])!,
+      position: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      quranBookId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}quran_book_id'])!,
+      paraId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}para_id'])!,
+    );
+  }
+
+  @override
+  $QuranBookPagesTable createAlias(String alias) {
+    return $QuranBookPagesTable(attachedDatabase, alias);
+  }
+}
+
+class QuranBookPage extends DataClass implements Insertable<QuranBookPage> {
+  final String id;
+  final String title;
+  final int paraPage;
+  final int position;
+  final String createdAt;
+  final String updatedAt;
+  final String quranBookId;
+  final String paraId;
+  const QuranBookPage(
+      {required this.id,
+      required this.title,
+      required this.paraPage,
+      required this.position,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.quranBookId,
+      required this.paraId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    map['para_page'] = Variable<int>(paraPage);
+    map['position'] = Variable<int>(position);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    map['quran_book_id'] = Variable<String>(quranBookId);
+    map['para_id'] = Variable<String>(paraId);
+    return map;
+  }
+
+  factory QuranBookPage.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return QuranBookPage(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      paraPage: serializer.fromJson<int>(json['paraPage']),
+      position: serializer.fromJson<int>(json['position']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+      quranBookId: serializer.fromJson<String>(json['quranBookId']),
+      paraId: serializer.fromJson<String>(json['paraId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'paraPage': serializer.toJson<int>(paraPage),
+      'position': serializer.toJson<int>(position),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+      'quranBookId': serializer.toJson<String>(quranBookId),
+      'paraId': serializer.toJson<String>(paraId),
+    };
+  }
+
+  QuranBookPage copyWith(
+          {String? id,
+          String? title,
+          int? paraPage,
+          int? position,
+          String? createdAt,
+          String? updatedAt,
+          String? quranBookId,
+          String? paraId}) =>
+      QuranBookPage(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        paraPage: paraPage ?? this.paraPage,
+        position: position ?? this.position,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        quranBookId: quranBookId ?? this.quranBookId,
+        paraId: paraId ?? this.paraId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('QuranBookPage(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('paraPage: $paraPage, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('quranBookId: $quranBookId, ')
+          ..write('paraId: $paraId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id, title, paraPage, position, createdAt, updatedAt, quranBookId, paraId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is QuranBookPage &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.paraPage == this.paraPage &&
+          other.position == this.position &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.quranBookId == this.quranBookId &&
+          other.paraId == this.paraId);
+}
+
+class QuranBookPagesCompanion extends UpdateCompanion<QuranBookPage> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<int> paraPage;
+  final Value<int> position;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  final Value<String> quranBookId;
+  final Value<String> paraId;
+  final Value<int> rowid;
+  const QuranBookPagesCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.paraPage = const Value.absent(),
+    this.position = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.quranBookId = const Value.absent(),
+    this.paraId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  QuranBookPagesCompanion.insert({
+    required String id,
+    required String title,
+    required int paraPage,
+    required int position,
+    required String createdAt,
+    required String updatedAt,
+    required String quranBookId,
+    required String paraId,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        title = Value(title),
+        paraPage = Value(paraPage),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt),
+        quranBookId = Value(quranBookId),
+        paraId = Value(paraId);
+  static Insertable<QuranBookPage> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<int>? paraPage,
+    Expression<int>? position,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+    Expression<String>? quranBookId,
+    Expression<String>? paraId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (paraPage != null) 'para_page': paraPage,
+      if (position != null) 'position': position,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (quranBookId != null) 'quran_book_id': quranBookId,
+      if (paraId != null) 'para_id': paraId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  QuranBookPagesCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? title,
+      Value<int>? paraPage,
+      Value<int>? position,
+      Value<String>? createdAt,
+      Value<String>? updatedAt,
+      Value<String>? quranBookId,
+      Value<String>? paraId,
+      Value<int>? rowid}) {
+    return QuranBookPagesCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      paraPage: paraPage ?? this.paraPage,
+      position: position ?? this.position,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      quranBookId: quranBookId ?? this.quranBookId,
+      paraId: paraId ?? this.paraId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (paraPage.present) {
+      map['para_page'] = Variable<int>(paraPage.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (quranBookId.present) {
+      map['quran_book_id'] = Variable<String>(quranBookId.value);
+    }
+    if (paraId.present) {
+      map['para_id'] = Variable<String>(paraId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('QuranBookPagesCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('paraPage: $paraPage, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('quranBookId: $quranBookId, ')
+          ..write('paraId: $paraId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $QuranBookSurahsTable extends QuranBookSurahs
+    with TableInfo<$QuranBookSurahsTable, QuranBookSurah> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $QuranBookSurahsTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> startAyah = GeneratedColumn<int>(
+      'start_ayah', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> endAyah = GeneratedColumn<int>(
+      'end_ayah', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> quranBookPageId = GeneratedColumn<String>(
+      'quran_book_page_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES quran_book_pages (id)'));
+  @override
+  late final GeneratedColumn<String> surahId = GeneratedColumn<String>(
+      'surah_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES surahs (id)'));
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        startAyah,
+        endAyah,
+        position,
+        createdAt,
+        updatedAt,
+        quranBookPageId,
+        surahId
+      ];
+  @override
+  String get aliasedName => _alias ?? 'quran_book_surahs';
+  @override
+  String get actualTableName => 'quran_book_surahs';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  QuranBookSurah map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return QuranBookSurah(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      startAyah: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}start_ayah'])!,
+      endAyah: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}end_ayah'])!,
+      position: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      quranBookPageId: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}quran_book_page_id'])!,
+      surahId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}surah_id'])!,
+    );
+  }
+
+  @override
+  $QuranBookSurahsTable createAlias(String alias) {
+    return $QuranBookSurahsTable(attachedDatabase, alias);
+  }
+}
+
+class QuranBookSurah extends DataClass implements Insertable<QuranBookSurah> {
+  final String id;
+  final int startAyah;
+  final int endAyah;
+  final int position;
+  final String createdAt;
+  final String updatedAt;
+  final String quranBookPageId;
+  final String surahId;
+  const QuranBookSurah(
+      {required this.id,
+      required this.startAyah,
+      required this.endAyah,
+      required this.position,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.quranBookPageId,
+      required this.surahId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['start_ayah'] = Variable<int>(startAyah);
+    map['end_ayah'] = Variable<int>(endAyah);
+    map['position'] = Variable<int>(position);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    map['quran_book_page_id'] = Variable<String>(quranBookPageId);
+    map['surah_id'] = Variable<String>(surahId);
+    return map;
+  }
+
+  factory QuranBookSurah.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return QuranBookSurah(
+      id: serializer.fromJson<String>(json['id']),
+      startAyah: serializer.fromJson<int>(json['startAyah']),
+      endAyah: serializer.fromJson<int>(json['endAyah']),
+      position: serializer.fromJson<int>(json['position']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+      quranBookPageId: serializer.fromJson<String>(json['quranBookPageId']),
+      surahId: serializer.fromJson<String>(json['surahId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'startAyah': serializer.toJson<int>(startAyah),
+      'endAyah': serializer.toJson<int>(endAyah),
+      'position': serializer.toJson<int>(position),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+      'quranBookPageId': serializer.toJson<String>(quranBookPageId),
+      'surahId': serializer.toJson<String>(surahId),
+    };
+  }
+
+  QuranBookSurah copyWith(
+          {String? id,
+          int? startAyah,
+          int? endAyah,
+          int? position,
+          String? createdAt,
+          String? updatedAt,
+          String? quranBookPageId,
+          String? surahId}) =>
+      QuranBookSurah(
+        id: id ?? this.id,
+        startAyah: startAyah ?? this.startAyah,
+        endAyah: endAyah ?? this.endAyah,
+        position: position ?? this.position,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        quranBookPageId: quranBookPageId ?? this.quranBookPageId,
+        surahId: surahId ?? this.surahId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('QuranBookSurah(')
+          ..write('id: $id, ')
+          ..write('startAyah: $startAyah, ')
+          ..write('endAyah: $endAyah, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('quranBookPageId: $quranBookPageId, ')
+          ..write('surahId: $surahId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, startAyah, endAyah, position, createdAt,
+      updatedAt, quranBookPageId, surahId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is QuranBookSurah &&
+          other.id == this.id &&
+          other.startAyah == this.startAyah &&
+          other.endAyah == this.endAyah &&
+          other.position == this.position &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.quranBookPageId == this.quranBookPageId &&
+          other.surahId == this.surahId);
+}
+
+class QuranBookSurahsCompanion extends UpdateCompanion<QuranBookSurah> {
+  final Value<String> id;
+  final Value<int> startAyah;
+  final Value<int> endAyah;
+  final Value<int> position;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  final Value<String> quranBookPageId;
+  final Value<String> surahId;
+  final Value<int> rowid;
+  const QuranBookSurahsCompanion({
+    this.id = const Value.absent(),
+    this.startAyah = const Value.absent(),
+    this.endAyah = const Value.absent(),
+    this.position = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.quranBookPageId = const Value.absent(),
+    this.surahId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  QuranBookSurahsCompanion.insert({
+    required String id,
+    required int startAyah,
+    required int endAyah,
+    required int position,
+    required String createdAt,
+    required String updatedAt,
+    required String quranBookPageId,
+    required String surahId,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        startAyah = Value(startAyah),
+        endAyah = Value(endAyah),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt),
+        quranBookPageId = Value(quranBookPageId),
+        surahId = Value(surahId);
+  static Insertable<QuranBookSurah> custom({
+    Expression<String>? id,
+    Expression<int>? startAyah,
+    Expression<int>? endAyah,
+    Expression<int>? position,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+    Expression<String>? quranBookPageId,
+    Expression<String>? surahId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (startAyah != null) 'start_ayah': startAyah,
+      if (endAyah != null) 'end_ayah': endAyah,
+      if (position != null) 'position': position,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (quranBookPageId != null) 'quran_book_page_id': quranBookPageId,
+      if (surahId != null) 'surah_id': surahId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  QuranBookSurahsCompanion copyWith(
+      {Value<String>? id,
+      Value<int>? startAyah,
+      Value<int>? endAyah,
+      Value<int>? position,
+      Value<String>? createdAt,
+      Value<String>? updatedAt,
+      Value<String>? quranBookPageId,
+      Value<String>? surahId,
+      Value<int>? rowid}) {
+    return QuranBookSurahsCompanion(
+      id: id ?? this.id,
+      startAyah: startAyah ?? this.startAyah,
+      endAyah: endAyah ?? this.endAyah,
+      position: position ?? this.position,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      quranBookPageId: quranBookPageId ?? this.quranBookPageId,
+      surahId: surahId ?? this.surahId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (startAyah.present) {
+      map['start_ayah'] = Variable<int>(startAyah.value);
+    }
+    if (endAyah.present) {
+      map['end_ayah'] = Variable<int>(endAyah.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (quranBookPageId.present) {
+      map['quran_book_page_id'] = Variable<String>(quranBookPageId.value);
+    }
+    if (surahId.present) {
+      map['surah_id'] = Variable<String>(surahId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('QuranBookSurahsCompanion(')
+          ..write('id: $id, ')
+          ..write('startAyah: $startAyah, ')
+          ..write('endAyah: $endAyah, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('quranBookPageId: $quranBookPageId, ')
+          ..write('surahId: $surahId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $QuranBookParasTable extends QuranBookParas
+    with TableInfo<$QuranBookParasTable, QuranBookPara> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $QuranBookParasTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> totalPage = GeneratedColumn<int>(
+      'total_page', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> quranBookId = GeneratedColumn<String>(
+      'quran_book_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES quran_books (id)'));
+  @override
+  late final GeneratedColumn<String> paraId = GeneratedColumn<String>(
+      'para_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES paras (id)'));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, totalPage, position, createdAt, updatedAt, quranBookId, paraId];
+  @override
+  String get aliasedName => _alias ?? 'quran_book_paras';
+  @override
+  String get actualTableName => 'quran_book_paras';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  QuranBookPara map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return QuranBookPara(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      totalPage: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}total_page'])!,
+      position: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      quranBookId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}quran_book_id'])!,
+      paraId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}para_id'])!,
+    );
+  }
+
+  @override
+  $QuranBookParasTable createAlias(String alias) {
+    return $QuranBookParasTable(attachedDatabase, alias);
+  }
+}
+
+class QuranBookPara extends DataClass implements Insertable<QuranBookPara> {
+  final String id;
+  final int totalPage;
+  final int position;
+  final String createdAt;
+  final String updatedAt;
+  final String quranBookId;
+  final String paraId;
+  const QuranBookPara(
+      {required this.id,
+      required this.totalPage,
+      required this.position,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.quranBookId,
+      required this.paraId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['total_page'] = Variable<int>(totalPage);
+    map['position'] = Variable<int>(position);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    map['quran_book_id'] = Variable<String>(quranBookId);
+    map['para_id'] = Variable<String>(paraId);
+    return map;
+  }
+
+  factory QuranBookPara.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return QuranBookPara(
+      id: serializer.fromJson<String>(json['id']),
+      totalPage: serializer.fromJson<int>(json['totalPage']),
+      position: serializer.fromJson<int>(json['position']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+      quranBookId: serializer.fromJson<String>(json['quranBookId']),
+      paraId: serializer.fromJson<String>(json['paraId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'totalPage': serializer.toJson<int>(totalPage),
+      'position': serializer.toJson<int>(position),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+      'quranBookId': serializer.toJson<String>(quranBookId),
+      'paraId': serializer.toJson<String>(paraId),
+    };
+  }
+
+  QuranBookPara copyWith(
+          {String? id,
+          int? totalPage,
+          int? position,
+          String? createdAt,
+          String? updatedAt,
+          String? quranBookId,
+          String? paraId}) =>
+      QuranBookPara(
+        id: id ?? this.id,
+        totalPage: totalPage ?? this.totalPage,
+        position: position ?? this.position,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        quranBookId: quranBookId ?? this.quranBookId,
+        paraId: paraId ?? this.paraId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('QuranBookPara(')
+          ..write('id: $id, ')
+          ..write('totalPage: $totalPage, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('quranBookId: $quranBookId, ')
+          ..write('paraId: $paraId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id, totalPage, position, createdAt, updatedAt, quranBookId, paraId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is QuranBookPara &&
+          other.id == this.id &&
+          other.totalPage == this.totalPage &&
+          other.position == this.position &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.quranBookId == this.quranBookId &&
+          other.paraId == this.paraId);
+}
+
+class QuranBookParasCompanion extends UpdateCompanion<QuranBookPara> {
+  final Value<String> id;
+  final Value<int> totalPage;
+  final Value<int> position;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  final Value<String> quranBookId;
+  final Value<String> paraId;
+  final Value<int> rowid;
+  const QuranBookParasCompanion({
+    this.id = const Value.absent(),
+    this.totalPage = const Value.absent(),
+    this.position = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.quranBookId = const Value.absent(),
+    this.paraId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  QuranBookParasCompanion.insert({
+    required String id,
+    required int totalPage,
+    required int position,
+    required String createdAt,
+    required String updatedAt,
+    required String quranBookId,
+    required String paraId,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        totalPage = Value(totalPage),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt),
+        quranBookId = Value(quranBookId),
+        paraId = Value(paraId);
+  static Insertable<QuranBookPara> custom({
+    Expression<String>? id,
+    Expression<int>? totalPage,
+    Expression<int>? position,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+    Expression<String>? quranBookId,
+    Expression<String>? paraId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (totalPage != null) 'total_page': totalPage,
+      if (position != null) 'position': position,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (quranBookId != null) 'quran_book_id': quranBookId,
+      if (paraId != null) 'para_id': paraId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  QuranBookParasCompanion copyWith(
+      {Value<String>? id,
+      Value<int>? totalPage,
+      Value<int>? position,
+      Value<String>? createdAt,
+      Value<String>? updatedAt,
+      Value<String>? quranBookId,
+      Value<String>? paraId,
+      Value<int>? rowid}) {
+    return QuranBookParasCompanion(
+      id: id ?? this.id,
+      totalPage: totalPage ?? this.totalPage,
+      position: position ?? this.position,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      quranBookId: quranBookId ?? this.quranBookId,
+      paraId: paraId ?? this.paraId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (totalPage.present) {
+      map['total_page'] = Variable<int>(totalPage.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (quranBookId.present) {
+      map['quran_book_id'] = Variable<String>(quranBookId.value);
+    }
+    if (paraId.present) {
+      map['para_id'] = Variable<String>(paraId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('QuranBookParasCompanion(')
+          ..write('id: $id, ')
+          ..write('totalPage: $totalPage, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('quranBookId: $quranBookId, ')
+          ..write('paraId: $paraId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$LocalResourceAPI extends GeneratedDatabase {
   _$LocalResourceAPI(QueryExecutor e) : super(e);
   late final $SurahsTable surahs = $SurahsTable(this);
@@ -8034,6 +9678,13 @@ abstract class _$LocalResourceAPI extends GeneratedDatabase {
   late final $NamazTimesTable namazTimes = $NamazTimesTable(this);
   late final $NewsTable news = $NewsTable(this);
   late final $PagesTable pages = $PagesTable(this);
+  late final $QuranBooksTable quranBooks = $QuranBooksTable(this);
+  late final $QuranBookQitabsTable quranBookQitabs =
+      $QuranBookQitabsTable(this);
+  late final $QuranBookPagesTable quranBookPages = $QuranBookPagesTable(this);
+  late final $QuranBookSurahsTable quranBookSurahs =
+      $QuranBookSurahsTable(this);
+  late final $QuranBookParasTable quranBookParas = $QuranBookParasTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -8061,7 +9712,12 @@ abstract class _$LocalResourceAPI extends GeneratedDatabase {
         madrasahInfos,
         namazTimes,
         news,
-        pages
+        pages,
+        quranBooks,
+        quranBookQitabs,
+        quranBookPages,
+        quranBookSurahs,
+        quranBookParas
       ];
   @override
   DriftDatabaseOptions get options =>

@@ -43,7 +43,10 @@ class $QuranBookQitabHiveLocalAdapter = HiveLocalAdapter<QuranBookQitab>
     with $QuranBookQitabLocalAdapter;
 
 class $QuranBookQitabRemoteAdapter = RemoteAdapter<QuranBookQitab>
-    with JSONAPIAdapter<QuranBookQitab>, ApplicationAdapter<QuranBookQitab>;
+    with
+        JSONAPIAdapter<QuranBookQitab>,
+        LocalResourceAdapter<QuranBookQitab>,
+        ApplicationAdapter<QuranBookQitab>;
 
 final internalQuranBookQitabsRemoteAdapterProvider =
     Provider<RemoteAdapter<QuranBookQitab>>((ref) =>
@@ -56,6 +59,8 @@ final quranBookQitabsRepositoryProvider = Provider<Repository<QuranBookQitab>>(
 extension QuranBookQitabDataRepositoryX on Repository<QuranBookQitab> {
   JSONAPIAdapter<QuranBookQitab> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<QuranBookQitab>;
+  LocalResourceAdapter<QuranBookQitab> get localResourceAdapter =>
+      remoteAdapter as LocalResourceAdapter<QuranBookQitab>;
   ApplicationAdapter<QuranBookQitab> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<QuranBookQitab>;
 }

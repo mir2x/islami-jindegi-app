@@ -10,6 +10,7 @@ class ConnectToInternet extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Icon(Icons.signal_wifi_connected_no_internet_4, size: 60),
         const SizedBox(height: 10),
