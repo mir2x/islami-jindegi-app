@@ -3,7 +3,7 @@ description: Islami Jindegi Native App
 
 publish_to: 'none'
 
-version: 5.0.7+102
+version: 5.0.8+103
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
