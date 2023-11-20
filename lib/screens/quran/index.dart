@@ -10,7 +10,7 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
-import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/widgets/utils/with_last_visited.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
@@ -86,98 +86,36 @@ class QuranState extends ConsumerState<Quran> {
                 },
                 error: (error, _) => Text(error.toString()),
                 data: (resources) {
-                  return WithPreferences(
-                    builder: (context, preferences) {
-                      if (isSurahSelected) {
-                        return ListView.builder(
-                          key: const PageStorageKey<String>('surah'),
-                          itemCount: resources.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            var item = resources[index];
+                  if (isSurahSelected) {
+                    return ListView.builder(
+                      key: const PageStorageKey<String>('surah'),
+                      itemCount: resources.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        var item = resources[index];
 
-                            String? location;
+                        String? location;
 
-                            if (item.location == 'Makkah') {
-                              location = locales.makkah;
-                            } else if (item.location == 'Madinah') {
-                              location = locales.madinah;
-                            } else if (item.location == 'Makkah & Madinah') {
-                              location = locales.makkahAndMadinah;
-                            }
+                        if (item.location == 'Makkah') {
+                          location = locales.makkah;
+                        } else if (item.location == 'Madinah') {
+                          location = locales.madinah;
+                        } else if (item.location == 'Makkah & Madinah') {
+                          location = locales.makkahAndMadinah;
+                        }
 
-                            return InkWell(
-                              onTap: () => QR.to('quran/surah/${item.slug}'),
-                              child: ListItem(
-                                item: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                        return InkWell(
+                          onTap: () => QR.to('quran/surah/${item.slug}'),
+                          child: ListItem(
+                            item: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
                                   children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          '${numFormatter.format(item.position)}.',
-                                          style: textTheme.titleMedium,
-                                        ),
-                                        const SizedBox(width: 3),
-                                        Text(
-                                          contextualTranslation(
-                                            locale: currentLang,
-                                            enText: item.title,
-                                            bnText: item.titleBn,
-                                          ),
-                                          style: textTheme.titleMedium,
-                                        ),
-                                      ],
+                                    Text(
+                                      '${numFormatter.format(item.position)}.',
+                                      style: textTheme.titleMedium,
                                     ),
-                                    Row(
-                                      children: [
-                                        if (preferences
-                                                .getString('lastSurah') ==
-                                            item.id) ...[
-                                          Container(
-                                            margin: const EdgeInsets.only(
-                                              right: 10,
-                                            ),
-                                            child: SvgPicture.asset(
-                                              'assets/images/icons/open-book.svg',
-                                              fit: BoxFit.scaleDown,
-                                              width: 25,
-                                              height: 20,
-                                            ),
-                                          ),
-                                        ],
-                                        Text(
-                                          '${locales.ayah}: ${numFormatter.format(item.totalAyat)}',
-                                          style: textTheme.labelSmall,
-                                        ),
-                                        if (location != null) ...[
-                                          Text(
-                                            ', $location',
-                                            style: textTheme.labelSmall,
-                                          ),
-                                        ],
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      } else {
-                        return ListView.builder(
-                          key: const PageStorageKey<String>('para'),
-                          itemCount: resources.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            var item = resources[index];
-
-                            return InkWell(
-                              onTap: () => QR.to('quran/para/${item.slug}'),
-                              child: ListItem(
-                                item: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
+                                    const SizedBox(width: 3),
                                     Text(
                                       contextualTranslation(
                                         locale: currentLang,
@@ -186,11 +124,15 @@ class QuranState extends ConsumerState<Quran> {
                                       ),
                                       style: textTheme.titleMedium,
                                     ),
-                                    Row(
-                                      children: [
-                                        if (preferences.getString('lastPara') ==
-                                            item.id) ...[
-                                          Container(
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    WithLastVisited(
+                                      builder: (context, settings) {
+                                        if (settings.getString('lastSurah') ==
+                                            item.id) {
+                                          return Container(
                                             margin: const EdgeInsets.only(
                                               right: 10,
                                             ),
@@ -200,23 +142,86 @@ class QuranState extends ConsumerState<Quran> {
                                               width: 25,
                                               height: 20,
                                             ),
-                                          ),
-                                        ],
-                                        Text(
-                                          '${locales.ayah}: ${numFormatter.format(item.totalAyat)}',
-                                          style: textTheme.labelSmall,
-                                        ),
-                                      ],
+                                          );
+                                        } else {
+                                          return const SizedBox.shrink();
+                                        }
+                                      },
+                                    ),
+                                    Text(
+                                      '${locales.ayah}: ${numFormatter.format(item.totalAyat)}',
+                                      style: textTheme.labelSmall,
+                                    ),
+                                    if (location != null) ...[
+                                      Text(
+                                        ', $location',
+                                        style: textTheme.labelSmall,
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  } else {
+                    return ListView.builder(
+                      key: const PageStorageKey<String>('para'),
+                      itemCount: resources.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        var item = resources[index];
+
+                        return InkWell(
+                          onTap: () => QR.to('quran/para/${item.slug}'),
+                          child: ListItem(
+                            item: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  contextualTranslation(
+                                    locale: currentLang,
+                                    enText: item.title,
+                                    bnText: item.titleBn,
+                                  ),
+                                  style: textTheme.titleMedium,
+                                ),
+                                Row(
+                                  children: [
+                                    WithLastVisited(
+                                      builder: (context, settings) {
+                                        if (settings.getString('lastPara') ==
+                                            item.id) {
+                                          return Container(
+                                            margin: const EdgeInsets.only(
+                                              right: 10,
+                                            ),
+                                            child: SvgPicture.asset(
+                                              'assets/images/icons/open-book.svg',
+                                              fit: BoxFit.scaleDown,
+                                              width: 25,
+                                              height: 20,
+                                            ),
+                                          );
+                                        } else {
+                                          return const SizedBox.shrink();
+                                        }
+                                      },
+                                    ),
+                                    Text(
+                                      '${locales.ayah}: ${numFormatter.format(item.totalAyat)}',
+                                      style: textTheme.labelSmall,
                                     ),
                                   ],
                                 ),
-                              ),
-                            );
-                          },
+                              ],
+                            ),
+                          ),
                         );
-                      }
-                    },
-                  );
+                      },
+                    );
+                  }
                 },
               ),
             ),

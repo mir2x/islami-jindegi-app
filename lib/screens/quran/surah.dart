@@ -6,7 +6,7 @@ import 'package:native_app/providers/first_model.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
-import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/providers/last_visited.dart';
 import 'ayah_list.dart';
 
 class Surah extends ConsumerWidget {
@@ -28,17 +28,13 @@ class Surah extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (surah) {
-        return WithPreferences(
-          builder: (context, preferences) {
-            preferences.setString('lastSurah', surah.id);
+        ref.read(lastVisitedProvider.notifier).updateLastSurah(surah.id);
 
-            return AyahList(
-              key: PageStorageKey<String>(surah.id),
-              chapter: surah,
-              filterParams: {
-                'surah_id': surah.id,
-              },
-            );
+        return AyahList(
+          key: PageStorageKey<String>(surah.id),
+          chapter: surah,
+          filterParams: {
+            'surah_id': surah.id,
           },
         );
       },
