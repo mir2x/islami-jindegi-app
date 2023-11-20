@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/filter/switch_button.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
-import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/utils/with_last_visited.dart';
@@ -231,17 +230,9 @@ class QuranState extends ConsumerState<Quran> {
       bottomBar: BottomBar(
         alignment: MainAxisAlignment.spaceBetween,
         children: [
-          WithConnectivity(
-            builder: (context, isConnected) {
-              if (isConnected) {
-                return TextButton(
-                  child: Text(locales.search, style: textTheme.labelMedium),
-                  onPressed: () => QR.to('quran/search'),
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            },
+          TextButton(
+            child: Text(locales.search, style: textTheme.labelMedium),
+            onPressed: () => QR.to('quran/search'),
           ),
           Container(
             margin: const EdgeInsets.only(right: 4),

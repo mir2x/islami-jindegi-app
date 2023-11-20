@@ -250,6 +250,10 @@ class LocalResourceAPI extends _$LocalResourceAPI {
       query.orderBy([(t) => OrderingTerm(expression: t.surahPosition)]);
     }
 
+    if (params.containsKey('search')) {
+      query.where((t) => t.title.like("%${params['search']}%"));
+    }
+
     var ayahItems = await query.get();
 
     if (params.containsKey('include') &&
