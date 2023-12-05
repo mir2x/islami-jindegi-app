@@ -4,7 +4,7 @@ class FontSizeRatio extends ValueNotifier<double> {
   FontSizeRatio({double? value}) : super(value ?? 1.0);
 
   double increment() {
-    if (value < 1.7) {
+    if (value < 2.0) {
       value += 0.1;
     }
 
