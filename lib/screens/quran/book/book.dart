@@ -223,7 +223,8 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
       showBottomBar: !isFullScreen,
       title: Text(widget.qitabTitle),
       body: GestureDetector(
-        onTap: () => {},
+        onTap: () {},
+        /* onTap: () => toggleFullScreen(), */
         child: PdfView(
           reverse: true,
           controller: widget.pdfController,

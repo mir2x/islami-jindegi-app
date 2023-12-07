@@ -16,6 +16,7 @@ import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/date.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/helpers/format_date.dart';
+import 'package:native_app/widgets/utils/last_visited.dart';
 
 class Bayans extends ConsumerWidget {
   const Bayans({super.key});
@@ -161,37 +162,48 @@ class Bayans extends ConsumerWidget {
                   return InkWell(
                     onTap: () => QR.to('bayans/${item.id}'),
                     child: ListItem(
-                      item: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      item: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            item.title,
-                            style: textTheme.titleMedium,
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.title,
+                                  style: textTheme.titleMedium,
+                                ),
+                                if (item.speaker.value != null) ...[
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 3),
+                                    child: Text(
+                                      item.speaker.value.name,
+                                      style: textTheme.labelMedium,
+                                    ),
+                                  ),
+                                ],
+                                if (item.location != null) ...[
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 2),
+                                    child: Text(
+                                      item.location,
+                                      style: textTheme.labelSmall,
+                                    ),
+                                  ),
+                                ],
+                                Container(
+                                  margin: const EdgeInsets.only(top: 2),
+                                  child: Text(
+                                    formatDate(item.publishedAt, currentLang),
+                                    style: textTheme.labelSmall,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          if (item.speaker.value != null) ...[
-                            Container(
-                              margin: const EdgeInsets.only(top: 3),
-                              child: Text(
-                                item.speaker.value.name,
-                                style: textTheme.labelMedium,
-                              ),
-                            ),
-                          ],
-                          if (item.location != null) ...[
-                            Container(
-                              margin: const EdgeInsets.only(top: 2),
-                              child: Text(
-                                item.location,
-                                style: textTheme.labelSmall,
-                              ),
-                            ),
-                          ],
-                          Container(
-                            margin: const EdgeInsets.only(top: 2),
-                            child: Text(
-                              formatDate(item.publishedAt, currentLang),
-                              style: textTheme.labelSmall,
-                            ),
+                          LastVisited(
+                            resourceKey: 'lastBayan',
+                            resourceId: item.id,
                           ),
                         ],
                       ),

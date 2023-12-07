@@ -14,6 +14,7 @@ import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
+import 'package:native_app/widgets/utils/last_visited.dart';
 
 class Duas extends ConsumerWidget {
   const Duas({super.key});
@@ -102,9 +103,25 @@ class Duas extends ConsumerWidget {
                   return InkWell(
                     onTap: () => QR.to('duas/${item.id}'),
                     child: ListItem(
-                      item: Text(
-                        item.title,
-                        style: textTheme.titleMedium,
+                      item: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.title,
+                                  style: textTheme.titleMedium,
+                                ),
+                              ],
+                            ),
+                          ),
+                          LastVisited(
+                            resourceKey: 'lastDuaDurud',
+                            resourceId: item.id,
+                          ),
+                        ],
                       ),
                     ),
                   );

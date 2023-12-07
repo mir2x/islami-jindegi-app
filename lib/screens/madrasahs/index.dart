@@ -11,6 +11,7 @@ import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
+import 'package:native_app/widgets/utils/last_visited.dart';
 
 class Madrasahs extends ConsumerWidget {
   const Madrasahs({super.key});
@@ -61,9 +62,25 @@ class Madrasahs extends ConsumerWidget {
                   return InkWell(
                     onTap: () => QR.to('madrasahs/${item.id}'),
                     child: ListItem(
-                      item: Text(
-                        item.title,
-                        style: textTheme.titleMedium,
+                      item: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.title,
+                                  style: textTheme.titleMedium,
+                                ),
+                              ],
+                            ),
+                          ),
+                          LastVisited(
+                            resourceKey: 'lastMadrasah',
+                            resourceId: item.id,
+                          ),
+                        ],
                       ),
                     ),
                   );

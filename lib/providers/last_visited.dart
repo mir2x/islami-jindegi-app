@@ -18,6 +18,48 @@ class LastVisitedNotifier extends AsyncNotifier<SharedPreferences> {
     await prefs.setString('lastPara', value);
     state = AsyncValue.data(prefs);
   }
+
+  Future<dynamic> updateLastBayan(value) async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setString('lastBayan', value);
+    state = AsyncValue.data(prefs);
+  }
+
+  Future<dynamic> updateLastMalfuzat(value) async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setString('lastMalfuzat', value);
+    state = AsyncValue.data(prefs);
+  }
+
+  Future<dynamic> updateLastMasail(value) async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setString('lastMasail', value);
+    state = AsyncValue.data(prefs);
+  }
+
+  Future<dynamic> updateLastDuaDurud(value) async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setString('lastDuaDurud', value);
+    state = AsyncValue.data(prefs);
+  }
+
+  Future<dynamic> updateLastArticle(value) async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setString('lastArticle', value);
+    state = AsyncValue.data(prefs);
+  }
+
+  Future<dynamic> updateLastNews(value) async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setString('lastNews', value);
+    state = AsyncValue.data(prefs);
+  }
+
+  Future<dynamic> updateLastMadrasah(value) async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setString('lastMadrasah', value);
+    state = AsyncValue.data(prefs);
+  }
 }
 
 final lastVisitedProvider =

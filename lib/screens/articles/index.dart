@@ -16,6 +16,7 @@ import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/nested_item.dart';
 import 'package:native_app/widgets/filter/subitem.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
+import 'package:native_app/widgets/utils/last_visited.dart';
 
 class Articles extends ConsumerWidget {
   const Articles({super.key});
@@ -155,22 +156,33 @@ class Articles extends ConsumerWidget {
                   return InkWell(
                     onTap: () => QR.to('articles/${item.id}'),
                     child: ListItem(
-                      item: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      item: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            item.title,
-                            style: textTheme.titleMedium,
-                          ),
-                          if (item.articleAuthor.value != null) ...[
-                            Container(
-                              margin: const EdgeInsets.only(top: 5),
-                              child: Text(
-                                item.articleAuthor.value.name,
-                                style: textTheme.labelSmall,
-                              ),
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.title,
+                                  style: textTheme.titleMedium,
+                                ),
+                                if (item.articleAuthor.value != null) ...[
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 5),
+                                    child: Text(
+                                      item.articleAuthor.value.name,
+                                      style: textTheme.labelSmall,
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
-                          ],
+                          ),
+                          LastVisited(
+                            resourceKey: 'lastArticle',
+                            resourceId: item.id,
+                          ),
                         ],
                       ),
                     ),

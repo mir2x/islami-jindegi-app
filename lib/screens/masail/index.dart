@@ -18,6 +18,7 @@ import 'package:native_app/widgets/filter/nested_item.dart';
 import 'package:native_app/widgets/filter/subitem.dart';
 import 'package:native_app/widgets/filter/triple_switch_button.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
+import 'package:native_app/widgets/utils/last_visited.dart';
 import 'package:native_app/theme/colors.dart';
 
 class Masail extends ConsumerWidget {
@@ -193,9 +194,25 @@ class Masail extends ConsumerWidget {
                   return InkWell(
                     onTap: () => QR.to('masail/${item.id}'),
                     child: ListItem(
-                      item: Text(
-                        item.title,
-                        style: textTheme.titleMedium,
+                      item: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.title,
+                                  style: textTheme.titleMedium,
+                                ),
+                              ],
+                            ),
+                          ),
+                          LastVisited(
+                            resourceKey: 'lastMasail',
+                            resourceId: item.id,
+                          ),
+                        ],
                       ),
                     ),
                   );

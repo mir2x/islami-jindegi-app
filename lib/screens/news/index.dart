@@ -12,6 +12,7 @@ import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/helpers/format_date.dart';
+import 'package:native_app/widgets/utils/last_visited.dart';
 
 class News extends ConsumerWidget {
   const News({super.key});
@@ -63,19 +64,30 @@ class News extends ConsumerWidget {
                   return InkWell(
                     onTap: () => QR.to('news/${item.id}'),
                     child: ListItem(
-                      item: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      item: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            item.title,
-                            style: textTheme.titleMedium,
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(top: 5),
-                            child: Text(
-                              formatDate(item.publishedAt, currentLang),
-                              style: textTheme.labelSmall,
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.title,
+                                  style: textTheme.titleMedium,
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(top: 5),
+                                  child: Text(
+                                    formatDate(item.publishedAt, currentLang),
+                                    style: textTheme.labelSmall,
+                                  ),
+                                ),
+                              ],
                             ),
+                          ),
+                          LastVisited(
+                            resourceKey: 'lastNews',
+                            resourceId: item.id,
                           ),
                         ],
                       ),

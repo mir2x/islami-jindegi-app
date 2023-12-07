@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/objects/single_model_query.dart';
@@ -71,6 +72,8 @@ class Article extends ConsumerWidget {
             await QR.to('articles/${nextResources.first.id}');
           }
         }
+
+        ref.read(lastVisitedProvider.notifier).updateLastArticle(resource.id);
 
         return ResizableFont(
           storeKey: 'articleFontRatio',

@@ -17,6 +17,7 @@ import 'package:native_app/widgets/filter/nested_item.dart';
 import 'package:native_app/widgets/filter/subitem.dart';
 import 'package:native_app/widgets/filter/triple_switch_button.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
+import 'package:native_app/widgets/utils/last_visited.dart';
 
 class Malfuzat extends ConsumerWidget {
   const Malfuzat({super.key});
@@ -212,22 +213,33 @@ class Malfuzat extends ConsumerWidget {
                   return InkWell(
                     onTap: () => QR.to('malfuzat/${item.id}'),
                     child: ListItem(
-                      item: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      item: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            item.title,
-                            style: textTheme.titleMedium,
-                          ),
-                          if (item.malfuzatAuthor.value != null) ...[
-                            Container(
-                              margin: const EdgeInsets.only(top: 5),
-                              child: Text(
-                                item.malfuzatAuthor.value.name,
-                                style: textTheme.labelSmall,
-                              ),
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.title,
+                                  style: textTheme.titleMedium,
+                                ),
+                                if (item.malfuzatAuthor.value != null) ...[
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 5),
+                                    child: Text(
+                                      item.malfuzatAuthor.value.name,
+                                      style: textTheme.labelSmall,
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
-                          ],
+                          ),
+                          LastVisited(
+                            resourceKey: 'lastMalfuzat',
+                            resourceId: item.id,
+                          ),
                         ],
                       ),
                     ),

@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/single_model.dart';
+import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
@@ -68,6 +69,8 @@ class NewsItem extends ConsumerWidget {
             await QR.to('news/${nextResources.first.id}');
           }
         }
+
+        ref.read(lastVisitedProvider.notifier).updateLastNews(resource.id);
 
         return ResizableFont(
           storeKey: 'newsFontRatio',
