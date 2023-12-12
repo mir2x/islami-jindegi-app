@@ -107,14 +107,9 @@ class Duas extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Flexible(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  item.title,
-                                  style: textTheme.titleMedium,
-                                ),
-                              ],
+                            child: Text(
+                              item.title,
+                              style: textTheme.titleMedium,
                             ),
                           ),
                           LastVisited(

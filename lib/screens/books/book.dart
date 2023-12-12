@@ -14,6 +14,7 @@ import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
+import 'package:native_app/widgets/utils/with_last_visited.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/utils/comma_separated_list.dart';
@@ -98,50 +99,93 @@ class BookItem extends ConsumerWidget {
                     Expanded(
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: InfiniteList(
-                          padding: 0,
-                          resourceFetcher: (Map<String, dynamic> params) async {
-                            AllModelsQuery query = AllModelsQuery(
-                              repository: ref.chapters,
-                              params: {
-                                ...params,
-                                'bookId': book.id,
-                                'include': 'subchapters',
-                              },
+                        child: WithLastVisited(
+                          builder: (context, settings) {
+                            String? lastChapterId;
+
+                            Map books = json.decode(
+                              settings.getString('lastChapters') ?? '{}',
                             );
 
-                            return await ref
-                                .watch(allModelsProvider(query).future);
-                          },
-                          itemBuilder: (_, chapter, __) {
-                            if (chapter.subchapters.length > 0) {
-                              return Subchapters(
-                                book: book,
-                                chapter: chapter,
-                              );
-                            } else {
-                              return InkWell(
-                                onTap: () => QR.to(
-                                  'books/${book.id}/chapters/${chapter.id}',
-                                ),
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    border: Border(
-                                      bottom: BorderSide(
-                                        color: ThemeColors.color4,
+                            if (books.containsKey(book.id.toString())) {
+                              lastChapterId = books[book.id.toString()];
+                            }
+
+                            return InfiniteList(
+                              padding: 0,
+                              resourceFetcher:
+                                  (Map<String, dynamic> params) async {
+                                AllModelsQuery query = AllModelsQuery(
+                                  repository: ref.chapters,
+                                  params: {
+                                    ...params,
+                                    'bookId': book.id,
+                                    'include': 'subchapters',
+                                  },
+                                );
+
+                                return await ref
+                                    .watch(allModelsProvider(query).future);
+                              },
+                              itemBuilder: (_, chapter, __) {
+                                if (chapter.subchapters.length > 0) {
+                                  return Subchapters(
+                                    book: book,
+                                    chapter: chapter,
+                                    lastSubchapterId: lastChapterId,
+                                    isOpen: chapter.subchapters
+                                        .map((s) => s.id.toString())
+                                        .any((id) => id == lastChapterId),
+                                  );
+                                } else {
+                                  return InkWell(
+                                    onTap: () => QR.to(
+                                      'books/${book.id}/chapters/${chapter.id}',
+                                    ),
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            color: ThemeColors.color4,
+                                          ),
+                                        ),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 15,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              chapter.title,
+                                              style: textTheme.titleLarge,
+                                            ),
+                                          ),
+                                          if (lastChapterId ==
+                                              chapter.id.toString()) ...[
+                                            Container(
+                                              margin: const EdgeInsets.only(
+                                                left: 10,
+                                              ),
+                                              child: SvgPicture.asset(
+                                                'assets/images/icons/open-book.svg',
+                                                fit: BoxFit.scaleDown,
+                                                width: 25,
+                                                height: 20,
+                                              ),
+                                            ),
+                                          ] else ...[
+                                            const SizedBox.shrink(),
+                                          ],
+                                        ],
                                       ),
                                     ),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 15,
-                                  ),
-                                  child: Text(
-                                    chapter.title,
-                                    style: textTheme.titleLarge,
-                                  ),
-                                ),
-                              );
-                            }
+                                  );
+                                }
+                              },
+                            );
                           },
                         ),
                       ),
@@ -234,10 +278,14 @@ class Subchapters extends ConsumerStatefulWidget {
     super.key,
     required this.book,
     required this.chapter,
+    required this.lastSubchapterId,
+    required this.isOpen,
   });
 
   final dynamic book;
   final dynamic chapter;
+  final String? lastSubchapterId;
+  final bool isOpen;
 
   @override
   SubchaptersState createState() => SubchaptersState();
@@ -246,6 +294,12 @@ class Subchapters extends ConsumerStatefulWidget {
 class SubchaptersState extends ConsumerState<Subchapters> {
   bool isOpen = false;
   final ScrollController sectionController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    isOpen = widget.isOpen;
+  }
 
   toggleOpen() {
     setState(() {
@@ -331,9 +385,32 @@ class SubchaptersState extends ConsumerState<Subchapters> {
                               bottom: 15,
                               right: 15,
                             ),
-                            child: Text(
-                              subchapter.title,
-                              style: textTheme.titleMedium,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    subchapter.title,
+                                    style: textTheme.titleMedium,
+                                  ),
+                                ),
+                                if (widget.lastSubchapterId ==
+                                    subchapter.id.toString()) ...[
+                                  Container(
+                                    margin: const EdgeInsets.only(
+                                      left: 10,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      'assets/images/icons/open-book.svg',
+                                      fit: BoxFit.scaleDown,
+                                      width: 25,
+                                      height: 20,
+                                    ),
+                                  ),
+                                ] else ...[
+                                  const SizedBox.shrink(),
+                                ],
+                              ],
                             ),
                           ),
                         );

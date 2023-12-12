@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,6 +17,14 @@ class LastVisitedNotifier extends AsyncNotifier<SharedPreferences> {
   Future<dynamic> updateLastPara(value) async {
     var prefs = await SharedPreferences.getInstance();
     await prefs.setString('lastPara', value);
+    state = AsyncValue.data(prefs);
+  }
+
+  Future<dynamic> updateLastChapter(bookId, chapterId) async {
+    var prefs = await SharedPreferences.getInstance();
+    Map books = json.decode(prefs.getString('lastChapters') ?? '{}');
+    books[bookId.toString()] = chapterId.toString();
+    await prefs.setString('lastChapters', json.encode(books));
     state = AsyncValue.data(prefs);
   }
 
