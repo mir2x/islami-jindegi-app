@@ -311,6 +311,10 @@ class AyahList extends ConsumerWidget {
                         {
                           'label': 'Al Mushaf Quran',
                           'value': 'arabic/al-mushaf',
+                        },
+                        {
+                          'label': 'Al Qalam Quran',
+                          'value': 'arabic/al-qalam-quran',
                         }
                       ];
 
