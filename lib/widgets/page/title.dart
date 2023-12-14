@@ -20,8 +20,8 @@ class PageTitle extends StatelessWidget {
       builder: (context, ratio, child) {
         return Text(
           text,
-          style: textTheme.headlineMedium?.copyWith(
-            fontSize: 20 * ratio,
+          style: textTheme.headlineLarge?.copyWith(
+            fontSize: 24 * ratio,
           ),
         );
       },
