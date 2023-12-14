@@ -47,7 +47,8 @@ class Bismillah extends ConsumerWidget {
                         'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ',
                         textDirection: TextDirection.rtl,
                         style: textTheme.labelLarge?.copyWith(
-                          fontSize: 22 * ratio,
+                          fontSize: 28 * ratio,
+                          height: 1.5,
                         ),
                       );
                     },
@@ -55,10 +56,13 @@ class Bismillah extends ConsumerWidget {
                 ),
                 if (chapterType != 'Para') ...[
                   PopupMenuButton<int>(
-                    child: const SizedBox(
-                      height: 40,
-                      width: 35,
-                      child: Icon(Icons.more_vert),
+                    child: Container(
+                      padding: const EdgeInsets.only(top: 5),
+                      child: const SizedBox(
+                        height: 40,
+                        width: 35,
+                        child: Icon(Icons.more_vert),
+                      ),
                     ),
                     itemBuilder: (BuildContext context) =>
                         <PopupMenuEntry<int>>[

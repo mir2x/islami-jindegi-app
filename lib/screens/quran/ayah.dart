@@ -57,7 +57,8 @@ class Ayah extends ConsumerWidget {
                         ayah.title,
                         textDirection: TextDirection.rtl,
                         style: textTheme.labelLarge?.copyWith(
-                          fontSize: 22 * ratio,
+                          fontSize: 28 * ratio,
+                          height: 1.5,
                         ),
                       );
                     },
@@ -65,7 +66,7 @@ class Ayah extends ConsumerWidget {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.only(left: 10),
+                margin: const EdgeInsets.only(left: 10, top: 5),
                 child: Column(
                   children: [
                     SizedBox(
@@ -99,10 +100,13 @@ class Ayah extends ConsumerWidget {
                 ),
               ),
               PopupMenuButton<int>(
-                child: const SizedBox(
-                  height: 40,
-                  width: 35,
-                  child: Icon(Icons.more_vert),
+                child: Container(
+                  padding: const EdgeInsets.only(top: 5),
+                  child: const SizedBox(
+                    height: 40,
+                    width: 35,
+                    child: Icon(Icons.more_vert),
+                  ),
                 ),
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
                   PopupMenuItem<int>(

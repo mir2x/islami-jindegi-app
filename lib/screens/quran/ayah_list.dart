@@ -95,7 +95,8 @@ class AyahList extends ConsumerWidget {
                             'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ',
                             textDirection: TextDirection.rtl,
                             style: textTheme.labelLarge?.copyWith(
-                              fontSize: 20 * ratio,
+                              fontSize: 28 * ratio,
+                              height: 1.5,
                             ),
                           ),
                         ),
@@ -104,7 +105,8 @@ class AyahList extends ConsumerWidget {
                           textDirection: TextDirection.rtl,
                           textAlign: TextAlign.justify,
                           style: textTheme.labelLarge?.copyWith(
-                            fontSize: 20 * ratio,
+                            fontSize: 28 * ratio,
+                            height: 1.5,
                           ),
                         ),
                       ],
@@ -323,7 +325,7 @@ class AyahList extends ConsumerWidget {
                                   .firstWhereOrNull((i) {
                                 return i == preferences.getString('arabicFont');
                               }) ??
-                              'arabic/al-qalam-quran-majeed';
+                              'arabic/al-mushaf';
 
                           return Dialog(
                             child: Container(

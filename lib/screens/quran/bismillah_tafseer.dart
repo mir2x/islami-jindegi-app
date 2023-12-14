@@ -57,7 +57,8 @@ class BismillahTafseer extends ConsumerWidget {
                           arabicBismillah,
                           textDirection: TextDirection.rtl,
                           style: textTheme.labelLarge?.copyWith(
-                            fontSize: 20 * ratio,
+                            fontSize: 28 * ratio,
+                            height: 1.5,
                           ),
                         );
                       },
