@@ -68,7 +68,7 @@ class BookItem extends ConsumerWidget {
                       child: Text(
                         book.title,
                         textAlign: TextAlign.center,
-                        style: textTheme.headlineMedium,
+                        style: textTheme.headlineLarge,
                       ),
                     ),
                     Container(
@@ -204,7 +204,7 @@ class BookItem extends ConsumerWidget {
                           Text(
                             book.title,
                             textAlign: TextAlign.center,
-                            style: textTheme.headlineMedium,
+                            style: textTheme.headlineLarge,
                           ),
                           Container(
                             margin: const EdgeInsets.only(top: 8),
