@@ -232,36 +232,36 @@ class BookItem extends ConsumerWidget {
                       image: book.image,
                       document: book.document,
                       publishedAt: book.publishedAt,
+                      downloadItem: (book.document != null)
+                          ? DownloadItem(
+                              filePath: book.document['id'],
+                              fileUrl: fileSrcUrl(book.document),
+                              downloadCallback: () async {
+                                await ref.watch(
+                                  createDownloadedBookProvider({
+                                    'bookId': book.id,
+                                    'title': book.title,
+                                    'excerpt': book.excerpt,
+                                    'publisher': book.publisher,
+                                    'price': book.price,
+                                    'image': json.encode(book.image),
+                                    'document': json.encode(book.document),
+                                    'authors': book.authors
+                                        .map((e) => e.name)
+                                        .toList()
+                                        .join(', '),
+                                    'publishedAt': book.publishedAt,
+                                  }).future,
+                                );
+                              },
+                              deleteCallback: () async {
+                                await ref.watch(
+                                  deleteDownloadedBookProvider(book.id).future,
+                                );
+                              },
+                            )
+                          : null,
                     ),
-                    if (book.document != null) ...[
-                      DownloadItem(
-                        filePath: book.document['id'],
-                        fileUrl: fileSrcUrl(book.document),
-                        downloadCallback: () async {
-                          await ref.watch(
-                            createDownloadedBookProvider({
-                              'bookId': book.id,
-                              'title': book.title,
-                              'excerpt': book.excerpt,
-                              'publisher': book.publisher,
-                              'price': book.price,
-                              'image': json.encode(book.image),
-                              'document': json.encode(book.document),
-                              'authors': book.authors
-                                  .map((e) => e.name)
-                                  .toList()
-                                  .join(', '),
-                              'publishedAt': book.publishedAt,
-                            }).future,
-                          );
-                        },
-                        deleteCallback: () async {
-                          await ref.watch(
-                            deleteDownloadedBookProvider(book.id).future,
-                          );
-                        },
-                      ),
-                    ],
                   ],
                 );
               }

@@ -42,20 +42,20 @@ class DownloadedBayan extends ConsumerWidget {
                 audio: audio,
                 speaker: resource.speaker,
                 publishedAt: resource.publishedAt,
-              ),
-              if (audio.isNotEmpty) ...[
-                DownloadItem(
-                  filePath: audio['id'],
-                  fileUrl: fileSrcUrl(audio),
-                  deleteCallback: () async {
-                    await ref
-                        .watch(downloadedBayansProvider.notifier)
-                        .deleteItem(resource.bayanId);
+                downloadItem: (audio.isNotEmpty)
+                    ? DownloadItem(
+                        filePath: audio['id'],
+                        fileUrl: fileSrcUrl(audio),
+                        deleteCallback: () async {
+                          await ref
+                              .watch(downloadedBayansProvider.notifier)
+                              .deleteItem(resource.bayanId);
 
-                    await QR.to('bayans/downloads');
-                  },
-                ),
-              ],
+                          await QR.to('bayans/downloads');
+                        },
+                      )
+                    : null,
+              ),
             ],
           ),
           bottomBar: BottomBar(

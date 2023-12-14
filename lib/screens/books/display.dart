@@ -15,6 +15,7 @@ class BookDisplay extends ConsumerWidget {
     required this.image,
     required this.document,
     required this.publishedAt,
+    required this.downloadItem,
   });
 
   final String id;
@@ -25,6 +26,7 @@ class BookDisplay extends ConsumerWidget {
   final Map? image;
   final Map? document;
   final String? publishedAt;
+  final Widget? downloadItem;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,6 +41,9 @@ class BookDisplay extends ConsumerWidget {
             image: image,
             document: document!,
           ),
+        ],
+        if (downloadItem != null) ...[
+          downloadItem!,
         ],
         if (publisher != null) ...[
           DescriptionItem(

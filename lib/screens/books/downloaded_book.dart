@@ -60,20 +60,20 @@ class DownloadedBook extends ConsumerWidget {
                 image: json.decode(book.image),
                 document: document,
                 publishedAt: book.publishedAt,
-              ),
-              if (document.isNotEmpty) ...[
-                DownloadItem(
-                  filePath: document['id'],
-                  fileUrl: fileSrcUrl(document),
-                  deleteCallback: () async {
-                    await ref
-                        .watch(downloadedBooksProvider.notifier)
-                        .deleteItem(book.bookId);
+                downloadItem: (document.isNotEmpty)
+                    ? DownloadItem(
+                        filePath: document['id'],
+                        fileUrl: fileSrcUrl(document),
+                        deleteCallback: () async {
+                          await ref
+                              .watch(downloadedBooksProvider.notifier)
+                              .deleteItem(book.bookId);
 
-                    await QR.to('books/downloads');
-                  },
-                ),
-              ],
+                          await QR.to('books/downloads');
+                        },
+                      )
+                    : null,
+              ),
             ],
           ),
         );

@@ -16,6 +16,7 @@ class BayanDisplay extends ConsumerWidget {
     required this.audio,
     required this.speaker,
     required this.publishedAt,
+    required this.downloadItem,
   });
 
   final String title;
@@ -24,6 +25,7 @@ class BayanDisplay extends ConsumerWidget {
   final Map? audio;
   final String? speaker;
   final String publishedAt;
+  final Widget? downloadItem;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -59,9 +61,12 @@ class BayanDisplay extends ConsumerWidget {
           ),
         ],
         Container(
-          margin: const EdgeInsets.only(top: 40),
+          margin: const EdgeInsets.only(top: 20),
           child: Column(
             children: [
+              if (downloadItem != null) ...[
+                downloadItem!,
+              ],
               if (location != null) ...[
                 DescriptionItem(
                   title: '${locales.location}:',
@@ -87,20 +92,20 @@ class BayanDisplay extends ConsumerWidget {
                   ),
                 ),
               ],
-              if (audio?['metadata']?['duration'] != null) ...[
-                DescriptionItem(
-                  title: '${locales.audioDuration}:',
-                  description: Text(
-                    playDuration(audio?['metadata']?['duration']!),
-                    style: textTheme.labelMedium,
-                  ),
-                ),
-              ],
               if (audio?['metadata']?['size'] != null) ...[
                 DescriptionItem(
                   title: '${locales.audioSize}:',
                   description: Text(
                     fileSize(audio?['metadata']?['size']!),
+                    style: textTheme.labelMedium,
+                  ),
+                ),
+              ],
+              if (audio?['metadata']?['duration'] != null) ...[
+                DescriptionItem(
+                  title: '${locales.audioDuration}:',
+                  description: Text(
+                    playDuration(audio?['metadata']?['duration']!),
                     style: textTheme.labelMedium,
                   ),
                 ),

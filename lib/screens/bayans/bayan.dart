@@ -89,31 +89,31 @@ class Bayan extends ConsumerWidget {
                   audio: resource.audio,
                   speaker: resource.speaker.value.name,
                   publishedAt: resource.publishedAt,
+                  downloadItem: (resource.audio != null)
+                      ? DownloadItem(
+                          filePath: resource.audio['id'],
+                          fileUrl: fileSrcUrl(resource.audio),
+                          downloadCallback: () async {
+                            await ref.watch(
+                              createDownloadedBayanProvider({
+                                'bayanId': resource.id,
+                                'title': resource.title,
+                                'excerpt': resource.excerpt,
+                                'location': resource.location,
+                                'audio': json.encode(resource.audio),
+                                'speaker': resource.speaker.value.name,
+                                'publishedAt': resource.publishedAt,
+                              }).future,
+                            );
+                          },
+                          deleteCallback: () async {
+                            await ref.watch(
+                              deleteDownloadedBayanProvider(resource.id).future,
+                            );
+                          },
+                        )
+                      : null,
                 ),
-                if (resource.audio != null) ...[
-                  DownloadItem(
-                    filePath: resource.audio['id'],
-                    fileUrl: fileSrcUrl(resource.audio),
-                    downloadCallback: () async {
-                      await ref.watch(
-                        createDownloadedBayanProvider({
-                          'bayanId': resource.id,
-                          'title': resource.title,
-                          'excerpt': resource.excerpt,
-                          'location': resource.location,
-                          'audio': json.encode(resource.audio),
-                          'speaker': resource.speaker.value.name,
-                          'publishedAt': resource.publishedAt,
-                        }).future,
-                      );
-                    },
-                    deleteCallback: () async {
-                      await ref.watch(
-                        deleteDownloadedBayanProvider(resource.id).future,
-                      );
-                    },
-                  ),
-                ],
               ],
             ),
           ),

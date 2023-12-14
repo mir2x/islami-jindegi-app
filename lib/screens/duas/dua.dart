@@ -103,27 +103,18 @@ class Dua extends ConsumerWidget {
                       ),
                     ),
                     if (resource.audio != null) ...[
-                      Container(
-                        margin: const EdgeInsets.only(top: 30),
-                        child: AudioPlayerWidget(
-                          audio: resource.audio,
-                        ),
+                      AudioPlayerWidget(
+                        audio: resource.audio,
                       ),
                     ],
                     Container(
-                      margin: const EdgeInsets.only(top: 40),
+                      margin: const EdgeInsets.only(top: 20),
                       child: Column(
                         children: [
-                          if (resource.audio?['metadata']?['duration'] !=
-                              null) ...[
-                            DescriptionItem(
-                              title: '${locales.audioDuration}:',
-                              description: Text(
-                                playDuration(
-                                  resource.audio['metadata']['duration'],
-                                ),
-                                style: textTheme.labelMedium,
-                              ),
+                          if (resource.audio != null) ...[
+                            DownloadItem(
+                              filePath: resource.audio['id'],
+                              fileUrl: fileSrcUrl(resource.audio),
                             ),
                           ],
                           if (resource.audio?['metadata']?['size'] != null) ...[
@@ -135,10 +126,16 @@ class Dua extends ConsumerWidget {
                               ),
                             ),
                           ],
-                          if (resource.audio != null) ...[
-                            DownloadItem(
-                              filePath: resource.audio['id'],
-                              fileUrl: fileSrcUrl(resource.audio),
+                          if (resource.audio?['metadata']?['duration'] !=
+                              null) ...[
+                            DescriptionItem(
+                              title: '${locales.audioDuration}:',
+                              description: Text(
+                                playDuration(
+                                  resource.audio['metadata']['duration'],
+                                ),
+                                style: textTheme.labelMedium,
+                              ),
                             ),
                           ],
                         ],
