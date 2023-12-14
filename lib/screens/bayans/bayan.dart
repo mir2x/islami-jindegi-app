@@ -87,7 +87,7 @@ class Bayan extends ConsumerWidget {
                   excerpt: resource.excerpt,
                   location: resource.location,
                   audio: resource.audio,
-                  speaker: resource.speaker.value.name,
+                  speaker: resource.speaker.value?.name,
                   publishedAt: resource.publishedAt,
                   downloadItem: (resource.audio != null)
                       ? DownloadItem(
@@ -101,7 +101,7 @@ class Bayan extends ConsumerWidget {
                                 'excerpt': resource.excerpt,
                                 'location': resource.location,
                                 'audio': json.encode(resource.audio),
-                                'speaker': resource.speaker.value.name,
+                                'speaker': resource.speaker.value?.name,
                                 'publishedAt': resource.publishedAt,
                               }).future,
                             );

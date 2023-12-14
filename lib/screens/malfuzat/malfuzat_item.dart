@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -5,6 +6,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/providers/last_visited.dart';
+import 'package:native_app/providers/downloaded_malfuzat.dart';
 import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
@@ -12,14 +14,7 @@ import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/presentation/resizable_font.dart';
 import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/widgets/presentation/description_item.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
-import 'package:native_app/widgets/page/title.dart';
-import 'package:native_app/widgets/page/subtitle.dart';
-import 'package:native_app/widgets/page/html_body.dart';
-import 'package:native_app/widgets/audio/player.dart';
-import 'package:native_app/helpers/file_size.dart';
-import 'package:native_app/helpers/play_duration.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
@@ -27,6 +22,7 @@ import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
+import 'display.dart';
 
 class MalfuzatItem extends ConsumerWidget {
   const MalfuzatItem({super.key});
@@ -34,7 +30,6 @@ class MalfuzatItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    var textTheme = Theme.of(context).textTheme;
 
     var query = SingleModelQuery(
       repository: ref.malfuzats,
@@ -92,69 +87,39 @@ class MalfuzatItem extends ConsumerWidget {
                 onNext: nextPage,
                 child: ItemContent(
                   children: [
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 15),
-                      child: PageTitle(
-                        text: resource.title,
-                        fontSizeRatio: fontSizeRatio,
-                      ),
-                    ),
-                    if (resource.malfuzatAuthor.value != null) ...[
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 15),
-                        child: PageSubtitle(
-                          text: resource.malfuzatAuthor.value.name,
-                          fontSizeRatio: fontSizeRatio,
-                        ),
-                      ),
-                    ],
-                    if (resource.body != null) ...[
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 30),
-                        child: PageHtmlBody(
-                          text: resource.body,
-                          fontSizeRatio: fontSizeRatio,
-                        ),
-                      ),
-                    ],
-                    if (resource.audio != null) ...[
-                      AudioPlayerWidget(
-                        audio: resource.audio,
-                      ),
-                    ],
-                    Container(
-                      margin: const EdgeInsets.only(top: 20),
-                      child: Column(
-                        children: [
-                          if (resource.audio != null) ...[
-                            DownloadItem(
+                    MalfuzatDisplay(
+                      title: resource.title,
+                      body: resource.body,
+                      excerpt: resource.excerpt,
+                      audio: resource.audio,
+                      author: resource.malfuzatAuthor.value?.name,
+                      fontSizeRatio: fontSizeRatio,
+                      downloadItem: (resource.audio != null)
+                          ? DownloadItem(
                               filePath: resource.audio['id'],
                               fileUrl: fileSrcUrl(resource.audio),
-                            ),
-                          ],
-                          if (resource.audio?['metadata']?['size'] != null) ...[
-                            DescriptionItem(
-                              title: '${locales.audioSize}:',
-                              description: Text(
-                                fileSize(resource.audio['metadata']['size']),
-                                style: textTheme.labelMedium,
-                              ),
-                            ),
-                          ],
-                          if (resource.audio?['metadata']?['duration'] !=
-                              null) ...[
-                            DescriptionItem(
-                              title: '${locales.audioDuration}:',
-                              description: Text(
-                                playDuration(
-                                  resource.audio['metadata']['duration'],
-                                ),
-                                style: textTheme.labelMedium,
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
+                              downloadCallback: () async {
+                                await ref.watch(
+                                  createDownloadedMalfuzatProvider({
+                                    'malfuzatId': resource.id,
+                                    'title': resource.title,
+                                    'body': resource.body,
+                                    'excerpt': resource.excerpt,
+                                    'audio': json.encode(resource.audio),
+                                    'author':
+                                        resource.malfuzatAuthor.value?.name,
+                                    'publishedAt': resource.publishedAt,
+                                  }).future,
+                                );
+                              },
+                              deleteCallback: () async {
+                                await ref.watch(
+                                  deleteDownloadedMalfuzatProvider(resource.id)
+                                      .future,
+                                );
+                              },
+                            )
+                          : null,
                     ),
                   ],
                 ),

@@ -250,6 +250,18 @@ class Malfuzat extends ConsumerWidget {
           ),
         ],
       ),
+      floatingActionButton: SizedBox(
+        width: 210,
+        height: 40,
+        child: FloatingActionButton.extended(
+          onPressed: () => QR.to('malfuzat/downloads'),
+          icon: const Icon(Icons.download),
+          label: Text(
+            '${locales.downloaded} ${locales.malfuzat}',
+            style: textTheme.labelMedium,
+          ),
+        ),
+      ),
     );
   }
 }

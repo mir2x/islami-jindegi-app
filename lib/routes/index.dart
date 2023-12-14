@@ -28,10 +28,14 @@ import '../screens/bayans/downloaded_bayan.dart';
 
 import '../screens/malfuzat/index.dart';
 import '../screens/malfuzat/malfuzat_item.dart';
+import '../screens/malfuzat/downloads.dart';
+import '../screens/malfuzat/downloaded_malfuzat.dart';
 
 import '../screens/masail/index.dart';
 import '../screens/masail/masail_item.dart';
 import '../screens/masail/ask_question.dart';
+import '../screens/masail/downloads.dart';
+import '../screens/masail/downloaded_masail.dart';
 
 import '../screens/duas/index.dart';
 import '../screens/duas/dua.dart';
@@ -164,6 +168,13 @@ class AppRoutes {
       builder: () => const Malfuzat(),
       children: [
         QRoute(path: '/:id', builder: () => const MalfuzatItem()),
+        QRoute(
+          path: '/downloads',
+          builder: () => const MalfuzatDownloads(),
+          children: [
+            QRoute(path: '/:id', builder: () => const DownloadedMalfuzat()),
+          ],
+        ),
       ],
     ),
     QRoute(
@@ -172,6 +183,13 @@ class AppRoutes {
       children: [
         QRoute(path: '/:id', builder: () => const MasailItem()),
         QRoute(path: '/ask-question', builder: () => const AskQuestion()),
+        QRoute(
+          path: '/downloads',
+          builder: () => const MasailDownloads(),
+          children: [
+            QRoute(path: '/:id', builder: () => const DownloadedMasail()),
+          ],
+        ),
       ],
     ),
     QRoute(
