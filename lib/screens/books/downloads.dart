@@ -20,23 +20,35 @@ class BookDownloads extends ConsumerWidget {
         loading: () => const CircularProgressIndicator(),
         error: (error, stackTrace) => Text(error.toString()),
         data: (resources) {
-          return ListView.separated(
-            itemCount: resources.length,
-            itemBuilder: (BuildContext context, int index) {
-              var item = resources[index];
+          if (resources.isNotEmpty) {
+            return ListView.separated(
+              itemCount: resources.length,
+              itemBuilder: (BuildContext context, int index) {
+                var item = resources[index];
 
-              return Material(
-                child: ListTile(
-                  title: Text(item.title!),
-                  subtitle: Text(item.authors!, style: textTheme.labelSmall),
-                  onTap: () => QR.to('books/downloads/${item.id}'),
+                return Material(
+                  child: ListTile(
+                    title: Text(item.title!),
+                    subtitle: Text(item.authors!, style: textTheme.labelSmall),
+                    onTap: () => QR.to('books/downloads/${item.id}'),
+                  ),
+                );
+              },
+              separatorBuilder: (context, index) {
+                return const Divider(height: 2);
+              },
+            );
+          } else {
+            return Container(
+              padding: const EdgeInsets.all(15),
+              child: Center(
+                child: Text(
+                  locales.noItemsTitle,
+                  style: textTheme.labelMedium,
                 ),
-              );
-            },
-            separatorBuilder: (context, index) {
-              return const Divider(height: 2);
-            },
-          );
+              ),
+            );
+          }
         },
       ),
     );

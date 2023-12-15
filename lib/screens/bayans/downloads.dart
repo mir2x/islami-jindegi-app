@@ -23,55 +23,67 @@ class BayanDownloads extends ConsumerWidget {
         loading: () => const CircularProgressIndicator(),
         error: (error, stackTrace) => Text(error.toString()),
         data: (resources) {
-          return Container(
-            padding: const EdgeInsets.all(15),
-            child: ListView.builder(
-              itemCount: resources.length,
-              itemBuilder: (BuildContext context, int index) {
-                var item = resources[index];
+          if (resources.isNotEmpty) {
+            return Container(
+              padding: const EdgeInsets.all(15),
+              child: ListView.builder(
+                itemCount: resources.length,
+                itemBuilder: (BuildContext context, int index) {
+                  var item = resources[index];
 
-                return InkWell(
-                  onTap: () => QR.to('bayans/downloads/${item.id}'),
-                  child: ListItem(
-                    item: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.title,
-                          style: textTheme.titleMedium,
-                        ),
-                        if (item.speaker != null) ...[
-                          Container(
-                            margin: const EdgeInsets.only(top: 3),
-                            child: Text(
-                              item.speaker,
-                              style: textTheme.labelMedium,
-                            ),
+                  return InkWell(
+                    onTap: () => QR.to('bayans/downloads/${item.id}'),
+                    child: ListItem(
+                      item: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.title,
+                            style: textTheme.titleMedium,
                           ),
-                        ],
-                        if (item.location != null) ...[
+                          if (item.speaker != null) ...[
+                            Container(
+                              margin: const EdgeInsets.only(top: 3),
+                              child: Text(
+                                item.speaker,
+                                style: textTheme.labelMedium,
+                              ),
+                            ),
+                          ],
+                          if (item.location != null) ...[
+                            Container(
+                              margin: const EdgeInsets.only(top: 2),
+                              child: Text(
+                                item.location,
+                                style: textTheme.labelSmall,
+                              ),
+                            ),
+                          ],
                           Container(
                             margin: const EdgeInsets.only(top: 2),
                             child: Text(
-                              item.location,
+                              formatDate(item.publishedAt, currentLang),
                               style: textTheme.labelSmall,
                             ),
                           ),
                         ],
-                        Container(
-                          margin: const EdgeInsets.only(top: 2),
-                          child: Text(
-                            formatDate(item.publishedAt, currentLang),
-                            style: textTheme.labelSmall,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-          );
+                  );
+                },
+              ),
+            );
+          } else {
+            return Container(
+              padding: const EdgeInsets.all(15),
+              child: Center(
+                child: Text(
+                  locales.noItemsTitle,
+                  style: textTheme.labelMedium,
+                ),
+              ),
+            );
+          }
         },
       ),
     );

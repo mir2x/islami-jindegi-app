@@ -23,39 +23,51 @@ class MalfuzatDownloads extends ConsumerWidget {
         loading: () => const CircularProgressIndicator(),
         error: (error, stackTrace) => Text(error.toString()),
         data: (resources) {
-          return Container(
-            padding: const EdgeInsets.all(15),
-            child: ListView.builder(
-              itemCount: resources.length,
-              itemBuilder: (BuildContext context, int index) {
-                var item = resources[index];
+          if (resources.isNotEmpty) {
+            return Container(
+              padding: const EdgeInsets.all(15),
+              child: ListView.builder(
+                itemCount: resources.length,
+                itemBuilder: (BuildContext context, int index) {
+                  var item = resources[index];
 
-                return InkWell(
-                  onTap: () => QR.to('malfuzat/downloads/${item.id}'),
-                  child: ListItem(
-                    item: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.title,
-                          style: textTheme.titleMedium,
-                        ),
-                        if (item.author != null) ...[
-                          Container(
-                            margin: const EdgeInsets.only(top: 5),
-                            child: Text(
-                              item.author,
-                              style: textTheme.labelSmall,
-                            ),
+                  return InkWell(
+                    onTap: () => QR.to('malfuzat/downloads/${item.id}'),
+                    child: ListItem(
+                      item: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.title,
+                            style: textTheme.titleMedium,
                           ),
+                          if (item.author != null) ...[
+                            Container(
+                              margin: const EdgeInsets.only(top: 5),
+                              child: Text(
+                                item.author,
+                                style: textTheme.labelSmall,
+                              ),
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-          );
+                  );
+                },
+              ),
+            );
+          } else {
+            return Container(
+              padding: const EdgeInsets.all(15),
+              child: Center(
+                child: Text(
+                  locales.noItemsTitle,
+                  style: textTheme.labelMedium,
+                ),
+              ),
+            );
+          }
         },
       ),
     );
