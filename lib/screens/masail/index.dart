@@ -54,6 +54,7 @@ class Masail extends ConsumerWidget {
                         children: [
                           Expanded(
                             child: FilterButton(
+                              label: locales.categories,
                               active: qParams.keys.any(
                                 (k) => [
                                   'masailCategoryId',

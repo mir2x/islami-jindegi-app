@@ -39,6 +39,7 @@ class Duas extends ConsumerWidget {
                     children: [
                       Expanded(
                         child: FilterButton(
+                          label: locales.categories,
                           active: qParams.keys.any(
                             (k) => k == 'duaCategoryId',
                           ),
