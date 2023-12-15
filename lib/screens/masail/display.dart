@@ -103,49 +103,6 @@ class MasailDisplay extends ConsumerWidget {
                   ),
                 ),
               ],
-              if (audio != null) ...[
-                Column(
-                  children: [
-                    AudioPlayerWidget(
-                      audio: audio!,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 20),
-                      child: Column(
-                        children: [
-                          if (audio != null) ...[
-                            if (downloadItem != null) ...[
-                              downloadItem!,
-                            ],
-                          ],
-                          if (audio?['metadata']?['size'] != null) ...[
-                            DescriptionItem(
-                              title: '${locales.audioSize}:',
-                              description: Text(
-                                fileSize(
-                                  audio?['metadata']?['size']!,
-                                ),
-                                style: textTheme.labelMedium,
-                              ),
-                            ),
-                          ],
-                          if (audio?['metadata']?['duration'] != null) ...[
-                            DescriptionItem(
-                              title: '${locales.audioDuration}:',
-                              description: Text(
-                                playDuration(
-                                  audio?['metadata']?['duration']!,
-                                ),
-                                style: textTheme.labelMedium,
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
               if (author != null) ...[
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

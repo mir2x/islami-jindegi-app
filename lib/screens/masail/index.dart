@@ -217,34 +217,55 @@ class Masail extends ConsumerWidget {
           ),
         ],
       ),
-      floatingActionButton: settingsQuery.when(
-        loading: () => const SizedBox.shrink(),
-        error: (error, _) => const SizedBox.shrink(),
-        data: (settings) {
-          if (settings.askQuestion) {
-            return SizedBox(
-              width: 170,
-              height: 40,
-              child: FloatingActionButton.extended(
-                onPressed: () => QR.to('masail/ask-question'),
-                icon: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: ThemeColors.color4),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          settingsQuery.when(
+            loading: () => const SizedBox.shrink(),
+            error: (error, _) => const SizedBox.shrink(),
+            data: (settings) {
+              if (settings.askQuestion) {
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: SizedBox(
+                    width: 170,
+                    height: 40,
+                    child: FloatingActionButton.extended(
+                      onPressed: () => QR.to('masail/ask-question'),
+                      icon: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: ThemeColors.color4),
+                        ),
+                        padding: const EdgeInsets.all(2),
+                        child: const Icon(Icons.question_mark, size: 18),
+                      ),
+                      label: Text(
+                        locales.askQuestion,
+                        style: textTheme.labelMedium,
+                      ),
+                    ),
                   ),
-                  padding: const EdgeInsets.all(2),
-                  child: const Icon(Icons.question_mark, size: 18),
-                ),
-                label: Text(
-                  locales.askQuestion,
-                  style: textTheme.labelMedium,
-                ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+          SizedBox(
+            width: 200,
+            height: 40,
+            child: FloatingActionButton.extended(
+              onPressed: () => QR.to('masail/downloads'),
+              icon: const Icon(Icons.download),
+              label: Text(
+                '${locales.downloaded} ${locales.masail}',
+                style: textTheme.labelMedium,
               ),
-            );
-          } else {
-            return const SizedBox.shrink();
-          }
-        },
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -73,6 +73,7 @@ class DownloadedMalfuzat extends ConsumerWidget {
                       SocialShare(
                         title: resource.title,
                         subtitle: resource.author,
+                        body: resource.body,
                         link: 'malfuzat/${resource.malfuzatId}',
                       ),
                       BookmarkButton(
