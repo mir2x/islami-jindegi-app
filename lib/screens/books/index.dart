@@ -158,7 +158,7 @@ class Books extends ConsumerWidget {
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: isMobile ? 2 : 3,
                   crossAxisSpacing: isMobile ? 15 : 20,
-                  mainAxisExtent: isMobile ? 330 : 400,
+                  mainAxisExtent: isMobile ? 300 : 360,
                 ),
                 itemBuilder: (_, item, __) {
                   return InkWell(
@@ -179,12 +179,14 @@ class Books extends ConsumerWidget {
                             item.title,
                             style: textTheme.titleMedium,
                             textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         Container(
                           margin: const EdgeInsets.only(top: 5),
                           child: Text(
-                            item.authors.map((e) => e.name).toList().join(', '),
+                            item.authors.first.name,
                             textAlign: TextAlign.center,
                             style: textTheme.labelSmall,
                           ),
