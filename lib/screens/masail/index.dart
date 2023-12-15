@@ -185,7 +185,11 @@ class Masail extends ConsumerWidget {
                 resourceFetcher: (Map<String, dynamic> params) async {
                   AllModelsQuery query = AllModelsQuery(
                     repository: ref.masails,
-                    params: {...params, 'published': true},
+                    params: {
+                      ...params,
+                      'published': true,
+                      'include': 'masail-author',
+                    },
                   );
 
                   return await ref.watch(allModelsProvider(query).future);
@@ -198,9 +202,23 @@ class Masail extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Flexible(
-                            child: Text(
-                              item.title,
-                              style: textTheme.titleMedium,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.title,
+                                  style: textTheme.titleMedium,
+                                ),
+                                if (item.masailAuthor.value != null) ...[
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 5),
+                                    child: Text(
+                                      item.masailAuthor.value.name,
+                                      style: textTheme.labelSmall,
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
                           LastVisited(

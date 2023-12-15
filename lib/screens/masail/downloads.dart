@@ -34,9 +34,23 @@ class MasailDownloads extends ConsumerWidget {
                   return InkWell(
                     onTap: () => QR.to('masail/downloads/${item.id}'),
                     child: ListItem(
-                      item: Text(
-                        item.title,
-                        style: textTheme.titleMedium,
+                      item: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.title,
+                            style: textTheme.titleMedium,
+                          ),
+                          if (item.author != null) ...[
+                            Container(
+                              margin: const EdgeInsets.only(top: 5),
+                              child: Text(
+                                item.author,
+                                style: textTheme.labelSmall,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ),
                   );
