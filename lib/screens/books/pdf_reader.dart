@@ -5,8 +5,10 @@ import 'package:pdfx/pdfx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/providers/pdf_controller.dart';
+import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/objects/pdf_source.dart';
 import 'package:native_app/objects/pdf_builders.dart';
+import 'package:native_app/widgets/presentation/connect_to_internet.dart';
 import 'package:native_app/widgets/responsive/image.dart';
 
 class PDFReader extends ConsumerWidget {
@@ -112,16 +114,32 @@ class PDFReader extends ConsumerWidget {
         } else {
           double screenWidth = MediaQuery.of(context).size.width;
 
-          return Center(
-            child: Container(
-              margin: const EdgeInsets.only(top: 20, bottom: 30),
-              width: screenWidth / 2,
-              child: ResponsiveImage(
-                image: image,
-                model: 'book',
-                vwset: const {'xs': 50},
+          return Column(
+            children: [
+              WithConnectivity(
+                builder: (context, isConnected) {
+                  if (!isConnected) {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 20),
+                      child: const ConnectToInternet(),
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
               ),
-            ),
+              Center(
+                child: Container(
+                  margin: const EdgeInsets.only(top: 20, bottom: 30),
+                  width: screenWidth / 2,
+                  child: ResponsiveImage(
+                    image: image,
+                    model: 'book',
+                    vwset: const {'xs': 50},
+                  ),
+                ),
+              ),
+            ],
           );
         }
       },

@@ -91,53 +91,53 @@ class QuranBook extends ConsumerWidget {
                   },
                 );
               } else {
+                int size = qitab.document['metadata']['size'];
+                double screenWidth = MediaQuery.of(context).size.width;
+
                 return AppScaffold(
                   title: Text(qitabTitle),
-                  body: Center(
-                    child: WithConnectivity(
-                      builder: (context, isConnected) {
-                        if (isConnected) {
-                          int size = qitab.document['metadata']['size'];
-                          double screenWidth =
-                              MediaQuery.of(context).size.width;
-
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.only(top: 20),
-                                width: screenWidth / 2,
-                                child: ResponsiveImage(
-                                  image: qitab.image,
-                                  model: 'book',
-                                  vwset: const {'xs': 50},
+                  body: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(top: 20, bottom: 15),
+                        width: screenWidth / 2,
+                        child: ResponsiveImage(
+                          image: qitab.image,
+                          model: 'book',
+                          vwset: const {'xs': 50},
+                        ),
+                      ),
+                      WithConnectivity(
+                        builder: (context, isConnected) {
+                          if (isConnected) {
+                            return Column(
+                              children: [
+                                Text(
+                                  locales.download,
+                                  style: textTheme.labelLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 15),
-                              Text(
-                                locales.download,
-                                style: textTheme.labelLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
+                                const SizedBox(height: 8),
+                                Text(
+                                  '${locales.fileSize}:  ${fileSize(size)}',
+                                  style: textTheme.labelMedium,
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                '${locales.fileSize}:  ${fileSize(size)}',
-                                style: textTheme.labelMedium,
-                              ),
-                              const SizedBox(height: 10),
-                              DownloadButton(
-                                filePath: filePath,
-                                fileUrl: fileUrl,
-                                direction: 'column',
-                              ),
-                            ],
-                          );
-                        } else {
-                          return const ConnectToInternet();
-                        }
-                      },
-                    ),
+                                const SizedBox(height: 10),
+                                DownloadButton(
+                                  filePath: filePath,
+                                  fileUrl: fileUrl,
+                                  direction: 'column',
+                                ),
+                              ],
+                            );
+                          } else {
+                            return const ConnectToInternet();
+                          }
+                        },
+                      ),
+                    ],
                   ),
                 );
               }
