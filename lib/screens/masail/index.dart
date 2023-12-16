@@ -66,7 +66,6 @@ class Masail extends ConsumerWidget {
                                   child: FilterList(
                                     title: locales.authors,
                                     paramKeys: const ['masailAuthorId'],
-                                    searchEnabled: true,
                                     queryBuilder:
                                         (Map<String, dynamic> params) {
                                       return AllModelsQuery(
