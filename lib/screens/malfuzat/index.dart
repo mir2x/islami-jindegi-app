@@ -47,8 +47,8 @@ class Malfuzat extends ConsumerWidget {
                             child: FilterButton(
                               active: qParams.keys.any(
                                 (k) => [
-                                  'malfuzatAuthorId'
-                                      'malfuzatCategoryId',
+                                  'malfuzatAuthorId',
+                                  'malfuzatCategoryId',
                                   'malfuzatSubcategoryId',
                                 ].contains(k),
                               ),

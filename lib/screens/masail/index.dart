@@ -54,14 +54,36 @@ class Masail extends ConsumerWidget {
                         children: [
                           Expanded(
                             child: FilterButton(
-                              label: locales.categories,
                               active: qParams.keys.any(
                                 (k) => [
+                                  'masailAuthorId',
                                   'masailCategoryId',
                                   'masailSubcategoryId',
                                 ].contains(k),
                               ),
                               children: [
+                                Expanded(
+                                  child: FilterList(
+                                    title: locales.authors,
+                                    paramKeys: const ['masailAuthorId'],
+                                    searchEnabled: true,
+                                    queryBuilder:
+                                        (Map<String, dynamic> params) {
+                                      return AllModelsQuery(
+                                        repository: ref.masailAuthors,
+                                        params: params,
+                                      );
+                                    },
+                                    itemBuilder: (_, item, __) {
+                                      return FilterItem(
+                                        itemId: item.id,
+                                        itemTitle: item.name,
+                                        paramKey: 'masailAuthorId',
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 40),
                                 Expanded(
                                   child: FilterList(
                                     title: locales.categories,
