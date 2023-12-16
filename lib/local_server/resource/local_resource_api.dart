@@ -322,6 +322,10 @@ class LocalResourceAPI extends _$LocalResourceAPI {
   Future<List> queryBook(Map params) async {
     var query = select(books);
 
+    if (params.containsKey('position')) {
+      query.where((r) => r.position.equals(params['position']));
+    }
+
     if (params.containsKey('page') && params.containsKey('per_page')) {
       query.limit(
         params['per_page'],

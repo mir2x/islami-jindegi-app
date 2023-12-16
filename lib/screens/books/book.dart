@@ -18,6 +18,11 @@ import 'package:native_app/widgets/utils/with_last_visited.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/utils/comma_separated_list.dart';
+import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/buttons/social_share.dart';
+import 'package:native_app/widgets/buttons/bookmark.dart';
+import 'package:native_app/widgets/buttons/previous.dart';
+import 'package:native_app/widgets/buttons/next.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/theme/colors.dart';
 import 'display.dart';
@@ -42,6 +47,36 @@ class BookItem extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (book) {
+        Future? previousPage() async {
+          var previousResources = await ref.books.findAll(
+            params: {
+              'quantity': 1,
+              'include': 'authors',
+              'position': book.position - 1,
+            },
+          );
+
+          if (previousResources.isEmpty) {
+            await QR.to('books');
+          } else {
+            await QR.to('books/${previousResources.first.id}');
+          }
+        }
+
+        Future? nextPage() async {
+          var nextResources = await ref.books.findAll(
+            params: {
+              'quantity': 1,
+              'include': 'authors',
+              'position': book.position + 1,
+            },
+          );
+
+          if (nextResources.isNotEmpty) {
+            await QR.to('books/${nextResources.first.id}');
+          }
+        }
+
         var cQuery = AllModelsQuery(
           repository: ref.chapters,
           params: {'bookId': book.id, 'quantity': 1},
@@ -266,6 +301,28 @@ class BookItem extends ConsumerWidget {
                 );
               }
             },
+          ),
+          bottomBar: BottomBar(
+            alignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Previous(onPrevious: previousPage),
+              Row(
+                children: [
+                  SocialShare(
+                    title: book.title,
+                    subtitle:
+                        book.authors.map((e) => e.name).toList().join(', '),
+                    link: 'books/${book.id}',
+                  ),
+                  BookmarkButton(
+                    type: 'Book',
+                    title: book.title,
+                    link: 'books/${book.id}',
+                  ),
+                ],
+              ),
+              Next(onNext: nextPage),
+            ],
           ),
         );
       },
