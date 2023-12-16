@@ -14,6 +14,7 @@ import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
+import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/utils/with_last_visited.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
@@ -87,220 +88,225 @@ class BookItem extends ConsumerWidget {
         return AppScaffold(
           showPattern: false,
           title: Text(locales.book),
-          body: chapterQuery.when(
-            loading: () => const SizedBox.shrink(),
-            error: (error, _) => Text(error.toString()),
-            data: (chapters) {
-              if (chapters.isNotEmpty) {
-                return Column(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(
-                        top: 20,
-                        left: 15,
-                        right: 15,
+          body: NextPageSwipe(
+            onPrevious: previousPage,
+            onNext: nextPage,
+            child: chapterQuery.when(
+              loading: () => const SizedBox.shrink(),
+              error: (error, _) => Text(error.toString()),
+              data: (chapters) {
+                if (chapters.isNotEmpty) {
+                  return Column(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(
+                          top: 20,
+                          left: 15,
+                          right: 15,
+                        ),
+                        child: Text(
+                          book.title,
+                          textAlign: TextAlign.center,
+                          style: textTheme.headlineLarge,
+                        ),
                       ),
-                      child: Text(
-                        book.title,
-                        textAlign: TextAlign.center,
-                        style: textTheme.headlineLarge,
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 8, bottom: 30),
-                      child: CommaSeparatedList(
-                        resources: book.authors.map((e) => e).toList(),
-                        alignment: WrapAlignment.center,
-                        builder: (_, author, __) {
-                          return Text(
-                            author.name,
-                            textAlign: TextAlign.center,
-                            style: textTheme.labelMedium,
-                          );
-                        },
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.only(
-                        bottom: 5,
-                        left: 15,
-                        right: 15,
-                      ),
-                      child: Text(
-                        locales.contents,
-                        style: textTheme.labelLarge,
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: WithLastVisited(
-                          builder: (context, settings) {
-                            String? lastChapterId;
-
-                            Map books = json.decode(
-                              settings.getString('lastChapters') ?? '{}',
-                            );
-
-                            if (books.containsKey(book.id.toString())) {
-                              lastChapterId = books[book.id.toString()];
-                            }
-
-                            return InfiniteList(
-                              padding: 0,
-                              resourceFetcher:
-                                  (Map<String, dynamic> params) async {
-                                AllModelsQuery query = AllModelsQuery(
-                                  repository: ref.chapters,
-                                  params: {
-                                    ...params,
-                                    'bookId': book.id,
-                                    'include': 'subchapters',
-                                  },
-                                );
-
-                                return await ref
-                                    .watch(allModelsProvider(query).future);
-                              },
-                              itemBuilder: (_, chapter, __) {
-                                if (chapter.subchapters.length > 0) {
-                                  return Subchapters(
-                                    book: book,
-                                    chapter: chapter,
-                                    lastSubchapterId: lastChapterId,
-                                    isOpen: chapter.subchapters
-                                        .map((s) => s.id.toString())
-                                        .any((id) => id == lastChapterId),
-                                  );
-                                } else {
-                                  return InkWell(
-                                    onTap: () => QR.to(
-                                      'books/${book.id}/chapters/${chapter.id}',
-                                    ),
-                                    child: Container(
-                                      decoration: const BoxDecoration(
-                                        border: Border(
-                                          bottom: BorderSide(
-                                            color: ThemeColors.color4,
-                                          ),
-                                        ),
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 15,
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Flexible(
-                                            child: Text(
-                                              chapter.title,
-                                              style: textTheme.titleLarge,
-                                            ),
-                                          ),
-                                          if (lastChapterId ==
-                                              chapter.id.toString()) ...[
-                                            Container(
-                                              margin: const EdgeInsets.only(
-                                                left: 10,
-                                              ),
-                                              child: SvgPicture.asset(
-                                                'assets/images/icons/open-book.svg',
-                                                fit: BoxFit.scaleDown,
-                                                width: 25,
-                                                height: 20,
-                                              ),
-                                            ),
-                                          ] else ...[
-                                            const SizedBox.shrink(),
-                                          ],
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                }
-                              },
+                      Container(
+                        margin: const EdgeInsets.only(top: 8, bottom: 30),
+                        child: CommaSeparatedList(
+                          resources: book.authors.map((e) => e).toList(),
+                          alignment: WrapAlignment.center,
+                          builder: (_, author, __) {
+                            return Text(
+                              author.name,
+                              textAlign: TextAlign.center,
+                              style: textTheme.labelMedium,
                             );
                           },
                         ),
                       ),
-                    ),
-                  ],
-                );
-              } else {
-                return ItemContent(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.only(bottom: 5),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            book.title,
-                            textAlign: TextAlign.center,
-                            style: textTheme.headlineLarge,
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(top: 8),
-                            child: CommaSeparatedList(
-                              resources: book.authors.map((e) => e).toList(),
-                              alignment: WrapAlignment.center,
-                              builder: (_, author, __) {
-                                return Text(
-                                  author.name,
-                                  textAlign: TextAlign.center,
-                                  style: textTheme.labelMedium,
-                                );
-                              },
-                            ),
-                          ),
-                        ],
+                      Container(
+                        padding: const EdgeInsets.only(
+                          bottom: 5,
+                          left: 15,
+                          right: 15,
+                        ),
+                        child: Text(
+                          locales.contents,
+                          style: textTheme.labelLarge,
+                        ),
                       ),
-                    ),
-                    BookDisplay(
-                      id: book.id,
-                      title: book.title,
-                      excerpt: book.excerpt,
-                      publisher: book.publisher,
-                      price: book.price,
-                      image: book.image,
-                      document: book.document,
-                      publishedAt: book.publishedAt,
-                      downloadItem: (book.document != null)
-                          ? DownloadItem(
-                              filePath: book.document['id'],
-                              fileUrl: fileSrcUrl(book.document),
-                              downloadCallback: () async {
-                                await ref.watch(
-                                  createDownloadedBookProvider({
-                                    'bookId': book.id,
-                                    'title': book.title,
-                                    'excerpt': book.excerpt,
-                                    'publisher': book.publisher,
-                                    'price': book.price,
-                                    'image': json.encode(book.image),
-                                    'document': json.encode(book.document),
-                                    'authors': book.authors
-                                        .map((e) => e.name)
-                                        .toList()
-                                        .join(', '),
-                                    'publishedAt': book.publishedAt,
-                                  }).future,
-                                );
-                              },
-                              deleteCallback: () async {
-                                await ref.watch(
-                                  deleteDownloadedBookProvider(book.id).future,
-                                );
-                              },
-                            )
-                          : null,
-                    ),
-                  ],
-                );
-              }
-            },
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: WithLastVisited(
+                            builder: (context, settings) {
+                              String? lastChapterId;
+
+                              Map books = json.decode(
+                                settings.getString('lastChapters') ?? '{}',
+                              );
+
+                              if (books.containsKey(book.id.toString())) {
+                                lastChapterId = books[book.id.toString()];
+                              }
+
+                              return InfiniteList(
+                                padding: 0,
+                                resourceFetcher:
+                                    (Map<String, dynamic> params) async {
+                                  AllModelsQuery query = AllModelsQuery(
+                                    repository: ref.chapters,
+                                    params: {
+                                      ...params,
+                                      'bookId': book.id,
+                                      'include': 'subchapters',
+                                    },
+                                  );
+
+                                  return await ref
+                                      .watch(allModelsProvider(query).future);
+                                },
+                                itemBuilder: (_, chapter, __) {
+                                  if (chapter.subchapters.length > 0) {
+                                    return Subchapters(
+                                      book: book,
+                                      chapter: chapter,
+                                      lastSubchapterId: lastChapterId,
+                                      isOpen: chapter.subchapters
+                                          .map((s) => s.id.toString())
+                                          .any((id) => id == lastChapterId),
+                                    );
+                                  } else {
+                                    return InkWell(
+                                      onTap: () => QR.to(
+                                        'books/${book.id}/chapters/${chapter.id}',
+                                      ),
+                                      child: Container(
+                                        decoration: const BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
+                                              color: ThemeColors.color4,
+                                            ),
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 15,
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Flexible(
+                                              child: Text(
+                                                chapter.title,
+                                                style: textTheme.titleLarge,
+                                              ),
+                                            ),
+                                            if (lastChapterId ==
+                                                chapter.id.toString()) ...[
+                                              Container(
+                                                margin: const EdgeInsets.only(
+                                                  left: 10,
+                                                ),
+                                                child: SvgPicture.asset(
+                                                  'assets/images/icons/open-book.svg',
+                                                  fit: BoxFit.scaleDown,
+                                                  width: 25,
+                                                  height: 20,
+                                                ),
+                                              ),
+                                            ] else ...[
+                                              const SizedBox.shrink(),
+                                            ],
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return ItemContent(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.only(bottom: 5),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              book.title,
+                              textAlign: TextAlign.center,
+                              style: textTheme.headlineLarge,
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 8),
+                              child: CommaSeparatedList(
+                                resources: book.authors.map((e) => e).toList(),
+                                alignment: WrapAlignment.center,
+                                builder: (_, author, __) {
+                                  return Text(
+                                    author.name,
+                                    textAlign: TextAlign.center,
+                                    style: textTheme.labelMedium,
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      BookDisplay(
+                        id: book.id,
+                        title: book.title,
+                        excerpt: book.excerpt,
+                        publisher: book.publisher,
+                        price: book.price,
+                        image: book.image,
+                        document: book.document,
+                        publishedAt: book.publishedAt,
+                        downloadItem: (book.document != null)
+                            ? DownloadItem(
+                                filePath: book.document['id'],
+                                fileUrl: fileSrcUrl(book.document),
+                                downloadCallback: () async {
+                                  await ref.watch(
+                                    createDownloadedBookProvider({
+                                      'bookId': book.id,
+                                      'title': book.title,
+                                      'excerpt': book.excerpt,
+                                      'publisher': book.publisher,
+                                      'price': book.price,
+                                      'image': json.encode(book.image),
+                                      'document': json.encode(book.document),
+                                      'authors': book.authors
+                                          .map((e) => e.name)
+                                          .toList()
+                                          .join(', '),
+                                      'publishedAt': book.publishedAt,
+                                    }).future,
+                                  );
+                                },
+                                deleteCallback: () async {
+                                  await ref.watch(
+                                    deleteDownloadedBookProvider(book.id)
+                                        .future,
+                                  );
+                                },
+                              )
+                            : null,
+                      ),
+                    ],
+                  );
+                }
+              },
+            ),
           ),
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
