@@ -1,12 +1,9 @@
 import 'package:drift/drift.dart';
 
-class NamazTimes extends Table {
+@DataClassName('DuaCategory')
+class DuaCategories extends Table {
   TextColumn get id => text()();
   TextColumn get title => text()();
-  TextColumn get titleBn => text().nullable()();
-  TextColumn get slug => text()();
-  TextColumn get masail => text()();
-  TextColumn get fazail => text().nullable()();
   IntColumn get position => integer()();
   TextColumn get createdAt => text()();
   TextColumn get updatedAt => text()();

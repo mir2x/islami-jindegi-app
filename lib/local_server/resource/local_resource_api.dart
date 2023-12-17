@@ -29,7 +29,9 @@ part 'local_resource_api.g.dart';
     Malfuzats,
     MasailAuthors,
     Masails,
+    DuaCategories,
     Duas,
+    DuaCategorizations,
     ArticleAuthors,
     Articles,
     Madrasahs,
@@ -100,6 +102,8 @@ class LocalResourceAPI extends _$LocalResourceAPI {
         return queryMalfuzat(params);
       case 'masails':
         return queryMasail(params);
+      case 'duaCategories':
+        return queryDuaCategory(params);
       case 'duas':
         return queryDua(params);
       case 'articles':
@@ -649,8 +653,8 @@ class LocalResourceAPI extends _$LocalResourceAPI {
     return (select(masails)..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
-  Future<List<Dua>> queryDua(Map params) {
-    var query = select(duas);
+  Future<List<DuaCategory>> queryDuaCategory(Map params) {
+    var query = select(duaCategories);
 
     if (params.containsKey('position')) {
       query.where((r) => r.position.equals(params['position']));
@@ -667,6 +671,48 @@ class LocalResourceAPI extends _$LocalResourceAPI {
 
     query.orderBy([(t) => OrderingTerm(expression: t.position)]);
     return query.get();
+  }
+
+  Future<List<Dua>> queryDua(Map params) async {
+    var query = select(duas);
+
+    if (params.containsKey('position')) {
+      query.where((r) => r.position.equals(params['position']));
+    }
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    } else {
+      query.limit(params['quantity'] ?? 20);
+    }
+
+    if (params.containsKey('search')) {
+      query.where((t) => t.title.like("%${params['search']}%"));
+    }
+
+    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
+
+    if (params.containsKey('duaCategoryId')) {
+      var rows = await (query.join([
+        innerJoin(
+          duaCategorizations,
+          duaCategorizations.duaId.equalsExp(duas.id),
+        ),
+      ])
+            ..where(
+              duaCategorizations.duaCategoryId.equals(params['duaCategoryId']),
+            ))
+          .get();
+
+      return Future.value(
+        rows.map((row) => row.readTable(duas)).toList(),
+      );
+    } else {
+      return query.get();
+    }
   }
 
   Future<Dua?> findDuaById(String id) {

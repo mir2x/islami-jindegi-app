@@ -51,7 +51,10 @@ class Duas extends ConsumerWidget {
                                 queryBuilder: (Map<String, dynamic> params) {
                                   return AllModelsQuery(
                                     repository: ref.duaCategories,
-                                    params: params,
+                                    params: {
+                                      ...params,
+                                      'offline': true,
+                                    },
                                   );
                                 },
                                 itemBuilder: (_, item, __) {
@@ -95,7 +98,7 @@ class Duas extends ConsumerWidget {
                 resourceFetcher: (Map<String, dynamic> params) async {
                   AllModelsQuery query = AllModelsQuery(
                     repository: ref.duas,
-                    params: {...params, 'published': true},
+                    params: {...params, 'published': true, 'offline': true},
                   );
 
                   return await ref.watch(allModelsProvider(query).future);

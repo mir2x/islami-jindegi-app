@@ -36,7 +36,10 @@ class $DuaCategoryHiveLocalAdapter = HiveLocalAdapter<DuaCategory>
     with $DuaCategoryLocalAdapter;
 
 class $DuaCategoryRemoteAdapter = RemoteAdapter<DuaCategory>
-    with JSONAPIAdapter<DuaCategory>, ApplicationAdapter<DuaCategory>;
+    with
+        JSONAPIAdapter<DuaCategory>,
+        LocalResourceAdapter<DuaCategory>,
+        ApplicationAdapter<DuaCategory>;
 
 final internalDuaCategoriesRemoteAdapterProvider =
     Provider<RemoteAdapter<DuaCategory>>((ref) => $DuaCategoryRemoteAdapter(
@@ -49,6 +52,8 @@ final duaCategoriesRepositoryProvider =
 extension DuaCategoryDataRepositoryX on Repository<DuaCategory> {
   JSONAPIAdapter<DuaCategory> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<DuaCategory>;
+  LocalResourceAdapter<DuaCategory> get localResourceAdapter =>
+      remoteAdapter as LocalResourceAdapter<DuaCategory>;
   ApplicationAdapter<DuaCategory> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<DuaCategory>;
 }

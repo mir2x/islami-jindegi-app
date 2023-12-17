@@ -5274,6 +5274,248 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
   }
 }
 
+class $DuaCategoriesTable extends DuaCategories
+    with TableInfo<$DuaCategoriesTable, DuaCategory> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DuaCategoriesTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, title, position, createdAt, updatedAt];
+  @override
+  String get aliasedName => _alias ?? 'dua_categories';
+  @override
+  String get actualTableName => 'dua_categories';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DuaCategory map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DuaCategory(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      position: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $DuaCategoriesTable createAlias(String alias) {
+    return $DuaCategoriesTable(attachedDatabase, alias);
+  }
+}
+
+class DuaCategory extends DataClass implements Insertable<DuaCategory> {
+  final String id;
+  final String title;
+  final int position;
+  final String createdAt;
+  final String updatedAt;
+  const DuaCategory(
+      {required this.id,
+      required this.title,
+      required this.position,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    map['position'] = Variable<int>(position);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    return map;
+  }
+
+  factory DuaCategory.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DuaCategory(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      position: serializer.fromJson<int>(json['position']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'position': serializer.toJson<int>(position),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+    };
+  }
+
+  DuaCategory copyWith(
+          {String? id,
+          String? title,
+          int? position,
+          String? createdAt,
+          String? updatedAt}) =>
+      DuaCategory(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        position: position ?? this.position,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('DuaCategory(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, title, position, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DuaCategory &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.position == this.position &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class DuaCategoriesCompanion extends UpdateCompanion<DuaCategory> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<int> position;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  final Value<int> rowid;
+  const DuaCategoriesCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.position = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DuaCategoriesCompanion.insert({
+    required String id,
+    required String title,
+    required int position,
+    required String createdAt,
+    required String updatedAt,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        title = Value(title),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<DuaCategory> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<int>? position,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (position != null) 'position': position,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DuaCategoriesCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? title,
+      Value<int>? position,
+      Value<String>? createdAt,
+      Value<String>? updatedAt,
+      Value<int>? rowid}) {
+    return DuaCategoriesCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      position: position ?? this.position,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DuaCategoriesCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $DuasTable extends Duas with TableInfo<$DuasTable, Dua> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -5681,6 +5923,196 @@ class DuasCompanion extends UpdateCompanion<Dua> {
           ..write('position: $position, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $DuaCategorizationsTable extends DuaCategorizations
+    with TableInfo<$DuaCategorizationsTable, DuaCategorization> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DuaCategorizationsTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> duaId = GeneratedColumn<String>(
+      'dua_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES duas (id)'));
+  @override
+  late final GeneratedColumn<String> duaCategoryId = GeneratedColumn<String>(
+      'dua_category_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES dua_categories (id)'));
+  @override
+  List<GeneratedColumn> get $columns => [id, duaId, duaCategoryId];
+  @override
+  String get aliasedName => _alias ?? 'dua_categorizations';
+  @override
+  String get actualTableName => 'dua_categorizations';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DuaCategorization map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DuaCategorization(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      duaId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}dua_id'])!,
+      duaCategoryId: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}dua_category_id'])!,
+    );
+  }
+
+  @override
+  $DuaCategorizationsTable createAlias(String alias) {
+    return $DuaCategorizationsTable(attachedDatabase, alias);
+  }
+}
+
+class DuaCategorization extends DataClass
+    implements Insertable<DuaCategorization> {
+  final String id;
+  final String duaId;
+  final String duaCategoryId;
+  const DuaCategorization(
+      {required this.id, required this.duaId, required this.duaCategoryId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['dua_id'] = Variable<String>(duaId);
+    map['dua_category_id'] = Variable<String>(duaCategoryId);
+    return map;
+  }
+
+  factory DuaCategorization.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DuaCategorization(
+      id: serializer.fromJson<String>(json['id']),
+      duaId: serializer.fromJson<String>(json['duaId']),
+      duaCategoryId: serializer.fromJson<String>(json['duaCategoryId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'duaId': serializer.toJson<String>(duaId),
+      'duaCategoryId': serializer.toJson<String>(duaCategoryId),
+    };
+  }
+
+  DuaCategorization copyWith(
+          {String? id, String? duaId, String? duaCategoryId}) =>
+      DuaCategorization(
+        id: id ?? this.id,
+        duaId: duaId ?? this.duaId,
+        duaCategoryId: duaCategoryId ?? this.duaCategoryId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('DuaCategorization(')
+          ..write('id: $id, ')
+          ..write('duaId: $duaId, ')
+          ..write('duaCategoryId: $duaCategoryId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, duaId, duaCategoryId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DuaCategorization &&
+          other.id == this.id &&
+          other.duaId == this.duaId &&
+          other.duaCategoryId == this.duaCategoryId);
+}
+
+class DuaCategorizationsCompanion extends UpdateCompanion<DuaCategorization> {
+  final Value<String> id;
+  final Value<String> duaId;
+  final Value<String> duaCategoryId;
+  final Value<int> rowid;
+  const DuaCategorizationsCompanion({
+    this.id = const Value.absent(),
+    this.duaId = const Value.absent(),
+    this.duaCategoryId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DuaCategorizationsCompanion.insert({
+    required String id,
+    required String duaId,
+    required String duaCategoryId,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        duaId = Value(duaId),
+        duaCategoryId = Value(duaCategoryId);
+  static Insertable<DuaCategorization> custom({
+    Expression<String>? id,
+    Expression<String>? duaId,
+    Expression<String>? duaCategoryId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (duaId != null) 'dua_id': duaId,
+      if (duaCategoryId != null) 'dua_category_id': duaCategoryId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DuaCategorizationsCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? duaId,
+      Value<String>? duaCategoryId,
+      Value<int>? rowid}) {
+    return DuaCategorizationsCompanion(
+      id: id ?? this.id,
+      duaId: duaId ?? this.duaId,
+      duaCategoryId: duaCategoryId ?? this.duaCategoryId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (duaId.present) {
+      map['dua_id'] = Variable<String>(duaId.value);
+    }
+    if (duaCategoryId.present) {
+      map['dua_category_id'] = Variable<String>(duaCategoryId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DuaCategorizationsCompanion(')
+          ..write('id: $id, ')
+          ..write('duaId: $duaId, ')
+          ..write('duaCategoryId: $duaCategoryId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -7066,6 +7498,10 @@ class $NamazTimesTable extends NamazTimes
       'title', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
+  late final GeneratedColumn<String> titleBn = GeneratedColumn<String>(
+      'title_bn', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
   late final GeneratedColumn<String> slug = GeneratedColumn<String>(
       'slug', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
@@ -7090,8 +7526,17 @@ class $NamazTimesTable extends NamazTimes
       'updated_at', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, title, slug, masail, fazail, position, createdAt, updatedAt];
+  List<GeneratedColumn> get $columns => [
+        id,
+        title,
+        titleBn,
+        slug,
+        masail,
+        fazail,
+        position,
+        createdAt,
+        updatedAt
+      ];
   @override
   String get aliasedName => _alias ?? 'namaz_times';
   @override
@@ -7106,6 +7551,8 @@ class $NamazTimesTable extends NamazTimes
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       title: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      titleBn: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title_bn']),
       slug: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
       masail: attachedDatabase.typeMapping
@@ -7130,6 +7577,7 @@ class $NamazTimesTable extends NamazTimes
 class NamazTime extends DataClass implements Insertable<NamazTime> {
   final String id;
   final String title;
+  final String? titleBn;
   final String slug;
   final String masail;
   final String? fazail;
@@ -7139,6 +7587,7 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
   const NamazTime(
       {required this.id,
       required this.title,
+      this.titleBn,
       required this.slug,
       required this.masail,
       this.fazail,
@@ -7150,6 +7599,9 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
+    if (!nullToAbsent || titleBn != null) {
+      map['title_bn'] = Variable<String>(titleBn);
+    }
     map['slug'] = Variable<String>(slug);
     map['masail'] = Variable<String>(masail);
     if (!nullToAbsent || fazail != null) {
@@ -7167,6 +7619,7 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
     return NamazTime(
       id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
+      titleBn: serializer.fromJson<String?>(json['titleBn']),
       slug: serializer.fromJson<String>(json['slug']),
       masail: serializer.fromJson<String>(json['masail']),
       fazail: serializer.fromJson<String?>(json['fazail']),
@@ -7181,6 +7634,7 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
+      'titleBn': serializer.toJson<String?>(titleBn),
       'slug': serializer.toJson<String>(slug),
       'masail': serializer.toJson<String>(masail),
       'fazail': serializer.toJson<String?>(fazail),
@@ -7193,6 +7647,7 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
   NamazTime copyWith(
           {String? id,
           String? title,
+          Value<String?> titleBn = const Value.absent(),
           String? slug,
           String? masail,
           Value<String?> fazail = const Value.absent(),
@@ -7202,6 +7657,7 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
       NamazTime(
         id: id ?? this.id,
         title: title ?? this.title,
+        titleBn: titleBn.present ? titleBn.value : this.titleBn,
         slug: slug ?? this.slug,
         masail: masail ?? this.masail,
         fazail: fazail.present ? fazail.value : this.fazail,
@@ -7214,6 +7670,7 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
     return (StringBuffer('NamazTime(')
           ..write('id: $id, ')
           ..write('title: $title, ')
+          ..write('titleBn: $titleBn, ')
           ..write('slug: $slug, ')
           ..write('masail: $masail, ')
           ..write('fazail: $fazail, ')
@@ -7226,13 +7683,14 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
 
   @override
   int get hashCode => Object.hash(
-      id, title, slug, masail, fazail, position, createdAt, updatedAt);
+      id, title, titleBn, slug, masail, fazail, position, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is NamazTime &&
           other.id == this.id &&
           other.title == this.title &&
+          other.titleBn == this.titleBn &&
           other.slug == this.slug &&
           other.masail == this.masail &&
           other.fazail == this.fazail &&
@@ -7244,6 +7702,7 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
 class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
   final Value<String> id;
   final Value<String> title;
+  final Value<String?> titleBn;
   final Value<String> slug;
   final Value<String> masail;
   final Value<String?> fazail;
@@ -7254,6 +7713,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
   const NamazTimesCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
+    this.titleBn = const Value.absent(),
     this.slug = const Value.absent(),
     this.masail = const Value.absent(),
     this.fazail = const Value.absent(),
@@ -7265,6 +7725,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
   NamazTimesCompanion.insert({
     required String id,
     required String title,
+    this.titleBn = const Value.absent(),
     required String slug,
     required String masail,
     this.fazail = const Value.absent(),
@@ -7282,6 +7743,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
   static Insertable<NamazTime> custom({
     Expression<String>? id,
     Expression<String>? title,
+    Expression<String>? titleBn,
     Expression<String>? slug,
     Expression<String>? masail,
     Expression<String>? fazail,
@@ -7293,6 +7755,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
+      if (titleBn != null) 'title_bn': titleBn,
       if (slug != null) 'slug': slug,
       if (masail != null) 'masail': masail,
       if (fazail != null) 'fazail': fazail,
@@ -7306,6 +7769,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
   NamazTimesCompanion copyWith(
       {Value<String>? id,
       Value<String>? title,
+      Value<String?>? titleBn,
       Value<String>? slug,
       Value<String>? masail,
       Value<String?>? fazail,
@@ -7316,6 +7780,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
     return NamazTimesCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
+      titleBn: titleBn ?? this.titleBn,
       slug: slug ?? this.slug,
       masail: masail ?? this.masail,
       fazail: fazail ?? this.fazail,
@@ -7334,6 +7799,9 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
+    }
+    if (titleBn.present) {
+      map['title_bn'] = Variable<String>(titleBn.value);
     }
     if (slug.present) {
       map['slug'] = Variable<String>(slug.value);
@@ -7364,6 +7832,7 @@ class NamazTimesCompanion extends UpdateCompanion<NamazTime> {
     return (StringBuffer('NamazTimesCompanion(')
           ..write('id: $id, ')
           ..write('title: $title, ')
+          ..write('titleBn: $titleBn, ')
           ..write('slug: $slug, ')
           ..write('masail: $masail, ')
           ..write('fazail: $fazail, ')
@@ -9670,7 +10139,10 @@ abstract class _$LocalResourceAPI extends GeneratedDatabase {
   late final $MalfuzatsTable malfuzats = $MalfuzatsTable(this);
   late final $MasailAuthorsTable masailAuthors = $MasailAuthorsTable(this);
   late final $MasailsTable masails = $MasailsTable(this);
+  late final $DuaCategoriesTable duaCategories = $DuaCategoriesTable(this);
   late final $DuasTable duas = $DuasTable(this);
+  late final $DuaCategorizationsTable duaCategorizations =
+      $DuaCategorizationsTable(this);
   late final $ArticleAuthorsTable articleAuthors = $ArticleAuthorsTable(this);
   late final $ArticlesTable articles = $ArticlesTable(this);
   late final $MadrasahsTable madrasahs = $MadrasahsTable(this);
@@ -9705,7 +10177,9 @@ abstract class _$LocalResourceAPI extends GeneratedDatabase {
         malfuzats,
         masailAuthors,
         masails,
+        duaCategories,
         duas,
+        duaCategorizations,
         articleAuthors,
         articles,
         madrasahs,
