@@ -975,6 +975,10 @@ class LocalResourceAPI extends _$LocalResourceAPI {
       query.limit(params['quantity'] ?? 20);
     }
 
+    if (params.containsKey('published')) {
+      query.where((r) => r.published.equals(params['published']));
+    }
+
     query.orderBy([(t) => OrderingTerm(expression: t.position)]);
 
     var quranBookQitabItems = await query.get();

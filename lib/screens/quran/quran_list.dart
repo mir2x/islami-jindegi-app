@@ -89,10 +89,10 @@ class QuranList extends ConsumerWidget {
                           onTap: () => QR.to('qurans/books/${item.id}'),
                           child: FractionallySizedBox(
                             widthFactor: 0.8,
-                            child: ResponsiveImage(
-                              image: item.image,
-                              model: 'quranBookQitab',
-                              vwset: const {'xs': 50},
+                            child: Image(
+                              image: AssetImage(
+                                'assets/images/quran-qitabs/${item.id}.jpg',
+                              ),
                             ),
                           ),
                         ),
