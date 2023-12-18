@@ -8,7 +8,6 @@ import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/providers/all_models.dart';
-import 'package:native_app/widgets/responsive/image.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 
 class QuranList extends ConsumerWidget {

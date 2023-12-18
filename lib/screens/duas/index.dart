@@ -4,7 +4,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
-import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
@@ -29,66 +28,58 @@ class Duas extends ConsumerWidget {
       title: Text(locales.duaDurud),
       body: Column(
         children: [
-          WithConnectivity(
-            builder: (context, isConnected) {
-              if (isConnected) {
-                return Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
-                  child: Row(
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
+            child: Row(
+              children: [
+                Expanded(
+                  child: FilterButton(
+                    label: locales.categories,
+                    active: qParams.keys.any(
+                      (k) => k == 'duaCategoryId',
+                    ),
                     children: [
                       Expanded(
-                        child: FilterButton(
-                          label: locales.categories,
-                          active: qParams.keys.any(
-                            (k) => k == 'duaCategoryId',
-                          ),
-                          children: [
-                            Expanded(
-                              child: FilterList(
-                                title: locales.categories,
-                                paramKeys: const ['duaCategoryId'],
-                                queryBuilder: (Map<String, dynamic> params) {
-                                  return AllModelsQuery(
-                                    repository: ref.duaCategories,
-                                    params: {
-                                      ...params,
-                                      'offline': true,
-                                    },
-                                  );
-                                },
-                                itemBuilder: (_, item, __) {
-                                  return FilterItem(
-                                    itemId: item.id,
-                                    itemTitle: item.title,
-                                    paramKey: 'duaCategoryId',
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 15,
-                      ),
-                      Expanded(
-                        child: SearchButtonField(
-                          value: qParams['search'],
-                          onUpdate: (value) {
-                            ref
-                                .read(queryParamsProvider.notifier)
-                                .updateParams('search', value);
+                        child: FilterList(
+                          title: locales.categories,
+                          paramKeys: const ['duaCategoryId'],
+                          queryBuilder: (Map<String, dynamic> params) {
+                            return AllModelsQuery(
+                              repository: ref.duaCategories,
+                              params: {
+                                ...params,
+                                'offline': true,
+                              },
+                            );
+                          },
+                          itemBuilder: (_, item, __) {
+                            return FilterItem(
+                              itemId: item.id,
+                              itemTitle: item.title,
+                              paramKey: 'duaCategoryId',
+                            );
                           },
                         ),
                       ),
                     ],
                   ),
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            },
+                ),
+                const SizedBox(
+                  width: 15,
+                ),
+                Expanded(
+                  child: SearchButtonField(
+                    value: qParams['search'],
+                    onUpdate: (value) {
+                      ref
+                          .read(queryParamsProvider.notifier)
+                          .updateParams('search', value);
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
           Expanded(
             child: Container(
