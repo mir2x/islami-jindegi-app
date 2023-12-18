@@ -137,60 +137,60 @@ class Malfuzat extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.only(
-                        left: 15,
-                        right: 15,
-                        top: 10,
-                        bottom: 5,
-                      ),
-                      child: TripleSwitchButton(
-                        firstLabel: locales.all,
-                        secondLabel: locales.text,
-                        thirdLabel: locales.audio,
-                        activateFirst: () {
-                          ref
-                              .read(
-                                queryParamsProvider.notifier,
-                              )
-                              .updateParams(
-                                'hasAudio',
-                                '',
-                              );
-                        },
-                        activateSecond: () {
-                          ref
-                              .read(
-                                queryParamsProvider.notifier,
-                              )
-                              .updateParams(
-                                'hasAudio',
-                                'false',
-                              );
-                        },
-                        activateThird: () {
-                          ref
-                              .read(
-                                queryParamsProvider.notifier,
-                              )
-                              .updateParams(
-                                'hasAudio',
-                                'true',
-                              );
-                        },
-                        isFirstActive: !qParams.containsKey('hasAudio'),
-                        isSecondActive: qParams.containsKey('hasAudio') &&
-                            qParams['hasAudio'] == 'false',
-                        isThirdActive: qParams.containsKey('hasAudio') &&
-                            qParams['hasAudio'] == 'true',
-                      ),
-                    ),
                   ],
                 );
               } else {
                 return const SizedBox.shrink();
               }
             },
+          ),
+          Container(
+            padding: const EdgeInsets.only(
+              left: 15,
+              right: 15,
+              top: 10,
+              bottom: 5,
+            ),
+            child: TripleSwitchButton(
+              firstLabel: locales.all,
+              secondLabel: locales.text,
+              thirdLabel: locales.audio,
+              activateFirst: () {
+                ref
+                    .read(
+                      queryParamsProvider.notifier,
+                    )
+                    .updateParams(
+                      'hasAudio',
+                      '',
+                    );
+              },
+              activateSecond: () {
+                ref
+                    .read(
+                      queryParamsProvider.notifier,
+                    )
+                    .updateParams(
+                      'hasAudio',
+                      'false',
+                    );
+              },
+              activateThird: () {
+                ref
+                    .read(
+                      queryParamsProvider.notifier,
+                    )
+                    .updateParams(
+                      'hasAudio',
+                      'true',
+                    );
+              },
+              isFirstActive: !qParams.containsKey('hasAudio'),
+              isSecondActive: qParams.containsKey('hasAudio') &&
+                  qParams['hasAudio'] == 'false',
+              isThirdActive: qParams.containsKey('hasAudio') &&
+                  qParams['hasAudio'] == 'true',
+            ),
           ),
           Expanded(
             child: Container(

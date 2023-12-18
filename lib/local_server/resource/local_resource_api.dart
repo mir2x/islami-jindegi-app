@@ -573,6 +573,14 @@ class LocalResourceAPI extends _$LocalResourceAPI {
       query.limit(params['quantity'] ?? 20);
     }
 
+    if (params.containsKey('hasAudio')) {
+      if (params['hasAudio'] == 'true') {
+        query.where((r) => r.hasAudio);
+      } else if (params['hasAudio'] == 'false') {
+        query.where((r) => r.hasAudio.not());
+      }
+    }
+
     query.orderBy([(t) => OrderingTerm(expression: t.position)]);
 
     var malfuzatItems = await query.get();
@@ -643,6 +651,14 @@ class LocalResourceAPI extends _$LocalResourceAPI {
       );
     } else {
       query.limit(params['quantity'] ?? 20);
+    }
+
+    if (params.containsKey('hasAudio')) {
+      if (params['hasAudio'] == 'true') {
+        query.where((r) => r.hasAudio);
+      } else if (params['hasAudio'] == 'false') {
+        query.where((r) => r.hasAudio.not());
+      }
     }
 
     query.orderBy([(t) => OrderingTerm(expression: t.position)]);
