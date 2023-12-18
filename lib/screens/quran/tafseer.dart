@@ -203,6 +203,7 @@ class SelectQitab extends ConsumerWidget {
                 return Dropdown(
                   items: qitabs,
                   selectedValue: selectedQitab,
+                  allowClear: true,
                   hint: Text(
                     locales.selectQitab,
                     style: textTheme.titleMedium,
