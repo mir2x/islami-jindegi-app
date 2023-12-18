@@ -6,6 +6,7 @@ import 'package:intl/intl.dart' hide TextDirection;
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/services.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
+import 'package:html/parser.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/single_model.dart';
@@ -184,7 +185,18 @@ class Ayah extends ConsumerWidget {
                       var text = ayah.title;
 
                       if (ayah.ayahTranslations.isNotEmpty) {
-                        text += '\n\n${ayah.ayahTranslations.first.body}';
+                        final document =
+                            parse(ayah.ayahTranslations.first.body);
+                        List pList = document.querySelectorAll('p');
+
+                        if (pList.isNotEmpty) {
+                          text += '\n\n';
+                          for (var p in pList) {
+                            if (p.text != '') {
+                              text += '${p.text}\n\n';
+                            }
+                          }
+                        }
                       }
 
                       text += '\n\n$surahTitle - $ayahPosition';
