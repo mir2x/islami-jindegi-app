@@ -11,24 +11,37 @@ import 'package:native_app/theme/colors.dart';
 class DateFilter extends ConsumerWidget {
   const DateFilter({super.key});
 
-  String formatDate(String date) {
+  String formatDate(String date, String locale) {
     var inputDate = DateFormat('yyyy-MM-dd').parse(date);
-    return DateFormat('dd/MM/yyyy').format(inputDate);
+    return DateFormat('dd MMMM yyyy', locale).format(inputDate);
   }
 
-  String selectedDate(Map qParams, List options, AppLocalizations locales) {
+  String selectedDate(
+    Map qParams,
+    List options,
+    String locale,
+    AppLocalizations locales,
+  ) {
     if (qParams.containsKey('dateFrom')) {
-      String from = formatDate(qParams['dateFrom']);
+      String from = formatDate(qParams['dateFrom'], locale);
 
       if (qParams.containsKey('dateTo')) {
-        String to = formatDate(qParams['dateTo']);
+        String to = formatDate(qParams['dateTo'], locale);
         return '$from - $to';
       } else {
-        return 'After $from';
+        if (locale == 'bn') {
+          return '$from এর পরে';
+        } else {
+          return 'After $from';
+        }
       }
     } else if (qParams.containsKey('dateTo')) {
-      String to = formatDate(qParams['dateTo']);
-      return 'Before $to';
+      String to = formatDate(qParams['dateTo'], locale);
+      if (locale == 'bn') {
+        return '$to এর আগে';
+      } else {
+        return 'Before $to';
+      }
     } else if (qParams.containsKey('dateRange')) {
       Map? option = options.firstWhereOrNull(
         (o) => o['value'] == qParams['dateRange'],
@@ -44,6 +57,7 @@ class DateFilter extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
+    String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isSmallMobile = screenWidth < 340;
@@ -58,7 +72,7 @@ class DateFilter extends ConsumerWidget {
       {'value': 'now-10y', 'label': locales.pastTenYears},
     ];
 
-    String selectedLabel = selectedDate(qParams, options, locales);
+    String selectedLabel = selectedDate(qParams, options, currentLang, locales);
 
     return WithPreferences(
       builder: (context, preferences) {
@@ -120,7 +134,7 @@ class DateFilter extends ConsumerWidget {
                         }),
                         Container(
                           margin: EdgeInsets.only(
-                            top: isSmallMobile ? 15 : 30,
+                            top: isSmallMobile ? 10 : 25,
                             bottom: isSmallMobile ? 10 : 15,
                           ),
                           child: Text(
@@ -150,15 +164,24 @@ class DateFilter extends ConsumerWidget {
             side: BorderSide(
               color: theme == 'dark' ? ThemeColors.color3 : ThemeColors.color9,
             ),
+            backgroundColor: selectedLabel != locales.date
+                ? theme == 'dark'
+                    ? ThemeColors.color1
+                    : ThemeColors.color3
+                : null,
             padding: EdgeInsets.symmetric(horizontal: isSmallMobile ? 13 : 16),
             minimumSize: const Size.fromHeight(45),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                selectedLabel,
-                style: textTheme.labelMedium,
+              Flexible(
+                child: Text(
+                  selectedLabel,
+                  style: selectedLabel != locales.date
+                      ? textTheme.labelSmall?.copyWith(height: 1.1)
+                      : textTheme.labelMedium,
+                ),
               ),
               Icon(
                 Icons.arrow_drop_down,
