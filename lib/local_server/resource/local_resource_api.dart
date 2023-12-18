@@ -18,6 +18,8 @@ part 'local_resource_api.g.dart';
     Paras,
     Ayahs,
     AyahTranslations,
+    TafseerQitabs,
+    Tafseers,
     Books,
     Chapters,
     Subchapters,
@@ -90,6 +92,10 @@ class LocalResourceAPI extends _$LocalResourceAPI {
         return queryPara(params);
       case 'ayahs':
         return queryAyah(params);
+      case 'tafseerQitabs':
+        return queryTafseerQitab(params);
+      case 'tafseers':
+        return queryTafseer(params);
       case 'books':
         return queryBook(params);
       case 'chapters':
@@ -321,6 +327,47 @@ class LocalResourceAPI extends _$LocalResourceAPI {
   Future<AyahTranslation?> findAyahTranslationById(String id) {
     return (select(ayahTranslations)..where((t) => t.id.equals(id)))
         .getSingleOrNull();
+  }
+
+  Future<List<TafseerQitab>> queryTafseerQitab(Map params) {
+    var query = select(tafseerQitabs);
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    } else {
+      query.limit(params['quantity'] ?? 20);
+    }
+
+    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
+    return query.get();
+  }
+
+  Future<List<Tafseer>> queryTafseer(Map params) {
+    var query = select(tafseers);
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    } else {
+      query.limit(params['quantity'] ?? 20);
+    }
+
+    if (params.containsKey('tafseerQitabId')) {
+      query.where(
+        (r) => r.tafseerQitabId.equals(params['tafseerQitabId'].toString()),
+      );
+    }
+
+    if (params.containsKey('ayahId')) {
+      query.where((r) => r.ayahId.equals(params['ayahId'].toString()));
+    }
+
+    return query.get();
   }
 
   Future<List> queryBook(Map params) async {

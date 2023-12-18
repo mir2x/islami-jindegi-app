@@ -1448,6 +1448,551 @@ class AyahTranslationsCompanion extends UpdateCompanion<AyahTranslation> {
   }
 }
 
+class $TafseerQitabsTable extends TafseerQitabs
+    with TableInfo<$TafseerQitabsTable, TafseerQitab> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TafseerQitabsTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> author = GeneratedColumn<String>(
+      'author', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, title, author, position, createdAt, updatedAt];
+  @override
+  String get aliasedName => _alias ?? 'tafseer_qitabs';
+  @override
+  String get actualTableName => 'tafseer_qitabs';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TafseerQitab map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TafseerQitab(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      author: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}author'])!,
+      position: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $TafseerQitabsTable createAlias(String alias) {
+    return $TafseerQitabsTable(attachedDatabase, alias);
+  }
+}
+
+class TafseerQitab extends DataClass implements Insertable<TafseerQitab> {
+  final String id;
+  final String title;
+  final String author;
+  final int position;
+  final String createdAt;
+  final String updatedAt;
+  const TafseerQitab(
+      {required this.id,
+      required this.title,
+      required this.author,
+      required this.position,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    map['author'] = Variable<String>(author);
+    map['position'] = Variable<int>(position);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    return map;
+  }
+
+  factory TafseerQitab.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TafseerQitab(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      author: serializer.fromJson<String>(json['author']),
+      position: serializer.fromJson<int>(json['position']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'author': serializer.toJson<String>(author),
+      'position': serializer.toJson<int>(position),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+    };
+  }
+
+  TafseerQitab copyWith(
+          {String? id,
+          String? title,
+          String? author,
+          int? position,
+          String? createdAt,
+          String? updatedAt}) =>
+      TafseerQitab(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        author: author ?? this.author,
+        position: position ?? this.position,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('TafseerQitab(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('author: $author, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, title, author, position, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TafseerQitab &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.author == this.author &&
+          other.position == this.position &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class TafseerQitabsCompanion extends UpdateCompanion<TafseerQitab> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<String> author;
+  final Value<int> position;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  final Value<int> rowid;
+  const TafseerQitabsCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.author = const Value.absent(),
+    this.position = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TafseerQitabsCompanion.insert({
+    required String id,
+    required String title,
+    required String author,
+    required int position,
+    required String createdAt,
+    required String updatedAt,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        title = Value(title),
+        author = Value(author),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<TafseerQitab> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<String>? author,
+    Expression<int>? position,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (author != null) 'author': author,
+      if (position != null) 'position': position,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TafseerQitabsCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? title,
+      Value<String>? author,
+      Value<int>? position,
+      Value<String>? createdAt,
+      Value<String>? updatedAt,
+      Value<int>? rowid}) {
+    return TafseerQitabsCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      author: author ?? this.author,
+      position: position ?? this.position,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (author.present) {
+      map['author'] = Variable<String>(author.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TafseerQitabsCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('author: $author, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $TafseersTable extends Tafseers with TableInfo<$TafseersTable, Tafseer> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TafseersTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+      'body', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> tafseerQitabId = GeneratedColumn<String>(
+      'tafseer_qitab_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES tafseer_qitabs (id)'));
+  @override
+  late final GeneratedColumn<String> ayahId = GeneratedColumn<String>(
+      'ayah_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES ayahs (id)'));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, body, createdAt, updatedAt, tafseerQitabId, ayahId];
+  @override
+  String get aliasedName => _alias ?? 'tafseers';
+  @override
+  String get actualTableName => 'tafseers';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Tafseer map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Tafseer(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      body: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}body'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      tafseerQitabId: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}tafseer_qitab_id'])!,
+      ayahId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}ayah_id'])!,
+    );
+  }
+
+  @override
+  $TafseersTable createAlias(String alias) {
+    return $TafseersTable(attachedDatabase, alias);
+  }
+}
+
+class Tafseer extends DataClass implements Insertable<Tafseer> {
+  final String id;
+  final String body;
+  final String createdAt;
+  final String updatedAt;
+  final String tafseerQitabId;
+  final String ayahId;
+  const Tafseer(
+      {required this.id,
+      required this.body,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.tafseerQitabId,
+      required this.ayahId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['body'] = Variable<String>(body);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    map['tafseer_qitab_id'] = Variable<String>(tafseerQitabId);
+    map['ayah_id'] = Variable<String>(ayahId);
+    return map;
+  }
+
+  factory Tafseer.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Tafseer(
+      id: serializer.fromJson<String>(json['id']),
+      body: serializer.fromJson<String>(json['body']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+      tafseerQitabId: serializer.fromJson<String>(json['tafseerQitabId']),
+      ayahId: serializer.fromJson<String>(json['ayahId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'body': serializer.toJson<String>(body),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+      'tafseerQitabId': serializer.toJson<String>(tafseerQitabId),
+      'ayahId': serializer.toJson<String>(ayahId),
+    };
+  }
+
+  Tafseer copyWith(
+          {String? id,
+          String? body,
+          String? createdAt,
+          String? updatedAt,
+          String? tafseerQitabId,
+          String? ayahId}) =>
+      Tafseer(
+        id: id ?? this.id,
+        body: body ?? this.body,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        tafseerQitabId: tafseerQitabId ?? this.tafseerQitabId,
+        ayahId: ayahId ?? this.ayahId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Tafseer(')
+          ..write('id: $id, ')
+          ..write('body: $body, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('tafseerQitabId: $tafseerQitabId, ')
+          ..write('ayahId: $ayahId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, body, createdAt, updatedAt, tafseerQitabId, ayahId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Tafseer &&
+          other.id == this.id &&
+          other.body == this.body &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.tafseerQitabId == this.tafseerQitabId &&
+          other.ayahId == this.ayahId);
+}
+
+class TafseersCompanion extends UpdateCompanion<Tafseer> {
+  final Value<String> id;
+  final Value<String> body;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  final Value<String> tafseerQitabId;
+  final Value<String> ayahId;
+  final Value<int> rowid;
+  const TafseersCompanion({
+    this.id = const Value.absent(),
+    this.body = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.tafseerQitabId = const Value.absent(),
+    this.ayahId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TafseersCompanion.insert({
+    required String id,
+    required String body,
+    required String createdAt,
+    required String updatedAt,
+    required String tafseerQitabId,
+    required String ayahId,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        body = Value(body),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt),
+        tafseerQitabId = Value(tafseerQitabId),
+        ayahId = Value(ayahId);
+  static Insertable<Tafseer> custom({
+    Expression<String>? id,
+    Expression<String>? body,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+    Expression<String>? tafseerQitabId,
+    Expression<String>? ayahId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (body != null) 'body': body,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (tafseerQitabId != null) 'tafseer_qitab_id': tafseerQitabId,
+      if (ayahId != null) 'ayah_id': ayahId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TafseersCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? body,
+      Value<String>? createdAt,
+      Value<String>? updatedAt,
+      Value<String>? tafseerQitabId,
+      Value<String>? ayahId,
+      Value<int>? rowid}) {
+    return TafseersCompanion(
+      id: id ?? this.id,
+      body: body ?? this.body,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      tafseerQitabId: tafseerQitabId ?? this.tafseerQitabId,
+      ayahId: ayahId ?? this.ayahId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (tafseerQitabId.present) {
+      map['tafseer_qitab_id'] = Variable<String>(tafseerQitabId.value);
+    }
+    if (ayahId.present) {
+      map['ayah_id'] = Variable<String>(ayahId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TafseersCompanion(')
+          ..write('id: $id, ')
+          ..write('body: $body, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('tafseerQitabId: $tafseerQitabId, ')
+          ..write('ayahId: $ayahId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -10127,6 +10672,8 @@ abstract class _$LocalResourceAPI extends GeneratedDatabase {
   late final $AyahsTable ayahs = $AyahsTable(this);
   late final $AyahTranslationsTable ayahTranslations =
       $AyahTranslationsTable(this);
+  late final $TafseerQitabsTable tafseerQitabs = $TafseerQitabsTable(this);
+  late final $TafseersTable tafseers = $TafseersTable(this);
   late final $BooksTable books = $BooksTable(this);
   late final $ChaptersTable chapters = $ChaptersTable(this);
   late final $SubchaptersTable subchapters = $SubchaptersTable(this);
@@ -10166,6 +10713,8 @@ abstract class _$LocalResourceAPI extends GeneratedDatabase {
         paras,
         ayahs,
         ayahTranslations,
+        tafseerQitabs,
+        tafseers,
         books,
         chapters,
         subchapters,

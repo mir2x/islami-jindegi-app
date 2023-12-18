@@ -36,7 +36,10 @@ class $TafseerQitabHiveLocalAdapter = HiveLocalAdapter<TafseerQitab>
     with $TafseerQitabLocalAdapter;
 
 class $TafseerQitabRemoteAdapter = RemoteAdapter<TafseerQitab>
-    with JSONAPIAdapter<TafseerQitab>, ApplicationAdapter<TafseerQitab>;
+    with
+        JSONAPIAdapter<TafseerQitab>,
+        LocalResourceAdapter<TafseerQitab>,
+        ApplicationAdapter<TafseerQitab>;
 
 final internalTafseerQitabsRemoteAdapterProvider =
     Provider<RemoteAdapter<TafseerQitab>>((ref) => $TafseerQitabRemoteAdapter(
@@ -49,6 +52,8 @@ final tafseerQitabsRepositoryProvider =
 extension TafseerQitabDataRepositoryX on Repository<TafseerQitab> {
   JSONAPIAdapter<TafseerQitab> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<TafseerQitab>;
+  LocalResourceAdapter<TafseerQitab> get localResourceAdapter =>
+      remoteAdapter as LocalResourceAdapter<TafseerQitab>;
   ApplicationAdapter<TafseerQitab> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<TafseerQitab>;
 }

@@ -49,7 +49,10 @@ class $TafseerHiveLocalAdapter = HiveLocalAdapter<Tafseer>
     with $TafseerLocalAdapter;
 
 class $TafseerRemoteAdapter = RemoteAdapter<Tafseer>
-    with JSONAPIAdapter<Tafseer>, ApplicationAdapter<Tafseer>;
+    with
+        JSONAPIAdapter<Tafseer>,
+        LocalResourceAdapter<Tafseer>,
+        ApplicationAdapter<Tafseer>;
 
 final internalTafseersRemoteAdapterProvider = Provider<RemoteAdapter<Tafseer>>(
     (ref) => $TafseerRemoteAdapter(
@@ -61,6 +64,8 @@ final tafseersRepositoryProvider =
 extension TafseerDataRepositoryX on Repository<Tafseer> {
   JSONAPIAdapter<Tafseer> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<Tafseer>;
+  LocalResourceAdapter<Tafseer> get localResourceAdapter =>
+      remoteAdapter as LocalResourceAdapter<Tafseer>;
   ApplicationAdapter<Tafseer> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<Tafseer>;
 }
