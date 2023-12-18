@@ -247,55 +247,60 @@ class AyahList extends ConsumerWidget {
               ),
               Row(
                 children: [
-                  TextButton(
-                    child: Text(locales.qaris, style: textTheme.titleMedium),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Dialog(
-                            child: Container(
-                              width: screenWidth,
-                              height: screenHeight * 0.4,
-                              padding: const EdgeInsets.only(
-                                top: 15,
-                                bottom: 25,
-                                left: 15,
-                                right: 15,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Expanded(
-                                    child: FilterList(
-                                      title: locales.qaris,
-                                      paramKeys: const ['qari'],
-                                      queryProvider: quranSettingsProvider,
-                                      queryBuilder:
-                                          (Map<String, dynamic> params) {
-                                        return AllModelsQuery(
-                                          repository: ref.qaris,
-                                          params: params,
-                                        );
-                                      },
-                                      itemBuilder: (_, item, __) {
-                                        return FilterItem(
-                                          itemId: item.slug,
-                                          itemTitle: item.name,
-                                          paramKey: 'qari',
-                                          queryProvider: quranSettingsProvider,
-                                        );
-                                      },
+                  if (!(qSettings.containsKey('tilawat') &&
+                      qSettings['tilawat'])) ...[
+                    TextButton(
+                      child: Text(locales.qaris, style: textTheme.titleMedium),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Dialog(
+                              child: Container(
+                                width: screenWidth,
+                                height: screenHeight * 0.4,
+                                padding: const EdgeInsets.only(
+                                  top: 15,
+                                  bottom: 25,
+                                  left: 15,
+                                  right: 15,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Expanded(
+                                      child: FilterList(
+                                        title: locales.qaris,
+                                        paramKeys: const ['qari'],
+                                        queryProvider: quranSettingsProvider,
+                                        queryBuilder:
+                                            (Map<String, dynamic> params) {
+                                          return AllModelsQuery(
+                                            repository: ref.qaris,
+                                            params: params,
+                                          );
+                                        },
+                                        itemBuilder: (_, item, __) {
+                                          return FilterItem(
+                                            itemId: item.slug,
+                                            itemTitle: item.name,
+                                            paramKey: 'qari',
+                                            queryProvider:
+                                                quranSettingsProvider,
+                                          );
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ],
                   TextButton(
                     child: Text(locales.font, style: textTheme.titleMedium),
                     onPressed: () {
