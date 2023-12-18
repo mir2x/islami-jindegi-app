@@ -129,8 +129,7 @@ class MasailItem extends ConsumerWidget {
                     children: [
                       SocialShare(
                         title: resource.title,
-                        subtitle: resource.question,
-                        body: resource.answer,
+                        body: '${resource.question} \n\n${resource.answer}',
                         link: 'masail/${resource.id}',
                       ),
                       BookmarkButton(
