@@ -216,7 +216,7 @@ class Bayans extends ConsumerWidget {
         ],
       ),
       floatingActionButton: SizedBox(
-        width: 180,
+        width: 200,
         height: 40,
         child: FloatingActionButton.extended(
           onPressed: () => QR.to('bayans/downloads'),

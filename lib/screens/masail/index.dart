@@ -294,7 +294,7 @@ class Masail extends ConsumerWidget {
             },
           ),
           SizedBox(
-            width: 200,
+            width: 205,
             height: 40,
             child: FloatingActionButton.extended(
               onPressed: () => QR.to('masail/downloads'),

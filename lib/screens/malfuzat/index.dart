@@ -251,7 +251,7 @@ class Malfuzat extends ConsumerWidget {
         ],
       ),
       floatingActionButton: SizedBox(
-        width: 210,
+        width: 220,
         height: 40,
         child: FloatingActionButton.extended(
           onPressed: () => QR.to('malfuzat/downloads'),
