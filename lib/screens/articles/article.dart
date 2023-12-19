@@ -108,7 +108,7 @@ class Article extends ConsumerWidget {
                         filePath: resource.document['id'],
                         fileUrl: fileSrcUrl(resource.document),
                         textWidth: 95,
-                        downloadedTextWidth: 120,
+                        downloadedTextWidth: 125,
                       ),
                     ],
                     Container(
