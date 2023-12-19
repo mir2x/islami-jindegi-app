@@ -41,6 +41,7 @@ dependencies:
 
   # widgets
   infinite_scroll_pagination: ^4.0.0
+  scrollable_positioned_list: ^0.3.8
   carousel_slider: ^4.1.1
   animated_toggle_switch: ^0.8.0
   just_audio: ^0.9.36

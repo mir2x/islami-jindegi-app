@@ -25,6 +25,7 @@ class Ayah extends ConsumerWidget {
     required this.preferences,
     required this.arabicFontSizeRatio,
     required this.banglaFontSizeRatio,
+    this.markAdjustment = 0,
   });
 
   final dynamic ayah;
@@ -32,6 +33,7 @@ class Ayah extends ConsumerWidget {
   final dynamic preferences;
   final FontSizeRatio arabicFontSizeRatio;
   final FontSizeRatio banglaFontSizeRatio;
+  final double markAdjustment;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -42,7 +44,7 @@ class Ayah extends ConsumerWidget {
     var qSettings = ref.watch(quranSettingsProvider);
 
     return Container(
-      padding: const EdgeInsets.only(bottom: 20, left: 15),
+      padding: EdgeInsets.only(bottom: 20, left: 15 + markAdjustment),
       child: Column(
         children: [
           Row(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:collection/collection.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/all_models.dart';
@@ -114,35 +115,85 @@ class AyahList extends ConsumerWidget {
                   },
                 );
               } else {
-                return SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      InkWell(
-                        onTap: () => QR.to('quran/bismillah-tafseer'),
-                        child: Bismillah(
-                          chapter: chapter,
-                          preferences: preferences,
-                          arabicFontSizeRatio: arabicFontSizeRatio,
-                          banglaFontSizeRatio: banglaFontSizeRatio,
-                        ),
-                      ),
-                      ListView.builder(
-                        key: PageStorageKey<String>(chapter.id),
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: resources.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Ayah(
-                            ayah: resources[index],
+                final itemScrollController = ItemScrollController();
+                final scrollOffsetController = ScrollOffsetController();
+                final itemPositionsListener = ItemPositionsListener.create();
+                final scrollOffsetListener = ScrollOffsetListener.create();
+
+                List<int> marks = [];
+
+                if (resources.length > 30) {
+                  int jump = ((resources.length - 1) / 10).floor();
+
+                  for (var i = 1; i < resources.length; i = i + jump) {
+                    marks.add(i);
+                  }
+                }
+
+                double screenHeight = MediaQuery.of(context).size.height;
+                double markHeight = (screenHeight - 160) / 11;
+                double offset = markHeight / 2 - 15;
+                return Stack(
+                  children: [
+                    Column(
+                      children: [
+                        InkWell(
+                          onTap: () => QR.to('quran/bismillah-tafseer'),
+                          child: Bismillah(
                             chapter: chapter,
                             preferences: preferences,
                             arabicFontSizeRatio: arabicFontSizeRatio,
                             banglaFontSizeRatio: banglaFontSizeRatio,
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ScrollablePositionedList.builder(
+                            key: PageStorageKey<String>(chapter.id),
+                            itemScrollController: itemScrollController,
+                            scrollOffsetController: scrollOffsetController,
+                            itemPositionsListener: itemPositionsListener,
+                            scrollOffsetListener: scrollOffsetListener,
+                            itemCount: resources.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Ayah(
+                                ayah: resources[index],
+                                chapter: chapter,
+                                preferences: preferences,
+                                arabicFontSizeRatio: arabicFontSizeRatio,
+                                banglaFontSizeRatio: banglaFontSizeRatio,
+                                markAdjustment: marks.isNotEmpty ? 12 : 0,
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    ...List.generate(marks.length, (index) {
+                      return Positioned(
+                        top: offset + markHeight * index,
+                        left: 0,
+                        child: InkWell(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 15,
+                              horizontal: 6,
+                            ),
+                            child: Text(
+                              marks[index].toString(),
+                              style: textTheme.labelSmall?.copyWith(
+                                fontSize: 10,
+                              ),
+                            ),
+                          ),
+                          onTap: () {
+                            itemScrollController.jumpTo(
+                              index: marks[index] - 1,
+                            );
+                          },
+                        ),
+                      );
+                    }),
+                  ],
                 );
               }
             },

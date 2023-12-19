@@ -32,7 +32,7 @@ class Bismillah extends ConsumerWidget {
           Container(
             width: double.infinity,
             padding: EdgeInsets.only(
-              top: 15,
+              top: 0,
               bottom: 10,
               left: 15,
               right: chapterType == 'Para' ? 15 : 0,
