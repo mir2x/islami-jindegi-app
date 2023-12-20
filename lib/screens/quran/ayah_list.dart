@@ -137,14 +137,11 @@ class AyahList extends ConsumerWidget {
                   children: [
                     Column(
                       children: [
-                        InkWell(
-                          onTap: () => QR.to('quran/bismillah-tafseer'),
-                          child: Bismillah(
-                            chapter: chapter,
-                            preferences: preferences,
-                            arabicFontSizeRatio: arabicFontSizeRatio,
-                            banglaFontSizeRatio: banglaFontSizeRatio,
-                          ),
+                        Bismillah(
+                          chapter: chapter,
+                          preferences: preferences,
+                          arabicFontSizeRatio: arabicFontSizeRatio,
+                          banglaFontSizeRatio: banglaFontSizeRatio,
                         ),
                         Expanded(
                           child: ScrollablePositionedList.builder(
