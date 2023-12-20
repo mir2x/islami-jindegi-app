@@ -155,6 +155,12 @@ flutter:
       fonts:
         - asset: assets/fonts/kalpurush.ttf
 
+    - family: bangla/noto-sans-bengali
+      fonts:
+        - asset: assets/fonts/NotoSansBengali-Regular.ttf
+        - asset: assets/fonts/NotoSansBengali-Bold.ttf
+          weight: 700
+
     - family: arabic/al-qalam-quran-majeed
       fonts:
         - asset: assets/fonts/al-qalam-quran-majeed.ttf

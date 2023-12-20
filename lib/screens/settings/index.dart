@@ -22,6 +22,7 @@ class Settings extends ConsumerWidget {
     {'label': 'Solaiman Lipi', 'value': 'bangla/solaimanlipi'},
     {'label': 'Siyam Rupali', 'value': 'bangla/siyamrupali'},
     {'label': 'Kalpurush', 'value': 'bangla/kalpurush'},
+    {'label': 'Noto Sans Bengali', 'value': 'bangla/noto-sans-bengali'},
   ];
 
   final List<Map<String, String>> arabicFonts = const [
