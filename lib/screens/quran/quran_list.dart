@@ -26,6 +26,7 @@ class QuranList extends ConsumerWidget {
       params: const {
         'published': true,
         'include': 'quran-book',
+        'offline': true,
       },
     );
 
