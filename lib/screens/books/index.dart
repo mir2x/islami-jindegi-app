@@ -37,101 +37,119 @@ class Books extends ConsumerWidget {
           WithConnectivity(
             builder: (context, isConnected) {
               if (isConnected) {
-                return Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: FilterButton(
-                          active: qParams.keys.any(
-                            (k) => [
-                              'authorId',
-                              'bookCategoryId',
-                              'bookSubcategoryId',
-                            ].contains(k),
-                          ),
-                          children: [
-                            Expanded(
-                              child: FilterList(
-                                title: locales.authors,
-                                paramKeys: const ['authorId'],
-                                searchEnabled: true,
-                                queryBuilder: (Map<String, dynamic> params) {
-                                  return AllModelsQuery(
-                                    repository: ref.authors,
-                                    params: params,
-                                  );
-                                },
-                                itemBuilder: (_, item, __) {
-                                  return FilterItem(
-                                    itemId: item.id,
-                                    itemTitle: item.name,
-                                    paramKey: 'authorId',
-                                  );
-                                },
-                              ),
+                return Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding:
+                          const EdgeInsets.only(top: 20, left: 15, right: 15),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: FilterButton(
+                              label: locales.authors,
+                              active: qParams.containsKey('authorId'),
+                              children: [
+                                Expanded(
+                                  child: FilterList(
+                                    title: locales.authors,
+                                    paramKeys: const ['authorId'],
+                                    pageSize: 16,
+                                    searchEnabled: true,
+                                    queryBuilder:
+                                        (Map<String, dynamic> params) {
+                                      return AllModelsQuery(
+                                        repository: ref.authors,
+                                        params: params,
+                                      );
+                                    },
+                                    itemBuilder: (_, item, __) {
+                                      return FilterItem(
+                                        itemId: item.id,
+                                        itemTitle: item.name,
+                                        paramKey: 'authorId',
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 40),
-                            Expanded(
-                              child: FilterList(
-                                title: locales.categories,
-                                paramKeys: const [
+                          ),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          Expanded(
+                            child: FilterButton(
+                              label: locales.categories,
+                              active: qParams.keys.any(
+                                (k) => [
                                   'bookCategoryId',
                                   'bookSubcategoryId',
-                                ],
-                                queryBuilder: (Map<String, dynamic> params) {
-                                  return AllModelsQuery(
-                                    repository: ref.bookCategories,
-                                    params: {
-                                      ...params,
-                                      'include': 'book-subcategories',
-                                    },
-                                  );
-                                },
-                                itemBuilder: (_, item, __) {
-                                  if (item.bookSubcategories.length > 0) {
-                                    return FilterNestedItem(
-                                      itemId: item.id,
-                                      itemTitle: item.title,
-                                      paramKey: 'bookSubcategoryId',
-                                      subitems: item.bookSubcategories,
-                                      subitemBuilder: (var subitem) {
-                                        return FilterSubitem(
-                                          itemId: subitem.id,
-                                          itemTitle: subitem.title,
-                                          paramKey: 'bookSubcategoryId',
-                                        );
-                                      },
-                                    );
-                                  } else {
-                                    return FilterItem(
-                                      itemId: item.id,
-                                      itemTitle: item.title,
-                                      paramKey: 'bookCategoryId',
-                                    );
-                                  }
-                                },
+                                ].contains(k),
                               ),
+                              children: [
+                                Expanded(
+                                  child: FilterList(
+                                    title: locales.categories,
+                                    paramKeys: const [
+                                      'bookCategoryId',
+                                      'bookSubcategoryId',
+                                    ],
+                                    pageSize: 16,
+                                    queryBuilder:
+                                        (Map<String, dynamic> params) {
+                                      return AllModelsQuery(
+                                        repository: ref.bookCategories,
+                                        params: {
+                                          ...params,
+                                          'include': 'book-subcategories',
+                                        },
+                                      );
+                                    },
+                                    itemBuilder: (_, item, __) {
+                                      if (item.bookSubcategories.length > 0) {
+                                        return FilterNestedItem(
+                                          itemId: item.id,
+                                          itemTitle: item.title,
+                                          paramKey: 'bookSubcategoryId',
+                                          subitems: item.bookSubcategories,
+                                          subitemBuilder: (var subitem) {
+                                            return FilterSubitem(
+                                              itemId: subitem.id,
+                                              itemTitle: subitem.title,
+                                              paramKey: 'bookSubcategoryId',
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        return FilterItem(
+                                          itemId: item.id,
+                                          itemTitle: item.title,
+                                          paramKey: 'bookCategoryId',
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(
-                        width: 15,
+                    ),
+                    Container(
+                      padding:
+                          const EdgeInsets.only(top: 10, left: 15, right: 15),
+                      child: SearchButtonField(
+                        value: qParams['search'],
+                        onUpdate: (value) {
+                          ref
+                              .read(queryParamsProvider.notifier)
+                              .updateParams('search', value);
+                        },
                       ),
-                      Expanded(
-                        child: SearchButtonField(
-                          value: qParams['search'],
-                          onUpdate: (value) {
-                            ref
-                                .read(queryParamsProvider.notifier)
-                                .updateParams('search', value);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 );
               } else {
                 return const SizedBox.shrink();
