@@ -80,7 +80,7 @@ class BookItem extends ConsumerWidget {
 
         var cQuery = AllModelsQuery(
           repository: ref.chapters,
-          params: {'bookId': book.id, 'quantity': 1},
+          params: {'bookId': book.id, 'quantity': 1, 'offline': true},
         );
 
         var chapterQuery = ref.watch(allModelsProvider(cQuery));
@@ -160,6 +160,7 @@ class BookItem extends ConsumerWidget {
                                       ...params,
                                       'bookId': book.id,
                                       'include': 'subchapters',
+                                      'offline': true,
                                     },
                                   );
 
