@@ -9,6 +9,7 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
+import 'package:native_app/settings/image.dart';
 
 class QuranList extends ConsumerWidget {
   const QuranList({super.key});
@@ -69,6 +70,9 @@ class QuranList extends ConsumerWidget {
             },
             error: (error, _) => Text(error.toString()),
             data: (resources) {
+              Map<String, int> dimensions =
+                  imageSettings['quranBookQitab']['image'];
+
               return GridView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
@@ -89,9 +93,14 @@ class QuranList extends ConsumerWidget {
                           onTap: () => QR.to('qurans/books/${item.id}'),
                           child: FractionallySizedBox(
                             widthFactor: 0.8,
-                            child: Image(
-                              image: AssetImage(
-                                'assets/images/quran-qitabs/${item.id}.jpg',
+                            child: AspectRatio(
+                              aspectRatio:
+                                  dimensions['width']! / dimensions['height']!,
+                              child: Image(
+                                image: AssetImage(
+                                  'assets/images/quran-qitabs/${item.id}.jpg',
+                                ),
+                                fit: BoxFit.fill,
                               ),
                             ),
                           ),

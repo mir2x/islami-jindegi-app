@@ -16,6 +16,9 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/utils/with_last_visited.dart';
+import 'package:native_app/providers/check_asset_file.dart';
+import 'package:native_app/widgets/responsive/image.dart';
+import 'package:native_app/settings/image.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/utils/comma_separated_list.dart';
@@ -233,6 +236,12 @@ class BookItem extends ConsumerWidget {
                     ],
                   );
                 } else {
+                  var assetChecker = ref.watch(
+                    checkAssetFileProvider('images/books/${book.id}.jpg'),
+                  );
+
+                  Map<String, int> dimensions = imageSettings['book']['image'];
+
                   return ItemContent(
                     children: [
                       Container(
@@ -269,7 +278,34 @@ class BookItem extends ConsumerWidget {
                         excerpt: book.excerpt,
                         publisher: book.publisher,
                         price: book.price,
-                        image: book.image,
+                        image: assetChecker.when(
+                          loading: () => AspectRatio(
+                            aspectRatio:
+                                dimensions['width']! / dimensions['height']!,
+                            child: const SizedBox.shrink(),
+                          ),
+                          error: (error, _) => const SizedBox.shrink(),
+                          data: (exists) {
+                            if (exists) {
+                              return AspectRatio(
+                                aspectRatio: dimensions['width']! /
+                                    dimensions['height']!,
+                                child: Image(
+                                  image: AssetImage(
+                                    'assets/images/books/${book.id}.jpg',
+                                  ),
+                                  fit: BoxFit.fill,
+                                ),
+                              );
+                            } else {
+                              return ResponsiveImage(
+                                image: book.image,
+                                model: 'book',
+                                vwset: const {'xs': 50},
+                              );
+                            }
+                          },
+                        ),
                         document: book.document,
                         publishedAt: book.publishedAt,
                         downloadItem: (book.document != null)

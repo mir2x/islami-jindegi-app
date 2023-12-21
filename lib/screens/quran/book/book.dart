@@ -26,6 +26,7 @@ import 'package:native_app/widgets/buttons/download.dart';
 import 'package:native_app/widgets/buttons/delete.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/helpers/file_size.dart';
+import 'package:native_app/settings/image.dart';
 import 'drawer.dart';
 
 class QuranBook extends ConsumerWidget {
@@ -92,6 +93,8 @@ class QuranBook extends ConsumerWidget {
               } else {
                 int size = qitab.document['metadata']['size'];
                 double screenWidth = MediaQuery.of(context).size.width;
+                Map<String, int> dimensions =
+                    imageSettings['quranBookQitab']['image'];
 
                 return AppScaffold(
                   title: Text(qitabTitle),
@@ -101,9 +104,14 @@ class QuranBook extends ConsumerWidget {
                       Container(
                         margin: const EdgeInsets.only(top: 20, bottom: 15),
                         width: screenWidth / 2,
-                        child: Image(
-                          image: AssetImage(
-                            'assets/images/quran-qitabs/${qitab.id}.jpg',
+                        child: AspectRatio(
+                          aspectRatio:
+                              dimensions['width']! / dimensions['height']!,
+                          child: Image(
+                            image: AssetImage(
+                              'assets/images/quran-qitabs/${qitab.id}.jpg',
+                            ),
+                            fit: BoxFit.fill,
                           ),
                         ),
                       ),

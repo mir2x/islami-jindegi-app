@@ -9,7 +9,6 @@ import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/objects/pdf_source.dart';
 import 'package:native_app/objects/pdf_builders.dart';
 import 'package:native_app/widgets/presentation/connect_to_internet.dart';
-import 'package:native_app/widgets/responsive/image.dart';
 
 class PDFReader extends ConsumerWidget {
   const PDFReader({
@@ -20,7 +19,7 @@ class PDFReader extends ConsumerWidget {
   });
 
   final String bookId;
-  final Map? image;
+  final Widget image;
   final Map document;
 
   @override
@@ -132,11 +131,7 @@ class PDFReader extends ConsumerWidget {
                 child: Container(
                   margin: const EdgeInsets.only(top: 20, bottom: 30),
                   width: screenWidth / 2,
-                  child: ResponsiveImage(
-                    image: image,
-                    model: 'book',
-                    vwset: const {'xs': 50},
-                  ),
+                  child: image,
                 ),
               ),
             ],

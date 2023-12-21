@@ -15,7 +15,9 @@ import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/nested_item.dart';
 import 'package:native_app/widgets/filter/subitem.dart';
+import 'package:native_app/providers/check_asset_file.dart';
 import 'package:native_app/widgets/responsive/image.dart';
+import 'package:native_app/settings/image.dart';
 
 class Books extends ConsumerWidget {
   const Books({super.key});
@@ -179,16 +181,45 @@ class Books extends ConsumerWidget {
                   mainAxisExtent: isMobile ? 300 : 360,
                 ),
                 itemBuilder: (_, item, __) {
+                  var assetChecker = ref.watch(
+                    checkAssetFileProvider('images/books/${item.id}.jpg'),
+                  );
+
+                  Map<String, int> dimensions = imageSettings['book']['image'];
+
                   return InkWell(
                     onTap: () => QR.to('books/${item.id}'),
                     child: Column(
                       children: [
                         FractionallySizedBox(
                           widthFactor: 0.7,
-                          child: ResponsiveImage(
-                            image: item.image,
-                            model: 'book',
-                            vwset: const {'xs': 50},
+                          child: assetChecker.when(
+                            loading: () => AspectRatio(
+                              aspectRatio:
+                                  dimensions['width']! / dimensions['height']!,
+                              child: const SizedBox.shrink(),
+                            ),
+                            error: (error, _) => const SizedBox.shrink(),
+                            data: (exists) {
+                              if (exists) {
+                                return AspectRatio(
+                                  aspectRatio: dimensions['width']! /
+                                      dimensions['height']!,
+                                  child: Image(
+                                    image: AssetImage(
+                                      'assets/images/books/${item.id}.jpg',
+                                    ),
+                                    fit: BoxFit.fill,
+                                  ),
+                                );
+                              } else {
+                                return ResponsiveImage(
+                                  image: item.image,
+                                  model: 'book',
+                                  vwset: const {'xs': 50},
+                                );
+                              }
+                            },
                           ),
                         ),
                         Container(

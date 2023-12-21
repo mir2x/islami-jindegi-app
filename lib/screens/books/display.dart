@@ -23,7 +23,7 @@ class BookDisplay extends ConsumerWidget {
   final String? excerpt;
   final String? publisher;
   final String? price;
-  final Map? image;
+  final Widget image;
   final Map? document;
   final String? publishedAt;
   final Widget? downloadItem;
