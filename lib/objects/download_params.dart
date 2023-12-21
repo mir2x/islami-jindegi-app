@@ -6,15 +6,15 @@ class DownloadParams extends Equatable {
   const DownloadParams({
     required this.url,
     required this.savePath,
-    required this.cancelToken,
-    required this.downloadProgress,
+    this.cancelToken,
+    this.downloadProgress,
   });
 
   final String url;
   final String savePath;
-  final CancelToken cancelToken;
-  final ProgressPercentage downloadProgress;
+  final CancelToken? cancelToken;
+  final ProgressPercentage? downloadProgress;
 
   @override
-  List<Object> get props => [url, savePath, cancelToken, downloadProgress];
+  List<dynamic> get props => [url, savePath, cancelToken, downloadProgress];
 }

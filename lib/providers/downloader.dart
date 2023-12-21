@@ -14,7 +14,11 @@ final downloaderProvider = FutureProvider.autoDispose
 
   if (dir == null) return null;
 
-  ref.onDispose(() => params.cancelToken.cancel());
+  ref.onDispose(() {
+    if (params.cancelToken != null) {
+      params.cancelToken!.cancel();
+    }
+  });
 
   Response? response;
 
@@ -24,8 +28,8 @@ final downloaderProvider = FutureProvider.autoDispose
       '${dir.path}/${params.savePath}',
       cancelToken: params.cancelToken,
       onReceiveProgress: (int received, int total) {
-        if (total != -1) {
-          params.downloadProgress.update({
+        if (total != -1 && params.downloadProgress != null) {
+          params.downloadProgress!.update({
             'received': received,
             'total': total,
           });
