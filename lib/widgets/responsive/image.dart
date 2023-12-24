@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:collection/collection.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/settings/image.dart';
@@ -87,8 +88,9 @@ class ResponsiveImage extends ConsumerWidget {
     if (model == 'book') {
       return AspectRatio(
         aspectRatio: settings['width']! / settings['height']!,
-        child: const Image(
-          image: AssetImage('assets/images/books/default.png'),
+        child: SvgPicture.asset(
+          'assets/images/books/default.svg',
+          fit: BoxFit.contain,
         ),
       );
     } else {
