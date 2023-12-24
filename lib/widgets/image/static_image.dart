@@ -4,7 +4,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:collection/collection.dart';
-import 'package:native_app/widgets/utils/with_connectivity.dart';
 
 class StaticImage extends ConsumerWidget {
   const StaticImage({
@@ -26,33 +25,20 @@ class StaticImage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return WithConnectivity(
-      builder: (context, isConnected) {
-        if (isConnected) {
-          double screenWidth = MediaQuery.of(context).size.width;
-          double vwsetWidth = screenWidth * (vwset['xs']! / 100);
-          int? selectedWidth = selectWidth(widths, vwsetWidth);
-          String staticHost = dotenv.env['STATIC_HOST_NAME']!;
-          String imageSrc = '$staticHost/$image${selectedWidth}w.$extension';
+    double screenWidth = MediaQuery.of(context).size.width;
+    double vwsetWidth = screenWidth * (vwset['xs']! / 100);
+    int? selectedWidth = selectWidth(widths, vwsetWidth);
+    String staticHost = dotenv.env['STATIC_HOST_NAME']!;
+    String imageSrc = '$staticHost/$image${selectedWidth}w.$extension';
 
-          return AspectRatio(
-            aspectRatio: width / height,
-            child: CachedNetworkImage(
-              imageUrl: imageSrc,
-              placeholder: (context, url) => Image.memory(kTransparentImage),
-              fit: BoxFit.fill,
-              fadeInDuration: const Duration(milliseconds: 150),
-            ),
-          );
-        } else {
-          return AspectRatio(
-            aspectRatio: width / height,
-            child: const Image(
-              image: AssetImage('assets/images/books/default.png'),
-            ),
-          );
-        }
-      },
+    return AspectRatio(
+      aspectRatio: width / height,
+      child: CachedNetworkImage(
+        imageUrl: imageSrc,
+        placeholder: (context, url) => Image.memory(kTransparentImage),
+        fit: BoxFit.fill,
+        fadeInDuration: const Duration(milliseconds: 150),
+      ),
     );
   }
 
