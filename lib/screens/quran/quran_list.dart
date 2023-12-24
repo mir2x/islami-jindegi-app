@@ -50,7 +50,7 @@ class QuranList extends ConsumerWidget {
                   ),
                 ),
                 SvgPicture.asset(
-                  'assets/images/books/quran.svg',
+                  'assets/images/quran-qitabs/offline.svg',
                   fit: BoxFit.contain,
                   width: isMobile ? 175 : 250,
                   height: isMobile ? 270 : 386,
