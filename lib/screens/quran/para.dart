@@ -19,6 +19,7 @@ class Para extends ConsumerWidget {
       params: {
         'slug': QR.params['slug'],
         'quantity': 1,
+        'offline': true,
       },
     );
 
@@ -28,6 +29,38 @@ class Para extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (para) {
+        Future? previousPage() async {
+          var previousResources = await ref.paras.findAll(
+            params: {
+              'position': para.position - 1,
+              'quantity': 1,
+              'offline': true,
+            },
+          );
+
+          if (previousResources.isEmpty) {
+            await QR.to('quran');
+          } else {
+            await QR.to('quran/para/${previousResources.first.slug}');
+          }
+        }
+
+        Future? nextPage() async {
+          var nextResources = await ref.paras.findAll(
+            params: {
+              'position': para.position + 1,
+              'quantity': 1,
+              'offline': true,
+            },
+          );
+
+          if (nextResources.isEmpty) {
+            await QR.to('quran');
+          } else {
+            await QR.to('quran/para/${nextResources.first.slug}');
+          }
+        }
+
         ref.read(lastVisitedProvider.notifier).updateLastPara(para.id);
 
         return AyahList(
@@ -37,6 +70,8 @@ class Para extends ConsumerWidget {
             'para_id': para.id,
             'sort': 'para-position',
           },
+          previousPage: previousPage,
+          nextPage: nextPage,
         );
       },
     );

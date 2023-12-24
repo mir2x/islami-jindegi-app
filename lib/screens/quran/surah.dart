@@ -19,6 +19,7 @@ class Surah extends ConsumerWidget {
       params: {
         'slug': QR.params['slug'],
         'quantity': 1,
+        'offline': true,
       },
     );
 
@@ -28,6 +29,38 @@ class Surah extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (surah) {
+        Future? previousPage() async {
+          var previousResources = await ref.surahs.findAll(
+            params: {
+              'position': surah.position - 1,
+              'quantity': 1,
+              'offline': true,
+            },
+          );
+
+          if (previousResources.isEmpty) {
+            await QR.to('quran');
+          } else {
+            await QR.to('quran/surah/${previousResources.first.slug}');
+          }
+        }
+
+        Future? nextPage() async {
+          var nextResources = await ref.surahs.findAll(
+            params: {
+              'position': surah.position + 1,
+              'quantity': 1,
+              'offline': true,
+            },
+          );
+
+          if (nextResources.isEmpty) {
+            await QR.to('quran');
+          } else {
+            await QR.to('quran/surah/${nextResources.first.slug}');
+          }
+        }
+
         ref.read(lastVisitedProvider.notifier).updateLastSurah(surah.id);
 
         return AyahList(
@@ -36,6 +69,8 @@ class Surah extends ConsumerWidget {
           filterParams: {
             'surah_id': surah.id,
           },
+          previousPage: previousPage,
+          nextPage: nextPage,
         );
       },
     );

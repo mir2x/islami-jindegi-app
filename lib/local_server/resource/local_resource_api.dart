@@ -193,6 +193,10 @@ class LocalResourceAPI extends _$LocalResourceAPI {
       query.where((t) => t.slug.equals(params['slug'].toString()));
     }
 
+    if (params.containsKey('position')) {
+      query.where((r) => r.position.equals(params['position']));
+    }
+
     if (params.containsKey('page') && params.containsKey('per_page')) {
       query.limit(
         params['per_page'],
@@ -215,6 +219,10 @@ class LocalResourceAPI extends _$LocalResourceAPI {
 
     if (params.containsKey('slug')) {
       query.where((t) => t.slug.equals(params['slug'].toString()));
+    }
+
+    if (params.containsKey('position')) {
+      query.where((r) => r.position.equals(params['position']));
     }
 
     if (params.containsKey('page') && params.containsKey('per_page')) {

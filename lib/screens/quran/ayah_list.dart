@@ -28,10 +28,14 @@ class AyahList extends ConsumerWidget {
     super.key,
     required this.chapter,
     required this.filterParams,
+    required this.previousPage,
+    required this.nextPage,
   });
 
   final dynamic chapter;
   final Map filterParams;
+  final Future? Function() previousPage;
+  final Future? Function() nextPage;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -141,6 +145,8 @@ class AyahList extends ConsumerWidget {
                           preferences: preferences,
                           arabicFontSizeRatio: arabicFontSizeRatio,
                           banglaFontSizeRatio: banglaFontSizeRatio,
+                          previousPage: previousPage,
+                          nextPage: nextPage,
                         ),
                         Expanded(
                           child: ScrollablePositionedList.builder(
