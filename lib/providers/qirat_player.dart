@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'local_file.dart';
+import 'connectivity_result.dart';
 import 'downloader.dart';
 import 'package:native_app/objects/download_params.dart';
 
@@ -16,26 +18,35 @@ final qiratPlayerProvider =
   var localFile = await ref.watch(fileProvider.future);
 
   if (localFile == null) {
-    var params = DownloadParams(
-      url: fileUrl,
-      savePath: filePath,
-    );
+    var connectivityResult = await ref.watch(connectivityResultProvider.future);
 
-    Response? response = await ref.watch(
-      downloaderProvider(params).future,
-    );
+    if (connectivityResult != ConnectivityResult.none) {
+      var params = DownloadParams(
+        url: fileUrl,
+        savePath: filePath,
+      );
 
-    if (response != null && response.statusCode == 200) {
-      await ref.read(fileProvider.notifier).check(filePath);
+      Response? response = await ref.watch(
+        downloaderProvider(params).future,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        await ref.read(fileProvider.notifier).check(filePath);
+        localFile = await ref.watch(fileProvider.future);
+      } else {
+        throw Exception('download error');
+      }
+    } else {
+      throw Exception('no connection');
     }
-
-    localFile = await ref.watch(fileProvider.future);
   }
 
   final AudioPlayer player = AudioPlayer();
 
   if (localFile != null) {
     await player.setFilePath(localFile.path);
+  } else {
+    throw Exception('no file');
   }
 
   return player;

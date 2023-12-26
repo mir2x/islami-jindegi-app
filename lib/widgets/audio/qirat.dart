@@ -29,7 +29,14 @@ class Qirat extends ConsumerWidget {
         height: 30,
       ),
       error: (error, _) {
-        return const Icon(Icons.play_disabled, size: 30);
+        if (error.toString() == 'Exception: no connection') {
+          return const Icon(
+            Icons.signal_wifi_connected_no_internet_4,
+            size: 30,
+          );
+        } else {
+          return const Icon(Icons.play_disabled, size: 30);
+        }
       },
       data: (player) {
         return StatefulQiratPlayer(player: player);
