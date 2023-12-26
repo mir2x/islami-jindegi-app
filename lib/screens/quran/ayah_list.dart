@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:collection/collection.dart';
@@ -68,6 +69,7 @@ class AyahList extends ConsumerWidget {
         var modelQuery = ref.watch(allModelsProvider(query));
 
         return AppScaffold(
+          onBackPressed: () async => await QR.to('quran'),
           showPattern: false,
           title: Text(
             contextualTranslation(
@@ -134,8 +136,8 @@ class AyahList extends ConsumerWidget {
                 }
 
                 double screenHeight = MediaQuery.of(context).size.height;
-                double markHeight = (screenHeight - 160) / 11;
-                double offset = markHeight / 2 - 15;
+                double markHeight = (screenHeight - 215) / 11;
+                double offset = markHeight / 2 + 35;
                 return Stack(
                   children: [
                     Column(
@@ -143,8 +145,6 @@ class AyahList extends ConsumerWidget {
                         Bismillah(
                           chapter: chapter,
                           preferences: preferences,
-                          arabicFontSizeRatio: arabicFontSizeRatio,
-                          banglaFontSizeRatio: banglaFontSizeRatio,
                           previousPage: previousPage,
                           nextPage: nextPage,
                         ),
