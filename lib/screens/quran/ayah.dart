@@ -44,7 +44,7 @@ class Ayah extends ConsumerWidget {
     var qSettings = ref.watch(quranSettingsProvider);
 
     return Container(
-      padding: EdgeInsets.only(bottom: 20, left: 15 + markAdjustment),
+      padding: EdgeInsets.only(top: 10, bottom: 10, left: 15 + markAdjustment),
       child: Column(
         children: [
           Row(
@@ -221,7 +221,7 @@ class Ayah extends ConsumerWidget {
               ayah.ayahTranslations.isNotEmpty) ...[
             Container(
               width: double.infinity,
-              margin: const EdgeInsets.only(right: 15),
+              margin: EdgeInsets.only(left: markAdjustment, right: 15),
               child: PageHtmlBody(
                 text: ayah.ayahTranslations.first.body,
                 fontSizeRatio: banglaFontSizeRatio,
