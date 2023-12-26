@@ -89,6 +89,7 @@ class BookItem extends ConsumerWidget {
         var chapterQuery = ref.watch(allModelsProvider(cQuery));
 
         return AppScaffold(
+          onBackPressed: () async => await QR.to('books'),
           showPattern: false,
           title: Text(locales.book),
           body: NextPageSwipe(
