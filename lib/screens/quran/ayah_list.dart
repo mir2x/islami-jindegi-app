@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
@@ -136,8 +137,10 @@ class AyahList extends ConsumerWidget {
                 }
 
                 double screenHeight = MediaQuery.of(context).size.height;
-                double markHeight = (screenHeight - 215) / 11;
+                double deviceAdjustment = Platform.isAndroid ? 0 : 20;
+                double markHeight = (screenHeight - deviceAdjustment - 215) / 11;
                 double offset = markHeight / 2 + 35;
+
                 return Stack(
                   children: [
                     Column(
