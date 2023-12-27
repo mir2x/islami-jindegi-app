@@ -79,7 +79,7 @@ class QuranList extends ConsumerWidget {
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: isMobile ? 2 : 3,
                   crossAxisSpacing: isMobile ? 15 : 20,
-                  mainAxisExtent: isMobile ? 325 : 400,
+                  mainAxisExtent: isMobile ? 340 : 400,
                 ),
                 itemCount: resources.length,
                 itemBuilder: (BuildContext context, int index) {
