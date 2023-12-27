@@ -7,13 +7,11 @@ import 'package:native_app/providers/downloaded_books.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
-import 'package:native_app/providers/check_asset_file.dart';
-import 'package:native_app/widgets/responsive/image.dart';
-import 'package:native_app/settings/image.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'display.dart';
+import 'image.dart';
 
 class DownloadedBook extends ConsumerWidget {
   const DownloadedBook({super.key});
@@ -30,12 +28,6 @@ class DownloadedBook extends ConsumerWidget {
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (book) {
         Map document = json.decode(book.document);
-
-        var assetChecker = ref.watch(
-          checkAssetFileProvider('images/books/${book.bookId}.jpg'),
-        );
-
-        Map<String, int> dimensions = imageSettings['book']['image'];
 
         return AppScaffold(
           showPattern: false,
@@ -66,32 +58,9 @@ class DownloadedBook extends ConsumerWidget {
                 excerpt: book.excerpt,
                 publisher: book.publisher,
                 price: book.price,
-                image: assetChecker.when(
-                  loading: () => AspectRatio(
-                    aspectRatio: dimensions['width']! / dimensions['height']!,
-                    child: const SizedBox.shrink(),
-                  ),
-                  error: (error, _) => const SizedBox.shrink(),
-                  data: (exists) {
-                    if (exists) {
-                      return AspectRatio(
-                        aspectRatio:
-                            dimensions['width']! / dimensions['height']!,
-                        child: Image(
-                          image: AssetImage(
-                            'assets/images/books/${book.bookId}.jpg',
-                          ),
-                          fit: BoxFit.fill,
-                        ),
-                      );
-                    } else {
-                      return ResponsiveImage(
-                        image: json.decode(book.image),
-                        model: 'book',
-                        vwset: const {'xs': 50},
-                      );
-                    }
-                  },
+                image: BookImage(
+                  bookId: book.bookId,
+                  image: json.decode(book.image),
                 ),
                 document: document,
                 publishedAt: book.publishedAt,
