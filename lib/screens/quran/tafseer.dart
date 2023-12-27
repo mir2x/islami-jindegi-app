@@ -62,7 +62,7 @@ class Tafseer extends ConsumerWidget {
                       valueListenable: fontSizeRatio,
                       builder: (context, ratio, child) {
                         return Text(
-                          ayah.title,
+                          ayah.title.trim(),
                           textDirection: TextDirection.rtl,
                           style: textTheme.headlineMedium?.copyWith(
                             fontSize: 28 * ratio,

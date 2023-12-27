@@ -57,7 +57,7 @@ class Ayah extends ConsumerWidget {
                     valueListenable: arabicFontSizeRatio,
                     builder: (context, ratio, child) {
                       return Text(
-                        ayah.title,
+                        ayah.title.trim(),
                         textDirection: TextDirection.rtl,
                         style: textTheme.labelLarge?.copyWith(
                           fontSize: 28 * ratio,
