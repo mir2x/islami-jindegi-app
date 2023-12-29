@@ -5,10 +5,12 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:native_app/main.data.dart';
-import 'package:native_app/widgets/filter/switch_button.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/all_models.dart';
+import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/objects/all_models_query.dart';
+import 'package:native_app/widgets/filter/switch_button.dart';
+import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/utils/with_last_visited.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
@@ -42,18 +44,19 @@ class QuranState extends ConsumerState<Quran> {
     String currentLang = Localizations.localeOf(context).languageCode;
     var numFormatter = NumberFormat('#', currentLang);
     var textTheme = Theme.of(context).textTheme;
+    var qParams = ref.watch(queryParamsProvider);
 
     AllModelsQuery query;
 
     if (isSurahSelected) {
       query = AllModelsQuery(
         repository: ref.surahs,
-        params: const {'quantity': 114, 'offline': true},
+        params: {...qParams, 'quantity': 114, 'offline': true},
       );
     } else {
       query = AllModelsQuery(
         repository: ref.paras,
-        params: const {'quantity': 30, 'offline': true},
+        params: {...qParams, 'quantity': 30, 'offline': true},
       );
     }
 
@@ -64,7 +67,7 @@ class QuranState extends ConsumerState<Quran> {
       body: Column(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+            padding: const EdgeInsets.only(left: 15, right: 15, top: 12),
             child: SwitchButton(
               firstLabel: locales.surah,
               secondLabel: locales.para,
@@ -72,6 +75,19 @@ class QuranState extends ConsumerState<Quran> {
               activateSecond: loadPara,
               isFirstActive: isSurahSelected,
               isSecondActive: !isSurahSelected,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.only(left: 15, right: 15, top: 10),
+            child: SearchField(
+              value: null,
+              maxHeight: 35,
+              borderRadius: 12,
+              onUpdate: (value) {
+                ref
+                    .read(queryParamsProvider.notifier)
+                    .updateParams('search', value);
+              },
             ),
           ),
           Expanded(
@@ -88,6 +104,7 @@ class QuranState extends ConsumerState<Quran> {
                   if (isSurahSelected) {
                     return ListView.builder(
                       key: const PageStorageKey<String>('surah'),
+                      padding: const EdgeInsets.symmetric(vertical: 25),
                       itemCount: resources.length,
                       itemBuilder: (BuildContext context, int index) {
                         var item = resources[index];

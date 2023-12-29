@@ -15,6 +15,7 @@ class SearchField extends ConsumerWidget {
     this.reverse = false,
     this.autofocus = false,
     this.maxHeight = 45,
+    this.borderRadius = 5,
   });
 
   final String? value;
@@ -23,6 +24,7 @@ class SearchField extends ConsumerWidget {
   final bool reverse;
   final bool autofocus;
   final double maxHeight;
+  final double borderRadius;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -44,12 +46,14 @@ class SearchField extends ConsumerWidget {
                   color:
                       theme == 'dark' ? ThemeColors.color3 : ThemeColors.color9,
                 ),
+                borderRadius: BorderRadius.circular(borderRadius),
               ),
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color:
                       theme == 'dark' ? ThemeColors.color3 : ThemeColors.color9,
                 ),
+                borderRadius: BorderRadius.circular(borderRadius),
               ),
               labelText: labelText ?? locales.search,
               labelStyle: textTheme.labelMedium,

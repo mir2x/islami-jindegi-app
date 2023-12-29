@@ -206,6 +206,10 @@ class LocalResourceAPI extends _$LocalResourceAPI {
       query.limit(params['quantity'] ?? 20);
     }
 
+    if (params.containsKey('search')) {
+      query.where((t) => t.title.like("%${params['search']}%"));
+    }
+
     query.orderBy([(t) => OrderingTerm(expression: t.position)]);
     return query.get();
   }
@@ -232,6 +236,10 @@ class LocalResourceAPI extends _$LocalResourceAPI {
       );
     } else {
       query.limit(params['quantity'] ?? 20);
+    }
+
+    if (params.containsKey('search')) {
+      query.where((t) => t.title.like("%${params['search']}%"));
     }
 
     query.orderBy([(t) => OrderingTerm(expression: t.position)]);
