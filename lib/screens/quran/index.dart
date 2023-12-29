@@ -185,6 +185,7 @@ class QuranState extends ConsumerState<Quran> {
                   } else {
                     return ListView.builder(
                       key: const PageStorageKey<String>('para'),
+                      padding: const EdgeInsets.symmetric(vertical: 25),
                       itemCount: resources.length,
                       itemBuilder: (BuildContext context, int index) {
                         var item = resources[index];
