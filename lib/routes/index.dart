@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../screens/home/index.dart';
 
@@ -90,6 +91,12 @@ class AppRoutes {
             bucket: _bucket,
             child: const Surah(),
           ),
+          middleware: [
+            QMiddlewareBuilder(
+              onEnterFunc: () => WakelockPlus.enable(),
+              onExitFunc: () => WakelockPlus.disable(),
+            ),
+          ],
           children: [
             QRoute(
               path: '/description',
@@ -103,6 +110,12 @@ class AppRoutes {
             bucket: _bucket,
             child: const Para(),
           ),
+          middleware: [
+            QMiddlewareBuilder(
+              onEnterFunc: () => WakelockPlus.enable(),
+              onExitFunc: () => WakelockPlus.disable(),
+            ),
+          ],
         ),
         QRoute(
           path: '/tafseers/:ayah_id',
