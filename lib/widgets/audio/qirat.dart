@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:native_app/providers/qirat_player.dart';
+import 'package:native_app/objects/qirat_player_audio.dart';
 
 class Qirat extends ConsumerWidget {
   const Qirat({
@@ -11,16 +12,25 @@ class Qirat extends ConsumerWidget {
     required this.surah,
     required this.ayah,
     required this.qari,
+    required this.player,
   });
 
   final dynamic surah;
   final dynamic ayah;
   final String qari;
+  final AudioPlayer player;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     String audioPath = '$qari/${surah.position}/${ayah.surahPosition}.mp3';
-    var audioPlayer = ref.watch(qiratPlayerProvider(audioPath));
+    var audioPlayer = ref.watch(
+      qiratPlayerProvider(
+        QiratPlayerAudio(
+          player: player,
+          audioPath: audioPath,
+        ),
+      ),
+    );
 
     return audioPlayer.when(
       loading: () => SvgPicture.asset(
@@ -38,8 +48,8 @@ class Qirat extends ConsumerWidget {
           return const Icon(Icons.play_disabled, size: 30);
         }
       },
-      data: (player) {
-        return StatefulQiratPlayer(player: player);
+      data: (sPlayer) {
+        return StatefulQiratPlayer(player: sPlayer);
       },
     );
   }

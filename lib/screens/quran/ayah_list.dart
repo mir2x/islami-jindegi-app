@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/widgets/audio/qirat.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:collection/collection.dart';
@@ -10,6 +13,9 @@ import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/providers/local_file.dart';
+import 'package:native_app/providers/qirat_player.dart';
+import 'package:native_app/objects/qirat_player_audio.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
@@ -85,9 +91,9 @@ class AyahList extends ConsumerWidget {
               );
             },
             error: (error, _) => Text(error.toString()),
-            data: (resources) {
+            data: (ayahs) {
               if (qSettings.containsKey('tilawat') && qSettings['tilawat']) {
-                String ayahs = resources.map((a) => a.title).join(' ');
+                String allAyahs = ayahs.map((a) => a.title).join(' ');
 
                 return ValueListenableBuilder<double>(
                   valueListenable: arabicFontSizeRatio,
@@ -107,7 +113,7 @@ class AyahList extends ConsumerWidget {
                           ),
                         ),
                         Text(
-                          ayahs,
+                          allAyahs,
                           textDirection: TextDirection.rtl,
                           textAlign: TextAlign.justify,
                           style: textTheme.labelLarge?.copyWith(
@@ -120,85 +126,14 @@ class AyahList extends ConsumerWidget {
                   },
                 );
               } else {
-                final itemScrollController = ItemScrollController();
-                final scrollOffsetController = ScrollOffsetController();
-                final itemPositionsListener = ItemPositionsListener.create();
-                final scrollOffsetListener = ScrollOffsetListener.create();
-
-                List<int> marks = [];
-
-                if (resources.length > 30) {
-                  int jump = ((resources.length - 1) / 10).floor();
-
-                  for (var i = 1; i < resources.length; i = i + jump) {
-                    marks.add(i);
-                  }
-                }
-
-                double screenHeight = MediaQuery.of(context).size.height;
-                var safeArea = MediaQuery.of(context).padding;
-                double markHeight =
-                    (screenHeight - safeArea.top - safeArea.bottom - 170) / 11;
-                double offset = markHeight / 2 + 35;
-
-                return Stack(
-                  children: [
-                    Column(
-                      children: [
-                        Bismillah(
-                          chapter: chapter,
-                          preferences: preferences,
-                          previousPage: previousPage,
-                          nextPage: nextPage,
-                        ),
-                        Expanded(
-                          child: ScrollablePositionedList.builder(
-                            key: PageStorageKey<String>(chapter.id),
-                            itemScrollController: itemScrollController,
-                            scrollOffsetController: scrollOffsetController,
-                            itemPositionsListener: itemPositionsListener,
-                            scrollOffsetListener: scrollOffsetListener,
-                            itemCount: resources.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Ayah(
-                                ayah: resources[index],
-                                chapter: chapter,
-                                preferences: preferences,
-                                arabicFontSizeRatio: arabicFontSizeRatio,
-                                banglaFontSizeRatio: banglaFontSizeRatio,
-                                markAdjustment: marks.isNotEmpty ? 12 : 0,
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    ...List.generate(marks.length, (index) {
-                      return Positioned(
-                        top: offset + markHeight * index,
-                        left: 0,
-                        child: InkWell(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 15,
-                              horizontal: 6,
-                            ),
-                            child: Text(
-                              marks[index].toString(),
-                              style: textTheme.labelSmall?.copyWith(
-                                fontSize: 10,
-                              ),
-                            ),
-                          ),
-                          onTap: () {
-                            itemScrollController.jumpTo(
-                              index: marks[index] - 1,
-                            );
-                          },
-                        ),
-                      );
-                    }),
-                  ],
+                return ReadingModeAyahList(
+                  chapter: chapter,
+                  ayahs: ayahs,
+                  preferences: preferences,
+                  previousPage: previousPage,
+                  nextPage: nextPage,
+                  arabicFontSizeRatio: arabicFontSizeRatio,
+                  banglaFontSizeRatio: banglaFontSizeRatio,
                 );
               }
             },
@@ -472,6 +407,176 @@ class AyahList extends ConsumerWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class ReadingModeAyahList extends ConsumerStatefulWidget {
+  const ReadingModeAyahList({
+    super.key,
+    required this.chapter,
+    required this.ayahs,
+    required this.preferences,
+    required this.previousPage,
+    required this.nextPage,
+    required this.arabicFontSizeRatio,
+    required this.banglaFontSizeRatio,
+  });
+
+  final dynamic chapter;
+  final List ayahs;
+  final dynamic preferences;
+  final Future? Function() previousPage;
+  final Future? Function() nextPage;
+  final FontSizeRatio arabicFontSizeRatio;
+  final FontSizeRatio banglaFontSizeRatio;
+
+  @override
+  ConsumerState createState() => _ReadingModeAyahListState();
+}
+
+class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
+  AudioPlayer player = AudioPlayer();
+  dynamic currentAyah;
+
+  void updateCurrentAyah(ayah) {
+    setState(() => currentAyah = ayah);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
+    var textTheme = Theme.of(context).textTheme;
+    var qSettings = ref.watch(quranSettingsProvider);
+    var qari = qSettings['qari'];
+    final itemScrollController = ItemScrollController();
+    final scrollOffsetController = ScrollOffsetController();
+    final itemPositionsListener = ItemPositionsListener.create();
+    final scrollOffsetListener = ScrollOffsetListener.create();
+
+    List<int> marks = [];
+
+    if (widget.ayahs.length > 30) {
+      int jump = ((widget.ayahs.length - 1) / 10).floor();
+
+      for (var i = 1; i < widget.ayahs.length; i = i + jump) {
+        marks.add(i);
+      }
+    }
+
+    double screenHeight = MediaQuery.of(context).size.height;
+    var safeArea = MediaQuery.of(context).padding;
+    double markHeight =
+        (screenHeight - safeArea.top - safeArea.bottom - 170) / 11;
+    double offset = markHeight / 2 + 35;
+
+    return Stack(
+      children: [
+        Column(
+          children: [
+            Bismillah(
+              chapter: widget.chapter,
+              preferences: widget.preferences,
+              previousPage: widget.previousPage,
+              nextPage: widget.nextPage,
+            ),
+            Expanded(
+              child: ScrollablePositionedList.builder(
+                key: PageStorageKey<String>(widget.chapter.id),
+                itemScrollController: itemScrollController,
+                scrollOffsetController: scrollOffsetController,
+                itemPositionsListener: itemPositionsListener,
+                scrollOffsetListener: scrollOffsetListener,
+                itemCount: widget.ayahs.length,
+                itemBuilder: (BuildContext context, int index) {
+                  var ayah = widget.ayahs[index];
+
+                  return Ayah(
+                    ayah: ayah,
+                    chapter: widget.chapter,
+                    qiratPlayer: StatefulQiratPlayer(player: player),
+                    isPlaying: currentAyah?.id == ayah.id,
+                    preferences: widget.preferences,
+                    arabicFontSizeRatio: widget.arabicFontSizeRatio,
+                    banglaFontSizeRatio: widget.banglaFontSizeRatio,
+                    markAdjustment: marks.isNotEmpty ? 12 : 0,
+                    loadQirat: (selectedAyah) async {
+                      var scaffoldMessenger = ScaffoldMessenger.of(context);
+                      String audioPath =
+                          '$qari/${widget.chapter.position}/${ayah.surahPosition}.mp3';
+
+                      bool hasNoConnection =
+                          await Connectivity().checkConnectivity() ==
+                              ConnectivityResult.none;
+
+                      var localFile = await ref.watch(
+                        localFileProvider('al-quran/qirats/$audioPath').future,
+                      );
+
+                      if (hasNoConnection && localFile == null) {
+                        scaffoldMessenger.removeCurrentSnackBar();
+
+                        scaffoldMessenger.showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.wifi),
+                                const SizedBox(width: 10),
+                                Text(
+                                  locales.connectToInternetMsg,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                            duration: const Duration(seconds: 5),
+                          ),
+                        );
+                      } else {
+                        await ref.watch(
+                          qiratPlayerProvider(
+                            QiratPlayerAudio(
+                              player: player,
+                              audioPath: audioPath,
+                            ),
+                          ).future,
+                        );
+
+                        updateCurrentAyah(selectedAyah);
+                      }
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+        ...List.generate(marks.length, (index) {
+          return Positioned(
+            top: offset + markHeight * index,
+            left: 0,
+            child: InkWell(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 15,
+                  horizontal: 6,
+                ),
+                child: Text(
+                  marks[index].toString(),
+                  style: textTheme.labelSmall?.copyWith(
+                    fontSize: 10,
+                  ),
+                ),
+              ),
+              onTap: () {
+                itemScrollController.jumpTo(
+                  index: marks[index] - 1,
+                );
+              },
+            ),
+          );
+        }),
+      ],
     );
   }
 }
