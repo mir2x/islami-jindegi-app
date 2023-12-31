@@ -5,14 +5,16 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/services.dart';
-import 'package:native_app/helpers/contextual_translation.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:html/parser.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/providers/quran_settings.dart';
+import 'package:native_app/providers/local_file.dart';
 import 'package:native_app/widgets/audio/qirat.dart';
 import 'package:native_app/providers/ayah_bookmarks.dart';
 import 'package:native_app/widgets/page/html_body.dart';
@@ -234,7 +236,7 @@ class Ayah extends ConsumerWidget {
   }
 }
 
-class QiratButton extends StatefulWidget {
+class QiratButton extends ConsumerStatefulWidget {
   const QiratButton({
     super.key,
     required this.surah,
@@ -247,10 +249,10 @@ class QiratButton extends StatefulWidget {
   final String qari;
 
   @override
-  State<QiratButton> createState() => _QiratButtonState();
+  ConsumerState<QiratButton> createState() => _QiratButtonState();
 }
 
-class _QiratButtonState extends State<QiratButton> {
+class _QiratButtonState extends ConsumerState<QiratButton> {
   bool playerLoaded = false;
 
   void loadPlayer() {
@@ -268,6 +270,8 @@ class _QiratButtonState extends State<QiratButton> {
 
   @override
   Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
+
     return Container(
       margin: const EdgeInsets.only(top: 8),
       child: playerLoaded
@@ -277,7 +281,40 @@ class _QiratButtonState extends State<QiratButton> {
               qari: widget.qari,
             )
           : InkWell(
-              onTap: loadPlayer,
+              onTap: () async {
+                var scaffoldMessenger = ScaffoldMessenger.of(context);
+                bool hasNoConnection =
+                    await Connectivity().checkConnectivity() ==
+                        ConnectivityResult.none;
+                var localFile = await ref.watch(
+                  localFileProvider(
+                    'al-quran/qirats/$widget.qari/${widget.surah.position}/${widget.ayah.surahPosition}.mp3',
+                  ).future,
+                );
+
+                if (hasNoConnection && localFile == null) {
+                  scaffoldMessenger.removeCurrentSnackBar();
+
+                  scaffoldMessenger.showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.wifi),
+                          const SizedBox(width: 10),
+                          Text(
+                            locales.connectToInternetMsg,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                      duration: const Duration(seconds: 5),
+                    ),
+                  );
+                } else {
+                  loadPlayer();
+                }
+              },
               child: SvgPicture.asset(
                 'assets/images/icons/play.svg',
                 width: 30,
