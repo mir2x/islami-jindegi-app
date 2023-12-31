@@ -5,15 +5,14 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/services.dart';
-import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:html/parser.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/providers/quran_settings.dart';
-import 'package:native_app/widgets/audio/qirat.dart';
 import 'package:native_app/providers/ayah_bookmarks.dart';
 import 'package:native_app/widgets/page/html_body.dart';
 
@@ -22,6 +21,9 @@ class Ayah extends ConsumerWidget {
     super.key,
     required this.ayah,
     required this.chapter,
+    required this.qiratPlayer,
+    required this.loadQirat,
+    required this.isPlaying,
     required this.preferences,
     required this.arabicFontSizeRatio,
     required this.banglaFontSizeRatio,
@@ -30,6 +32,9 @@ class Ayah extends ConsumerWidget {
 
   final dynamic ayah;
   final dynamic chapter;
+  final Widget qiratPlayer;
+  final Future? Function(dynamic) loadQirat;
+  final bool isPlaying;
   final dynamic preferences;
   final FontSizeRatio arabicFontSizeRatio;
   final FontSizeRatio banglaFontSizeRatio;
@@ -94,9 +99,11 @@ class Ayah extends ConsumerWidget {
                     if (qSettings.containsKey('qari') &&
                         chapter.runtimeType.toString() == 'Surah') ...[
                       QiratButton(
-                        surah: chapter,
                         ayah: ayah,
                         qari: qSettings['qari'],
+                        qiratPlayer: qiratPlayer,
+                        loadQirat: loadQirat,
+                        isPlaying: isPlaying,
                       ),
                     ],
                   ],
@@ -234,23 +241,27 @@ class Ayah extends ConsumerWidget {
   }
 }
 
-class QiratButton extends StatefulWidget {
+class QiratButton extends ConsumerStatefulWidget {
   const QiratButton({
     super.key,
-    required this.surah,
     required this.ayah,
     required this.qari,
+    required this.qiratPlayer,
+    required this.loadQirat,
+    required this.isPlaying,
   });
 
-  final dynamic surah;
   final dynamic ayah;
   final String qari;
+  final Widget qiratPlayer;
+  final Future? Function(dynamic) loadQirat;
+  final bool isPlaying;
 
   @override
-  State<QiratButton> createState() => _QiratButtonState();
+  ConsumerState<QiratButton> createState() => _QiratButtonState();
 }
 
-class _QiratButtonState extends State<QiratButton> {
+class _QiratButtonState extends ConsumerState<QiratButton> {
   bool playerLoaded = false;
 
   void loadPlayer() {
@@ -270,14 +281,10 @@ class _QiratButtonState extends State<QiratButton> {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 8),
-      child: playerLoaded
-          ? Qirat(
-              surah: widget.surah,
-              ayah: widget.ayah,
-              qari: widget.qari,
-            )
+      child: widget.isPlaying
+          ? widget.qiratPlayer
           : InkWell(
-              onTap: loadPlayer,
+              onTap: () async => await widget.loadQirat(widget.ayah),
               child: SvgPicture.asset(
                 'assets/images/icons/play.svg',
                 width: 30,

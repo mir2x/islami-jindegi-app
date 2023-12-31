@@ -1,18 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:native_app/objects/qirat_player_audio.dart';
+import 'package:native_app/objects/download_params.dart';
 import 'local_file.dart';
 import 'connectivity_result.dart';
 import 'downloader.dart';
-import 'package:native_app/objects/download_params.dart';
 
 final qiratPlayerProvider =
-    FutureProvider.autoDispose.family((ref, String audioPath) async {
+    FutureProvider.autoDispose.family((ref, QiratPlayerAudio qirat) async {
   String staticHostName = dotenv.env['STATIC_HOST_NAME']!;
-  String fileUrl = '$staticHostName/assets/al-quran/qirats/$audioPath';
-  String filePath = 'al-quran/qirats/$audioPath';
+  String fileUrl = '$staticHostName/assets/al-quran/qirats/${qirat.audioPath}';
+  String filePath = 'al-quran/qirats/${qirat.audioPath}';
 
   var fileProvider = localFileProvider(filePath);
   var localFile = await ref.watch(fileProvider.future);
@@ -41,13 +41,11 @@ final qiratPlayerProvider =
     }
   }
 
-  final AudioPlayer player = AudioPlayer();
-
   if (localFile != null) {
-    await player.setFilePath(localFile.path);
+    await qirat.player.setFilePath(localFile.path);
   } else {
     throw Exception('no file');
   }
 
-  return player;
+  return qirat.player;
 });
