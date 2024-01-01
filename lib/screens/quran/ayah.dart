@@ -7,10 +7,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flutter/services.dart';
 import 'package:html/parser.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/objects/single_model_query.dart';
+import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/providers/ayah_bookmarks.dart';
@@ -21,9 +21,9 @@ class Ayah extends ConsumerWidget {
     super.key,
     required this.ayah,
     required this.chapter,
-    required this.qiratPlayer,
     required this.loadQirat,
     required this.isPlaying,
+    required this.qiratPlayer,
     required this.preferences,
     required this.arabicFontSizeRatio,
     required this.banglaFontSizeRatio,
@@ -32,7 +32,7 @@ class Ayah extends ConsumerWidget {
 
   final dynamic ayah;
   final dynamic chapter;
-  final Widget qiratPlayer;
+  final Widget? qiratPlayer;
   final Future? Function(dynamic) loadQirat;
   final bool isPlaying;
   final dynamic preferences;
@@ -253,7 +253,7 @@ class QiratButton extends ConsumerStatefulWidget {
 
   final dynamic ayah;
   final String qari;
-  final Widget qiratPlayer;
+  final Widget? qiratPlayer;
   final Future? Function(dynamic) loadQirat;
   final bool isPlaying;
 

@@ -12,13 +12,13 @@ import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/objects/all_models_query.dart';
-import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/local_file.dart';
 import 'package:native_app/providers/qirat_player.dart';
-import 'package:native_app/objects/qirat_player_audio.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
+import 'package:native_app/objects/qirat_player_audio.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
@@ -439,7 +439,11 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
   AudioPlayer player = AudioPlayer();
   dynamic currentAyah;
 
-  void updateCurrentAyah(ayah) {
+  updatePlayer(updatedPlayer) {
+    setState(() => player = updatedPlayer);
+  }
+
+  updateCurrentAyah(ayah) {
     setState(() => currentAyah = ayah);
   }
 
@@ -470,6 +474,8 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
         (screenHeight - safeArea.top - safeArea.bottom - 170) / 11;
     double offset = markHeight / 2 + 35;
 
+    var qiratPlayer = StatefulQiratPlayer(player: player);
+
     return Stack(
       children: [
         Column(
@@ -490,12 +496,13 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
                 itemCount: widget.ayahs.length,
                 itemBuilder: (BuildContext context, int index) {
                   var ayah = widget.ayahs[index];
+                  bool isPlaying = currentAyah?.id == ayah.id;
 
                   return Ayah(
                     ayah: ayah,
                     chapter: widget.chapter,
-                    qiratPlayer: StatefulQiratPlayer(player: player),
-                    isPlaying: currentAyah?.id == ayah.id,
+                    isPlaying: isPlaying,
+                    qiratPlayer: isPlaying ? qiratPlayer : null,
                     preferences: widget.preferences,
                     arabicFontSizeRatio: widget.arabicFontSizeRatio,
                     banglaFontSizeRatio: widget.banglaFontSizeRatio,
@@ -533,7 +540,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
                           ),
                         );
                       } else {
-                        await ref.watch(
+                        var updatedPlayer = await ref.watch(
                           qiratPlayerProvider(
                             QiratPlayerAudio(
                               player: player,
@@ -542,6 +549,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
                           ).future,
                         );
 
+                        updatePlayer(updatedPlayer);
                         updateCurrentAyah(selectedAyah);
                       }
                     },
