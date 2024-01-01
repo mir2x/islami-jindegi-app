@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:flutter_svg/svg.dart';
@@ -21,9 +22,10 @@ class Ayah extends ConsumerWidget {
     super.key,
     required this.ayah,
     required this.chapter,
-    required this.loadQirat,
+    required this.player,
+    required this.isActive,
     required this.isPlaying,
-    required this.qiratPlayer,
+    required this.loadQirat,
     required this.preferences,
     required this.arabicFontSizeRatio,
     required this.banglaFontSizeRatio,
@@ -32,9 +34,10 @@ class Ayah extends ConsumerWidget {
 
   final dynamic ayah;
   final dynamic chapter;
-  final Widget? qiratPlayer;
-  final Future? Function(dynamic) loadQirat;
+  final AudioPlayer player;
+  final bool isActive;
   final bool isPlaying;
+  final Future? Function(dynamic) loadQirat;
   final dynamic preferences;
   final FontSizeRatio arabicFontSizeRatio;
   final FontSizeRatio banglaFontSizeRatio;
@@ -42,7 +45,6 @@ class Ayah extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
     var numFormatter = NumberFormat('#', currentLang);
     var textTheme = Theme.of(context).textTheme;
@@ -100,127 +102,16 @@ class Ayah extends ConsumerWidget {
                         chapter.runtimeType.toString() == 'Surah') ...[
                       QiratButton(
                         ayah: ayah,
-                        qari: qSettings['qari'],
-                        qiratPlayer: qiratPlayer,
+                        player: player,
                         loadQirat: loadQirat,
+                        isActive: isActive,
                         isPlaying: isPlaying,
                       ),
                     ],
                   ],
                 ),
               ),
-              PopupMenuButton<int>(
-                child: Container(
-                  padding: const EdgeInsets.only(top: 5),
-                  child: const SizedBox(
-                    height: 40,
-                    width: 35,
-                    child: Icon(Icons.more_vert),
-                  ),
-                ),
-                itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-                  PopupMenuItem<int>(
-                    value: 0,
-                    child: Text(locales.readTafseer),
-                  ),
-                  PopupMenuItem<int>(
-                    value: 1,
-                    child: Text(locales.saveAyah),
-                  ),
-                  PopupMenuItem<int>(
-                    value: 2,
-                    child: Text(locales.copyAyah),
-                  ),
-                  PopupMenuItem<int>(
-                    value: 3,
-                    child: Text(locales.share),
-                  ),
-                ],
-                onSelected: (int item) async {
-                  switch (item) {
-                    case 0:
-                      QR.to('quran/tafseers/${ayah.id}');
-                      break;
-                    case 1:
-                      var query = SingleModelQuery(
-                        repository: ref.ayahs,
-                        id: ayah.id,
-                        params: const {'include': 'surah,ayah-translations'},
-                      );
-
-                      var reloadedAyah = await ref.read(
-                        singleModelProvider(query).future,
-                      );
-
-                      await ref
-                          .read(ayahBookmarkProvider(ayah.id).notifier)
-                          .createItem({
-                        'ayahId': ayah.id,
-                        'title': ayah.title,
-                        if (ayah.ayahTranslations.isNotEmpty) ...{
-                          'translation':
-                              reloadedAyah.ayahTranslations.first.body,
-                        },
-                        'position': ayah.surahPosition,
-                        'surahTitle': reloadedAyah.surah.value.title,
-                        'surahTitleBn': reloadedAyah.surah.value.titleBn,
-                      });
-
-                      break;
-                    case 2:
-                      await Clipboard.setData(ClipboardData(text: ayah.title));
-                      break;
-                    case 3:
-                      var query = SingleModelQuery(
-                        repository: ref.ayahs,
-                        id: ayah.id,
-                        params: const {'include': 'surah,ayah-translations'},
-                      );
-
-                      var reloadedAyah = await ref.read(
-                        singleModelProvider(query).future,
-                      );
-
-                      String surahTitle = contextualTranslation(
-                        locale: currentLang,
-                        enText: reloadedAyah.surah.value.title,
-                        bnText: reloadedAyah.surah.value.titleBn,
-                      );
-
-                      String ayahPosition = numFormatter.format(
-                        ayah.surahPosition,
-                      );
-
-                      var text = ayah.title;
-
-                      if (ayah.ayahTranslations.isNotEmpty) {
-                        final document =
-                            parse(ayah.ayahTranslations.first.body);
-                        List pList = document.querySelectorAll('p');
-
-                        if (pList.isNotEmpty) {
-                          text += '\n\n';
-                          for (var p in pList) {
-                            if (p.text != '') {
-                              text += '${p.text}\n\n';
-                            }
-                          }
-                        }
-                      }
-
-                      text += '\n\n$surahTitle - $ayahPosition';
-
-                      await Clipboard.setData(ClipboardData(text: text));
-
-                      Share.share(
-                        text,
-                        subject: '$surahTitle - $ayahPosition',
-                      );
-
-                      break;
-                  }
-                },
-              ),
+              ActionButtons(ayah: ayah),
             ],
           ),
           if (qSettings.containsKey('translation') &&
@@ -241,56 +132,180 @@ class Ayah extends ConsumerWidget {
   }
 }
 
-class QiratButton extends ConsumerStatefulWidget {
+class QiratButton extends StatelessWidget {
   const QiratButton({
     super.key,
     required this.ayah,
-    required this.qari,
-    required this.qiratPlayer,
-    required this.loadQirat,
+    required this.player,
+    required this.isActive,
     required this.isPlaying,
+    required this.loadQirat,
   });
 
   final dynamic ayah;
-  final String qari;
-  final Widget? qiratPlayer;
-  final Future? Function(dynamic) loadQirat;
+  final AudioPlayer player;
+  final bool isActive;
   final bool isPlaying;
-
-  @override
-  ConsumerState<QiratButton> createState() => _QiratButtonState();
-}
-
-class _QiratButtonState extends ConsumerState<QiratButton> {
-  bool playerLoaded = false;
-
-  void loadPlayer() {
-    setState(() => playerLoaded = true);
-  }
-
-  @override
-  @mustCallSuper
-  void didUpdateWidget(covariant oldwidget) {
-    super.didUpdateWidget(oldwidget);
-    if (widget.qari != oldwidget.qari) {
-      setState(() => playerLoaded = false);
-    }
-  }
+  final Future? Function(dynamic) loadQirat;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 8),
-      child: widget.isPlaying
-          ? widget.qiratPlayer
+      child: isActive
+          ? InkWell(
+              onTap: () async {
+                if (isPlaying) {
+                  await player.pause();
+                } else {
+                  await player.play();
+                }
+              },
+              child: isPlaying
+                  ? SvgPicture.asset(
+                      'assets/images/icons/pause.svg',
+                      width: 30,
+                      height: 30,
+                    )
+                  : SvgPicture.asset(
+                      'assets/images/icons/play.svg',
+                      width: 30,
+                      height: 30,
+                    ),
+            )
           : InkWell(
-              onTap: () async => await widget.loadQirat(widget.ayah),
+              onTap: () async => await loadQirat(ayah),
               child: SvgPicture.asset(
                 'assets/images/icons/play.svg',
                 width: 30,
                 height: 30,
               ),
             ),
+    );
+  }
+}
+
+class ActionButtons extends ConsumerWidget {
+  const ActionButtons({
+    super.key,
+    required this.ayah,
+  });
+
+  final dynamic ayah;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
+    String currentLang = Localizations.localeOf(context).languageCode;
+    var numFormatter = NumberFormat('#', currentLang);
+
+    return PopupMenuButton<int>(
+      child: Container(
+        padding: const EdgeInsets.only(top: 5),
+        child: const SizedBox(
+          height: 40,
+          width: 35,
+          child: Icon(Icons.more_vert),
+        ),
+      ),
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+        PopupMenuItem<int>(
+          value: 0,
+          child: Text(locales.readTafseer),
+        ),
+        PopupMenuItem<int>(
+          value: 1,
+          child: Text(locales.saveAyah),
+        ),
+        PopupMenuItem<int>(
+          value: 2,
+          child: Text(locales.copyAyah),
+        ),
+        PopupMenuItem<int>(
+          value: 3,
+          child: Text(locales.share),
+        ),
+      ],
+      onSelected: (int item) async {
+        switch (item) {
+          case 0:
+            QR.to('quran/tafseers/${ayah.id}');
+            break;
+          case 1:
+            var query = SingleModelQuery(
+              repository: ref.ayahs,
+              id: ayah.id,
+              params: const {'include': 'surah,ayah-translations'},
+            );
+
+            var reloadedAyah = await ref.read(
+              singleModelProvider(query).future,
+            );
+
+            await ref.read(ayahBookmarkProvider(ayah.id).notifier).createItem({
+              'ayahId': ayah.id,
+              'title': ayah.title,
+              if (ayah.ayahTranslations.isNotEmpty) ...{
+                'translation': reloadedAyah.ayahTranslations.first.body,
+              },
+              'position': ayah.surahPosition,
+              'surahTitle': reloadedAyah.surah.value.title,
+              'surahTitleBn': reloadedAyah.surah.value.titleBn,
+            });
+
+            break;
+          case 2:
+            await Clipboard.setData(ClipboardData(text: ayah.title));
+            break;
+          case 3:
+            var query = SingleModelQuery(
+              repository: ref.ayahs,
+              id: ayah.id,
+              params: const {'include': 'surah,ayah-translations'},
+            );
+
+            var reloadedAyah = await ref.read(
+              singleModelProvider(query).future,
+            );
+
+            String surahTitle = contextualTranslation(
+              locale: currentLang,
+              enText: reloadedAyah.surah.value.title,
+              bnText: reloadedAyah.surah.value.titleBn,
+            );
+
+            String ayahPosition = numFormatter.format(
+              ayah.surahPosition,
+            );
+
+            var text = ayah.title;
+
+            if (ayah.ayahTranslations.isNotEmpty) {
+              final document = parse(ayah.ayahTranslations.first.body);
+              List pList = document.querySelectorAll('p');
+
+              if (pList.isNotEmpty) {
+                text += '\n\n';
+                for (var p in pList) {
+                  if (p.text != '') {
+                    text += '${p.text}\n\n';
+                  }
+                }
+              }
+            }
+
+            text += '\n\n$surahTitle - $ayahPosition';
+
+            await Clipboard.setData(ClipboardData(text: text));
+
+            Share.share(
+              text,
+              subject: '$surahTitle - $ayahPosition',
+            );
+
+            break;
+        }
+      },
     );
   }
 }

@@ -1,6 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:native_app/widgets/audio/qirat.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -93,42 +93,15 @@ class AyahList extends ConsumerWidget {
             error: (error, _) => Text(error.toString()),
             data: (ayahs) {
               if (qSettings.containsKey('tilawat') && qSettings['tilawat']) {
-                String allAyahs = ayahs.map((a) => a.title).join(' ');
-
-                return ValueListenableBuilder<double>(
-                  valueListenable: arabicFontSizeRatio,
-                  builder: (context, ratio, child) {
-                    return ItemContent(
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          margin: const EdgeInsets.only(bottom: 15),
-                          child: Text(
-                            'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ',
-                            textDirection: TextDirection.rtl,
-                            style: textTheme.labelLarge?.copyWith(
-                              fontSize: 28 * ratio,
-                              height: 1.5,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          allAyahs,
-                          textDirection: TextDirection.rtl,
-                          textAlign: TextAlign.justify,
-                          style: textTheme.labelLarge?.copyWith(
-                            fontSize: 28 * ratio,
-                            height: 1.5,
-                          ),
-                        ),
-                      ],
-                    );
-                  },
+                return TilawatModeAyahList(
+                  ayahs: ayahs,
+                  arabicFontSizeRatio: arabicFontSizeRatio,
                 );
               } else {
                 return ReadingModeAyahList(
                   chapter: chapter,
                   ayahs: ayahs,
+                  qari: qSettings['qari'],
                   preferences: preferences,
                   previousPage: previousPage,
                   nextPage: nextPage,
@@ -411,11 +384,60 @@ class AyahList extends ConsumerWidget {
   }
 }
 
+class TilawatModeAyahList extends StatelessWidget {
+  const TilawatModeAyahList({
+    super.key,
+    required this.ayahs,
+    required this.arabicFontSizeRatio,
+  });
+
+  final List ayahs;
+  final FontSizeRatio arabicFontSizeRatio;
+
+  @override
+  Widget build(BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
+    String allAyahs = ayahs.map((a) => a.title).join(' ');
+
+    return ValueListenableBuilder<double>(
+      valueListenable: arabicFontSizeRatio,
+      builder: (context, ratio, child) {
+        return ItemContent(
+          children: [
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.only(bottom: 15),
+              child: Text(
+                'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ',
+                textDirection: TextDirection.rtl,
+                style: textTheme.labelLarge?.copyWith(
+                  fontSize: 28 * ratio,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            Text(
+              allAyahs,
+              textDirection: TextDirection.rtl,
+              textAlign: TextAlign.justify,
+              style: textTheme.labelLarge?.copyWith(
+                fontSize: 28 * ratio,
+                height: 1.5,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
 class ReadingModeAyahList extends ConsumerStatefulWidget {
   const ReadingModeAyahList({
     super.key,
     required this.chapter,
     required this.ayahs,
+    required this.qari,
     required this.preferences,
     required this.previousPage,
     required this.nextPage,
@@ -425,6 +447,7 @@ class ReadingModeAyahList extends ConsumerStatefulWidget {
 
   final dynamic chapter;
   final List ayahs;
+  final String? qari;
   final dynamic preferences;
   final Future? Function() previousPage;
   final Future? Function() nextPage;
@@ -437,22 +460,54 @@ class ReadingModeAyahList extends ConsumerStatefulWidget {
 
 class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
   AudioPlayer player = AudioPlayer();
-  dynamic currentAyah;
+  StreamSubscription? _playerStateSubscription;
+  bool isPlaying = false;
 
-  updatePlayer(updatedPlayer) {
-    setState(() => player = updatedPlayer);
-  }
+  dynamic currentAyah;
 
   updateCurrentAyah(ayah) {
     setState(() => currentAyah = ayah);
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    _playerStateSubscription = player.playerStateStream.listen((PlayerState s) {
+      setState(() {
+        if (s.processingState == ProcessingState.completed) {
+          player.pause();
+          player.seek(const Duration(seconds: 0));
+        }
+
+        isPlaying = s.playing;
+      });
+    });
+  }
+
+  @override
+  @mustCallSuper
+  void didUpdateWidget(covariant oldwidget) {
+    super.didUpdateWidget(oldwidget);
+    if (widget.qari != oldwidget.qari) {
+      setState(() {
+        player.stop();
+        currentAyah = null;
+      });
+    }
+  }
+
+  @override
+  Future<void> dispose() async {
+    super.dispose();
+    await _playerStateSubscription?.cancel();
+    await player.stop();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    var qSettings = ref.watch(quranSettingsProvider);
-    var qari = qSettings['qari'];
     final itemScrollController = ItemScrollController();
     final scrollOffsetController = ScrollOffsetController();
     final itemPositionsListener = ItemPositionsListener.create();
@@ -474,8 +529,6 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
         (screenHeight - safeArea.top - safeArea.bottom - 170) / 11;
     double offset = markHeight / 2 + 35;
 
-    var qiratPlayer = StatefulQiratPlayer(player: player);
-
     return Stack(
       children: [
         Column(
@@ -496,21 +549,23 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
                 itemCount: widget.ayahs.length,
                 itemBuilder: (BuildContext context, int index) {
                   var ayah = widget.ayahs[index];
-                  bool isPlaying = currentAyah?.id == ayah.id;
+                  bool isActive = currentAyah?.id == ayah.id;
 
                   return Ayah(
                     ayah: ayah,
                     chapter: widget.chapter,
+                    player: player,
+                    isActive: isActive,
                     isPlaying: isPlaying,
-                    qiratPlayer: isPlaying ? qiratPlayer : null,
                     preferences: widget.preferences,
                     arabicFontSizeRatio: widget.arabicFontSizeRatio,
                     banglaFontSizeRatio: widget.banglaFontSizeRatio,
                     markAdjustment: marks.isNotEmpty ? 12 : 0,
                     loadQirat: (selectedAyah) async {
                       var scaffoldMessenger = ScaffoldMessenger.of(context);
+
                       String audioPath =
-                          '$qari/${widget.chapter.position}/${ayah.surahPosition}.mp3';
+                          '${widget.qari}/${widget.chapter.position}/${selectedAyah.surahPosition}.mp3';
 
                       bool hasNoConnection =
                           await Connectivity().checkConnectivity() ==
@@ -540,17 +595,32 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
                           ),
                         );
                       } else {
-                        var updatedPlayer = await ref.watch(
-                          qiratPlayerProvider(
-                            QiratPlayerAudio(
-                              player: player,
-                              audioPath: audioPath,
-                            ),
-                          ).future,
-                        );
+                        try {
+                          await ref.watch(
+                            qiratPlayerProvider(
+                              QiratPlayerAudio(
+                                player: player,
+                                audioPath: audioPath,
+                              ),
+                            ).future,
+                          );
 
-                        updatePlayer(updatedPlayer);
-                        updateCurrentAyah(selectedAyah);
+                          player.play();
+
+                          updateCurrentAyah(selectedAyah);
+                        } catch (error) {
+                          scaffoldMessenger.removeCurrentSnackBar();
+
+                          scaffoldMessenger.showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                locales.tryAgain,
+                                textAlign: TextAlign.center,
+                              ),
+                              duration: const Duration(seconds: 5),
+                            ),
+                          );
+                        }
                       }
                     },
                   );
