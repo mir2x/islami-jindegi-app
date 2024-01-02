@@ -43,6 +43,7 @@ final qiratPlayerProvider =
 
   if (localFile != null) {
     await qirat.player.setFilePath(localFile.path);
+    qirat.player.play();
   } else {
     throw Exception('no file');
   }

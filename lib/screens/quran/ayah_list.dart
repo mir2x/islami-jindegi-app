@@ -13,12 +13,10 @@ import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/providers/local_file.dart';
-import 'package:native_app/providers/qirat_player.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
-import 'package:native_app/objects/qirat_player_audio.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
@@ -46,11 +44,8 @@ class AyahList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
-    var textTheme = Theme.of(context).textTheme;
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
     bool isSmallMobile = screenWidth < 340;
     var qSettings = ref.watch(quranSettingsProvider);
 
@@ -102,6 +97,8 @@ class AyahList extends ConsumerWidget {
                   chapter: chapter,
                   ayahs: ayahs,
                   qari: qSettings['qari'],
+                  serialTilawat: qSettings.containsKey('serialTilawat') &&
+                      qSettings['serialTilawat'],
                   preferences: preferences,
                   previousPage: previousPage,
                   nextPage: nextPage,
@@ -118,93 +115,13 @@ class AyahList extends ConsumerWidget {
                 children: [
                   Container(
                     margin: EdgeInsets.only(left: isSmallMobile ? 0 : 2),
-                    child: TextButton(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (qSettings.containsKey('tilawat') &&
-                              qSettings['tilawat']) ...[
-                            const Icon(
-                              Icons.check_box,
-                              color: ThemeColors.color4,
-                              size: 20,
-                            ),
-                          ] else ...[
-                            const Icon(
-                              Icons.check_box_outline_blank,
-                              color: ThemeColors.color4,
-                              size: 20,
-                            ),
-                          ],
-                          Container(
-                            margin: const EdgeInsets.only(left: 2, bottom: 1),
-                            child: Text(
-                              locales.tilawat,
-                              style: isSmallMobile
-                                  ? textTheme.labelSmall
-                                  : textTheme.labelMedium,
-                            ),
-                          ),
-                        ],
-                      ),
-                      onPressed: () {
-                        bool selectedTranslationOption =
-                            qSettings.containsKey('tilawat')
-                                ? qSettings['tilawat']
-                                : false;
-
-                        ref.read(quranSettingsProvider.notifier).updateParams(
-                              'tilawat',
-                              !selectedTranslationOption,
-                            );
-                      },
-                    ),
+                    child: const TilawatOption(),
                   ),
                   if (!(qSettings.containsKey('tilawat') &&
                       qSettings['tilawat'])) ...[
                     Container(
                       margin: const EdgeInsets.only(left: 2),
-                      child: TextButton(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (qSettings.containsKey('translation') &&
-                                qSettings['translation']) ...[
-                              const Icon(
-                                Icons.check_box,
-                                color: ThemeColors.color4,
-                                size: 20,
-                              ),
-                            ] else ...[
-                              const Icon(
-                                Icons.check_box_outline_blank,
-                                color: ThemeColors.color4,
-                                size: 20,
-                              ),
-                            ],
-                            Container(
-                              margin: const EdgeInsets.only(left: 2, bottom: 1),
-                              child: Text(
-                                locales.translation,
-                                style: isSmallMobile
-                                    ? textTheme.labelSmall
-                                    : textTheme.labelMedium,
-                              ),
-                            ),
-                          ],
-                        ),
-                        onPressed: () {
-                          bool selectedTranslationOption =
-                              qSettings.containsKey('translation')
-                                  ? qSettings['translation']
-                                  : false;
-
-                          ref.read(quranSettingsProvider.notifier).updateParams(
-                                'translation',
-                                !selectedTranslationOption,
-                              );
-                        },
-                      ),
+                      child: const TranslationOption(),
                     ),
                   ],
                 ],
@@ -213,166 +130,12 @@ class AyahList extends ConsumerWidget {
                 children: [
                   if (!(qSettings.containsKey('tilawat') &&
                       qSettings['tilawat'])) ...[
-                    TextButton(
-                      child: Text(locales.qaris, style: textTheme.titleMedium),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return Dialog(
-                              child: Container(
-                                width: screenWidth,
-                                height: screenHeight * 0.4,
-                                padding: const EdgeInsets.only(
-                                  top: 15,
-                                  bottom: 25,
-                                  left: 15,
-                                  right: 15,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    Expanded(
-                                      child: FilterList(
-                                        title: locales.qaris,
-                                        paramKeys: const ['qari'],
-                                        queryProvider: quranSettingsProvider,
-                                        queryBuilder:
-                                            (Map<String, dynamic> params) {
-                                          return AllModelsQuery(
-                                            repository: ref.qaris,
-                                            params: params,
-                                          );
-                                        },
-                                        itemBuilder: (_, item, __) {
-                                          return FilterItem(
-                                            itemId: item.slug,
-                                            itemTitle: item.name,
-                                            paramKey: 'qari',
-                                            queryProvider:
-                                                quranSettingsProvider,
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
+                    const QariOptions(),
                   ],
-                  TextButton(
-                    child: Text(locales.font, style: textTheme.titleMedium),
-                    onPressed: () {
-                      const List<Map<String, String>> arabicFonts = [
-                        {
-                          'label': 'Al Qalam Quran Majeed',
-                          'value': 'arabic/al-qalam-quran-majeed',
-                        },
-                        {
-                          'label': 'Al Qalam Kolkatta Quran Majeed',
-                          'value': 'arabic/al-qalam-kolkatta',
-                        },
-                        {
-                          'label': 'Al Mushaf Quran',
-                          'value': 'arabic/al-mushaf',
-                        },
-                        {
-                          'label': 'Al Qalam Quran',
-                          'value': 'arabic/al-qalam-quran',
-                        }
-                      ];
-
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          String theme =
-                              preferences.getString('theme') ?? 'dark';
-
-                          String selectedArabicFont = arabicFonts
-                                  .map((i) => i['value'])
-                                  .firstWhereOrNull((i) {
-                                return i == preferences.getString('arabicFont');
-                              }) ??
-                              'arabic/al-mushaf';
-
-                          return Dialog(
-                            child: Container(
-                              width: screenWidth,
-                              height: 270,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: theme == 'dark'
-                                      ? const AssetImage(
-                                          'assets/images/icons/background-pattern-dark.png',
-                                        )
-                                      : const AssetImage(
-                                          'assets/images/icons/background-pattern-light.png',
-                                        ),
-                                  repeat: ImageRepeat.repeat,
-                                ),
-                              ),
-                              padding: const EdgeInsets.only(
-                                top: 15,
-                                bottom: 25,
-                                left: 15,
-                                right: 15,
-                              ),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(bottom: 40),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: [
-                                        SectionTitle(
-                                          title: locales.arabicFont,
-                                        ),
-                                        Dropdown(
-                                          items: arabicFonts,
-                                          selectedValue: selectedArabicFont,
-                                          updateItem: (value) {
-                                            ref
-                                                .read(
-                                                  preferencesProvider.notifier,
-                                                )
-                                                .updateArabicFont(value);
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Column(
-                                    children: [
-                                      Center(
-                                        child: FontResizer(
-                                          fontSizeRatio: arabicFontSizeRatio,
-                                          text: locales.arabicFont,
-                                          storeKey: 'ayahFontRatio',
-                                        ),
-                                      ),
-                                      FontResizer(
-                                        fontSizeRatio: banglaFontSizeRatio,
-                                        text: locales.banglaFont,
-                                        storeKey: 'translationFontRatio',
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
+                  FontOptions(
+                    preferences: preferences,
+                    arabicFontSizeRatio: arabicFontSizeRatio,
+                    banglaFontSizeRatio: banglaFontSizeRatio,
                   ),
                 ],
               ),
@@ -438,6 +201,7 @@ class ReadingModeAyahList extends ConsumerStatefulWidget {
     required this.chapter,
     required this.ayahs,
     required this.qari,
+    required this.serialTilawat,
     required this.preferences,
     required this.previousPage,
     required this.nextPage,
@@ -448,6 +212,7 @@ class ReadingModeAyahList extends ConsumerStatefulWidget {
   final dynamic chapter;
   final List ayahs;
   final String? qari;
+  final bool serialTilawat;
   final dynamic preferences;
   final Future? Function() previousPage;
   final Future? Function() nextPage;
@@ -466,7 +231,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
   dynamic currentAyah;
 
   updateCurrentAyah(ayah) {
-    setState(() => currentAyah = ayah);
+    setState(() => currentAyah = ayah.surahPosition);
   }
 
   @override
@@ -476,8 +241,12 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
     _playerStateSubscription = player.playerStateStream.listen((PlayerState s) {
       setState(() {
         if (s.processingState == ProcessingState.completed) {
-          player.pause();
-          player.seek(const Duration(seconds: 0));
+          if (widget.serialTilawat && currentAyah < widget.ayahs.length) {
+            currentAyah = currentAyah + 1;
+          } else {
+            player.pause();
+            player.seek(const Duration(seconds: 0));
+          }
         }
 
         isPlaying = s.playing;
@@ -489,12 +258,23 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
   @mustCallSuper
   void didUpdateWidget(covariant oldwidget) {
     super.didUpdateWidget(oldwidget);
-    if (widget.qari != oldwidget.qari) {
-      setState(() {
+
+    setState(() {
+      bool qariChanged = widget.qari != oldwidget.qari;
+
+      if (widget.serialTilawat) {
+        player.play();
+
+        if (qariChanged) {
+          currentAyah ??= 1;
+        } else {
+          currentAyah = 1;
+        }
+      } else if (qariChanged) {
         player.stop();
         currentAyah = null;
-      });
-    }
+      }
+    });
   }
 
   @override
@@ -549,11 +329,12 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
                 itemCount: widget.ayahs.length,
                 itemBuilder: (BuildContext context, int index) {
                   var ayah = widget.ayahs[index];
-                  bool isActive = currentAyah?.id == ayah.id;
+                  bool isActive = currentAyah == ayah.surahPosition;
 
                   return Ayah(
                     ayah: ayah,
                     chapter: widget.chapter,
+                    qari: widget.qari,
                     player: player,
                     isActive: isActive,
                     isPlaying: isPlaying,
@@ -595,32 +376,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
                           ),
                         );
                       } else {
-                        try {
-                          await ref.watch(
-                            qiratPlayerProvider(
-                              QiratPlayerAudio(
-                                player: player,
-                                audioPath: audioPath,
-                              ),
-                            ).future,
-                          );
-
-                          player.play();
-
-                          updateCurrentAyah(selectedAyah);
-                        } catch (error) {
-                          scaffoldMessenger.removeCurrentSnackBar();
-
-                          scaffoldMessenger.showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                locales.tryAgain,
-                                textAlign: TextAlign.center,
-                              ),
-                              duration: const Duration(seconds: 5),
-                            ),
-                          );
-                        }
+                        updateCurrentAyah(selectedAyah);
                       }
                     },
                   );
@@ -655,6 +411,345 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
           );
         }),
       ],
+    );
+  }
+}
+
+class TilawatOption extends ConsumerWidget {
+  const TilawatOption({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
+    var textTheme = Theme.of(context).textTheme;
+    var qSettings = ref.watch(quranSettingsProvider);
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallMobile = screenWidth < 340;
+
+    return TextButton(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (qSettings.containsKey('tilawat') && qSettings['tilawat']) ...[
+            const Icon(
+              Icons.check_box,
+              color: ThemeColors.color4,
+              size: 20,
+            ),
+          ] else ...[
+            const Icon(
+              Icons.check_box_outline_blank,
+              color: ThemeColors.color4,
+              size: 20,
+            ),
+          ],
+          Container(
+            margin: const EdgeInsets.only(left: 2, bottom: 1),
+            child: Text(
+              locales.tilawat,
+              style:
+                  isSmallMobile ? textTheme.labelSmall : textTheme.labelMedium,
+            ),
+          ),
+        ],
+      ),
+      onPressed: () {
+        bool selectedTranslationOption =
+            qSettings.containsKey('tilawat') ? qSettings['tilawat'] : false;
+
+        ref.read(quranSettingsProvider.notifier).updateParams(
+              'tilawat',
+              !selectedTranslationOption,
+            );
+      },
+    );
+  }
+}
+
+class TranslationOption extends ConsumerWidget {
+  const TranslationOption({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
+    var textTheme = Theme.of(context).textTheme;
+    var qSettings = ref.watch(quranSettingsProvider);
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallMobile = screenWidth < 340;
+
+    return TextButton(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (qSettings.containsKey('translation') &&
+              qSettings['translation']) ...[
+            const Icon(
+              Icons.check_box,
+              color: ThemeColors.color4,
+              size: 20,
+            ),
+          ] else ...[
+            const Icon(
+              Icons.check_box_outline_blank,
+              color: ThemeColors.color4,
+              size: 20,
+            ),
+          ],
+          Container(
+            margin: const EdgeInsets.only(left: 2, bottom: 1),
+            child: Text(
+              locales.translation,
+              style:
+                  isSmallMobile ? textTheme.labelSmall : textTheme.labelMedium,
+            ),
+          ),
+        ],
+      ),
+      onPressed: () {
+        bool selectedTranslationOption = qSettings.containsKey('translation')
+            ? qSettings['translation']
+            : false;
+
+        ref.read(quranSettingsProvider.notifier).updateParams(
+              'translation',
+              !selectedTranslationOption,
+            );
+      },
+    );
+  }
+}
+
+class QariOptions extends ConsumerWidget {
+  const QariOptions({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
+    var textTheme = Theme.of(context).textTheme;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    var qSettings = ref.watch(quranSettingsProvider);
+
+    return TextButton(
+      child: Text(locales.qaris, style: textTheme.titleMedium),
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Dialog(
+              child: Container(
+                width: screenWidth,
+                height: screenHeight * 0.5,
+                padding: const EdgeInsets.only(
+                  top: 15,
+                  bottom: 25,
+                  left: 15,
+                  right: 15,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextButton(
+                      child: Row(
+                        children: [
+                          if (qSettings.containsKey('serialTilawat') &&
+                              qSettings['serialTilawat']) ...[
+                            const Icon(
+                              Icons.check_box,
+                              color: ThemeColors.color4,
+                              size: 20,
+                            ),
+                          ] else ...[
+                            const Icon(
+                              Icons.check_box_outline_blank,
+                              color: ThemeColors.color4,
+                              size: 20,
+                            ),
+                          ],
+                          Container(
+                            margin: const EdgeInsets.only(left: 4, bottom: 1),
+                            child: Text(
+                              locales.serialTilawat,
+                              style: textTheme.labelMedium,
+                            ),
+                          ),
+                        ],
+                      ),
+                      onPressed: () {
+                        bool selectedSerialTilawatOption =
+                            qSettings.containsKey('serialTilawat')
+                                ? qSettings['serialTilawat']
+                                : false;
+
+                        ref.read(quranSettingsProvider.notifier).updateParams(
+                              'serialTilawat',
+                              !selectedSerialTilawatOption,
+                            );
+
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    const SizedBox(height: 50),
+                    Expanded(
+                      child: FilterList(
+                        title: locales.qaris,
+                        paramKeys: const ['qari'],
+                        queryProvider: quranSettingsProvider,
+                        queryBuilder: (Map<String, dynamic> params) {
+                          return AllModelsQuery(
+                            repository: ref.qaris,
+                            params: params,
+                          );
+                        },
+                        itemBuilder: (_, item, __) {
+                          return FilterItem(
+                            itemId: item.slug,
+                            itemTitle: item.name,
+                            paramKey: 'qari',
+                            queryProvider: quranSettingsProvider,
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class FontOptions extends ConsumerWidget {
+  const FontOptions({
+    super.key,
+    required this.preferences,
+    required this.arabicFontSizeRatio,
+    required this.banglaFontSizeRatio,
+  });
+
+  final dynamic preferences;
+  final FontSizeRatio arabicFontSizeRatio;
+  final FontSizeRatio banglaFontSizeRatio;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
+    var textTheme = Theme.of(context).textTheme;
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    return TextButton(
+      child: Text(locales.font, style: textTheme.titleMedium),
+      onPressed: () {
+        const List<Map<String, String>> arabicFonts = [
+          {
+            'label': 'Al Qalam Quran Majeed',
+            'value': 'arabic/al-qalam-quran-majeed',
+          },
+          {
+            'label': 'Al Qalam Kolkatta Quran Majeed',
+            'value': 'arabic/al-qalam-kolkatta',
+          },
+          {
+            'label': 'Al Mushaf Quran',
+            'value': 'arabic/al-mushaf',
+          },
+          {
+            'label': 'Al Qalam Quran',
+            'value': 'arabic/al-qalam-quran',
+          }
+        ];
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            String theme = preferences.getString('theme') ?? 'dark';
+
+            String selectedArabicFont =
+                arabicFonts.map((i) => i['value']).firstWhereOrNull((i) {
+                      return i == preferences.getString('arabicFont');
+                    }) ??
+                    'arabic/al-mushaf';
+
+            return Dialog(
+              child: Container(
+                width: screenWidth,
+                height: 270,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: theme == 'dark'
+                        ? const AssetImage(
+                            'assets/images/icons/background-pattern-dark.png',
+                          )
+                        : const AssetImage(
+                            'assets/images/icons/background-pattern-light.png',
+                          ),
+                    repeat: ImageRepeat.repeat,
+                  ),
+                ),
+                padding: const EdgeInsets.only(
+                  top: 15,
+                  bottom: 25,
+                  left: 15,
+                  right: 15,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 40),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SectionTitle(
+                            title: locales.arabicFont,
+                          ),
+                          Dropdown(
+                            items: arabicFonts,
+                            selectedValue: selectedArabicFont,
+                            updateItem: (value) {
+                              ref
+                                  .read(
+                                    preferencesProvider.notifier,
+                                  )
+                                  .updateArabicFont(value);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        Center(
+                          child: FontResizer(
+                            fontSizeRatio: arabicFontSizeRatio,
+                            text: locales.arabicFont,
+                            storeKey: 'ayahFontRatio',
+                          ),
+                        ),
+                        FontResizer(
+                          fontSizeRatio: banglaFontSizeRatio,
+                          text: locales.banglaFont,
+                          storeKey: 'translationFontRatio',
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

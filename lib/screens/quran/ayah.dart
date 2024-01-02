@@ -13,7 +13,9 @@ import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
+import 'package:native_app/objects/qirat_player_audio.dart';
 import 'package:native_app/providers/quran_settings.dart';
+import 'package:native_app/providers/qirat_player.dart';
 import 'package:native_app/providers/ayah_bookmarks.dart';
 import 'package:native_app/widgets/page/html_body.dart';
 
@@ -22,6 +24,7 @@ class Ayah extends ConsumerWidget {
     super.key,
     required this.ayah,
     required this.chapter,
+    required this.qari,
     required this.player,
     required this.isActive,
     required this.isPlaying,
@@ -34,6 +37,7 @@ class Ayah extends ConsumerWidget {
 
   final dynamic ayah;
   final dynamic chapter;
+  final String? qari;
   final AudioPlayer player;
   final bool isActive;
   final bool isPlaying;
@@ -98,10 +102,12 @@ class Ayah extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    if (qSettings.containsKey('qari') &&
+                    if (qari != null &&
                         chapter.runtimeType.toString() == 'Surah') ...[
                       QiratButton(
                         ayah: ayah,
+                        chapter: chapter,
+                        qari: qari!,
                         player: player,
                         loadQirat: loadQirat,
                         isActive: isActive,
@@ -136,6 +142,8 @@ class QiratButton extends StatelessWidget {
   const QiratButton({
     super.key,
     required this.ayah,
+    required this.chapter,
+    required this.qari,
     required this.player,
     required this.isActive,
     required this.isPlaying,
@@ -143,6 +151,8 @@ class QiratButton extends StatelessWidget {
   });
 
   final dynamic ayah;
+  final dynamic chapter;
+  final String qari;
   final AudioPlayer player;
   final bool isActive;
   final bool isPlaying;
@@ -153,25 +163,13 @@ class QiratButton extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(top: 8),
       child: isActive
-          ? InkWell(
-              onTap: () async {
-                if (isPlaying) {
-                  await player.pause();
-                } else {
-                  await player.play();
-                }
-              },
-              child: isPlaying
-                  ? SvgPicture.asset(
-                      'assets/images/icons/pause.svg',
-                      width: 30,
-                      height: 30,
-                    )
-                  : SvgPicture.asset(
-                      'assets/images/icons/play.svg',
-                      width: 30,
-                      height: 30,
-                    ),
+          ? QiratPlayer(
+              ayah: ayah,
+              chapter: chapter,
+              qari: qari,
+              player: player,
+              isPlaying: isPlaying,
+              loadQirat: loadQirat,
             )
           : InkWell(
               onTap: () async => await loadQirat(ayah),
@@ -181,6 +179,77 @@ class QiratButton extends StatelessWidget {
                 height: 30,
               ),
             ),
+    );
+  }
+}
+
+class QiratPlayer extends ConsumerWidget {
+  const QiratPlayer({
+    super.key,
+    required this.ayah,
+    required this.chapter,
+    required this.qari,
+    required this.player,
+    required this.isPlaying,
+    required this.loadQirat,
+  });
+
+  final dynamic ayah;
+  final dynamic chapter;
+  final String qari;
+  final AudioPlayer player;
+  final bool isPlaying;
+  final Future? Function(dynamic) loadQirat;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    String audioPath = '$qari/${chapter.position}/${ayah.surahPosition}.mp3';
+
+    var qiratProvider = ref.watch(
+      qiratPlayerProvider(
+        QiratPlayerAudio(
+          player: player,
+          audioPath: audioPath,
+        ),
+      ),
+    );
+
+    return qiratProvider.when(
+      loading: () => SvgPicture.asset(
+        'assets/images/icons/pause.svg',
+        width: 30,
+        height: 30,
+      ),
+      error: (error, _) => InkWell(
+        onTap: () async => await loadQirat(ayah),
+        child: SvgPicture.asset(
+          'assets/images/icons/play.svg',
+          width: 30,
+          height: 30,
+        ),
+      ),
+      data: (updatedPlayer) {
+        return InkWell(
+          onTap: () async {
+            if (isPlaying) {
+              await updatedPlayer.pause();
+            } else {
+              await updatedPlayer.play();
+            }
+          },
+          child: isPlaying
+              ? SvgPicture.asset(
+                  'assets/images/icons/pause.svg',
+                  width: 30,
+                  height: 30,
+                )
+              : SvgPicture.asset(
+                  'assets/images/icons/play.svg',
+                  width: 30,
+                  height: 30,
+                ),
+        );
+      },
     );
   }
 }
