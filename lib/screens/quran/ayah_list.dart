@@ -230,7 +230,12 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
   StreamSubscription? _playerStateSubscription;
   bool isPlaying = false;
 
-  dynamic currentAyah;
+  int currentAyah = 0;
+
+  final itemScrollController = ItemScrollController();
+  final scrollOffsetController = ScrollOffsetController();
+  final itemPositionsListener = ItemPositionsListener.create();
+  final scrollOffsetListener = ScrollOffsetListener.create();
 
   updateCurrentAyah(ayah) {
     setState(() => currentAyah = ayah.surahPosition);
@@ -245,6 +250,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
         if (s.processingState == ProcessingState.completed) {
           if (widget.serialTilawat && currentAyah < widget.ayahs.length) {
             currentAyah = currentAyah + 1;
+            itemScrollController.jumpTo(index: currentAyah - 1);
           } else {
             player.pause();
             player.seek(const Duration(seconds: 0));
@@ -268,13 +274,15 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
         player.play();
 
         if (qariChanged) {
-          currentAyah ??= 1;
+          currentAyah = currentAyah == 0 ? 1 : currentAyah;
         } else {
           currentAyah = 1;
         }
+
+        itemScrollController.jumpTo(index: currentAyah - 1);
       } else if (qariChanged) {
         player.stop();
-        currentAyah = null;
+        currentAyah = 0;
       }
     });
   }
@@ -290,10 +298,6 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    final itemScrollController = ItemScrollController();
-    final scrollOffsetController = ScrollOffsetController();
-    final itemPositionsListener = ItemPositionsListener.create();
-    final scrollOffsetListener = ScrollOffsetListener.create();
 
     List<int> marks = [];
 
