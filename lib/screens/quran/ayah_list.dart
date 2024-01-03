@@ -7,6 +7,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:collection/collection.dart';
+import 'package:idkit_inputformatters/idkit_inputformatters.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/quran_settings.dart';
@@ -24,6 +25,7 @@ import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/presentation/section_title.dart';
 import 'package:native_app/widgets/buttons/dropdown.dart';
+import 'package:native_app/widgets/inputs/input_field.dart';
 import 'package:native_app/theme/colors.dart';
 import 'bismillah.dart';
 import 'ayah.dart';
@@ -45,7 +47,9 @@ class AyahList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     String currentLang = Localizations.localeOf(context).languageCode;
-    double screenWidth = MediaQuery.of(context).size.width;
+    // MediaQuery.of(context) refreshes the screen when tilawat range input is focused.
+    double screenWidth =
+        View.of(context).physicalSize.width / View.of(context).devicePixelRatio;
     bool isSmallMobile = screenWidth < 340;
     var qSettings = ref.watch(quranSettingsProvider);
     bool isSurah = chapter.runtimeType.toString() == 'Surah';
@@ -69,6 +73,23 @@ class AyahList extends ConsumerWidget {
         );
 
         var modelQuery = ref.watch(allModelsProvider(query));
+
+        int fromAyah;
+        int toAyah;
+
+        if (qSettings.containsKey('fromAyah') &&
+            qSettings['fromAyah'] <= chapter.totalAyat) {
+          fromAyah = qSettings['fromAyah'];
+        } else {
+          fromAyah = 1;
+        }
+
+        if (qSettings.containsKey('toAyah') &&
+            qSettings['toAyah'] <= chapter.totalAyat) {
+          toAyah = qSettings['toAyah'];
+        } else {
+          toAyah = chapter.totalAyat;
+        }
 
         return AppScaffold(
           onBackPressed: () async => await QR.to('quran'),
@@ -100,6 +121,8 @@ class AyahList extends ConsumerWidget {
                   qari: qSettings['qari'],
                   serialTilawat: qSettings.containsKey('serialTilawat') &&
                       qSettings['serialTilawat'],
+                  fromAyah: fromAyah,
+                  toAyah: toAyah,
                   preferences: preferences,
                   previousPage: previousPage,
                   nextPage: nextPage,
@@ -132,7 +155,11 @@ class AyahList extends ConsumerWidget {
                   if (isSurah &&
                       !(qSettings.containsKey('tilawat') &&
                           qSettings['tilawat'])) ...[
-                    const QariOptions(),
+                    QariOptions(
+                      chapter: chapter,
+                      fromAyah: fromAyah,
+                      toAyah: toAyah,
+                    ),
                   ],
                   FontOptions(
                     preferences: preferences,
@@ -204,6 +231,8 @@ class ReadingModeAyahList extends ConsumerStatefulWidget {
     required this.ayahs,
     required this.qari,
     required this.serialTilawat,
+    required this.fromAyah,
+    required this.toAyah,
     required this.preferences,
     required this.previousPage,
     required this.nextPage,
@@ -215,6 +244,8 @@ class ReadingModeAyahList extends ConsumerStatefulWidget {
   final List ayahs;
   final String? qari;
   final bool serialTilawat;
+  final int fromAyah;
+  final int toAyah;
   final dynamic preferences;
   final Future? Function() previousPage;
   final Future? Function() nextPage;
@@ -248,7 +279,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
     _playerStateSubscription = player.playerStateStream.listen((PlayerState s) {
       setState(() {
         if (s.processingState == ProcessingState.completed) {
-          if (widget.serialTilawat && currentAyah < widget.ayahs.length) {
+          if (widget.serialTilawat && currentAyah < widget.toAyah) {
             currentAyah = currentAyah + 1;
             itemScrollController.jumpTo(index: currentAyah - 1);
           } else {
@@ -274,9 +305,9 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
         player.play();
 
         if (qariChanged) {
-          currentAyah = currentAyah == 0 ? 1 : currentAyah;
+          currentAyah = currentAyah == 0 ? widget.fromAyah : currentAyah;
         } else {
-          currentAyah = 1;
+          currentAyah = widget.fromAyah;
         }
 
         itemScrollController.jumpTo(index: currentAyah - 1);
@@ -532,7 +563,14 @@ class TranslationOption extends ConsumerWidget {
 class QariOptions extends ConsumerWidget {
   const QariOptions({
     super.key,
+    required this.chapter,
+    required this.fromAyah,
+    required this.toAyah,
   });
+
+  final dynamic chapter;
+  final int fromAyah;
+  final int toAyah;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -561,45 +599,56 @@ class QariOptions extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    TextButton(
-                      child: Row(
-                        children: [
-                          if (qSettings.containsKey('serialTilawat') &&
-                              qSettings['serialTilawat']) ...[
-                            const Icon(
-                              Icons.check_box,
-                              color: ThemeColors.color4,
-                              size: 20,
-                            ),
-                          ] else ...[
-                            const Icon(
-                              Icons.check_box_outline_blank,
-                              color: ThemeColors.color4,
-                              size: 20,
+                    Container(
+                      constraints: const BoxConstraints(maxHeight: 40),
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                        ),
+                        child: Row(
+                          children: [
+                            if (qSettings.containsKey('serialTilawat') &&
+                                qSettings['serialTilawat']) ...[
+                              const Icon(
+                                Icons.check_box,
+                                color: ThemeColors.color4,
+                                size: 20,
+                              ),
+                            ] else ...[
+                              const Icon(
+                                Icons.check_box_outline_blank,
+                                color: ThemeColors.color4,
+                                size: 20,
+                              ),
+                            ],
+                            Container(
+                              margin: const EdgeInsets.only(left: 4, bottom: 1),
+                              child: Text(
+                                locales.serialTilawat,
+                                style: textTheme.labelMedium,
+                              ),
                             ),
                           ],
-                          Container(
-                            margin: const EdgeInsets.only(left: 4, bottom: 1),
-                            child: Text(
-                              locales.serialTilawat,
-                              style: textTheme.labelMedium,
-                            ),
-                          ),
-                        ],
+                        ),
+                        onPressed: () {
+                          bool selectedSerialTilawatOption =
+                              qSettings.containsKey('serialTilawat')
+                                  ? qSettings['serialTilawat']
+                                  : false;
+
+                          ref.read(quranSettingsProvider.notifier).updateParams(
+                                'serialTilawat',
+                                !selectedSerialTilawatOption,
+                              );
+
+                          Navigator.of(context).pop();
+                        },
                       ),
-                      onPressed: () {
-                        bool selectedSerialTilawatOption =
-                            qSettings.containsKey('serialTilawat')
-                                ? qSettings['serialTilawat']
-                                : false;
-
-                        ref.read(quranSettingsProvider.notifier).updateParams(
-                              'serialTilawat',
-                              !selectedSerialTilawatOption,
-                            );
-
-                        Navigator.of(context).pop();
-                      },
+                    ),
+                    TilwatRange(
+                      chapter: chapter,
+                      fromAyah: fromAyah,
+                      toAyah: toAyah,
                     ),
                     const SizedBox(height: 50),
                     Expanded(
@@ -630,6 +679,153 @@ class QariOptions extends ConsumerWidget {
           },
         );
       },
+    );
+  }
+}
+
+class TilwatRange extends ConsumerStatefulWidget {
+  const TilwatRange({
+    super.key,
+    required this.chapter,
+    required this.fromAyah,
+    required this.toAyah,
+  });
+
+  final dynamic chapter;
+  final int fromAyah;
+  final int toAyah;
+
+  @override
+  ConsumerState<TilwatRange> createState() => _TilawatRangeState();
+}
+
+class _TilawatRangeState extends ConsumerState<TilwatRange> {
+  int? fromValue;
+  int? toValue;
+
+  updateFrom(value) {
+    if (value != null && int.tryParse(value) != null) {
+      setState(() {
+        fromValue = int.parse(value);
+      });
+    }
+  }
+
+  updateTo(value) {
+    if (value != null && int.tryParse(value) != null) {
+      setState(() {
+        toValue = int.parse(value);
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    fromValue = widget.fromAyah;
+    toValue = widget.toAyah;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
+    var textTheme = Theme.of(context).textTheme;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          margin: const EdgeInsets.only(top: 6),
+          child: Text('${locales.from}:', style: textTheme.labelMedium),
+        ),
+        Container(
+          width: 40,
+          margin: const EdgeInsets.only(left: 3),
+          child: InputField(
+            initialValue: fromValue.toString(),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              IDKitNumeralTextInputFormatter.range(
+                minValue: 1,
+                maxValue: widget.chapter.totalAyat - 1,
+                decimalPoint: false,
+              ),
+            ],
+            decoration: const InputDecoration(
+              contentPadding: EdgeInsets.symmetric(horizontal: 5),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: ThemeColors.border,
+                ),
+              ),
+              constraints: BoxConstraints(maxHeight: 40),
+            ),
+            onChanged: updateFrom,
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(top: 6, left: 15),
+          child: Text('${locales.to}:', style: textTheme.labelMedium),
+        ),
+        Container(
+          width: 40,
+          margin: const EdgeInsets.only(left: 3),
+          child: InputField(
+            initialValue: toValue.toString(),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              IDKitNumeralTextInputFormatter.range(
+                minValue: 1,
+                maxValue: widget.chapter.totalAyat,
+                decimalPoint: false,
+              ),
+            ],
+            decoration: const InputDecoration(
+              contentPadding: EdgeInsets.symmetric(horizontal: 5),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: ThemeColors.border,
+                ),
+              ),
+              constraints: BoxConstraints(maxHeight: 40),
+            ),
+            onChanged: updateTo,
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(top: 5, left: 20),
+          constraints: const BoxConstraints(maxHeight: 30),
+          child: TextButton(
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              backgroundColor: ThemeColors.color4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onPressed: () {
+              ref.read(quranSettingsProvider.notifier).updateParams(
+                    'fromAyah',
+                    fromValue,
+                  );
+
+              ref.read(quranSettingsProvider.notifier).updateParams(
+                    'toAyah',
+                    toValue,
+                  );
+
+              Navigator.of(context).pop();
+            },
+            child: (fromValue != widget.fromAyah || toValue != widget.toAyah)
+                ? Text(locales.save, style: textTheme.titleSmall)
+                : const Icon(
+                    Icons.done,
+                    color: ThemeColors.color2,
+                  ),
+          ),
+        ),
+      ],
     );
   }
 }
