@@ -18,6 +18,7 @@ import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/providers/qirat_player.dart';
 import 'package:native_app/providers/ayah_bookmarks.dart';
 import 'package:native_app/widgets/page/html_body.dart';
+import 'package:native_app/theme/colors.dart';
 
 class Ayah extends ConsumerWidget {
   const Ayah({
@@ -53,9 +54,17 @@ class Ayah extends ConsumerWidget {
     var numFormatter = NumberFormat('#', currentLang);
     var textTheme = Theme.of(context).textTheme;
     var qSettings = ref.watch(quranSettingsProvider);
+    String theme = preferences.getString('theme') ?? 'dark';
 
     return Container(
       padding: EdgeInsets.only(top: 10, bottom: 10, left: 15 + markAdjustment),
+      decoration: BoxDecoration(
+        color: isActive
+            ? (theme == 'dark')
+                ? ThemeColors.color1
+                : ThemeColors.color9
+            : null,
+      ),
       child: Column(
         children: [
           Row(
