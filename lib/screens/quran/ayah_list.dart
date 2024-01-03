@@ -48,6 +48,7 @@ class AyahList extends ConsumerWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isSmallMobile = screenWidth < 340;
     var qSettings = ref.watch(quranSettingsProvider);
+    bool isSurah = chapter.runtimeType.toString() == 'Surah';
 
     return WithPreferences(
       builder: (context, preferences) {
@@ -128,8 +129,9 @@ class AyahList extends ConsumerWidget {
               ),
               Row(
                 children: [
-                  if (!(qSettings.containsKey('tilawat') &&
-                      qSettings['tilawat'])) ...[
+                  if (isSurah &&
+                      !(qSettings.containsKey('tilawat') &&
+                          qSettings['tilawat'])) ...[
                     const QariOptions(),
                   ],
                   FontOptions(
