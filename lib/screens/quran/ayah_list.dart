@@ -297,7 +297,6 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
   }
 
   @override
-  @mustCallSuper
   void didUpdateWidget(covariant oldwidget) {
     super.didUpdateWidget(oldwidget);
 
