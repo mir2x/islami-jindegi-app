@@ -16,6 +16,7 @@ class SearchField extends ConsumerWidget {
     this.autofocus = false,
     this.maxHeight = 45,
     this.borderRadius = 5,
+    this.horizontalPadding = 15,
   });
 
   final String? value;
@@ -25,6 +26,7 @@ class SearchField extends ConsumerWidget {
   final bool autofocus;
   final double maxHeight;
   final double borderRadius;
+  final double horizontalPadding;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -61,8 +63,8 @@ class SearchField extends ConsumerWidget {
               contentPadding: EdgeInsets.only(
                 top: 0,
                 bottom: 0,
-                left: reverse ? 0 : 10,
-                right: reverse ? 10 : 0,
+                left: reverse ? 0 : horizontalPadding,
+                right: reverse ? horizontalPadding : 0,
               ),
             ),
             onChanged: (value) {

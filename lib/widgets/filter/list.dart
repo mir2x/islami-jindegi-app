@@ -85,6 +85,7 @@ class _FilterListState extends ConsumerState<FilterList> {
                   child: SearchField(
                     value: searchText,
                     maxHeight: 35,
+                    horizontalPadding: 10,
                     onUpdate: updateSearchText,
                   ),
                 ),
