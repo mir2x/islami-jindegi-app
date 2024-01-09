@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:native_app/widgets/utils/with_connectivity.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/audio_player.dart';
+import 'package:native_app/providers/local_file.dart';
 import 'package:native_app/objects/audio_resource.dart';
 import 'package:native_app/widgets/presentation/connect_to_internet.dart';
 import 'package:native_app/helpers/play_time.dart';
@@ -22,55 +25,28 @@ class AudioPlayerWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var audioSource = AudioResource(id: audio['id'], storage: audio['storage']);
+    var audioPlayer = ref.watch(audioPlayerProvider(audioSource));
 
-    return WithConnectivity(
-      builder: (context, isConnected) {
-        if (isConnected) {
-          var audioPlayer = ref.watch(audioPlayerProvider(audioSource));
-
-          return audioPlayer.when(
-            loading: () => Center(
-              child: Container(
-                margin: const EdgeInsets.only(top: 78, bottom: 77),
-                child: const CircularProgressIndicator(),
-              ),
-            ),
-            error: (error, _) => Text(error.toString()),
-            data: (player) {
-              return StatefulAudioPlayer(
-                player: player,
-                audio: audio,
-              );
-            },
-          );
-        } else {
-          var audioPlayer = ref.watch(localAudioPlayerProvider(audioSource));
-
-          return audioPlayer.when(
-            loading: () => Center(
-              child: Container(
-                margin: const EdgeInsets.only(top: 78, bottom: 77),
-                child: const CircularProgressIndicator(),
-              ),
-            ),
-            error: (error, _) => Text(error.toString()),
-            data: (player) {
-              if (player != null) {
-                return StatefulAudioPlayer(
-                  player: player,
-                  audio: audio,
-                );
-              } else {
-                return Center(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 49, bottom: 48),
-                    child: const ConnectToInternet(),
-                  ),
-                );
-              }
-            },
-          );
-        }
+    return audioPlayer.when(
+      loading: () => Center(
+        child: Container(
+          margin: const EdgeInsets.only(top: 78, bottom: 77),
+          child: const CircularProgressIndicator(),
+        ),
+      ),
+      error: (error, _) {
+        return Center(
+          child: Container(
+            margin: const EdgeInsets.only(top: 49, bottom: 48),
+            child: const ConnectToInternet(),
+          ),
+        );
+      },
+      data: (player) {
+        return StatefulAudioPlayer(
+          player: player,
+          audio: audio,
+        );
       },
     );
   }
@@ -93,9 +69,10 @@ class StatefulAudioPlayer extends ConsumerStatefulWidget {
 class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
   bool isPlaying = false;
 
+  StreamSubscription? _playerStateSubscription;
   StreamSubscription? _durationSubscription;
   StreamSubscription? _positionSubscription;
-  StreamSubscription? _playerStateSubscription;
+  StreamSubscription? _playbackEventSubscription;
 
   Duration duration = const Duration();
   Duration position = const Duration();
@@ -114,6 +91,18 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
       duration = Duration(seconds: seconds);
     }
 
+    _playerStateSubscription =
+        widget.player.playerStateStream.listen((PlayerState s) {
+      setState(() {
+        if (s.processingState == ProcessingState.completed) {
+          widget.player.pause();
+          widget.player.seek(const Duration(seconds: 0));
+        }
+
+        isPlaying = s.playing;
+      });
+    });
+
     _durationSubscription = widget.player.durationStream.listen((Duration? d) {
       setState(() {
         if (d != null) {
@@ -126,31 +115,66 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
       setState(() => position = p);
     });
 
-    _playerStateSubscription =
-        widget.player.playerStateStream.listen((PlayerState s) {
-      setState(() {
-        if (s.processingState == ProcessingState.completed) {
+    _playbackEventSubscription = widget.player.playbackEventStream.listen(
+      (event) {},
+      onError: (Object e, StackTrace st) {
+        if (e is PlatformException) {
           widget.player.pause();
-          widget.player.seek(const Duration(seconds: 0));
-        }
-
-        isPlaying = s.playing;
-      });
-    });
+        } else {}
+      },
+    );
   }
 
   @override
   Future<void> dispose() async {
     super.dispose();
+    await _playerStateSubscription?.cancel();
     await _durationSubscription?.cancel();
     await _positionSubscription?.cancel();
-    await _playerStateSubscription?.cancel();
+    await _playbackEventSubscription?.cancel();
     await widget.player.stop();
   }
 
   @override
   Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+
+    Future<bool> canSeek() async {
+      var scaffoldMessenger = ScaffoldMessenger.of(context);
+
+      bool hasNoConnection =
+          await Connectivity().checkConnectivity() == ConnectivityResult.none;
+
+      var localFile = await ref.watch(
+        localFileProvider(widget.audio['id']).future,
+      );
+
+      if (hasNoConnection && localFile == null) {
+        scaffoldMessenger.removeCurrentSnackBar();
+
+        scaffoldMessenger.showSnackBar(
+          SnackBar(
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.wifi),
+                const SizedBox(width: 10),
+                Text(
+                  locales.connectToInternetMsg,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            duration: const Duration(seconds: 5),
+          ),
+        );
+
+        return false;
+      } else {
+        return true;
+      }
+    }
 
     return WithPreferences(
       builder: (context, preferences) {
@@ -215,8 +239,10 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
                 min: 0,
                 max: duration.inSeconds.toDouble() + 2,
                 onChanged: (double value) async {
-                  await widget.player.seek(Duration(seconds: value.toInt()));
-                  value = value;
+                  if (await canSeek()) {
+                    await widget.player.seek(Duration(seconds: value.toInt()));
+                    value = value;
+                  }
                 },
               ),
             ),
@@ -226,22 +252,26 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
                 IconButton(
                   icon: const Icon(Icons.fast_rewind),
                   onPressed: () async {
-                    int tenSecondBehind = position.inSeconds - 10;
+                    if (await canSeek()) {
+                      int tenSecondBehind = position.inSeconds - 10;
 
-                    if (tenSecondBehind >= 0) {
-                      await widget.player
-                          .seek(Duration(seconds: tenSecondBehind));
+                      if (tenSecondBehind >= 0) {
+                        await widget.player
+                            .seek(Duration(seconds: tenSecondBehind));
+                      }
                     }
                   },
                 ),
                 IconButton(
                   icon: const Icon(Icons.fast_forward),
                   onPressed: () async {
-                    int tenSecondForward = position.inSeconds + 10;
+                    if (await canSeek()) {
+                      int tenSecondForward = position.inSeconds + 10;
 
-                    if (tenSecondForward <= duration.inSeconds) {
-                      await widget.player
-                          .seek(Duration(seconds: tenSecondForward));
+                      if (tenSecondForward <= duration.inSeconds) {
+                        await widget.player
+                            .seek(Duration(seconds: tenSecondForward));
+                      }
                     }
                   },
                 ),
