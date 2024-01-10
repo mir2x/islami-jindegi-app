@@ -10,6 +10,7 @@ import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
@@ -44,7 +45,7 @@ class DownloadedBayan extends ConsumerWidget {
                 publishedAt: resource.publishedAt,
                 downloadItem: (audio.isNotEmpty)
                     ? DownloadItem(
-                        filePath: audio['id'],
+                        filePath: fileTitlePath(resource.title, audio['id']),
                         fileUrl: fileSrcUrl(audio),
                         deleteCallback: () async {
                           await ref

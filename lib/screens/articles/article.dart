@@ -16,6 +16,7 @@ import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/page/title.dart';
 import 'package:native_app/widgets/page/subtitle.dart';
 import 'package:native_app/widgets/page/html_body.dart';
+import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
@@ -105,7 +106,10 @@ class Article extends ConsumerWidget {
                     ],
                     if (resource.document != null) ...[
                       DownloadItem(
-                        filePath: resource.document['id'],
+                        filePath: fileTitlePath(
+                          resource.title,
+                          resource.document['id'],
+                        ),
                         fileUrl: fileSrcUrl(resource.document),
                         textWidth: 110,
                         downloadedTextWidth: 125,

@@ -24,6 +24,18 @@ class LocalFileNotifier extends AutoDisposeFamilyAsyncNotifier<File?, String> {
       if (await localFile.exists()) {
         return localFile;
       }
+
+      List<String> parts = path.split('/');
+      parts[1] = parts[1].split('_').last;
+      String alternatePath = parts.join('/');
+
+      if (alternatePath != path) {
+        var alternativeFile = File(p.join(downloadDir.path, alternatePath));
+
+        if (await alternativeFile.exists()) {
+          return alternativeFile;
+        }
+      }
     }
 
     return null;

@@ -38,6 +38,7 @@ class BookDisplay extends ConsumerWidget {
         if (document != null) ...[
           PDFReader(
             bookId: id,
+            bookTitle: title,
             image: image,
             document: document!,
           ),

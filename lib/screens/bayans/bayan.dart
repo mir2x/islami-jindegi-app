@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:native_app/helpers/file_title_path.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/single_model.dart';
@@ -91,7 +92,10 @@ class Bayan extends ConsumerWidget {
                   publishedAt: resource.publishedAt,
                   downloadItem: (resource.audio != null)
                       ? DownloadItem(
-                          filePath: resource.audio['id'],
+                          filePath: fileTitlePath(
+                            resource.title,
+                            resource.audio['id'],
+                          ),
                           fileUrl: fileSrcUrl(resource.audio),
                           downloadCallback: () async {
                             await ref.watch(

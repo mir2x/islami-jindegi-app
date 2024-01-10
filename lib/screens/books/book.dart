@@ -24,6 +24,7 @@ import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
+import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/theme/colors.dart';
 import 'display.dart';
@@ -279,7 +280,10 @@ class BookItem extends ConsumerWidget {
                         publishedAt: book.publishedAt,
                         downloadItem: (book.document != null)
                             ? DownloadItem(
-                                filePath: book.document['id'],
+                                filePath: fileTitlePath(
+                                  book.title,
+                                  book.document['id'],
+                                ),
                                 fileUrl: fileSrcUrl(book.document),
                                 downloadCallback: () async {
                                   await ref.watch(

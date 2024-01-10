@@ -8,17 +8,20 @@ import 'package:native_app/providers/pdf_controller.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/objects/pdf_source.dart';
 import 'package:native_app/objects/pdf_builders.dart';
+import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/widgets/presentation/connect_to_internet.dart';
 
 class PDFReader extends ConsumerWidget {
   const PDFReader({
     super.key,
     required this.bookId,
+    required this.bookTitle,
     required this.image,
     required this.document,
   });
 
   final String bookId;
+  final String bookTitle;
   final Widget image;
   final Map document;
 
@@ -26,7 +29,7 @@ class PDFReader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    String filePath = document['id'];
+    String filePath = fileTitlePath(bookTitle, document['id']);
 
     var checkFileProvider = checkDownloadedFileProvider(filePath);
     var checkDownloadedFile = ref.watch(checkFileProvider);
@@ -38,7 +41,7 @@ class PDFReader extends ConsumerWidget {
         if (isDownloaded) {
           PdfSource params = PdfSource(
             resourceId: bookId,
-            document: document,
+            filePath: filePath,
           );
 
           var pdfCtrl = ref.watch(pdfControllerProvider(params));

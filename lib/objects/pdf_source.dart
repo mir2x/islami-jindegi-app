@@ -3,12 +3,12 @@ import 'package:equatable/equatable.dart';
 class PdfSource extends Equatable {
   const PdfSource({
     required this.resourceId,
-    required this.document,
+    required this.filePath,
   });
 
   final String resourceId;
-  final Map document;
+  final String filePath;
 
   @override
-  List<Object> get props => [resourceId, document];
+  List<Object> get props => [resourceId, filePath];
 }

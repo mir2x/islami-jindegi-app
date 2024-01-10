@@ -24,6 +24,7 @@ import 'package:native_app/widgets/presentation/connect_to_internet.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/download.dart';
 import 'package:native_app/widgets/buttons/delete.dart';
+import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/helpers/file_size.dart';
 import 'package:native_app/settings/image.dart';
@@ -57,7 +58,7 @@ class QuranBook extends ConsumerWidget {
         );
 
         if (qitab.document != null) {
-          String filePath = qitab.document['id'];
+          String filePath = fileTitlePath(qitab.title, qitab.document['id']);
           String fileUrl = fileSrcUrl(qitab.document);
 
           var checkFileProvider = checkDownloadedFileProvider(filePath);
@@ -70,7 +71,7 @@ class QuranBook extends ConsumerWidget {
               if (isDownloaded) {
                 PdfSource params = PdfSource(
                   resourceId: qitab.id,
-                  document: qitab.document,
+                  filePath: filePath,
                 );
 
                 var pdfCtrl = ref.watch(pdfControllerProvider(params));
@@ -86,6 +87,7 @@ class QuranBook extends ConsumerWidget {
                     return QuranDisplay(
                       qitab: qitab,
                       qitabTitle: qitabTitle,
+                      filePath: filePath,
                       pdfController: pdfController,
                     );
                   },
@@ -168,11 +170,13 @@ class QuranDisplay extends ConsumerStatefulWidget {
     super.key,
     required this.qitab,
     required this.qitabTitle,
+    required this.filePath,
     required this.pdfController,
   });
 
   final dynamic qitab;
   final String qitabTitle;
+  final String filePath;
   final PdfController pdfController;
 
   @override
@@ -289,7 +293,7 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
         alignment: MainAxisAlignment.spaceBetween,
         children: [
           const QuranMenuButton(),
-          DeleteButton(filePath: widget.qitab.document['id']),
+          DeleteButton(filePath: widget.filePath),
         ],
       ),
     );

@@ -19,6 +19,7 @@ import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
+import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
 
 class MadrasahIntroduction extends ConsumerWidget {
@@ -90,7 +91,10 @@ class MadrasahIntroduction extends ConsumerWidget {
                     ),
                     if (resource.document != null) ...[
                       DownloadItem(
-                        filePath: resource.document['id'],
+                        filePath: fileTitlePath(
+                          resource.title,
+                          resource.document['id'],
+                        ),
                         fileUrl: fileSrcUrl(resource.document),
                       ),
                     ],

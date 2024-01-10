@@ -9,6 +9,7 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
+import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'display.dart';
 import 'image.dart';
@@ -66,7 +67,7 @@ class DownloadedBook extends ConsumerWidget {
                 publishedAt: book.publishedAt,
                 downloadItem: (document.isNotEmpty)
                     ? DownloadItem(
-                        filePath: document['id'],
+                        filePath: fileTitlePath(book.title, document['id']),
                         fileUrl: fileSrcUrl(document),
                         deleteCallback: () async {
                           await ref

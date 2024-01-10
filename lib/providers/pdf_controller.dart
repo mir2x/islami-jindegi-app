@@ -6,14 +6,11 @@ import 'local_file.dart';
 
 final pdfControllerProvider = FutureProvider.autoDispose
     .family<PdfController, PdfSource>((ref, PdfSource params) async {
-  var resourceId = params.resourceId;
-  var documentPath = params.document['id'];
-
-  var localFile = await ref.watch(localFileProvider(documentPath).future);
+  var localFile = await ref.watch(localFileProvider(params.filePath).future);
   dynamic pdfDoc = PdfDocument.openFile(localFile!.path);
 
   var prefs = await SharedPreferences.getInstance();
-  int initialPage = prefs.getInt('pdfResource-$resourceId') ?? 1;
+  int initialPage = prefs.getInt('pdfResource-${params.resourceId}') ?? 1;
 
   var pdfController = PdfController(document: pdfDoc, initialPage: initialPage);
 

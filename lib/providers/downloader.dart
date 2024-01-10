@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/helpers/delete_file_diretory.dart';
 import 'package:native_app/objects/download_params.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
@@ -43,7 +44,7 @@ final downloaderProvider = FutureProvider.autoDispose
       );
 
       if (localFile != null) {
-        await localFile.delete();
+        await deleteFileDirectory(params.savePath);
         await ref
             .read(checkDownloadedFileProvider(params.savePath).notifier)
             .check(params.savePath);

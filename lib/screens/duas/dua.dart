@@ -19,6 +19,7 @@ import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/widgets/audio/player.dart';
 import 'package:native_app/helpers/file_size.dart';
 import 'package:native_app/helpers/play_duration.dart';
+import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
@@ -113,7 +114,10 @@ class Dua extends ConsumerWidget {
                         children: [
                           if (resource.audio != null) ...[
                             DownloadItem(
-                              filePath: resource.audio['id'],
+                              filePath: fileTitlePath(
+                                resource.title,
+                                resource.audio['id'],
+                              ),
                               fileUrl: fileSrcUrl(resource.audio),
                             ),
                           ],

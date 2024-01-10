@@ -15,6 +15,7 @@ import 'package:native_app/widgets/presentation/resizable_font.dart';
 import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
+import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
@@ -96,7 +97,10 @@ class MalfuzatItem extends ConsumerWidget {
                       fontSizeRatio: fontSizeRatio,
                       downloadItem: (resource.audio != null)
                           ? DownloadItem(
-                              filePath: resource.audio['id'],
+                              filePath: fileTitlePath(
+                                resource.title,
+                                resource.audio['id'],
+                              ),
                               fileUrl: fileSrcUrl(resource.audio),
                               downloadCallback: () async {
                                 await ref.watch(
