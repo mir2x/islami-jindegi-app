@@ -576,6 +576,7 @@ class QariOptions extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    String currentLang = Localizations.localeOf(context).languageCode;
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     double screenHeight = MediaQuery.of(context).size.height;
@@ -661,13 +662,17 @@ class QariOptions extends ConsumerWidget {
                         queryBuilder: (Map<String, dynamic> params) {
                           return AllModelsQuery(
                             repository: ref.qaris,
-                            params: params,
+                            params: {...params, 'offline': true},
                           );
                         },
                         itemBuilder: (_, item, __) {
                           return FilterItem(
                             itemId: item.slug,
-                            itemTitle: item.name,
+                            itemTitle: contextualTranslation(
+                              locale: currentLang,
+                              enText: item.name,
+                              bnText: item.nameBn,
+                            ),
                             paramKey: 'qari',
                             queryProvider: quranSettingsProvider,
                           );

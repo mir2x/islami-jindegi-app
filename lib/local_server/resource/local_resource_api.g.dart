@@ -1448,6 +1448,303 @@ class AyahTranslationsCompanion extends UpdateCompanion<AyahTranslation> {
   }
 }
 
+class $QarisTable extends Qaris with TableInfo<$QarisTable, Qari> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $QarisTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> nameBn = GeneratedColumn<String>(
+      'name_bn', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> slug = GeneratedColumn<String>(
+      'slug', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+      'position', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, name, nameBn, slug, position, createdAt, updatedAt];
+  @override
+  String get aliasedName => _alias ?? 'qaris';
+  @override
+  String get actualTableName => 'qaris';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Qari map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Qari(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      nameBn: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name_bn']),
+      slug: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
+      position: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}position'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $QarisTable createAlias(String alias) {
+    return $QarisTable(attachedDatabase, alias);
+  }
+}
+
+class Qari extends DataClass implements Insertable<Qari> {
+  final String id;
+  final String name;
+  final String? nameBn;
+  final String slug;
+  final int position;
+  final String createdAt;
+  final String updatedAt;
+  const Qari(
+      {required this.id,
+      required this.name,
+      this.nameBn,
+      required this.slug,
+      required this.position,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || nameBn != null) {
+      map['name_bn'] = Variable<String>(nameBn);
+    }
+    map['slug'] = Variable<String>(slug);
+    map['position'] = Variable<int>(position);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    return map;
+  }
+
+  factory Qari.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Qari(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      nameBn: serializer.fromJson<String?>(json['nameBn']),
+      slug: serializer.fromJson<String>(json['slug']),
+      position: serializer.fromJson<int>(json['position']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'nameBn': serializer.toJson<String?>(nameBn),
+      'slug': serializer.toJson<String>(slug),
+      'position': serializer.toJson<int>(position),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+    };
+  }
+
+  Qari copyWith(
+          {String? id,
+          String? name,
+          Value<String?> nameBn = const Value.absent(),
+          String? slug,
+          int? position,
+          String? createdAt,
+          String? updatedAt}) =>
+      Qari(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        nameBn: nameBn.present ? nameBn.value : this.nameBn,
+        slug: slug ?? this.slug,
+        position: position ?? this.position,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Qari(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('nameBn: $nameBn, ')
+          ..write('slug: $slug, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, name, nameBn, slug, position, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Qari &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.nameBn == this.nameBn &&
+          other.slug == this.slug &&
+          other.position == this.position &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class QarisCompanion extends UpdateCompanion<Qari> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<String?> nameBn;
+  final Value<String> slug;
+  final Value<int> position;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  final Value<int> rowid;
+  const QarisCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.nameBn = const Value.absent(),
+    this.slug = const Value.absent(),
+    this.position = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  QarisCompanion.insert({
+    required String id,
+    required String name,
+    this.nameBn = const Value.absent(),
+    required String slug,
+    required int position,
+    required String createdAt,
+    required String updatedAt,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        name = Value(name),
+        slug = Value(slug),
+        position = Value(position),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<Qari> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<String>? nameBn,
+    Expression<String>? slug,
+    Expression<int>? position,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (nameBn != null) 'name_bn': nameBn,
+      if (slug != null) 'slug': slug,
+      if (position != null) 'position': position,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  QarisCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? name,
+      Value<String?>? nameBn,
+      Value<String>? slug,
+      Value<int>? position,
+      Value<String>? createdAt,
+      Value<String>? updatedAt,
+      Value<int>? rowid}) {
+    return QarisCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      nameBn: nameBn ?? this.nameBn,
+      slug: slug ?? this.slug,
+      position: position ?? this.position,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (nameBn.present) {
+      map['name_bn'] = Variable<String>(nameBn.value);
+    }
+    if (slug.present) {
+      map['slug'] = Variable<String>(slug.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('QarisCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('nameBn: $nameBn, ')
+          ..write('slug: $slug, ')
+          ..write('position: $position, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $TafseerQitabsTable extends TafseerQitabs
     with TableInfo<$TafseerQitabsTable, TafseerQitab> {
   @override
@@ -10672,6 +10969,7 @@ abstract class _$LocalResourceAPI extends GeneratedDatabase {
   late final $AyahsTable ayahs = $AyahsTable(this);
   late final $AyahTranslationsTable ayahTranslations =
       $AyahTranslationsTable(this);
+  late final $QarisTable qaris = $QarisTable(this);
   late final $TafseerQitabsTable tafseerQitabs = $TafseerQitabsTable(this);
   late final $TafseersTable tafseers = $TafseersTable(this);
   late final $BooksTable books = $BooksTable(this);
@@ -10713,6 +11011,7 @@ abstract class _$LocalResourceAPI extends GeneratedDatabase {
         paras,
         ayahs,
         ayahTranslations,
+        qaris,
         tafseerQitabs,
         tafseers,
         books,

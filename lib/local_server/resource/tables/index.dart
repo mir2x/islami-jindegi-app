@@ -2,6 +2,7 @@ export 'surahs.dart';
 export 'paras.dart';
 export 'ayahs.dart';
 export 'ayah_translations.dart';
+export 'qaris.dart';
 export 'tafseer_qitabs.dart';
 export 'tafseers.dart';
 export 'books.dart';

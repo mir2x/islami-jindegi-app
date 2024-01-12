@@ -34,7 +34,10 @@ final _qarisFinders = <String, dynamic>{};
 class $QariHiveLocalAdapter = HiveLocalAdapter<Qari> with $QariLocalAdapter;
 
 class $QariRemoteAdapter = RemoteAdapter<Qari>
-    with JSONAPIAdapter<Qari>, ApplicationAdapter<Qari>;
+    with
+        JSONAPIAdapter<Qari>,
+        LocalResourceAdapter<Qari>,
+        ApplicationAdapter<Qari>;
 
 final internalQarisRemoteAdapterProvider = Provider<RemoteAdapter<Qari>>(
     (ref) => $QariRemoteAdapter(
@@ -46,6 +49,8 @@ final qarisRepositoryProvider =
 extension QariDataRepositoryX on Repository<Qari> {
   JSONAPIAdapter<Qari> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<Qari>;
+  LocalResourceAdapter<Qari> get localResourceAdapter =>
+      remoteAdapter as LocalResourceAdapter<Qari>;
   ApplicationAdapter<Qari> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<Qari>;
 }
@@ -59,6 +64,7 @@ extension QariRelationshipGraphNodeX on RelationshipGraphNode<Qari> {}
 Qari _$QariFromJson(Map<String, dynamic> json) => Qari(
       id: json['id'] as String?,
       name: json['name'] as String,
+      nameBn: json['name-bn'] as String?,
       slug: json['slug'] as String,
       position: json['position'] as int?,
       createdAt: json['created-at'] as String?,
@@ -68,6 +74,7 @@ Qari _$QariFromJson(Map<String, dynamic> json) => Qari(
 Map<String, dynamic> _$QariToJson(Qari instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
+      'name-bn': instance.nameBn,
       'slug': instance.slug,
       'position': instance.position,
       'created-at': instance.createdAt,

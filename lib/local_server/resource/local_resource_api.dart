@@ -18,6 +18,7 @@ part 'local_resource_api.g.dart';
     Paras,
     Ayahs,
     AyahTranslations,
+    Qaris,
     TafseerQitabs,
     Tafseers,
     Books,
@@ -94,6 +95,8 @@ class LocalResourceAPI extends _$LocalResourceAPI {
         return queryAyah(params);
       case 'tafseerQitabs':
         return queryTafseerQitab(params);
+      case 'qaris':
+        return queryQari(params);
       case 'tafseers':
         return queryTafseer(params);
       case 'books':
@@ -343,6 +346,22 @@ class LocalResourceAPI extends _$LocalResourceAPI {
   Future<AyahTranslation?> findAyahTranslationById(String id) {
     return (select(ayahTranslations)..where((t) => t.id.equals(id)))
         .getSingleOrNull();
+  }
+
+  Future<List<Qari>> queryQari(Map params) {
+    var query = select(qaris);
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    } else {
+      query.limit(params['quantity'] ?? 20);
+    }
+
+    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
+    return query.get();
   }
 
   Future<List<TafseerQitab>> queryTafseerQitab(Map params) {
