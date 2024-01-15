@@ -142,7 +142,10 @@ class QuranBook extends ConsumerWidget {
                               ],
                             );
                           } else {
-                            return const ConnectToInternet();
+                            return Container(
+                              margin: const EdgeInsets.only(top: 20),
+                              child: const ConnectToInternet(),
+                            );
                           }
                         },
                       ),

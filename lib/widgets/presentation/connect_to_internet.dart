@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ConnectToInternet extends StatelessWidget {
@@ -12,8 +13,12 @@ class ConnectToInternet extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Icon(Icons.signal_wifi_connected_no_internet_4, size: 60),
-        const SizedBox(height: 10),
+        SvgPicture.asset(
+          'assets/images/icons/offline.svg',
+          width: 70,
+          height: 70,
+        ),
+        const SizedBox(height: 15),
         Text(locales.connectToInternetMsg, textAlign: TextAlign.center),
       ],
     );
