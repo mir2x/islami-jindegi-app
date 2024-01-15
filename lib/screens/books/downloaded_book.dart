@@ -9,6 +9,9 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
+import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/buttons/social_share.dart';
+import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'display.dart';
@@ -78,6 +81,22 @@ class DownloadedBook extends ConsumerWidget {
                         },
                       )
                     : null,
+              ),
+            ],
+          ),
+          bottomBar: BottomBar(
+            alignment: MainAxisAlignment.center,
+            children: [
+              SocialShare(
+                title: book.title,
+                subtitle: book.authors,
+                link: 'books/${book.bookId}',
+                fileLink: fileSrcUrl(document),
+              ),
+              BookmarkButton(
+                type: 'Book',
+                title: book.title,
+                link: 'books/${book.bookId}',
               ),
             ],
           ),

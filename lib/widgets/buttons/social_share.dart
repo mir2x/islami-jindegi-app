@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SocialShare extends StatelessWidget {
   const SocialShare({
@@ -10,15 +11,19 @@ class SocialShare extends StatelessWidget {
     this.subtitle,
     this.body,
     this.link,
+    this.fileLink,
   });
 
   final String? title;
   final String? subtitle;
   final dynamic body;
   final String? link;
+  final String? fileLink;
 
   @override
   Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
+
     const appLink =
         'https://play.google.com/store/apps/details?id=com.islami_jindegi';
 
@@ -49,8 +54,12 @@ class SocialShare extends StatelessWidget {
           }
         }
 
+        if (fileLink != null) {
+          text += '\n\n${locales.file}: $fileLink';
+        }
+
         if (link != null) {
-          text += '\n\nhttps://islamidars.com/$link';
+          text += '\n\n${locales.link}: https://islamidars.com/$link';
         }
 
         text += '\n\n$appLink';

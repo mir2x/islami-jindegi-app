@@ -329,6 +329,7 @@ class BookItem extends ConsumerWidget {
                     subtitle:
                         book.authors.map((e) => e.name).toList().join(', '),
                     link: 'books/${book.id}',
+                    fileLink: fileSrcUrl(book.document),
                   ),
                   BookmarkButton(
                     type: 'Book',

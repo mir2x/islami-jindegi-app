@@ -66,6 +66,7 @@ class DownloadedBayan extends ConsumerWidget {
                 title: resource.title,
                 subtitle: resource.speaker,
                 link: 'bayans/${resource.bayanId}',
+                fileLink: fileSrcUrl(audio),
               ),
               BookmarkButton(
                 type: 'Bayan',

@@ -207,6 +207,8 @@
   "androidAppLink": "Android App Link",
   "iphoneAppLink": "iPhone App Link",
   "websiteLink": "Website Link",
+  "link": "Link",
+  "file": "File",
 
   "errorTitle": "Error!",
   "pageNotFoundTitle": "Page Not Found",

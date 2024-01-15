@@ -211,6 +211,9 @@
   "androidAppLink": "এন্ড্রয়েডের এপ লিংক",
   "iphoneAppLink": "আইফোনের এপ লিংক",
   "websiteLink": "ওয়েবসাইট লিংক",
+  "link": "লিংক",
+  "file": "ফাইল",
+
 
   "errorTitle": "সমস্যা!",
   "pageNotFoundTitle": "পেইজটি পাওয়া যায়নি",
