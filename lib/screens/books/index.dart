@@ -15,6 +15,7 @@ import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/nested_item.dart';
 import 'package:native_app/widgets/filter/subitem.dart';
+import 'package:native_app/providers/downloaded_books.dart';
 import 'image.dart';
 
 class Books extends ConsumerWidget {
@@ -188,6 +189,9 @@ class Books extends ConsumerWidget {
                           child: BookImage(
                             bookId: item.id,
                             image: item.image,
+                            highlightProvider: getDownloadedBookByIdProvider(
+                              item.id,
+                            ),
                           ),
                         ),
                         Container(

@@ -15,6 +15,7 @@ import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/date.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
+import 'package:native_app/providers/downloaded_bayans.dart';
 import 'package:native_app/helpers/format_date.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
 
@@ -162,6 +163,9 @@ class Bayans extends ConsumerWidget {
                   return InkWell(
                     onTap: () => QR.to('bayans/${item.id}'),
                     child: ListItem(
+                      highlightProvider: getDownloadedBayanByIdProvider(
+                        item.id,
+                      ),
                       item: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

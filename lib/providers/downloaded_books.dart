@@ -20,6 +20,12 @@ final getDownloadedBookProvider =
   return await isar.downloadedBooks.get(id);
 });
 
+final getDownloadedBookByIdProvider = FutureProvider.autoDispose
+    .family<dynamic, String>((ref, String bookId) async {
+  final isar = await ref.watch(downloadedBooksStoreProvider.future);
+  return await isar.downloadedBooks.where().bookIdEqualTo(bookId).findFirst();
+});
+
 final createDownloadedBookProvider =
     FutureProvider.autoDispose.family<dynamic, Map>((ref, Map attrs) async {
   final isar = await ref.watch(downloadedBooksStoreProvider.future);

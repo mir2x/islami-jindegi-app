@@ -20,6 +20,15 @@ final getDownloadedBayanProvider =
   return await isar.downloadedBayans.get(id);
 });
 
+final getDownloadedBayanByIdProvider = FutureProvider.autoDispose
+    .family<dynamic, String>((ref, String bayanId) async {
+  final isar = await ref.watch(downloadedBayansStoreProvider.future);
+  return await isar.downloadedBayans
+      .where()
+      .bayanIdEqualTo(bayanId)
+      .findFirst();
+});
+
 final createDownloadedBayanProvider =
     FutureProvider.autoDispose.family<dynamic, Map>((ref, Map attrs) async {
   final isar = await ref.watch(downloadedBayansStoreProvider.future);

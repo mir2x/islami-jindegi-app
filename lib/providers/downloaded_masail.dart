@@ -20,6 +20,15 @@ final getDownloadedMasailProvider =
   return await isar.downloadedMasails.get(id);
 });
 
+final getDownloadedMasailByIdProvider = FutureProvider.autoDispose
+    .family<dynamic, String>((ref, String masailId) async {
+  final isar = await ref.watch(downloadedMasailStoreProvider.future);
+  return await isar.downloadedMasails
+      .where()
+      .masailIdEqualTo(masailId)
+      .findFirst();
+});
+
 final createDownloadedMasailProvider =
     FutureProvider.autoDispose.family<dynamic, Map>((ref, Map attrs) async {
   final isar = await ref.watch(downloadedMasailStoreProvider.future);

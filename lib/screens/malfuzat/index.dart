@@ -17,6 +17,7 @@ import 'package:native_app/widgets/filter/nested_item.dart';
 import 'package:native_app/widgets/filter/subitem.dart';
 import 'package:native_app/widgets/filter/triple_switch_button.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
+import 'package:native_app/providers/downloaded_malfuzat.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
 
 class Malfuzat extends ConsumerWidget {
@@ -213,6 +214,9 @@ class Malfuzat extends ConsumerWidget {
                   return InkWell(
                     onTap: () => QR.to('malfuzat/${item.id}'),
                     child: ListItem(
+                      highlightProvider: getDownloadedMalfuzatByIdProvider(
+                        item.id,
+                      ),
                       item: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

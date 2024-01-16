@@ -20,6 +20,15 @@ final getDownloadedMalfuzatProvider =
   return await isar.downloadedMalfuzats.get(id);
 });
 
+final getDownloadedMalfuzatByIdProvider = FutureProvider.autoDispose
+    .family<dynamic, String>((ref, String malfuzatId) async {
+  final isar = await ref.watch(downloadedMalfuzatStoreProvider.future);
+  return await isar.downloadedMalfuzats
+      .where()
+      .malfuzatIdEqualTo(malfuzatId)
+      .findFirst();
+});
+
 final createDownloadedMalfuzatProvider =
     FutureProvider.autoDispose.family<dynamic, Map>((ref, Map attrs) async {
   final isar = await ref.watch(downloadedMalfuzatStoreProvider.future);
