@@ -16,6 +16,7 @@ import 'package:native_app/objects/font_size_ratio.dart';
 import 'package:native_app/objects/qirat_player_audio.dart';
 import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/providers/qirat_player.dart';
+import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/providers/ayah_bookmarks.dart';
 import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/theme/colors.dart';
@@ -182,12 +183,54 @@ class QiratButton extends StatelessWidget {
             )
           : InkWell(
               onTap: () async => await loadQirat(ayah),
-              child: SvgPicture.asset(
-                'assets/images/icons/play.svg',
-                width: 30,
-                height: 30,
+              child: PlayButton(
+                ayah: ayah,
+                chapter: chapter,
+                qari: qari,
               ),
             ),
+    );
+  }
+}
+
+class PlayButton extends ConsumerWidget {
+  const PlayButton({
+    super.key,
+    required this.ayah,
+    required this.chapter,
+    required this.qari,
+  });
+
+  final dynamic ayah;
+  final dynamic chapter;
+  final String qari;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    String filePath =
+        'al-quran/qirats/$qari/${chapter.position}/${ayah.surahPosition}.mp3';
+    var checkDownloaded = ref.watch(checkDownloadedFileProvider(filePath));
+
+    Widget defaultButton = SvgPicture.asset(
+      'assets/images/icons/play.svg',
+      width: 30,
+      height: 30,
+    );
+
+    return checkDownloaded.when(
+      loading: () => defaultButton,
+      error: (error, _) => defaultButton,
+      data: (isDownloaded) {
+        if (isDownloaded) {
+          return SvgPicture.asset(
+            'assets/images/icons/play-offline.svg',
+            width: 30,
+            height: 30,
+          );
+        } else {
+          return defaultButton;
+        }
+      },
     );
   }
 }
@@ -225,16 +268,16 @@ class QiratPlayer extends ConsumerWidget {
 
     return qiratProvider.when(
       loading: () => SvgPicture.asset(
-        'assets/images/icons/pause.svg',
+        'assets/images/icons/pause-offline.svg',
         width: 30,
         height: 30,
       ),
       error: (error, _) => InkWell(
         onTap: () async => await loadQirat(ayah),
-        child: SvgPicture.asset(
-          'assets/images/icons/play.svg',
-          width: 30,
-          height: 30,
+        child: PlayButton(
+          ayah: ayah,
+          chapter: chapter,
+          qari: qari,
         ),
       ),
       data: (updatedPlayer) {
@@ -248,14 +291,14 @@ class QiratPlayer extends ConsumerWidget {
           },
           child: isPlaying
               ? SvgPicture.asset(
-                  'assets/images/icons/pause.svg',
+                  'assets/images/icons/pause-offline.svg',
                   width: 30,
                   height: 30,
                 )
-              : SvgPicture.asset(
-                  'assets/images/icons/play.svg',
-                  width: 30,
-                  height: 30,
+              : PlayButton(
+                  ayah: ayah,
+                  chapter: chapter,
+                  qari: qari,
                 ),
         );
       },
