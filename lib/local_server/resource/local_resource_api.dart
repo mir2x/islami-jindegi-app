@@ -279,36 +279,77 @@ class LocalResourceAPI extends _$LocalResourceAPI {
       query.orderBy([(t) => OrderingTerm(expression: t.surahPosition)]);
     }
 
-    if (params.containsKey('search')) {
-      query.where((t) => t.title.like("%${params['search']}%"));
+    if (params.containsKey('ayahSearch')) {
+      query.where((t) => t.title.like("%${params['ayahSearch']}%"));
     }
 
-    var ayahItems = await query.get();
+    List ayahItems;
 
-    if (params.containsKey('include') &&
-        params['include'] == 'ayah-translations') {
+    if (params.containsKey('translationSearch')) {
+      var rows = await (query.join([
+        innerJoin(
+          ayahTranslations,
+          ayahTranslations.ayahId.equalsExp(ayahs.id),
+        ),
+      ])
+            ..where(
+              ayahTranslations.body.like("%${params['translationSearch']}%"),
+            ))
+          .get();
+
+      ayahItems = rows.map((row) => row.readTable(ayahs)).toList();
+    } else {
+      ayahItems = await query.get();
+    }
+
+    if (params.containsKey('include')) {
       Map<String, Ayah> idToAyahs = <String, Ayah>{
         for (var v in ayahItems) v.id: v,
       };
       var ids = idToAyahs.keys;
 
-      var translationItems = await (select(ayahTranslations)
-            ..where((s) => s.ayahId.isIn(ids)))
-          .get();
+      Map idToSurahs = {};
+      Map idToTranslations = {};
 
-      var idToTranslations =
-          groupBy(translationItems, (AyahTranslation obj) => obj.ayahId);
+      bool includeSurah = params['include'].contains('surah');
+      bool includeTranslation = params['include'].contains('ayah-translations');
 
-      var ayahsWithTranslations = ids.map((id) {
+      if (includeSurah) {
+        var surahIds =
+            ayahItems.map((item) => item.surahId.toString()).toSet().toList();
+
+        var surahItems =
+            await (select(surahs)..where((s) => s.id.isIn(surahIds))).get();
+
+        idToSurahs = <String, Surah>{
+          for (var v in surahItems) v.id: v,
+        };
+      }
+
+      if (includeTranslation) {
+        var translationItems = await (select(ayahTranslations)
+              ..where((s) => s.ayahId.isIn(ids)))
+            .get();
+
+        idToTranslations =
+            groupBy(translationItems, (AyahTranslation obj) => obj.ayahId);
+      }
+
+      var ayahsWithRelations = ayahItems.map((item) {
         return {
-          'ayahs': idToAyahs[id],
+          'ayahs': idToAyahs[item.id],
           'relationships': {
-            'ayah-translations': idToTranslations[id] ?? [],
+            if (includeSurah) ...{
+              'surah': idToSurahs[item.surahId],
+            },
+            if (includeTranslation) ...{
+              'ayah-translations': idToTranslations[item.id] ?? [],
+            },
           },
         };
       }).toList();
 
-      return ayahsWithTranslations;
+      return ayahsWithRelations;
     } else {
       return ayahItems;
     }
