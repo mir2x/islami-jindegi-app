@@ -131,6 +131,8 @@ class LocalResourceAPI extends _$LocalResourceAPI {
         return queryQuranBookQitab(params);
       case 'quranBookPages':
         return queryQuranBookPage(params);
+      case 'quranBookSurahs':
+        return queryQuranBookSurah(params);
       case 'quranBookParas':
         return queryQuranBookPara(params);
       default:
@@ -1227,6 +1229,60 @@ class LocalResourceAPI extends _$LocalResourceAPI {
       );
     } else {
       return query.get();
+    }
+  }
+
+  Future<List> queryQuranBookSurah(Map params) async {
+    var query = select(quranBookSurahs);
+
+    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
+
+    List quranBookSurahItems;
+
+    if (params.containsKey('page') && params.containsKey('bookId')) {
+      var rows = await (query.join([
+        innerJoin(
+          quranBookPages,
+          quranBookPages.id.equalsExp(quranBookSurahs.quranBookPageId),
+        ),
+      ])
+            ..where(
+              quranBookPages.quranBookId.equals(params['bookId']) &
+                  quranBookPages.position.equals(params['page']),
+            ))
+          .get();
+
+      quranBookSurahItems =
+          rows.map((row) => row.readTable(quranBookSurahs)).toList();
+    } else {
+      quranBookSurahItems = await query.get();
+    }
+
+    if (params.containsKey('include') && params['include'] == 'surah') {
+      var bookSurahIds = quranBookSurahItems
+          .map((item) => item.surahId.toString())
+          .toSet()
+          .toList();
+
+      var surahItems =
+          await (select(surahs)..where((s) => s.id.isIn(bookSurahIds))).get();
+
+      Map<String, Surah> idToSurahs = <String, Surah>{
+        for (var v in surahItems) v.id: v,
+      };
+
+      var bookSurahsWithSurahs = quranBookSurahItems.map((item) {
+        return {
+          'quranBookSurahs': item,
+          'relationships': {
+            'surah': idToSurahs[item.surahId],
+          },
+        };
+      }).toList();
+
+      return bookSurahsWithSurahs;
+    } else {
+      return quranBookSurahItems;
     }
   }
 

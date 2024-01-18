@@ -29,6 +29,8 @@ import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/helpers/file_size.dart';
 import 'package:native_app/settings/image.dart';
 import 'drawer.dart';
+import 'tilawat.dart';
+import '../qari_list.dart';
 
 class QuranBook extends ConsumerWidget {
   const QuranBook({super.key});
@@ -296,6 +298,37 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
         alignment: MainAxisAlignment.spaceBetween,
         children: [
           const QuranMenuButton(),
+          Row(
+            children: [
+              TextButton(
+                child: Text(locales.qaris, style: textTheme.titleMedium),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        child: Container(
+                          width: screenWidth,
+                          height: screenHeight * 0.5,
+                          padding: const EdgeInsets.only(
+                            top: 15,
+                            bottom: 25,
+                            left: 15,
+                            right: 15,
+                          ),
+                          child: const QariList(),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+              QuranBookTilawat(
+                bookId: book.id,
+                pdfController: widget.pdfController,
+              ),
+            ],
+          ),
           DeleteButton(filePath: widget.filePath),
         ],
       ),
