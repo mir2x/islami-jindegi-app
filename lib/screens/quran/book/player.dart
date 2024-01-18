@@ -58,23 +58,6 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
   }
 
   @override
-  void didUpdateWidget(covariant oldwidget) {
-    super.didUpdateWidget(oldwidget);
-
-    setState(() {
-      bool qariChanged = widget.qari != oldwidget.qari;
-
-      player.play();
-
-      if (qariChanged) {
-        currentAyah = currentAyah == 0 ? widget.fromAyah : currentAyah;
-      } else {
-        currentAyah = widget.fromAyah;
-      }
-    });
-  }
-
-  @override
   Future<void> dispose() async {
     super.dispose();
     await _playerStateSubscription?.cancel();
@@ -94,42 +77,54 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
       ),
     );
 
-    return qiratProvider.when(
-      loading: () => SvgPicture.asset(
-        'assets/images/icons/pause.svg',
-        width: 30,
-        height: 30,
-      ),
-      error: (error, _) => InkWell(
-        onTap: () {},
-        child: SvgPicture.asset(
-          'assets/images/icons/play.svg',
-          width: 30,
-          height: 30,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 5),
+      child: qiratProvider.when(
+        loading: () => Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: SvgPicture.asset(
+            'assets/images/icons/pause.svg',
+            width: 30,
+            height: 30,
+          ),
         ),
+        error: (error, _) => InkWell(
+          onTap: () {},
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: SvgPicture.asset(
+              'assets/images/icons/play.svg',
+              width: 30,
+              height: 30,
+            ),
+          ),
+        ),
+        data: (updatedPlayer) {
+          return InkWell(
+            onTap: () async {
+              if (isPlaying) {
+                await updatedPlayer.pause();
+              } else {
+                await updatedPlayer.play();
+              }
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: isPlaying
+                  ? SvgPicture.asset(
+                      'assets/images/icons/pause.svg',
+                      width: 30,
+                      height: 30,
+                    )
+                  : SvgPicture.asset(
+                      'assets/images/icons/play.svg',
+                      width: 30,
+                      height: 30,
+                    ),
+            ),
+          );
+        },
       ),
-      data: (updatedPlayer) {
-        return InkWell(
-          onTap: () async {
-            if (isPlaying) {
-              await updatedPlayer.pause();
-            } else {
-              await updatedPlayer.play();
-            }
-          },
-          child: isPlaying
-              ? SvgPicture.asset(
-                  'assets/images/icons/pause.svg',
-                  width: 30,
-                  height: 30,
-                )
-              : SvgPicture.asset(
-                  'assets/images/icons/play.svg',
-                  width: 30,
-                  height: 30,
-                ),
-        );
-      },
     );
   }
 }
