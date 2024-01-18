@@ -280,10 +280,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
         if (s.processingState == ProcessingState.completed) {
           if (widget.serialTilawat && currentAyah < widget.toAyah) {
             currentAyah = currentAyah + 1;
-            itemScrollController.scrollTo(
-              index: currentAyah - 1,
-              duration: const Duration(milliseconds: 300),
-            );
+            itemScrollController.jumpTo(index: currentAyah - 1);
           } else {
             player.pause();
             player.seek(const Duration(seconds: 0));
@@ -305,9 +302,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
       if (widget.serialTilawat) {
         player.play();
 
-        if (qariChanged) {
-          currentAyah = currentAyah == 0 ? widget.fromAyah : currentAyah;
-        } else {
+        if (!qariChanged || (qariChanged && currentAyah == 0)) {
           currentAyah = widget.fromAyah;
         }
 
