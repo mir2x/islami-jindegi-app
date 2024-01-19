@@ -74,6 +74,8 @@ class MasailDisplay extends ConsumerWidget {
         if (audio != null) ...[
           AudioPlayerWidget(
             audio: audio!,
+            album: locales.masail,
+            title: title,
           ),
         ],
         Container(

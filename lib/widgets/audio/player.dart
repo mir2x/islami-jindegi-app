@@ -11,6 +11,7 @@ import 'package:native_app/providers/audio_player.dart';
 import 'package:native_app/providers/local_file.dart';
 import 'package:native_app/objects/audio_resource.dart';
 import 'package:native_app/widgets/presentation/connect_to_internet.dart';
+import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/play_time.dart';
 import 'package:native_app/theme/colors.dart';
 
@@ -18,13 +19,23 @@ class AudioPlayerWidget extends ConsumerWidget {
   const AudioPlayerWidget({
     super.key,
     required this.audio,
+    required this.album,
+    required this.title,
   });
 
   final Map audio;
+  final String album;
+  final String title;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var audioSource = AudioResource(id: audio['id'], storage: audio['storage']);
+    var audioSource = AudioResource(
+      id: audio['id'],
+      storage: audio['storage'],
+      album: album,
+      title: title,
+    );
+
     var audioPlayer = ref.watch(audioPlayerProvider(audioSource));
 
     return audioPlayer.when(
@@ -46,6 +57,7 @@ class AudioPlayerWidget extends ConsumerWidget {
         return StatefulAudioPlayer(
           player: player,
           audio: audio,
+          title: title,
         );
       },
     );
@@ -57,10 +69,12 @@ class StatefulAudioPlayer extends ConsumerStatefulWidget {
     super.key,
     required this.player,
     required this.audio,
+    required this.title,
   });
 
   final AudioPlayer player;
   final Map audio;
+  final String title;
 
   @override
   ConsumerState<StatefulAudioPlayer> createState() => _AudioPlayerState();
@@ -146,9 +160,8 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
       bool hasNoConnection =
           await Connectivity().checkConnectivity() == ConnectivityResult.none;
 
-      var localFile = await ref.watch(
-        localFileProvider(widget.audio['id']).future,
-      );
+      String filePath = fileTitlePath(widget.title, widget.audio['id']);
+      var localFile = await ref.watch(localFileProvider(filePath).future);
 
       if (hasNoConnection && localFile == null) {
         scaffoldMessenger.removeCurrentSnackBar();

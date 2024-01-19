@@ -255,6 +255,8 @@ class QiratPlayer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    String currentLang = Localizations.localeOf(context).languageCode;
+    var numFormatter = NumberFormat('#', currentLang);
     String audioPath = '$qari/${chapter.position}/${ayah.surahPosition}.mp3';
 
     var qiratProvider = ref.watch(
@@ -262,6 +264,12 @@ class QiratPlayer extends ConsumerWidget {
         QiratPlayerAudio(
           player: player,
           audioPath: audioPath,
+          surah: contextualTranslation(
+            locale: currentLang,
+            enText: chapter.title,
+            bnText: chapter.titleBn,
+          ),
+          ayah: numFormatter.format(ayah.surahPosition),
         ),
       ),
     );

@@ -60,12 +60,14 @@ class QuranBookTilawat extends ConsumerWidget {
             },
           ),
           if (qSettings.containsKey('qari') &&
-              qSettings.containsKey('selectedSurah') &&
+              qSettings.containsKey('surahNo') &&
+              qSettings.containsKey('surahTitle') &&
               qSettings.containsKey('fromAyah') &&
               qSettings.containsKey('toAyah')) ...[
             QuranBookPlayer(
               qari: qSettings['qari'],
-              surah: qSettings['selectedSurah'],
+              surahNo: qSettings['surahNo'],
+              surahTitle: qSettings['surahTitle'],
               fromAyah: qSettings['fromAyah'],
               toAyah: qSettings['toAyah'],
             ),
@@ -195,6 +197,7 @@ class _QuranBookTilawatRangeState extends ConsumerState<QuranBookTilawatRange> {
   @override
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
+    String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
 
     return Row(
@@ -271,7 +274,15 @@ class _QuranBookTilawatRangeState extends ConsumerState<QuranBookTilawatRange> {
 
               notifier.updateParams('fromAyah', fromValue);
               notifier.updateParams('toAyah', toValue);
-              notifier.updateParams('selectedSurah', widget.surah.position);
+              notifier.updateParams('surahNo', widget.surah.position);
+              notifier.updateParams(
+                'surahTitle',
+                contextualTranslation(
+                  locale: currentLang,
+                  enText: widget.surah.title,
+                  bnText: widget.surah.titleBn,
+                ),
+              );
 
               Navigator.of(context).pop();
             },

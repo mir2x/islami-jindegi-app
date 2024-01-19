@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import 'package:native_app/providers/qirat_player.dart';
 import 'package:native_app/objects/qirat_player_audio.dart';
 
@@ -10,13 +11,15 @@ class QuranBookPlayer extends ConsumerStatefulWidget {
   const QuranBookPlayer({
     super.key,
     required this.qari,
-    required this.surah,
+    required this.surahNo,
+    required this.surahTitle,
     required this.fromAyah,
     required this.toAyah,
   });
 
   final String qari;
-  final int surah;
+  final int surahNo;
+  final String surahTitle;
   final int fromAyah;
   final int toAyah;
 
@@ -58,6 +61,20 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
   }
 
   @override
+  void didUpdateWidget(covariant oldwidget) {
+    super.didUpdateWidget(oldwidget);
+
+    setState(() {
+      bool pageChanged = widget.fromAyah != oldwidget.fromAyah;
+      bool surahChanged = widget.surahNo != oldwidget.surahNo;
+
+      if (pageChanged || surahChanged) {
+        currentAyah = widget.fromAyah;
+      }
+    });
+  }
+
+  @override
   Future<void> dispose() async {
     super.dispose();
     await _playerStateSubscription?.cancel();
@@ -66,13 +83,17 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    String audioPath = '${widget.qari}/${widget.surah}/$currentAyah.mp3';
+    String currentLang = Localizations.localeOf(context).languageCode;
+    var numFormatter = NumberFormat('#', currentLang);
+    String audioPath = '${widget.qari}/${widget.surahNo}/$currentAyah.mp3';
 
     var qiratProvider = ref.watch(
       qiratPlayerProvider(
         QiratPlayerAudio(
           player: player,
           audioPath: audioPath,
+          surah: widget.surahTitle,
+          ayah: numFormatter.format(currentAyah),
         ),
       ),
     );

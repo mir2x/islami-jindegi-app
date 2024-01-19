@@ -225,6 +225,7 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
 
   @override
   Widget build(BuildContext context) {
+    String currentLang = Localizations.localeOf(context).languageCode;
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
 
@@ -307,8 +308,16 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                 notifier.updateParams('fromAyah', qitabSurah.startAyah);
                 notifier.updateParams('toAyah', qitabSurah.endAyah);
                 notifier.updateParams(
-                  'selectedSurah',
+                  'surahNo',
                   qitabSurah.surah.value.position,
+                );
+                notifier.updateParams(
+                  'surahTitle',
+                  contextualTranslation(
+                    locale: currentLang,
+                    enText: qitabSurah.surah.value.title,
+                    bnText: qitabSurah.surah.value.titleBn,
+                  ),
                 );
               }
             }

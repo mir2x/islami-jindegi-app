@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:native_app/objects/qirat_player_audio.dart';
@@ -42,7 +44,16 @@ final qiratPlayerProvider =
   }
 
   if (localFile != null) {
-    await qirat.player.setFilePath(localFile.path);
+    var audioSource = AudioSource.file(
+      localFile.path,
+      tag: MediaItem(
+        id: qirat.audioPath,
+        album: qirat.surah,
+        title: qirat.ayah,
+      ),
+    );
+
+    await qirat.player.setAudioSource(audioSource);
     qirat.player.play();
   } else {
     throw Exception('no file');
