@@ -105,7 +105,7 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
         loading: () => Container(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: SvgPicture.asset(
-            'assets/images/icons/play.svg',
+            'assets/images/icons/pause.svg',
             width: 30,
             height: 30,
           ),
