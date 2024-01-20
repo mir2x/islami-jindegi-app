@@ -305,8 +305,8 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                 var qitabSurah = resources.first;
                 var notifier = ref.read(quranSettingsProvider.notifier);
 
-                notifier.updateParams('fromAyah', qitabSurah.startAyah);
-                notifier.updateParams('toAyah', qitabSurah.endAyah);
+                notifier.updateParams('qitabFromAyah', qitabSurah.startAyah);
+                notifier.updateParams('qitabToAyah', qitabSurah.endAyah);
                 notifier.updateParams(
                   'surahNo',
                   qitabSurah.surah.value.position,

@@ -5,11 +5,12 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/objects/audio_resource.dart';
 import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
+import 'player.dart';
 import 'local_file.dart';
 
 final audioPlayerProvider =
     FutureProvider.autoDispose.family((ref, AudioResource audioResource) async {
-  final AudioPlayer player = AudioPlayer();
+  final AudioPlayer player = ref.read(playerProvider);
 
   String filePath = fileTitlePath(audioResource.title, audioResource.id);
   var localFile = await ref.watch(localFileProvider(filePath).future);

@@ -5,6 +5,7 @@ import 'package:pdfx/pdfx.dart';
 import 'package:idkit_inputformatters/idkit_inputformatters.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/all_models.dart';
+import 'package:native_app/providers/player.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/providers/quran_settings.dart';
@@ -62,14 +63,15 @@ class QuranBookTilawat extends ConsumerWidget {
           if (qSettings.containsKey('qari') &&
               qSettings.containsKey('surahNo') &&
               qSettings.containsKey('surahTitle') &&
-              qSettings.containsKey('fromAyah') &&
-              qSettings.containsKey('toAyah')) ...[
+              qSettings.containsKey('qitabFromAyah') &&
+              qSettings.containsKey('qitabToAyah')) ...[
             QuranBookPlayer(
+              player: ref.read(playerProvider),
               qari: qSettings['qari'],
               surahNo: qSettings['surahNo'],
               surahTitle: qSettings['surahTitle'],
-              fromAyah: qSettings['fromAyah'],
-              toAyah: qSettings['toAyah'],
+              fromAyah: qSettings['qitabFromAyah'],
+              toAyah: qSettings['qitabToAyah'],
             ),
           ],
         ],
@@ -272,8 +274,8 @@ class _QuranBookTilawatRangeState extends ConsumerState<QuranBookTilawatRange> {
             onPressed: () {
               var notifier = ref.read(quranSettingsProvider.notifier);
 
-              notifier.updateParams('fromAyah', fromValue);
-              notifier.updateParams('toAyah', toValue);
+              notifier.updateParams('qitabFromAyah', fromValue);
+              notifier.updateParams('qitabToAyah', toValue);
               notifier.updateParams('surahNo', widget.surah.position);
               notifier.updateParams(
                 'surahTitle',

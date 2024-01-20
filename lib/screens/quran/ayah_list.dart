@@ -14,6 +14,7 @@ import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/providers/local_file.dart';
+import 'package:native_app/providers/player.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
@@ -115,6 +116,7 @@ class AyahList extends ConsumerWidget {
                 );
               } else {
                 return ReadingModeAyahList(
+                  player: ref.read(playerProvider),
                   chapter: chapter,
                   ayahs: ayahs,
                   qari: qSettings['qari'],
@@ -226,6 +228,7 @@ class TilawatModeAyahList extends StatelessWidget {
 class ReadingModeAyahList extends ConsumerStatefulWidget {
   const ReadingModeAyahList({
     super.key,
+    required this.player,
     required this.chapter,
     required this.ayahs,
     required this.qari,
@@ -239,6 +242,7 @@ class ReadingModeAyahList extends ConsumerStatefulWidget {
     required this.banglaFontSizeRatio,
   });
 
+  final AudioPlayer player;
   final dynamic chapter;
   final List ayahs;
   final String? qari;
@@ -256,7 +260,6 @@ class ReadingModeAyahList extends ConsumerStatefulWidget {
 }
 
 class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
-  AudioPlayer player = AudioPlayer();
   StreamSubscription? _playerStateSubscription;
   bool isPlaying = false;
 
@@ -275,15 +278,19 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
   void initState() {
     super.initState();
 
-    _playerStateSubscription = player.playerStateStream.listen((PlayerState s) {
+    _playerStateSubscription =
+        widget.player.playerStateStream.listen((PlayerState s) {
       setState(() {
         if (s.processingState == ProcessingState.completed) {
           if (widget.serialTilawat && currentAyah < widget.toAyah) {
             currentAyah = currentAyah + 1;
-            itemScrollController.jumpTo(index: currentAyah - 1);
+            itemScrollController.scrollTo(
+              index: currentAyah - 1,
+              duration: const Duration(milliseconds: 50),
+            );
           } else {
-            player.pause();
-            player.seek(const Duration(seconds: 0));
+            widget.player.pause();
+            widget.player.seek(const Duration(seconds: 0));
           }
         }
 
@@ -300,7 +307,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
       bool qariChanged = widget.qari != oldwidget.qari;
 
       if (widget.serialTilawat) {
-        player.play();
+        widget.player.play();
 
         if (!qariChanged || (qariChanged && currentAyah == 0)) {
           currentAyah = widget.fromAyah;
@@ -308,7 +315,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
 
         itemScrollController.jumpTo(index: currentAyah - 1);
       } else if (qariChanged) {
-        player.stop();
+        widget.player.stop();
         currentAyah = 0;
       }
     });
@@ -318,7 +325,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
   Future<void> dispose() async {
     super.dispose();
     await _playerStateSubscription?.cancel();
-    await player.stop();
+    await widget.player.stop();
   }
 
   @override
@@ -368,7 +375,6 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
                     ayah: ayah,
                     chapter: widget.chapter,
                     qari: widget.qari,
-                    player: player,
                     isActive: isActive,
                     isPlaying: isPlaying,
                     preferences: widget.preferences,
@@ -570,7 +576,6 @@ class QariOptions extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    String currentLang = Localizations.localeOf(context).languageCode;
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     double screenHeight = MediaQuery.of(context).size.height;

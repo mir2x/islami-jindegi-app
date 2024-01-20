@@ -5,11 +5,12 @@ import 'package:just_audio/just_audio.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:native_app/providers/qirat_player.dart';
-import 'package:native_app/objects/qirat_player_audio.dart';
+import 'package:native_app/objects/qirat_audio.dart';
 
 class QuranBookPlayer extends ConsumerStatefulWidget {
   const QuranBookPlayer({
     super.key,
+    required this.player,
     required this.qari,
     required this.surahNo,
     required this.surahTitle,
@@ -17,6 +18,7 @@ class QuranBookPlayer extends ConsumerStatefulWidget {
     required this.toAyah,
   });
 
+  final AudioPlayer player;
   final String qari;
   final int surahNo;
   final String surahTitle;
@@ -28,7 +30,6 @@ class QuranBookPlayer extends ConsumerStatefulWidget {
 }
 
 class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
-  AudioPlayer player = AudioPlayer();
   StreamSubscription? _playerStateSubscription;
   bool isPlaying = false;
 
@@ -44,14 +45,15 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
 
     currentAyah = widget.fromAyah;
 
-    _playerStateSubscription = player.playerStateStream.listen((PlayerState s) {
+    _playerStateSubscription =
+        widget.player.playerStateStream.listen((PlayerState s) {
       setState(() {
         if (s.processingState == ProcessingState.completed) {
           if (currentAyah < widget.toAyah) {
             currentAyah = currentAyah + 1;
           } else {
-            player.pause();
-            player.seek(const Duration(seconds: 0));
+            widget.player.pause();
+            widget.player.seek(const Duration(seconds: 0));
           }
         }
 
@@ -78,7 +80,7 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
   Future<void> dispose() async {
     super.dispose();
     await _playerStateSubscription?.cancel();
-    await player.stop();
+    await widget.player.stop();
   }
 
   @override
@@ -89,8 +91,7 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
 
     var qiratProvider = ref.watch(
       qiratPlayerProvider(
-        QiratPlayerAudio(
-          player: player,
+        QiratAudio(
           audioPath: audioPath,
           surah: widget.surahTitle,
           ayah: numFormatter.format(currentAyah),
