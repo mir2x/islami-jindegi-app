@@ -38,7 +38,7 @@ class BookImage extends ConsumerWidget {
           error: (error, _) => null,
           data: (highlight) {
             if (highlight != null) {
-              return Border.all(color: ThemeColors.color4, width: 4);
+              return Border.all(color: ThemeColors.danger, width: 4);
             } else {
               return null;
             }
