@@ -56,7 +56,10 @@ final qiratPlayerProvider =
     );
 
     await player.setAudioSource(audioSource);
-    player.play();
+
+    if (qirat.autoPlay) {
+      player.play();
+    }
   } else {
     throw Exception('no file');
   }

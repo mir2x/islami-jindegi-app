@@ -5,12 +5,14 @@ class QiratAudio extends Equatable {
     required this.audioPath,
     required this.surah,
     required this.ayah,
+    this.autoPlay = false,
   });
 
   final String audioPath;
   final String surah;
   final String ayah;
+  final bool autoPlay;
 
   @override
-  List<Object> get props => [audioPath, surah, ayah];
+  List<Object> get props => [audioPath, surah, ayah, autoPlay];
 }

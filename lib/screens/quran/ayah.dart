@@ -260,6 +260,7 @@ class QiratPlayer extends ConsumerWidget {
             bnText: chapter.titleBn,
           ),
           ayah: numFormatter.format(ayah.surahPosition),
+          autoPlay: true,
         ),
       ),
     );
