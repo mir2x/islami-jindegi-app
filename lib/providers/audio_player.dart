@@ -25,6 +25,7 @@ final audioPlayerProvider =
       ),
     );
 
+    await player.stop();
     await player.setAudioSource(audioSource);
   } else {
     final connectivityResult = await Connectivity().checkConnectivity();
@@ -44,6 +45,7 @@ final audioPlayerProvider =
         ),
       );
 
+      await player.stop();
       await player.setAudioSource(audioSource);
     } else {
       throw Exception('no connection');

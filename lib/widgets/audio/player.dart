@@ -53,9 +53,9 @@ class AudioPlayerWidget extends ConsumerWidget {
           ),
         );
       },
-      data: (player) {
+      data: (updatedPlayer) {
         return StatefulAudioPlayer(
-          player: player,
+          player: updatedPlayer,
           audio: audio,
           title: title,
         );
