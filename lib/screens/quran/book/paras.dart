@@ -28,7 +28,12 @@ class QuranBookParas extends ConsumerWidget {
 
     var query = AllModelsQuery(
       repository: ref.quranBookParas,
-      params: {'quranBookId': book.id, 'include': 'para', 'quantity': 30},
+      params: {
+        'quranBookId': book.id,
+        'include': 'para',
+        'quantity': 30,
+        'offline': true,
+      },
     );
 
     var modelQuery = ref.watch(allModelsProvider(query));
@@ -176,6 +181,7 @@ class _ParasState extends ConsumerState<StatefulParas> {
                         'paraId': selectedBookPara.para.value.id,
                         'paraPage': number,
                         'quantity': 1,
+                        'offline': true,
                       },
                     );
 

@@ -25,7 +25,7 @@ class QuranBookSurahs extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var query = AllModelsQuery(
       repository: ref.surahs,
-      params: const {'quantity': 114},
+      params: const {'quantity': 114, 'offline': true},
     );
 
     var modelQuery = ref.watch(allModelsProvider(query));
@@ -168,6 +168,7 @@ class _SurahsState extends ConsumerState<StatefulSurahs> {
                         'surahId': selectedSurah.id,
                         'ayahNo': number,
                         'quantity': 1,
+                        'offline': true,
                       },
                     );
 

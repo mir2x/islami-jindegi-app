@@ -24,7 +24,11 @@ class BismillahTafseer extends ConsumerWidget {
 
     var query = AllModelsQuery(
       repository: ref.pages,
-      params: const {'slug': 'bismillah-tafseer', 'quantity': 1},
+      params: const {
+        'slug': 'bismillah-tafseer',
+        'quantity': 1,
+        'offline': true,
+      },
     );
 
     var modelQuery = ref.watch(firstModelProvider(query));

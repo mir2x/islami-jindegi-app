@@ -114,6 +114,7 @@ class TafseerDisplay extends ConsumerWidget {
         'ayahId': QR.params['ayah_id'].toString(),
         'tafseerQitabId': qSettings['qitab'],
         'quantity': 1,
+        'offline': true,
       },
     );
 
@@ -170,7 +171,12 @@ class SelectQitab extends ConsumerWidget {
 
     var qNotifier = ref.read(quranSettingsProvider.notifier);
     var qitabQuery = ref.watch(
-      allModelsProvider(AllModelsQuery(repository: ref.tafseerQitabs)),
+      allModelsProvider(
+        AllModelsQuery(
+          repository: ref.tafseerQitabs,
+          params: const {'offline': true},
+        ),
+      ),
     );
     String? selectedQitab = qSettings['qitab'];
 

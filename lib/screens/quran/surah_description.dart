@@ -23,7 +23,11 @@ class SurahDescription extends ConsumerWidget {
 
     var query = AllModelsQuery(
       repository: ref.surahs,
-      params: {'slug': QR.params['slug'].toString(), 'quantity': 1},
+      params: {
+        'slug': QR.params['slug'].toString(),
+        'quantity': 1,
+        'offline': true,
+      },
     );
 
     var modelQuery = ref.watch(firstModelProvider(query));

@@ -264,6 +264,7 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                 'quranBookId': book.id,
                 'position': page,
                 'quantity': 1,
+                'offline': true,
               },
             );
 
