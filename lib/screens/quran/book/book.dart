@@ -11,6 +11,7 @@ import 'package:native_app/providers/pdf_controller.dart';
 import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
+import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/objects/all_models_query.dart';
@@ -224,6 +225,7 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
 
   @override
   Widget build(BuildContext context) {
+    String currentLang = Localizations.localeOf(context).languageCode;
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
 
@@ -282,6 +284,42 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                   duration: const Duration(seconds: 3),
                 ),
               );
+            }
+
+            var qSettings = ref.read(quranSettingsProvider);
+
+            if (qSettings.containsKey('qari')) {
+              var query = AllModelsQuery(
+                repository: ref.quranBookSurahs,
+                params: {
+                  'bookId': book.id,
+                  'page': widget.pdfController.page,
+                  'include': 'surah',
+                  'offline': true,
+                },
+              );
+
+              var resources = await ref.read(allModelsProvider(query).future);
+
+              if (resources.length == 1) {
+                var qitabSurah = resources.first;
+                var notifier = ref.read(quranSettingsProvider.notifier);
+
+                notifier.updateParams('qitabFromAyah', qitabSurah.startAyah);
+                notifier.updateParams('qitabToAyah', qitabSurah.endAyah);
+                notifier.updateParams(
+                  'surahNo',
+                  qitabSurah.surah.value.position,
+                );
+                notifier.updateParams(
+                  'surahTitle',
+                  contextualTranslation(
+                    locale: currentLang,
+                    enText: qitabSurah.surah.value.title,
+                    bnText: qitabSurah.surah.value.titleBn,
+                  ),
+                );
+              }
             }
           },
         ),

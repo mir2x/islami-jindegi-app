@@ -66,6 +66,8 @@ class MalfuzatDisplay extends ConsumerWidget {
         if (audio != null) ...[
           AudioPlayerWidget(
             audio: audio!,
+            album: locales.malfuzat,
+            title: title,
           ),
         ],
         Container(

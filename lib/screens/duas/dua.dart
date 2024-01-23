@@ -106,6 +106,8 @@ class Dua extends ConsumerWidget {
                     if (resource.audio != null) ...[
                       AudioPlayerWidget(
                         audio: resource.audio,
+                        album: locales.duaDurud,
+                        title: resource.title,
                       ),
                     ],
                     Container(

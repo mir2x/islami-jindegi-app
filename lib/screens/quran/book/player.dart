@@ -3,20 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import 'package:native_app/providers/qirat_player.dart';
-import 'package:native_app/objects/qirat_player_audio.dart';
+import 'package:native_app/objects/qirat_audio.dart';
 
 class QuranBookPlayer extends ConsumerStatefulWidget {
   const QuranBookPlayer({
     super.key,
+    required this.player,
     required this.qari,
-    required this.surah,
+    required this.surahNo,
+    required this.surahTitle,
     required this.fromAyah,
     required this.toAyah,
   });
 
+  final AudioPlayer player;
   final String qari;
-  final int surah;
+  final int surahNo;
+  final String surahTitle;
   final int fromAyah;
   final int toAyah;
 
@@ -25,7 +30,6 @@ class QuranBookPlayer extends ConsumerStatefulWidget {
 }
 
 class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
-  AudioPlayer player = AudioPlayer();
   StreamSubscription? _playerStateSubscription;
   bool isPlaying = false;
 
@@ -41,14 +45,15 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
 
     currentAyah = widget.fromAyah;
 
-    _playerStateSubscription = player.playerStateStream.listen((PlayerState s) {
+    _playerStateSubscription =
+        widget.player.playerStateStream.listen((PlayerState s) {
       setState(() {
         if (s.processingState == ProcessingState.completed) {
           if (currentAyah < widget.toAyah) {
             currentAyah = currentAyah + 1;
           } else {
-            player.pause();
-            player.seek(const Duration(seconds: 0));
+            widget.player.pause();
+            widget.player.seek(const Duration(seconds: 0));
           }
         }
 
@@ -62,13 +67,10 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
     super.didUpdateWidget(oldwidget);
 
     setState(() {
-      bool qariChanged = widget.qari != oldwidget.qari;
+      bool pageChanged = widget.fromAyah != oldwidget.fromAyah;
+      bool surahChanged = widget.surahNo != oldwidget.surahNo;
 
-      player.play();
-
-      if (qariChanged) {
-        currentAyah = currentAyah == 0 ? widget.fromAyah : currentAyah;
-      } else {
+      if (pageChanged || surahChanged) {
         currentAyah = widget.fromAyah;
       }
     });
@@ -78,58 +80,73 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
   Future<void> dispose() async {
     super.dispose();
     await _playerStateSubscription?.cancel();
-    await player.stop();
+    await widget.player.stop();
   }
 
   @override
   Widget build(BuildContext context) {
-    String audioPath = '${widget.qari}/${widget.surah}/$currentAyah.mp3';
+    String currentLang = Localizations.localeOf(context).languageCode;
+    var numFormatter = NumberFormat('#', currentLang);
+    String audioPath = '${widget.qari}/${widget.surahNo}/$currentAyah.mp3';
 
     var qiratProvider = ref.watch(
       qiratPlayerProvider(
-        QiratPlayerAudio(
-          player: player,
+        QiratAudio(
           audioPath: audioPath,
+          surah: widget.surahTitle,
+          ayah: numFormatter.format(currentAyah),
         ),
       ),
     );
 
-    return qiratProvider.when(
-      loading: () => SvgPicture.asset(
-        'assets/images/icons/pause.svg',
-        width: 30,
-        height: 30,
-      ),
-      error: (error, _) => InkWell(
-        onTap: () {},
-        child: SvgPicture.asset(
-          'assets/images/icons/play.svg',
-          width: 30,
-          height: 30,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 5),
+      child: qiratProvider.when(
+        loading: () => Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: SvgPicture.asset(
+            'assets/images/icons/pause.svg',
+            width: 30,
+            height: 30,
+          ),
         ),
+        error: (error, _) => InkWell(
+          onTap: () {},
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: SvgPicture.asset(
+              'assets/images/icons/play.svg',
+              width: 30,
+              height: 30,
+            ),
+          ),
+        ),
+        data: (updatedPlayer) {
+          return InkWell(
+            onTap: () async {
+              if (isPlaying) {
+                await updatedPlayer.pause();
+              } else {
+                await updatedPlayer.play();
+              }
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: isPlaying
+                  ? SvgPicture.asset(
+                      'assets/images/icons/pause.svg',
+                      width: 30,
+                      height: 30,
+                    )
+                  : SvgPicture.asset(
+                      'assets/images/icons/play.svg',
+                      width: 30,
+                      height: 30,
+                    ),
+            ),
+          );
+        },
       ),
-      data: (updatedPlayer) {
-        return InkWell(
-          onTap: () async {
-            if (isPlaying) {
-              await updatedPlayer.pause();
-            } else {
-              await updatedPlayer.play();
-            }
-          },
-          child: isPlaying
-              ? SvgPicture.asset(
-                  'assets/images/icons/pause.svg',
-                  width: 30,
-                  height: 30,
-                )
-              : SvgPicture.asset(
-                  'assets/images/icons/play.svg',
-                  width: 30,
-                  height: 30,
-                ),
-        );
-      },
     );
   }
 }

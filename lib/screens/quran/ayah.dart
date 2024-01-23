@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:flutter_svg/svg.dart';
@@ -13,7 +12,7 @@ import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
-import 'package:native_app/objects/qirat_player_audio.dart';
+import 'package:native_app/objects/qirat_audio.dart';
 import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/providers/qirat_player.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
@@ -27,7 +26,6 @@ class Ayah extends ConsumerWidget {
     required this.ayah,
     required this.chapter,
     required this.qari,
-    required this.player,
     required this.isActive,
     required this.isPlaying,
     required this.loadQirat,
@@ -40,7 +38,6 @@ class Ayah extends ConsumerWidget {
   final dynamic ayah;
   final dynamic chapter;
   final String? qari;
-  final AudioPlayer player;
   final bool isActive;
   final bool isPlaying;
   final Future? Function(dynamic) loadQirat;
@@ -118,7 +115,6 @@ class Ayah extends ConsumerWidget {
                         ayah: ayah,
                         chapter: chapter,
                         qari: qari!,
-                        player: player,
                         loadQirat: loadQirat,
                         isActive: isActive,
                         isPlaying: isPlaying,
@@ -154,7 +150,6 @@ class QiratButton extends StatelessWidget {
     required this.ayah,
     required this.chapter,
     required this.qari,
-    required this.player,
     required this.isActive,
     required this.isPlaying,
     required this.loadQirat,
@@ -163,7 +158,6 @@ class QiratButton extends StatelessWidget {
   final dynamic ayah;
   final dynamic chapter;
   final String qari;
-  final AudioPlayer player;
   final bool isActive;
   final bool isPlaying;
   final Future? Function(dynamic) loadQirat;
@@ -177,7 +171,6 @@ class QiratButton extends StatelessWidget {
               ayah: ayah,
               chapter: chapter,
               qari: qari,
-              player: player,
               isPlaying: isPlaying,
               loadQirat: loadQirat,
             )
@@ -241,7 +234,6 @@ class QiratPlayer extends ConsumerWidget {
     required this.ayah,
     required this.chapter,
     required this.qari,
-    required this.player,
     required this.isPlaying,
     required this.loadQirat,
   });
@@ -249,19 +241,26 @@ class QiratPlayer extends ConsumerWidget {
   final dynamic ayah;
   final dynamic chapter;
   final String qari;
-  final AudioPlayer player;
   final bool isPlaying;
   final Future? Function(dynamic) loadQirat;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    String currentLang = Localizations.localeOf(context).languageCode;
+    var numFormatter = NumberFormat('#', currentLang);
     String audioPath = '$qari/${chapter.position}/${ayah.surahPosition}.mp3';
 
     var qiratProvider = ref.watch(
       qiratPlayerProvider(
-        QiratPlayerAudio(
-          player: player,
+        QiratAudio(
           audioPath: audioPath,
+          surah: contextualTranslation(
+            locale: currentLang,
+            enText: chapter.title,
+            bnText: chapter.titleBn,
+          ),
+          ayah: numFormatter.format(ayah.surahPosition),
+          autoPlay: true,
         ),
       ),
     );

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:pdfx/pdfx.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:idkit_inputformatters/idkit_inputformatters.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/all_models.dart';
+import 'package:native_app/providers/player.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/providers/quran_settings.dart';
@@ -25,6 +25,8 @@ class QuranBookTilawat extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
+    var textTheme = Theme.of(context).textTheme;
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     var qSettings = ref.watch(quranSettingsProvider);
@@ -33,57 +35,43 @@ class QuranBookTilawat extends ConsumerWidget {
       return Row(
         children: [
           TextButton(
-            child: SvgPicture.asset(
-              'assets/images/icons/play.svg',
-              width: 30,
-              height: 30,
-            ),
+            child: Text(locales.ayah, style: textTheme.titleMedium),
             onPressed: () async {
-              var query = AllModelsQuery(
-                repository: ref.quranBookSurahs,
-                params: {
-                  'bookId': bookId,
-                  'page': pdfController.page,
-                  'include': 'surah',
-                  'offline': true,
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return Dialog(
+                    child: Container(
+                      width: screenWidth,
+                      height: screenHeight * 0.4,
+                      padding: const EdgeInsets.only(
+                        top: 15,
+                        bottom: 25,
+                        left: 15,
+                        right: 15,
+                      ),
+                      child: QuranBookTilawatRanges(
+                        bookId: bookId,
+                        page: pdfController.page,
+                      ),
+                    ),
+                  );
                 },
               );
-
-              var resources = await ref.read(allModelsProvider(query).future);
-
-              if (resources.length > 1) {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Dialog(
-                      child: Container(
-                        width: screenWidth,
-                        height: screenHeight * 0.4,
-                        padding: const EdgeInsets.only(
-                          top: 15,
-                          bottom: 25,
-                          left: 15,
-                          right: 15,
-                        ),
-                        child: QuranBookTilawatRanges(
-                          resources: resources,
-                        ),
-                      ),
-                    );
-                  },
-                );
-              } else {}
             },
           ),
           if (qSettings.containsKey('qari') &&
-              qSettings.containsKey('selectedSurah') &&
-              qSettings.containsKey('fromAyah') &&
-              qSettings.containsKey('toAyah')) ...[
+              qSettings.containsKey('surahNo') &&
+              qSettings.containsKey('surahTitle') &&
+              qSettings.containsKey('qitabFromAyah') &&
+              qSettings.containsKey('qitabToAyah')) ...[
             QuranBookPlayer(
+              player: ref.read(playerProvider),
               qari: qSettings['qari'],
-              surah: qSettings['selectedSurah'],
-              fromAyah: qSettings['fromAyah'],
-              toAyah: qSettings['toAyah'],
+              surahNo: qSettings['surahNo'],
+              surahTitle: qSettings['surahTitle'],
+              fromAyah: qSettings['qitabFromAyah'],
+              toAyah: qSettings['qitabToAyah'],
             ),
           ],
         ],
@@ -97,47 +85,74 @@ class QuranBookTilawat extends ConsumerWidget {
 class QuranBookTilawatRanges extends ConsumerWidget {
   const QuranBookTilawatRanges({
     super.key,
-    required this.resources,
+    required this.bookId,
+    required this.page,
   });
 
-  final List resources;
+  final String bookId;
+  final int page;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     String currentLang = Localizations.localeOf(context).languageCode;
 
-    return ListView.builder(
-      itemCount: resources.length,
-      itemBuilder: (BuildContext context, int index) {
-        var bookSurah = resources[index];
+    var query = AllModelsQuery(
+      repository: ref.quranBookSurahs,
+      params: {
+        'bookId': bookId,
+        'page': page,
+        'include': 'surah',
+        'offline': true,
+      },
+    );
 
-        return Container(
-          margin: const EdgeInsets.only(bottom: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                contextualTranslation(
-                  locale: currentLang,
-                  enText: bookSurah.surah.value.title,
-                  bnText: bookSurah.surah.value.titleBn,
-                ),
+    var modelQuery = ref.watch(allModelsProvider(query));
+
+    return modelQuery.when(
+      loading: () {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+      error: (error, _) => Text(error.toString()),
+      data: (resources) {
+        return ListView.builder(
+          itemCount: resources.length,
+          itemBuilder: (BuildContext context, int index) {
+            var bookSurah = resources[index];
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 3),
+                    child: Text(
+                      contextualTranslation(
+                        locale: currentLang,
+                        enText: bookSurah.surah.value.title,
+                        bnText: bookSurah.surah.value.titleBn,
+                      ),
+                    ),
+                  ),
+                  QuranBookTilawatRange(
+                    surah: bookSurah.surah.value,
+                    fromAyah: bookSurah.startAyah,
+                    toAyah: bookSurah.endAyah,
+                  ),
+                ],
               ),
-              TilwatRange(
-                surah: bookSurah.surah.value,
-                fromAyah: bookSurah.startAyah,
-                toAyah: bookSurah.endAyah,
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
 }
 
-class TilwatRange extends ConsumerStatefulWidget {
-  const TilwatRange({
+class QuranBookTilawatRange extends ConsumerStatefulWidget {
+  const QuranBookTilawatRange({
     super.key,
     required this.surah,
     required this.fromAyah,
@@ -149,10 +164,11 @@ class TilwatRange extends ConsumerStatefulWidget {
   final int toAyah;
 
   @override
-  ConsumerState<TilwatRange> createState() => _TilawatRangeState();
+  ConsumerState<QuranBookTilawatRange> createState() =>
+      _QuranBookTilawatRangeState();
 }
 
-class _TilawatRangeState extends ConsumerState<TilwatRange> {
+class _QuranBookTilawatRangeState extends ConsumerState<QuranBookTilawatRange> {
   int? fromValue;
   int? toValue;
 
@@ -183,6 +199,7 @@ class _TilawatRangeState extends ConsumerState<TilwatRange> {
   @override
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
+    String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
 
     return Row(
@@ -197,7 +214,7 @@ class _TilawatRangeState extends ConsumerState<TilwatRange> {
             keyboardType: TextInputType.number,
             inputFormatters: [
               IDKitNumeralTextInputFormatter.range(
-                minValue: widget.fromAyah,
+                minValue: 1,
                 maxValue: widget.toAyah,
                 decimalPoint: false,
               ),
@@ -226,7 +243,7 @@ class _TilawatRangeState extends ConsumerState<TilwatRange> {
             keyboardType: TextInputType.number,
             inputFormatters: [
               IDKitNumeralTextInputFormatter.range(
-                minValue: widget.fromAyah,
+                minValue: 1,
                 maxValue: widget.toAyah,
                 decimalPoint: false,
               ),
@@ -255,20 +272,19 @@ class _TilawatRangeState extends ConsumerState<TilwatRange> {
               ),
             ),
             onPressed: () {
-              ref.read(quranSettingsProvider.notifier).updateParams(
-                    'fromAyah',
-                    fromValue,
-                  );
+              var notifier = ref.read(quranSettingsProvider.notifier);
 
-              ref.read(quranSettingsProvider.notifier).updateParams(
-                    'toAyah',
-                    toValue,
-                  );
-
-              ref.read(quranSettingsProvider.notifier).updateParams(
-                    'selectedSurah',
-                    widget.surah.position,
-                  );
+              notifier.updateParams('qitabFromAyah', fromValue);
+              notifier.updateParams('qitabToAyah', toValue);
+              notifier.updateParams('surahNo', widget.surah.position);
+              notifier.updateParams(
+                'surahTitle',
+                contextualTranslation(
+                  locale: currentLang,
+                  enText: widget.surah.title,
+                  bnText: widget.surah.titleBn,
+                ),
+              );
 
               Navigator.of(context).pop();
             },

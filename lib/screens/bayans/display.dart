@@ -57,6 +57,8 @@ class BayanDisplay extends ConsumerWidget {
             margin: const EdgeInsets.only(top: 30),
             child: AudioPlayerWidget(
               audio: audio!,
+              album: locales.bayan,
+              title: title,
             ),
           ),
         ],

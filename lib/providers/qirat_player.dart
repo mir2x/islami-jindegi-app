@@ -1,15 +1,19 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
-import 'package:native_app/objects/qirat_player_audio.dart';
+import 'package:native_app/objects/qirat_audio.dart';
 import 'package:native_app/objects/download_params.dart';
+import 'player.dart';
 import 'local_file.dart';
 import 'connectivity_result.dart';
 import 'downloader.dart';
 
 final qiratPlayerProvider =
-    FutureProvider.autoDispose.family((ref, QiratPlayerAudio qirat) async {
+    FutureProvider.autoDispose.family((ref, QiratAudio qirat) async {
+  final AudioPlayer player = ref.read(playerProvider);
   String staticHostName = dotenv.env['STATIC_HOST_NAME']!;
   String fileUrl = '$staticHostName/assets/al-quran/qirats/${qirat.audioPath}';
   String filePath = 'al-quran/qirats/${qirat.audioPath}';
@@ -42,11 +46,23 @@ final qiratPlayerProvider =
   }
 
   if (localFile != null) {
-    await qirat.player.setFilePath(localFile.path);
-    qirat.player.play();
+    var audioSource = AudioSource.file(
+      localFile.path,
+      tag: MediaItem(
+        id: qirat.audioPath,
+        album: qirat.surah,
+        title: qirat.ayah,
+      ),
+    );
+
+    await player.setAudioSource(audioSource);
+
+    if (qirat.autoPlay) {
+      player.play();
+    }
   } else {
     throw Exception('no file');
   }
 
-  return qirat.player;
+  return player;
 });

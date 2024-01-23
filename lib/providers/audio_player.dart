@@ -1,18 +1,32 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/objects/audio_resource.dart';
+import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
+import 'player.dart';
 import 'local_file.dart';
 
 final audioPlayerProvider =
     FutureProvider.autoDispose.family((ref, AudioResource audioResource) async {
-  final AudioPlayer player = AudioPlayer();
+  final AudioPlayer player = ref.read(playerProvider);
 
-  var localFile = await ref.watch(localFileProvider(audioResource.id).future);
+  String filePath = fileTitlePath(audioResource.title, audioResource.id);
+  var localFile = await ref.watch(localFileProvider(filePath).future);
 
   if (localFile != null) {
-    await player.setFilePath(localFile.path);
+    var audioSource = AudioSource.file(
+      localFile.path,
+      tag: MediaItem(
+        id: audioResource.id,
+        album: audioResource.album,
+        title: audioResource.title,
+      ),
+    );
+
+    await player.stop();
+    await player.setAudioSource(audioSource);
   } else {
     final connectivityResult = await Connectivity().checkConnectivity();
 
@@ -22,7 +36,17 @@ final audioPlayerProvider =
         'storage': audioResource.storage,
       });
 
-      await player.setUrl(url);
+      var audioSource = AudioSource.uri(
+        Uri.parse(url),
+        tag: MediaItem(
+          id: audioResource.id,
+          album: audioResource.album,
+          title: audioResource.title,
+        ),
+      );
+
+      await player.stop();
+      await player.setAudioSource(audioSource);
     } else {
       throw Exception('no connection');
     }
