@@ -9,6 +9,7 @@ import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/buttons/delete.dart';
 import 'package:native_app/widgets/buttons/download.dart';
+import 'package:native_app/helpers/file_fallback_path.dart';
 import 'description_item.dart';
 
 class DownloadItem extends ConsumerWidget {
@@ -60,13 +61,15 @@ class DownloadItem extends ConsumerWidget {
                       icon: const Icon(Icons.open_in_new),
                       iconSize: 30,
                       onPressed: () async {
+                        var path = await fileFallbackPath(filePath);
+
                         var downloadDir = Platform.isAndroid
                             ? await getExternalStorageDirectory()
                             : await getApplicationSupportDirectory();
 
-                        if (downloadDir != null) {
+                        if (downloadDir != null && path != null) {
                           await OpenFilex.open(
-                            p.join(downloadDir.path, filePath),
+                            p.join(downloadDir.path, path),
                           );
                         }
                       },

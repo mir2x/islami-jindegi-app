@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
-import 'package:native_app/providers/local_file.dart';
+import 'package:native_app/helpers/file_fallback_path.dart';
 import 'package:native_app/helpers/delete_file_diretory.dart';
 import 'package:native_app/theme/colors.dart';
 
@@ -44,12 +44,10 @@ class DeleteButton extends ConsumerWidget {
           onPressed: () async {
             Navigator.of(context).pop();
 
-            var localFile = await ref.watch(
-              localFileProvider(filePath).future,
-            );
+            var path = await fileFallbackPath(filePath);
 
-            if (localFile != null) {
-              await deleteFileDirectory(filePath);
+            if (path != null) {
+              await deleteFileDirectory(path);
               await ref
                   .read(checkDownloadedFileProvider(filePath).notifier)
                   .check(filePath);
