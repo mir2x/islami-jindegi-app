@@ -202,8 +202,8 @@ class QuranSearchState extends ConsumerState<QuranSearch> {
                               ayah.title,
                               textDirection: TextDirection.rtl,
                               style: textTheme.labelLarge?.copyWith(
-                                fontSize: 28,
-                                height: 1.5,
+                                fontSize: 25,
+                                height: 1.6,
                               ),
                             ),
                           ),

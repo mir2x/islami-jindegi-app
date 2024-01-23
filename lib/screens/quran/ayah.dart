@@ -81,8 +81,8 @@ class Ayah extends ConsumerWidget {
                         ayah.title.trim(),
                         textDirection: TextDirection.rtl,
                         style: textTheme.labelLarge?.copyWith(
-                          fontSize: 28 * ratio,
-                          height: 1.5,
+                          fontSize: 25 * ratio,
+                          height: 1.6,
                         ),
                       );
                     },

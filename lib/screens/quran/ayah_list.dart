@@ -201,8 +201,8 @@ class TilawatModeAyahList extends StatelessWidget {
                 'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ',
                 textDirection: TextDirection.rtl,
                 style: textTheme.labelLarge?.copyWith(
-                  fontSize: 28 * ratio,
-                  height: 1.5,
+                  fontSize: 25 * ratio,
+                  height: 1.6,
                 ),
               ),
             ),
@@ -211,8 +211,8 @@ class TilawatModeAyahList extends StatelessWidget {
               textDirection: TextDirection.rtl,
               textAlign: TextAlign.justify,
               style: textTheme.labelLarge?.copyWith(
-                fontSize: 28 * ratio,
-                height: 1.5,
+                fontSize: 25 * ratio,
+                height: 1.6,
               ),
             ),
           ],
@@ -715,7 +715,7 @@ class FontOptions extends ConsumerWidget {
                 arabicFonts.map((i) => i['value']).firstWhereOrNull((i) {
                       return i == preferences.getString('arabicFont');
                     }) ??
-                    'arabic/al-mushaf';
+                    'arabic/al-qalam-quran-majeed';
 
             return Dialog(
               child: Container(
