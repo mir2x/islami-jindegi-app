@@ -1,6 +1,6 @@
-package com.islami_jindegi.native_app
+package com.islami_jindegi.native_app;
 
-import com.ryanheise.audioservice.AudioServiceActivity
+import com.ryanheise.audioservice.AudioServiceActivity;
 
-class MainActivity extends AudioServiceActivity {
+public class MainActivity extends AudioServiceActivity {
 }
