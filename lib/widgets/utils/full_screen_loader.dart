@@ -23,10 +23,10 @@ class FullScreenLoader extends ConsumerWidget {
                 ? DecorationImage(
                     image: theme == 'dark'
                         ? const AssetImage(
-                            'assets/images/icons/background-pattern-dark.png',
+                            'assets/images/background/pattern-dark.png',
                           )
                         : const AssetImage(
-                            'assets/images/icons/background-pattern-light.png',
+                            'assets/images/background/pattern-light.png',
                           ),
                     repeat: ImageRepeat.repeat,
                   )
