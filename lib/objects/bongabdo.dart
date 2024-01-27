@@ -46,12 +46,12 @@ String translateNumbersToBangla(String number) {
 }
 
 class Bongabdo {
-  var bDay;
-  var bMonth;
-  var bYear;
-  var bSeason;
-  var bWeekDay;
-  var version;
+  dynamic bDay;
+  dynamic bMonth;
+  dynamic bYear;
+  String? bSeason;
+  String? bWeekDay;
+  String? version;
 
   Bongabdo.addMonth(int year, int month) {
     bYear = month % 12 == 0 ? year - 1 : year;
@@ -76,7 +76,7 @@ class Bongabdo {
     bSeason = season;
   }
 
-  List<int> toList() => [bYear, bMonth, bDay];
+  List<dynamic> toList() => [bYear, bMonth, bDay];
 
   String fullDate() =>
       '$bDay, $bMonth, $bYear বঙ্গাব্দ, $bSeason কাল, রোজ $bWeekDay';
