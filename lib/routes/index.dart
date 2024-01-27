@@ -75,7 +75,16 @@ class AppRoutes {
       path: '/qurans',
       builder: () => const QuranList(),
       children: [
-        QRoute(path: '/books/:id', builder: () => const QuranBook()),
+        QRoute(
+          path: '/books/:id',
+          builder: () => const QuranBook(),
+          middleware: [
+            QMiddlewareBuilder(
+              onEnterFunc: () => WakelockPlus.enable(),
+              onExitFunc: () => WakelockPlus.disable(),
+            ),
+          ],
+        ),
       ],
     ),
     QRoute(
