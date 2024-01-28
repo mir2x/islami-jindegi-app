@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
-import 'package:native_app/theme/colors.dart';
+import 'package:native_app/theme/app_theme.dart';
 import 'current_dates.dart';
 import 'current_location_prayers.dart';
 
@@ -32,8 +32,7 @@ class DatesPrayers extends ConsumerWidget {
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
-                  color:
-                      theme == 'dark' ? ThemeColors.color2 : ThemeColors.color3,
+                  color: AppTheme.backgroundColor[theme],
                 ),
                 padding: const EdgeInsets.symmetric(
                   vertical: 9,
@@ -48,7 +47,7 @@ class DatesPrayers extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 30),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
-              color: theme == 'dark' ? ThemeColors.color2 : ThemeColors.color3,
+              color: AppTheme.backgroundColor[theme],
             ),
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

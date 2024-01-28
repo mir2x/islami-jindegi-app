@@ -249,13 +249,13 @@ class QuranState extends ConsumerState<Quran> {
         alignment: MainAxisAlignment.spaceBetween,
         children: [
           TextButton(
-            child: Text(locales.search, style: textTheme.labelMedium),
+            child: Text(locales.search, style: textTheme.titleMedium),
             onPressed: () => QR.to('quran/search'),
           ),
           Container(
             margin: const EdgeInsets.only(right: 4),
             child: TextButton(
-              child: Text(locales.savedAyahs, style: textTheme.labelMedium),
+              child: Text(locales.savedAyahs, style: textTheme.titleMedium),
               onPressed: () => QR.to('quran/bookmarks'),
             ),
           ),

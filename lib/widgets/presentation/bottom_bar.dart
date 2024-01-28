@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
-import 'package:native_app/theme/colors.dart';
+import 'package:native_app/theme/app_theme.dart';
 
 class BottomBar extends ConsumerWidget {
   const BottomBar({
@@ -20,7 +20,7 @@ class BottomBar extends ConsumerWidget {
         String theme = preferences.getString('theme') ?? 'dark';
 
         return BottomAppBar(
-          color: theme == 'dark' ? ThemeColors.color5 : ThemeColors.color3,
+          color: AppTheme.bottomBarColor[theme],
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
             child: Row(

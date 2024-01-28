@@ -5,7 +5,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:adhan/adhan.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/providers/geolocation.dart';
-import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/objects/prayer_time.dart';
 import 'package:native_app/theme/colors.dart';
 
@@ -214,31 +213,25 @@ class NamazTimeItem extends ConsumerWidget {
       children: [
         Expanded(
           flex: 3,
-          child: WithPreferences(
-            builder: (context, preferences) {
-              String theme = preferences.getString('theme') ?? 'dark';
-
-              return InkWell(
-                onTap: onSelected,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: isActive ? ThemeColors.color5 : ThemeColors.color7,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 12,
-                  ),
-                  child: Text(
-                    label,
-                    textAlign: TextAlign.center,
-                    style: textTheme.labelMedium?.copyWith(
-                      color: theme == 'light' ? ThemeColors.color3 : null,
-                    ),
-                  ),
+          child: InkWell(
+            onTap: onSelected,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: isActive ? ThemeColors.color5 : ThemeColors.color7,
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 15,
+                vertical: 12,
+              ),
+              child: Text(
+                label,
+                textAlign: TextAlign.center,
+                style: textTheme.labelMedium?.copyWith(
+                  color: ThemeColors.color3,
                 ),
-              );
-            },
+              ),
+            ),
           ),
         ),
         const SizedBox(width: 10),

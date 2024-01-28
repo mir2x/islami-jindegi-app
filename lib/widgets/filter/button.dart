@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
-import 'package:native_app/theme/colors.dart';
+import 'package:native_app/theme/app_theme.dart';
 
 class FilterButton extends ConsumerWidget {
   const FilterButton({
@@ -55,14 +55,9 @@ class FilterButton extends ConsumerWidget {
             );
           },
           style: OutlinedButton.styleFrom(
-            side: BorderSide(
-              color: theme == 'dark' ? ThemeColors.color3 : ThemeColors.color9,
-            ),
-            backgroundColor: active == true
-                ? theme == 'dark'
-                    ? ThemeColors.color1
-                    : ThemeColors.color3
-                : null,
+            side: BorderSide(color: AppTheme.inputBorderOutlineColor[theme]),
+            backgroundColor:
+                active == true ? AppTheme.inputSelectedBgColor[theme] : null,
             padding: EdgeInsets.symmetric(horizontal: isSmallMobile ? 13 : 16),
             minimumSize: const Size.fromHeight(45),
           ),
@@ -75,8 +70,7 @@ class FilterButton extends ConsumerWidget {
               ),
               Icon(
                 Icons.arrow_drop_down,
-                color:
-                    theme == 'dark' ? ThemeColors.color4 : ThemeColors.color8,
+                color: AppTheme.iconColor[theme],
               ),
             ],
           ),

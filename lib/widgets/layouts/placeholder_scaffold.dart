@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
-import 'package:native_app/theme/colors.dart';
+import 'package:native_app/theme/app_theme.dart';
 
 class PlaceholderScaffold extends ConsumerWidget {
   const PlaceholderScaffold({
@@ -54,21 +54,13 @@ class PlaceholderScaffold extends ConsumerWidget {
             decoration: BoxDecoration(
               image: showPattern
                   ? DecorationImage(
-                      image: theme == 'dark'
-                          ? const AssetImage(
-                              'assets/images/background/pattern-dark.png',
-                            )
-                          : const AssetImage(
-                              'assets/images/background/pattern-light.png',
-                            ),
+                      image: AssetImage(
+                        'assets/images/background/pattern-$theme.png',
+                      ),
                       repeat: ImageRepeat.repeat,
                     )
                   : null,
-              color: !showPattern
-                  ? theme == 'dark'
-                      ? ThemeColors.color2
-                      : ThemeColors.color3
-                  : null,
+              color: !showPattern ? AppTheme.backgroundColor[theme] : null,
             ),
             constraints: const BoxConstraints.expand(),
             child: LayoutBuilder(

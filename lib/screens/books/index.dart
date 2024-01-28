@@ -16,6 +16,7 @@ import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/nested_item.dart';
 import 'package:native_app/widgets/filter/subitem.dart';
 import 'package:native_app/providers/downloaded_books.dart';
+import 'package:native_app/widgets/buttons/floating_downloaded.dart';
 import 'image.dart';
 
 class Books extends ConsumerWidget {
@@ -224,13 +225,9 @@ class Books extends ConsumerWidget {
       floatingActionButton: SizedBox(
         width: 200,
         height: 40,
-        child: FloatingActionButton.extended(
+        child: FloatingDownloadedButton(
           onPressed: () => QR.to('books/downloads'),
-          icon: const Icon(Icons.download),
-          label: Text(
-            '${locales.downloaded} ${locales.books}',
-            style: textTheme.labelMedium,
-          ),
+          label: '${locales.downloaded} ${locales.books}',
         ),
       ),
     );

@@ -47,6 +47,7 @@ class Settings extends ConsumerWidget {
   final List<Map<String, String>> themes = const [
     {'label': 'Dark', 'value': 'dark'},
     {'label': 'Light', 'value': 'light'},
+    {'label': 'Classic', 'value': 'classic'},
   ];
 
   @override

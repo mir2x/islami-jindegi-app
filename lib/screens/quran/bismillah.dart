@@ -4,7 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
-import 'package:native_app/theme/colors.dart';
+import 'package:native_app/theme/app_theme.dart';
 
 class Bismillah extends ConsumerWidget {
   const Bismillah({
@@ -29,7 +29,7 @@ class Bismillah extends ConsumerWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: theme == 'dark' ? ThemeColors.color7 : ThemeColors.color10,
+        color: AppTheme.headerColor[theme],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

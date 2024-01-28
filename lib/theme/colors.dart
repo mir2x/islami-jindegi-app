@@ -13,6 +13,11 @@ class ThemeColors {
   static const Color color8 = Color(0xFF449b82);
   static const Color color9 = Color(0xFFfdfdfd);
   static const Color color10 = Color(0xFFf6f6f6);
+  static const Color color11 = Color(0xFFbedbd7);
+  static const Color color12 = Color(0xFF004b44);
+  static const Color color13 = Color(0xFF212529);
+  static const Color color14 = Color(0xFFdaf5f2);
+  static const Color color15 = Color(0xFFc7ebe7);
   static const Color placeholder = Color(0xFFcdd4ca);
   static const Color border = Color(0xFFBDBDBD);
   static const Color danger = Color(0xFFa12f1f);

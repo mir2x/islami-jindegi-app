@@ -7,6 +7,7 @@ import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
+import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/theme/colors.dart';
 
 class News extends ConsumerWidget {
@@ -76,9 +77,7 @@ class News extends ConsumerWidget {
                       color: Colors.white,
                       width: 2,
                     ),
-                    color: theme == 'dark'
-                        ? ThemeColors.color4
-                        : ThemeColors.color10,
+                    color: AppTheme.backgroundHighlightColor[theme],
                   ),
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 15),

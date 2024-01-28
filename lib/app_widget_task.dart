@@ -20,6 +20,7 @@ void callbackDispatcher() {
     final preferences = await SharedPreferences.getInstance();
     var currentLang = preferences.getString('locale') ?? 'bn';
     var locales = await AppLocalizations.delegate.load(Locale(currentLang));
+    String theme = preferences.getString('theme') ?? 'dark';
 
     initializeDateFormatting(currentLang);
 
@@ -55,6 +56,7 @@ void callbackDispatcher() {
         '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}';
 
     updateAppWidget({
+      'theme': theme,
       'hijriDate': hijriDate,
       'bangaliDate': getBangaliDate(),
       'gregorianDate': getGregorianDate(currentLang, null),

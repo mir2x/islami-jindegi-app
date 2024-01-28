@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:native_app/theme/colors.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
@@ -11,6 +10,8 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/hijri_date_settings.dart';
 import 'package:native_app/widgets/location/index.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
+import 'package:native_app/theme/app_theme.dart';
+import 'package:native_app/theme/colors.dart';
 import 'calendar_dates.dart';
 import 'namaz_time_items.dart';
 
@@ -149,13 +150,9 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                         onChanged: (b) => toggleTime(b),
                         indicatorSize: const Size.fromWidth(26),
                         styleBuilder: (b) => ToggleStyle(
-                          backgroundColor: theme == 'dark'
-                              ? ThemeColors.color2
-                              : ThemeColors.color3,
+                          backgroundColor: AppTheme.backgroundColor[theme],
                           indicatorColor: b
-                              ? theme == 'dark'
-                                  ? ThemeColors.color4
-                                  : ThemeColors.color8
+                              ? AppTheme.iconColor[theme]
                               : ThemeColors.danger,
                         ),
                         textBuilder: (value) => value

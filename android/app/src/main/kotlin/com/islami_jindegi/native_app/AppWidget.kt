@@ -81,6 +81,27 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
 
       textColor = ContextCompat.getColor(context, R.color.theme_color_2)
       highlightTextColor = ContextCompat.getColor(context, R.color.theme_color_8)
+    } else if (theme == "classic") {
+      setInt(
+        R.id.widget_container,
+        "setBackgroundResource",
+        R.drawable.widget_classic_background,
+      )
+
+      setInt(
+        R.id.dates,
+        "setBackgroundResource",
+        R.drawable.container_classic_background,
+      )
+
+      setInt(
+        R.id.sunriseSunset,
+        "setBackgroundResource",
+        R.drawable.container_classic_background,
+      )
+
+      textColor = ContextCompat.getColor(context, R.color.theme_color_13)
+      highlightTextColor = ContextCompat.getColor(context, R.color.theme_color_8)
     } else {
       setInt(
         R.id.widget_container,

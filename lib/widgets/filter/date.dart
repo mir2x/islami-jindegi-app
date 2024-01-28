@@ -6,6 +6,7 @@ import 'package:date_field/date_field.dart';
 import 'package:intl/intl.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/query_params.dart';
+import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/theme/colors.dart';
 
 class DateFilter extends ConsumerWidget {
@@ -161,13 +162,9 @@ class DateFilter extends ConsumerWidget {
             );
           },
           style: OutlinedButton.styleFrom(
-            side: BorderSide(
-              color: theme == 'dark' ? ThemeColors.color3 : ThemeColors.color9,
-            ),
+            side: BorderSide(color: AppTheme.inputBorderOutlineColor[theme]),
             backgroundColor: selectedLabel != locales.date
-                ? theme == 'dark'
-                    ? ThemeColors.color1
-                    : ThemeColors.color3
+                ? AppTheme.inputSelectedBgColor[theme]
                 : null,
             padding: EdgeInsets.symmetric(horizontal: isSmallMobile ? 13 : 16),
             minimumSize: const Size.fromHeight(45),
@@ -185,8 +182,7 @@ class DateFilter extends ConsumerWidget {
               ),
               Icon(
                 Icons.arrow_drop_down,
-                color:
-                    theme == 'dark' ? ThemeColors.color4 : ThemeColors.color8,
+                color: AppTheme.iconColor[theme],
               ),
             ],
           ),

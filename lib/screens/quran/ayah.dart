@@ -18,7 +18,7 @@ import 'package:native_app/providers/qirat_player.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/providers/ayah_bookmarks.dart';
 import 'package:native_app/widgets/page/html_body.dart';
-import 'package:native_app/theme/colors.dart';
+import 'package:native_app/theme/app_theme.dart';
 
 class Ayah extends ConsumerWidget {
   const Ayah({
@@ -57,11 +57,7 @@ class Ayah extends ConsumerWidget {
     return Container(
       padding: EdgeInsets.only(top: 10, bottom: 10, left: 15 + markAdjustment),
       decoration: BoxDecoration(
-        color: isActive
-            ? (theme == 'dark')
-                ? ThemeColors.color1
-                : ThemeColors.color9
-            : null,
+        color: isActive ? AppTheme.activeAyahColor[theme] : null,
       ),
       child: Column(
         children: [

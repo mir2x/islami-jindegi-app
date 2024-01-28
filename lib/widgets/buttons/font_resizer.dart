@@ -26,7 +26,10 @@ class FontResizer extends ConsumerWidget {
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(text ?? locales.font, style: textTheme.labelMedium),
+            Text(
+              text ?? locales.font,
+              style: textTheme.titleMedium,
+            ),
             IconButton(
               icon: const Icon(Icons.add),
               padding: const EdgeInsets.only(

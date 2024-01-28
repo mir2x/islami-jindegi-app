@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/theme/colors.dart';
 
 class Dropdown extends ConsumerStatefulWidget {
@@ -44,8 +45,7 @@ class DropdownState extends ConsumerState<Dropdown> {
     return WithPreferences(
       builder: (context, preferences) {
         String theme = preferences.getString('theme') ?? 'dark';
-        Color iconColor =
-            theme == 'dark' ? ThemeColors.color4 : ThemeColors.color8;
+        Color iconColor = AppTheme.iconColor[theme];
 
         return DropdownButton2<dynamic>(
           isExpanded: true,
@@ -72,7 +72,7 @@ class DropdownState extends ConsumerState<Dropdown> {
           dropdownStyleData: DropdownStyleData(
             offset: const Offset(0, 5),
             decoration: BoxDecoration(
-              color: theme == 'dark' ? ThemeColors.color6 : ThemeColors.color3,
+              color: AppTheme.dropdownColor[theme],
             ),
           ),
           dropdownSearchData: widget.searchEnabled
@@ -93,16 +93,12 @@ class DropdownState extends ConsumerState<Dropdown> {
                         hintStyle: textTheme.labelMedium,
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                            color: theme == 'dark'
-                                ? ThemeColors.color3
-                                : ThemeColors.color2,
+                            color: AppTheme.borderOutlineColor[theme],
                           ),
                         ),
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                            color: theme == 'dark'
-                                ? ThemeColors.color3
-                                : ThemeColors.color2,
+                            color: AppTheme.borderOutlineColor[theme],
                           ),
                         ),
                       ),
@@ -121,8 +117,7 @@ class DropdownState extends ConsumerState<Dropdown> {
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color:
-                      theme == 'dark' ? ThemeColors.color3 : ThemeColors.color2,
+                  color: AppTheme.borderOutlineColor[theme],
                   width: 0.0,
                 ),
               ),

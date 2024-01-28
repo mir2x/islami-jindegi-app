@@ -21,6 +21,9 @@ import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/providers/downloaded_masail.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
 import 'package:native_app/theme/colors.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/theme/app_theme.dart';
+import 'package:native_app/widgets/buttons/floating_downloaded.dart';
 
 class Masail extends ConsumerWidget {
   const Masail({super.key});
@@ -275,20 +278,28 @@ class Masail extends ConsumerWidget {
                   child: SizedBox(
                     width: 170,
                     height: 40,
-                    child: FloatingActionButton.extended(
-                      onPressed: () => QR.to('masail/ask-question'),
-                      icon: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: ThemeColors.color4),
-                        ),
-                        padding: const EdgeInsets.all(2),
-                        child: const Icon(Icons.question_mark, size: 18),
-                      ),
-                      label: Text(
-                        locales.askQuestion,
-                        style: textTheme.labelMedium,
-                      ),
+                    child: WithPreferences(
+                      builder: (context, preferences) {
+                        String theme = preferences.getString('theme') ?? 'dark';
+
+                        return FloatingActionButton.extended(
+                          onPressed: () => QR.to('masail/ask-question'),
+                          icon: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: ThemeColors.color4),
+                            ),
+                            padding: const EdgeInsets.all(2),
+                            child: const Icon(Icons.question_mark, size: 18),
+                          ),
+                          label: Text(
+                            locales.askQuestion,
+                            style: textTheme.labelMedium?.copyWith(
+                              color: AppTheme.labelContrastColor[theme],
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 );
@@ -300,13 +311,9 @@ class Masail extends ConsumerWidget {
           SizedBox(
             width: 205,
             height: 40,
-            child: FloatingActionButton.extended(
+            child: FloatingDownloadedButton(
               onPressed: () => QR.to('masail/downloads'),
-              icon: const Icon(Icons.download),
-              label: Text(
-                '${locales.downloaded} ${locales.masail}',
-                style: textTheme.labelMedium,
-              ),
+              label: '${locales.downloaded} ${locales.masail}',
             ),
           ),
         ],

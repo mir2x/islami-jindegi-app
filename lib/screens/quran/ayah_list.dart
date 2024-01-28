@@ -489,7 +489,7 @@ class TilawatOption extends ConsumerWidget {
             child: Text(
               locales.tilawat,
               style:
-                  isSmallMobile ? textTheme.labelSmall : textTheme.labelMedium,
+                  isSmallMobile ? textTheme.titleSmall : textTheme.titleMedium,
             ),
           ),
         ],
@@ -543,7 +543,7 @@ class TranslationOption extends ConsumerWidget {
             child: Text(
               locales.translation,
               style:
-                  isSmallMobile ? textTheme.labelSmall : textTheme.labelMedium,
+                  isSmallMobile ? textTheme.titleSmall : textTheme.titleMedium,
             ),
           ),
         ],
@@ -863,13 +863,9 @@ class FontOptions extends ConsumerWidget {
                 height: 270,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: theme == 'dark'
-                        ? const AssetImage(
-                            'assets/images/background/pattern-dark.png',
-                          )
-                        : const AssetImage(
-                            'assets/images/background/pattern-light.png',
-                          ),
+                    image: AssetImage(
+                      'assets/images/background/pattern-$theme.png',
+                    ),
                     repeat: ImageRepeat.repeat,
                   ),
                 ),

@@ -117,7 +117,7 @@ class MyApp extends ConsumerWidget {
           debugShowCheckedModeBanner: false,
           routeInformationParser: const QRouteInformationParser(),
           routerDelegate: QRouterDelegate(AppRoutes().routes),
-          theme: lightTheme(fonts),
+          theme: theme == 'light' ? lightTheme(fonts) : classicTheme(fonts),
           darkTheme: darkTheme(fonts),
           themeMode: theme == 'dark' ? ThemeMode.dark : ThemeMode.light,
           localizationsDelegates: AppLocalizations.localizationsDelegates,

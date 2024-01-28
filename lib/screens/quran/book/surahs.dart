@@ -7,6 +7,7 @@ import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
+import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/theme/colors.dart';
 
 class QuranBookSurahs extends ConsumerWidget {
@@ -94,22 +95,22 @@ class _SurahsState extends ConsumerState<StatefulSurahs> {
     var numFormatter = NumberFormat('#', currentLang);
     var textTheme = Theme.of(context).textTheme;
 
-    return Expanded(
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Container(
-              decoration: const BoxDecoration(
-                border: Border(
-                  left: BorderSide(color: ThemeColors.color7, width: 0.5),
-                ),
-              ),
-              child: WithPreferences(
-                builder: (context, preferences) {
-                  String theme = preferences.getString('theme') ?? 'dark';
+    return WithPreferences(
+      builder: (context, preferences) {
+        String theme = preferences.getString('theme') ?? 'dark';
 
-                  return ListView.builder(
+        return Expanded(
+          child: Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      left: BorderSide(color: ThemeColors.color7, width: 0.5),
+                    ),
+                  ),
+                  child: ListView.builder(
                     itemCount: widget.surahs.length,
                     itemBuilder: (BuildContext context, int index) {
                       var item = widget.surahs[index];
@@ -129,9 +130,7 @@ class _SurahsState extends ConsumerState<StatefulSurahs> {
                           ),
                           decoration: BoxDecoration(
                             color: selectedSurah.id == item.id
-                                ? theme == 'dark'
-                                    ? ThemeColors.color7
-                                    : ThemeColors.color9
+                                ? AppTheme.activeItemColor[theme]
                                 : null,
                           ),
                           child: Row(
@@ -141,70 +140,77 @@ class _SurahsState extends ConsumerState<StatefulSurahs> {
                                 style: textTheme.titleMedium,
                               ),
                               const SizedBox(width: 3),
-                              Text(surahTitle, style: textTheme.titleMedium),
+                              Text(
+                                surahTitle,
+                                style: textTheme.titleMedium?.copyWith(
+                                  color: AppTheme.titleContrastColor[theme],
+                                ),
+                              ),
                             ],
                           ),
                         ),
                       );
                     },
-                  );
-                },
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: ListView.builder(
-              itemCount: selectedSurah.totalAyat,
-              itemBuilder: (BuildContext context, int index) {
-                var number = index + 1;
-
-                return InkWell(
-                  onTap: () async {
-                    var query = AllModelsQuery(
-                      repository: ref.quranBookPages,
-                      params: {
-                        'quranBookId': widget.book.id,
-                        'surahId': selectedSurah.id,
-                        'ayahNo': number,
-                        'quantity': 1,
-                        'offline': true,
-                      },
-                    );
-
-                    var resources =
-                        await ref.watch(allModelsProvider(query).future);
-
-                    if (resources.isNotEmpty) {
-                      var bookPage = resources.first;
-                      widget.pdfController.jumpToPage(bookPage.position);
-                    }
-
-                    widget.closeDrawer();
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: ThemeColors.color7,
-                        width: 0.5,
-                      ),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 25,
-                      vertical: 10,
-                    ),
-                    child: Text(
-                      numFormatter.format(number),
-                      style: textTheme.titleMedium,
-                      textAlign: TextAlign.center,
-                    ),
                   ),
-                );
-              },
-            ),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: ListView.builder(
+                  itemCount: selectedSurah.totalAyat,
+                  itemBuilder: (BuildContext context, int index) {
+                    var number = index + 1;
+
+                    return InkWell(
+                      onTap: () async {
+                        var query = AllModelsQuery(
+                          repository: ref.quranBookPages,
+                          params: {
+                            'quranBookId': widget.book.id,
+                            'surahId': selectedSurah.id,
+                            'ayahNo': number,
+                            'quantity': 1,
+                            'offline': true,
+                          },
+                        );
+
+                        var resources =
+                            await ref.watch(allModelsProvider(query).future);
+
+                        if (resources.isNotEmpty) {
+                          var bookPage = resources.first;
+                          widget.pdfController.jumpToPage(bookPage.position);
+                        }
+
+                        widget.closeDrawer();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: ThemeColors.color7,
+                            width: 0.5,
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 25,
+                          vertical: 10,
+                        ),
+                        child: Text(
+                          numFormatter.format(number),
+                          style: textTheme.titleMedium?.copyWith(
+                            color: AppTheme.titleContrastColor[theme],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

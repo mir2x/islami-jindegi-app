@@ -13,7 +13,7 @@ import 'package:native_app/objects/audio_resource.dart';
 import 'package:native_app/widgets/presentation/connect_to_internet.dart';
 import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/play_time.dart';
-import 'package:native_app/theme/colors.dart';
+import 'package:native_app/theme/app_theme.dart';
 
 class AudioPlayerWidget extends ConsumerWidget {
   const AudioPlayerWidget({
@@ -222,19 +222,11 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
                 children: [
                   Text(
                     playTime(position.inSeconds),
-                    style: textTheme.labelMedium?.copyWith(
-                      color: theme == 'dark'
-                          ? ThemeColors.color4
-                          : ThemeColors.color8,
-                    ),
+                    style: textTheme.titleMedium,
                   ),
                   Text(
                     playTime(duration.inSeconds),
-                    style: textTheme.labelMedium?.copyWith(
-                      color: theme == 'dark'
-                          ? ThemeColors.color4
-                          : ThemeColors.color8,
-                    ),
+                    style: textTheme.titleMedium,
                   ),
                 ],
               ),
@@ -244,10 +236,8 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
                 overlayShape: SliderComponentShape.noThumb,
               ),
               child: Slider(
-                activeColor:
-                    theme == 'dark' ? ThemeColors.color4 : ThemeColors.color8,
-                inactiveColor:
-                    theme == 'dark' ? ThemeColors.color3 : ThemeColors.color9,
+                activeColor: AppTheme.sliderFgColor[theme],
+                inactiveColor: AppTheme.sliderBgColor[theme],
                 value: position.inSeconds.toDouble(),
                 min: 0,
                 max: duration.inSeconds.toDouble() + 2,

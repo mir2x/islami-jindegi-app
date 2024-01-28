@@ -18,6 +18,7 @@ import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/providers/downloaded_bayans.dart';
 import 'package:native_app/helpers/format_date.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
+import 'package:native_app/widgets/buttons/floating_downloaded.dart';
 
 class Bayans extends ConsumerWidget {
   const Bayans({super.key});
@@ -222,13 +223,9 @@ class Bayans extends ConsumerWidget {
       floatingActionButton: SizedBox(
         width: 200,
         height: 40,
-        child: FloatingActionButton.extended(
+        child: FloatingDownloadedButton(
           onPressed: () => QR.to('bayans/downloads'),
-          icon: const Icon(Icons.download),
-          label: Text(
-            '${locales.downloaded} ${locales.bayans}',
-            style: textTheme.labelMedium,
-          ),
+          label: '${locales.downloaded} ${locales.bayans}',
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/theme/colors.dart';
 
 class ListItem extends ConsumerWidget {
@@ -40,7 +41,7 @@ class ListItem extends ConsumerWidget {
               },
             ),
             borderRadius: BorderRadius.circular(15),
-            color: theme == 'dark' ? ThemeColors.color7 : ThemeColors.color10,
+            color: AppTheme.listItemColor[theme],
           ),
           padding: const EdgeInsets.all(15),
           margin: const EdgeInsets.only(bottom: 15),

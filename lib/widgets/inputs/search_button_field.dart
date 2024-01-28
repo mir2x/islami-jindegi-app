@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
-import 'package:native_app/theme/colors.dart';
+import 'package:native_app/theme/app_theme.dart';
 import 'input_field.dart';
 
 class SearchButtonField extends ConsumerStatefulWidget {
@@ -56,14 +56,12 @@ class _SearchState extends ConsumerState<SearchButtonField> {
             decoration: InputDecoration(
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color:
-                      theme == 'dark' ? ThemeColors.color3 : ThemeColors.color9,
+                  color: AppTheme.inputBorderOutlineColor[theme],
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color:
-                      theme == 'dark' ? ThemeColors.color3 : ThemeColors.color9,
+                  color: AppTheme.inputBorderOutlineColor[theme],
                 ),
               ),
               labelText: widget.labelText ?? locales.search,
@@ -83,8 +81,7 @@ class _SearchState extends ConsumerState<SearchButtonField> {
                 },
                 icon: Icon(
                   Icons.search,
-                  color:
-                      theme == 'dark' ? ThemeColors.color4 : ThemeColors.color8,
+                  color: AppTheme.iconColor[theme],
                 ),
               ),
             ),

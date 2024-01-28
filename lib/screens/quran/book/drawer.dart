@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/theme/colors.dart';
 import 'surahs.dart';
 import 'paras.dart';
@@ -63,9 +64,7 @@ class _QuranDrawerState extends ConsumerState<QuranDrawer> {
                             width: 0.5,
                           ),
                           color: selectedSection == 'Surah'
-                              ? theme == 'dark'
-                                  ? ThemeColors.color1
-                                  : ThemeColors.color9
+                              ? AppTheme.activeItemColor[theme]
                               : null,
                         ),
                         padding: const EdgeInsets.symmetric(
@@ -74,7 +73,9 @@ class _QuranDrawerState extends ConsumerState<QuranDrawer> {
                         ),
                         child: Text(
                           locales.surah,
-                          style: textTheme.labelMedium,
+                          style: textTheme.labelMedium?.copyWith(
+                            color: AppTheme.labelContrastColor[theme],
+                          ),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -91,9 +92,7 @@ class _QuranDrawerState extends ConsumerState<QuranDrawer> {
                             width: 0.5,
                           ),
                           color: selectedSection == 'Para'
-                              ? theme == 'dark'
-                                  ? ThemeColors.color1
-                                  : ThemeColors.color9
+                              ? AppTheme.activeItemColor[theme]
                               : null,
                         ),
                         padding: const EdgeInsets.symmetric(
@@ -102,7 +101,9 @@ class _QuranDrawerState extends ConsumerState<QuranDrawer> {
                         ),
                         child: Text(
                           locales.para,
-                          style: textTheme.labelMedium,
+                          style: textTheme.labelMedium?.copyWith(
+                            color: AppTheme.labelContrastColor[theme],
+                          ),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -125,7 +126,9 @@ class _QuranDrawerState extends ConsumerState<QuranDrawer> {
                         selectedSection == 'Surah'
                             ? locales.ayah
                             : locales.page,
-                        style: textTheme.labelMedium,
+                        style: textTheme.labelMedium?.copyWith(
+                          color: AppTheme.labelContrastColor[theme],
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),

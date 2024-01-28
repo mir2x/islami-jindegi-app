@@ -12,7 +12,7 @@ import 'package:native_app/providers/push_notifications.dart';
 import 'package:native_app/providers/app_widget_link.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/notification_status.dart';
-import 'package:native_app/theme/colors.dart';
+import 'package:native_app/theme/app_theme.dart';
 
 class AppScaffold extends ConsumerWidget {
   const AppScaffold({
@@ -67,15 +67,15 @@ class AppScaffold extends ConsumerWidget {
                     leading: Padding(
                       padding: const EdgeInsets.only(left: 15),
                       child: isHome
-                          ? theme == 'dark'
+                          ? theme == 'light'
                               ? SvgPicture.asset(
-                                  'assets/images/logos/logo.svg',
+                                  'assets/images/logos/logo-light.svg',
                                   fit: BoxFit.scaleDown,
                                   width: 40,
                                   height: 35,
                                 )
                               : SvgPicture.asset(
-                                  'assets/images/logos/logo-light.svg',
+                                  'assets/images/logos/logo.svg',
                                   fit: BoxFit.scaleDown,
                                   width: 40,
                                   height: 35,
@@ -209,7 +209,10 @@ class AppScaffold extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(vertical: 15),
                       child: Text(
                         locales.home,
-                        style: textTheme.titleLarge?.copyWith(fontSize: 24),
+                        style: textTheme.titleLarge?.copyWith(
+                          color: AppTheme.titleContrastColor[theme],
+                          fontSize: 24,
+                        ),
                         textAlign: TextAlign.right,
                       ),
                     ),
@@ -238,21 +241,13 @@ class AppScaffold extends ConsumerWidget {
               decoration: BoxDecoration(
                 image: showPattern
                     ? DecorationImage(
-                        image: theme == 'dark'
-                            ? const AssetImage(
-                                'assets/images/background/pattern-dark.png',
-                              )
-                            : const AssetImage(
-                                'assets/images/background/pattern-light.png',
-                              ),
+                        image: AssetImage(
+                          'assets/images/background/pattern-$theme.png',
+                        ),
                         repeat: ImageRepeat.repeat,
                       )
                     : null,
-                color: !showPattern
-                    ? theme == 'dark'
-                        ? ThemeColors.color2
-                        : ThemeColors.color3
-                    : null,
+                color: !showPattern ? AppTheme.backgroundColor[theme] : null,
               ),
               constraints: const BoxConstraints.expand(),
               child: LayoutBuilder(
@@ -316,22 +311,30 @@ class DrawerLink extends StatelessWidget {
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
 
-    return InkWell(
-      onTap: () {
-        Scaffold.of(context).closeEndDrawer();
+    return WithPreferences(
+      builder: (context, preferences) {
+        String theme = preferences.getString('theme') ?? 'dark';
 
-        if (QR.currentPath.substring(1) != route) {
-          QR.to(route);
-        }
+        return InkWell(
+          onTap: () {
+            Scaffold.of(context).closeEndDrawer();
+
+            if (QR.currentPath.substring(1) != route) {
+              QR.to(route);
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Text(
+              title,
+              style: textTheme.titleLarge?.copyWith(
+                color: AppTheme.titleContrastColor[theme],
+              ),
+              textAlign: TextAlign.right,
+            ),
+          ),
+        );
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Text(
-          title,
-          style: textTheme.titleLarge,
-          textAlign: TextAlign.right,
-        ),
-      ),
     );
   }
 }

@@ -8,7 +8,7 @@ import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/objects/progress_percentage.dart';
 import 'package:native_app/objects/download_params.dart';
 import 'package:native_app/helpers/file_size.dart';
-import 'package:native_app/theme/colors.dart';
+import 'package:native_app/theme/app_theme.dart';
 
 class DownloadButton extends ConsumerWidget {
   const DownloadButton({
@@ -171,9 +171,7 @@ class DownloadProgress extends ConsumerWidget {
                       SizedBox(
                         width: 110,
                         child: LinearProgressIndicator(
-                          backgroundColor: theme == 'dark'
-                              ? ThemeColors.color3
-                              : ThemeColors.color9,
+                          backgroundColor: AppTheme.sliderBgColor[theme],
                           value: received / total,
                         ),
                       ),

@@ -14,7 +14,7 @@ import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
-import 'package:native_app/theme/colors.dart';
+import 'package:native_app/theme/app_theme.dart';
 
 class QuranSearch extends ConsumerStatefulWidget {
   const QuranSearch({super.key});
@@ -88,10 +88,8 @@ class QuranSearchState extends ConsumerState<QuranSearch> {
                 },
                 indicatorSize: const Size.fromWidth(80),
                 styleBuilder: (b) => ToggleStyle(
-                  backgroundColor:
-                      theme == 'dark' ? ThemeColors.color2 : ThemeColors.color3,
-                  indicatorColor:
-                      theme == 'dark' ? ThemeColors.color8 : ThemeColors.color4,
+                  backgroundColor: AppTheme.backgroundColor[theme],
+                  indicatorColor: AppTheme.indicatorColor[theme],
                 ),
                 customIconBuilder: (context, local, global) {
                   final text = [locales.arabic, locales.bangla][local.index];

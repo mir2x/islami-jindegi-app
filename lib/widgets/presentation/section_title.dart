@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
-import 'package:native_app/theme/colors.dart';
+import 'package:native_app/theme/app_theme.dart';
 
 class SectionTitle extends ConsumerWidget {
   const SectionTitle({
@@ -20,7 +20,7 @@ class SectionTitle extends ConsumerWidget {
         return Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            color: theme == 'dark' ? ThemeColors.color7 : ThemeColors.color3,
+            color: AppTheme.sectionColor[theme],
           ),
           padding: const EdgeInsets.symmetric(
             horizontal: 15,

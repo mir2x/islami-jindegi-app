@@ -14,7 +14,7 @@ import 'package:native_app/helpers/get_location_name.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
-import 'package:native_app/theme/colors.dart';
+import 'package:native_app/theme/app_theme.dart';
 
 class Location extends ConsumerWidget {
   const Location({super.key});
@@ -88,13 +88,11 @@ class Location extends ConsumerWidget {
                               },
                               style: OutlinedButton.styleFrom(
                                 side: BorderSide(
-                                  color: theme == 'dark'
-                                      ? ThemeColors.color3
-                                      : ThemeColors.color9,
+                                  color:
+                                      AppTheme.inputBorderOutlineColor[theme],
                                 ),
-                                backgroundColor: theme == 'dark'
-                                    ? ThemeColors.color1
-                                    : ThemeColors.color3,
+                                backgroundColor:
+                                    AppTheme.inputSelectedBgColor[theme],
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 15),
                                 minimumSize: const Size.fromHeight(45),
@@ -110,9 +108,7 @@ class Location extends ConsumerWidget {
                                   Icon(
                                     Icons.arrow_drop_down,
                                     size: 35,
-                                    color: theme == 'dark'
-                                        ? ThemeColors.color4
-                                        : ThemeColors.color8,
+                                    color: AppTheme.iconColor[theme],
                                   ),
                                 ],
                               ),

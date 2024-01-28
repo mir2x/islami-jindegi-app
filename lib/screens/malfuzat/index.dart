@@ -19,6 +19,7 @@ import 'package:native_app/widgets/filter/triple_switch_button.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/providers/downloaded_malfuzat.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
+import 'package:native_app/widgets/buttons/floating_downloaded.dart';
 
 class Malfuzat extends ConsumerWidget {
   const Malfuzat({super.key});
@@ -257,13 +258,9 @@ class Malfuzat extends ConsumerWidget {
       floatingActionButton: SizedBox(
         width: 220,
         height: 40,
-        child: FloatingActionButton.extended(
+        child: FloatingDownloadedButton(
           onPressed: () => QR.to('malfuzat/downloads'),
-          icon: const Icon(Icons.download),
-          label: Text(
-            '${locales.downloaded} ${locales.malfuzat}',
-            style: textTheme.labelMedium,
-          ),
+          label: '${locales.downloaded} ${locales.malfuzat}',
         ),
       ),
     );

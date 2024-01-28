@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/theme/colors.dart';
 
 class TripleSwitchButton extends ConsumerWidget {
@@ -34,10 +35,8 @@ class TripleSwitchButton extends ConsumerWidget {
     return WithPreferences(
       builder: (context, preferences) {
         String theme = preferences.getString('theme') ?? 'dark';
-        var activeColor =
-            theme == 'dark' ? ThemeColors.color8 : ThemeColors.color10;
-        var inactiveColor =
-            theme == 'dark' ? ThemeColors.color4 : ThemeColors.color9;
+        var activeColor = AppTheme.buttonActiveColor[theme];
+        var inactiveColor = AppTheme.buttonInactiveColor[theme];
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
