@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
+import 'package:native_app/theme/app_theme.dart';
 
 class FontResizer extends ConsumerWidget {
   const FontResizer({
@@ -10,11 +11,13 @@ class FontResizer extends ConsumerWidget {
     required this.fontSizeRatio,
     this.text,
     this.storeKey,
+    this.contrastColor = true,
   });
 
   final FontSizeRatio fontSizeRatio;
   final String? text;
   final String? storeKey;
+  final bool contrastColor;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,15 +26,24 @@ class FontResizer extends ConsumerWidget {
 
     return WithPreferences(
       builder: (context, preferences) {
+        String theme = preferences.getString('theme') ?? 'dark';
+
+        Color? textColor =
+            contrastColor ? AppTheme.labelContrastColor[theme] : null;
+
+        Color? iconColor =
+            contrastColor ? AppTheme.titleContrastColor[theme] : null;
+
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               text ?? locales.font,
-              style: textTheme.titleMedium,
+              style: textTheme.labelMedium?.copyWith(color: textColor),
             ),
             IconButton(
               icon: const Icon(Icons.add),
+              color: iconColor,
               padding: const EdgeInsets.only(
                 top: 10,
                 right: 5,
@@ -49,6 +61,7 @@ class FontResizer extends ConsumerWidget {
             ),
             IconButton(
               icon: const Icon(Icons.remove),
+              color: iconColor,
               padding: const EdgeInsets.only(
                 top: 10,
                 right: 10,

@@ -3,6 +3,8 @@ import 'package:html/parser.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/theme/app_theme.dart';
 
 class SocialShare extends StatelessWidget {
   const SocialShare({
@@ -22,53 +24,60 @@ class SocialShare extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var locales = AppLocalizations.of(context)!;
+    return WithPreferences(
+      builder: (context, preferences) {
+        String theme = preferences.getString('theme') ?? 'dark';
 
-    const appLink =
-        'https://play.google.com/store/apps/details?id=com.islami_jindegi';
+        var locales = AppLocalizations.of(context)!;
 
-    return IconButton(
-      icon: const Icon(Icons.ios_share_rounded),
-      onPressed: () async {
-        String text = '';
+        const appLink =
+            'https://play.google.com/store/apps/details?id=com.islami_jindegi';
 
-        if (title != null) {
-          text += '$title';
-        }
+        return IconButton(
+          icon: const Icon(Icons.ios_share_rounded),
+          color: AppTheme.titleContrastColor[theme],
+          onPressed: () async {
+            String text = '';
 
-        if (subtitle != null) {
-          text += '\n\n$subtitle';
-        }
+            if (title != null) {
+              text += '$title';
+            }
 
-        if (body != null) {
-          final document = parse(body);
-          List pList = document.querySelectorAll('p');
+            if (subtitle != null) {
+              text += '\n\n$subtitle';
+            }
 
-          if (pList.isNotEmpty) {
-            text += '\n\n';
-            for (var p in pList) {
-              if (p.text != '') {
-                text += '${p.text}\n\n';
+            if (body != null) {
+              final document = parse(body);
+              List pList = document.querySelectorAll('p');
+
+              if (pList.isNotEmpty) {
+                text += '\n\n';
+                for (var p in pList) {
+                  if (p.text != '') {
+                    text += '${p.text}\n\n';
+                  }
+                }
               }
             }
-          }
-        }
 
-        if (fileLink != null) {
-          text += '\n\n${locales.file}: $fileLink';
-        }
+            if (fileLink != null) {
+              text += '\n\n${locales.file}: $fileLink';
+            }
 
-        if (link != null) {
-          text += '\n\n${locales.link}: https://islamidars.com/$link';
-        }
+            if (link != null) {
+              text += '\n\n${locales.link}: https://islamidars.com/$link';
+            }
 
-        text += '\n\n$appLink';
+            text += '\n\n$appLink';
 
-        await Clipboard.setData(ClipboardData(text: text));
+            await Clipboard.setData(ClipboardData(text: text));
 
-        Share.share(
-          text,
-          subject: title,
+            Share.share(
+              text,
+              subject: title,
+            );
+          },
         );
       },
     );

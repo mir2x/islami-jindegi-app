@@ -25,6 +25,7 @@ import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/widgets/presentation/section_title.dart';
 import 'package:native_app/widgets/buttons/dropdown.dart';
+import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/theme/colors.dart';
 import 'bismillah.dart';
 import 'ayah.dart';
@@ -467,41 +468,52 @@ class TilawatOption extends ConsumerWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isSmallMobile = screenWidth < 340;
 
-    return TextButton(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (qSettings.containsKey('tilawat') && qSettings['tilawat']) ...[
-            const Icon(
-              Icons.check_box,
-              color: ThemeColors.color4,
-              size: 20,
-            ),
-          ] else ...[
-            const Icon(
-              Icons.check_box_outline_blank,
-              color: ThemeColors.color4,
-              size: 20,
-            ),
-          ],
-          Container(
-            margin: const EdgeInsets.only(left: 2, bottom: 1),
-            child: Text(
-              locales.tilawat,
-              style:
-                  isSmallMobile ? textTheme.titleSmall : textTheme.titleMedium,
-            ),
-          ),
-        ],
-      ),
-      onPressed: () {
-        bool selectedTranslationOption =
-            qSettings.containsKey('tilawat') ? qSettings['tilawat'] : false;
+    return WithPreferences(
+      builder: (context, preferences) {
+        String theme = preferences.getString('theme') ?? 'dark';
 
-        ref.read(quranSettingsProvider.notifier).updateParams(
-              'tilawat',
-              !selectedTranslationOption,
-            );
+        return TextButton(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (qSettings.containsKey('tilawat') && qSettings['tilawat']) ...[
+                const Icon(
+                  Icons.check_box,
+                  color: ThemeColors.color4,
+                  size: 20,
+                ),
+              ] else ...[
+                const Icon(
+                  Icons.check_box_outline_blank,
+                  color: ThemeColors.color4,
+                  size: 20,
+                ),
+              ],
+              Container(
+                margin: const EdgeInsets.only(left: 2, bottom: 1),
+                child: Text(
+                  locales.tilawat,
+                  style: isSmallMobile
+                      ? textTheme.labelSmall?.copyWith(
+                          color: AppTheme.labelContrastColor[theme],
+                        )
+                      : textTheme.labelMedium?.copyWith(
+                          color: AppTheme.labelContrastColor[theme],
+                        ),
+                ),
+              ),
+            ],
+          ),
+          onPressed: () {
+            bool selectedTranslationOption =
+                qSettings.containsKey('tilawat') ? qSettings['tilawat'] : false;
+
+            ref.read(quranSettingsProvider.notifier).updateParams(
+                  'tilawat',
+                  !selectedTranslationOption,
+                );
+          },
+        );
       },
     );
   }
@@ -520,43 +532,55 @@ class TranslationOption extends ConsumerWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isSmallMobile = screenWidth < 340;
 
-    return TextButton(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (qSettings.containsKey('translation') &&
-              qSettings['translation']) ...[
-            const Icon(
-              Icons.check_box,
-              color: ThemeColors.color4,
-              size: 20,
-            ),
-          ] else ...[
-            const Icon(
-              Icons.check_box_outline_blank,
-              color: ThemeColors.color4,
-              size: 20,
-            ),
-          ],
-          Container(
-            margin: const EdgeInsets.only(left: 2, bottom: 1),
-            child: Text(
-              locales.translation,
-              style:
-                  isSmallMobile ? textTheme.titleSmall : textTheme.titleMedium,
-            ),
-          ),
-        ],
-      ),
-      onPressed: () {
-        bool selectedTranslationOption = qSettings.containsKey('translation')
-            ? qSettings['translation']
-            : false;
+    return WithPreferences(
+      builder: (context, preferences) {
+        String theme = preferences.getString('theme') ?? 'dark';
 
-        ref.read(quranSettingsProvider.notifier).updateParams(
-              'translation',
-              !selectedTranslationOption,
-            );
+        return TextButton(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (qSettings.containsKey('translation') &&
+                  qSettings['translation']) ...[
+                const Icon(
+                  Icons.check_box,
+                  color: ThemeColors.color4,
+                  size: 20,
+                ),
+              ] else ...[
+                const Icon(
+                  Icons.check_box_outline_blank,
+                  color: ThemeColors.color4,
+                  size: 20,
+                ),
+              ],
+              Container(
+                margin: const EdgeInsets.only(left: 2, bottom: 1),
+                child: Text(
+                  locales.translation,
+                  style: isSmallMobile
+                      ? textTheme.labelSmall?.copyWith(
+                          color: AppTheme.labelContrastColor[theme],
+                        )
+                      : textTheme.labelMedium?.copyWith(
+                          color: AppTheme.labelContrastColor[theme],
+                        ),
+                ),
+              ),
+            ],
+          ),
+          onPressed: () {
+            bool selectedTranslationOption =
+                qSettings.containsKey('translation')
+                    ? qSettings['translation']
+                    : false;
+
+            ref.read(quranSettingsProvider.notifier).updateParams(
+                  'translation',
+                  !selectedTranslationOption,
+                );
+          },
+        );
       },
     );
   }
@@ -582,83 +606,97 @@ class QariOptions extends ConsumerWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     var qSettings = ref.watch(quranSettingsProvider);
 
-    return TextButton(
-      child: Text(locales.qaris, style: textTheme.titleMedium),
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return Dialog(
-              child: Container(
-                width: screenWidth,
-                height: screenHeight * 0.5,
-                padding: const EdgeInsets.only(
-                  top: 15,
-                  bottom: 25,
-                  left: 15,
-                  right: 15,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Container(
-                      constraints: const BoxConstraints(maxHeight: 40),
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                        ),
-                        child: Row(
-                          children: [
-                            if (qSettings.containsKey('serialTilawat') &&
-                                qSettings['serialTilawat']) ...[
-                              const Icon(
-                                Icons.check_box,
-                                color: ThemeColors.color4,
-                                size: 20,
-                              ),
-                            ] else ...[
-                              const Icon(
-                                Icons.check_box_outline_blank,
-                                color: ThemeColors.color4,
-                                size: 20,
-                              ),
-                            ],
-                            Container(
-                              margin: const EdgeInsets.only(left: 4, bottom: 1),
-                              child: Text(
-                                locales.serialTilawat,
-                                style: textTheme.labelMedium,
-                              ),
+    return WithPreferences(
+      builder: (context, preferences) {
+        String theme = preferences.getString('theme') ?? 'dark';
+
+        return TextButton(
+          child: Text(
+            locales.qaris,
+            style: textTheme.titleMedium?.copyWith(
+              color: AppTheme.titleContrastColor[theme],
+            ),
+          ),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return Dialog(
+                  child: Container(
+                    width: screenWidth,
+                    height: screenHeight * 0.5,
+                    padding: const EdgeInsets.only(
+                      top: 15,
+                      bottom: 25,
+                      left: 15,
+                      right: 15,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          constraints: const BoxConstraints(maxHeight: 40),
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
                             ),
-                          ],
+                            child: Row(
+                              children: [
+                                if (qSettings.containsKey('serialTilawat') &&
+                                    qSettings['serialTilawat']) ...[
+                                  const Icon(
+                                    Icons.check_box,
+                                    color: ThemeColors.color4,
+                                    size: 20,
+                                  ),
+                                ] else ...[
+                                  const Icon(
+                                    Icons.check_box_outline_blank,
+                                    color: ThemeColors.color4,
+                                    size: 20,
+                                  ),
+                                ],
+                                Container(
+                                  margin:
+                                      const EdgeInsets.only(left: 4, bottom: 1),
+                                  child: Text(
+                                    locales.serialTilawat,
+                                    style: textTheme.labelMedium,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            onPressed: () {
+                              bool selectedSerialTilawatOption =
+                                  qSettings.containsKey('serialTilawat')
+                                      ? qSettings['serialTilawat']
+                                      : false;
+
+                              ref
+                                  .read(quranSettingsProvider.notifier)
+                                  .updateParams(
+                                    'serialTilawat',
+                                    !selectedSerialTilawatOption,
+                                  );
+
+                              Navigator.of(context).pop();
+                            },
+                          ),
                         ),
-                        onPressed: () {
-                          bool selectedSerialTilawatOption =
-                              qSettings.containsKey('serialTilawat')
-                                  ? qSettings['serialTilawat']
-                                  : false;
-
-                          ref.read(quranSettingsProvider.notifier).updateParams(
-                                'serialTilawat',
-                                !selectedSerialTilawatOption,
-                              );
-
-                          Navigator.of(context).pop();
-                        },
-                      ),
+                        TilwatRange(
+                          chapter: chapter,
+                          fromAyah: fromAyah,
+                          toAyah: toAyah,
+                        ),
+                        const SizedBox(height: 50),
+                        const Expanded(
+                          child: QariList(),
+                        ),
+                      ],
                     ),
-                    TilwatRange(
-                      chapter: chapter,
-                      fromAyah: fromAyah,
-                      toAyah: toAyah,
-                    ),
-                    const SizedBox(height: 50),
-                    const Expanded(
-                      child: QariList(),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             );
           },
         );
@@ -823,9 +861,15 @@ class FontOptions extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     double screenWidth = MediaQuery.of(context).size.width;
+    String theme = preferences.getString('theme') ?? 'dark';
 
     return TextButton(
-      child: Text(locales.font, style: textTheme.titleMedium),
+      child: Text(
+        locales.font,
+        style: textTheme.titleMedium?.copyWith(
+          color: AppTheme.titleContrastColor[theme],
+        ),
+      ),
       onPressed: () {
         const List<Map<String, String>> arabicFonts = [
           {
@@ -849,8 +893,6 @@ class FontOptions extends ConsumerWidget {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            String theme = preferences.getString('theme') ?? 'dark';
-
             String selectedArabicFont =
                 arabicFonts.map((i) => i['value']).firstWhereOrNull((i) {
                       return i == preferences.getString('arabicFont');
@@ -908,12 +950,14 @@ class FontOptions extends ConsumerWidget {
                             fontSizeRatio: arabicFontSizeRatio,
                             text: locales.arabicFont,
                             storeKey: 'ayahFontRatio',
+                            contrastColor: false,
                           ),
                         ),
                         FontResizer(
                           fontSizeRatio: banglaFontSizeRatio,
                           text: locales.banglaFont,
                           storeKey: 'translationFontRatio',
+                          contrastColor: false,
                         ),
                       ],
                     ),

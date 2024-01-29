@@ -182,12 +182,12 @@ ThemeData classicTheme(Map fonts) {
         fontSize: 17,
       ),
       titleLarge: TextStyle(
-        color: ThemeColors.color8,
+        color: ThemeColors.color2,
         fontSize: 20,
         fontWeight: FontWeight.normal,
       ),
       titleMedium: TextStyle(
-        color: ThemeColors.color8,
+        color: ThemeColors.color2,
         fontSize: 17,
       ),
       bodyLarge: TextStyle(

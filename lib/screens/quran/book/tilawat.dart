@@ -9,6 +9,8 @@ import 'package:native_app/providers/player.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/providers/quran_settings.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/widgets/inputs/input_field.dart';
 import 'package:native_app/theme/colors.dart';
 import 'player.dart';
@@ -34,27 +36,38 @@ class QuranBookTilawat extends ConsumerWidget {
     if (qSettings.containsKey('qari')) {
       return Row(
         children: [
-          TextButton(
-            child: Text(locales.ayah, style: textTheme.titleMedium),
-            onPressed: () async {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return Dialog(
-                    child: Container(
-                      width: screenWidth,
-                      height: screenHeight * 0.4,
-                      padding: const EdgeInsets.only(
-                        top: 15,
-                        bottom: 25,
-                        left: 15,
-                        right: 15,
-                      ),
-                      child: QuranBookTilawatRanges(
-                        bookId: bookId,
-                        page: pdfController.page,
-                      ),
-                    ),
+          WithPreferences(
+            builder: (context, preferences) {
+              String theme = preferences.getString('theme') ?? 'dark';
+
+              return TextButton(
+                child: Text(
+                  locales.ayah,
+                  style: textTheme.titleMedium?.copyWith(
+                    color: AppTheme.titleContrastColor[theme],
+                  ),
+                ),
+                onPressed: () async {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        child: Container(
+                          width: screenWidth,
+                          height: screenHeight * 0.4,
+                          padding: const EdgeInsets.only(
+                            top: 15,
+                            bottom: 25,
+                            left: 15,
+                            right: 15,
+                          ),
+                          child: QuranBookTilawatRanges(
+                            bookId: bookId,
+                            page: pdfController.page,
+                          ),
+                        ),
+                      );
+                    },
                   );
                 },
               );

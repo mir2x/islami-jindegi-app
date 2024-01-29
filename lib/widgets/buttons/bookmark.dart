@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/providers/bookmarks.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/theme/app_theme.dart';
 
 class BookmarkButton extends ConsumerWidget {
   const BookmarkButton({
@@ -17,43 +19,51 @@ class BookmarkButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var locales = AppLocalizations.of(context)!;
-    var bookmarkProviderWithLink = bookmarkProvider(link);
-    var bookmarkQuery = ref.watch(bookmarkProviderWithLink);
+    return WithPreferences(
+      builder: (context, preferences) {
+        String theme = preferences.getString('theme') ?? 'dark';
 
-    return bookmarkQuery.when(
-      loading: () => const CircularProgressIndicator(),
-      error: (error, stackTrace) => Text(error.toString()),
-      data: (bookmark) {
-        if (bookmark != null) {
-          return IconButton(
-            icon: const Icon(Icons.bookmark_remove),
-            onPressed: () {
-              ref
-                  .read(bookmarkProviderWithLink.notifier)
-                  .deleteItem(bookmark.id);
+        var locales = AppLocalizations.of(context)!;
+        var bookmarkProviderWithLink = bookmarkProvider(link);
+        var bookmarkQuery = ref.watch(bookmarkProviderWithLink);
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(locales.bookmarkDeleted)),
+        return bookmarkQuery.when(
+          loading: () => const CircularProgressIndicator(),
+          error: (error, stackTrace) => Text(error.toString()),
+          data: (bookmark) {
+            if (bookmark != null) {
+              return IconButton(
+                icon: const Icon(Icons.bookmark_remove),
+                color: AppTheme.titleContrastColor[theme],
+                onPressed: () {
+                  ref
+                      .read(bookmarkProviderWithLink.notifier)
+                      .deleteItem(bookmark.id);
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(locales.bookmarkDeleted)),
+                  );
+                },
               );
-            },
-          );
-        } else {
-          return IconButton(
-            icon: const Icon(Icons.bookmark_add),
-            onPressed: () {
-              ref.read(bookmarkProviderWithLink.notifier).createItem({
-                'type': type,
-                'title': title,
-                'link': link,
-              });
+            } else {
+              return IconButton(
+                icon: const Icon(Icons.bookmark_add),
+                color: AppTheme.titleContrastColor[theme],
+                onPressed: () {
+                  ref.read(bookmarkProviderWithLink.notifier).createItem({
+                    'type': type,
+                    'title': title,
+                    'link': link,
+                  });
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(locales.bookmarkAdded)),
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(locales.bookmarkAdded)),
+                  );
+                },
               );
-            },
-          );
-        }
+            }
+          },
+        );
       },
     );
   }

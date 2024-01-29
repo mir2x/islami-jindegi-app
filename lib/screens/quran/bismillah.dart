@@ -36,7 +36,7 @@ class Bismillah extends ConsumerWidget {
         children: [
           Container(
             padding: const EdgeInsets.only(left: 5, right: 5),
-            child: Previous(onPrevious: previousPage),
+            child: Previous(onPrevious: previousPage, contrastColor: false),
           ),
           if (chapter.position != 9 || chapterType != 'Surah') ...[
             Expanded(
@@ -101,7 +101,7 @@ class Bismillah extends ConsumerWidget {
           ],
           Container(
             padding: const EdgeInsets.only(left: 5, right: 5),
-            child: Next(onNext: nextPage),
+            child: Next(onNext: nextPage, contrastColor: false),
           ),
         ],
       ),

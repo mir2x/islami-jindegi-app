@@ -23,6 +23,8 @@ import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/widgets/presentation/connect_to_internet.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/widgets/buttons/download.dart';
 import 'package:native_app/widgets/buttons/delete.dart';
 import 'package:native_app/helpers/file_title_path.dart';
@@ -339,24 +341,35 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
           const QuranMenuButton(),
           Row(
             children: [
-              TextButton(
-                child: Text(locales.qaris, style: textTheme.titleMedium),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Dialog(
-                        child: Container(
-                          width: screenWidth,
-                          height: screenHeight * 0.5,
-                          padding: const EdgeInsets.only(
-                            top: 15,
-                            bottom: 25,
-                            left: 15,
-                            right: 15,
-                          ),
-                          child: const QariList(),
-                        ),
+              WithPreferences(
+                builder: (context, preferences) {
+                  String theme = preferences.getString('theme') ?? 'dark';
+
+                  return TextButton(
+                    child: Text(
+                      locales.qaris,
+                      style: textTheme.titleMedium?.copyWith(
+                        color: AppTheme.titleContrastColor[theme],
+                      ),
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Dialog(
+                            child: Container(
+                              width: screenWidth,
+                              height: screenHeight * 0.5,
+                              padding: const EdgeInsets.only(
+                                top: 15,
+                                bottom: 25,
+                                left: 15,
+                                right: 15,
+                              ),
+                              child: const QariList(),
+                            ),
+                          );
+                        },
                       );
                     },
                   );
