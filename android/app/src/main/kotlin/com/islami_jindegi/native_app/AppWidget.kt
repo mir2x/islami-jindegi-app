@@ -101,7 +101,7 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
       )
 
       textColor = ContextCompat.getColor(context, R.color.theme_color_13)
-      highlightTextColor = ContextCompat.getColor(context, R.color.theme_color_8)
+      highlightTextColor = ContextCompat.getColor(context, R.color.theme_color_2)
     } else {
       setInt(
         R.id.widget_container,
