@@ -71,9 +71,15 @@ class CurrentLocationState extends ConsumerState<CurrentLocation> {
                 ),
                 const SizedBox(width: 10),
                 const SizedBox(
-                  width: 10,
-                  height: 10,
-                  child: CircularProgressIndicator(strokeWidth: 1),
+                  width: 23,
+                  height: 23,
+                  child: Center(
+                    child: SizedBox(
+                      width: 10,
+                      height: 10,
+                      child: CircularProgressIndicator(strokeWidth: 1),
+                    ),
+                  ),
                 ),
               ],
             );
