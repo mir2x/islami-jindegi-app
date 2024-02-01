@@ -343,7 +343,7 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
             children: [
               WithPreferences(
                 builder: (context, preferences) {
-                  String theme = preferences.getString('theme') ?? 'dark';
+                  String theme = preferences.getString('theme') ?? 'classic';
 
                   return TextButton(
                     child: Text(

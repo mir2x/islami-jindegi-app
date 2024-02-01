@@ -44,7 +44,7 @@ class DropdownState extends ConsumerState<Dropdown> {
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'dark';
+        String theme = preferences.getString('theme') ?? 'classic';
         Color iconColor = AppTheme.iconColor[theme];
 
         return DropdownButton2<dynamic>(

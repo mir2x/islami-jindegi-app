@@ -18,7 +18,7 @@ class Next extends StatelessWidget {
   Widget build(BuildContext context) {
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'dark';
+        String theme = preferences.getString('theme') ?? 'classic';
 
         Color? iconColor = nextDisabled
             ? Colors.grey

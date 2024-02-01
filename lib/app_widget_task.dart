@@ -20,7 +20,7 @@ void callbackDispatcher() {
     final preferences = await SharedPreferences.getInstance();
     var currentLang = preferences.getString('locale') ?? 'bn';
     var locales = await AppLocalizations.delegate.load(Locale(currentLang));
-    String theme = preferences.getString('theme') ?? 'dark';
+    String theme = preferences.getString('theme') ?? 'classic';
 
     initializeDateFormatting(currentLang);
 

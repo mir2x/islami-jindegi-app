@@ -144,7 +144,7 @@ class Prayers extends StatelessWidget {
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'dark';
+        String theme = preferences.getString('theme') ?? 'classic';
         Color titleColor = AppTheme.titleOppositeColor[theme];
         Color labelColor = AppTheme.labelOppsititeColor[theme];
 

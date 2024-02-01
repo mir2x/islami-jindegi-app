@@ -46,7 +46,7 @@ class _SearchState extends ConsumerState<SearchButtonField> {
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'dark';
+        String theme = preferences.getString('theme') ?? 'classic';
 
         return Directionality(
           textDirection: widget.reverse ? TextDirection.rtl : TextDirection.ltr,

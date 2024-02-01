@@ -92,13 +92,13 @@ class Settings extends ConsumerWidget {
               themes.map((i) => i['value']).firstWhereOrNull((i) {
                     return i == preferences.getString('theme');
                   }) ??
-                  'dark';
+                  'classic';
 
           String selectedBackground =
               backgrounds.map((i) => i['value']).firstWhereOrNull((i) {
                     return i == preferences.getString('background');
                   }) ??
-                  'pattern';
+                  'mosque';
 
           return ItemContent(
             children: [

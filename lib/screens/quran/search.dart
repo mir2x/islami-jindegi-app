@@ -57,7 +57,7 @@ class QuranSearchState extends ConsumerState<QuranSearch> {
           const SizedBox(height: 20),
           WithPreferences(
             builder: (context, preferences) {
-              String theme = preferences.getString('theme') ?? 'dark';
+              String theme = preferences.getString('theme') ?? 'classic';
 
               return AnimatedToggleSwitch<String>.size(
                 current: language,

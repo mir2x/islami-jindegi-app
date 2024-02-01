@@ -21,7 +21,7 @@ class BookmarkButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'dark';
+        String theme = preferences.getString('theme') ?? 'classic';
 
         var locales = AppLocalizations.of(context)!;
         var bookmarkProviderWithLink = bookmarkProvider(link);

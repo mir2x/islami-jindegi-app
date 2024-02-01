@@ -48,8 +48,8 @@ class PlaceholderScaffold extends ConsumerWidget {
       ),
       body: WithPreferences(
         builder: (context, preferences) {
-          String theme = preferences.getString('theme') ?? 'dark';
-          String background = preferences.getString('background') ?? 'pattern';
+          String theme = preferences.getString('theme') ?? 'classic';
+          String background = preferences.getString('background') ?? 'mosque';
 
           return Container(
             decoration: BoxDecoration(

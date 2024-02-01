@@ -34,7 +34,7 @@ class TripleSwitchButton extends ConsumerWidget {
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'dark';
+        String theme = preferences.getString('theme') ?? 'classic';
         var activeColor = AppTheme.buttonActiveColor[theme];
         var inactiveColor = AppTheme.buttonInactiveColor[theme];
 

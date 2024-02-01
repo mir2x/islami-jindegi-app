@@ -60,7 +60,7 @@ class News extends ConsumerWidget {
           Expanded(
             child: WithPreferences(
               builder: (context, preferences) {
-                String theme = preferences.getString('theme') ?? 'dark';
+                String theme = preferences.getString('theme') ?? 'classic';
                 double height;
 
                 if (isMobile) {

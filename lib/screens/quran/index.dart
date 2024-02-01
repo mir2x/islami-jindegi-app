@@ -44,7 +44,7 @@ class QuranState extends ConsumerState<Quran> {
   Widget build(BuildContext context) {
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'dark';
+        String theme = preferences.getString('theme') ?? 'classic';
 
         var locales = AppLocalizations.of(context)!;
         String currentLang = Localizations.localeOf(context).languageCode;

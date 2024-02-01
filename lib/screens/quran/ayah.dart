@@ -52,7 +52,7 @@ class Ayah extends ConsumerWidget {
     var numFormatter = NumberFormat('#', currentLang);
     var textTheme = Theme.of(context).textTheme;
     var qSettings = ref.watch(quranSettingsProvider);
-    String theme = preferences.getString('theme') ?? 'dark';
+    String theme = preferences.getString('theme') ?? 'classic';
 
     return Container(
       padding: EdgeInsets.only(top: 10, bottom: 10, left: 15 + markAdjustment),

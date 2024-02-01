@@ -19,7 +19,7 @@ class BangaliDate extends StatelessWidget {
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'dark';
+        String theme = preferences.getString('theme') ?? 'classic';
 
         return Container(
           margin: const EdgeInsets.only(top: 1),

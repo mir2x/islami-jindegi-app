@@ -280,7 +280,8 @@ class Masail extends ConsumerWidget {
                     height: 40,
                     child: WithPreferences(
                       builder: (context, preferences) {
-                        String theme = preferences.getString('theme') ?? 'dark';
+                        String theme =
+                            preferences.getString('theme') ?? 'classic';
 
                         return FloatingActionButton.extended(
                           onPressed: () => QR.to('masail/ask-question'),

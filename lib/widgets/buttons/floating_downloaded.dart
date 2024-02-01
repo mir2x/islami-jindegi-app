@@ -19,7 +19,7 @@ class FloatingDownloadedButton extends ConsumerWidget {
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'dark';
+        String theme = preferences.getString('theme') ?? 'classic';
 
         return FloatingActionButton.extended(
           onPressed: onPressed,

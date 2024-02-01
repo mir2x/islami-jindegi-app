@@ -102,7 +102,7 @@ class MyApp extends ConsumerWidget {
       ),
       error: (error, _) => Text(error.toString()),
       data: (preferences) {
-        String theme = preferences.getString('theme') ?? 'dark';
+        String theme = preferences.getString('theme') ?? 'classic';
         String banglaFont =
             preferences.getString('banglaFont') ?? 'bangla/solaimanlipi';
         String arabicFont = preferences.getString('arabicFont') ??

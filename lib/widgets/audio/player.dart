@@ -191,7 +191,7 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'dark';
+        String theme = preferences.getString('theme') ?? 'classic';
 
         return Column(
           children: [

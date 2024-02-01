@@ -127,7 +127,8 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                   const SizedBox(height: 8),
                   WithPreferences(
                     builder: (context, preferences) {
-                      String theme = preferences.getString('theme') ?? 'dark';
+                      String theme =
+                          preferences.getString('theme') ?? 'classic';
 
                       return AnimatedToggleSwitch<bool>.dual(
                         current: isStartTime,

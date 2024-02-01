@@ -50,7 +50,7 @@ class CurrentLocationState extends ConsumerState<CurrentLocation> {
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'dark';
+        String theme = preferences.getString('theme') ?? 'classic';
 
         return geoData.when(
           loading: () {

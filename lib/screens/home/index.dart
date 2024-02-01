@@ -33,7 +33,7 @@ class Home extends StatelessWidget {
           children: [
             WithPreferences(
               builder: (context, preferences) {
-                String theme = preferences.getString('theme') ?? 'dark';
+                String theme = preferences.getString('theme') ?? 'classic';
 
                 return Container(
                   decoration: BoxDecoration(

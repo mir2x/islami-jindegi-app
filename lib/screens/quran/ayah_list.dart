@@ -470,7 +470,7 @@ class TilawatOption extends ConsumerWidget {
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'dark';
+        String theme = preferences.getString('theme') ?? 'classic';
 
         return TextButton(
           child: Row(
@@ -534,7 +534,7 @@ class TranslationOption extends ConsumerWidget {
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'dark';
+        String theme = preferences.getString('theme') ?? 'classic';
 
         return TextButton(
           child: Row(
@@ -608,7 +608,7 @@ class QariOptions extends ConsumerWidget {
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'dark';
+        String theme = preferences.getString('theme') ?? 'classic';
 
         return TextButton(
           child: Text(
@@ -861,7 +861,7 @@ class FontOptions extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     double screenWidth = MediaQuery.of(context).size.width;
-    String theme = preferences.getString('theme') ?? 'dark';
+    String theme = preferences.getString('theme') ?? 'classic';
 
     return TextButton(
       child: Text(

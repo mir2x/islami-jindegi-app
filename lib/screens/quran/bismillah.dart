@@ -25,7 +25,7 @@ class Bismillah extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     String chapterType = chapter.runtimeType.toString();
-    String theme = preferences.getString('theme') ?? 'dark';
+    String theme = preferences.getString('theme') ?? 'classic';
 
     return Container(
       decoration: BoxDecoration(

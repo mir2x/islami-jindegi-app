@@ -26,7 +26,7 @@ class FontResizer extends ConsumerWidget {
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'dark';
+        String theme = preferences.getString('theme') ?? 'classic';
 
         Color? textColor =
             contrastColor ? AppTheme.labelContrastColor[theme] : null;

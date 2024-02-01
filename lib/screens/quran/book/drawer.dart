@@ -45,7 +45,7 @@ class _QuranDrawerState extends ConsumerState<QuranDrawer> {
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'dark';
+        String theme = preferences.getString('theme') ?? 'classic';
 
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
