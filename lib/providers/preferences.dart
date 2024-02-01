@@ -37,6 +37,12 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
     state = AsyncValue.data(prefs);
   }
 
+  Future<dynamic> updateBackground(value) async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setString('background', value);
+    state = AsyncValue.data(prefs);
+  }
+
   Future<dynamic> updateMadhab(value) async {
     var prefs = await SharedPreferences.getInstance();
     await prefs.setString('madhab', value);

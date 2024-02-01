@@ -904,12 +904,7 @@ class FontOptions extends ConsumerWidget {
                 width: screenWidth,
                 height: 270,
                 decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(
-                      'assets/images/background/pattern-$theme.png',
-                    ),
-                    repeat: ImageRepeat.repeat,
-                  ),
+                  color: AppTheme.backgroundColor[theme],
                 ),
                 padding: const EdgeInsets.only(
                   top: 15,

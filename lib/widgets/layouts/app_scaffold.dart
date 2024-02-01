@@ -51,6 +51,7 @@ class AppScaffold extends ConsumerWidget {
     return WithPreferences(
       builder: (context, preferences) {
         String theme = preferences.getString('theme') ?? 'dark';
+        String background = preferences.getString('background') ?? 'pattern';
 
         return BackButtonListener(
           onBackButtonPressed: () async {
@@ -239,15 +240,17 @@ class AppScaffold extends ConsumerWidget {
             ),
             body: Container(
               decoration: BoxDecoration(
-                image: showPattern
+                image: (showPattern && background != 'no-background')
                     ? DecorationImage(
                         image: AssetImage(
-                          'assets/images/background/pattern-$theme.png',
+                          'assets/images/background/$background-$theme.png',
                         ),
-                        repeat: ImageRepeat.repeat,
+                        repeat: background == 'pattern'
+                            ? ImageRepeat.repeat
+                            : ImageRepeat.noRepeat,
                       )
                     : null,
-                color: !showPattern ? AppTheme.backgroundColor[theme] : null,
+                color: AppTheme.backgroundColor[theme],
               ),
               constraints: const BoxConstraints.expand(),
               child: LayoutBuilder(

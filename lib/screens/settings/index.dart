@@ -50,6 +50,12 @@ class Settings extends ConsumerWidget {
     {'label': 'Classic', 'value': 'classic'},
   ];
 
+  final List<Map<String, String>> backgrounds = const [
+    {'label': 'Pattern', 'value': 'pattern'},
+    {'label': 'Mosque', 'value': 'mosque'},
+    {'label': 'No Background', 'value': 'no-background'},
+  ];
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
@@ -87,6 +93,12 @@ class Settings extends ConsumerWidget {
                     return i == preferences.getString('theme');
                   }) ??
                   'dark';
+
+          String selectedBackground =
+              backgrounds.map((i) => i['value']).firstWhereOrNull((i) {
+                    return i == preferences.getString('background');
+                  }) ??
+                  'pattern';
 
           return ItemContent(
             children: [
@@ -199,6 +211,24 @@ class Settings extends ConsumerWidget {
                         ref
                             .read(preferencesProvider.notifier)
                             .updateTheme(value);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(bottom: 40),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SectionTitle(title: locales.background),
+                    Dropdown(
+                      items: backgrounds,
+                      selectedValue: selectedBackground,
+                      updateItem: (value) {
+                        ref
+                            .read(preferencesProvider.notifier)
+                            .updateBackground(value);
                       },
                     ),
                   ],
