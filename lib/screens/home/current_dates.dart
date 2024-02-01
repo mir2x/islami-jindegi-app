@@ -42,11 +42,11 @@ class CurrentDatesState extends ConsumerState<CurrentDates> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        HijriDate(count: count),
+        HijriDate(count: count, oppositeColor: true),
         if (!isMobile) ...[const SizedBox(height: 5)],
-        BangaliDate(count: count),
+        BangaliDate(count: count, oppositeColor: true),
         if (!isMobile) ...[const SizedBox(height: 5)],
-        GregorianDate(count: count),
+        GregorianDate(count: count, oppositeColor: true),
       ],
     );
   }

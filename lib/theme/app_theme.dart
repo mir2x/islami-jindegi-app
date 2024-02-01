@@ -27,6 +27,24 @@ class AppTheme {
     'classic': ThemeColors.color3,
   };
 
+  static const Map backgroundOppositeColor = {
+    'dark': ThemeColors.color1,
+    'light': ThemeColors.color6,
+    'classic': ThemeColors.color13,
+  };
+
+  static const Map labelOppsititeColor = {
+    'dark': ThemeColors.color3,
+    'light': ThemeColors.color3,
+    'classic': ThemeColors.color3,
+  };
+
+  static const Map titleOppositeColor = {
+    'dark': ThemeColors.color4,
+    'light': ThemeColors.color4,
+    'classic': ThemeColors.color4,
+  };
+
   static const Map headerColor = {
     'dark': ThemeColors.color7,
     'light': ThemeColors.color10,

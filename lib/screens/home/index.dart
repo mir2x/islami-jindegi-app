@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/theme/app_theme.dart';
 import 'dates_prayers.dart';
 import 'resource.dart';
 import 'news.dart';
@@ -29,13 +31,24 @@ class Home extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              margin: EdgeInsets.only(
-                left: sideMargin,
-                right: sideMargin,
-                top: isMobile ? screenHeight * 0.02 : screenHeight * 0.05,
-              ),
-              child: const DatesPrayers(),
+            WithPreferences(
+              builder: (context, preferences) {
+                String theme = preferences.getString('theme') ?? 'dark';
+
+                return Container(
+                  decoration: BoxDecoration(
+                    color: AppTheme.backgroundOppositeColor[theme],
+                  ),
+                  padding: EdgeInsets.only(
+                    left: sideMargin * 2,
+                    right: sideMargin * 2,
+                    top: isMobile ? screenHeight * 0.02 : screenHeight * 0.05,
+                    bottom:
+                        isMobile ? screenHeight * 0.02 : screenHeight * 0.05,
+                  ),
+                  child: const DatesPrayers(),
+                );
+              },
             ),
             GridView.count(
               crossAxisCount: 3,

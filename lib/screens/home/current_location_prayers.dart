@@ -4,9 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:adhan/adhan.dart';
 import 'package:native_app/providers/geolocation.dart';
-import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/widgets/location/index.dart';
 import 'package:native_app/objects/prayer_time.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/theme/app_theme.dart';
 
 class CurrentLocationPrayers extends StatelessWidget {
   const CurrentLocationPrayers({super.key});
@@ -26,7 +27,7 @@ class CurrentLocationPrayers extends StatelessWidget {
           children: [
             Container(
               margin: EdgeInsets.only(bottom: isMobile ? 0 : 5),
-              child: const CurrentLocation(),
+              child: const CurrentLocation(oppositeColor: true),
             ),
           ],
         ),
@@ -70,15 +71,8 @@ class CurrentPrayersState extends ConsumerState<CurrentPrayers> {
 
     return dataProvider.when(
       loading: () {
-        var prefs = ref.watch(preferencesProvider);
-
-        return prefs.when(
-          loading: () => const SizedBox(
-            width: 15,
-            height: 15,
-          ),
-          error: (error, _) => Text(error.toString()),
-          data: (preferences) {
+        return WithPreferences(
+          builder: (context, preferences) {
             String? currentPrayerTitle =
                 preferences.getString('currentPrayerTitle');
             String? currentPrayerTime =
@@ -148,37 +142,55 @@ class Prayers extends StatelessWidget {
     bool isMobile = screenWidth < 768;
     bool isSmallMobile = screenWidth < 340;
 
-    return Column(
-      crossAxisAlignment:
-          isMobile ? CrossAxisAlignment.start : CrossAxisAlignment.end,
-      children: [
-        if (prayerTimes.containsKey('current') &&
-            prayerTimes['current'] != null) ...[
-          Container(
-            margin: EdgeInsets.only(bottom: isMobile ? 0 : 5),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${prayerTimes['current']['title']}',
-                  style: isSmallMobile
-                      ? textTheme.titleMedium?.copyWith(fontSize: 17)
-                      : textTheme.titleLarge,
+    return WithPreferences(
+      builder: (context, preferences) {
+        String theme = preferences.getString('theme') ?? 'dark';
+        Color titleColor = AppTheme.titleOppositeColor[theme];
+        Color labelColor = AppTheme.labelOppsititeColor[theme];
+
+        return Column(
+          crossAxisAlignment:
+              isMobile ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+          children: [
+            if (prayerTimes.containsKey('current') &&
+                prayerTimes['current'] != null) ...[
+              Container(
+                margin: EdgeInsets.only(bottom: isMobile ? 0 : 5),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${prayerTimes['current']['title']}',
+                      style: isSmallMobile
+                          ? textTheme.titleMedium?.copyWith(
+                              fontSize: 17,
+                              color: titleColor,
+                            )
+                          : textTheme.titleLarge?.copyWith(color: titleColor),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      margin: EdgeInsets.only(top: isSmallMobile ? 1 : 3),
+                      child: Text(
+                        '${prayerTimes['current']['time']}',
+                        style: textTheme.titleMedium?.copyWith(
+                          color: titleColor,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                Container(
-                  margin: EdgeInsets.only(top: isSmallMobile ? 1 : 3),
-                  child: Text(
-                    '${prayerTimes['current']['time']}',
-                    style: textTheme.titleMedium,
-                  ),
-                ),
-              ],
+              ),
+            ],
+            Text(
+              prayerTimes['next'],
+              style: textTheme.labelSmall?.copyWith(
+                color: labelColor,
+              ),
             ),
-          ),
-        ],
-        Text(prayerTimes['next'], style: textTheme.labelSmall),
-      ],
+          ],
+        );
+      },
     );
   }
 }
