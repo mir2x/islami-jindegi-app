@@ -227,7 +227,7 @@ ThemeData classicTheme(Map fonts) {
       backgroundColor: ThemeColors.color12,
     ),
     listTileTheme: const ListTileThemeData(
-      tileColor: ThemeColors.color12,
+      tileColor: ThemeColors.color14,
     ),
     iconTheme: const IconThemeData(
       color: ThemeColors.color8,
