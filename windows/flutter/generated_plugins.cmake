@@ -9,6 +9,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   isar_flutter_libs
   pdfx
   permission_handler_windows
+  share_plus
   sqlite3_flutter_libs
   url_launcher_windows
 )

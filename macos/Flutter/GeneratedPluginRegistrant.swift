@@ -21,7 +21,7 @@ import location
 import package_info_plus
 import path_provider_foundation
 import pdfx
-import share_plus_macos
+import share_plus
 import shared_preferences_foundation
 import sqflite
 import sqlite3_flutter_libs
