@@ -47,7 +47,7 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
   val ratio = getRatio(context)
 
   val views = RemoteViews(context.packageName, R.layout.app_widget).apply {
-    val theme = widgetData.getString("theme", "dark")
+    val theme = widgetData.getString("theme", "classic")
     val hijriDate = widgetData.getString("hijriDate", "Hijri Date")
     val bangaliDate = widgetData.getString("bangaliDate", "Bangali Date")
     val gregorianDate = widgetData.getString("gregorianDate", "Gregorian Date")
@@ -67,18 +67,6 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
         R.drawable.widget_light_background,
       )
 
-      setInt(
-        R.id.dates,
-        "setBackgroundResource",
-        R.drawable.container_light_background,
-      )
-
-      setInt(
-        R.id.sunriseSunset,
-        "setBackgroundResource",
-        R.drawable.container_light_background,
-      )
-
       textColor = ContextCompat.getColor(context, R.color.theme_color_2)
       highlightTextColor = ContextCompat.getColor(context, R.color.theme_color_8)
     } else if (theme == "classic") {
@@ -88,18 +76,6 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
         R.drawable.widget_classic_background,
       )
 
-      setInt(
-        R.id.dates,
-        "setBackgroundResource",
-        R.drawable.container_classic_background,
-      )
-
-      setInt(
-        R.id.sunriseSunset,
-        "setBackgroundResource",
-        R.drawable.container_classic_background,
-      )
-
       textColor = ContextCompat.getColor(context, R.color.theme_color_13)
       highlightTextColor = ContextCompat.getColor(context, R.color.theme_color_2)
     } else {
@@ -107,18 +83,6 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
         R.id.widget_container,
         "setBackgroundResource",
         R.drawable.widget_dark_background,
-      )
-
-      setInt(
-        R.id.dates,
-        "setBackgroundResource",
-        R.drawable.container_dark_background,
-      )
-
-      setInt(
-        R.id.sunriseSunset,
-        "setBackgroundResource",
-        R.drawable.container_dark_background,
       )
 
       textColor = ContextCompat.getColor(context, R.color.theme_color_3)
