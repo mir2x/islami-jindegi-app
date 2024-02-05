@@ -137,7 +137,9 @@ class _SurahsState extends ConsumerState<StatefulSurahs> {
                             children: [
                               Text(
                                 '${numFormatter.format(item.position)}.',
-                                style: textTheme.titleMedium,
+                                style: textTheme.titleMedium?.copyWith(
+                                  color: AppTheme.titleContrastColor[theme],
+                                ),
                               ),
                               const SizedBox(width: 3),
                               Text(
