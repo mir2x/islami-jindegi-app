@@ -18,18 +18,6 @@
         android:label="Islami Jindegi"
         android:usesCleartextTraffic="true">
 
-        <receiver
-            android:name=".AppWidget"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/app_widget_info" />
-        </receiver>
-
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
@@ -61,19 +49,35 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.ryanheise.audioservice.AudioService"
-            android:foregroundServiceType="mediaPlayback"
-            android:exported="true" tools:ignore="Instantiatable">
+        <service
+          android:name="com.ryanheise.audioservice.AudioService"
+          android:foregroundServiceType="mediaPlayback"
+          android:exported="true"
+          tools:ignore="Instantiatable">
           <intent-filter>
             <action android:name="android.media.browse.MediaBrowserService" />
           </intent-filter>
         </service>
 
-        <receiver android:name="com.ryanheise.audioservice.MediaButtonReceiver"
-            android:exported="true" tools:ignore="Instantiatable">
+        <receiver
+          android:name="com.ryanheise.audioservice.MediaButtonReceiver"
+          android:exported="true"
+          tools:ignore="Instantiatable">
           <intent-filter>
             <action android:name="android.intent.action.MEDIA_BUTTON" />
           </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".AppWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/app_widget_info" />
         </receiver>
 
         <meta-data
