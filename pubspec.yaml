@@ -3,7 +3,7 @@ description: Islami Jindegi Native App
 
 publish_to: 'none'
 
-version: 5.0.17+112
+version: 5.0.18+113
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -109,6 +109,13 @@ dependencies:
   cached_network_image: ^3.2.3
   transparent_image: ^2.0.0
   flutter_native_splash: ^2.3.2
+
+dependency_overrides:
+  audio_service:
+     git:
+       url: https://github.com/ryanheise/audio_service.git
+       ref: fix/notification_npe
+       path: audio_service
 
 dev_dependencies:
   flutter_test:
