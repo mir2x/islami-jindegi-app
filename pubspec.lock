@@ -78,7 +78,7 @@ packages:
     description:
       path: audio_service
       ref: "fix/notification_npe"
-      resolved-ref: b6110bf60488267a4ddda65d8f6d527799c3b5ff
+      resolved-ref: "3d5a308fe178e55b418626397f564fd8c011d38d"
       url: "https://github.com/ryanheise/audio_service.git"
     source: git
     version: "0.18.13"
