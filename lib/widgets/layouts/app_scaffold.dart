@@ -9,7 +9,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:native_app/providers/push_notifications.dart';
-import 'package:native_app/providers/app_widget_link.dart';
+import 'package:native_app/providers/launch_app_widget_link.dart';
+import 'package:native_app/providers/background_app_widget_link.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/notification_status.dart';
 import 'package:native_app/theme/app_theme.dart';
@@ -46,7 +47,8 @@ class AppScaffold extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
 
     ref.read(pushNotificationProvider);
-    ref.read(appWidgetLinkProvider);
+    ref.read(launchAppWidgetLinkProvider);
+    ref.read(backgroundAppWidgetLinkProvider);
 
     return WithPreferences(
       builder: (context, preferences) {
