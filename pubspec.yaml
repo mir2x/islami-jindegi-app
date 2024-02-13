@@ -3,7 +3,7 @@ description: Islami Jindegi Native App
 
 publish_to: 'none'
 
-version: 5.0.18+113
+version: 5.0.19+114
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -63,7 +63,7 @@ dependencies:
   permission_handler: ^10.2.0
   path_provider: ^2.0.12
   shared_preferences: ^2.0.16
-  geolocator: ^10.0.0
+  geolocator: ^10.1.1
   geocoding: ^2.1.0
   connectivity_plus: ^3.0.3
   open_filex: ^4.3.2
