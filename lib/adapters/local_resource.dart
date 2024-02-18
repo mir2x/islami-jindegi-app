@@ -84,9 +84,12 @@ mixin LocalResourceAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
         headers: {'content-type': 'application/vnd.api+json'},
       );
 
-      onSuccess ??= (data, label, _) => this.onSuccess<List<T>>(data, label);
+      onSuccess ??= (data, label, _) async {
+        final result = await this.onSuccess<List<T>>(data, label);
+        return result as List<T>;
+      };
 
-      List<T> items = await onSuccess.call(data, label, this) ?? <T>[];
+      List<T> items = await onSuccess.call(data, label, this);
 
       if (items.isNotEmpty || onlyLocal || hasNoConnection) {
         return items;
