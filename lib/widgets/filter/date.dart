@@ -95,7 +95,7 @@ class DateFilter extends ConsumerWidget {
                     width: screenWidth,
                     height: isSmallMobile
                         ? screenHeight * 0.85
-                        : screenHeight * 0.6,
+                        : screenHeight * 0.7,
                     padding: const EdgeInsets.only(
                       top: 15,
                       bottom: 25,
@@ -196,7 +196,7 @@ class DateFilter extends ConsumerWidget {
 }
 
 class CustomDateField extends ConsumerWidget {
-  CustomDateField({
+  const CustomDateField({
     super.key,
     required this.field,
     required this.label,
@@ -204,7 +204,6 @@ class CustomDateField extends ConsumerWidget {
 
   final String field;
   final String label;
-  final _formFieldStateKey = GlobalKey<FormFieldState>();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -213,7 +212,6 @@ class CustomDateField extends ConsumerWidget {
     var qParamsNotifier = ref.read(queryParamsProvider.notifier);
 
     return DateTimeFormField(
-      key: _formFieldStateKey,
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(
@@ -229,19 +227,6 @@ class CustomDateField extends ConsumerWidget {
                 : ThemeColors.color4,
           ),
         ),
-        suffixIcon: !qParams.containsKey(field)
-            ? const Icon(Icons.event_outlined, color: ThemeColors.color4)
-            : IconButton(
-                icon: const Icon(
-                  Icons.clear_outlined,
-                  color: ThemeColors.color3,
-                ),
-                onPressed: () {
-                  _formFieldStateKey.currentState!.didChange(null);
-                  qParamsNotifier.updateParams(field, '');
-                  Navigator.of(context).pop();
-                },
-              ),
         labelStyle: qParams.containsKey(field)
             ? textTheme.labelMedium
             : textTheme.titleMedium,
@@ -251,11 +236,15 @@ class CustomDateField extends ConsumerWidget {
       initialValue: qParams.containsKey(field)
           ? DateFormat('yyyy-MM-dd').parse(qParams[field])
           : null,
-      onDateSelected: (DateTime value) {
-        qParamsNotifier.updateParams(
-          field,
-          DateFormat('yyyy-MM-dd').format(value),
-        );
+      onChanged: (DateTime? value) {
+        if (value != null) {
+          qParamsNotifier.updateParams(
+            field,
+            DateFormat('yyyy-MM-dd').format(value),
+          );
+        } else {
+          qParamsNotifier.updateParams(field, '');
+        }
         qParamsNotifier.updateParams('dateRange', '');
         Navigator.of(context).pop();
       },

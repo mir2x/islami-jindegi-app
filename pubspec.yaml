@@ -34,7 +34,7 @@ dependencies:
   json_api: ^5.3.0
 
   # form
-  date_field: ^3.0.2
+  date_field: ^4.0.1
   dropdown_button2: ^2.3.9
   idkit_inputformatters: ^0.0.1
   easy_debounce: ^2.0.3
@@ -60,12 +60,12 @@ dependencies:
   html: ^0.15.2
 
   # platform
-  permission_handler: ^10.2.0
+  permission_handler: ^11.3.0
   path_provider: ^2.0.12
   shared_preferences: ^2.0.16
-  geolocator: ^10.1.1
+  geolocator: ^11.0.0
   geocoding: ^2.1.0
-  connectivity_plus: ^3.0.3
+  connectivity_plus: ^5.0.2
   open_filex: ^4.3.2
   share_plus: ^7.2.2
   wakelock_plus: ^1.1.4
@@ -94,7 +94,7 @@ dependencies:
   smooth_compass: ^2.0.12
 
   # app widget
-  home_widget: ^0.3.0
+  home_widget: ^0.4.1
   workmanager: ^0.5.1
 
   # firebase
@@ -122,7 +122,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
 
   build_runner: ^2.4.6
   isar_generator: ^3.0.5
