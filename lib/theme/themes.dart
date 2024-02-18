@@ -58,6 +58,7 @@ ThemeData darkTheme(Map fonts) {
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: ThemeColors.color5,
+      foregroundColor: ThemeColors.color3,
     ),
     drawerTheme: const DrawerThemeData(
       backgroundColor: ThemeColors.color5,
@@ -78,7 +79,12 @@ ThemeData darkTheme(Map fonts) {
     popupMenuTheme: const PopupMenuThemeData(
       color: ThemeColors.color5,
     ),
-    dialogBackgroundColor: ThemeColors.color1,
+    dialogTheme: DialogTheme(
+      backgroundColor: ThemeColors.color1,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+    ),
   );
 }
 
@@ -160,7 +166,12 @@ ThemeData lightTheme(Map fonts) {
     popupMenuTheme: const PopupMenuThemeData(
       color: ThemeColors.color3,
     ),
-    dialogBackgroundColor: ThemeColors.color3,
+    dialogTheme: DialogTheme(
+      backgroundColor: ThemeColors.color3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+    ),
   );
 }
 
@@ -242,6 +253,11 @@ ThemeData classicTheme(Map fonts) {
     popupMenuTheme: const PopupMenuThemeData(
       color: ThemeColors.color14,
     ),
-    dialogBackgroundColor: ThemeColors.color14,
+    dialogTheme: DialogTheme(
+      backgroundColor: ThemeColors.color14,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+    ),
   );
 }

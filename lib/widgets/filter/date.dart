@@ -167,6 +167,9 @@ class DateFilter extends ConsumerWidget {
                 ? AppTheme.inputSelectedBgColor[theme]
                 : null,
             padding: EdgeInsets.symmetric(horizontal: isSmallMobile ? 13 : 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
             minimumSize: const Size.fromHeight(45),
           ),
           child: Row(

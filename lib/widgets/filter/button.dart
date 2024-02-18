@@ -59,6 +59,9 @@ class FilterButton extends ConsumerWidget {
             backgroundColor:
                 active == true ? AppTheme.inputSelectedBgColor[theme] : null,
             padding: EdgeInsets.symmetric(horizontal: isSmallMobile ? 13 : 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
             minimumSize: const Size.fromHeight(45),
           ),
           child: Row(

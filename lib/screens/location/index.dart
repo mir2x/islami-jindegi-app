@@ -95,6 +95,9 @@ class Location extends ConsumerWidget {
                                     AppTheme.inputSelectedBgColor[theme],
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 15),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
                                 minimumSize: const Size.fromHeight(45),
                               ),
                               child: Row(

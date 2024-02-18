@@ -114,19 +114,31 @@ class AppScaffold extends ConsumerWidget {
                                     <PopupMenuEntry<int>>[
                                   PopupMenuItem<int>(
                                     value: 0,
-                                    child: Text(locales.settings),
+                                    child: Text(
+                                      locales.settings,
+                                      style: textTheme.labelMedium,
+                                    ),
                                   ),
                                   PopupMenuItem<int>(
                                     value: 1,
-                                    child: Text(locales.contactUs),
+                                    child: Text(
+                                      locales.contactUs,
+                                      style: textTheme.labelMedium,
+                                    ),
                                   ),
                                   PopupMenuItem<int>(
                                     value: 2,
-                                    child: Text(locales.shareThisApp),
+                                    child: Text(
+                                      locales.shareThisApp,
+                                      style: textTheme.labelMedium,
+                                    ),
                                   ),
                                   PopupMenuItem<int>(
                                     value: 3,
-                                    child: Text(locales.rateThisApp),
+                                    child: Text(
+                                      locales.rateThisApp,
+                                      style: textTheme.labelMedium,
+                                    ),
                                   ),
                                   PopupMenuItem<int>(
                                     value: 4,
@@ -134,15 +146,22 @@ class AppScaffold extends ConsumerWidget {
                                       Platform.isAndroid
                                           ? locales.iphoneAppLink
                                           : locales.androidAppLink,
+                                      style: textTheme.labelMedium,
                                     ),
                                   ),
                                   PopupMenuItem<int>(
                                     value: 5,
-                                    child: Text(locales.websiteLink),
+                                    child: Text(
+                                      locales.websiteLink,
+                                      style: textTheme.labelMedium,
+                                    ),
                                   ),
                                   PopupMenuItem<int>(
                                     value: 6,
-                                    child: Text(locales.importantMatters),
+                                    child: Text(
+                                      locales.importantMatters,
+                                      style: textTheme.labelMedium,
+                                    ),
                                   ),
                                 ],
                                 onSelected: (int item) {

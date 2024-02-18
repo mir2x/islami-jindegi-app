@@ -21,6 +21,8 @@ class BottomBar extends ConsumerWidget {
 
         return BottomAppBar(
           color: AppTheme.bottomBarColor[theme],
+          padding: EdgeInsets.zero,
+          height: 52,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
             child: Row(

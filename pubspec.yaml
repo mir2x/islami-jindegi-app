@@ -46,7 +46,7 @@ dependencies:
   animated_toggle_switch: ^0.8.0
   just_audio: ^0.9.36
   just_audio_background: ^0.0.1-beta.11
-  pdfx: 2.4.0
+  pdfx: 2.6.0
   # pdfx:
   #   path: /home/musaffa/projects/libraries/packages.flutter/packages/pdfx
 
@@ -111,6 +111,7 @@ dependencies:
   flutter_native_splash: ^2.3.2
 
 dependency_overrides:
+  uuid: ^4.0.0
   audio_service:
      git:
        url: https://github.com/ryanheise/audio_service.git
