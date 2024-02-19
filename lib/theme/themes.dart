@@ -5,6 +5,19 @@ ThemeData darkTheme(Map fonts) {
   return ThemeData(
     fontFamily: fonts['fontFamily'],
     fontFamilyFallback: fonts['fontFamilyFallback'],
+    colorScheme: const ColorScheme(
+      brightness: Brightness.dark,
+      primary: ThemeColors.color5,
+      onPrimary: ThemeColors.color3,
+      secondary: ThemeColors.color2,
+      onSecondary: ThemeColors.color3,
+      error: ThemeColors.danger,
+      onError: ThemeColors.color3,
+      background: ThemeColors.color2,
+      onBackground: ThemeColors.color3,
+      surface: ThemeColors.color2,
+      onSurface: ThemeColors.color3,
+    ),
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
         color: ThemeColors.color3,
@@ -92,6 +105,19 @@ ThemeData lightTheme(Map fonts) {
   return ThemeData(
     fontFamily: fonts['fontFamily'],
     fontFamilyFallback: fonts['fontFamilyFallback'],
+    colorScheme: const ColorScheme(
+      brightness: Brightness.light,
+      primary: ThemeColors.color3,
+      onPrimary: ThemeColors.color2,
+      secondary: ThemeColors.color3,
+      onSecondary: ThemeColors.color2,
+      error: ThemeColors.danger,
+      onError: ThemeColors.color2,
+      background: ThemeColors.color3,
+      onBackground: ThemeColors.color2,
+      surface: ThemeColors.color3,
+      onSurface: ThemeColors.color2,
+    ),
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
         color: ThemeColors.color2,
@@ -179,6 +205,19 @@ ThemeData classicTheme(Map fonts) {
   return ThemeData(
     fontFamily: fonts['fontFamily'],
     fontFamilyFallback: fonts['fontFamilyFallback'],
+    colorScheme: const ColorScheme(
+      brightness: Brightness.light,
+      primary: ThemeColors.color12,
+      onPrimary: ThemeColors.color13,
+      secondary: ThemeColors.color11,
+      onSecondary: ThemeColors.color13,
+      error: ThemeColors.danger,
+      onError: ThemeColors.color13,
+      background: ThemeColors.color12,
+      onBackground: ThemeColors.color13,
+      surface: ThemeColors.color12,
+      onSurface: ThemeColors.color13,
+    ),
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
         color: ThemeColors.color13,
