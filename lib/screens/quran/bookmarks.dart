@@ -66,7 +66,10 @@ class QuranBookmarks extends ConsumerWidget {
                               <PopupMenuEntry<int>>[
                             PopupMenuItem<int>(
                               value: 0,
-                              child: Text(locales.remove),
+                              child: Text(
+                                locales.remove,
+                                style: textTheme.labelMedium,
+                              ),
                             ),
                           ],
                           onSelected: (int menuItem) async {

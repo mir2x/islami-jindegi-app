@@ -76,7 +76,10 @@ class Bismillah extends ConsumerWidget {
                                   <PopupMenuEntry<int>>[
                                 PopupMenuItem<int>(
                                   value: 0,
-                                  child: Text(locales.surahIntroduction),
+                                  child: Text(
+                                    locales.surahIntroduction,
+                                    style: textTheme.labelMedium,
+                                  ),
                                 ),
                               ],
                               onSelected: (int item) async {

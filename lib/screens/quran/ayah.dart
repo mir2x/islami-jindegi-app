@@ -312,6 +312,7 @@ class ActionButtons extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
+    var textTheme = Theme.of(context).textTheme;
     String currentLang = Localizations.localeOf(context).languageCode;
     var numFormatter = NumberFormat('#', currentLang);
 
@@ -327,19 +328,31 @@ class ActionButtons extends ConsumerWidget {
       itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
         PopupMenuItem<int>(
           value: 0,
-          child: Text(locales.readTafseer),
+          child: Text(
+            locales.readTafseer,
+            style: textTheme.labelMedium,
+          ),
         ),
         PopupMenuItem<int>(
           value: 1,
-          child: Text(locales.saveAyah),
+          child: Text(
+            locales.saveAyah,
+            style: textTheme.labelMedium,
+          ),
         ),
         PopupMenuItem<int>(
           value: 2,
-          child: Text(locales.copyAyah),
+          child: Text(
+            locales.copyAyah,
+            style: textTheme.labelMedium,
+          ),
         ),
         PopupMenuItem<int>(
           value: 3,
-          child: Text(locales.share),
+          child: Text(
+            locales.share,
+            style: textTheme.labelMedium,
+          ),
         ),
       ],
       onSelected: (int item) async {
