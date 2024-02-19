@@ -53,7 +53,7 @@ class LocalResourceAPI extends _$LocalResourceAPI {
   LocalResourceAPI()
       : super(
           LazyDatabase(() async {
-            int dataVersion = 5;
+            int dataVersion = 6;
 
             final dbFolder = await getApplicationDocumentsDirectory();
             final file = File(
