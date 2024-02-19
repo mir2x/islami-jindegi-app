@@ -211,42 +211,43 @@ class CustomDateField extends ConsumerWidget {
     var qParams = ref.watch(queryParamsProvider);
     var qParamsNotifier = ref.read(queryParamsProvider.notifier);
 
-    return DateTimeFormField(
-      decoration: InputDecoration(
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: qParams.containsKey(field)
-                ? ThemeColors.color3
-                : ThemeColors.color4,
+    return WithPreferences(
+      builder: (context, preferences) {
+        String theme = preferences.getString('theme') ?? 'classic';
+
+        return DateTimeFormField(
+          decoration: InputDecoration(
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: AppTheme.inputBorderOutlineColor[theme],
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: AppTheme.inputBorderOutlineColor[theme],
+              ),
+            ),
+            labelStyle: textTheme.labelMedium,
+            labelText: label,
+            suffixIconColor: AppTheme.iconColor[theme],
           ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: qParams.containsKey(field)
-                ? ThemeColors.color3
-                : ThemeColors.color4,
-          ),
-        ),
-        labelStyle: qParams.containsKey(field)
-            ? textTheme.labelMedium
-            : textTheme.titleMedium,
-        labelText: label,
-      ),
-      mode: DateTimeFieldPickerMode.date,
-      initialValue: qParams.containsKey(field)
-          ? DateFormat('yyyy-MM-dd').parse(qParams[field])
-          : null,
-      onChanged: (DateTime? value) {
-        if (value != null) {
-          qParamsNotifier.updateParams(
-            field,
-            DateFormat('yyyy-MM-dd').format(value),
-          );
-        } else {
-          qParamsNotifier.updateParams(field, '');
-        }
-        qParamsNotifier.updateParams('dateRange', '');
-        Navigator.of(context).pop();
+          mode: DateTimeFieldPickerMode.date,
+          initialValue: qParams.containsKey(field)
+              ? DateFormat('yyyy-MM-dd').parse(qParams[field])
+              : null,
+          onChanged: (DateTime? value) {
+            if (value != null) {
+              qParamsNotifier.updateParams(
+                field,
+                DateFormat('yyyy-MM-dd').format(value),
+              );
+            } else {
+              qParamsNotifier.updateParams(field, '');
+            }
+            qParamsNotifier.updateParams('dateRange', '');
+            Navigator.of(context).pop();
+          },
+        );
       },
     );
   }
