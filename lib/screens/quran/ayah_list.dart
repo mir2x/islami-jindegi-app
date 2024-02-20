@@ -333,6 +333,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    String theme = widget.preferences.getString('theme') ?? 'classic';
 
     List<int> marks = [];
 
@@ -361,7 +362,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
               nextPage: widget.nextPage,
             ),
             Expanded(
-              child: ScrollablePositionedList.builder(
+              child: ScrollablePositionedList.separated(
                 key: PageStorageKey<String>(widget.chapter.id),
                 itemScrollController: itemScrollController,
                 scrollOffsetController: scrollOffsetController,
@@ -419,6 +420,12 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
                         updateCurrentAyah(selectedAyah);
                       }
                     },
+                  );
+                },
+                separatorBuilder: (context, index) {
+                  return Divider(
+                    height: 0.7,
+                    color: AppTheme.separatorColor[theme],
                   );
                 },
               ),

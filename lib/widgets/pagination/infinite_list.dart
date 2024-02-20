@@ -129,8 +129,8 @@ class NoItemsFoundIndicator extends StatelessWidget {
 class FirstPageErrorIndicator extends StatelessWidget {
   const FirstPageErrorIndicator({
     this.onTryAgain,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final VoidCallback? onTryAgain;
 
@@ -148,9 +148,9 @@ class FirstPageErrorIndicator extends StatelessWidget {
 
 class NewPageErrorIndicator extends StatelessWidget {
   const NewPageErrorIndicator({
-    Key? key,
+    super.key,
     this.onTap,
-  }) : super(key: key);
+  });
   final VoidCallback? onTap;
 
   @override

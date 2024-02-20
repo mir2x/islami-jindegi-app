@@ -62,12 +62,6 @@ class Ayah extends ConsumerWidget {
       ),
       decoration: BoxDecoration(
         color: isActive ? AppTheme.activeAyahColor[theme] : null,
-        border: Border(
-          bottom: BorderSide(
-            color: AppTheme.separatorColor[theme],
-            width: 0.7,
-          ),
-        ),
       ),
       child: Column(
         children: [

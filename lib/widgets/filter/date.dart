@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/theme/app_theme.dart';
-import 'package:native_app/theme/colors.dart';
 
 class DateFilter extends ConsumerWidget {
   const DateFilter({super.key});
