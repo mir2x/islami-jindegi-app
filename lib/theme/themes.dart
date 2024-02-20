@@ -198,6 +198,9 @@ ThemeData lightTheme(Map fonts) {
         borderRadius: BorderRadius.circular(10),
       ),
     ),
+    snackBarTheme: const SnackBarThemeData(
+      backgroundColor: ThemeColors.color6,
+    ),
   );
 }
 
@@ -297,6 +300,9 @@ ThemeData classicTheme(Map fonts) {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
+    ),
+    snackBarTheme: const SnackBarThemeData(
+      backgroundColor: ThemeColors.color3,
     ),
   );
 }

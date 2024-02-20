@@ -40,7 +40,10 @@ class BookmarkButton extends ConsumerWidget {
                       .read(bookmarkProviderWithLink.notifier)
                       .deleteItem(bookmark.id);
 
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  var scaffoldMessenger = ScaffoldMessenger.of(context);
+                  scaffoldMessenger.removeCurrentSnackBar();
+
+                  scaffoldMessenger.showSnackBar(
                     SnackBar(content: Text(locales.bookmarkDeleted)),
                   );
                 },
@@ -55,8 +58,10 @@ class BookmarkButton extends ConsumerWidget {
                     'title': title,
                     'link': link,
                   });
+                  var scaffoldMessenger = ScaffoldMessenger.of(context);
+                  scaffoldMessenger.removeCurrentSnackBar();
 
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  scaffoldMessenger.showSnackBar(
                     SnackBar(content: Text(locales.bookmarkAdded)),
                   );
                 },
