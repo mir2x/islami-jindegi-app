@@ -59,7 +59,6 @@ class Ayah extends ConsumerWidget {
         top: 10,
         bottom: 10,
         left: 15 + markAdjustment,
-        right: 15,
       ),
       decoration: BoxDecoration(
         color: isActive ? AppTheme.activeAyahColor[theme] : null,
@@ -125,7 +124,11 @@ class Ayah extends ConsumerWidget {
               builder: (context, ratio, child) {
                 return Container(
                   width: double.infinity,
-                  margin: EdgeInsets.only(left: markAdjustment, bottom: 5),
+                  margin: EdgeInsets.only(
+                    left: markAdjustment,
+                    right: 15,
+                    bottom: 5,
+                  ),
                   child: Text(
                     ayah.title.trim(),
                     textDirection: TextDirection.rtl,
@@ -143,7 +146,7 @@ class Ayah extends ConsumerWidget {
               ayah.ayahTranslations.isNotEmpty) ...[
             Container(
               width: double.infinity,
-              margin: EdgeInsets.only(left: markAdjustment),
+              margin: EdgeInsets.only(left: markAdjustment, right: 15),
               child: PageHtmlBody(
                 text: ayah.ayahTranslations.first.body,
                 fontSizeRatio: banglaFontSizeRatio,
@@ -333,9 +336,11 @@ class ActionButtons extends ConsumerWidget {
 
     return PopupMenuButton<int>(
       child: const SizedBox(
+        width: 50,
         height: 40,
-        width: 35,
-        child: Icon(Icons.more_vert),
+        child: Icon(
+          Icons.more_horiz,
+        ),
       ),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
         PopupMenuItem<int>(

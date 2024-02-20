@@ -105,7 +105,8 @@ class AppScaffold extends ConsumerWidget {
                         child: isHome
                             ? PopupMenuButton<int>(
                                 child: const SizedBox(
-                                  width: 40,
+                                  width: 45,
+                                  height: 50,
                                   child: Icon(
                                     Icons.more_vert,
                                   ),
@@ -309,7 +310,7 @@ class MenuButton extends StatelessWidget {
     return InkWell(
       onTap: () => Scaffold.of(context).openEndDrawer(),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         child: SvgPicture.asset(
           'assets/images/icons/menu.svg',
           fit: BoxFit.scaleDown,
