@@ -381,7 +381,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
                     preferences: widget.preferences,
                     arabicFontSizeRatio: widget.arabicFontSizeRatio,
                     banglaFontSizeRatio: widget.banglaFontSizeRatio,
-                    markAdjustment: marks.isNotEmpty ? 12 : 0,
+                    markAdjustment: marks.isNotEmpty ? 10 : 0,
                     loadQirat: (selectedAyah) async {
                       var scaffoldMessenger = ScaffoldMessenger.of(context);
 

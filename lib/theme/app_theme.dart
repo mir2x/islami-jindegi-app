@@ -140,4 +140,10 @@ class AppTheme {
     'light': ThemeColors.color9,
     'classic': ThemeColors.color15,
   };
+
+  static const Map separatorColor = {
+    'dark': ThemeColors.color1,
+    'light': ThemeColors.color11,
+    'classic': ThemeColors.color14,
+  };
 }

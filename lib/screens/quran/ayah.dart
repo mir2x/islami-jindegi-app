@@ -55,56 +55,52 @@ class Ayah extends ConsumerWidget {
     String theme = preferences.getString('theme') ?? 'classic';
 
     return Container(
-      padding: EdgeInsets.only(top: 10, bottom: 10, left: 15 + markAdjustment),
+      padding: EdgeInsets.only(
+        top: 10,
+        bottom: 10,
+        left: 15 + markAdjustment,
+        right: 15,
+      ),
       decoration: BoxDecoration(
         color: isActive ? AppTheme.activeAyahColor[theme] : null,
+        border: Border(
+          bottom: BorderSide(
+            color: AppTheme.separatorColor[theme],
+            width: 0.7,
+          ),
+        ),
       ),
       child: Column(
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: InkWell(
-                  onTap: () => QR.to('quran/tafseers/${ayah.id}'),
-                  child: ValueListenableBuilder<double>(
-                    valueListenable: arabicFontSizeRatio,
-                    builder: (context, ratio, child) {
-                      return Text(
-                        ayah.title.trim(),
-                        textDirection: TextDirection.rtl,
-                        style: textTheme.labelLarge?.copyWith(
-                          fontSize: 25 * ratio,
-                          height: 1.6,
+          Container(
+            margin: const EdgeInsets.only(bottom: 3),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(left: 5),
+                  child: SizedBox(
+                    width: 50,
+                    height: 42,
+                    child: Stack(
+                      children: [
+                        SvgPicture.asset(
+                          'assets/images/icons/ayah-symbol.svg',
+                          fit: BoxFit.scaleDown,
                         ),
-                      );
-                    },
+                        Container(
+                          alignment: Alignment.center,
+                          child: Text(
+                            numFormatter.format(ayah.surahPosition),
+                            style: textTheme.titleMedium,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(left: 10, top: 5),
-                child: Column(
+                Row(
                   children: [
-                    SizedBox(
-                      width: 50,
-                      height: 42,
-                      child: Stack(
-                        children: [
-                          SvgPicture.asset(
-                            'assets/images/icons/ayah-symbol.svg',
-                            fit: BoxFit.scaleDown,
-                          ),
-                          Container(
-                            alignment: Alignment.center,
-                            child: Text(
-                              numFormatter.format(ayah.surahPosition),
-                              style: textTheme.titleMedium,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                     if (qari != null &&
                         chapter.runtimeType.toString() == 'Surah') ...[
                       QiratButton(
@@ -116,18 +112,38 @@ class Ayah extends ConsumerWidget {
                         isPlaying: isPlaying,
                       ),
                     ],
+                    ActionButtons(ayah: ayah),
                   ],
                 ),
-              ),
-              ActionButtons(ayah: ayah),
-            ],
+              ],
+            ),
+          ),
+          InkWell(
+            onTap: () => QR.to('quran/tafseers/${ayah.id}'),
+            child: ValueListenableBuilder<double>(
+              valueListenable: arabicFontSizeRatio,
+              builder: (context, ratio, child) {
+                return Container(
+                  width: double.infinity,
+                  margin: EdgeInsets.only(left: markAdjustment, bottom: 5),
+                  child: Text(
+                    ayah.title.trim(),
+                    textDirection: TextDirection.rtl,
+                    style: textTheme.labelLarge?.copyWith(
+                      fontSize: 25 * ratio,
+                      height: 1.6,
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
           if (qSettings.containsKey('translation') &&
               qSettings['translation'] &&
               ayah.ayahTranslations.isNotEmpty) ...[
             Container(
               width: double.infinity,
-              margin: EdgeInsets.only(left: markAdjustment, right: 15),
+              margin: EdgeInsets.only(left: markAdjustment),
               child: PageHtmlBody(
                 text: ayah.ayahTranslations.first.body,
                 fontSizeRatio: banglaFontSizeRatio,
@@ -160,25 +176,24 @@ class QiratButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 8),
-      child: isActive
-          ? QiratPlayer(
-              ayah: ayah,
-              chapter: chapter,
-              qari: qari,
-              isPlaying: isPlaying,
-              loadQirat: loadQirat,
-            )
-          : InkWell(
-              onTap: () async => await loadQirat(ayah),
-              child: PlayButton(
-                ayah: ayah,
-                chapter: chapter,
-                qari: qari,
-              ),
-            ),
-    );
+    if (isActive) {
+      return QiratPlayer(
+        ayah: ayah,
+        chapter: chapter,
+        qari: qari,
+        isPlaying: isPlaying,
+        loadQirat: loadQirat,
+      );
+    } else {
+      return InkWell(
+        onTap: () async => await loadQirat(ayah),
+        child: PlayButton(
+          ayah: ayah,
+          chapter: chapter,
+          qari: qari,
+        ),
+      );
+    }
   }
 }
 
@@ -317,13 +332,10 @@ class ActionButtons extends ConsumerWidget {
     var numFormatter = NumberFormat('#', currentLang);
 
     return PopupMenuButton<int>(
-      child: Container(
-        padding: const EdgeInsets.only(top: 5),
-        child: const SizedBox(
-          height: 40,
-          width: 35,
-          child: Icon(Icons.more_vert),
-        ),
+      child: const SizedBox(
+        height: 40,
+        width: 35,
+        child: Icon(Icons.more_vert),
       ),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
         PopupMenuItem<int>(
