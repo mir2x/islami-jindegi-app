@@ -69,7 +69,7 @@ class AppTheme {
     'classic': ThemeColors.color9,
   };
 
-  static const Map borderOutlineColor = {
+  static const Map dropdownBorderOutlineColor = {
     'dark': ThemeColors.color3,
     'light': ThemeColors.color2,
     'classic': ThemeColors.color2,

@@ -93,12 +93,12 @@ class DropdownState extends ConsumerState<Dropdown> {
                         hintStyle: textTheme.labelMedium,
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                            color: AppTheme.borderOutlineColor[theme],
+                            color: AppTheme.dropdownBorderOutlineColor[theme],
                           ),
                         ),
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                            color: AppTheme.borderOutlineColor[theme],
+                            color: AppTheme.dropdownBorderOutlineColor[theme],
                           ),
                         ),
                       ),
@@ -117,7 +117,7 @@ class DropdownState extends ConsumerState<Dropdown> {
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: AppTheme.borderOutlineColor[theme],
+                  color: AppTheme.dropdownBorderOutlineColor[theme],
                   width: 0.0,
                 ),
               ),
