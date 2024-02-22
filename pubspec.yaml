@@ -22,7 +22,7 @@ dependencies:
   qlevar_router: ^1.7.1
 
   # data
-  flutter_data: ^1.5.13
+  flutter_data: 1.5.13
   flutter_data_json_api_adapter: ^0.8.0
   isar: ^3.0.5
   isar_flutter_libs: ^3.0.5

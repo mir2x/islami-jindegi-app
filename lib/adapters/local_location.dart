@@ -46,12 +46,7 @@ mixin LocalLocationAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
       headers: {'content-type': 'application/vnd.api+json'},
     );
 
-    onSuccess ??= (data, label, _) async {
-      final result = await this.onSuccess<List<T>>(data, label);
-      return result as List<T>;
-    };
-
-    List<T> items = await onSuccess.call(data, label, this);
+    List<T> items = await this.onSuccess(data, label);
 
     return items;
   }

@@ -571,10 +571,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_data
-      sha256: "719c53eb98494b9d4b4c1538e38a81d9ddcc8a6821e6eaef89e917c35160803d"
+      sha256: de1a214a03bec74c09c0430cf721a54fb0badbbda7875195457a24d605768a64
       url: "https://pub.dev"
     source: hosted
-    version: "1.5.14"
+    version: "1.5.13"
   flutter_data_json_api_adapter:
     dependency: "direct main"
     description:
