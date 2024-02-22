@@ -65,7 +65,7 @@ class Tafseer extends ConsumerWidget {
                           ayah.title.trim(),
                           textDirection: TextDirection.rtl,
                           style: textTheme.headlineMedium?.copyWith(
-                            fontSize: 25 * ratio,
+                            fontSize: 27 * ratio,
                             height: 1.6,
                           ),
                         );

@@ -205,7 +205,7 @@ class TilawatModeAyahList extends StatelessWidget {
                 'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ',
                 textDirection: TextDirection.rtl,
                 style: textTheme.labelLarge?.copyWith(
-                  fontSize: 25 * ratio,
+                  fontSize: 27 * ratio,
                   height: 1.6,
                 ),
               ),
@@ -215,7 +215,7 @@ class TilawatModeAyahList extends StatelessWidget {
               textDirection: TextDirection.rtl,
               textAlign: TextAlign.justify,
               style: textTheme.labelLarge?.copyWith(
-                fontSize: 25 * ratio,
+                fontSize: 27 * ratio,
                 height: 1.6,
               ),
             ),
