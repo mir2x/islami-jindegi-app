@@ -114,7 +114,10 @@ mixin LocalResourceAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     OnErrorOne<T>? onError,
     DataRequestLabel? label,
   }) async {
-    if (remote != true) {
+    bool hasNoConnection =
+        await Connectivity().checkConnectivity() == ConnectivityResult.none;
+
+    if (remote != true || hasNoConnection) {
       final localResource = ref.read(localResourceProvider);
       final item = await localResource.findById(
         internalType,

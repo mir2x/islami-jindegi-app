@@ -8,7 +8,7 @@ import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
-import 'package:native_app/widgets/utils/full_screen_loader.dart';
+import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
 import 'package:native_app/widgets/presentation/resizable_font.dart';
 import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
@@ -34,12 +34,19 @@ class NewsItem extends ConsumerWidget {
     var query = SingleModelQuery(
       repository: ref.news,
       id: QR.params['id'].toString(),
+      remote: true,
     );
 
     var modelQuery = ref.watch(singleModelProvider(query));
 
     return modelQuery.when(
-      loading: () => const FullScreenLoader(),
+      loading: () {
+        return const PlaceholderScaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
         Future? previousPage() async {
