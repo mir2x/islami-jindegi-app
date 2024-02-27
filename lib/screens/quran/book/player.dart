@@ -88,13 +88,19 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
     String currentLang = Localizations.localeOf(context).languageCode;
     var numFormatter = NumberFormat('#', currentLang);
     String audioPath = '${widget.qari}/${widget.surahNo}/$currentAyah.mp3';
+    String? nextAudioPath;
+
+    if (currentAyah + 1 <= widget.toAyah) {
+      nextAudioPath = '${widget.qari}/${widget.surahNo}/${currentAyah + 1}.mp3';
+    }
 
     var qiratProvider = ref.watch(
       qiratPlayerProvider(
         QiratAudio(
-          audioPath: audioPath,
           surah: widget.surahTitle,
           ayah: numFormatter.format(currentAyah),
+          audioPath: audioPath,
+          nextAudioPath: nextAudioPath,
         ),
       ),
     );

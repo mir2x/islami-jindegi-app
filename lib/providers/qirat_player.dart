@@ -45,6 +45,37 @@ final qiratPlayerProvider =
     }
   }
 
+  if (qirat.nextAudioPath != null) {
+    String nextFileUrl =
+        '$staticHostName/assets/al-quran/qirats/${qirat.nextAudioPath}';
+    String nextFilePath = 'al-quran/qirats/${qirat.nextAudioPath}';
+
+    var nextFileProvider = localFileProvider(nextFilePath);
+    var nextLocalFile = await ref.watch(nextFileProvider.future);
+
+    if (nextLocalFile == null) {
+      var connectivityResult =
+          await ref.watch(connectivityResultProvider.future);
+
+      if (connectivityResult != ConnectivityResult.none) {
+        var params = DownloadParams(
+          url: nextFileUrl,
+          savePath: nextFilePath,
+        );
+
+        Response? response = await ref.watch(
+          downloaderProvider(params).future,
+        );
+
+        if (response != null && response.statusCode == 200) {
+          await ref.read(nextFileProvider.notifier).check(nextFilePath);
+        } else {
+          throw Exception('download error');
+        }
+      }
+    }
+  }
+
   if (localFile != null) {
     var audioSource = AudioSource.file(
       localFile.path,
