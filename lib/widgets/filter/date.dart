@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/theme/app_theme.dart';
-import 'package:native_app/theme/colors.dart';
 
 class DateFilter extends ConsumerWidget {
   const DateFilter({super.key});
@@ -196,7 +195,7 @@ class DateFilter extends ConsumerWidget {
 }
 
 class CustomDateField extends ConsumerWidget {
-  CustomDateField({
+  const CustomDateField({
     super.key,
     required this.field,
     required this.label,
@@ -204,7 +203,6 @@ class CustomDateField extends ConsumerWidget {
 
   final String field;
   final String label;
-  final _formFieldStateKey = GlobalKey<FormFieldState>();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -217,7 +215,6 @@ class CustomDateField extends ConsumerWidget {
         String theme = preferences.getString('theme') ?? 'classic';
 
         return DateTimeFormField(
-          key: _formFieldStateKey,
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
@@ -231,26 +228,13 @@ class CustomDateField extends ConsumerWidget {
             ),
             labelStyle: textTheme.labelMedium,
             labelText: label,
-            /* suffixIconColor: AppTheme.iconColor[theme], */
-            suffixIcon: !qParams.containsKey(field)
-                ? const Icon(Icons.event_outlined, color: ThemeColors.color4)
-                : IconButton(
-                    icon: const Icon(
-                      Icons.clear_outlined,
-                      color: ThemeColors.color3,
-                    ),
-                    onPressed: () {
-                      _formFieldStateKey.currentState!.didChange(null);
-                      qParamsNotifier.updateParams(field, '');
-                      Navigator.of(context).pop();
-                    },
-                  ),
+            suffixIconColor: AppTheme.iconColor[theme],
           ),
           mode: DateTimeFieldPickerMode.date,
           initialValue: qParams.containsKey(field)
               ? DateFormat('yyyy-MM-dd').parse(qParams[field])
               : null,
-          onDateSelected: (DateTime? value) {
+          onChanged: (DateTime? value) {
             if (value != null) {
               qParamsNotifier.updateParams(
                 field,

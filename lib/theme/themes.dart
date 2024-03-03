@@ -3,7 +3,7 @@ import 'colors.dart';
 
 ThemeData darkTheme(Map fonts) {
   return ThemeData(
-    useMaterial3: true,
+    useMaterial3: false,
     fontFamily: fonts['fontFamily'],
     fontFamilyFallback: fonts['fontFamilyFallback'],
     colorScheme: const ColorScheme(
@@ -104,7 +104,7 @@ ThemeData darkTheme(Map fonts) {
 
 ThemeData lightTheme(Map fonts) {
   return ThemeData(
-    useMaterial3: true,
+    useMaterial3: false,
     fontFamily: fonts['fontFamily'],
     fontFamilyFallback: fonts['fontFamilyFallback'],
     colorScheme: const ColorScheme(
@@ -208,7 +208,7 @@ ThemeData lightTheme(Map fonts) {
 
 ThemeData classicTheme(Map fonts) {
   return ThemeData(
-    useMaterial3: true,
+    useMaterial3: false,
     fontFamily: fonts['fontFamily'],
     fontFamilyFallback: fonts['fontFamilyFallback'],
     colorScheme: const ColorScheme(
