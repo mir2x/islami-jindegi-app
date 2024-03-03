@@ -34,7 +34,7 @@ dependencies:
   json_api: ^5.3.0
 
   # form
-  date_field: ^4.0.1
+  date_field: ^3.0.5
   dropdown_button2: ^2.3.9
   idkit_inputformatters: ^0.0.1
   easy_debounce: ^2.0.3
@@ -60,7 +60,7 @@ dependencies:
   html: ^0.15.2
 
   # platform
-  permission_handler: ^11.3.0
+  permission_handler: ^11.0.1
   path_provider: ^2.0.12
   shared_preferences: ^2.0.16
   geolocator: ^11.0.0
