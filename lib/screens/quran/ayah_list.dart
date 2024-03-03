@@ -15,6 +15,7 @@ import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/providers/local_file.dart';
 import 'package:native_app/providers/player.dart';
+import 'package:native_app/providers/bismillah_player.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
@@ -264,7 +265,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
   StreamSubscription? _playerStateSubscription;
   bool isPlaying = false;
 
-  int currentAyah = 0;
+  int currentAyah = -1;
 
   final itemScrollController = ItemScrollController();
   final scrollOffsetController = ScrollOffsetController();
@@ -285,10 +286,12 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
         if (s.processingState == ProcessingState.completed) {
           if (widget.serialTilawat && currentAyah < widget.toAyah) {
             currentAyah = currentAyah + 1;
-            itemScrollController.scrollTo(
-              index: currentAyah - 1,
-              duration: const Duration(milliseconds: 50),
-            );
+            if (currentAyah > 0) {
+              itemScrollController.scrollTo(
+                index: currentAyah - 1,
+                duration: const Duration(milliseconds: 50),
+              );
+            }
           } else {
             widget.player.pause();
             widget.player.seek(const Duration(seconds: 0));
@@ -310,14 +313,21 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
       if (widget.serialTilawat) {
         widget.player.play();
 
-        if (!qariChanged || (qariChanged && currentAyah == 0)) {
-          currentAyah = widget.fromAyah;
+        if (qariChanged && currentAyah == -1) {
+          if (widget.fromAyah == 1) {
+            currentAyah = 0;
+            ref.read(bismillahPlayerProvider);
+          } else {
+            currentAyah = widget.fromAyah;
+          }
         }
 
-        itemScrollController.jumpTo(index: currentAyah - 1);
+        if (currentAyah > 0) {
+          itemScrollController.jumpTo(index: currentAyah - 1);
+        }
       } else if (qariChanged) {
         widget.player.stop();
-        currentAyah = 0;
+        currentAyah = -1;
       }
     });
   }
