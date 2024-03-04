@@ -8,6 +8,7 @@ final allModelsProvider = FutureProvider.autoDispose
 
   return await query.repository.findAll(
     params: query.params,
+    remote: query.remote,
     syncLocal: query.syncLocal,
   );
 });

@@ -26,12 +26,12 @@ class News extends ConsumerWidget {
 
     return AppScaffold(
       title: Text(locales.news),
-      body: Column(
-        children: [
-          WithConnectivity(
-            builder: (context, isConnected) {
-              if (isConnected) {
-                return Container(
+      body: WithConnectivity(
+        builder: (context, isConnected) {
+          if (isConnected) {
+            return Column(
+              children: [
+                Container(
                   padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
                   child: SearchButtonField(
                     value: qParams['search'],
@@ -41,63 +41,74 @@ class News extends ConsumerWidget {
                           .updateParams('search', value);
                     },
                   ),
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            },
-          ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: InfiniteList(
-                qParams: qParams,
-                resourceFetcher: (Map<String, dynamic> params) async {
-                  AllModelsQuery query = AllModelsQuery(
-                    repository: ref.news,
-                    params: {...params, 'published': true},
-                  );
+                ),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: InfiniteList(
+                      qParams: qParams,
+                      resourceFetcher: (Map<String, dynamic> params) async {
+                        AllModelsQuery query = AllModelsQuery(
+                          repository: ref.news,
+                          params: {...params, 'published': true},
+                          remote: true,
+                        );
 
-                  return await ref.watch(allModelsProvider(query).future);
-                },
-                itemBuilder: (_, item, __) {
-                  return InkWell(
-                    onTap: () => QR.to('news/${item.id}'),
-                    child: ListItem(
-                      item: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                        return await ref.watch(allModelsProvider(query).future);
+                      },
+                      itemBuilder: (_, item, __) {
+                        return InkWell(
+                          onTap: () => QR.to('news/${item.id}'),
+                          child: ListItem(
+                            item: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  item.title,
-                                  style: textTheme.titleMedium,
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.only(top: 5),
-                                  child: Text(
-                                    formatDate(item.publishedAt, currentLang),
-                                    style: textTheme.labelSmall,
+                                Flexible(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.title,
+                                        style: textTheme.titleMedium,
+                                      ),
+                                      Container(
+                                        margin: const EdgeInsets.only(top: 5),
+                                        child: Text(
+                                          formatDate(
+                                            item.publishedAt,
+                                            currentLang,
+                                          ),
+                                          style: textTheme.labelSmall,
+                                        ),
+                                      ),
+                                    ],
                                   ),
+                                ),
+                                LastVisited(
+                                  resourceKey: 'lastNews',
+                                  resourceId: item.id,
                                 ),
                               ],
                             ),
                           ),
-                          LastVisited(
-                            resourceKey: 'lastNews',
-                            resourceId: item.id,
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return Center(
+              child: Text(
+                locales.connectToInternetMsg,
+                style: textTheme.labelMedium,
+                textAlign: TextAlign.center,
               ),
-            ),
-          ),
-        ],
+            );
+          }
+        },
       ),
     );
   }

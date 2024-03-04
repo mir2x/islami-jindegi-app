@@ -34,6 +34,7 @@ class News extends ConsumerWidget {
     var query = AllModelsQuery(
       repository: ref.news,
       params: const {'quantity': 5, 'published': true},
+      remote: true,
     );
 
     var modelQuery = ref.watch(allModelsProvider(query));
@@ -91,7 +92,15 @@ class News extends ConsumerWidget {
                         ),
                       );
                     },
-                    error: (error, _) => Text(error.toString()),
+                    error: (error, _) {
+                      return Center(
+                        child: Text(
+                          locales.connectToInternetMsg,
+                          style: fontStyle,
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    },
                     data: (resources) {
                       if (resources.isNotEmpty) {
                         return CarouselSlider.builder(
@@ -117,8 +126,9 @@ class News extends ConsumerWidget {
                       } else {
                         return Center(
                           child: Text(
-                            locales.noItemsTitle,
+                            locales.connectToInternetMsg,
                             style: fontStyle,
+                            textAlign: TextAlign.center,
                           ),
                         );
                       }

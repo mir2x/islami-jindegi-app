@@ -17,6 +17,7 @@ mixin LocalResourceAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     OnErrorAll<T>? onError,
     DataRequestLabel? label,
   }) async {
+    bool notRemote = remote != null && !remote;
     bool onlyLocal =
         params != null && params.containsKey('offline') && params['offline'];
 
@@ -27,7 +28,7 @@ mixin LocalResourceAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     bool hasNoConnection =
         await Connectivity().checkConnectivity() == ConnectivityResult.none;
 
-    if (onlyLocal || hasOneItem || hasNoConnection) {
+    if (notRemote && (onlyLocal || hasOneItem || hasNoConnection)) {
       final localResource = ref.read(localResourceProvider);
       final resources = await localResource.query(internalType, params: params);
       List<Resource> included = [];
@@ -114,10 +115,9 @@ mixin LocalResourceAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     OnErrorOne<T>? onError,
     DataRequestLabel? label,
   }) async {
-    bool hasNoConnection =
-        await Connectivity().checkConnectivity() == ConnectivityResult.none;
+    bool notRemote = remote != null && !remote;
 
-    if (remote != true || hasNoConnection) {
+    if (notRemote) {
       final localResource = ref.read(localResourceProvider);
       final item = await localResource.findById(
         internalType,
