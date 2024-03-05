@@ -272,8 +272,8 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
   final itemPositionsListener = ItemPositionsListener.create();
   final scrollOffsetListener = ScrollOffsetListener.create();
 
-  updateCurrentAyah(ayah) {
-    setState(() => currentAyah = ayah.surahPosition);
+  updateCurrentAyah(ayahPosition) {
+    setState(() => currentAyah = ayahPosition);
   }
 
   @override
@@ -313,7 +313,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
       if (widget.serialTilawat) {
         widget.player.play();
 
-        if (qariChanged && currentAyah == -1) {
+        if (widget.qari != null && currentAyah == -1) {
           if (widget.fromAyah == 1) {
             currentAyah = 0;
             ref.read(bismillahPlayerProvider);
@@ -394,40 +394,47 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
                     banglaFontSizeRatio: widget.banglaFontSizeRatio,
                     markAdjustment: marks.isNotEmpty ? 10 : 0,
                     loadQirat: (selectedAyah) async {
-                      var scaffoldMessenger = ScaffoldMessenger.of(context);
-
-                      String audioPath =
-                          '${widget.qari}/${widget.chapter.position}/${selectedAyah.surahPosition}.mp3';
-
-                      bool hasNoConnection =
-                          await Connectivity().checkConnectivity() ==
-                              ConnectivityResult.none;
-
-                      var localFile = await ref.watch(
-                        localFileProvider('al-quran/qirats/$audioPath').future,
-                      );
-
-                      if (hasNoConnection && localFile == null) {
-                        scaffoldMessenger.removeCurrentSnackBar();
-
-                        scaffoldMessenger.showSnackBar(
-                          SnackBar(
-                            content: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.wifi),
-                                const SizedBox(width: 10),
-                                Text(
-                                  locales.connectToInternetMsg,
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                            duration: const Duration(seconds: 5),
-                          ),
-                        );
+                      if (widget.serialTilawat &&
+                          selectedAyah.surahPosition == 1) {
+                        updateCurrentAyah(0);
+                        ref.read(bismillahPlayerProvider);
                       } else {
-                        updateCurrentAyah(selectedAyah);
+                        var scaffoldMessenger = ScaffoldMessenger.of(context);
+
+                        String audioPath =
+                            '${widget.qari}/${widget.chapter.position}/${selectedAyah.surahPosition}.mp3';
+
+                        bool hasNoConnection =
+                            await Connectivity().checkConnectivity() ==
+                                ConnectivityResult.none;
+
+                        var localFile = await ref.watch(
+                          localFileProvider('al-quran/qirats/$audioPath')
+                              .future,
+                        );
+
+                        if (hasNoConnection && localFile == null) {
+                          scaffoldMessenger.removeCurrentSnackBar();
+
+                          scaffoldMessenger.showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.wifi),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    locales.connectToInternetMsg,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                              duration: const Duration(seconds: 5),
+                            ),
+                          );
+                        } else {
+                          updateCurrentAyah(selectedAyah.surahPosition);
+                        }
                       }
                     },
                   );
