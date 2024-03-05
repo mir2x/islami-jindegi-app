@@ -289,7 +289,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
             if (currentAyah > 0) {
               itemScrollController.scrollTo(
                 index: currentAyah - 1,
-                duration: const Duration(milliseconds: 50),
+                duration: const Duration(milliseconds: 1),
               );
             }
           } else {

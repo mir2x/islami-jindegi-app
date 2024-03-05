@@ -63,15 +63,7 @@ final qiratPlayerProvider =
           savePath: nextFilePath,
         );
 
-        Response? response = await ref.watch(
-          downloaderProvider(params).future,
-        );
-
-        if (response != null && response.statusCode == 200) {
-          await ref.read(nextFileProvider.notifier).check(nextFilePath);
-        } else {
-          throw Exception('download error');
-        }
+        ref.watch(downloaderProvider(params).future);
       }
     }
   }
