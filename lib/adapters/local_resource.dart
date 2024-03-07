@@ -93,7 +93,7 @@ mixin LocalResourceAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     }
 
     return super.findAll(
-      remote: remote,
+      remote: true,
       background: background,
       params: params,
       headers: headers,
