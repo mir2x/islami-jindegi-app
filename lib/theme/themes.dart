@@ -305,7 +305,7 @@ ThemeData classicTheme(Map fonts) {
       ),
     ),
     snackBarTheme: const SnackBarThemeData(
-      backgroundColor: ThemeColors.color3,
+      backgroundColor: ThemeColors.color13,
     ),
   );
 }
