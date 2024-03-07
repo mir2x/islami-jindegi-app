@@ -5,6 +5,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:native_app/providers/qirat_player.dart';
+import 'package:native_app/providers/bismillah_player.dart';
 import 'package:native_app/objects/qirat_audio.dart';
 
 class QuranBookPlayer extends ConsumerStatefulWidget {
@@ -33,7 +34,7 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
   StreamSubscription? _playerStateSubscription;
   bool isPlaying = false;
 
-  int currentAyah = 0;
+  int currentAyah = -1;
 
   updateCurrentAyah(ayah) {
     setState(() => currentAyah = ayah);
@@ -72,6 +73,11 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
 
       if (pageChanged || surahChanged) {
         currentAyah = widget.fromAyah;
+
+        if (currentAyah == 1 && widget.surahNo != 9) {
+          currentAyah = 0;
+          ref.read(bismillahPlayerProvider);
+        }
       }
     });
   }
