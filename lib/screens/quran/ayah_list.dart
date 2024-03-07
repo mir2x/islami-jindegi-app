@@ -314,7 +314,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
         widget.player.play();
 
         if (widget.qari != null && currentAyah == -1) {
-          if (widget.fromAyah == 1) {
+          if (widget.fromAyah == 1 && widget.chapter.position != 9) {
             currentAyah = 0;
             ref.read(bismillahPlayerProvider);
           } else {
@@ -395,7 +395,8 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
                     markAdjustment: marks.isNotEmpty ? 10 : 0,
                     loadQirat: (selectedAyah) async {
                       if (widget.serialTilawat &&
-                          selectedAyah.surahPosition == 1) {
+                          selectedAyah.surahPosition == 1 &&
+                          widget.chapter.position != 9) {
                         updateCurrentAyah(0);
                         ref.read(bismillahPlayerProvider);
                       } else {
