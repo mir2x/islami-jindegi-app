@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
+/* import 'package:just_audio_background/just_audio_background.dart'; */
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/objects/audio_resource.dart';
 import 'package:native_app/helpers/file_title_path.dart';
@@ -18,11 +18,11 @@ final audioPlayerProvider =
   if (localFile != null) {
     var audioSource = AudioSource.file(
       localFile.path,
-      tag: MediaItem(
-        id: audioResource.id,
-        album: audioResource.album,
-        title: audioResource.title,
-      ),
+      /* tag: MediaItem( */
+      /*   id: audioResource.id, */
+      /*   album: audioResource.album, */
+      /*   title: audioResource.title, */
+      /* ), */
     );
 
     await player.stop();
@@ -38,11 +38,11 @@ final audioPlayerProvider =
 
       var audioSource = AudioSource.uri(
         Uri.parse(url),
-        tag: MediaItem(
-          id: audioResource.id,
-          album: audioResource.album,
-          title: audioResource.title,
-        ),
+        /* tag: MediaItem( */
+        /*   id: audioResource.id, */
+        /*   album: audioResource.album, */
+        /*   title: audioResource.title, */
+        /* ), */
       );
 
       await player.stop();

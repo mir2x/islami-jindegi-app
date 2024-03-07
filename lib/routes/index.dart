@@ -175,7 +175,16 @@ class AppRoutes {
       path: '/bayans',
       builder: () => const Bayans(),
       children: [
-        QRoute(path: '/:id', builder: () => const Bayan()),
+        QRoute(
+          path: '/:id',
+          builder: () => const Bayan(),
+          middleware: [
+            QMiddlewareBuilder(
+              onEnterFunc: () => WakelockPlus.enable(),
+              onExitFunc: () => WakelockPlus.disable(),
+            ),
+          ],
+        ),
         QRoute(
           path: '/downloads',
           builder: () => const BayanDownloads(),

@@ -12,7 +12,6 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:workmanager/workmanager.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/theme/themes.dart';
 import 'routes/index.dart';
@@ -61,13 +60,6 @@ Future main() async {
   );
 
   await container.read(repositoryInitializerProvider.future);
-
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
-    androidNotificationChannelName: 'Audio playback',
-    androidNotificationOngoing: true,
-    androidNotificationIcon: 'mipmap/launcher_icon',
-  );
 
   if (Platform.isAndroid) {
     Workmanager().initialize(callbackDispatcher);
