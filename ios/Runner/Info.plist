@@ -42,7 +42,6 @@
 	<array>
 		<string>fetch</string>
 		<string>remote-notification</string>
-    <string>audio</string>
 	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
