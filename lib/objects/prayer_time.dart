@@ -245,10 +245,6 @@ class PrayerTime {
         return CalculationMethod.singapore.getParameters();
       case 'Turkey':
         return CalculationMethod.turkey.getParameters();
-      case 'Tehran':
-        return CalculationMethod.tehran.getParameters();
-      case 'NorthAmerica':
-        return CalculationMethod.north_america.getParameters();
       default:
         return CalculationMethod.karachi.getParameters();
     }

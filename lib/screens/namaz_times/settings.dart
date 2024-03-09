@@ -32,8 +32,6 @@ class NamazSettings extends ConsumerWidget {
     {'label': 'Kuwait', 'value': 'Kuwait'},
     {'label': 'Singapore, Malaysia and Indonesia', 'value': 'Singapore'},
     {'label': 'Turkey', 'value': 'Turkey'},
-    {'label': 'Tehran', 'value': 'Tehran'},
-    {'label': 'North America (ISNA)', 'value': 'NorthAmerica'},
   ];
 
   @override
