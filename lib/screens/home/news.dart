@@ -34,7 +34,6 @@ class News extends ConsumerWidget {
     var query = AllModelsQuery(
       repository: ref.news,
       params: const {'quantity': 5, 'published': true},
-      remote: true,
     );
 
     var modelQuery = ref.watch(allModelsProvider(query));

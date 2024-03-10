@@ -5,15 +5,13 @@ class AllModelsQuery extends Equatable {
   const AllModelsQuery({
     required this.repository,
     this.params = const {},
-    this.remote = false,
     this.syncLocal = false,
   });
 
   final Repository repository;
   final Map<String, dynamic> params;
-  final bool remote;
   final bool syncLocal;
 
   @override
-  List<Object> get props => [repository, params, remote, syncLocal];
+  List<Object> get props => [repository, params, syncLocal];
 }

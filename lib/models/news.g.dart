@@ -34,10 +34,7 @@ final _newsFinders = <String, dynamic>{};
 class $NewsHiveLocalAdapter = HiveLocalAdapter<News> with $NewsLocalAdapter;
 
 class $NewsRemoteAdapter = RemoteAdapter<News>
-    with
-        JSONAPIAdapter<News>,
-        LocalResourceAdapter<News>,
-        ApplicationAdapter<News>;
+    with JSONAPIAdapter<News>, ApplicationAdapter<News>;
 
 final internalNewsRemoteAdapterProvider = Provider<RemoteAdapter<News>>((ref) =>
     $NewsRemoteAdapter(
@@ -49,8 +46,6 @@ final newsRepositoryProvider =
 extension NewsDataRepositoryX on Repository<News> {
   JSONAPIAdapter<News> get jSONAPIAdapter =>
       remoteAdapter as JSONAPIAdapter<News>;
-  LocalResourceAdapter<News> get localResourceAdapter =>
-      remoteAdapter as LocalResourceAdapter<News>;
   ApplicationAdapter<News> get applicationAdapter =>
       remoteAdapter as ApplicationAdapter<News>;
 }

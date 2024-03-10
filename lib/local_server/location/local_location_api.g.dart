@@ -28,9 +28,10 @@ class $CountriesTable extends Countries
   @override
   List<GeneratedColumn> get $columns => [id, name, nameBn, code];
   @override
-  String get aliasedName => _alias ?? 'countries';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'countries';
+  String get actualTableName => $name;
+  static const String $name = 'countries';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -248,9 +249,10 @@ class $CitiesTable extends Cities with TableInfo<$CitiesTable, City> {
   List<GeneratedColumn> get $columns =>
       [id, name, nameBn, countryCode, latitude, longitude];
   @override
-  String get aliasedName => _alias ?? 'cities';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'cities';
+  String get actualTableName => $name;
+  static const String $name = 'cities';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override

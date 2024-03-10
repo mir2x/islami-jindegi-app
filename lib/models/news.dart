@@ -2,12 +2,11 @@ import 'package:flutter_data/flutter_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter_data_json_api_adapter/flutter_data_json_api_adapter.dart';
 import 'package:native_app/adapters/application.dart';
-import 'package:native_app/adapters/local_resource.dart';
 
 part 'news.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.kebab)
-@DataRepository([JSONAPIAdapter, LocalResourceAdapter, ApplicationAdapter])
+@DataRepository([JSONAPIAdapter, ApplicationAdapter])
 class News extends DataModel<News> {
   @override
   final String? id;

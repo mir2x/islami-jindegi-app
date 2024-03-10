@@ -72,9 +72,10 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, Surah> {
         updatedAt
       ];
   @override
-  String get aliasedName => _alias ?? 'surahs';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'surahs';
+  String get actualTableName => $name;
+  static const String $name = 'surahs';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -504,9 +505,10 @@ class $ParasTable extends Paras with TableInfo<$ParasTable, Para> {
         updatedAt
       ];
   @override
-  String get aliasedName => _alias ?? 'paras';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'paras';
+  String get actualTableName => $name;
+  static const String $name = 'paras';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -869,9 +871,10 @@ class $AyahsTable extends Ayahs with TableInfo<$AyahsTable, Ayah> {
         paraId
       ];
   @override
-  String get aliasedName => _alias ?? 'ayahs';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'ayahs';
+  String get actualTableName => $name;
+  static const String $name = 'ayahs';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -1212,9 +1215,10 @@ class $AyahTranslationsTable extends AyahTranslations
   List<GeneratedColumn> get $columns =>
       [id, title, body, createdAt, updatedAt, ayahId];
   @override
-  String get aliasedName => _alias ?? 'ayah_translations';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'ayah_translations';
+  String get actualTableName => $name;
+  static const String $name = 'ayah_translations';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -1485,9 +1489,10 @@ class $QarisTable extends Qaris with TableInfo<$QarisTable, Qari> {
   List<GeneratedColumn> get $columns =>
       [id, name, nameBn, slug, position, createdAt, updatedAt];
   @override
-  String get aliasedName => _alias ?? 'qaris';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'qaris';
+  String get actualTableName => $name;
+  static const String $name = 'qaris';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -1779,9 +1784,10 @@ class $TafseerQitabsTable extends TafseerQitabs
   List<GeneratedColumn> get $columns =>
       [id, title, author, position, createdAt, updatedAt];
   @override
-  String get aliasedName => _alias ?? 'tafseer_qitabs';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'tafseer_qitabs';
+  String get actualTableName => $name;
+  static const String $name = 'tafseer_qitabs';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -2054,9 +2060,10 @@ class $TafseersTable extends Tafseers with TableInfo<$TafseersTable, Tafseer> {
   List<GeneratedColumn> get $columns =>
       [id, body, createdAt, updatedAt, tafseerQitabId, ayahId];
   @override
-  String get aliasedName => _alias ?? 'tafseers';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'tafseers';
+  String get actualTableName => $name;
+  static const String $name = 'tafseers';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -2363,9 +2370,10 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
         updatedAt
       ];
   @override
-  String get aliasedName => _alias ?? 'books';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'books';
+  String get actualTableName => $name;
+  static const String $name = 'books';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -2459,12 +2467,12 @@ class Book extends DataClass implements Insertable<Book> {
     }
     map['language'] = Variable<String>(language);
     if (!nullToAbsent || imageData != null) {
-      final converter = $BooksTable.$converterimageDatan;
-      map['image_data'] = Variable<String>(converter.toSql(imageData));
+      map['image_data'] =
+          Variable<String>($BooksTable.$converterimageDatan.toSql(imageData));
     }
     if (!nullToAbsent || documentData != null) {
-      final converter = $BooksTable.$converterdocumentDatan;
-      map['document_data'] = Variable<String>(converter.toSql(documentData));
+      map['document_data'] = Variable<String>(
+          $BooksTable.$converterdocumentDatan.toSql(documentData));
     }
     map['position'] = Variable<int>(position);
     if (!nullToAbsent || publishedAt != null) {
@@ -2726,13 +2734,12 @@ class BooksCompanion extends UpdateCompanion<Book> {
       map['language'] = Variable<String>(language.value);
     }
     if (imageData.present) {
-      final converter = $BooksTable.$converterimageDatan;
-      map['image_data'] = Variable<String>(converter.toSql(imageData.value));
+      map['image_data'] = Variable<String>(
+          $BooksTable.$converterimageDatan.toSql(imageData.value));
     }
     if (documentData.present) {
-      final converter = $BooksTable.$converterdocumentDatan;
-      map['document_data'] =
-          Variable<String>(converter.toSql(documentData.value));
+      map['document_data'] = Variable<String>(
+          $BooksTable.$converterdocumentDatan.toSql(documentData.value));
     }
     if (position.present) {
       map['position'] = Variable<int>(position.value);
@@ -2813,9 +2820,10 @@ class $ChaptersTable extends Chapters with TableInfo<$ChaptersTable, Chapter> {
   List<GeneratedColumn> get $columns =>
       [id, title, body, position, createdAt, updatedAt, bookId];
   @override
-  String get aliasedName => _alias ?? 'chapters';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'chapters';
+  String get actualTableName => $name;
+  static const String $name = 'chapters';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -3114,9 +3122,10 @@ class $SubchaptersTable extends Subchapters
   List<GeneratedColumn> get $columns =>
       [id, title, body, position, createdAt, updatedAt, chapterId];
   @override
-  String get aliasedName => _alias ?? 'subchapters';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'subchapters';
+  String get actualTableName => $name;
+  static const String $name = 'subchapters';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -3406,9 +3415,10 @@ class $AuthorsTable extends Authors with TableInfo<$AuthorsTable, Author> {
   List<GeneratedColumn> get $columns =>
       [id, name, info, position, createdAt, updatedAt];
   @override
-  String get aliasedName => _alias ?? 'authors';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'authors';
+  String get actualTableName => $name;
+  static const String $name = 'authors';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -3670,9 +3680,10 @@ class $BooksAuthorsTable extends BooksAuthors
   @override
   List<GeneratedColumn> get $columns => [id, bookId, authorId];
   @override
-  String get aliasedName => _alias ?? 'books_authors';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'books_authors';
+  String get actualTableName => $name;
+  static const String $name = 'books_authors';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -3864,9 +3875,10 @@ class $SpeakersTable extends Speakers with TableInfo<$SpeakersTable, Speaker> {
   List<GeneratedColumn> get $columns =>
       [id, name, info, position, createdAt, updatedAt];
   @override
-  String get aliasedName => _alias ?? 'speakers';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'speakers';
+  String get actualTableName => $name;
+  static const String $name = 'speakers';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -4170,9 +4182,10 @@ class $BayansTable extends Bayans with TableInfo<$BayansTable, Bayan> {
         speakerId
       ];
   @override
-  String get aliasedName => _alias ?? 'bayans';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'bayans';
+  String get actualTableName => $name;
+  static const String $name = 'bayans';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -4253,8 +4266,8 @@ class Bayan extends DataClass implements Insertable<Bayan> {
       map['location'] = Variable<String>(location);
     }
     if (!nullToAbsent || audioData != null) {
-      final converter = $BayansTable.$converteraudioDatan;
-      map['audio_data'] = Variable<String>(converter.toSql(audioData));
+      map['audio_data'] =
+          Variable<String>($BayansTable.$converteraudioDatan.toSql(audioData));
     }
     map['position'] = Variable<int>(position);
     map['published_at'] = Variable<String>(publishedAt);
@@ -4488,8 +4501,8 @@ class BayansCompanion extends UpdateCompanion<Bayan> {
       map['location'] = Variable<String>(location.value);
     }
     if (audioData.present) {
-      final converter = $BayansTable.$converteraudioDatan;
-      map['audio_data'] = Variable<String>(converter.toSql(audioData.value));
+      map['audio_data'] = Variable<String>(
+          $BayansTable.$converteraudioDatan.toSql(audioData.value));
     }
     if (position.present) {
       map['position'] = Variable<int>(position.value);
@@ -4566,9 +4579,10 @@ class $MalfuzatAuthorsTable extends MalfuzatAuthors
   List<GeneratedColumn> get $columns =>
       [id, name, info, position, createdAt, updatedAt];
   @override
-  String get aliasedName => _alias ?? 'malfuzat_authors';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'malfuzat_authors';
+  String get actualTableName => $name;
+  static const String $name = 'malfuzat_authors';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -4830,16 +4844,13 @@ class $MalfuzatsTable extends Malfuzats
       'language', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<bool> hasAudio =
-      GeneratedColumn<bool>('has_audio', aliasedName, false,
-          type: DriftSqlType.bool,
-          requiredDuringInsert: false,
-          defaultConstraints: GeneratedColumn.constraintsDependsOnDialect({
-            SqlDialect.sqlite: 'CHECK ("has_audio" IN (0, 1))',
-            SqlDialect.mysql: '',
-            SqlDialect.postgres: '',
-          }),
-          defaultValue: const Constant(false));
+  late final GeneratedColumn<bool> hasAudio = GeneratedColumn<bool>(
+      'has_audio', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("has_audio" IN (0, 1))'),
+      defaultValue: const Constant(false));
   @override
   late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
       audioData = GeneratedColumn<String>('audio_data', aliasedName, true,
@@ -4892,9 +4903,10 @@ class $MalfuzatsTable extends Malfuzats
         malfuzatAuthorId
       ];
   @override
-  String get aliasedName => _alias ?? 'malfuzats';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'malfuzats';
+  String get actualTableName => $name;
+  static const String $name = 'malfuzats';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -4990,12 +5002,12 @@ class Malfuzat extends DataClass implements Insertable<Malfuzat> {
     map['language'] = Variable<String>(language);
     map['has_audio'] = Variable<bool>(hasAudio);
     if (!nullToAbsent || audioData != null) {
-      final converter = $MalfuzatsTable.$converteraudioDatan;
-      map['audio_data'] = Variable<String>(converter.toSql(audioData));
+      map['audio_data'] = Variable<String>(
+          $MalfuzatsTable.$converteraudioDatan.toSql(audioData));
     }
     if (!nullToAbsent || documentData != null) {
-      final converter = $MalfuzatsTable.$converterdocumentDatan;
-      map['document_data'] = Variable<String>(converter.toSql(documentData));
+      map['document_data'] = Variable<String>(
+          $MalfuzatsTable.$converterdocumentDatan.toSql(documentData));
     }
     map['position'] = Variable<int>(position);
     if (!nullToAbsent || publishedAt != null) {
@@ -5273,13 +5285,12 @@ class MalfuzatsCompanion extends UpdateCompanion<Malfuzat> {
       map['has_audio'] = Variable<bool>(hasAudio.value);
     }
     if (audioData.present) {
-      final converter = $MalfuzatsTable.$converteraudioDatan;
-      map['audio_data'] = Variable<String>(converter.toSql(audioData.value));
+      map['audio_data'] = Variable<String>(
+          $MalfuzatsTable.$converteraudioDatan.toSql(audioData.value));
     }
     if (documentData.present) {
-      final converter = $MalfuzatsTable.$converterdocumentDatan;
-      map['document_data'] =
-          Variable<String>(converter.toSql(documentData.value));
+      map['document_data'] = Variable<String>(
+          $MalfuzatsTable.$converterdocumentDatan.toSql(documentData.value));
     }
     if (position.present) {
       map['position'] = Variable<int>(position.value);
@@ -5358,9 +5369,10 @@ class $MasailAuthorsTable extends MasailAuthors
   List<GeneratedColumn> get $columns =>
       [id, name, info, position, createdAt, updatedAt];
   @override
-  String get aliasedName => _alias ?? 'masail_authors';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'masail_authors';
+  String get actualTableName => $name;
+  static const String $name = 'masail_authors';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -5621,16 +5633,13 @@ class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
       'language', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumn<bool> hasAudio =
-      GeneratedColumn<bool>('has_audio', aliasedName, false,
-          type: DriftSqlType.bool,
-          requiredDuringInsert: false,
-          defaultConstraints: GeneratedColumn.constraintsDependsOnDialect({
-            SqlDialect.sqlite: 'CHECK ("has_audio" IN (0, 1))',
-            SqlDialect.mysql: '',
-            SqlDialect.postgres: '',
-          }),
-          defaultValue: const Constant(false));
+  late final GeneratedColumn<bool> hasAudio = GeneratedColumn<bool>(
+      'has_audio', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("has_audio" IN (0, 1))'),
+      defaultValue: const Constant(false));
   @override
   late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>?, String>
       audioData = GeneratedColumn<String>('audio_data', aliasedName, true,
@@ -5683,9 +5692,10 @@ class $MasailsTable extends Masails with TableInfo<$MasailsTable, Masail> {
         masailAuthorId
       ];
   @override
-  String get aliasedName => _alias ?? 'masails';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'masails';
+  String get actualTableName => $name;
+  static const String $name = 'masails';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -5779,12 +5789,12 @@ class Masail extends DataClass implements Insertable<Masail> {
     map['language'] = Variable<String>(language);
     map['has_audio'] = Variable<bool>(hasAudio);
     if (!nullToAbsent || audioData != null) {
-      final converter = $MasailsTable.$converteraudioDatan;
-      map['audio_data'] = Variable<String>(converter.toSql(audioData));
+      map['audio_data'] =
+          Variable<String>($MasailsTable.$converteraudioDatan.toSql(audioData));
     }
     if (!nullToAbsent || documentData != null) {
-      final converter = $MasailsTable.$converterdocumentDatan;
-      map['document_data'] = Variable<String>(converter.toSql(documentData));
+      map['document_data'] = Variable<String>(
+          $MasailsTable.$converterdocumentDatan.toSql(documentData));
     }
     map['position'] = Variable<int>(position);
     if (!nullToAbsent || publishedAt != null) {
@@ -6065,13 +6075,12 @@ class MasailsCompanion extends UpdateCompanion<Masail> {
       map['has_audio'] = Variable<bool>(hasAudio.value);
     }
     if (audioData.present) {
-      final converter = $MasailsTable.$converteraudioDatan;
-      map['audio_data'] = Variable<String>(converter.toSql(audioData.value));
+      map['audio_data'] = Variable<String>(
+          $MasailsTable.$converteraudioDatan.toSql(audioData.value));
     }
     if (documentData.present) {
-      final converter = $MasailsTable.$converterdocumentDatan;
-      map['document_data'] =
-          Variable<String>(converter.toSql(documentData.value));
+      map['document_data'] = Variable<String>(
+          $MasailsTable.$converterdocumentDatan.toSql(documentData.value));
     }
     if (position.present) {
       map['position'] = Variable<int>(position.value);
@@ -6146,9 +6155,10 @@ class $DuaCategoriesTable extends DuaCategories
   List<GeneratedColumn> get $columns =>
       [id, title, position, createdAt, updatedAt];
   @override
-  String get aliasedName => _alias ?? 'dua_categories';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'dua_categories';
+  String get actualTableName => $name;
+  static const String $name = 'dua_categories';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -6421,9 +6431,10 @@ class $DuasTable extends Duas with TableInfo<$DuasTable, Dua> {
         updatedAt
       ];
   @override
-  String get aliasedName => _alias ?? 'duas';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'duas';
+  String get actualTableName => $name;
+  static const String $name = 'duas';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -6504,12 +6515,12 @@ class Dua extends DataClass implements Insertable<Dua> {
     }
     map['language'] = Variable<String>(language);
     if (!nullToAbsent || audioData != null) {
-      final converter = $DuasTable.$converteraudioDatan;
-      map['audio_data'] = Variable<String>(converter.toSql(audioData));
+      map['audio_data'] =
+          Variable<String>($DuasTable.$converteraudioDatan.toSql(audioData));
     }
     if (!nullToAbsent || documentData != null) {
-      final converter = $DuasTable.$converterdocumentDatan;
-      map['document_data'] = Variable<String>(converter.toSql(documentData));
+      map['document_data'] = Variable<String>(
+          $DuasTable.$converterdocumentDatan.toSql(documentData));
     }
     map['position'] = Variable<int>(position);
     map['created_at'] = Variable<String>(createdAt);
@@ -6729,13 +6740,12 @@ class DuasCompanion extends UpdateCompanion<Dua> {
       map['language'] = Variable<String>(language.value);
     }
     if (audioData.present) {
-      final converter = $DuasTable.$converteraudioDatan;
-      map['audio_data'] = Variable<String>(converter.toSql(audioData.value));
+      map['audio_data'] = Variable<String>(
+          $DuasTable.$converteraudioDatan.toSql(audioData.value));
     }
     if (documentData.present) {
-      final converter = $DuasTable.$converterdocumentDatan;
-      map['document_data'] =
-          Variable<String>(converter.toSql(documentData.value));
+      map['document_data'] = Variable<String>(
+          $DuasTable.$converterdocumentDatan.toSql(documentData.value));
     }
     if (position.present) {
       map['position'] = Variable<int>(position.value);
@@ -6798,9 +6808,10 @@ class $DuaCategorizationsTable extends DuaCategorizations
   @override
   List<GeneratedColumn> get $columns => [id, duaId, duaCategoryId];
   @override
-  String get aliasedName => _alias ?? 'dua_categorizations';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'dua_categorizations';
+  String get actualTableName => $name;
+  static const String $name = 'dua_categorizations';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -6995,9 +7006,10 @@ class $ArticleAuthorsTable extends ArticleAuthors
   List<GeneratedColumn> get $columns =>
       [id, name, info, position, createdAt, updatedAt];
   @override
-  String get aliasedName => _alias ?? 'article_authors';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'article_authors';
+  String get actualTableName => $name;
+  static const String $name = 'article_authors';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -7301,9 +7313,10 @@ class $ArticlesTable extends Articles with TableInfo<$ArticlesTable, Article> {
         articleAuthorId
       ];
   @override
-  String get aliasedName => _alias ?? 'articles';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'articles';
+  String get actualTableName => $name;
+  static const String $name = 'articles';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -7383,8 +7396,8 @@ class Article extends DataClass implements Insertable<Article> {
     }
     map['language'] = Variable<String>(language);
     if (!nullToAbsent || documentData != null) {
-      final converter = $ArticlesTable.$converterdocumentDatan;
-      map['document_data'] = Variable<String>(converter.toSql(documentData));
+      map['document_data'] = Variable<String>(
+          $ArticlesTable.$converterdocumentDatan.toSql(documentData));
     }
     map['position'] = Variable<int>(position);
     if (!nullToAbsent || publishedAt != null) {
@@ -7632,9 +7645,8 @@ class ArticlesCompanion extends UpdateCompanion<Article> {
       map['language'] = Variable<String>(language.value);
     }
     if (documentData.present) {
-      final converter = $ArticlesTable.$converterdocumentDatan;
-      map['document_data'] =
-          Variable<String>(converter.toSql(documentData.value));
+      map['document_data'] = Variable<String>(
+          $ArticlesTable.$converterdocumentDatan.toSql(documentData.value));
     }
     if (position.present) {
       map['position'] = Variable<int>(position.value);
@@ -7729,9 +7741,10 @@ class $MadrasahsTable extends Madrasahs
         updatedAt
       ];
   @override
-  String get aliasedName => _alias ?? 'madrasahs';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'madrasahs';
+  String get actualTableName => $name;
+  static const String $name = 'madrasahs';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -7798,8 +7811,8 @@ class Madrasah extends DataClass implements Insertable<Madrasah> {
       map['excerpt'] = Variable<String>(excerpt);
     }
     if (!nullToAbsent || documentData != null) {
-      final converter = $MadrasahsTable.$converterdocumentDatan;
-      map['document_data'] = Variable<String>(converter.toSql(documentData));
+      map['document_data'] = Variable<String>(
+          $MadrasahsTable.$converterdocumentDatan.toSql(documentData));
     }
     map['position'] = Variable<int>(position);
     map['created_at'] = Variable<String>(createdAt);
@@ -7989,9 +8002,8 @@ class MadrasahsCompanion extends UpdateCompanion<Madrasah> {
       map['excerpt'] = Variable<String>(excerpt.value);
     }
     if (documentData.present) {
-      final converter = $MadrasahsTable.$converterdocumentDatan;
-      map['document_data'] =
-          Variable<String>(converter.toSql(documentData.value));
+      map['document_data'] = Variable<String>(
+          $MadrasahsTable.$converterdocumentDatan.toSql(documentData.value));
     }
     if (position.present) {
       map['position'] = Variable<int>(position.value);
@@ -8066,9 +8078,10 @@ class $MadrasahInfosTable extends MadrasahInfos
   List<GeneratedColumn> get $columns =>
       [id, label, info, position, createdAt, updatedAt, madrasahId];
   @override
-  String get aliasedName => _alias ?? 'madrasah_infos';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'madrasah_infos';
+  String get actualTableName => $name;
+  static const String $name = 'madrasah_infos';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -8380,9 +8393,10 @@ class $NamazTimesTable extends NamazTimes
         updatedAt
       ];
   @override
-  String get aliasedName => _alias ?? 'namaz_times';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'namaz_times';
+  String get actualTableName => $name;
+  static const String $name = 'namaz_times';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -8728,9 +8742,10 @@ class $NewsTable extends News with TableInfo<$NewsTable, New> {
   List<GeneratedColumn> get $columns =>
       [id, title, body, excerpt, language, publishedAt, createdAt, updatedAt];
   @override
-  String get aliasedName => _alias ?? 'news';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'news';
+  String get actualTableName => $name;
+  static const String $name = 'news';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -9050,9 +9065,10 @@ class $PagesTable extends Pages with TableInfo<$PagesTable, Page> {
   List<GeneratedColumn> get $columns =>
       [id, title, slug, body, imageData, createdAt, updatedAt];
   @override
-  String get aliasedName => _alias ?? 'pages';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'pages';
+  String get actualTableName => $name;
+  static const String $name = 'pages';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -9112,8 +9128,8 @@ class Page extends DataClass implements Insertable<Page> {
     map['slug'] = Variable<String>(slug);
     map['body'] = Variable<String>(body);
     if (!nullToAbsent || imageData != null) {
-      final converter = $PagesTable.$converterimageDatan;
-      map['image_data'] = Variable<String>(converter.toSql(imageData));
+      map['image_data'] =
+          Variable<String>($PagesTable.$converterimageDatan.toSql(imageData));
     }
     map['created_at'] = Variable<String>(createdAt);
     map['updated_at'] = Variable<String>(updatedAt);
@@ -9287,8 +9303,8 @@ class PagesCompanion extends UpdateCompanion<Page> {
       map['body'] = Variable<String>(body.value);
     }
     if (imageData.present) {
-      final converter = $PagesTable.$converterimageDatan;
-      map['image_data'] = Variable<String>(converter.toSql(imageData.value));
+      map['image_data'] = Variable<String>(
+          $PagesTable.$converterimageDatan.toSql(imageData.value));
     }
     if (createdAt.present) {
       map['created_at'] = Variable<String>(createdAt.value);
@@ -9348,9 +9364,10 @@ class $QuranBooksTable extends QuranBooks
   List<GeneratedColumn> get $columns =>
       [id, title, position, createdAt, updatedAt];
   @override
-  String get aliasedName => _alias ?? 'quran_books';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'quran_books';
+  String get actualTableName => $name;
+  static const String $name = 'quran_books';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -9591,16 +9608,13 @@ class $QuranBookQitabsTable extends QuranBookQitabs
           .withConverter<Map<dynamic, dynamic>?>(
               $QuranBookQitabsTable.$converterdocumentDatan);
   @override
-  late final GeneratedColumn<bool> published =
-      GeneratedColumn<bool>('published', aliasedName, false,
-          type: DriftSqlType.bool,
-          requiredDuringInsert: false,
-          defaultConstraints: GeneratedColumn.constraintsDependsOnDialect({
-            SqlDialect.sqlite: 'CHECK ("published" IN (0, 1))',
-            SqlDialect.mysql: '',
-            SqlDialect.postgres: '',
-          }),
-          defaultValue: const Constant(false));
+  late final GeneratedColumn<bool> published = GeneratedColumn<bool>(
+      'published', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("published" IN (0, 1))'),
+      defaultValue: const Constant(false));
   @override
   late final GeneratedColumn<int> position = GeneratedColumn<int>(
       'position', aliasedName, false,
@@ -9634,9 +9648,10 @@ class $QuranBookQitabsTable extends QuranBookQitabs
         quranBookId
       ];
   @override
-  String get aliasedName => _alias ?? 'quran_book_qitabs';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'quran_book_qitabs';
+  String get actualTableName => $name;
+  static const String $name = 'quran_book_qitabs';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -9715,12 +9730,12 @@ class QuranBookQitab extends DataClass implements Insertable<QuranBookQitab> {
       map['title_bn'] = Variable<String>(titleBn);
     }
     if (!nullToAbsent || imageData != null) {
-      final converter = $QuranBookQitabsTable.$converterimageDatan;
-      map['image_data'] = Variable<String>(converter.toSql(imageData));
+      map['image_data'] = Variable<String>(
+          $QuranBookQitabsTable.$converterimageDatan.toSql(imageData));
     }
     if (!nullToAbsent || documentData != null) {
-      final converter = $QuranBookQitabsTable.$converterdocumentDatan;
-      map['document_data'] = Variable<String>(converter.toSql(documentData));
+      map['document_data'] = Variable<String>(
+          $QuranBookQitabsTable.$converterdocumentDatan.toSql(documentData));
     }
     map['published'] = Variable<bool>(published);
     map['position'] = Variable<int>(position);
@@ -9935,13 +9950,13 @@ class QuranBookQitabsCompanion extends UpdateCompanion<QuranBookQitab> {
       map['title_bn'] = Variable<String>(titleBn.value);
     }
     if (imageData.present) {
-      final converter = $QuranBookQitabsTable.$converterimageDatan;
-      map['image_data'] = Variable<String>(converter.toSql(imageData.value));
+      map['image_data'] = Variable<String>(
+          $QuranBookQitabsTable.$converterimageDatan.toSql(imageData.value));
     }
     if (documentData.present) {
-      final converter = $QuranBookQitabsTable.$converterdocumentDatan;
-      map['document_data'] =
-          Variable<String>(converter.toSql(documentData.value));
+      map['document_data'] = Variable<String>($QuranBookQitabsTable
+          .$converterdocumentDatan
+          .toSql(documentData.value));
     }
     if (published.present) {
       map['published'] = Variable<bool>(published.value);
@@ -10039,9 +10054,10 @@ class $QuranBookPagesTable extends QuranBookPages
         paraId
       ];
   @override
-  String get aliasedName => _alias ?? 'quran_book_pages';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'quran_book_pages';
+  String get actualTableName => $name;
+  static const String $name = 'quran_book_pages';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -10377,9 +10393,10 @@ class $QuranBookSurahsTable extends QuranBookSurahs
         surahId
       ];
   @override
-  String get aliasedName => _alias ?? 'quran_book_surahs';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'quran_book_surahs';
+  String get actualTableName => $name;
+  static const String $name = 'quran_book_surahs';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
@@ -10703,9 +10720,10 @@ class $QuranBookParasTable extends QuranBookParas
   List<GeneratedColumn> get $columns =>
       [id, totalPage, position, createdAt, updatedAt, quranBookId, paraId];
   @override
-  String get aliasedName => _alias ?? 'quran_book_paras';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'quran_book_paras';
+  String get actualTableName => $name;
+  static const String $name = 'quran_book_paras';
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
