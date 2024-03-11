@@ -87,6 +87,12 @@ class BookItem extends ConsumerWidget {
 
         var chapterQuery = ref.watch(allModelsProvider(cQuery));
 
+        String? fileLink;
+
+        if (book.document != null) {
+          fileLink = fileSrcUrl(book.document);
+        }
+
         return AppScaffold(
           onBackPressed: () async => await QR.to('books'),
           showPattern: false,
@@ -329,7 +335,7 @@ class BookItem extends ConsumerWidget {
                     subtitle:
                         book.authors.map((e) => e.name).toList().join(', '),
                     link: 'books/${book.id}',
-                    fileLink: fileSrcUrl(book.document),
+                    fileLink: fileLink,
                   ),
                   BookmarkButton(
                     type: 'Book',
