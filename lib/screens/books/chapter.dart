@@ -48,6 +48,7 @@ class Chapter extends ConsumerWidget {
               'include': 'subchapters',
               'bookId': bookId,
               'position': resource.position - 1,
+              'localFirst': true,
             },
           );
 
@@ -77,6 +78,7 @@ class Chapter extends ConsumerWidget {
               'include': 'subchapters',
               'bookId': bookId,
               'position': resource.position + 1,
+              'localFirst': true,
             },
           );
 

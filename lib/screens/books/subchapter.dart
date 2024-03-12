@@ -50,6 +50,7 @@ class Subchapter extends ConsumerWidget {
               'quantity': 1,
               'chapterId': chapterId,
               'position': resource.position - 1,
+              'localFirst': true,
             },
           );
 
@@ -67,6 +68,7 @@ class Subchapter extends ConsumerWidget {
                   'include': 'subchapters',
                   'bookId': bookId,
                   'position': currentChapter.position! - 1,
+                  'localFirst': true,
                 },
               );
 
@@ -97,6 +99,7 @@ class Subchapter extends ConsumerWidget {
               'quantity': 1,
               'chapterId': chapterId,
               'position': resource.position + 1,
+              'localFirst': true,
             },
           );
 
@@ -114,6 +117,7 @@ class Subchapter extends ConsumerWidget {
                   'include': 'subchapters',
                   'bookId': bookId,
                   'position': currentChapter.position! + 1,
+                  'localFirst': true,
                 },
               );
 

@@ -48,6 +48,7 @@ class MadrasahGallery extends ConsumerWidget {
               'madrasahId': resource.id,
               'sort': '-position',
               'quantity': 1,
+              'localFirst': true,
             },
           );
 

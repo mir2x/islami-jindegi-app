@@ -42,6 +42,7 @@ class MadrasahInfo extends ConsumerWidget {
                 'madrasahId': resource.madrasah.value.id,
                 'quantity': 1,
                 'position': resource.position - 1,
+                'localFirst': true,
               },
             );
 
@@ -63,6 +64,7 @@ class MadrasahInfo extends ConsumerWidget {
               'madrasahId': resource.madrasah.value.id,
               'quantity': 1,
               'position': resource.position + 1,
+              'localFirst': true,
             },
           );
 

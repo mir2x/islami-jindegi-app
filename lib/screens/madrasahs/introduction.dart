@@ -50,6 +50,7 @@ class MadrasahIntroduction extends ConsumerWidget {
               'madrasahId': resource.id,
               'quantity': 1,
               'position': 1,
+              'localFirst': true,
             },
           );
 

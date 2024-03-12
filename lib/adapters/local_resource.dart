@@ -17,6 +17,10 @@ mixin LocalResourceAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     OnErrorAll<T>? onError,
     DataRequestLabel? label,
   }) async {
+    bool localFirst = params != null &&
+        params.containsKey('localFirst') &&
+        params['localFirst'];
+
     bool onlyLocal =
         params != null && params.containsKey('offline') && params['offline'];
 
@@ -27,7 +31,7 @@ mixin LocalResourceAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
     bool hasNoConnection =
         await Connectivity().checkConnectivity() == ConnectivityResult.none;
 
-    if (onlyLocal || hasOneItem || hasNoConnection) {
+    if (localFirst || onlyLocal || hasOneItem || hasNoConnection) {
       final localResource = ref.read(localResourceProvider);
       final resources = await localResource.query(internalType, params: params);
       List<Resource> included = [];
@@ -177,9 +181,9 @@ mixin LocalResourceAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
       }
     }
 
-    final item = await super.findOne(
+    return super.findOne(
       id,
-      remote: remote,
+      remote: true,
       background: background,
       params: params,
       headers: headers,
@@ -187,21 +191,6 @@ mixin LocalResourceAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
       onError: onError,
       label: label,
     );
-
-    if (item != null) {
-      return item;
-    } else {
-      return super.findOne(
-        id,
-        remote: true,
-        background: background,
-        params: params,
-        headers: headers,
-        onSuccess: onSuccess,
-        onError: onError,
-        label: label,
-      );
-    }
   }
 
   Resource mapToResource(Map resourceMap, String type) {
