@@ -3,7 +3,7 @@ description: Islami Jindegi Native App
 
 publish_to: 'none'
 
-version: 5.0.25+120
+version: 5.0.26+121
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -140,7 +140,7 @@ flutter:
     - assets/images/books/
     - assets/images/quran-qitabs/
     - assets/audios/0.mp3
-    - assets/db/offline_data_7.sqlite3
+    - assets/db/offline_data_8.sqlite3
     - assets/db/offline_location_1.sqlite3
 
   fonts:
