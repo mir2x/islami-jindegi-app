@@ -26,7 +26,7 @@ final Map<int, String> banglaWeekDays = {
 final banglaSeasons = ['গ্রীষ্ম', 'বর্ষা', 'শরৎ', 'হেমন্ত', 'শীত', 'বসন্ত'];
 
 final totalDaysInMonthOld = [31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30, 30];
-final totalDaysInMonthNew = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30];
+final totalDaysInMonthNew = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 29, 30];
 
 bool isLeapYear(int year) =>
     ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
@@ -86,13 +86,9 @@ class Bongabdo {
   toBanglaDate(gYear, gMonth, gDay) {
     var totalDaysInMonth = isnew() ? totalDaysInMonthNew : totalDaysInMonthOld;
 
-    isLeapYear(gYear) && isnew()
-        ? totalDaysInMonth[10] = 29
-        : totalDaysInMonth[10] = 31;
-
-    /* if (isLeapYear(gYear)){
-      totalDaysInMonth[10] = 31;
-    } */
+    if (isLeapYear(gYear)) {
+      isnew() ? totalDaysInMonth[10] = 30 : totalDaysInMonth[10] = 31;
+    }
 
     int banglaYear =
         (gMonth < 4 || (gMonth == 4 && gDay < 14)) ? gYear - 594 : gYear - 593;
