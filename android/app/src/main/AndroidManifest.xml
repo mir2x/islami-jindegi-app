@@ -14,6 +14,7 @@
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
         android:label="Islami Jindegi"
+        android:enableOnBackInvokedCallback="true"
         android:usesCleartextTraffic="true">
 
         <activity
