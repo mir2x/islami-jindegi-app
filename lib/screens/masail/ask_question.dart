@@ -27,7 +27,7 @@ class AskQuestion extends StatelessWidget {
             child: Text(locales.sendMoney),
           ),
           Text('01611162167', style: textTheme.titleLarge),
-          Text('01618811737', style: textTheme.titleLarge),
+          Text('01718811737', style: textTheme.titleLarge),
           Container(
             margin: const EdgeInsets.only(top: 15, bottom: 40),
             child: Text(locales.provideTransactionId),
@@ -58,7 +58,7 @@ class AskQuestion extends StatelessWidget {
             },
           ),
           Container(
-            margin: const EdgeInsets.only(top: 5),
+            margin: const EdgeInsets.only(top: 10),
             child: Text(
               locales.emailAppHint,
               style: textTheme.labelSmall,
