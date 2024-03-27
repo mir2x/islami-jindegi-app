@@ -284,6 +284,7 @@ class Masail extends ConsumerWidget {
                             preferences.getString('theme') ?? 'classic';
 
                         return FloatingActionButton.extended(
+                          heroTag: 'ask-question',
                           onPressed: () => QR.to('masail/ask-question'),
                           icon: Container(
                             decoration: BoxDecoration(
