@@ -109,18 +109,18 @@ class BookItem extends ConsumerWidget {
                     children: [
                       Container(
                         margin: const EdgeInsets.only(
-                          top: 20,
+                          top: 15,
                           left: 15,
                           right: 15,
                         ),
                         child: Text(
                           book.title,
                           textAlign: TextAlign.center,
-                          style: textTheme.headlineLarge,
+                          style: textTheme.headlineLarge?.copyWith(height: 1.2),
                         ),
                       ),
                       Container(
-                        margin: const EdgeInsets.only(top: 8, bottom: 30),
+                        margin: const EdgeInsets.only(top: 3, bottom: 15),
                         child: CommaSeparatedList(
                           resources: book.authors.map((e) => e).toList(),
                           alignment: WrapAlignment.center,
@@ -135,7 +135,7 @@ class BookItem extends ConsumerWidget {
                       ),
                       Container(
                         padding: const EdgeInsets.only(
-                          bottom: 5,
+                          bottom: 3,
                           left: 15,
                           right: 15,
                         ),
@@ -253,10 +253,12 @@ class BookItem extends ConsumerWidget {
                             Text(
                               book.title,
                               textAlign: TextAlign.center,
-                              style: textTheme.headlineLarge,
+                              style: textTheme.headlineLarge?.copyWith(
+                                height: 1.2,
+                              ),
                             ),
                             Container(
-                              margin: const EdgeInsets.only(top: 8),
+                              margin: const EdgeInsets.only(top: 3),
                               child: CommaSeparatedList(
                                 resources: book.authors.map((e) => e).toList(),
                                 alignment: WrapAlignment.center,
