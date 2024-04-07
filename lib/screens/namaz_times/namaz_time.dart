@@ -94,35 +94,12 @@ class NamazTime extends ConsumerWidget {
                 child: ItemContent(
                   children: [
                     Container(
-                      margin: const EdgeInsets.only(bottom: 15),
-                      child: PageTitle(
-                        text: locales.masail,
-                        fontSizeRatio: fontSizeRatio,
-                      ),
-                    ),
-                    Container(
                       margin: const EdgeInsets.only(bottom: 30),
                       child: PageHtmlBody(
                         text: item.masail,
                         fontSizeRatio: fontSizeRatio,
                       ),
                     ),
-                    if (item.fazail != null) ...[
-                      Container(
-                        margin: const EdgeInsets.only(top: 30, bottom: 15),
-                        child: PageTitle(
-                          text: locales.fazail,
-                          fontSizeRatio: fontSizeRatio,
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 30),
-                        child: PageHtmlBody(
-                          text: item.fazail,
-                          fontSizeRatio: fontSizeRatio,
-                        ),
-                      ),
-                    ],
                   ],
                 ),
               ),
