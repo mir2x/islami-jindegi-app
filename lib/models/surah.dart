@@ -14,6 +14,7 @@ class Surah extends DataModel<Surah> {
   final String? id;
   final String title;
   final String titleBn;
+  final String? searchTitle;
   final String slug;
   final String? introduction;
   final String? excerpt;
@@ -30,6 +31,7 @@ class Surah extends DataModel<Surah> {
     this.id,
     required this.title,
     required this.titleBn,
+    this.searchTitle,
     required this.slug,
     this.introduction,
     this.excerpt,

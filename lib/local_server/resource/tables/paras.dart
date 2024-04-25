@@ -4,6 +4,7 @@ class Paras extends Table {
   TextColumn get id => text()();
   TextColumn get title => text()();
   TextColumn get titleBn => text()();
+  TextColumn get searchTitle => text()();
   TextColumn get slug => text()();
   IntColumn get totalAyat => integer()();
   IntColumn get totalRuku => integer()();

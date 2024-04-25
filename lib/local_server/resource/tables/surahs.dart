@@ -4,6 +4,7 @@ class Surahs extends Table {
   TextColumn get id => text()();
   TextColumn get title => text()();
   TextColumn get titleBn => text()();
+  TextColumn get searchTitle => text()();
   TextColumn get slug => text()();
   TextColumn get introduction => text().nullable()();
   TextColumn get excerpt => text().nullable()();

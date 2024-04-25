@@ -21,6 +21,10 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, Surah> {
       'title_bn', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
+  late final GeneratedColumn<String> searchTitle = GeneratedColumn<String>(
+      'search_title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
   late final GeneratedColumn<String> slug = GeneratedColumn<String>(
       'slug', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
@@ -61,6 +65,7 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, Surah> {
         id,
         title,
         titleBn,
+        searchTitle,
         slug,
         introduction,
         excerpt,
@@ -88,6 +93,8 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, Surah> {
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
       titleBn: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title_bn'])!,
+      searchTitle: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}search_title'])!,
       slug: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
       introduction: attachedDatabase.typeMapping
@@ -119,6 +126,7 @@ class Surah extends DataClass implements Insertable<Surah> {
   final String id;
   final String title;
   final String titleBn;
+  final String searchTitle;
   final String slug;
   final String? introduction;
   final String? excerpt;
@@ -132,6 +140,7 @@ class Surah extends DataClass implements Insertable<Surah> {
       {required this.id,
       required this.title,
       required this.titleBn,
+      required this.searchTitle,
       required this.slug,
       this.introduction,
       this.excerpt,
@@ -147,6 +156,7 @@ class Surah extends DataClass implements Insertable<Surah> {
     map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
     map['title_bn'] = Variable<String>(titleBn);
+    map['search_title'] = Variable<String>(searchTitle);
     map['slug'] = Variable<String>(slug);
     if (!nullToAbsent || introduction != null) {
       map['introduction'] = Variable<String>(introduction);
@@ -172,6 +182,7 @@ class Surah extends DataClass implements Insertable<Surah> {
       id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       titleBn: serializer.fromJson<String>(json['titleBn']),
+      searchTitle: serializer.fromJson<String>(json['searchTitle']),
       slug: serializer.fromJson<String>(json['slug']),
       introduction: serializer.fromJson<String?>(json['introduction']),
       excerpt: serializer.fromJson<String?>(json['excerpt']),
@@ -190,6 +201,7 @@ class Surah extends DataClass implements Insertable<Surah> {
       'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
       'titleBn': serializer.toJson<String>(titleBn),
+      'searchTitle': serializer.toJson<String>(searchTitle),
       'slug': serializer.toJson<String>(slug),
       'introduction': serializer.toJson<String?>(introduction),
       'excerpt': serializer.toJson<String?>(excerpt),
@@ -206,6 +218,7 @@ class Surah extends DataClass implements Insertable<Surah> {
           {String? id,
           String? title,
           String? titleBn,
+          String? searchTitle,
           String? slug,
           Value<String?> introduction = const Value.absent(),
           Value<String?> excerpt = const Value.absent(),
@@ -219,6 +232,7 @@ class Surah extends DataClass implements Insertable<Surah> {
         id: id ?? this.id,
         title: title ?? this.title,
         titleBn: titleBn ?? this.titleBn,
+        searchTitle: searchTitle ?? this.searchTitle,
         slug: slug ?? this.slug,
         introduction:
             introduction.present ? introduction.value : this.introduction,
@@ -236,6 +250,7 @@ class Surah extends DataClass implements Insertable<Surah> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('titleBn: $titleBn, ')
+          ..write('searchTitle: $searchTitle, ')
           ..write('slug: $slug, ')
           ..write('introduction: $introduction, ')
           ..write('excerpt: $excerpt, ')
@@ -250,8 +265,20 @@ class Surah extends DataClass implements Insertable<Surah> {
   }
 
   @override
-  int get hashCode => Object.hash(id, title, titleBn, slug, introduction,
-      excerpt, totalAyat, totalRuku, location, position, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+      id,
+      title,
+      titleBn,
+      searchTitle,
+      slug,
+      introduction,
+      excerpt,
+      totalAyat,
+      totalRuku,
+      location,
+      position,
+      createdAt,
+      updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -259,6 +286,7 @@ class Surah extends DataClass implements Insertable<Surah> {
           other.id == this.id &&
           other.title == this.title &&
           other.titleBn == this.titleBn &&
+          other.searchTitle == this.searchTitle &&
           other.slug == this.slug &&
           other.introduction == this.introduction &&
           other.excerpt == this.excerpt &&
@@ -274,6 +302,7 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
   final Value<String> id;
   final Value<String> title;
   final Value<String> titleBn;
+  final Value<String> searchTitle;
   final Value<String> slug;
   final Value<String?> introduction;
   final Value<String?> excerpt;
@@ -288,6 +317,7 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.titleBn = const Value.absent(),
+    this.searchTitle = const Value.absent(),
     this.slug = const Value.absent(),
     this.introduction = const Value.absent(),
     this.excerpt = const Value.absent(),
@@ -303,6 +333,7 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
     required String id,
     required String title,
     required String titleBn,
+    required String searchTitle,
     required String slug,
     this.introduction = const Value.absent(),
     this.excerpt = const Value.absent(),
@@ -316,6 +347,7 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
   })  : id = Value(id),
         title = Value(title),
         titleBn = Value(titleBn),
+        searchTitle = Value(searchTitle),
         slug = Value(slug),
         totalAyat = Value(totalAyat),
         totalRuku = Value(totalRuku),
@@ -326,6 +358,7 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
     Expression<String>? id,
     Expression<String>? title,
     Expression<String>? titleBn,
+    Expression<String>? searchTitle,
     Expression<String>? slug,
     Expression<String>? introduction,
     Expression<String>? excerpt,
@@ -341,6 +374,7 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
       if (id != null) 'id': id,
       if (title != null) 'title': title,
       if (titleBn != null) 'title_bn': titleBn,
+      if (searchTitle != null) 'search_title': searchTitle,
       if (slug != null) 'slug': slug,
       if (introduction != null) 'introduction': introduction,
       if (excerpt != null) 'excerpt': excerpt,
@@ -358,6 +392,7 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
       {Value<String>? id,
       Value<String>? title,
       Value<String>? titleBn,
+      Value<String>? searchTitle,
       Value<String>? slug,
       Value<String?>? introduction,
       Value<String?>? excerpt,
@@ -372,6 +407,7 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
       id: id ?? this.id,
       title: title ?? this.title,
       titleBn: titleBn ?? this.titleBn,
+      searchTitle: searchTitle ?? this.searchTitle,
       slug: slug ?? this.slug,
       introduction: introduction ?? this.introduction,
       excerpt: excerpt ?? this.excerpt,
@@ -396,6 +432,9 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
     }
     if (titleBn.present) {
       map['title_bn'] = Variable<String>(titleBn.value);
+    }
+    if (searchTitle.present) {
+      map['search_title'] = Variable<String>(searchTitle.value);
     }
     if (slug.present) {
       map['slug'] = Variable<String>(slug.value);
@@ -436,6 +475,7 @@ class SurahsCompanion extends UpdateCompanion<Surah> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('titleBn: $titleBn, ')
+          ..write('searchTitle: $searchTitle, ')
           ..write('slug: $slug, ')
           ..write('introduction: $introduction, ')
           ..write('excerpt: $excerpt, ')
@@ -469,6 +509,10 @@ class $ParasTable extends Paras with TableInfo<$ParasTable, Para> {
       'title_bn', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
+  late final GeneratedColumn<String> searchTitle = GeneratedColumn<String>(
+      'search_title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
   late final GeneratedColumn<String> slug = GeneratedColumn<String>(
       'slug', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
@@ -497,6 +541,7 @@ class $ParasTable extends Paras with TableInfo<$ParasTable, Para> {
         id,
         title,
         titleBn,
+        searchTitle,
         slug,
         totalAyat,
         totalRuku,
@@ -521,6 +566,8 @@ class $ParasTable extends Paras with TableInfo<$ParasTable, Para> {
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
       titleBn: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title_bn'])!,
+      searchTitle: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}search_title'])!,
       slug: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}slug'])!,
       totalAyat: attachedDatabase.typeMapping
@@ -546,6 +593,7 @@ class Para extends DataClass implements Insertable<Para> {
   final String id;
   final String title;
   final String titleBn;
+  final String searchTitle;
   final String slug;
   final int totalAyat;
   final int totalRuku;
@@ -556,6 +604,7 @@ class Para extends DataClass implements Insertable<Para> {
       {required this.id,
       required this.title,
       required this.titleBn,
+      required this.searchTitle,
       required this.slug,
       required this.totalAyat,
       required this.totalRuku,
@@ -568,6 +617,7 @@ class Para extends DataClass implements Insertable<Para> {
     map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
     map['title_bn'] = Variable<String>(titleBn);
+    map['search_title'] = Variable<String>(searchTitle);
     map['slug'] = Variable<String>(slug);
     map['total_ayat'] = Variable<int>(totalAyat);
     map['total_ruku'] = Variable<int>(totalRuku);
@@ -584,6 +634,7 @@ class Para extends DataClass implements Insertable<Para> {
       id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       titleBn: serializer.fromJson<String>(json['titleBn']),
+      searchTitle: serializer.fromJson<String>(json['searchTitle']),
       slug: serializer.fromJson<String>(json['slug']),
       totalAyat: serializer.fromJson<int>(json['totalAyat']),
       totalRuku: serializer.fromJson<int>(json['totalRuku']),
@@ -599,6 +650,7 @@ class Para extends DataClass implements Insertable<Para> {
       'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
       'titleBn': serializer.toJson<String>(titleBn),
+      'searchTitle': serializer.toJson<String>(searchTitle),
       'slug': serializer.toJson<String>(slug),
       'totalAyat': serializer.toJson<int>(totalAyat),
       'totalRuku': serializer.toJson<int>(totalRuku),
@@ -612,6 +664,7 @@ class Para extends DataClass implements Insertable<Para> {
           {String? id,
           String? title,
           String? titleBn,
+          String? searchTitle,
           String? slug,
           int? totalAyat,
           int? totalRuku,
@@ -622,6 +675,7 @@ class Para extends DataClass implements Insertable<Para> {
         id: id ?? this.id,
         title: title ?? this.title,
         titleBn: titleBn ?? this.titleBn,
+        searchTitle: searchTitle ?? this.searchTitle,
         slug: slug ?? this.slug,
         totalAyat: totalAyat ?? this.totalAyat,
         totalRuku: totalRuku ?? this.totalRuku,
@@ -635,6 +689,7 @@ class Para extends DataClass implements Insertable<Para> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('titleBn: $titleBn, ')
+          ..write('searchTitle: $searchTitle, ')
           ..write('slug: $slug, ')
           ..write('totalAyat: $totalAyat, ')
           ..write('totalRuku: $totalRuku, ')
@@ -646,8 +701,8 @@ class Para extends DataClass implements Insertable<Para> {
   }
 
   @override
-  int get hashCode => Object.hash(id, title, titleBn, slug, totalAyat,
-      totalRuku, position, createdAt, updatedAt);
+  int get hashCode => Object.hash(id, title, titleBn, searchTitle, slug,
+      totalAyat, totalRuku, position, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -655,6 +710,7 @@ class Para extends DataClass implements Insertable<Para> {
           other.id == this.id &&
           other.title == this.title &&
           other.titleBn == this.titleBn &&
+          other.searchTitle == this.searchTitle &&
           other.slug == this.slug &&
           other.totalAyat == this.totalAyat &&
           other.totalRuku == this.totalRuku &&
@@ -667,6 +723,7 @@ class ParasCompanion extends UpdateCompanion<Para> {
   final Value<String> id;
   final Value<String> title;
   final Value<String> titleBn;
+  final Value<String> searchTitle;
   final Value<String> slug;
   final Value<int> totalAyat;
   final Value<int> totalRuku;
@@ -678,6 +735,7 @@ class ParasCompanion extends UpdateCompanion<Para> {
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.titleBn = const Value.absent(),
+    this.searchTitle = const Value.absent(),
     this.slug = const Value.absent(),
     this.totalAyat = const Value.absent(),
     this.totalRuku = const Value.absent(),
@@ -690,6 +748,7 @@ class ParasCompanion extends UpdateCompanion<Para> {
     required String id,
     required String title,
     required String titleBn,
+    required String searchTitle,
     required String slug,
     required int totalAyat,
     required int totalRuku,
@@ -700,6 +759,7 @@ class ParasCompanion extends UpdateCompanion<Para> {
   })  : id = Value(id),
         title = Value(title),
         titleBn = Value(titleBn),
+        searchTitle = Value(searchTitle),
         slug = Value(slug),
         totalAyat = Value(totalAyat),
         totalRuku = Value(totalRuku),
@@ -710,6 +770,7 @@ class ParasCompanion extends UpdateCompanion<Para> {
     Expression<String>? id,
     Expression<String>? title,
     Expression<String>? titleBn,
+    Expression<String>? searchTitle,
     Expression<String>? slug,
     Expression<int>? totalAyat,
     Expression<int>? totalRuku,
@@ -722,6 +783,7 @@ class ParasCompanion extends UpdateCompanion<Para> {
       if (id != null) 'id': id,
       if (title != null) 'title': title,
       if (titleBn != null) 'title_bn': titleBn,
+      if (searchTitle != null) 'search_title': searchTitle,
       if (slug != null) 'slug': slug,
       if (totalAyat != null) 'total_ayat': totalAyat,
       if (totalRuku != null) 'total_ruku': totalRuku,
@@ -736,6 +798,7 @@ class ParasCompanion extends UpdateCompanion<Para> {
       {Value<String>? id,
       Value<String>? title,
       Value<String>? titleBn,
+      Value<String>? searchTitle,
       Value<String>? slug,
       Value<int>? totalAyat,
       Value<int>? totalRuku,
@@ -747,6 +810,7 @@ class ParasCompanion extends UpdateCompanion<Para> {
       id: id ?? this.id,
       title: title ?? this.title,
       titleBn: titleBn ?? this.titleBn,
+      searchTitle: searchTitle ?? this.searchTitle,
       slug: slug ?? this.slug,
       totalAyat: totalAyat ?? this.totalAyat,
       totalRuku: totalRuku ?? this.totalRuku,
@@ -768,6 +832,9 @@ class ParasCompanion extends UpdateCompanion<Para> {
     }
     if (titleBn.present) {
       map['title_bn'] = Variable<String>(titleBn.value);
+    }
+    if (searchTitle.present) {
+      map['search_title'] = Variable<String>(searchTitle.value);
     }
     if (slug.present) {
       map['slug'] = Variable<String>(slug.value);
@@ -799,6 +866,7 @@ class ParasCompanion extends UpdateCompanion<Para> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('titleBn: $titleBn, ')
+          ..write('searchTitle: $searchTitle, ')
           ..write('slug: $slug, ')
           ..write('totalAyat: $totalAyat, ')
           ..write('totalRuku: $totalRuku, ')

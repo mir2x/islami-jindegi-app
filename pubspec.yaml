@@ -140,7 +140,7 @@ flutter:
     - assets/images/books/
     - assets/images/quran-qitabs/
     - assets/audios/0.mp3
-    - assets/db/offline_data_9.sqlite3
+    - assets/db/offline_data_10.sqlite3
     - assets/db/offline_location_1.sqlite3
 
   fonts:

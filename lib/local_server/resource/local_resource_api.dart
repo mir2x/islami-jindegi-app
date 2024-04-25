@@ -53,7 +53,7 @@ class LocalResourceAPI extends _$LocalResourceAPI {
   LocalResourceAPI()
       : super(
           LazyDatabase(() async {
-            int dataVersion = 9;
+            int dataVersion = 10;
 
             final dbFolder = await getApplicationDocumentsDirectory();
             final file = File(
@@ -212,7 +212,7 @@ class LocalResourceAPI extends _$LocalResourceAPI {
     }
 
     if (params.containsKey('search')) {
-      query.where((t) => t.title.like("%${params['search']}%"));
+      query.where((t) => t.searchTitle.like("%${params['search']}%"));
     }
 
     query.orderBy([(t) => OrderingTerm(expression: t.position)]);
@@ -244,7 +244,7 @@ class LocalResourceAPI extends _$LocalResourceAPI {
     }
 
     if (params.containsKey('search')) {
-      query.where((t) => t.title.like("%${params['search']}%"));
+      query.where((t) => t.searchTitle.like("%${params['search']}%"));
     }
 
     query.orderBy([(t) => OrderingTerm(expression: t.position)]);

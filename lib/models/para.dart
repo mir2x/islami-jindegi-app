@@ -13,6 +13,7 @@ class Para extends DataModel<Para> {
   final String? id;
   final String title;
   final String titleBn;
+  final String? searchTitle;
   final String slug;
   final int totalAyat;
   final int totalRuku;
@@ -24,6 +25,7 @@ class Para extends DataModel<Para> {
     this.id,
     required this.title,
     required this.titleBn,
+    this.searchTitle,
     required this.slug,
     required this.totalAyat,
     required this.totalRuku,
