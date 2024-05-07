@@ -176,8 +176,6 @@
 
   "askQuestion": "Ask Question",
   "instructions": "Instructions",
-  "sendMoney": "1. Send at least 20 Tk bKash to one of these numbers:",
-  "provideTransactionId": "2. Provide this bKash Transaction ID with your question",
   "askAQuestion": "Ask a Question",
   "emailAppHint": "It will open your default Email app",
   "questionRequired": "Question (required)",
