@@ -67,7 +67,7 @@ class AskQuestion extends ConsumerWidget {
                 onPressed: () async {
                   String email = Uri.encodeComponent('islamijindegi@gmail.com');
                   String body = Uri.encodeComponent(
-                    '${locales.yourNameOptional}:\n${locales.yourContactOptional}:\n\n${locales.transactionIdRequired}:\n\n\n${locales.questionRequired}:',
+                    '${locales.yourNameOptional}:\n${locales.yourContactOptional}:\n\n\n${locales.questionRequired}:',
                   );
 
                   Uri mail = Uri.parse('mailto:$email?body=$body');

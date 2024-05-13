@@ -175,13 +175,11 @@
   "bookmarkDeleted": "Bookmark deleted",
 
   "askQuestion": "Ask Question",
-  "instructions": "Instructions",
   "askAQuestion": "Ask a Question",
   "emailAppHint": "It will open your default Email app",
   "questionRequired": "Question (required)",
   "yourNameOptional": "Your Name (optional)",
   "yourContactOptional": "Contact No (optional)",
-  "transactionIdRequired": "bKash Transaction Id (required)",
 
   "newsAndUpdates": "News & Updates",
   "seeMore": "See More",
