@@ -49,7 +49,7 @@ Future main() async {
     };
   }
 
-  QR.settings.pagesType = const QSlidePage(maintainState: false);
+  QR.settings.pagesType = const QSlidePage(maintainState: true);
   QR.settings.notFoundPage = QRoute(
     path: '/error-pages/404',
     builder: () => const Page404(),
