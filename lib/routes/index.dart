@@ -89,10 +89,7 @@ class AppRoutes {
     ),
     QRoute(
       path: '/quran',
-      builder: () => PageStorage(
-        bucket: _bucket,
-        child: const Quran(),
-      ),
+      builder: () => const QuranIndex(),
       children: [
         QRoute(
           path: '/surah/:slug',

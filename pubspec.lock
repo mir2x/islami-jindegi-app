@@ -1322,10 +1322,10 @@ packages:
     dependency: "direct main"
     description:
       name: qlevar_router
-      sha256: eae01d6966474798b632788faf0a27172c9392831310cd1259741ab4655a47b5
+      sha256: "55ee7a822b9f7311eea292bd6d348336b03ffd1b85c44427987b72072591a84c"
       url: "https://pub.dev"
     source: hosted
-    version: "1.10.1"
+    version: "1.10.3"
   recase:
     dependency: "direct main"
     description:
