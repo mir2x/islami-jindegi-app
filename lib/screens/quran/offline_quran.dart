@@ -19,8 +19,8 @@ import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/theme/app_theme.dart';
 
-class QuranIndex extends StatelessWidget {
-  const QuranIndex({super.key});
+class OfflineQuran extends StatelessWidget {
+  const OfflineQuran({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +63,7 @@ class QuranState extends ConsumerState<Quran> {
     });
   }
 
-  void updateSurahPosition() {
+  void updateLastSurahPosition() {
     EasyDebounce.debounce(
       'surah-position',
       const Duration(milliseconds: 1000),
@@ -76,7 +76,7 @@ class QuranState extends ConsumerState<Quran> {
     );
   }
 
-  void updateParaPosition() {
+  void updateLastParaPosition() {
     EasyDebounce.debounce(
       'para-position',
       const Duration(milliseconds: 1000),
@@ -103,14 +103,14 @@ class QuranState extends ConsumerState<Quran> {
     surahController = ScrollController(initialScrollOffset: lastSurahPosition);
     paraController = ScrollController(initialScrollOffset: lastParaPosition);
 
-    surahController!.addListener(updateSurahPosition);
-    paraController!.addListener(updateParaPosition);
+    surahController!.addListener(updateLastSurahPosition);
+    paraController!.addListener(updateLastParaPosition);
   }
 
   @override
   void dispose() {
-    surahController!.removeListener(updateSurahPosition);
-    paraController!.removeListener(updateParaPosition);
+    surahController!.removeListener(updateLastSurahPosition);
+    paraController!.removeListener(updateLastParaPosition);
     super.dispose();
   }
 

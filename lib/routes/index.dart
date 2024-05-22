@@ -5,7 +5,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import '../screens/home/index.dart';
 
 import '../screens/quran/quran_list.dart';
-import '../screens/quran/index.dart';
+import '../screens/quran/offline_quran.dart';
 import '../screens/quran/surah.dart';
 import '../screens/quran/surah_description.dart';
 import '../screens/quran/para.dart';
@@ -89,7 +89,7 @@ class AppRoutes {
     ),
     QRoute(
       path: '/quran',
-      builder: () => const QuranIndex(),
+      builder: () => const OfflineQuran(),
       children: [
         QRoute(
           path: '/surah/:slug',

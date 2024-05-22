@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:idkit_inputformatters/idkit_inputformatters.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -276,9 +277,33 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
     setState(() => currentAyah = ayahPosition);
   }
 
+  void updateLastAyahPosition() {
+    EasyDebounce.debounce(
+      'ayah-position',
+      const Duration(milliseconds: 1000),
+      () {
+        widget.preferences.setInt(
+          'lastAyahPosition',
+          itemPositionsListener.itemPositions.value.first.index,
+        );
+
+        widget.preferences.setString('lastChapter', widget.chapter.id);
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
+
+    int lastAyahPosition = widget.preferences.getInt('lastAyahPosition') ?? 0;
+    String? lastChapter = widget.preferences.getString('lastChapter');
+
+    if (lastChapter == widget.chapter.id && lastAyahPosition > 0) {
+      scrollToLastPosition(lastAyahPosition);
+    }
+
+    itemPositionsListener.itemPositions.addListener(updateLastAyahPosition);
 
     _playerStateSubscription =
         widget.player.playerStateStream.listen((PlayerState s) {
@@ -301,6 +326,17 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
         isPlaying = s.playing;
       });
     });
+  }
+
+  void scrollToLastPosition(int lastAyahPosition) async {
+    await Future.delayed(const Duration(milliseconds: 200));
+
+    if (itemScrollController.isAttached) {
+      itemScrollController.scrollTo(
+        index: lastAyahPosition,
+        duration: const Duration(milliseconds: 1),
+      );
+    }
   }
 
   @override
@@ -334,6 +370,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
 
   @override
   Future<void> dispose() async {
+    itemPositionsListener.itemPositions.removeListener(updateLastAyahPosition);
     super.dispose();
     await _playerStateSubscription?.cancel();
     await widget.player.stop();
