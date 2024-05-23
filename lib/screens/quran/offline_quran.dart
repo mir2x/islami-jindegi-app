@@ -68,10 +68,12 @@ class QuranState extends ConsumerState<Quran> {
       'surah-position',
       const Duration(milliseconds: 1000),
       () {
-        widget.preferences.setDouble(
-          'lastSurahPosition',
-          surahController!.position.pixels,
-        );
+        if (surahController!.hasClients) {
+          widget.preferences.setDouble(
+            'lastSurahPosition',
+            surahController!.position.pixels,
+          );
+        }
       },
     );
   }
@@ -81,10 +83,12 @@ class QuranState extends ConsumerState<Quran> {
       'para-position',
       const Duration(milliseconds: 1000),
       () {
-        widget.preferences.setDouble(
-          'lastParaPosition',
-          paraController!.position.pixels,
-        );
+        if (paraController!.hasClients) {
+          widget.preferences.setDouble(
+            'lastParaPosition',
+            paraController!.position.pixels,
+          );
+        }
       },
     );
   }
