@@ -66,7 +66,7 @@ class QuranState extends ConsumerState<Quran> {
   void updateLastSurahPosition() {
     EasyDebounce.debounce(
       'surah-position',
-      const Duration(milliseconds: 1000),
+      const Duration(milliseconds: 250),
       () {
         if (surahController!.hasClients) {
           widget.preferences.setDouble(
@@ -81,7 +81,7 @@ class QuranState extends ConsumerState<Quran> {
   void updateLastParaPosition() {
     EasyDebounce.debounce(
       'para-position',
-      const Duration(milliseconds: 1000),
+      const Duration(milliseconds: 250),
       () {
         if (paraController!.hasClients) {
           widget.preferences.setDouble(
