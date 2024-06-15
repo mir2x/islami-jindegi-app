@@ -7,6 +7,7 @@ import 'package:intl/intl.dart' hide TextDirection;
 import 'package:native_app/providers/qirat_player.dart';
 import 'package:native_app/providers/bismillah_player.dart';
 import 'package:native_app/objects/qirat_audio.dart';
+import 'package:native_app/theme/app_theme.dart';
 
 class QuranBookPlayer extends ConsumerStatefulWidget {
   const QuranBookPlayer({
@@ -17,6 +18,7 @@ class QuranBookPlayer extends ConsumerStatefulWidget {
     required this.surahTitle,
     required this.fromAyah,
     required this.toAyah,
+    required this.preferences,
   });
 
   final AudioPlayer player;
@@ -25,6 +27,7 @@ class QuranBookPlayer extends ConsumerStatefulWidget {
   final String surahTitle;
   final int fromAyah;
   final int toAyah;
+  final dynamic preferences;
 
   @override
   ConsumerState createState() => _QuranBookPlayerState();
@@ -93,6 +96,8 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
   Widget build(BuildContext context) {
     String currentLang = Localizations.localeOf(context).languageCode;
     var numFormatter = NumberFormat('#', currentLang);
+    String theme = widget.preferences.getString('theme') ?? 'classic';
+    var textTheme = Theme.of(context).textTheme;
     String audioPath = '${widget.qari}/${widget.surahNo}/$currentAyah.mp3';
     String? nextAudioPath;
 
@@ -111,16 +116,28 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
       ),
     );
 
+    Widget currentAyahText = Text(
+      currentAyah.toString(),
+      style: textTheme.titleMedium?.copyWith(
+        color: AppTheme.titleContrastColor[theme],
+      ),
+    );
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 5),
       child: qiratProvider.when(
-        loading: () => Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: SvgPicture.asset(
-            'assets/images/icons/pause.svg',
-            width: 30,
-            height: 30,
-          ),
+        loading: () => Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: SvgPicture.asset(
+                'assets/images/icons/pause.svg',
+                width: 30,
+                height: 30,
+              ),
+            ),
+            currentAyahText,
+          ],
         ),
         error: (error, _) => InkWell(
           onTap: () {},
@@ -134,28 +151,33 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
           ),
         ),
         data: (updatedPlayer) {
-          return InkWell(
-            onTap: () async {
-              if (isPlaying) {
-                await updatedPlayer.pause();
-              } else {
-                await updatedPlayer.play();
-              }
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: isPlaying
-                  ? SvgPicture.asset(
-                      'assets/images/icons/pause.svg',
-                      width: 30,
-                      height: 30,
-                    )
-                  : SvgPicture.asset(
-                      'assets/images/icons/play.svg',
-                      width: 30,
-                      height: 30,
-                    ),
-            ),
+          return Row(
+            children: [
+              InkWell(
+                onTap: () async {
+                  if (isPlaying) {
+                    await updatedPlayer.pause();
+                  } else {
+                    await updatedPlayer.play();
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: isPlaying
+                      ? SvgPicture.asset(
+                          'assets/images/icons/pause.svg',
+                          width: 30,
+                          height: 30,
+                        )
+                      : SvgPicture.asset(
+                          'assets/images/icons/play.svg',
+                          width: 30,
+                          height: 30,
+                        ),
+                ),
+              ),
+              currentAyahText,
+            ],
           );
         },
       ),

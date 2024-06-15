@@ -34,13 +34,13 @@ class QuranBookTilawat extends ConsumerWidget {
     var qSettings = ref.watch(quranSettingsProvider);
 
     if (qSettings.containsKey('qari')) {
-      return Row(
-        children: [
-          WithPreferences(
-            builder: (context, preferences) {
-              String theme = preferences.getString('theme') ?? 'classic';
+      return WithPreferences(
+        builder: (context, preferences) {
+          String theme = preferences.getString('theme') ?? 'classic';
 
-              return TextButton(
+          return Row(
+            children: [
+              TextButton(
                 child: Text(
                   locales.ayah,
                   style: textTheme.titleMedium?.copyWith(
@@ -70,24 +70,25 @@ class QuranBookTilawat extends ConsumerWidget {
                     },
                   );
                 },
-              );
-            },
-          ),
-          if (qSettings.containsKey('qari') &&
-              qSettings.containsKey('surahNo') &&
-              qSettings.containsKey('surahTitle') &&
-              qSettings.containsKey('qitabFromAyah') &&
-              qSettings.containsKey('qitabToAyah')) ...[
-            QuranBookPlayer(
-              player: ref.read(playerProvider),
-              qari: qSettings['qari'],
-              surahNo: qSettings['surahNo'],
-              surahTitle: qSettings['surahTitle'],
-              fromAyah: qSettings['qitabFromAyah'],
-              toAyah: qSettings['qitabToAyah'],
-            ),
-          ],
-        ],
+              ),
+              if (qSettings.containsKey('qari') &&
+                  qSettings.containsKey('surahNo') &&
+                  qSettings.containsKey('surahTitle') &&
+                  qSettings.containsKey('qitabFromAyah') &&
+                  qSettings.containsKey('qitabToAyah')) ...[
+                QuranBookPlayer(
+                  player: ref.read(playerProvider),
+                  qari: qSettings['qari'],
+                  surahNo: qSettings['surahNo'],
+                  surahTitle: qSettings['surahTitle'],
+                  fromAyah: qSettings['qitabFromAyah'],
+                  toAyah: qSettings['qitabToAyah'],
+                  preferences: preferences,
+                ),
+              ],
+            ],
+          );
+        },
       );
     } else {
       return const SizedBox.shrink();
