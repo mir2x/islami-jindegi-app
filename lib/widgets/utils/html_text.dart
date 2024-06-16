@@ -38,7 +38,7 @@ class HtmlText extends StatelessWidget {
     ).copyWith(
       lineHeight: const LineHeight(1.45),
       margin: Margins.zero,
-      fontSize: FontSize(25 * fontSizeRatio),
+      fontSize: FontSize(20 * fontSizeRatio),
     );
 
     Style bodyExtraLarge = Style.fromTextStyle(
@@ -46,7 +46,7 @@ class HtmlText extends StatelessWidget {
     ).copyWith(
       lineHeight: const LineHeight(1.45),
       margin: Margins.zero,
-      fontSize: FontSize(30 * fontSizeRatio),
+      fontSize: FontSize(24 * fontSizeRatio),
     );
 
     Style paragraph = Style.fromTextStyle(
