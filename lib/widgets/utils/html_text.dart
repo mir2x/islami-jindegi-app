@@ -67,10 +67,14 @@ class HtmlText extends StatelessWidget {
           },
         ),
       ],
-      onLinkTap: (String? strUrl, attributes, __) async {
-        if (strUrl != null) {
-          final url = Uri.parse(strUrl);
-          await launchUrl(url, mode: LaunchMode.externalApplication);
+      onLinkTap: (String? url, _, __) async {
+        if (url != null) {
+          final uri = Uri.parse(url);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri);
+          } else {
+            throw 'Could not launch $url';
+          }
         }
       },
       style: {
