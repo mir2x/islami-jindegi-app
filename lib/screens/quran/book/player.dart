@@ -117,70 +117,67 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
     );
 
     Widget currentAyahText = Text(
-      currentAyah.toString(),
+      numFormatter.format(currentAyah),
       style: textTheme.titleMedium?.copyWith(
         color: AppTheme.titleContrastColor[theme],
       ),
     );
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 5),
-      child: qiratProvider.when(
-        loading: () => Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: SvgPicture.asset(
-                'assets/images/icons/pause.svg',
-                width: 30,
-                height: 30,
-              ),
-            ),
-            currentAyahText,
-          ],
-        ),
-        error: (error, _) => InkWell(
-          onTap: () {},
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+    return qiratProvider.when(
+      loading: () => Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: SvgPicture.asset(
-              'assets/images/icons/play.svg',
+              'assets/images/icons/pause.svg',
               width: 30,
               height: 30,
             ),
           ),
-        ),
-        data: (updatedPlayer) {
-          return Row(
-            children: [
-              InkWell(
-                onTap: () async {
-                  if (isPlaying) {
-                    await updatedPlayer.pause();
-                  } else {
-                    await updatedPlayer.play();
-                  }
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: isPlaying
-                      ? SvgPicture.asset(
-                          'assets/images/icons/pause.svg',
-                          width: 30,
-                          height: 30,
-                        )
-                      : SvgPicture.asset(
-                          'assets/images/icons/play.svg',
-                          width: 30,
-                          height: 30,
-                        ),
-                ),
-              ),
-              currentAyahText,
-            ],
-          );
-        },
+          currentAyahText,
+        ],
       ),
+      error: (error, _) => InkWell(
+        onTap: () {},
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: SvgPicture.asset(
+            'assets/images/icons/play.svg',
+            width: 30,
+            height: 30,
+          ),
+        ),
+      ),
+      data: (updatedPlayer) {
+        return Row(
+          children: [
+            InkWell(
+              onTap: () async {
+                if (isPlaying) {
+                  await updatedPlayer.pause();
+                } else {
+                  await updatedPlayer.play();
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: isPlaying
+                    ? SvgPicture.asset(
+                        'assets/images/icons/pause.svg',
+                        width: 30,
+                        height: 30,
+                      )
+                    : SvgPicture.asset(
+                        'assets/images/icons/play.svg',
+                        width: 30,
+                        height: 30,
+                      ),
+              ),
+            ),
+            currentAyahText,
+          ],
+        );
+      },
     );
   }
 }

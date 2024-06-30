@@ -289,40 +289,42 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
               );
             }
 
-            var qSettings = ref.read(quranSettingsProvider);
+            var qitabSurahQuery = AllModelsQuery(
+              repository: ref.quranBookSurahs,
+              params: {
+                'bookId': book.id,
+                'page': page,
+                'include': 'surah',
+                'offline': true,
+              },
+            );
 
-            if (qSettings.containsKey('qari')) {
-              var query = AllModelsQuery(
-                repository: ref.quranBookSurahs,
-                params: {
-                  'bookId': book.id,
-                  'page': widget.pdfController.page,
-                  'include': 'surah',
-                  'offline': true,
-                },
+            var qitabSurahs = await ref.read(
+              allModelsProvider(qitabSurahQuery).future,
+            );
+
+            if (qitabSurahs.length == 1) {
+              var qitabSurah = qitabSurahs.first;
+              var notifier = ref.read(quranSettingsProvider.notifier);
+
+              notifier.updateParams('qitabFromAyah', qitabSurah.startAyah);
+              notifier.updateParams('qitabToAyah', qitabSurah.endAyah);
+              notifier.updateParams(
+                'surahNo',
+                qitabSurah.surah.value.position,
               );
-
-              var resources = await ref.read(allModelsProvider(query).future);
-
-              if (resources.length == 1) {
-                var qitabSurah = resources.first;
-                var notifier = ref.read(quranSettingsProvider.notifier);
-
-                notifier.updateParams('qitabFromAyah', qitabSurah.startAyah);
-                notifier.updateParams('qitabToAyah', qitabSurah.endAyah);
-                notifier.updateParams(
-                  'surahNo',
-                  qitabSurah.surah.value.position,
-                );
-                notifier.updateParams(
-                  'surahTitle',
-                  contextualTranslation(
-                    locale: currentLang,
-                    enText: qitabSurah.surah.value.title,
-                    bnText: qitabSurah.surah.value.titleBn,
-                  ),
-                );
-              }
+              notifier.updateParams(
+                'surahSlug',
+                qitabSurah.surah.value.slug,
+              );
+              notifier.updateParams(
+                'surahTitle',
+                contextualTranslation(
+                  locale: currentLang,
+                  enText: qitabSurah.surah.value.title,
+                  bnText: qitabSurah.surah.value.titleBn,
+                ),
+              );
             }
           },
         ),
@@ -339,13 +341,76 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
         alignment: MainAxisAlignment.spaceBetween,
         children: [
           const QuranMenuButton(),
-          Row(
-            children: [
-              WithPreferences(
-                builder: (context, preferences) {
-                  String theme = preferences.getString('theme') ?? 'classic';
+          WithPreferences(
+            builder: (context, preferences) {
+              String theme = preferences.getString('theme') ?? 'classic';
+              double screenWidth = MediaQuery.of(context).size.width;
+              bool isSmallMobile = screenWidth < 340;
 
-                  return TextButton(
+              return Row(
+                children: [
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      minimumSize: Size.zero,
+                      padding: EdgeInsets.all(isSmallMobile ? 0 : 5),
+                    ),
+                    child: Text(
+                      locales.translation,
+                      style: textTheme.titleMedium?.copyWith(
+                        color: AppTheme.titleContrastColor[theme],
+                      ),
+                    ),
+                    onPressed: () async {
+                      var qSettings = ref.read(quranSettingsProvider);
+
+                      String? slug;
+                      int? qitabFromAyah;
+
+                      if (qSettings.containsKey('surahSlug') &&
+                          qSettings.containsKey('qitabFromAyah')) {
+                        slug = qSettings['surahSlug'];
+                        qitabFromAyah = qSettings['qitabFromAyah'];
+                      } else {
+                        var qitabSurahQuery = AllModelsQuery(
+                          repository: ref.quranBookSurahs,
+                          params: {
+                            'bookId': book.id,
+                            'page': widget.pdfController.page,
+                            'include': 'surah',
+                            'offline': true,
+                          },
+                        );
+
+                        var qitabSurahs = await ref.read(
+                          allModelsProvider(qitabSurahQuery).future,
+                        );
+
+                        if (qitabSurahs.length == 1) {
+                          var qitabSurah = qitabSurahs.first;
+                          slug = qitabSurah.surah.value.slug;
+                          qitabFromAyah = qitabSurah.startAyah;
+                        }
+                      }
+
+                      if (slug != null && qitabFromAyah != null) {
+                        await preferences.setInt(
+                          'lastAyahPosition',
+                          qitabFromAyah - 1,
+                        );
+
+                        ref
+                            .read(quranSettingsProvider.notifier)
+                            .updateParams('translation', true);
+
+                        QR.to('quran/surah/$slug');
+                      }
+                    },
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      minimumSize: Size.zero,
+                      padding: EdgeInsets.all(isSmallMobile ? 0 : 5),
+                    ),
                     child: Text(
                       locales.qaris,
                       style: textTheme.titleMedium?.copyWith(
@@ -372,14 +437,14 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                         },
                       );
                     },
-                  );
-                },
-              ),
-              QuranBookTilawat(
-                bookId: book.id,
-                pdfController: widget.pdfController,
-              ),
-            ],
+                  ),
+                  QuranBookTilawat(
+                    bookId: book.id,
+                    pdfController: widget.pdfController,
+                  ),
+                ],
+              );
+            },
           ),
           DeleteButton(filePath: widget.filePath),
         ],

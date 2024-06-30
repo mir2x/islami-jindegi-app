@@ -31,6 +31,7 @@ class QuranBookTilawat extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallMobile = screenWidth < 340;
     var qSettings = ref.watch(quranSettingsProvider);
 
     if (qSettings.containsKey('qari')) {
@@ -41,6 +42,10 @@ class QuranBookTilawat extends ConsumerWidget {
           return Row(
             children: [
               TextButton(
+                style: TextButton.styleFrom(
+                  minimumSize: Size.zero,
+                  padding: EdgeInsets.all(isSmallMobile ? 0 : 5),
+                ),
                 child: Text(
                   locales.ayah,
                   style: textTheme.titleMedium?.copyWith(
@@ -291,6 +296,7 @@ class _QuranBookTilawatRangeState extends ConsumerState<QuranBookTilawatRange> {
               notifier.updateParams('qitabFromAyah', fromValue);
               notifier.updateParams('qitabToAyah', toValue);
               notifier.updateParams('surahNo', widget.surah.position);
+              notifier.updateParams('surahSlug', widget.surah.slug);
               notifier.updateParams(
                 'surahTitle',
                 contextualTranslation(
