@@ -5,6 +5,7 @@ import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/theme/app_theme.dart';
 import 'dates_prayers.dart';
 import 'resource.dart';
+import 'malfuzat_popup.dart';
 import 'news.dart';
 
 class Home extends StatelessWidget {
@@ -124,6 +125,7 @@ class Home extends StatelessWidget {
                 ),
               ],
             ),
+            const MalfuzatPopup(),
             Container(
               margin: EdgeInsets.only(
                 left: sideMargin,
