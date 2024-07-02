@@ -116,6 +116,7 @@ dependencies:
 dependency_overrides:
   uuid: ^4.0.0
   flutter_data: 1.5.15
+  location: ^5.0.0
 
 dev_dependencies:
   flutter_test:

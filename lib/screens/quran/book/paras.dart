@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
-import 'package:pdfx/pdfx.dart';
+import 'package:pdfrx/pdfrx.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
@@ -20,7 +20,7 @@ class QuranBookParas extends ConsumerWidget {
   });
 
   final dynamic book;
-  final PdfController pdfController;
+  final PdfViewerController pdfController;
   final Function closeDrawer;
 
   @override
@@ -83,7 +83,7 @@ class StatefulParas extends ConsumerStatefulWidget {
 
   final dynamic book;
   final List bookParas;
-  final PdfController pdfController;
+  final PdfViewerController pdfController;
   final Function closeDrawer;
 
   @override
@@ -192,7 +192,9 @@ class _ParasState extends ConsumerState<StatefulParas> {
 
                         if (resources.isNotEmpty) {
                           var bookPage = resources.first;
-                          widget.pdfController.jumpToPage(bookPage.position);
+                          widget.pdfController.goToPage(
+                            pageNumber: bookPage.position,
+                          );
                         }
 
                         widget.closeDrawer();

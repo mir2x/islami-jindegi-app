@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:pdfx/pdfx.dart';
+import 'package:pdfrx/pdfrx.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/theme/colors.dart';
@@ -16,7 +16,7 @@ class QuranDrawer extends ConsumerStatefulWidget {
   });
 
   final dynamic book;
-  final PdfController pdfController;
+  final PdfViewerController pdfController;
 
   @override
   ConsumerState<QuranDrawer> createState() => _QuranDrawerState();

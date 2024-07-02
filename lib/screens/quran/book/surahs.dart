@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:pdfx/pdfx.dart';
+import 'package:pdfrx/pdfrx.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
@@ -19,7 +19,7 @@ class QuranBookSurahs extends ConsumerWidget {
   });
 
   final dynamic book;
-  final PdfController pdfController;
+  final PdfViewerController pdfController;
   final Function closeDrawer;
 
   @override
@@ -66,7 +66,7 @@ class StatefulSurahs extends ConsumerStatefulWidget {
 
   final dynamic book;
   final List surahs;
-  final PdfController pdfController;
+  final PdfViewerController pdfController;
   final Function closeDrawer;
 
   @override
@@ -181,7 +181,9 @@ class _SurahsState extends ConsumerState<StatefulSurahs> {
 
                         if (resources.isNotEmpty) {
                           var bookPage = resources.first;
-                          widget.pdfController.jumpToPage(bookPage.position);
+                          widget.pdfController.goToPage(
+                            pageNumber: bookPage.position,
+                          );
                         }
 
                         widget.closeDrawer();
