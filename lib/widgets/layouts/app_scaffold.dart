@@ -28,6 +28,7 @@ class AppScaffold extends ConsumerWidget {
     this.showAppBar = true,
     this.showBottomBar = true,
     this.showPattern = true,
+    this.tabletBodyPadding = true,
   });
 
   final Text title;
@@ -40,6 +41,7 @@ class AppScaffold extends ConsumerWidget {
   final bool showAppBar;
   final bool showBottomBar;
   final bool showPattern;
+  final bool tabletBodyPadding;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -280,15 +282,19 @@ class AppScaffold extends ConsumerWidget {
                   if (constraints.maxWidth < 768) {
                     return body;
                   } else {
-                    double screenWidth = MediaQuery.of(context).size.width;
+                    if (tabletBodyPadding) {
+                      double screenWidth = MediaQuery.of(context).size.width;
 
-                    return Container(
-                      padding: EdgeInsets.only(
-                        left: screenWidth * 0.06,
-                        right: screenWidth * 0.06,
-                      ),
-                      child: body,
-                    );
+                      return Container(
+                        padding: EdgeInsets.only(
+                          left: screenWidth * 0.06,
+                          right: screenWidth * 0.06,
+                        ),
+                        child: body,
+                      );
+                    } else {
+                      return body;
+                    }
                   }
                 },
               ),

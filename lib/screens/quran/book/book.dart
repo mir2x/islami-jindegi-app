@@ -221,8 +221,10 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
 
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-
-    double heightAdjustment = isFullScreen ? 0 : 160;
+    double barHeight = kToolbarHeight +
+        MediaQuery.of(context).padding.top +
+        kBottomNavigationBarHeight;
+    double heightAdjustment = isFullScreen ? 0 : barHeight;
 
     var pdfFile = ref.watch(localFileProvider(widget.filePath));
 
@@ -230,6 +232,7 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
       showAppBar: !isFullScreen,
       showBottomBar: !isFullScreen,
       title: Text(widget.qitabTitle),
+      tabletBodyPadding: false,
       body: GestureDetector(
         onTap: () => toggleFullScreen(),
         child: pdfFile.when(
@@ -243,6 +246,7 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
             int initalPage =
                 widget.preferences.getInt('pdfResource-${widget.qitab.id}') ??
                     1;
+
             return PdfViewer.file(
               localFile!.path,
               controller: pdfController,
