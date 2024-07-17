@@ -212,6 +212,8 @@
   "file": "File",
   "deleteFile": "Delete File",
   "switchMode": "Switch Mode",
+  "landscape": "Landscape",
+  "portrait": "Portrait",
 
   "errorTitle": "Error!",
   "pageNotFoundTitle": "Page Not Found",

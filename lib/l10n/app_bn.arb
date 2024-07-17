@@ -218,8 +218,8 @@
   "file": "ফাইল",
   "deleteFile": "ফাইল ডিলিট করুন",
   "switchMode": "মোড সুইচ করুন",
-
-
+  "landscape": "আনুভূমিক",
+  "portrait": "উলম্ব",
 
   "errorTitle": "সমস্যা!",
   "pageNotFoundTitle": "পেইজটি পাওয়া যায়নি",
