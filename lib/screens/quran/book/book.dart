@@ -24,11 +24,12 @@ import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/widgets/buttons/download.dart';
-import 'package:native_app/widgets/buttons/delete.dart';
+import 'package:native_app/helpers/delete_file.dart';
 import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/helpers/file_size.dart';
 import 'package:native_app/settings/image.dart';
+import 'package:native_app/theme/colors.dart';
 import 'drawer.dart';
 import 'tilawat.dart';
 import '../qari_list.dart';
@@ -178,6 +179,7 @@ class QuranDisplay extends ConsumerStatefulWidget {
 
 class _QuranDisplayState extends ConsumerState<QuranDisplay> {
   bool isFullScreen = false;
+  bool darkMode = false;
   final pdfController = PdfViewerController();
 
   @override
@@ -208,6 +210,12 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
               SystemUiMode.manual,
               overlays: SystemUiOverlay.values,
             );
+    });
+  }
+
+  void toggleMode() {
+    setState(() {
+      darkMode = !darkMode;
     });
   }
 
@@ -247,112 +255,118 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                 widget.preferences.getInt('pdfResource-${widget.qitab.id}') ??
                     1;
 
-            return PdfViewer.file(
-              localFile!.path,
-              controller: pdfController,
-              initialPageNumber: initalPage,
-              params: PdfViewerParams(
-                margin: 0,
-                layoutPages: (pages, params) {
-                  final pageCount = pages.length;
-                  final height = screenHeight - heightAdjustment;
-                  final width = pageCount * screenWidth;
-                  final pageLayouts = <Rect>[];
-                  double x = width;
+            return ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                Colors.white,
+                darkMode ? BlendMode.difference : BlendMode.dst,
+              ),
+              child: PdfViewer.file(
+                localFile!.path,
+                controller: pdfController,
+                initialPageNumber: initalPage,
+                params: PdfViewerParams(
+                  margin: 0,
+                  layoutPages: (pages, params) {
+                    final pageCount = pages.length;
+                    final height = screenHeight - heightAdjustment;
+                    final width = pageCount * screenWidth;
+                    final pageLayouts = <Rect>[];
+                    double x = width;
 
-                  while (x > 10) {
-                    x -= screenWidth;
-                    pageLayouts.add(
-                      Rect.fromLTWH(
-                        x,
-                        0,
-                        screenWidth,
-                        height,
-                      ),
-                    );
-                  }
-                  return PdfPageLayout(
-                    pageLayouts: pageLayouts,
-                    documentSize: Size(width, height),
-                  );
-                },
-                onPageChanged: (page) async {
-                  if (page == null) {
-                    return;
-                  }
-
-                  var scaffoldMessenger = ScaffoldMessenger.of(context);
-
-                  var query = AllModelsQuery(
-                    repository: ref.quranBookPages,
-                    params: {
-                      'quranBookId': book.id,
-                      'position': page,
-                      'quantity': 1,
-                      'offline': true,
-                    },
-                  );
-
-                  var resources =
-                      await ref.watch(allModelsProvider(query).future);
-
-                  if (resources.isNotEmpty) {
-                    await widget.preferences
-                        .setInt('pdfResource-${widget.qitab.id}', page);
-                    scaffoldMessenger.removeCurrentSnackBar();
-
-                    scaffoldMessenger.showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          resources.first.title,
-                          textAlign: TextAlign.center,
+                    while (x > 10) {
+                      x -= screenWidth;
+                      pageLayouts.add(
+                        Rect.fromLTWH(
+                          x,
+                          0,
+                          screenWidth,
+                          height,
                         ),
-                        duration: const Duration(seconds: 3),
-                      ),
+                      );
+                    }
+                    return PdfPageLayout(
+                      pageLayouts: pageLayouts,
+                      documentSize: Size(width, height),
                     );
-                  }
+                  },
+                  onPageChanged: (page) async {
+                    if (page == null) {
+                      return;
+                    }
 
-                  var qitabSurahQuery = AllModelsQuery(
-                    repository: ref.quranBookSurahs,
-                    params: {
-                      'bookId': book.id,
-                      'page': page,
-                      'include': 'surah',
-                      'offline': true,
-                    },
-                  );
+                    var scaffoldMessenger = ScaffoldMessenger.of(context);
 
-                  var qitabSurahs = await ref.read(
-                    allModelsProvider(qitabSurahQuery).future,
-                  );
+                    var query = AllModelsQuery(
+                      repository: ref.quranBookPages,
+                      params: {
+                        'quranBookId': book.id,
+                        'position': page,
+                        'quantity': 1,
+                        'offline': true,
+                      },
+                    );
 
-                  if (qitabSurahs.length == 1) {
-                    var qitabSurah = qitabSurahs.first;
-                    var notifier = ref.read(quranSettingsProvider.notifier);
+                    var resources =
+                        await ref.watch(allModelsProvider(query).future);
 
-                    notifier.updateParams(
-                      'qitabFromAyah',
-                      qitabSurah.startAyah,
+                    if (resources.isNotEmpty) {
+                      await widget.preferences
+                          .setInt('pdfResource-${widget.qitab.id}', page);
+                      scaffoldMessenger.removeCurrentSnackBar();
+
+                      scaffoldMessenger.showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            resources.first.title,
+                            textAlign: TextAlign.center,
+                          ),
+                          duration: const Duration(seconds: 3),
+                        ),
+                      );
+                    }
+
+                    var qitabSurahQuery = AllModelsQuery(
+                      repository: ref.quranBookSurahs,
+                      params: {
+                        'bookId': book.id,
+                        'page': page,
+                        'include': 'surah',
+                        'offline': true,
+                      },
                     );
-                    notifier.updateParams('qitabToAyah', qitabSurah.endAyah);
-                    notifier.updateParams(
-                      'surahNo',
-                      qitabSurah.surah.value.position,
+
+                    var qitabSurahs = await ref.read(
+                      allModelsProvider(qitabSurahQuery).future,
                     );
-                    notifier.updateParams(
-                      'surahSlug',
-                      qitabSurah.surah.value.slug,
-                    );
-                    notifier.updateParams(
-                      'surahTitle',
-                      contextualTranslation(
-                        locale: currentLang,
-                        enText: qitabSurah.surah.value.title,
-                        bnText: qitabSurah.surah.value.titleBn,
-                      ),
-                    );
-                  }
-                },
+
+                    if (qitabSurahs.length == 1) {
+                      var qitabSurah = qitabSurahs.first;
+                      var notifier = ref.read(quranSettingsProvider.notifier);
+
+                      notifier.updateParams(
+                        'qitabFromAyah',
+                        qitabSurah.startAyah,
+                      );
+                      notifier.updateParams('qitabToAyah', qitabSurah.endAyah);
+                      notifier.updateParams(
+                        'surahNo',
+                        qitabSurah.surah.value.position,
+                      );
+                      notifier.updateParams(
+                        'surahSlug',
+                        qitabSurah.surah.value.slug,
+                      );
+                      notifier.updateParams(
+                        'surahTitle',
+                        contextualTranslation(
+                          locale: currentLang,
+                          enText: qitabSurah.surah.value.title,
+                          bnText: qitabSurah.surah.value.titleBn,
+                        ),
+                      );
+                    }
+                  },
+                ),
               ),
             );
           },
@@ -475,7 +489,65 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
               );
             },
           ),
-          DeleteButton(filePath: widget.filePath),
+          PopupMenuButton<int>(
+            child: const SizedBox(
+              width: 45,
+              height: 50,
+              child: Icon(
+                Icons.more_vert,
+              ),
+            ),
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+              PopupMenuItem<int>(
+                value: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      locales.deleteFile,
+                      style: textTheme.labelMedium,
+                    ),
+                    const SizedBox(width: 10),
+                    const Icon(
+                      Icons.delete,
+                      color: ThemeColors.danger,
+                    ),
+                  ],
+                ),
+              ),
+              PopupMenuItem<int>(
+                value: 1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      locales.switchMode,
+                      style: textTheme.labelMedium,
+                    ),
+                    const SizedBox(width: 10),
+                    Icon(
+                      Icons.dark_mode,
+                      color: darkMode ? Colors.white : Colors.black,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            onSelected: (int item) {
+              switch (item) {
+                case 0:
+                  deleteFile(
+                    context: context,
+                    ref: ref,
+                    filePath: widget.filePath,
+                  );
+                  break;
+                case 1:
+                  toggleMode();
+                  break;
+              }
+            },
+          ),
         ],
       ),
     );

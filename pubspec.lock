@@ -1195,10 +1195,10 @@ packages:
     dependency: "direct main"
     description:
       name: pdfrx
-      sha256: "8e93c5f8c600e4afb0d1bd381b1f11e4c11d6a4ce51bf6f1930c2e0d6c53765c"
+      sha256: "0e8c6acb3340ac0fb1402f7a381e0b276b89af7f8ef157157c27d3932a54d96d"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.73"
+    version: "1.0.81"
   pdfx:
     dependency: "direct main"
     description:

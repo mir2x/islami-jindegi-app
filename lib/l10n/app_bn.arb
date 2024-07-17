@@ -216,6 +216,9 @@
   "websiteLink": "ওয়েবসাইট লিংক",
   "link": "লিংক",
   "file": "ফাইল",
+  "deleteFile": "ফাইল ডিলিট করুন",
+  "switchMode": "মোড সুইচ করুন",
+
 
 
   "errorTitle": "সমস্যা!",
