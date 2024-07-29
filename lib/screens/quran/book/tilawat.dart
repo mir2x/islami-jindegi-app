@@ -81,6 +81,7 @@ class QuranBookTilawat extends ConsumerWidget {
                 },
               ),
               if (qSettings.containsKey('qari') &&
+                  qSettings.containsKey('surahId') &&
                   qSettings.containsKey('surahNo') &&
                   qSettings.containsKey('surahTitle') &&
                   qSettings.containsKey('qitabFromAyah') &&
@@ -88,6 +89,7 @@ class QuranBookTilawat extends ConsumerWidget {
                 QuranBookPlayer(
                   player: ref.read(playerProvider),
                   qari: qSettings['qari'],
+                  surahId: qSettings['surahId'],
                   surahNo: qSettings['surahNo'],
                   surahTitle: qSettings['surahTitle'],
                   fromAyah: qSettings['qitabFromAyah'],
@@ -300,7 +302,7 @@ class _QuranBookTilawatRangeState extends ConsumerState<QuranBookTilawatRange> {
               notifier.updateParams('qitabFromAyah', fromValue);
               notifier.updateParams('qitabToAyah', toValue);
               notifier.updateParams('surahNo', widget.surah.position);
-              notifier.updateParams('surahSlug', widget.surah.slug);
+              notifier.updateParams('surahId', widget.surah.id);
               notifier.updateParams(
                 'surahTitle',
                 contextualTranslation(

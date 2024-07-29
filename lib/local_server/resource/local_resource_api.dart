@@ -93,6 +93,8 @@ class LocalResourceAPI extends _$LocalResourceAPI {
         return queryPara(params);
       case 'ayahs':
         return queryAyah(params);
+      case 'ayahTranslations':
+        return queryAyahTranslation(params);
       case 'tafseerQitabs':
         return queryTafseerQitab(params);
       case 'qaris':
@@ -389,6 +391,43 @@ class LocalResourceAPI extends _$LocalResourceAPI {
   Future<AyahTranslation?> findAyahTranslationById(String id) {
     return (select(ayahTranslations)..where((t) => t.id.equals(id)))
         .getSingleOrNull();
+  }
+
+  Future<List<AyahTranslation>> queryAyahTranslation(Map params) async {
+    var query = select(ayahTranslations);
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    } else {
+      query.limit(params['quantity'] ?? 20);
+    }
+
+    if (params.containsKey('surahId') && params.containsKey('ayahNo')) {
+      String surahId = params['surahId'];
+      int ayahNo = params['ayahNo'];
+
+      var rows = await (query.join(
+        [
+          innerJoin(
+            ayahs,
+            ayahs.id.equalsExp(ayahTranslations.ayahId),
+          ),
+        ],
+      )..where(
+              ayahs.surahId.equals(surahId) &
+                  ayahs.surahPosition.equals(ayahNo),
+            ))
+          .get();
+
+      return Future.value(
+        rows.map((row) => row.readTable(ayahTranslations)).toList(),
+      );
+    } else {
+      return query.get();
+    }
   }
 
   Future<List<Qari>> queryQari(Map params) {

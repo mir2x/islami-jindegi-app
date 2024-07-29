@@ -1,12 +1,16 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart' hide TextDirection;
+import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/qirat_player.dart';
 import 'package:native_app/providers/bismillah_player.dart';
 import 'package:native_app/objects/qirat_audio.dart';
+import 'package:native_app/widgets/utils/html_text.dart';
+import 'package:native_app/widgets/presentation/popup_dialog.dart';
 import 'package:native_app/theme/app_theme.dart';
 
 class QuranBookPlayer extends ConsumerStatefulWidget {
@@ -14,6 +18,7 @@ class QuranBookPlayer extends ConsumerStatefulWidget {
     super.key,
     required this.player,
     required this.qari,
+    required this.surahId,
     required this.surahNo,
     required this.surahTitle,
     required this.fromAyah,
@@ -23,6 +28,7 @@ class QuranBookPlayer extends ConsumerStatefulWidget {
 
   final AudioPlayer player;
   final String qari;
+  final String surahId;
   final int surahNo;
   final String surahTitle;
   final int fromAyah;
@@ -95,7 +101,10 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
   @override
   Widget build(BuildContext context) {
     String currentLang = Localizations.localeOf(context).languageCode;
+    var locales = AppLocalizations.of(context)!;
     var numFormatter = NumberFormat('#', currentLang);
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallMobile = screenWidth < 340;
     String theme = widget.preferences.getString('theme') ?? 'classic';
     var textTheme = Theme.of(context).textTheme;
     String audioPath = '${widget.qari}/${widget.surahNo}/$currentAyah.mp3';
@@ -175,6 +184,67 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
               ),
             ),
             currentAyahText,
+            const SizedBox(width: 5),
+            TextButton(
+              style: TextButton.styleFrom(
+                minimumSize: Size.zero,
+                padding: EdgeInsets.all(isSmallMobile ? 0 : 5),
+              ),
+              child: Text(
+                locales.translation,
+                style: textTheme.titleMedium?.copyWith(
+                  color: AppTheme.titleContrastColor[theme],
+                ),
+              ),
+              onPressed: () async {
+                var translations = await ref.ayahTranslations.findAll(
+                  params: {
+                    'ayahNo': currentAyah,
+                    'surahId': widget.surahId,
+                    'quantity': 1,
+                  },
+                );
+
+                if (context.mounted) {
+                  await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      var textTheme = Theme.of(context).textTheme;
+                      var item = translations.first;
+
+                      return PopupDialog(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 15),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      widget.surahTitle,
+                                      style: textTheme.headlineMedium,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      ', ${locales.ayah}: ${numFormatter.format(currentAyah)}',
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 20),
+                                child: HtmlText(text: item.body),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
+            ),
           ],
         );
       },
