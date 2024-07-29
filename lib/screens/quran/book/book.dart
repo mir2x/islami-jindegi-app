@@ -15,9 +15,9 @@ import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
+import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 // import 'package:native_app/objects/pdf_builders.dart';
-import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/widgets/presentation/connect_to_internet.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
@@ -52,7 +52,13 @@ class QuranBook extends ConsumerWidget {
     var modelQuery = ref.watch(singleModelProvider(query));
 
     return modelQuery.when(
-      loading: () => const FullScreenLoader(),
+      loading: () {
+        return const PlaceholderScaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (qitab) {
         String qitabTitle = contextualTranslation(
@@ -69,7 +75,13 @@ class QuranBook extends ConsumerWidget {
           var checkDownloadedFile = ref.watch(checkFileProvider);
 
           return checkDownloadedFile.when(
-            loading: () => const CircularProgressIndicator(),
+            loading: () {
+              return const PlaceholderScaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            },
             error: (error, stackTrace) => Text(error.toString()),
             data: (isDownloaded) {
               if (isDownloaded) {
