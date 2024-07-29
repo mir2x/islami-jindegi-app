@@ -7,7 +7,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_core
   geolocator_windows
   isar_flutter_libs
-  pdfx
   permission_handler_windows
   share_plus
   sqlite3_flutter_libs

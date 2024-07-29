@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -12,11 +13,11 @@ import 'package:native_app/providers/downloaded_books.dart';
 import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
+import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/utils/with_last_visited.dart';
-import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/utils/comma_separated_list.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
@@ -30,11 +31,56 @@ import 'package:native_app/theme/colors.dart';
 import 'display.dart';
 import 'image.dart';
 
-class BookItem extends ConsumerWidget {
+class BookItem extends ConsumerStatefulWidget {
   const BookItem({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<BookItem> createState() => _BookItemState();
+}
+
+class _BookItemState extends ConsumerState<BookItem> {
+  bool isFullScreen = false;
+  bool darkMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: SystemUiOverlay.values,
+    );
+    super.dispose();
+  }
+
+  void toggleFullScreen() {
+    setState(() {
+      isFullScreen = !isFullScreen;
+
+      isFullScreen
+          ? SystemChrome.setEnabledSystemUIMode(
+              SystemUiMode.manual,
+              overlays: [],
+            )
+          : SystemChrome.setEnabledSystemUIMode(
+              SystemUiMode.manual,
+              overlays: SystemUiOverlay.values,
+            );
+    });
+  }
+
+  void toggleMode() {
+    setState(() {
+      darkMode = !darkMode;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
 
@@ -93,19 +139,25 @@ class BookItem extends ConsumerWidget {
           fileLink = fileSrcUrl(book.document);
         }
 
-        return AppScaffold(
-          onBackPressed: () async => await QR.to('books'),
-          showPattern: false,
-          title: Text(locales.book),
-          body: NextPageSwipe(
-            onPrevious: previousPage,
-            onNext: nextPage,
-            child: chapterQuery.when(
-              loading: () => const SizedBox.shrink(),
-              error: (error, _) => Text(error.toString()),
-              data: (chapters) {
-                if (chapters.isNotEmpty) {
-                  return Column(
+        return chapterQuery.when(
+          loading: () {
+            return const PlaceholderScaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          },
+          error: (error, _) => Text(error.toString()),
+          data: (chapters) {
+            if (chapters.isNotEmpty) {
+              return AppScaffold(
+                onBackPressed: () async => await QR.to('books'),
+                showPattern: false,
+                title: Text(locales.book),
+                body: NextPageSwipe(
+                  onPrevious: previousPage,
+                  onNext: nextPage,
+                  child: Column(
                     children: [
                       Container(
                         margin: const EdgeInsets.only(
@@ -240,13 +292,53 @@ class BookItem extends ConsumerWidget {
                         ),
                       ),
                     ],
-                  );
-                } else {
-                  return ItemContent(
+                  ),
+                ),
+                bottomBar: BottomBar(
+                  alignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Previous(onPrevious: previousPage),
+                    Row(
+                      children: [
+                        SocialShare(
+                          title: book.title,
+                          subtitle: book.authors
+                              .map((e) => e.name)
+                              .toList()
+                              .join(', '),
+                          link: 'books/${book.id}',
+                          fileLink: fileLink,
+                        ),
+                        BookmarkButton(
+                          type: 'Book',
+                          title: book.title,
+                          link: 'books/${book.id}',
+                        ),
+                      ],
+                    ),
+                    Next(onNext: nextPage),
+                  ],
+                ),
+              );
+            } else {
+              return AppScaffold(
+                onBackPressed: () async => await QR.to('books'),
+                showPattern: false,
+                showAppBar: !isFullScreen,
+                showBottomBar: !isFullScreen,
+                title: Text(locales.book),
+                body: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
                         width: double.infinity,
-                        margin: const EdgeInsets.only(bottom: 5),
+                        margin: const EdgeInsets.only(
+                          top: 20,
+                          left: 20,
+                          right: 20,
+                          bottom: 5,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -319,36 +411,48 @@ class BookItem extends ConsumerWidget {
                                 },
                               )
                             : null,
+                        isFullScreen: isFullScreen,
+                        darkMode: darkMode,
+                        toggleFullScreen: toggleFullScreen,
                       ),
                     ],
-                  );
-                }
-              },
-            ),
-          ),
-          bottomBar: BottomBar(
-            alignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Previous(onPrevious: previousPage),
-              Row(
-                children: [
-                  SocialShare(
-                    title: book.title,
-                    subtitle:
-                        book.authors.map((e) => e.name).toList().join(', '),
-                    link: 'books/${book.id}',
-                    fileLink: fileLink,
                   ),
-                  BookmarkButton(
-                    type: 'Book',
-                    title: book.title,
-                    link: 'books/${book.id}',
-                  ),
-                ],
-              ),
-              Next(onNext: nextPage),
-            ],
-          ),
+                ),
+                bottomBar: BottomBar(
+                  alignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Previous(onPrevious: previousPage),
+                    Row(
+                      children: [
+                        SocialShare(
+                          title: book.title,
+                          subtitle: book.authors
+                              .map((e) => e.name)
+                              .toList()
+                              .join(', '),
+                          link: 'books/${book.id}',
+                          fileLink: fileLink,
+                        ),
+                        BookmarkButton(
+                          type: 'Book',
+                          title: book.title,
+                          link: 'books/${book.id}',
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.dark_mode,
+                            color: darkMode ? Colors.white : Colors.black,
+                          ),
+                          onPressed: toggleMode,
+                        ),
+                      ],
+                    ),
+                    Next(onNext: nextPage),
+                  ],
+                ),
+              );
+            }
+          },
         );
       },
     );

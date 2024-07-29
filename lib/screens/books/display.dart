@@ -16,6 +16,9 @@ class BookDisplay extends ConsumerWidget {
     required this.document,
     required this.publishedAt,
     required this.downloadItem,
+    required this.isFullScreen,
+    required this.darkMode,
+    required this.toggleFullScreen,
   });
 
   final String id;
@@ -27,6 +30,9 @@ class BookDisplay extends ConsumerWidget {
   final Map? document;
   final String? publishedAt;
   final Widget? downloadItem;
+  final bool isFullScreen;
+  final bool darkMode;
+  final void Function() toggleFullScreen;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,38 +47,53 @@ class BookDisplay extends ConsumerWidget {
             bookTitle: title,
             image: image,
             document: document!,
+            isFullScreen: isFullScreen,
+            darkMode: darkMode,
+            toggleFullScreen: toggleFullScreen,
           ),
         ],
-        if (downloadItem != null) ...[
-          downloadItem!,
-        ],
-        if (publisher != null) ...[
-          DescriptionItem(
-            title: '${locales.publisher}:',
-            description: Text(
-              publisher!,
-              style: textTheme.labelMedium,
-            ),
+        Container(
+          margin: const EdgeInsets.only(
+            top: 30,
+            left: 20,
+            right: 20,
+            bottom: 50,
           ),
-        ],
-        if (publishedAt != null) ...[
-          DescriptionItem(
-            title: '${locales.publicationDate}:',
-            description: Text(
-              publishedAt!,
-              style: textTheme.labelMedium,
-            ),
+          child: Column(
+            children: [
+              if (downloadItem != null) ...[
+                downloadItem!,
+              ],
+              if (publisher != null) ...[
+                DescriptionItem(
+                  title: '${locales.publisher}:',
+                  description: Text(
+                    publisher!,
+                    style: textTheme.labelMedium,
+                  ),
+                ),
+              ],
+              if (publishedAt != null) ...[
+                DescriptionItem(
+                  title: '${locales.publicationDate}:',
+                  description: Text(
+                    publishedAt!,
+                    style: textTheme.labelMedium,
+                  ),
+                ),
+              ],
+              if (price != null) ...[
+                DescriptionItem(
+                  title: '${locales.price}:',
+                  description: Text(
+                    price!,
+                    style: textTheme.labelMedium,
+                  ),
+                ),
+              ],
+            ],
           ),
-        ],
-        if (price != null) ...[
-          DescriptionItem(
-            title: '${locales.price}:',
-            description: Text(
-              price!,
-              style: textTheme.labelMedium,
-            ),
-          ),
-        ],
+        ),
       ],
     );
   }

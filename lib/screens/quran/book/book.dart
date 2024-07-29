@@ -17,7 +17,6 @@ import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
-// import 'package:native_app/objects/pdf_builders.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/widgets/presentation/connect_to_internet.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
@@ -400,6 +399,23 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                           ),
                         );
                       }
+                    },
+                    loadingBannerBuilder: (_, __, ___) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                    errorBannerBuilder: (context, _, __, ___) {
+                      var locales = AppLocalizations.of(context)!;
+                      var textTheme = Theme.of(context).textTheme;
+
+                      return AlertDialog(
+                        title: Text(locales.errorTitle),
+                        content: Text(
+                          locales.documentLoadErrorMsg,
+                          style: textTheme.labelMedium,
+                        ),
+                      );
                     },
                   ),
                 ),
