@@ -745,7 +745,11 @@ class LocalResourceAPI extends _$LocalResourceAPI {
       }
     }
 
-    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
+    if (params.containsKey('random') && params['random'] == true) {
+      query.orderBy([(t) => OrderingTerm.random()]);
+    } else {
+      query.orderBy([(t) => OrderingTerm(expression: t.position)]);
+    }
 
     var malfuzatItems = await query.get();
 
