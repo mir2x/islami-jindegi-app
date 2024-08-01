@@ -9,6 +9,7 @@ import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/providers/all_models.dart';
+import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/providers/downloaded_books.dart';
 import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/objects/all_models_query.dart';
@@ -18,69 +19,29 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/utils/with_last_visited.dart';
-import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/utils/comma_separated_list.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
+import 'package:native_app/widgets/buttons/download.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/widgets/utils/with_connectivity.dart';
+import 'package:native_app/widgets/presentation/connect_to_internet.dart';
+import 'package:native_app/widgets/presentation/description_item.dart';
+import 'package:native_app/widgets/utils/pdf_menu.dart';
 import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/theme/colors.dart';
-import 'display.dart';
+import 'pdf_reader.dart';
 import 'image.dart';
 
-class BookItem extends ConsumerStatefulWidget {
+class BookItem extends ConsumerWidget {
   const BookItem({super.key});
 
   @override
-  ConsumerState<BookItem> createState() => _BookItemState();
-}
-
-class _BookItemState extends ConsumerState<BookItem> {
-  bool isFullScreen = false;
-  bool darkMode = false;
-
-  @override
-  void initState() {
-    super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-  }
-
-  @override
-  void dispose() {
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual,
-      overlays: SystemUiOverlay.values,
-    );
-    super.dispose();
-  }
-
-  void toggleFullScreen() {
-    setState(() {
-      isFullScreen = !isFullScreen;
-
-      isFullScreen
-          ? SystemChrome.setEnabledSystemUIMode(
-              SystemUiMode.manual,
-              overlays: [],
-            )
-          : SystemChrome.setEnabledSystemUIMode(
-              SystemUiMode.manual,
-              overlays: SystemUiOverlay.values,
-            );
-    });
-  }
-
-  void toggleMode() {
-    setState(() {
-      darkMode = !darkMode;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
 
@@ -321,140 +282,345 @@ class _BookItemState extends ConsumerState<BookItem> {
                 ),
               );
             } else {
-              return AppScaffold(
-                onBackPressed: () async => await QR.to('books'),
-                showPattern: false,
-                showAppBar: !isFullScreen,
-                showBottomBar: !isFullScreen,
-                title: Text(locales.book),
-                body: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.only(
-                          top: 20,
-                          left: 20,
-                          right: 20,
-                          bottom: 5,
-                        ),
+              String filePath = fileTitlePath(book.title, book.document['id']);
+              var checkFileProvider = checkDownloadedFileProvider(filePath);
+              var checkDownloadedFile = ref.watch(checkFileProvider);
+
+              return checkDownloadedFile.when(
+                loading: () {
+                  return const PlaceholderScaffold(
+                    body: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                },
+                error: (error, stackTrace) => Text(error.toString()),
+                data: (isDownloaded) {
+                  if (isDownloaded) {
+                    return PDFBook(
+                      book: book,
+                      filePath: filePath,
+                      fileLink: fileLink,
+                      previousPage: previousPage,
+                      nextPage: nextPage,
+                    );
+                  } else {
+                    double screenWidth = MediaQuery.of(context).size.width;
+
+                    return AppScaffold(
+                      onBackPressed: () async => await QR.to('books'),
+                      showPattern: false,
+                      title: Text(locales.book),
+                      body: SingleChildScrollView(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              book.title,
-                              textAlign: TextAlign.center,
-                              style: textTheme.headlineLarge?.copyWith(
-                                height: 1.2,
+                            Container(
+                              width: double.infinity,
+                              margin: const EdgeInsets.only(
+                                top: 20,
+                                left: 20,
+                                right: 20,
+                                bottom: 5,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    book.title,
+                                    textAlign: TextAlign.center,
+                                    style: textTheme.headlineLarge?.copyWith(
+                                      height: 1.2,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 3),
+                                    child: CommaSeparatedList(
+                                      resources:
+                                          book.authors.map((e) => e).toList(),
+                                      alignment: WrapAlignment.center,
+                                      builder: (_, author, __) {
+                                        return Text(
+                                          author.name,
+                                          textAlign: TextAlign.center,
+                                          style: textTheme.labelMedium,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            WithConnectivity(
+                              builder: (context, isConnected) {
+                                if (!isConnected) {
+                                  return Container(
+                                    margin: const EdgeInsets.symmetric(
+                                      vertical: 20,
+                                    ),
+                                    child: const ConnectToInternet(),
+                                  );
+                                } else {
+                                  return const SizedBox.shrink();
+                                }
+                              },
+                            ),
+                            Center(
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.only(top: 20, bottom: 30),
+                                width: screenWidth / 2,
+                                child: BookImage(
+                                  bookId: book.id,
+                                  image: book.image,
+                                ),
                               ),
                             ),
                             Container(
-                              margin: const EdgeInsets.only(top: 3),
-                              child: CommaSeparatedList(
-                                resources: book.authors.map((e) => e).toList(),
-                                alignment: WrapAlignment.center,
-                                builder: (_, author, __) {
-                                  return Text(
-                                    author.name,
-                                    textAlign: TextAlign.center,
-                                    style: textTheme.labelMedium,
-                                  );
-                                },
+                              margin: const EdgeInsets.only(
+                                top: 30,
+                                left: 20,
+                                right: 20,
+                                bottom: 50,
+                              ),
+                              child: Column(
+                                children: [
+                                  if (book.document != null) ...[
+                                    WithConnectivity(
+                                      builder: (context, isConnected) {
+                                        if (isConnected) {
+                                          return DescriptionItem(
+                                            title: '${locales.download}:',
+                                            description: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: DownloadButton(
+                                                filePath: filePath,
+                                                fileUrl:
+                                                    fileSrcUrl(book.document),
+                                                callback: () async {
+                                                  await ref.watch(
+                                                    createDownloadedBookProvider({
+                                                      'bookId': book.id,
+                                                      'title': book.title,
+                                                      'excerpt': book.excerpt,
+                                                      'publisher':
+                                                          book.publisher,
+                                                      'price': book.price,
+                                                      'image': json
+                                                          .encode(book.image),
+                                                      'document': json.encode(
+                                                        book.document,
+                                                      ),
+                                                      'authors': book.authors
+                                                          .map((e) => e.name)
+                                                          .toList()
+                                                          .join(', '),
+                                                      'publishedAt':
+                                                          book.publishedAt,
+                                                    }).future,
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                            alignment:
+                                                CrossAxisAlignment.center,
+                                            textWidth: 120,
+                                          );
+                                        } else {
+                                          return const SizedBox.shrink();
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                  if (book.publisher != null) ...[
+                                    DescriptionItem(
+                                      title: '${locales.publisher}:',
+                                      description: Text(
+                                        book.publisher!,
+                                        style: textTheme.labelMedium,
+                                      ),
+                                    ),
+                                  ],
+                                  if (book.publishedAt != null) ...[
+                                    DescriptionItem(
+                                      title: '${locales.publicationDate}:',
+                                      description: Text(
+                                        book.publishedAt!,
+                                        style: textTheme.labelMedium,
+                                      ),
+                                    ),
+                                  ],
+                                  if (book.price != null) ...[
+                                    DescriptionItem(
+                                      title: '${locales.price}:',
+                                      description: Text(
+                                        book.price!,
+                                        style: textTheme.labelMedium,
+                                      ),
+                                    ),
+                                  ],
+                                ],
                               ),
                             ),
                           ],
                         ),
                       ),
-                      BookDisplay(
-                        id: book.id,
-                        title: book.title,
-                        excerpt: book.excerpt,
-                        publisher: book.publisher,
-                        price: book.price,
-                        image: BookImage(
-                          bookId: book.id,
-                          image: book.image,
-                        ),
-                        document: book.document,
-                        publishedAt: book.publishedAt,
-                        downloadItem: (book.document != null)
-                            ? DownloadItem(
-                                filePath: fileTitlePath(
-                                  book.title,
-                                  book.document['id'],
-                                ),
-                                fileUrl: fileSrcUrl(book.document),
-                                downloadCallback: () async {
-                                  await ref.watch(
-                                    createDownloadedBookProvider({
-                                      'bookId': book.id,
-                                      'title': book.title,
-                                      'excerpt': book.excerpt,
-                                      'publisher': book.publisher,
-                                      'price': book.price,
-                                      'image': json.encode(book.image),
-                                      'document': json.encode(book.document),
-                                      'authors': book.authors
-                                          .map((e) => e.name)
-                                          .toList()
-                                          .join(', '),
-                                      'publishedAt': book.publishedAt,
-                                    }).future,
-                                  );
-                                },
-                                deleteCallback: () async {
-                                  await ref.watch(
-                                    deleteDownloadedBookProvider(book.id)
-                                        .future,
-                                  );
-                                },
-                              )
-                            : null,
-                        isFullScreen: isFullScreen,
-                        darkMode: darkMode,
-                        toggleFullScreen: toggleFullScreen,
-                      ),
-                    ],
-                  ),
-                ),
-                bottomBar: BottomBar(
-                  alignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Previous(onPrevious: previousPage),
-                    Row(
-                      children: [
-                        SocialShare(
-                          title: book.title,
-                          subtitle: book.authors
-                              .map((e) => e.name)
-                              .toList()
-                              .join(', '),
-                          link: 'books/${book.id}',
-                          fileLink: fileLink,
-                        ),
-                        BookmarkButton(
-                          type: 'Book',
-                          title: book.title,
-                          link: 'books/${book.id}',
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.dark_mode,
-                            color: darkMode ? Colors.white : Colors.black,
+                      bottomBar: BottomBar(
+                        alignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Previous(onPrevious: previousPage),
+                          Row(
+                            children: [
+                              SocialShare(
+                                title: book.title,
+                                subtitle: book.authors
+                                    .map((e) => e.name)
+                                    .toList()
+                                    .join(', '),
+                                link: 'books/${book.id}',
+                                fileLink: fileLink,
+                              ),
+                              BookmarkButton(
+                                type: 'Book',
+                                title: book.title,
+                                link: 'books/${book.id}',
+                              ),
+                            ],
                           ),
-                          onPressed: toggleMode,
-                        ),
-                      ],
-                    ),
-                    Next(onNext: nextPage),
-                  ],
-                ),
+                          Next(onNext: nextPage),
+                        ],
+                      ),
+                    );
+                  }
+                },
               );
             }
           },
         );
       },
+    );
+  }
+}
+
+class PDFBook extends ConsumerStatefulWidget {
+  const PDFBook({
+    super.key,
+    required this.book,
+    required this.filePath,
+    this.fileLink,
+    required this.previousPage,
+    required this.nextPage,
+  });
+
+  final dynamic book;
+  final String filePath;
+  final String? fileLink;
+  final Future? Function() previousPage;
+  final Future? Function() nextPage;
+
+  @override
+  ConsumerState<PDFBook> createState() => _PDFBookState();
+}
+
+class _PDFBookState extends ConsumerState<PDFBook> {
+  bool isFullScreen = false;
+  bool darkMode = false;
+  bool landscape = false;
+
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: SystemUiOverlay.values,
+    );
+    super.dispose();
+  }
+
+  void toggleFullScreen() {
+    setState(() {
+      isFullScreen = !isFullScreen;
+
+      isFullScreen
+          ? SystemChrome.setEnabledSystemUIMode(
+              SystemUiMode.manual,
+              overlays: [],
+            )
+          : SystemChrome.setEnabledSystemUIMode(
+              SystemUiMode.manual,
+              overlays: SystemUiOverlay.values,
+            );
+    });
+  }
+
+  void toggleMode() {
+    setState(() {
+      darkMode = !darkMode;
+    });
+  }
+
+  void toggleOrientation() {
+    setState(() {
+      landscape = !landscape;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AppScaffold(
+      onBackPressed: () async => await QR.to('books'),
+      showPattern: false,
+      showAppBar: !isFullScreen,
+      showBottomBar: !isFullScreen,
+      title: Text(widget.book.title),
+      body: WithPreferences(
+        builder: (context, preferences) {
+          return PDFReader(
+            bookId: widget.book.id,
+            filePath: widget.filePath,
+            preferences: preferences,
+            isFullScreen: isFullScreen,
+            darkMode: darkMode,
+            landscape: landscape,
+            toggleFullScreen: toggleFullScreen,
+          );
+        },
+      ),
+      bottomBar: BottomBar(
+        alignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Previous(onPrevious: widget.previousPage),
+          Row(
+            children: [
+              SocialShare(
+                title: widget.book.title,
+                subtitle:
+                    widget.book.authors.map((e) => e.name).toList().join(', '),
+                link: 'books/${widget.book.id}',
+                fileLink: widget.fileLink,
+              ),
+              BookmarkButton(
+                type: 'Book',
+                title: widget.book.title,
+                link: 'books/${widget.book.id}',
+              ),
+              PDFMenu(
+                filePath: widget.filePath,
+                darkMode: darkMode,
+                landscape: landscape,
+                toggleMode: toggleMode,
+                toggleOrientation: toggleOrientation,
+              ),
+            ],
+          ),
+          Next(onNext: widget.nextPage),
+        ],
+      ),
     );
   }
 }

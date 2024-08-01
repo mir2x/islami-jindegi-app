@@ -2,20 +2,19 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/providers/downloaded_books.dart';
 import 'package:native_app/screens/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
-import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/widgets/utils/pdf_menu.dart';
 import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
-import 'display.dart';
-import 'image.dart';
+import 'pdf_reader.dart';
 
 class DownloadedBook extends ConsumerStatefulWidget {
   const DownloadedBook({super.key});
@@ -27,6 +26,7 @@ class DownloadedBook extends ConsumerStatefulWidget {
 class _DownloadedBookState extends ConsumerState<DownloadedBook> {
   bool isFullScreen = false;
   bool darkMode = false;
+  bool landscape = false;
 
   @override
   void initState() {
@@ -65,10 +65,14 @@ class _DownloadedBookState extends ConsumerState<DownloadedBook> {
     });
   }
 
+  void toggleOrientation() {
+    setState(() {
+      landscape = !landscape;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    var locales = AppLocalizations.of(context)!;
-    var textTheme = Theme.of(context).textTheme;
     int id = int.parse(QR.params['id'].toString());
     var modelQuery = ref.watch(getDownloadedBookProvider(id));
 
@@ -77,71 +81,26 @@ class _DownloadedBookState extends ConsumerState<DownloadedBook> {
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (book) {
         Map document = json.decode(book.document);
+        String filePath = fileTitlePath(book.title, document['id']);
 
         return AppScaffold(
           showPattern: false,
           showAppBar: !isFullScreen,
           showBottomBar: !isFullScreen,
           tabletBodyPadding: false,
-          title: Text(locales.book),
-          body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: double.infinity,
-                  margin: const EdgeInsets.only(
-                    top: 20,
-                    left: 20,
-                    right: 20,
-                    bottom: 5,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        book.title,
-                        textAlign: TextAlign.center,
-                        style: textTheme.headlineMedium,
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(top: 8),
-                        child: Text(book.authors),
-                      ),
-                    ],
-                  ),
-                ),
-                BookDisplay(
-                  id: book.bookId,
-                  title: book.title,
-                  excerpt: book.excerpt,
-                  publisher: book.publisher,
-                  price: book.price,
-                  image: BookImage(
-                    bookId: book.bookId,
-                    image: json.decode(book.image),
-                  ),
-                  document: document,
-                  publishedAt: book.publishedAt,
-                  downloadItem: (document.isNotEmpty)
-                      ? DownloadItem(
-                          filePath: fileTitlePath(book.title, document['id']),
-                          fileUrl: fileSrcUrl(document),
-                          deleteCallback: () async {
-                            await ref
-                                .watch(downloadedBooksProvider.notifier)
-                                .deleteItem(book.bookId);
-
-                            await QR.to('books/downloads');
-                          },
-                        )
-                      : null,
-                  isFullScreen: isFullScreen,
-                  darkMode: darkMode,
-                  toggleFullScreen: toggleFullScreen,
-                ),
-              ],
-            ),
+          title: Text(book.title),
+          body: WithPreferences(
+            builder: (context, preferences) {
+              return PDFReader(
+                bookId: book.bookId,
+                filePath: filePath,
+                preferences: preferences,
+                isFullScreen: isFullScreen,
+                darkMode: darkMode,
+                landscape: landscape,
+                toggleFullScreen: toggleFullScreen,
+              );
+            },
           ),
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.center,
@@ -157,12 +116,19 @@ class _DownloadedBookState extends ConsumerState<DownloadedBook> {
                 title: book.title,
                 link: 'books/${book.bookId}',
               ),
-              IconButton(
-                icon: Icon(
-                  Icons.dark_mode,
-                  color: darkMode ? Colors.white : Colors.black,
-                ),
-                onPressed: toggleMode,
+              PDFMenu(
+                filePath: filePath,
+                darkMode: darkMode,
+                landscape: landscape,
+                toggleMode: toggleMode,
+                toggleOrientation: toggleOrientation,
+                deleteCallback: () async {
+                  await ref
+                      .watch(downloadedBooksProvider.notifier)
+                      .deleteItem(book.bookId);
+
+                  await QR.to('books/downloads');
+                },
               ),
             ],
           ),

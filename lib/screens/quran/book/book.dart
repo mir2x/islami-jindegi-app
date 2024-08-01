@@ -21,14 +21,13 @@ import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/widgets/presentation/connect_to_internet.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
-import 'package:native_app/theme/app_theme.dart';
+import 'package:native_app/widgets/utils/pdf_menu.dart';
 import 'package:native_app/widgets/buttons/download.dart';
-import 'package:native_app/helpers/delete_file.dart';
 import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/helpers/file_size.dart';
+import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/settings/image.dart';
-import 'package:native_app/theme/colors.dart';
 import 'drawer.dart';
 import 'tilawat.dart';
 import '../qari_list.dart';
@@ -484,85 +483,12 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
               );
             },
           ),
-          PopupMenuButton<int>(
-            child: const SizedBox(
-              width: 45,
-              height: 50,
-              child: Icon(
-                Icons.more_vert,
-              ),
-            ),
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-              PopupMenuItem<int>(
-                value: 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      locales.deleteFile,
-                      style: textTheme.labelMedium,
-                    ),
-                    const SizedBox(width: 10),
-                    const Icon(
-                      Icons.delete,
-                      color: ThemeColors.danger,
-                    ),
-                  ],
-                ),
-              ),
-              PopupMenuItem<int>(
-                value: 1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      locales.switchMode,
-                      style: textTheme.labelMedium,
-                    ),
-                    const SizedBox(width: 10),
-                    Icon(
-                      Icons.dark_mode,
-                      color: darkMode ? Colors.white : Colors.black,
-                    ),
-                  ],
-                ),
-              ),
-              PopupMenuItem<int>(
-                value: 2,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      landscape ? locales.portrait : locales.landscape,
-                      style: textTheme.labelMedium,
-                    ),
-                    const SizedBox(width: 10),
-                    Icon(
-                      landscape
-                          ? Icons.stay_primary_portrait
-                          : Icons.stay_primary_landscape,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-            onSelected: (int item) {
-              switch (item) {
-                case 0:
-                  deleteFile(
-                    context: context,
-                    ref: ref,
-                    filePath: widget.filePath,
-                  );
-                  break;
-                case 1:
-                  toggleMode();
-                  break;
-                case 2:
-                  toggleOrientation();
-                  break;
-              }
-            },
+          PDFMenu(
+            filePath: widget.filePath,
+            darkMode: darkMode,
+            landscape: landscape,
+            toggleMode: toggleMode,
+            toggleOrientation: toggleOrientation,
           ),
         ],
       ),
