@@ -18,7 +18,7 @@ class PageTitle extends StatelessWidget {
     return ValueListenableBuilder<double>(
       valueListenable: fontSizeRatio,
       builder: (context, ratio, child) {
-        return Text(
+        return SelectableText(
           text,
           style: textTheme.headlineLarge?.copyWith(
             fontSize: 24 * ratio,

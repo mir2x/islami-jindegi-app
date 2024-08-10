@@ -20,7 +20,7 @@ class PageSubtitle extends StatelessWidget {
     return ValueListenableBuilder<double>(
       valueListenable: fontSizeRatio,
       builder: (context, ratio, child) {
-        return Text(
+        return SelectableText(
           text,
           style: textTheme.labelLarge?.copyWith(
             fontSize: 20 * ratio,
