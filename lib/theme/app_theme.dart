@@ -146,4 +146,10 @@ class AppTheme {
     'light': ThemeColors.color11,
     'classic': ThemeColors.color14,
   };
+
+  static const Map dialogBgColor = {
+    'dark': ThemeColors.color1,
+    'light': ThemeColors.color3,
+    'classic': ThemeColors.color14,
+  };
 }
