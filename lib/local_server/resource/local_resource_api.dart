@@ -93,6 +93,8 @@ class LocalResourceAPI extends _$LocalResourceAPI {
         return queryPara(params);
       case 'ayahs':
         return queryAyah(params);
+      case 'ayahTranslations':
+        return queryAyahTranslation(params);
       case 'tafseerQitabs':
         return queryTafseerQitab(params);
       case 'qaris':
@@ -361,22 +363,33 @@ class LocalResourceAPI extends _$LocalResourceAPI {
     var ayah =
         await (select(ayahs)..where((t) => t.id.equals(id))).getSingleOrNull();
 
-    if (ayah != null &&
-        params.containsKey('include') &&
-        params['include'] == 'surah,ayah-translations') {
-      var surah = await (select(surahs)
-            ..where((s) => s.id.equals(ayah.surahId)))
-          .getSingle();
+    if (ayah != null && params.containsKey('include')) {
+      bool includeSurah = params['include'].contains('surah');
+      bool includeTranslation = params['include'].contains('ayah-translations');
 
-      var translations = await (select(ayahTranslations)
-            ..where((s) => s.ayahId.equals(ayah.id)))
-          .get();
+      dynamic surah;
+      dynamic translations;
+
+      if (includeSurah) {
+        surah = await (select(surahs)..where((s) => s.id.equals(ayah.surahId)))
+            .getSingle();
+      }
+
+      if (includeTranslation) {
+        translations = await (select(ayahTranslations)
+              ..where((s) => s.ayahId.equals(ayah.id)))
+            .get();
+      }
 
       var ayahWithRelations = {
         'ayahs': ayah,
         'relationships': {
-          'surah': surah,
-          'ayah-translations': translations,
+          if (includeSurah) ...{
+            'surah': surah,
+          },
+          if (includeTranslation) ...{
+            'ayah-translations': translations,
+          },
         },
       };
 
@@ -389,6 +402,43 @@ class LocalResourceAPI extends _$LocalResourceAPI {
   Future<AyahTranslation?> findAyahTranslationById(String id) {
     return (select(ayahTranslations)..where((t) => t.id.equals(id)))
         .getSingleOrNull();
+  }
+
+  Future<List<AyahTranslation>> queryAyahTranslation(Map params) async {
+    var query = select(ayahTranslations);
+
+    if (params.containsKey('page') && params.containsKey('per_page')) {
+      query.limit(
+        params['per_page'],
+        offset: (params['page'] - 1) * params['per_page'],
+      );
+    } else {
+      query.limit(params['quantity'] ?? 20);
+    }
+
+    if (params.containsKey('surahId') && params.containsKey('ayahNo')) {
+      String surahId = params['surahId'];
+      int ayahNo = params['ayahNo'];
+
+      var rows = await (query.join(
+        [
+          innerJoin(
+            ayahs,
+            ayahs.id.equalsExp(ayahTranslations.ayahId),
+          ),
+        ],
+      )..where(
+              ayahs.surahId.equals(surahId) &
+                  ayahs.surahPosition.equals(ayahNo),
+            ))
+          .get();
+
+      return Future.value(
+        rows.map((row) => row.readTable(ayahTranslations)).toList(),
+      );
+    } else {
+      return query.get();
+    }
   }
 
   Future<List<Qari>> queryQari(Map params) {
@@ -423,7 +473,7 @@ class LocalResourceAPI extends _$LocalResourceAPI {
     return query.get();
   }
 
-  Future<List<Tafseer>> queryTafseer(Map params) {
+  Future<List> queryTafseer(Map params) async {
     var query = select(tafseers);
 
     if (params.containsKey('page') && params.containsKey('per_page')) {
@@ -445,7 +495,33 @@ class LocalResourceAPI extends _$LocalResourceAPI {
       query.where((r) => r.ayahId.equals(params['ayahId'].toString()));
     }
 
-    return query.get();
+    var tafseerItems = await query.get();
+
+    if (params.containsKey('include') && params['include'] == 'tafseer-qitab') {
+      var qitabIds =
+          tafseerItems.map((item) => item.tafseerQitabId).toSet().toList();
+
+      var qitabs = await (select(tafseerQitabs)
+            ..where((s) => s.id.isIn(qitabIds)))
+          .get();
+
+      Map<String, TafseerQitab> idToQitabs = <String, TafseerQitab>{
+        for (var v in qitabs) v.id: v,
+      };
+
+      var tafseersWithQitab = tafseerItems.map((item) {
+        return {
+          'tafseers': item,
+          'relationships': {
+            'tafseer-qitab': idToQitabs[item.tafseerQitabId],
+          },
+        };
+      }).toList();
+
+      return tafseersWithQitab;
+    } else {
+      return tafseerItems;
+    }
   }
 
   Future<List> queryBook(Map params) async {
@@ -706,7 +782,11 @@ class LocalResourceAPI extends _$LocalResourceAPI {
       }
     }
 
-    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
+    if (params.containsKey('random') && params['random'] == true) {
+      query.orderBy([(t) => OrderingTerm.random()]);
+    } else {
+      query.orderBy([(t) => OrderingTerm(expression: t.position)]);
+    }
 
     var malfuzatItems = await query.get();
 
