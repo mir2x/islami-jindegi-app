@@ -388,9 +388,12 @@ class SubchaptersState extends ConsumerState<Subchapters> {
       isOpen = !isOpen;
 
       if (isOpen) {
-        Scrollable.ensureVisible(
-          GlobalObjectKey(widget.chapter.id).currentContext!,
-        );
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          Scrollable.ensureVisible(
+            GlobalObjectKey(widget.chapter.id).currentContext!,
+            duration: const Duration(milliseconds: 500),
+          );
+        });
       }
     });
   }
