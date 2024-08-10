@@ -79,6 +79,7 @@ final qiratPlayerProvider =
     );
 
     await player.setAudioSource(audioSource);
+    await player.setSpeed(0.8);
 
     if (qirat.autoPlay) {
       player.play();
