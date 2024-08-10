@@ -49,13 +49,18 @@ class SocialShare extends StatelessWidget {
 
             if (body != null) {
               final document = parse(body);
-              List pList = document.querySelectorAll('p');
+              List eList = document.querySelectorAll('p,h1,h2,h3,h4,h5,h6');
 
-              if (pList.isNotEmpty) {
+              if (eList.isNotEmpty) {
                 text += '\n\n';
-                for (var p in pList) {
-                  if (p.text != '') {
-                    text += '${p.text}\n\n';
+
+                for (var e in eList) {
+                  if (e.text != '') {
+                    if (e.localName != 'p') {
+                      text += '\n';
+                    }
+
+                    text += '${e.text}\n\n';
                   }
                 }
               }

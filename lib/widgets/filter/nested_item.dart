@@ -34,9 +34,12 @@ class FilterNestedItemState extends ConsumerState<FilterNestedItem> {
       isOpen = !isOpen;
 
       if (isOpen) {
-        Scrollable.ensureVisible(
-          GlobalObjectKey(widget.itemId).currentContext!,
-        );
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          Scrollable.ensureVisible(
+            GlobalObjectKey(widget.itemId).currentContext!,
+            duration: const Duration(milliseconds: 500),
+          );
+        });
       }
     });
   }

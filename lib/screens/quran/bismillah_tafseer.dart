@@ -57,7 +57,7 @@ class BismillahTafseer extends ConsumerWidget {
                     child: ValueListenableBuilder<double>(
                       valueListenable: fontSizeRatio,
                       builder: (context, ratio, child) {
-                        return Text(
+                        return SelectableText(
                           arabicBismillah,
                           textDirection: TextDirection.rtl,
                           style: textTheme.labelLarge?.copyWith(
