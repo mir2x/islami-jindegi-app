@@ -64,10 +64,11 @@ Future<Map> getLocation(Position position) async {
   String locale = preferences.getString('locale') ?? 'bn';
 
   try {
+    await setLocaleIdentifier(locale);
+
     List<Placemark> placemarks = await placemarkFromCoordinates(
       position.latitude,
       position.longitude,
-      localeIdentifier: locale,
     ).timeout(const Duration(seconds: 30));
 
     Placemark placemark = placemarks.first;

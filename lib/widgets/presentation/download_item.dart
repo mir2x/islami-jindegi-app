@@ -58,7 +58,7 @@ class DownloadItem extends ConsumerWidget {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.open_in_new),
+                      icon: const Icon(Icons.file_open),
                       iconSize: 30,
                       onPressed: () async {
                         var path = await fileFallbackPath(filePath);

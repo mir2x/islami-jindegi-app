@@ -57,43 +57,45 @@ class HtmlText extends StatelessWidget {
       fontSize: FontSize(17 * fontSizeRatio),
     );
 
-    return Html(
-      data: text,
-      extensions: [
-        ImageExtension(
-          builder: (extensionContext) {
-            String src = extensionContext.attributes['src']!;
-            return CachedNetworkImage(imageUrl: src);
-          },
-        ),
-      ],
-      onLinkTap: (String? url, _, __) async {
-        if (url != null) {
-          final uri = Uri.parse(url);
-          if (await canLaunchUrl(uri)) {
-            await launchUrl(uri);
-          } else {
-            throw 'Could not launch $url';
+    return SelectionArea(
+      child: Html(
+        data: text,
+        extensions: [
+          ImageExtension(
+            builder: (extensionContext) {
+              String src = extensionContext.attributes['src']!;
+              return CachedNetworkImage(imageUrl: src);
+            },
+          ),
+        ],
+        onLinkTap: (String? url, _, __) async {
+          if (url != null) {
+            final uri = Uri.parse(url);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri);
+            } else {
+              throw 'Could not launch $url';
+            }
           }
-        }
-      },
-      style: {
-        'body': bodyMedium,
-        'h6': bodyMedium,
-        'h5': bodyLarge,
-        'h4': bodyExtraLarge,
-        'h3': bodyExtraLarge,
-        'h2': bodyExtraLarge,
-        'h1': bodyExtraLarge,
-        'p': paragraph,
-        '.tiptap-sm-font': bodySmall,
-        '.tiptap-md-font': bodyMedium,
-        '.tiptap-lg-font': bodyLarge,
-        '.tiptap-xl-font': bodyExtraLarge,
-        '[dir="rtl"]': Style(
-          direction: TextDirection.rtl,
-        ),
-      },
+        },
+        style: {
+          'body': bodyMedium,
+          'h6': bodyMedium,
+          'h5': bodyLarge,
+          'h4': bodyExtraLarge,
+          'h3': bodyExtraLarge,
+          'h2': bodyExtraLarge,
+          'h1': bodyExtraLarge,
+          'p': paragraph,
+          '.tiptap-sm-font': bodySmall,
+          '.tiptap-md-font': bodyMedium,
+          '.tiptap-lg-font': bodyLarge,
+          '.tiptap-xl-font': bodyExtraLarge,
+          '[dir="rtl"]': Style(
+            direction: TextDirection.rtl,
+          ),
+        },
+      ),
     );
   }
 }
