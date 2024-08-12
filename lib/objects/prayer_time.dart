@@ -42,6 +42,7 @@ class PrayerTime {
           prayerTimes.sunrise.subtract(oneMin),
           currentLang,
         ),
+        'startDateTime': prayerTimes.fajr,
       },
       'sunrise': {
         'title': locales.sunrise,
@@ -50,6 +51,7 @@ class PrayerTime {
           prayerTimes.sunrise.add(fourteenMins),
           currentLang,
         ),
+        'startDateTime': prayerTimes.sunrise,
       },
       'ishraq': {
         'title': locales.ishraqChasht,
@@ -58,16 +60,19 @@ class PrayerTime {
           currentLang,
         ),
         'endTime': _formatTime(prayerTimes.dhuhr.subtract(oneMin), currentLang),
+        'startDateTime': prayerTimes.sunrise.add(fifteenMins),
       },
       'midday': {
         'title': locales.midday,
         'startTime': _formatTime(prayerTimes.dhuhr, currentLang),
         'endTime': _formatTime(prayerTimes.dhuhr.add(fourMins), currentLang),
+        'startDateTime': prayerTimes.dhuhr,
       },
       'dhuhr': {
         'title': locales.zuhrZawal,
         'startTime': _formatTime(prayerTimes.dhuhr.add(fiveMins), currentLang),
         'endTime': _formatTime(prayerTimes.asr.subtract(oneMin), currentLang),
+        'startDateTime': prayerTimes.dhuhr.add(fiveMins),
       },
       'asr': {
         'title': locales.asr,
@@ -76,6 +81,7 @@ class PrayerTime {
           prayerTimes.maghrib.subtract(fourMins),
           currentLang,
         ),
+        'startDateTime': prayerTimes.asr,
       },
       'sunset': {
         'title': locales.sunset,
@@ -87,6 +93,7 @@ class PrayerTime {
           prayerTimes.maghrib.subtract(oneMin),
           currentLang,
         ),
+        'startDateTime': prayerTimes.maghrib.subtract(threeMins),
       },
       'maghrib': {
         'title': locales.maghribIftar,
@@ -101,6 +108,7 @@ class PrayerTime {
         'title': locales.isha,
         'startTime': _formatTime(prayerTimes.isha, currentLang),
         'endTime': _formatTime(prayerTimes.fajr.subtract(tenMins), currentLang),
+        'startDateTime': prayerTimes.isha,
       },
     };
   }

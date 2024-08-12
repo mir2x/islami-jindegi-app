@@ -1,9 +1,11 @@
+import 'dart:io' show Platform;
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:adhan/adhan.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:adhan/adhan.dart';
+import 'package:flutter_alarm_clock/flutter_alarm_clock.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/objects/prayer_time.dart';
 import 'package:native_app/theme/colors.dart';
@@ -92,6 +94,8 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                 value: widget.isStartTime
                     ? prayerTimes['fajr']['startTime']
                     : prayerTimes['fajr']['endTime'],
+                alarmTime: prayerTimes['fajr']['startDateTime'],
+                alarmLabel: '${prayerTimes['fajr']['title']} ${locales.starts}',
                 isActive: currentPrayer == 'fajr',
                 onSelected: () => QR.to('namaz-times/fajr'),
               ),
@@ -103,6 +107,9 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                 value: widget.isStartTime
                     ? prayerTimes['sunrise']['startTime']
                     : prayerTimes['sunrise']['endTime'],
+                alarmTime: prayerTimes['sunrise']['startDateTime'],
+                alarmLabel:
+                    '${prayerTimes['sunrise']['title']} ${locales.starts}',
                 isActive: false,
                 onSelected: () => QR.to('namaz-times/sunrise'),
               ),
@@ -114,6 +121,9 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                 value: widget.isStartTime
                     ? prayerTimes['ishraq']['startTime']
                     : prayerTimes['ishraq']['endTime'],
+                alarmTime: prayerTimes['ishraq']['startDateTime'],
+                alarmLabel:
+                    '${prayerTimes['ishraq']['title']} ${locales.starts}',
                 isActive: currentPrayer == 'ishraq',
                 onSelected: () => QR.to('namaz-times/ishraq'),
               ),
@@ -125,6 +135,9 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                 value: widget.isStartTime
                     ? prayerTimes['midday']['startTime']
                     : prayerTimes['midday']['endTime'],
+                alarmTime: prayerTimes['midday']['startDateTime'],
+                alarmLabel:
+                    '${prayerTimes['midday']['title']} ${locales.starts}',
                 isActive: false,
                 onSelected: () => QR.to('namaz-times/midday'),
               ),
@@ -136,6 +149,9 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                 value: widget.isStartTime
                     ? prayerTimes['dhuhr']['startTime']
                     : prayerTimes['dhuhr']['endTime'],
+                alarmTime: prayerTimes['dhuhr']['startDateTime'],
+                alarmLabel:
+                    '${prayerTimes['dhuhr']['title']} ${locales.starts}',
                 isActive: currentPrayer == 'dhuhr',
                 onSelected: () => QR.to('namaz-times/zuhr'),
               ),
@@ -147,6 +163,8 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                 value: widget.isStartTime
                     ? prayerTimes['asr']['startTime']
                     : prayerTimes['asr']['endTime'],
+                alarmTime: prayerTimes['asr']['startDateTime'],
+                alarmLabel: '${prayerTimes['asr']['title']} ${locales.starts}',
                 isActive: currentPrayer == 'asr',
                 onSelected: () => QR.to('namaz-times/asr'),
               ),
@@ -158,6 +176,9 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                 value: widget.isStartTime
                     ? prayerTimes['sunset']['startTime']
                     : prayerTimes['sunset']['endTime'],
+                alarmTime: prayerTimes['sunset']['startDateTime'],
+                alarmLabel:
+                    '${prayerTimes['sunset']['title']} ${locales.starts}',
                 isActive: false,
                 onSelected: () => QR.to('namaz-times/sunset'),
               ),
@@ -169,6 +190,9 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                 value: widget.isStartTime
                     ? prayerTimes['maghrib']['startTime']
                     : prayerTimes['maghrib']['endTime'],
+                alarmTime: prayerTimes['maghrib']['startDateTime'],
+                alarmLabel:
+                    '${prayerTimes['maghrib']['title']} ${locales.starts}',
                 isActive: currentPrayer == 'maghrib',
                 onSelected: () => QR.to('namaz-times/maghrib'),
               ),
@@ -180,6 +204,8 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                 value: widget.isStartTime
                     ? prayerTimes['isha']['startTime']
                     : prayerTimes['isha']['endTime'],
+                alarmTime: prayerTimes['isha']['startDateTime'],
+                alarmLabel: '${prayerTimes['isha']['title']} ${locales.starts}',
                 isActive: currentPrayer == 'isha',
                 onSelected: () => QR.to('namaz-times/isha'),
               ),
@@ -196,23 +222,29 @@ class NamazTimeItem extends ConsumerWidget {
     super.key,
     required this.label,
     required this.value,
+    this.alarmTime,
+    this.alarmLabel,
     required this.isActive,
     required this.onSelected,
   });
 
   final String label;
   final String value;
+  final DateTime? alarmTime;
+  final String? alarmLabel;
   final bool isActive;
   final void Function() onSelected;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
+    bool alarmable =
+        Platform.isAndroid && alarmTime != null && alarmLabel != null;
 
     return Row(
       children: [
         Expanded(
-          flex: 3,
+          flex: 7,
           child: InkWell(
             onTap: onSelected,
             child: Container(
@@ -236,7 +268,7 @@ class NamazTimeItem extends ConsumerWidget {
         ),
         const SizedBox(width: 10),
         Expanded(
-          flex: 2,
+          flex: 5,
           child: InkWell(
             onTap: onSelected,
             child: Container(
@@ -248,15 +280,46 @@ class NamazTimeItem extends ConsumerWidget {
                 ),
               ),
               padding: const EdgeInsets.symmetric(
-                horizontal: 15,
-                vertical: 12,
+                vertical: 2,
+                horizontal: 5,
               ),
-              child: Text(
-                value,
-                textAlign: TextAlign.center,
-                style: textTheme.labelMedium?.copyWith(
-                  color: ThemeColors.color2,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(
+                      top: alarmable ? 0 : 9,
+                      bottom: alarmable ? 0 : 9,
+                      left: alarmable ? 10 : 0,
+                    ),
+                    child: Text(
+                      value,
+                      textAlign: TextAlign.center,
+                      style: textTheme.labelMedium?.copyWith(
+                        color: ThemeColors.color2,
+                      ),
+                    ),
+                  ),
+                  if (alarmable) ...[
+                    const SizedBox(width: 5),
+                    IconButton(
+                      constraints: const BoxConstraints(
+                        maxHeight: 40,
+                      ),
+                      icon: const Icon(
+                        Icons.add_alarm,
+                      ),
+                      onPressed: () async {
+                        FlutterAlarmClock.createAlarm(
+                          hour: alarmTime!.hour,
+                          minutes: alarmTime!.minute,
+                          title: alarmLabel!,
+                          skipUi: false,
+                        );
+                      },
+                    ),
+                  ],
+                ],
               ),
             ),
           ),
