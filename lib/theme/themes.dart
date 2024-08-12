@@ -10,13 +10,13 @@ ThemeData darkTheme(Map fonts) {
       brightness: Brightness.dark,
       primary: ThemeColors.color5,
       onPrimary: ThemeColors.color3,
-      secondary: ThemeColors.color2,
+      secondary: ThemeColors.color5,
       onSecondary: ThemeColors.color3,
       error: ThemeColors.danger,
       onError: ThemeColors.color3,
       background: ThemeColors.color2,
       onBackground: ThemeColors.color3,
-      surface: ThemeColors.color2,
+      surface: ThemeColors.color5,
       onSurface: ThemeColors.color3,
     ),
     textTheme: const TextTheme(
@@ -99,6 +99,10 @@ ThemeData darkTheme(Map fonts) {
         borderRadius: BorderRadius.circular(10),
       ),
     ),
+    textSelectionTheme: const TextSelectionThemeData(
+      selectionColor: ThemeColors.color8,
+      selectionHandleColor: ThemeColors.color8,
+    ),
   );
 }
 
@@ -114,11 +118,11 @@ ThemeData lightTheme(Map fonts) {
       secondary: ThemeColors.color3,
       onSecondary: ThemeColors.color2,
       error: ThemeColors.danger,
-      onError: ThemeColors.color2,
+      onError: ThemeColors.color3,
       background: ThemeColors.color3,
       onBackground: ThemeColors.color2,
-      surface: ThemeColors.color3,
-      onSurface: ThemeColors.color2,
+      surface: ThemeColors.color2,
+      onSurface: ThemeColors.color3,
     ),
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
@@ -203,6 +207,10 @@ ThemeData lightTheme(Map fonts) {
     snackBarTheme: const SnackBarThemeData(
       backgroundColor: ThemeColors.color6,
     ),
+    textSelectionTheme: const TextSelectionThemeData(
+      selectionColor: ThemeColors.color4,
+      selectionHandleColor: ThemeColors.color4,
+    ),
   );
 }
 
@@ -214,15 +222,15 @@ ThemeData classicTheme(Map fonts) {
     colorScheme: const ColorScheme(
       brightness: Brightness.light,
       primary: ThemeColors.color12,
-      onPrimary: ThemeColors.color13,
-      secondary: ThemeColors.color11,
-      onSecondary: ThemeColors.color13,
+      onPrimary: ThemeColors.color3,
+      secondary: ThemeColors.color12,
+      onSecondary: ThemeColors.color3,
       error: ThemeColors.danger,
-      onError: ThemeColors.color13,
-      background: ThemeColors.color12,
+      onError: ThemeColors.color3,
+      background: ThemeColors.color11,
       onBackground: ThemeColors.color13,
       surface: ThemeColors.color12,
-      onSurface: ThemeColors.color13,
+      onSurface: ThemeColors.color3,
     ),
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
