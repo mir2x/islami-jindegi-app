@@ -4,18 +4,21 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:native_app/widgets/calendar/hijri_date.dart';
 import 'package:native_app/widgets/calendar/gregorian_date.dart';
 import 'hijri_date_calendar.dart';
+import 'gregorian_date_calendar.dart';
 
 class CalendarDates extends StatefulWidget {
   const CalendarDates({
     super.key,
     required this.selectedHijriDate,
-    required this.currentGregorianDate,
+    required this.selectedGregorianDate,
     required this.updateHijriDate,
+    required this.updateGregorianDate,
   });
 
   final HijriCalendar? selectedHijriDate;
-  final DateTime? currentGregorianDate;
+  final DateTime? selectedGregorianDate;
   final Function updateHijriDate;
+  final Function updateGregorianDate;
 
   @override
   CalendarDatesState createState() => CalendarDatesState();
@@ -59,11 +62,20 @@ class CalendarDatesState extends State<CalendarDates> {
             ],
           ),
         ),
-        Container(
-          margin: const EdgeInsets.only(top: 5),
-          child: GregorianDate(
-            currentDate: widget.currentGregorianDate,
-            count: count,
+        const SizedBox(height: 10),
+        GregorianDateCalendar(
+          currentDate: widget.selectedGregorianDate,
+          onUpdate: widget.updateGregorianDate,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GregorianDate(
+                currentDate: widget.selectedGregorianDate,
+                count: count,
+              ),
+              const SizedBox(width: 10),
+              const Icon(Icons.calendar_month),
+            ],
           ),
         ),
       ],

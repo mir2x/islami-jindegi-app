@@ -8,8 +8,8 @@ ThemeData darkTheme(Map fonts) {
     fontFamilyFallback: fonts['fontFamilyFallback'],
     colorScheme: const ColorScheme(
       brightness: Brightness.dark,
-      primary: ThemeColors.color5,
-      onPrimary: ThemeColors.color3,
+      primary: ThemeColors.color3,
+      onPrimary: ThemeColors.color2,
       secondary: ThemeColors.color5,
       onSecondary: ThemeColors.color3,
       error: ThemeColors.danger,
@@ -40,6 +40,10 @@ ThemeData darkTheme(Map fonts) {
       titleMedium: TextStyle(
         color: ThemeColors.color4,
         fontSize: 17,
+      ),
+      titleSmall: TextStyle(
+        color: ThemeColors.color4,
+        fontSize: 14,
       ),
       bodyLarge: TextStyle(
         color: ThemeColors.color3,
@@ -113,16 +117,16 @@ ThemeData lightTheme(Map fonts) {
     fontFamilyFallback: fonts['fontFamilyFallback'],
     colorScheme: const ColorScheme(
       brightness: Brightness.light,
-      primary: ThemeColors.color3,
-      onPrimary: ThemeColors.color2,
-      secondary: ThemeColors.color3,
-      onSecondary: ThemeColors.color2,
+      primary: ThemeColors.color2,
+      onPrimary: ThemeColors.color3,
+      secondary: ThemeColors.color8,
+      onSecondary: ThemeColors.color3,
       error: ThemeColors.danger,
       onError: ThemeColors.color3,
       background: ThemeColors.color3,
       onBackground: ThemeColors.color2,
-      surface: ThemeColors.color2,
-      onSurface: ThemeColors.color3,
+      surface: ThemeColors.color3,
+      onSurface: ThemeColors.color2,
     ),
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
@@ -145,6 +149,10 @@ ThemeData lightTheme(Map fonts) {
       titleMedium: TextStyle(
         color: ThemeColors.color8,
         fontSize: 17,
+      ),
+      titleSmall: TextStyle(
+        color: ThemeColors.color8,
+        fontSize: 14,
       ),
       bodyLarge: TextStyle(
         color: ThemeColors.color2,
@@ -221,7 +229,7 @@ ThemeData classicTheme(Map fonts) {
     fontFamilyFallback: fonts['fontFamilyFallback'],
     colorScheme: const ColorScheme(
       brightness: Brightness.light,
-      primary: ThemeColors.color12,
+      primary: ThemeColors.color13,
       onPrimary: ThemeColors.color3,
       secondary: ThemeColors.color12,
       onSecondary: ThemeColors.color3,
@@ -229,8 +237,8 @@ ThemeData classicTheme(Map fonts) {
       onError: ThemeColors.color3,
       background: ThemeColors.color11,
       onBackground: ThemeColors.color13,
-      surface: ThemeColors.color12,
-      onSurface: ThemeColors.color3,
+      surface: ThemeColors.color3,
+      onSurface: ThemeColors.color12,
     ),
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
@@ -253,6 +261,10 @@ ThemeData classicTheme(Map fonts) {
       titleMedium: TextStyle(
         color: ThemeColors.color2,
         fontSize: 17,
+      ),
+      titleSmall: TextStyle(
+        color: ThemeColors.color2,
+        fontSize: 14,
       ),
       bodyLarge: TextStyle(
         color: ThemeColors.color13,
