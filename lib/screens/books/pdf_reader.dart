@@ -89,8 +89,13 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
                             double height;
                             double viewWidth;
 
-                            height = screenHeight - heightAdjustment;
-                            viewWidth = screenWidth;
+                            if (widget.landscape) {
+                              height = (screenHeight - heightAdjustment) * 1.5;
+                              viewWidth = screenHeight - heightAdjustment;
+                            } else {
+                              height = screenHeight - heightAdjustment;
+                              viewWidth = screenWidth;
+                            }
 
                             final width = pageCount * viewWidth;
                             final pageLayouts = <Rect>[];
