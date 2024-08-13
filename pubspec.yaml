@@ -94,6 +94,7 @@ dependencies:
       url: https://github.com/musaffa/hijri_picker.git
       ref: pass-weekday-number
   adhan: ^2.0.0-nullsafety.2
+  date_picker_plus: ^4.1.0
   smooth_compass: ^2.0.12
 
   # app widget

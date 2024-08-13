@@ -8,6 +8,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/hijri_date_settings.dart';
+import 'package:native_app/helpers/adjusted_hijri_date.dart';
 import 'package:native_app/widgets/location/index.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/theme/app_theme.dart';
@@ -24,11 +25,20 @@ class NamazTimes extends ConsumerStatefulWidget {
 
 class NamazTimesState extends ConsumerState<NamazTimes> {
   HijriCalendar? selectedHijriDate;
+  DateTime? selectedGregorianDate;
   bool isStartTime = true;
 
   updateHijriDate(HijriCalendar value) {
     setState(() {
       selectedHijriDate = value;
+      selectedGregorianDate = null;
+    });
+  }
+
+  updateGregorianDate(DateTime value) {
+    setState(() {
+      selectedGregorianDate = value;
+      selectedHijriDate = null;
     });
   }
 
@@ -55,15 +65,36 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
         ),
         error: (error, _) => Text(error.toString()),
         data: (settings) {
-          DateTime? currentGregorianDate;
+          int adjustment = settings['hijriAdjustment'];
 
           if (selectedHijriDate != null) {
-            int adjustment = settings['hijriAdjustment'];
-
-            currentGregorianDate = HijriCalendar().hijriToGregorian(
+            selectedGregorianDate = HijriCalendar().hijriToGregorian(
               selectedHijriDate!.hYear,
               selectedHijriDate!.hMonth,
               selectedHijriDate!.hDay - adjustment,
+            );
+          } else if (selectedGregorianDate != null) {
+            DateTime currentTime = DateTime.now();
+
+            DateTime date = DateTime(
+              selectedGregorianDate!.year,
+              selectedGregorianDate!.month,
+              selectedGregorianDate!.day,
+              currentTime.hour,
+              currentTime.minute,
+              currentTime.second,
+            );
+
+            if (isAfterDateStartTime(date, settings)) {
+              date = DateTime(date.year, date.month, date.day + 1);
+            }
+
+            selectedHijriDate = HijriCalendar.fromDate(
+              DateTime(
+                date.year,
+                date.month,
+                date.day + adjustment,
+              ),
             );
           }
 
@@ -73,8 +104,9 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                 children: [
                   CalendarDates(
                     selectedHijriDate: selectedHijriDate,
-                    currentGregorianDate: currentGregorianDate,
+                    selectedGregorianDate: selectedGregorianDate,
                     updateHijriDate: updateHijriDate,
+                    updateGregorianDate: updateGregorianDate,
                   ),
                   const SizedBox(height: 10),
                   const CurrentLocation(alignment: MainAxisAlignment.center),
@@ -174,7 +206,7 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
                   ),
                   const SizedBox(height: 10),
                   NamazTimeItems(
-                    currentDate: currentGregorianDate,
+                    currentDate: selectedGregorianDate,
                     isStartTime: isStartTime,
                   ),
                 ],
