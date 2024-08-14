@@ -26,6 +26,7 @@ bool isAfterDateStartTime(DateTime date, Map settings) {
       coordinates['longitude'],
     ),
     preferences: preferences,
+    currentDate: date,
   );
 
   DateTime dateStartTime = prayerTime.getDateStartTime();

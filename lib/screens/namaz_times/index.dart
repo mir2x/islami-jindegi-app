@@ -66,16 +66,37 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
         error: (error, _) => Text(error.toString()),
         data: (settings) {
           int adjustment = settings['hijriAdjustment'];
+          DateTime currentTime = DateTime.now();
 
           if (selectedHijriDate != null) {
-            selectedGregorianDate = HijriCalendar().hijriToGregorian(
+            DateTime date = HijriCalendar().hijriToGregorian(
               selectedHijriDate!.hYear,
               selectedHijriDate!.hMonth,
               selectedHijriDate!.hDay - adjustment,
             );
-          } else if (selectedGregorianDate != null) {
-            DateTime currentTime = DateTime.now();
 
+            date = DateTime(
+              date.year,
+              date.month,
+              date.day,
+              currentTime.hour,
+              currentTime.minute,
+              currentTime.second,
+            );
+
+            if (isAfterDateStartTime(date, settings)) {
+              date = DateTime(date.year, date.month, date.day - 1);
+            }
+
+            selectedGregorianDate = DateTime(
+              date.year,
+              date.month,
+              date.day,
+              currentTime.hour,
+              currentTime.minute,
+              currentTime.second,
+            );
+          } else if (selectedGregorianDate != null) {
             DateTime date = DateTime(
               selectedGregorianDate!.year,
               selectedGregorianDate!.month,
