@@ -31,7 +31,10 @@ class Subchapter extends ConsumerWidget {
     var query = SingleModelQuery(
       repository: ref.subchapters,
       id: QR.params['subchapter_id'].toString(),
-      params: const {'include': 'chapter'},
+      params: const {
+        'include': 'chapter',
+        'localFirst': true,
+      },
     );
 
     var bookId = QR.params['id'];

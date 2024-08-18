@@ -31,6 +31,7 @@ class Chapter extends ConsumerWidget {
     var query = SingleModelQuery(
       repository: ref.chapters,
       id: QR.params['chapter_id'].toString(),
+      params: const {'localFirst': true},
     );
 
     var bookId = QR.params['id'];
@@ -121,13 +122,15 @@ class Chapter extends ConsumerWidget {
                         fontSizeRatio: fontSizeRatio,
                       ),
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 30),
-                      child: PageHtmlBody(
-                        text: resource.body,
-                        fontSizeRatio: fontSizeRatio,
+                    if (resource.body != null) ...[
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 30),
+                        child: PageHtmlBody(
+                          text: resource.body,
+                          fontSizeRatio: fontSizeRatio,
+                        ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ),
