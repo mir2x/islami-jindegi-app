@@ -20,7 +20,7 @@ class LocalLocationAPI extends _$LocalLocationAPI {
   LocalLocationAPI()
       : super(
           LazyDatabase(() async {
-            int dataVersion = 1;
+            int dataVersion = 2;
 
             final dbFolder = await getApplicationDocumentsDirectory();
             final file = File(

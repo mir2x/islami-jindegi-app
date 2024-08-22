@@ -15,6 +15,7 @@ class City extends DataModel<City> {
   final String countryCode;
   final double latitude;
   final double longitude;
+  final String timezone;
 
   City({
     required this.id,
@@ -23,5 +24,6 @@ class City extends DataModel<City> {
     required this.countryCode,
     required this.latitude,
     required this.longitude,
+    required this.timezone,
   });
 }
