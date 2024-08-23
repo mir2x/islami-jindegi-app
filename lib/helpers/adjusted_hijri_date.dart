@@ -25,6 +25,7 @@ bool isAfterDateStartTime(DateTime date, Map settings) {
       coordinates['latitude'],
       coordinates['longitude'],
     ),
+    timezone: settings['timezone'],
     preferences: preferences,
     currentDate: date,
   );

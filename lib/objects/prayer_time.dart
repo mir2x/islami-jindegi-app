@@ -1,4 +1,5 @@
 import 'package:adhan/adhan.dart';
+import 'package:timezone_utc_offset/timezone_utc_offset.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,18 +7,23 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PrayerTime {
   PrayerTime({
     required this.coordinates,
+    required this.timezone,
     required this.preferences,
     this.currentDate,
   }) {
     DateTime today = currentDate ?? DateTime.now();
+    Duration? utcOffset = getTimezoneUTCOffset(timezone);
+
     prayerTimes = PrayerTimes(
       coordinates,
       DateComponents(today.year, today.month, today.day),
       _adjustedParams(),
+      utcOffset: utcOffset,
     );
   }
 
   final Coordinates coordinates;
+  final String timezone;
   final SharedPreferences preferences;
   final DateTime? currentDate;
   late final PrayerTimes prayerTimes;

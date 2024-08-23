@@ -399,6 +399,7 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
                               'latitude': item.latitude,
                               'longitude': item.longitude,
                             },
+                            'timezone': item.timezone,
                           });
 
                           ref

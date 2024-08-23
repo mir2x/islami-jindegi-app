@@ -247,8 +247,8 @@ class $CitiesTable extends Cities with TableInfo<$CitiesTable, City> {
       type: DriftSqlType.double, requiredDuringInsert: true);
   @override
   late final GeneratedColumn<String> timezone = GeneratedColumn<String>(
-      'timezone', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      'timezone', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
       [id, name, nameBn, countryCode, latitude, longitude, timezone];
@@ -276,7 +276,7 @@ class $CitiesTable extends Cities with TableInfo<$CitiesTable, City> {
       longitude: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}longitude'])!,
       timezone: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}timezone'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}timezone']),
     );
   }
 
@@ -293,7 +293,7 @@ class City extends DataClass implements Insertable<City> {
   final String countryCode;
   final double latitude;
   final double longitude;
-  final String timezone;
+  final String? timezone;
   const City(
       {required this.id,
       required this.name,
@@ -301,7 +301,7 @@ class City extends DataClass implements Insertable<City> {
       required this.countryCode,
       required this.latitude,
       required this.longitude,
-      required this.timezone});
+      this.timezone});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -313,7 +313,9 @@ class City extends DataClass implements Insertable<City> {
     map['country_code'] = Variable<String>(countryCode);
     map['latitude'] = Variable<double>(latitude);
     map['longitude'] = Variable<double>(longitude);
-    map['timezone'] = Variable<String>(timezone);
+    if (!nullToAbsent || timezone != null) {
+      map['timezone'] = Variable<String>(timezone);
+    }
     return map;
   }
 
@@ -327,7 +329,7 @@ class City extends DataClass implements Insertable<City> {
       countryCode: serializer.fromJson<String>(json['countryCode']),
       latitude: serializer.fromJson<double>(json['latitude']),
       longitude: serializer.fromJson<double>(json['longitude']),
-      timezone: serializer.fromJson<String>(json['timezone']),
+      timezone: serializer.fromJson<String?>(json['timezone']),
     );
   }
   @override
@@ -340,7 +342,7 @@ class City extends DataClass implements Insertable<City> {
       'countryCode': serializer.toJson<String>(countryCode),
       'latitude': serializer.toJson<double>(latitude),
       'longitude': serializer.toJson<double>(longitude),
-      'timezone': serializer.toJson<String>(timezone),
+      'timezone': serializer.toJson<String?>(timezone),
     };
   }
 
@@ -351,7 +353,7 @@ class City extends DataClass implements Insertable<City> {
           String? countryCode,
           double? latitude,
           double? longitude,
-          String? timezone}) =>
+          Value<String?> timezone = const Value.absent()}) =>
       City(
         id: id ?? this.id,
         name: name ?? this.name,
@@ -359,7 +361,7 @@ class City extends DataClass implements Insertable<City> {
         countryCode: countryCode ?? this.countryCode,
         latitude: latitude ?? this.latitude,
         longitude: longitude ?? this.longitude,
-        timezone: timezone ?? this.timezone,
+        timezone: timezone.present ? timezone.value : this.timezone,
       );
   @override
   String toString() {
@@ -398,7 +400,7 @@ class CitiesCompanion extends UpdateCompanion<City> {
   final Value<String> countryCode;
   final Value<double> latitude;
   final Value<double> longitude;
-  final Value<String> timezone;
+  final Value<String?> timezone;
   final Value<int> rowid;
   const CitiesCompanion({
     this.id = const Value.absent(),
@@ -417,14 +419,13 @@ class CitiesCompanion extends UpdateCompanion<City> {
     required String countryCode,
     required double latitude,
     required double longitude,
-    required String timezone,
+    this.timezone = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         name = Value(name),
         countryCode = Value(countryCode),
         latitude = Value(latitude),
-        longitude = Value(longitude),
-        timezone = Value(timezone);
+        longitude = Value(longitude);
   static Insertable<City> custom({
     Expression<String>? id,
     Expression<String>? name,
@@ -454,7 +455,7 @@ class CitiesCompanion extends UpdateCompanion<City> {
       Value<String>? countryCode,
       Value<double>? latitude,
       Value<double>? longitude,
-      Value<String>? timezone,
+      Value<String?>? timezone,
       Value<int>? rowid}) {
     return CitiesCompanion(
       id: id ?? this.id,
