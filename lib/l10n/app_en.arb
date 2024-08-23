@@ -122,6 +122,8 @@
   "jilhajj": "Jilhajj",
 
   "hijriDateAdjustment": "Hijri Date Adjustment",
+  "daylightSaving": "Daylight Saving",
+  "onlyUsedToCalculatePrayerTimes": "Only used to calculate prayer times",
   "banglaFont": "Bangla Font",
   "arabicFont": "Arabic Font",
   "theme": "Theme",

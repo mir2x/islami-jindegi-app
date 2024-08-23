@@ -12,7 +12,8 @@ class PrayerTime {
     this.currentDate,
   }) {
     DateTime today = currentDate ?? DateTime.now();
-    Duration? utcOffset = getTimezoneUTCOffset(timezone);
+    bool daylight = preferences.getBool('daylight') ?? false;
+    Duration? utcOffset = getTimezoneUTCOffset(timezone, daylight: daylight);
 
     prayerTimes = PrayerTimes(
       coordinates,

@@ -9,6 +9,7 @@ import 'package:native_app/widgets/presentation/section_title.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/buttons/dropdown.dart';
 import 'date_button.dart';
+import 'daylight_switch.dart';
 
 class Settings extends ConsumerWidget {
   const Settings({super.key});
@@ -59,6 +60,7 @@ class Settings extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
+    var textTheme = Theme.of(context).textTheme;
     var prefs = ref.watch(preferencesProvider);
 
     return AppScaffold(
@@ -139,6 +141,29 @@ class Settings extends ConsumerWidget {
                             selectedValue: selectedHijriAdj,
                           ),
                         ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(bottom: 40),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SectionTitle(title: locales.daylightSaving),
+                    Align(
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 10),
+                        child: DayLightSwitch(preferences: preferences),
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      child: Text(
+                        locales.onlyUsedToCalculatePrayerTimes,
+                        style: textTheme.labelSmall,
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ],
