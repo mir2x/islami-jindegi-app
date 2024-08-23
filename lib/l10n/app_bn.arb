@@ -123,6 +123,7 @@
 
   "hijriDateAdjustment": "হিজরী দিন সমন্বয়",
   "daylightSaving": "দিনের আলো সংরক্ষণ",
+  "onlyUsedToCalculatePrayerTimes": "কেবল নামাজের সময় নির্ধারণে ব্যবহৃত হয়",
   "banglaFont": "বাংলা ফন্ট",
   "arabicFont": "আরবী ফন্ট",
   "theme": "থিম",

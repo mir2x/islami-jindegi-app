@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:collection/collection.dart';
@@ -61,6 +60,7 @@ class Settings extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
+    var textTheme = Theme.of(context).textTheme;
     var prefs = ref.watch(preferencesProvider);
 
     return AppScaffold(
@@ -156,6 +156,14 @@ class Settings extends ConsumerWidget {
                       child: Container(
                         margin: const EdgeInsets.only(top: 10),
                         child: DayLightSwitch(preferences: preferences),
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      child: Text(
+                        locales.onlyUsedToCalculatePrayerTimes,
+                        style: textTheme.labelSmall,
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ],
