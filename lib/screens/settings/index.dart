@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:collection/collection.dart';
@@ -9,6 +10,7 @@ import 'package:native_app/widgets/presentation/section_title.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/buttons/dropdown.dart';
 import 'date_button.dart';
+import 'daylight_switch.dart';
 
 class Settings extends ConsumerWidget {
   const Settings({super.key});
@@ -139,6 +141,21 @@ class Settings extends ConsumerWidget {
                             selectedValue: selectedHijriAdj,
                           ),
                         ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(bottom: 40),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SectionTitle(title: locales.daylightSaving),
+                    Align(
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 10),
+                        child: DayLightSwitch(preferences: preferences),
                       ),
                     ),
                   ],

@@ -122,6 +122,7 @@
   "jilhajj": "যিলহাজ্জ",
 
   "hijriDateAdjustment": "হিজরী দিন সমন্বয়",
+  "daylightSaving": "দিনের আলো সংরক্ষণ",
   "banglaFont": "বাংলা ফন্ট",
   "arabicFont": "আরবী ফন্ট",
   "theme": "থিম",
@@ -130,7 +131,7 @@
 
   "next": "পরবর্তীতে",
   "all": "সব",
-  
+
   "country": "দেশ",
   "city": "শহর",
   "setLocation": "স্থান সেট করুন",
@@ -140,7 +141,7 @@
   "giveGeolocationPermission": "জিওলোকেশনের অনুমতি দিন",
   "geolocationEnabled": "জিওলোকেশন সক্রিয় আছে",
   "disable": "নিষ্ক্রিয় করুন",
-  "benefits": "সুবিধাসমূহ", 
+  "benefits": "সুবিধাসমূহ",
   "geolocationBenefits": "আপনার চলাচলের সাথে সাথে সংক্রিয়ভাবে লোকেশন আপডেট হবে",
   "selectCountry": "দেশ সনাক্ত করুন",
   "searchCountry": "দেশের নাম দিয়ে সার্চ করুন",
