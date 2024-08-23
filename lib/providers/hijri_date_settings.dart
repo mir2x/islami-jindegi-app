@@ -35,6 +35,7 @@ final hijriDateSettingsProvider = FutureProvider((ref) async {
   return {
     'preferences': data['preferences'],
     'coordinates': data['geolocation']['coordinates'],
+    'timezone': data['geolocation']['timezone'],
     'hijriAdjustment': adjustment,
   };
 });

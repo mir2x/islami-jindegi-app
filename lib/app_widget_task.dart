@@ -26,11 +26,13 @@ void callbackDispatcher() {
 
     Map coordinates = await getFailSafeCoordinates();
     Map location = await getFailSafeLocation();
+    String timezone = await getFailSafeTimezone();
     String locationName = getLocationName(location);
 
     HijriCalendar hijri = adjustedHijriDate({
       'preferences': preferences,
       'coordinates': coordinates,
+      'timezone': timezone,
       'hijriAdjustment': preferences.getInt('hijriAdjustment') ?? 0,
     });
 
@@ -42,6 +44,7 @@ void callbackDispatcher() {
         coordinates['latitude'],
         coordinates['longitude'],
       ),
+      timezone: timezone,
       preferences: preferences,
     );
 

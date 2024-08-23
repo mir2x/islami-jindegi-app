@@ -107,6 +107,7 @@ class CurrentPrayersState extends ConsumerState<CurrentPrayers> {
             coordinates['latitude'],
             coordinates['longitude'],
           ),
+          timezone: geolocation['timezone'],
           preferences: data['preferences'],
         );
 

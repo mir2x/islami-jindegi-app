@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
@@ -11,10 +10,12 @@ import 'preferences.dart';
 Future<Map> getFailSafeGeolocation() async {
   Map coordinates = await getFailSafeCoordinates();
   Map location = await getFailSafeLocation();
+  String timezone = await getFailSafeTimezone();
 
   return {
     'coordinates': coordinates,
     'location': location,
+    'timezone': timezone,
     'isGeolocated': false,
   };
 }
@@ -55,6 +56,16 @@ Future<Map> getFailSafeLocation() async {
       'country': locale == 'bn' ? 'বাংলাদেশ' : 'Bangladesh',
       'countryCode': 'BD',
     };
+  }
+}
+
+Future<String> getFailSafeTimezone() async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+
+  if (preferences.getString('timezone') != null) {
+    return preferences.getString('timezone')!;
+  } else {
+    return '';
   }
 }
 
@@ -122,9 +133,18 @@ Future setLocation(Map location) async {
       location['coordinates']['longitude'].toString(),
     );
   }
+
+  if ((location['timezone'] != null) &&
+      (preferences.getString('timezone') != location['timezone'])) {
+    preferences.setString('timezone', location['timezone']);
+  }
 }
 
-Future updatePreferences(Position position, Map location) async {
+Future updatePreferences(
+  Map location,
+  Position position,
+  String timezone,
+) async {
   await setLocation({
     'country': location['country'],
     'countryCode': location['countryCode'],
@@ -133,6 +153,7 @@ Future updatePreferences(Position position, Map location) async {
       'latitude': position.latitude,
       'longitude': position.longitude,
     },
+    'timezone': location['timezone'],
   });
 }
 
@@ -168,8 +189,9 @@ class GeolocationNotifier extends AsyncNotifier<Map> {
     }
 
     var location = await getLocation(position);
+    String timezone = await getFailSafeTimezone();
 
-    await updatePreferences(position, location);
+    await updatePreferences(location, position, timezone);
 
     return {
       'coordinates': {
@@ -177,6 +199,7 @@ class GeolocationNotifier extends AsyncNotifier<Map> {
         'longitude': position.longitude,
       },
       'location': location,
+      'timezone': timezone,
       'isGeolocated': true,
     };
   }
@@ -224,8 +247,9 @@ class GeolocationNotifier extends AsyncNotifier<Map> {
     }
 
     var location = await getLocation(position);
+    String timezone = '';
 
-    await updatePreferences(position, location);
+    await updatePreferences(location, position, timezone);
 
     state = AsyncValue.data({
       'coordinates': {
@@ -233,6 +257,7 @@ class GeolocationNotifier extends AsyncNotifier<Map> {
         'longitude': position.longitude,
       },
       'location': location,
+      'timezone': timezone,
       'isGeolocated': true,
     });
   }

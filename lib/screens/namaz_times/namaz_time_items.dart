@@ -66,6 +66,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
             geolocation['coordinates']['latitude'],
             geolocation['coordinates']['longitude'],
           ),
+          timezone: geolocation['timezone'],
           preferences: prefs,
           currentDate: widget.currentDate,
         );

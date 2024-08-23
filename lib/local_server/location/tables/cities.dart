@@ -8,6 +8,7 @@ class Cities extends Table {
   TextColumn get countryCode => text()();
   RealColumn get latitude => real()();
   RealColumn get longitude => real()();
+  TextColumn get timezone => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
