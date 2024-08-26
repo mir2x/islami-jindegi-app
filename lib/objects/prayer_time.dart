@@ -1,3 +1,4 @@
+import 'dart:core';
 import 'package:adhan/adhan.dart';
 import 'package:timezone_utc_offset/timezone_utc_offset.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -183,10 +184,16 @@ class PrayerTime {
 
   Map<String, String> currentAndNextPrayerNames() {
     DateTime currentTime = DateTime.now();
+    DateTime offsetTime = currentTime.toUtc().add(currentTime.timeZoneOffset);
 
-    String currentPrayer =
-        prayerTimes.currentPrayer().toString().split('.').last;
-    String nextPrayer = prayerTimes.nextPrayer().toString().split('.').last;
+    String currentPrayer = prayerTimes
+        .currentPrayerByDateTime(offsetTime)
+        .toString()
+        .split('.')
+        .last;
+
+    String nextPrayer =
+        prayerTimes.nextPrayerByDateTime(offsetTime).toString().split('.').last;
 
     DateTime ishraqStartTime = prayerTimes.sunrise.add(fifteenMins);
     DateTime ishraqEndTime = prayerTimes.dhuhr.subtract(oneMin);
