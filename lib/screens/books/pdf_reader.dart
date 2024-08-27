@@ -124,6 +124,18 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
                               page,
                             );
                           },
+                          onViewSizeChanged: (_, __, controller) {
+                            if (controller.pageNumber != null) {
+                              int pageNumber = controller.pageNumber!;
+
+                              Future.delayed(
+                                const Duration(milliseconds: 100),
+                                () {
+                                  controller.goToPage(pageNumber: pageNumber);
+                                },
+                              );
+                            }
+                          },
                           viewerOverlayBuilder:
                               (context, size, handleLinkTap) => [
                             PdfViewerScrollThumb(

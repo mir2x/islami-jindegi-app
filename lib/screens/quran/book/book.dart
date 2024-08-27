@@ -399,6 +399,15 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                         );
                       }
                     },
+                    onViewSizeChanged: (_, __, controller) {
+                      if (controller.pageNumber != null) {
+                        int pageNumber = controller.pageNumber!;
+
+                        Future.delayed(const Duration(milliseconds: 100), () {
+                          controller.goToPage(pageNumber: pageNumber);
+                        });
+                      }
+                    },
                     loadingBannerBuilder: (_, __, ___) {
                       return const Center(
                         child: CircularProgressIndicator(),
