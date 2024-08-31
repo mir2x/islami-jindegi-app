@@ -58,7 +58,11 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
           return SizedBox(
             height: screenHeight - heightAdjustment,
             child: GestureDetector(
-              onTap: () => widget.toggleFullScreen(),
+              onTap: () {
+                if (!widget.landscape) {
+                  widget.toggleFullScreen();
+                }
+              },
               child: pdfFile.when(
                 loading: () {
                   return const Center(

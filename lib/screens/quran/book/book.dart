@@ -259,7 +259,11 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
       title: Text(widget.qitabTitle),
       tabletBodyPadding: false,
       body: GestureDetector(
-        onTap: () => toggleFullScreen(),
+        onTap: () {
+          if (!landscape) {
+            toggleFullScreen();
+          }
+        },
         child: pdfFile.when(
           loading: () {
             return const Center(
