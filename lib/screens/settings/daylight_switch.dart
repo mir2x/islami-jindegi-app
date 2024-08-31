@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
+import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/theme/colors.dart';
 
-class DayLightSwitch extends ConsumerStatefulWidget {
+class DayLightSwitch extends ConsumerWidget {
   const DayLightSwitch({
     super.key,
     required this.preferences,
@@ -14,23 +15,12 @@ class DayLightSwitch extends ConsumerStatefulWidget {
   final dynamic preferences;
 
   @override
-  DayLightSwitchState createState() => DayLightSwitchState();
-}
-
-class DayLightSwitchState extends ConsumerState<DayLightSwitch> {
-  toggleTime(bool value) {
-    setState(() {
-      widget.preferences.setBool('daylight', value);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    String theme = widget.preferences.getString('theme') ?? 'classic';
+    String theme = preferences.getString('theme') ?? 'classic';
 
-    bool selectedDayLight = widget.preferences.getBool('daylight') ?? false;
+    bool selectedDayLight = preferences.getBool('daylight') ?? false;
 
     return AnimatedToggleSwitch<bool>.dual(
       current: selectedDayLight,
@@ -50,7 +40,8 @@ class DayLightSwitchState extends ConsumerState<DayLightSwitch> {
       ),
       borderWidth: 5,
       height: 36,
-      onChanged: (b) => toggleTime(b),
+      onChanged: (b) =>
+          ref.read(preferencesProvider.notifier).updateDaylight(b),
       indicatorSize: const Size.fromWidth(26),
       styleBuilder: (b) => ToggleStyle(
         backgroundColor: AppTheme.backgroundColor[theme],

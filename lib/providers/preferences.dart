@@ -13,6 +13,12 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
     state = AsyncValue.data(prefs);
   }
 
+  Future<dynamic> updateDaylight(bool value) async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('daylight', value);
+    state = AsyncValue.data(prefs);
+  }
+
   Future<dynamic> updateLocale(value) async {
     var prefs = await SharedPreferences.getInstance();
     await prefs.setString('locale', value);
