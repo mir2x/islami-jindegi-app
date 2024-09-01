@@ -184,16 +184,16 @@ class PrayerTime {
 
   Map<String, String> currentAndNextPrayerNames() {
     DateTime currentTime = DateTime.now();
-    DateTime offsetTime = currentTime.toUtc().add(currentTime.timeZoneOffset);
+    DateTime localTime = currentTime.toUtc().add(currentTime.timeZoneOffset);
 
     String currentPrayer = prayerTimes
-        .currentPrayerByDateTime(offsetTime)
+        .currentPrayerByDateTime(localTime)
         .toString()
         .split('.')
         .last;
 
     String nextPrayer =
-        prayerTimes.nextPrayerByDateTime(offsetTime).toString().split('.').last;
+        prayerTimes.nextPrayerByDateTime(localTime).toString().split('.').last;
 
     DateTime ishraqStartTime = prayerTimes.sunrise.add(fifteenMins);
     DateTime ishraqEndTime = prayerTimes.dhuhr.subtract(oneMin);
@@ -206,27 +206,27 @@ class PrayerTime {
     }
 
     if (currentPrayer == 'sunrise') {
-      if ((currentTime.isAtSameMomentAs(ishraqStartTime) ||
-              currentTime.isAfter(ishraqStartTime)) &&
-          currentTime.isBefore(ishraqEndTime)) {
+      if ((localTime.isAtSameMomentAs(ishraqStartTime) ||
+              localTime.isAfter(ishraqStartTime)) &&
+          localTime.isBefore(ishraqEndTime)) {
         currentPrayer = 'ishraq';
       } else {
         currentPrayer = 'none';
       }
     }
 
-    if (currentPrayer == 'dhuhr' && currentTime.isBefore(dhuhrStartTime)) {
+    if (currentPrayer == 'dhuhr' && localTime.isBefore(dhuhrStartTime)) {
       currentPrayer = 'none';
       nextPrayer = 'dhuhr';
     }
 
-    if (currentPrayer == 'asr' && currentTime.isAfter(asrEndTime)) {
+    if (currentPrayer == 'asr' && localTime.isAfter(asrEndTime)) {
       currentPrayer = 'none';
     }
 
     if (currentPrayer == 'isha' &&
-        currentTime.isAfter(ishaEndTime) &&
-        currentTime.isBefore(prayerTimes.fajr)) {
+        localTime.isAfter(ishaEndTime) &&
+        localTime.isBefore(prayerTimes.fajr)) {
       currentPrayer = 'none';
     }
 
@@ -235,7 +235,7 @@ class PrayerTime {
     }
 
     if (['dhuhr', 'sunrise'].contains(nextPrayer) &&
-        currentTime.isBefore(ishraqStartTime)) {
+        localTime.isBefore(ishraqStartTime)) {
       nextPrayer = 'ishraq';
     }
 
