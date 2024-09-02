@@ -32,7 +32,13 @@ class CurrentLocationState extends ConsumerState<CurrentLocation> {
 
     timer = Timer.periodic(
       const Duration(minutes: 30),
-      (Timer t) => setState(() {}),
+      (Timer t) async {
+        Map geolocation = await ref.read(geolocationProvider.future);
+
+        if (geolocation['isGeolocated']) {
+          await ref.read(geolocationProvider.notifier).updateCoordinates();
+        }
+      },
     );
   }
 
