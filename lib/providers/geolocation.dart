@@ -153,7 +153,7 @@ Future updatePreferences(
       'latitude': position.latitude,
       'longitude': position.longitude,
     },
-    'timezone': location['timezone'],
+    'timezone': timezone,
   });
 }
 
