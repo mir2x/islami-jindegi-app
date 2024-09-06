@@ -65,7 +65,7 @@ Future<String> getFailSafeTimezone() async {
   if (preferences.getString('timezone') != null) {
     return preferences.getString('timezone')!;
   } else {
-    return '';
+    return 'Asia/Dhaka';
   }
 }
 
@@ -134,8 +134,7 @@ Future setLocation(Map location) async {
     );
   }
 
-  if ((location['timezone'] != null) &&
-      (preferences.getString('timezone') != location['timezone'])) {
+  if (location['timezone'] != null) {
     preferences.setString('timezone', location['timezone']);
   }
 }
