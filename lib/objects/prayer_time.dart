@@ -184,7 +184,9 @@ class PrayerTime {
 
   Map<String, String> currentAndNextPrayerNames() {
     DateTime currentTime = DateTime.now();
-    DateTime localTime = currentTime.toUtc().add(currentTime.timeZoneOffset);
+    DateTime localTime = timezone.isEmpty
+        ? currentTime
+        : currentTime.toUtc().add(currentTime.timeZoneOffset);
 
     String currentPrayer = prayerTimes
         .currentPrayerByDateTime(localTime)
