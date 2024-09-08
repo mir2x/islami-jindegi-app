@@ -14,6 +14,12 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
     state = AsyncValue.data(prefs);
   }
 
+  Future<dynamic> removeHijriLocalAdjustment() async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.remove('hijriLocalAdjustment');
+    state = AsyncValue.data(prefs);
+  }
+
   Future<dynamic> updateDaylight(bool value) async {
     var prefs = await SharedPreferences.getInstance();
     await prefs.setBool('daylight', value);
