@@ -8,6 +8,7 @@ import 'package:native_app/widgets/location/index.dart';
 import 'package:native_app/objects/prayer_time.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/theme/app_theme.dart';
+import 'package:native_app/helpers/update_app_widget.dart';
 
 class CurrentLocationPrayers extends StatelessWidget {
   const CurrentLocationPrayers({super.key});
@@ -148,6 +149,34 @@ class Prayers extends StatelessWidget {
         String theme = preferences.getString('theme') ?? 'classic';
         Color titleColor = AppTheme.titleOppositeColor[theme];
         Color labelColor = AppTheme.labelOppsititeColor[theme];
+
+        Map updatableParams = {};
+
+        if (preferences.getString('currentPrayerTitle') !=
+            prayerTimes['current']['title']) {
+          preferences.setString(
+            'currentPrayerTitle',
+            prayerTimes['current']['title'],
+          );
+          updatableParams['currentPrayerTitle'] =
+              prayerTimes['current']['title'];
+        }
+
+        if (preferences.getString('currentPrayerTime') !=
+            prayerTimes['current']['time']) {
+          preferences.setString(
+            'currentPrayerTime',
+            prayerTimes['current']['time'],
+          );
+          updatableParams['currentPrayerTime'] = prayerTimes['current']['time'];
+        }
+
+        if (preferences.getString('nextPrayer') != prayerTimes['next']) {
+          preferences.setString('nextPrayer', prayerTimes['next']);
+          updatableParams['nextPrayer'] = prayerTimes['next'];
+        }
+
+        updateAppWidget(updatableParams);
 
         return Column(
           crossAxisAlignment:

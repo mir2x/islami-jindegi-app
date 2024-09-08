@@ -6,6 +6,7 @@ import 'package:native_app/providers/hijri_date_settings.dart';
 import 'package:native_app/helpers/adjusted_hijri_date.dart';
 import 'package:native_app/helpers/split_hijri_date.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/helpers/update_app_widget.dart';
 import 'package:native_app/theme/app_theme.dart';
 
 class HijriDate extends ConsumerWidget {
@@ -77,8 +78,13 @@ class HijriDate extends ConsumerWidget {
             }
 
             Map h = splitHijriDate(today, locales, currentLang);
-            String hijriText =
-                '${h['day']} ${h['month']}, ${h['year']} ${locales.hijri}';
+            String hijriDate = '${h['day']} ${h['month']}, ${h['year']}';
+            String hijriText = '$hijriDate ${locales.hijri}';
+
+            if (preferences.getString('hijriDate') != hijriDate) {
+              preferences.setString('hijriDate', hijriDate);
+              updateAppWidget({'hijriDate': hijriDate});
+            }
 
             return Text(
               hijriText,

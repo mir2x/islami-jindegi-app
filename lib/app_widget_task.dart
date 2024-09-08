@@ -38,6 +38,8 @@ void callbackDispatcher() {
 
     Map h = splitHijriDate(hijri, locales, currentLang);
     String hijriDate = '${h['day']} ${h['month']}, ${h['year']}';
+    String bangaliDate = getBangaliDate();
+    String gregorianDate = getGregorianDate(currentLang, null);
 
     PrayerTime prayerTime = PrayerTime(
       coordinates: Coordinates(
@@ -61,8 +63,8 @@ void callbackDispatcher() {
     updateAppWidget({
       'theme': theme,
       'hijriDate': hijriDate,
-      'bangaliDate': getBangaliDate(),
-      'gregorianDate': getGregorianDate(currentLang, null),
+      'bangaliDate': bangaliDate,
+      'gregorianDate': gregorianDate,
       'sunriseTitle': sunriseSunset['sunrise']['title'],
       'sunriseTime': sunriseSunset['sunrise']['time'],
       'sunsetTitle': sunriseSunset['sunset']['title'],
@@ -77,6 +79,8 @@ void callbackDispatcher() {
     });
 
     await preferences.setString('hijriDate', hijriDate);
+    await preferences.setString('bangaliDate', bangaliDate);
+    await preferences.setString('gregorianDate', gregorianDate);
     await preferences.setString('location', locationName);
 
     if (prayerTimes.containsKey('current') && prayerTimes['current'] != null) {
