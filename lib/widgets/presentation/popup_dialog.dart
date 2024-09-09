@@ -24,17 +24,11 @@ class PopupDialog extends StatelessWidget {
             backgroundColor: Colors.transparent,
             child: Container(
               width: screenWidth * 0.8,
-              height: screenHeight * 0.3,
+              height: screenHeight * 0.5,
               margin: const EdgeInsets.only(left: 0.0, right: 0.0),
               child: Stack(
                 children: <Widget>[
                   Container(
-                    padding: const EdgeInsets.only(
-                      top: 20,
-                      bottom: 20,
-                      left: 20,
-                      right: 20,
-                    ),
                     margin: const EdgeInsets.only(top: 10.0, right: 5.0),
                     decoration: BoxDecoration(
                       color: AppTheme.dialogBgColor[theme],

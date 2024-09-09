@@ -39,9 +39,7 @@ class DateButton extends ConsumerWidget {
         ),
         onPressed: () {
           if (selectedValue == value) {
-            ref
-                .read(preferencesProvider.notifier)
-                .removeHijriLocalAdjustment();
+            ref.read(preferencesProvider.notifier).removeHijriLocalAdjustment();
           } else {
             ref
                 .read(preferencesProvider.notifier)

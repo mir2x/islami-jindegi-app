@@ -6,8 +6,12 @@ final allModelsProvider = FutureProvider.autoDispose
     .family<List, AllModelsQuery>((ref, AllModelsQuery query) async {
   await ref.watch(repositoryInitializerProvider.future);
 
-  return await query.repository.findAll(
-    params: query.params,
-    syncLocal: query.syncLocal,
-  );
+  try {
+    return await query.repository.findAll(
+      params: query.params,
+      syncLocal: query.syncLocal,
+    );
+  } catch (error) {
+    return [];
+  }
 });
