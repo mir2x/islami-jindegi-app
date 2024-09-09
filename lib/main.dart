@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'dart:io' show Platform;
+import 'dart:io' show Platform, HttpOverrides;
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +12,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:workmanager/workmanager.dart';
+import 'package:lehttp_overrides/lehttp_overrides.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/theme/themes.dart';
 import 'routes/index.dart';
@@ -62,6 +63,9 @@ Future main() async {
   await container.read(repositoryInitializerProvider.future);
 
   if (Platform.isAndroid) {
+    // fixes Let's Encrypt SSL certificate problems with Android 7.1.1 and below
+    HttpOverrides.global = LEHttpOverrides();
+
     Workmanager().initialize(callbackDispatcher);
     Workmanager().registerPeriodicTask(
       'app-widget-task',
