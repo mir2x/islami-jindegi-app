@@ -152,8 +152,12 @@ class Prayers extends StatelessWidget {
 
         Map updatableParams = {};
 
-        if (preferences.getString('currentPrayerTitle') !=
-            prayerTimes['current']['title']) {
+        bool hasCurrentPrayer = prayerTimes.containsKey('current') &&
+            (prayerTimes['current'] != null);
+
+        if (hasCurrentPrayer &&
+            (preferences.getString('currentPrayerTitle') !=
+                prayerTimes['current']['title'])) {
           preferences.setString(
             'currentPrayerTitle',
             prayerTimes['current']['title'],
@@ -162,8 +166,9 @@ class Prayers extends StatelessWidget {
               prayerTimes['current']['title'];
         }
 
-        if (preferences.getString('currentPrayerTime') !=
-            prayerTimes['current']['time']) {
+        if (hasCurrentPrayer &&
+            (preferences.getString('currentPrayerTime') !=
+                prayerTimes['current']['time'])) {
           preferences.setString(
             'currentPrayerTime',
             prayerTimes['current']['time'],
@@ -182,8 +187,7 @@ class Prayers extends StatelessWidget {
           crossAxisAlignment:
               isMobile ? CrossAxisAlignment.start : CrossAxisAlignment.end,
           children: [
-            if (prayerTimes.containsKey('current') &&
-                prayerTimes['current'] != null) ...[
+            if (hasCurrentPrayer) ...[
               Container(
                 margin: EdgeInsets.only(bottom: isMobile ? 0 : 5),
                 child: Row(
