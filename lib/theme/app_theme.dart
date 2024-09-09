@@ -51,6 +51,12 @@ class AppTheme {
     'classic': ThemeColors.color14,
   };
 
+  static const Map popupBarColor = {
+    'dark': ThemeColors.color5,
+    'light': ThemeColors.color6,
+    'classic': ThemeColors.color12,
+  };
+
   static const Map bottomBarColor = {
     'dark': ThemeColors.color5,
     'light': ThemeColors.color3,
