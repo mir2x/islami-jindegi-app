@@ -666,7 +666,6 @@ class QariOptions extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    var qSettings = ref.watch(quranSettingsProvider);
 
     return WithPreferences(
       builder: (context, preferences) {
@@ -696,55 +695,7 @@ class QariOptions extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Container(
-                          constraints: const BoxConstraints(maxHeight: 40),
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                            ),
-                            child: Row(
-                              children: [
-                                if (qSettings.containsKey('serialTilawat') &&
-                                    qSettings['serialTilawat']) ...[
-                                  const Icon(
-                                    Icons.check_box,
-                                    color: ThemeColors.color4,
-                                    size: 20,
-                                  ),
-                                ] else ...[
-                                  const Icon(
-                                    Icons.check_box_outline_blank,
-                                    color: ThemeColors.color4,
-                                    size: 20,
-                                  ),
-                                ],
-                                Container(
-                                  margin:
-                                      const EdgeInsets.only(left: 4, bottom: 1),
-                                  child: Text(
-                                    locales.serialTilawat,
-                                    style: textTheme.labelMedium,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            onPressed: () {
-                              bool selectedSerialTilawatOption =
-                                  qSettings.containsKey('serialTilawat')
-                                      ? qSettings['serialTilawat']
-                                      : false;
-
-                              ref
-                                  .read(quranSettingsProvider.notifier)
-                                  .updateParams(
-                                    'serialTilawat',
-                                    !selectedSerialTilawatOption,
-                                  );
-
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ),
+                        const SerialTilawat(),
                         TilwatRange(
                           chapter: chapter,
                           fromAyah: fromAyah,
@@ -763,6 +714,66 @@ class QariOptions extends ConsumerWidget {
           },
         );
       },
+    );
+  }
+}
+
+class SerialTilawat extends ConsumerWidget {
+  const SerialTilawat({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
+    var textTheme = Theme.of(context).textTheme;
+    var qSettings = ref.watch(quranSettingsProvider);
+
+    return Container(
+      constraints: const BoxConstraints(maxHeight: 40),
+      child: TextButton(
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.zero,
+        ),
+        child: Row(
+          children: [
+            if (qSettings.containsKey('serialTilawat') &&
+                qSettings['serialTilawat']) ...[
+              const Icon(
+                Icons.check_box,
+                color: ThemeColors.color4,
+                size: 20,
+              ),
+            ] else ...[
+              const Icon(
+                Icons.check_box_outline_blank,
+                color: ThemeColors.color4,
+                size: 20,
+              ),
+            ],
+            Container(
+              margin: const EdgeInsets.only(left: 4, bottom: 1),
+              child: Text(
+                locales.serialTilawat,
+                style: textTheme.labelMedium,
+              ),
+            ),
+          ],
+        ),
+        onPressed: () {
+          bool selectedSerialTilawatOption =
+              qSettings.containsKey('serialTilawat')
+                  ? qSettings['serialTilawat']
+                  : false;
+
+          ref.read(quranSettingsProvider.notifier).updateParams(
+                'serialTilawat',
+                !selectedSerialTilawatOption,
+              );
+
+          if (qSettings['qari'] != null) {
+            Navigator.of(context).pop();
+          }
+        },
+      ),
     );
   }
 }
