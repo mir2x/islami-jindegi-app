@@ -23,15 +23,15 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
       var locales = AppLocalizations.of(context)!;
       final preferences = await SharedPreferences.getInstance();
       String theme = preferences.getString('theme') ?? 'classic';
-      /* int? timestamp = preferences.getInt('lastMalfuzatPopup'); */
+      int? timestamp = preferences.getInt('lastMalfuzatPopup');
 
-      /* if (timestamp != null) { */
-      /*   DateTime lastClosed = DateTime.fromMillisecondsSinceEpoch(timestamp); */
+      if (timestamp != null) {
+        DateTime lastClosed = DateTime.fromMillisecondsSinceEpoch(timestamp);
 
-      /*   if (DateUtils.isSameDay(lastClosed, DateTime.now())) { */
-      /*     return; */
-      /*   } */
-      /* } */
+        if (DateUtils.isSameDay(lastClosed, DateTime.now())) {
+          return;
+        }
+      }
 
       var malfuzats = await ref.malfuzats.findAll(
         params: const {
