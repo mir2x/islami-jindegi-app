@@ -144,6 +144,16 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
             ),
           ),
           currentAyahText,
+          const SizedBox(width: 5),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: Text(
+              locales.translation,
+              style: textTheme.titleMedium?.copyWith(
+                color: AppTheme.titleContrastColor[theme],
+              ),
+            ),
+          ),
         ],
       ),
       error: (error, _) => InkWell(
