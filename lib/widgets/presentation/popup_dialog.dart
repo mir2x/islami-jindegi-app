@@ -29,7 +29,7 @@ class PopupDialog extends StatelessWidget {
               child: Stack(
                 children: <Widget>[
                   Container(
-                    margin: const EdgeInsets.only(top: 10.0, right: 5.0),
+                    margin: const EdgeInsets.only(top: 12.0, right: 7.0),
                     decoration: BoxDecoration(
                       color: AppTheme.dialogBgColor[theme],
                       shape: BoxShape.rectangle,
@@ -45,7 +45,7 @@ class PopupDialog extends StatelessWidget {
                     child: child,
                   ),
                   Positioned(
-                    right: 0.0,
+                    right: 0,
                     child: GestureDetector(
                       onTap: () {
                         Navigator.of(context).pop();
@@ -53,7 +53,7 @@ class PopupDialog extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.topRight,
                         child: CircleAvatar(
-                          radius: 14.0,
+                          radius: 16.0,
                           backgroundColor: Colors.white,
                           child: Icon(
                             Icons.close,

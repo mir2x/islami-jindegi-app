@@ -65,7 +65,7 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
                     padding: const EdgeInsets.all(10),
                     child: Text(
                       locales.malfuzat,
-                      style: textTheme.labelLarge?.copyWith(
+                      style: textTheme.headlineLarge?.copyWith(
                         color: AppTheme.labelOppsititeColor[theme],
                         fontFamily: 'bangla/ben-sen-handwriting',
                       ),
@@ -101,7 +101,10 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
                             if (item.body != null) ...[
                               Container(
                                 margin: const EdgeInsets.only(bottom: 25),
-                                child: HtmlText(text: item.body!),
+                                child: HtmlText(
+                                  text: item.body!,
+                                  fontSizeRatio: 1.1,
+                                ),
                               ),
                             ],
                           ],
