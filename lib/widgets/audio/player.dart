@@ -4,14 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/audio_player.dart';
-import 'package:native_app/providers/local_file.dart';
 import 'package:native_app/objects/audio_resource.dart';
 import 'package:native_app/widgets/presentation/connect_to_internet.dart';
-import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/play_time.dart';
 import 'package:native_app/theme/app_theme.dart';
 
@@ -82,6 +78,7 @@ class StatefulAudioPlayer extends ConsumerStatefulWidget {
 
 class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
   bool isPlaying = false;
+  bool isIdle = true;
 
   StreamSubscription? _playerStateSubscription;
   StreamSubscription? _durationSubscription;
@@ -105,17 +102,19 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
       duration = Duration(seconds: seconds);
     }
 
-    _playerStateSubscription =
-        widget.player.playerStateStream.listen((PlayerState s) {
-      setState(() {
-        if (s.processingState == ProcessingState.completed) {
-          widget.player.pause();
-          widget.player.seek(const Duration(seconds: 0));
-        }
+    _playerStateSubscription = widget.player.playerStateStream.listen(
+      (PlayerState s) {
+        setState(() {
+          if (s.processingState == ProcessingState.completed) {
+            widget.player.pause();
+            widget.player.seek(const Duration(seconds: 0));
+          }
 
-        isPlaying = s.playing;
-      });
-    });
+          isPlaying = s.playing;
+          isIdle = s.processingState == ProcessingState.idle;
+        });
+      },
+    );
 
     _durationSubscription = widget.player.durationStream.listen((Duration? d) {
       setState(() {
@@ -130,10 +129,18 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
     });
 
     _playbackEventSubscription = widget.player.playbackEventStream.listen(
-      (event) {},
+      (event) {
+        if (isPlaying && (event.processingState == ProcessingState.idle)) {
+          Future.delayed(const Duration(seconds: 10), () {
+            if (isPlaying && isIdle) {
+              widget.player.stop();
+            }
+          });
+        }
+      },
       onError: (Object e, StackTrace st) {
         if (e is PlatformException) {
-          widget.player.pause();
+          widget.player.stop();
         } else {}
       },
     );
@@ -151,43 +158,7 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-
-    Future<bool> canSeek() async {
-      var scaffoldMessenger = ScaffoldMessenger.of(context);
-
-      bool hasNoConnection =
-          await Connectivity().checkConnectivity() == ConnectivityResult.none;
-
-      String filePath = fileTitlePath(widget.title, widget.audio['id']);
-      var localFile = await ref.watch(localFileProvider(filePath).future);
-
-      if (hasNoConnection && localFile == null) {
-        scaffoldMessenger.removeCurrentSnackBar();
-
-        scaffoldMessenger.showSnackBar(
-          SnackBar(
-            content: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.wifi),
-                const SizedBox(width: 10),
-                Text(
-                  locales.connectToInternetMsg,
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-            duration: const Duration(seconds: 5),
-          ),
-        );
-
-        return false;
-      } else {
-        return true;
-      }
-    }
 
     return WithPreferences(
       builder: (context, preferences) {
@@ -242,10 +213,8 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
                 min: 0,
                 max: duration.inSeconds.toDouble() + 2,
                 onChanged: (double value) async {
-                  if (await canSeek()) {
-                    await widget.player.seek(Duration(seconds: value.toInt()));
-                    value = value;
-                  }
+                  await widget.player.seek(Duration(seconds: value.toInt()));
+                  value = value;
                 },
               ),
             ),
@@ -255,26 +224,22 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
                 IconButton(
                   icon: const Icon(Icons.fast_rewind),
                   onPressed: () async {
-                    if (await canSeek()) {
-                      int tenSecondBehind = position.inSeconds - 10;
+                    int tenSecondBehind = position.inSeconds - 10;
 
-                      if (tenSecondBehind >= 0) {
-                        await widget.player
-                            .seek(Duration(seconds: tenSecondBehind));
-                      }
+                    if (tenSecondBehind >= 0) {
+                      await widget.player
+                          .seek(Duration(seconds: tenSecondBehind));
                     }
                   },
                 ),
                 IconButton(
                   icon: const Icon(Icons.fast_forward),
                   onPressed: () async {
-                    if (await canSeek()) {
-                      int tenSecondForward = position.inSeconds + 10;
+                    int tenSecondForward = position.inSeconds + 10;
 
-                      if (tenSecondForward <= duration.inSeconds) {
-                        await widget.player
-                            .seek(Duration(seconds: tenSecondForward));
-                      }
+                    if (tenSecondForward <= duration.inSeconds) {
+                      await widget.player
+                          .seek(Duration(seconds: tenSecondForward));
                     }
                   },
                 ),

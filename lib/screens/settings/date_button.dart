@@ -13,7 +13,7 @@ class DateButton extends ConsumerWidget {
 
   final String label;
   final int value;
-  final int selectedValue;
+  final int? selectedValue;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,9 +38,13 @@ class DateButton extends ConsumerWidget {
           ),
         ),
         onPressed: () {
-          ref
-              .read(preferencesProvider.notifier)
-              .updateHijriLocalAdjustment(value);
+          if (selectedValue == value) {
+            ref.read(preferencesProvider.notifier).removeHijriLocalAdjustment();
+          } else {
+            ref
+                .read(preferencesProvider.notifier)
+                .updateHijriLocalAdjustment(value);
+          }
         },
       ),
     );

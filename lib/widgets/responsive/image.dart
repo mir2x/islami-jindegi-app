@@ -35,13 +35,9 @@ class ResponsiveImage extends ConsumerWidget {
         return WithConnectivity(
           builder: (context, isConnected) {
             if (isConnected) {
-              Map<dynamic, dynamic> metadata = getImageMetadata(
-                image,
-                model,
-                attr,
-              );
+              Map metadata = getImageMetadata(image, model, attr);
 
-              Map<dynamic, dynamic> img = image[selectedWidth];
+              Map img = image[selectedWidth];
               String staticHostName = dotenv.env['STATIC_HOST_NAME']!;
               String imageSrc =
                   "$staticHostName/uploads/${img['storage']}/${img['id']}";
@@ -76,7 +72,7 @@ class ResponsiveImage extends ConsumerWidget {
         widths.lastWhereOrNull((w) => int.parse(w) < vwsetWidth);
   }
 
-  Map<dynamic, dynamic> getImageMetadata(image, String model, String attr) {
+  Map getImageMetadata(image, String model, String attr) {
     Map<String, int> settings = imageSettings[model]![attr]!;
 
     return image[settings['width'].toString()]?['metadata'] ?? settings;

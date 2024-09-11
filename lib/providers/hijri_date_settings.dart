@@ -3,18 +3,16 @@ import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/main.data.dart';
-import 'package:native_app/helpers/update_app_widget.dart';
 
 final hijriDateSettingsProvider = FutureProvider((ref) async {
   final data = await ref.watch(preferencesAndGeolocationProvider.future);
 
   String? countryCode = data['geolocation']['location']['countryCode'];
 
-  int hijriAdjustment = data['preferences'].getInt('hijriAdjustment') ?? 0;
-  int localAdjustment = data['preferences'].getInt('hijriLocalAdjustment') ?? 0;
-  int adjustment = localAdjustment;
+  int? localAdjustment = data['preferences'].getInt('hijriLocalAdjustment');
+  int adjustment = localAdjustment ?? 0;
 
-  if (adjustment == 0 && countryCode != null) {
+  if (localAdjustment == null && countryCode != null) {
     var query = AllModelsQuery(
       repository: ref.hijriAdjustments,
       params: {'country-code': countryCode, 'quantity': 1},
@@ -27,9 +25,8 @@ final hijriDateSettingsProvider = FutureProvider((ref) async {
     }
   }
 
-  if (adjustment != hijriAdjustment) {
+  if (adjustment != data['preferences'].getInt('hijriAdjustment')) {
     await data['preferences'].setInt('hijriAdjustment', adjustment);
-    updateAppWidget({'hijriAdjustment': adjustment});
   }
 
   return {

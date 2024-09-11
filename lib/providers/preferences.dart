@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:native_app/helpers/update_app_widget.dart';
 
 class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
   @override
@@ -10,6 +11,12 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
   Future<dynamic> updateHijriLocalAdjustment(int value) async {
     var prefs = await SharedPreferences.getInstance();
     await prefs.setInt('hijriLocalAdjustment', value);
+    state = AsyncValue.data(prefs);
+  }
+
+  Future<dynamic> removeHijriLocalAdjustment() async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.remove('hijriLocalAdjustment');
     state = AsyncValue.data(prefs);
   }
 
@@ -40,6 +47,7 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
   Future<dynamic> updateTheme(value) async {
     var prefs = await SharedPreferences.getInstance();
     await prefs.setString('theme', value);
+    updateAppWidget({'theme': value});
     state = AsyncValue.data(prefs);
   }
 

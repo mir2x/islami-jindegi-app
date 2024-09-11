@@ -8,6 +8,7 @@ import 'package:native_app/widgets/location/index.dart';
 import 'package:native_app/objects/prayer_time.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/theme/app_theme.dart';
+import 'package:native_app/helpers/update_app_widget.dart';
 
 class CurrentLocationPrayers extends StatelessWidget {
   const CurrentLocationPrayers({super.key});
@@ -149,12 +150,44 @@ class Prayers extends StatelessWidget {
         Color titleColor = AppTheme.titleOppositeColor[theme];
         Color labelColor = AppTheme.labelOppsititeColor[theme];
 
+        Map updatableParams = {};
+
+        bool hasCurrentPrayer = prayerTimes.containsKey('current') &&
+            (prayerTimes['current'] != null);
+
+        if (hasCurrentPrayer &&
+            (preferences.getString('currentPrayerTitle') !=
+                prayerTimes['current']['title'])) {
+          preferences.setString(
+            'currentPrayerTitle',
+            prayerTimes['current']['title'],
+          );
+          updatableParams['currentPrayerTitle'] =
+              prayerTimes['current']['title'];
+        }
+
+        if (hasCurrentPrayer &&
+            (preferences.getString('currentPrayerTime') !=
+                prayerTimes['current']['time'])) {
+          preferences.setString(
+            'currentPrayerTime',
+            prayerTimes['current']['time'],
+          );
+          updatableParams['currentPrayerTime'] = prayerTimes['current']['time'];
+        }
+
+        if (preferences.getString('nextPrayer') != prayerTimes['next']) {
+          preferences.setString('nextPrayer', prayerTimes['next']);
+          updatableParams['nextPrayer'] = prayerTimes['next'];
+        }
+
+        updateAppWidget(updatableParams);
+
         return Column(
           crossAxisAlignment:
               isMobile ? CrossAxisAlignment.start : CrossAxisAlignment.end,
           children: [
-            if (prayerTimes.containsKey('current') &&
-                prayerTimes['current'] != null) ...[
+            if (hasCurrentPrayer) ...[
               Container(
                 margin: EdgeInsets.only(bottom: isMobile ? 0 : 5),
                 child: Row(

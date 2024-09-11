@@ -5,6 +5,8 @@ import 'package:geocoding/geocoding.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
+import 'package:native_app/helpers/get_location_name.dart';
+import 'package:native_app/helpers/update_app_widget.dart';
 import 'preferences.dart';
 
 Future<Map> getFailSafeGeolocation() async {
@@ -137,6 +139,13 @@ Future setLocation(Map location) async {
   if ((location['timezone'] != null) &&
       (preferences.getString('timezone') != location['timezone'])) {
     preferences.setString('timezone', location['timezone']);
+  }
+
+  String locationName = getLocationName(location);
+
+  if (preferences.getString('location') != locationName) {
+    preferences.setString('location', locationName);
+    updateAppWidget({'location': locationName});
   }
 }
 

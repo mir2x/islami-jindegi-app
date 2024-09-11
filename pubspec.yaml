@@ -3,7 +3,7 @@ description: Islami Jindegi Native App
 
 publish_to: 'none'
 
-version: 5.0.31+126
+version: 5.0.33+128
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -46,7 +46,7 @@ dependencies:
   scrollable_positioned_list: ^0.3.8
   carousel_slider: ^4.1.1
   animated_toggle_switch: ^0.8.0
-  just_audio: ^0.9.36
+  just_audio: ^0.9.40
   # just_audio_background: ^0.0.1-beta.11
   pdfrx: ^1.0.73
   # pdfrx:
@@ -76,6 +76,7 @@ dependencies:
   # http
   dio: ^5.3.2
   url_launcher: ^6.1.14
+  lehttp_overrides: ^1.0.3
 
   # builder
   json_annotation: ^4.7.0
@@ -175,6 +176,10 @@ flutter:
         - asset: assets/fonts/NotoSansBengali-Regular.ttf
         - asset: assets/fonts/NotoSansBengali-Bold.ttf
           weight: 700
+
+    - family: bangla/ben-sen-handwriting
+      fonts:
+        - asset: assets/fonts/BenSenHandwriting.ttf
 
     - family: arabic/al-qalam-quran-majeed
       fonts:
