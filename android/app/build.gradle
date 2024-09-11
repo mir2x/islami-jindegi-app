@@ -42,14 +42,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-    }
-
     defaultConfig {
         applicationId "com.islami_jindegi"
         // You can update the following values to match your application needs.
@@ -72,6 +64,7 @@ android {
            storePassword keystoreProperties['storePassword']
        }
     }
+
     buildTypes {
         release {
             signingConfig signingConfigs.release
@@ -80,6 +73,7 @@ android {
             }
         }
     }
+
     buildFeatures {
         viewBinding true
     }
@@ -90,6 +84,5 @@ flutter {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22"
     implementation 'com.android.support:multidex:1.0.3'
 }

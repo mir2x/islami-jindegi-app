@@ -117,6 +117,7 @@ dependencies:
 
 dependency_overrides:
   uuid: ^4.0.0
+  location: ^5.0.0
 
 dev_dependencies:
   flutter_test:
