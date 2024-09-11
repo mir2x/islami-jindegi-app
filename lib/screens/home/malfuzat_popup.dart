@@ -23,15 +23,15 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
       var locales = AppLocalizations.of(context)!;
       final preferences = await SharedPreferences.getInstance();
       String theme = preferences.getString('theme') ?? 'classic';
-      int? timestamp = preferences.getInt('lastMalfuzatPopup');
+      /* int? timestamp = preferences.getInt('lastMalfuzatPopup'); */
 
-      if (timestamp != null) {
-        DateTime lastClosed = DateTime.fromMillisecondsSinceEpoch(timestamp);
+      /* if (timestamp != null) { */
+      /*   DateTime lastClosed = DateTime.fromMillisecondsSinceEpoch(timestamp); */
 
-        if (DateUtils.isSameDay(lastClosed, DateTime.now())) {
-          return;
-        }
-      }
+      /*   if (DateUtils.isSameDay(lastClosed, DateTime.now())) { */
+      /*     return; */
+      /*   } */
+      /* } */
 
       var malfuzats = await ref.malfuzats.findAll(
         params: const {
@@ -67,6 +67,7 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
                       locales.malfuzat,
                       style: textTheme.labelLarge?.copyWith(
                         color: AppTheme.labelOppsititeColor[theme],
+                        fontFamily: 'bangla/ben-sen-handwriting',
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -81,7 +82,9 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
                               margin: const EdgeInsets.only(bottom: 10),
                               child: Text(
                                 item.title,
-                                style: textTheme.headlineMedium,
+                                style: textTheme.headlineLarge?.copyWith(
+                                  fontFamily: 'bangla/ben-sen-handwriting',
+                                ),
                                 textAlign: TextAlign.center,
                               ),
                             ),
