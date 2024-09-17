@@ -94,6 +94,8 @@ class AyahList extends ConsumerWidget {
           toAyah = chapter.totalAyat;
         }
 
+        var player = ref.read(playerProvider);
+
         return AppScaffold(
           onBackPressed: () async => await QR.to('quran'),
           showPattern: false,
@@ -119,7 +121,7 @@ class AyahList extends ConsumerWidget {
                 );
               } else {
                 return ReadingModeAyahList(
-                  player: ref.read(playerProvider),
+                  player: player,
                   chapter: chapter,
                   ayahs: ayahs,
                   qari: qSettings['qari'],
@@ -163,6 +165,7 @@ class AyahList extends ConsumerWidget {
                       chapter: chapter,
                       fromAyah: fromAyah,
                       toAyah: toAyah,
+                      player: player,
                     ),
                   ],
                   FontOptions(
@@ -347,8 +350,6 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
       bool qariChanged = widget.qari != oldwidget.qari;
 
       if (widget.serialTilawat) {
-        widget.player.play();
-
         if (widget.qari != null && currentAyah == -1) {
           if (widget.fromAyah == 1 && widget.chapter.position != 9) {
             currentAyah = 0;
@@ -654,11 +655,13 @@ class QariOptions extends ConsumerWidget {
     required this.chapter,
     required this.fromAyah,
     required this.toAyah,
+    required this.player,
   });
 
   final dynamic chapter;
   final int fromAyah;
   final int toAyah;
+  final AudioPlayer player;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -695,7 +698,7 @@ class QariOptions extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const SerialTilawat(),
+                        SerialTilawat(player: player),
                         TilwatRange(
                           chapter: chapter,
                           fromAyah: fromAyah,
@@ -719,7 +722,12 @@ class QariOptions extends ConsumerWidget {
 }
 
 class SerialTilawat extends ConsumerWidget {
-  const SerialTilawat({super.key});
+  const SerialTilawat({
+    super.key,
+    required this.player,
+  });
+
+  final AudioPlayer player;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -758,7 +766,7 @@ class SerialTilawat extends ConsumerWidget {
             ),
           ],
         ),
-        onPressed: () {
+        onPressed: () async {
           bool selectedSerialTilawatOption =
               qSettings.containsKey('serialTilawat')
                   ? qSettings['serialTilawat']
@@ -770,7 +778,12 @@ class SerialTilawat extends ConsumerWidget {
               );
 
           if (qSettings['qari'] != null) {
-            Navigator.of(context).pop();
+            await player.stop();
+            await player.play();
+
+            if (context.mounted) {
+              Navigator.of(context).pop();
+            }
           }
         },
       ),
