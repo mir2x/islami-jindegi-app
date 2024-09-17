@@ -50,7 +50,8 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
               MediaQueryData.fromView(
                 ui.PlatformDispatcher.instance.implicitView!,
               ).padding.top +
-              kBottomNavigationBarHeight;
+              kBottomNavigationBarHeight -
+              4;
           double heightAdjustment = widget.isFullScreen ? 0 : barHeight;
 
           var pdfFile = ref.watch(localFileProvider(widget.filePath));

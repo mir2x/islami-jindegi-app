@@ -248,7 +248,8 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
     double screenHeight = MediaQuery.of(context).size.height;
     double barHeight = kToolbarHeight +
         MediaQuery.of(context).padding.top +
-        kBottomNavigationBarHeight;
+        kBottomNavigationBarHeight -
+        4;
     double heightAdjustment = isFullScreen ? 0 : barHeight;
 
     var pdfFile = ref.watch(localFileProvider(widget.filePath));
