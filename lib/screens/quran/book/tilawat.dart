@@ -314,7 +314,10 @@ class _QuranBookTilawatRangeState extends ConsumerState<QuranBookTilawatRange> {
 
               Navigator.of(context).pop();
             },
-            child: Text(locales.select, style: textTheme.titleSmall),
+            child: Text(
+              locales.select,
+              style: textTheme.labelSmall?.copyWith(color: ThemeColors.color2),
+            ),
           ),
         ),
       ],
