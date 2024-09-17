@@ -144,6 +144,16 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
             ),
           ),
           currentAyahText,
+          const SizedBox(width: 5),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: Text(
+              locales.translation,
+              style: textTheme.titleMedium?.copyWith(
+                color: AppTheme.titleContrastColor[theme],
+              ),
+            ),
+          ),
         ],
       ),
       error: (error, _) => InkWell(
@@ -213,30 +223,33 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
                       var item = translations.first;
 
                       return PopupDialog(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.only(bottom: 15),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      widget.surahTitle,
-                                      style: textTheme.headlineMedium,
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      ', ${locales.ayah}: ${numFormatter.format(currentAyah)}',
-                                    ),
-                                  ],
+                        child: Container(
+                          padding: const EdgeInsets.all(20),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(bottom: 15),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        widget.surahTitle,
+                                        style: textTheme.headlineMedium,
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        ', ${locales.ayah}: ${numFormatter.format(currentAyah)}',
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(bottom: 20),
-                                child: HtmlText(text: item.body),
-                              ),
-                            ],
+                                Container(
+                                  margin: const EdgeInsets.only(bottom: 20),
+                                  child: HtmlText(text: item.body),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
