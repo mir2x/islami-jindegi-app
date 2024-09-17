@@ -283,6 +283,7 @@ class AyahTranslation extends ConsumerWidget {
             ),
             if (translation.ayah.value != null) ...[
               Container(
+                width: double.infinity,
                 margin: const EdgeInsets.only(bottom: 10),
                 child: SelectableText(
                   translation.ayah.value.title.trim(),
