@@ -13,12 +13,14 @@ class CalendarDates extends StatefulWidget {
     required this.selectedGregorianDate,
     required this.updateHijriDate,
     required this.updateGregorianDate,
+    required this.isHijriLoading,
   });
 
   final HijriCalendar? selectedHijriDate;
   final DateTime? selectedGregorianDate;
   final Function updateHijriDate;
   final Function updateGregorianDate;
+  final bool isHijriLoading;
 
   @override
   CalendarDatesState createState() => CalendarDatesState();
@@ -57,6 +59,14 @@ class CalendarDatesState extends State<CalendarDates> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               HijriDate(currentDate: widget.selectedHijriDate, count: count),
+              if (widget.isHijriLoading) ...[
+                const SizedBox(width: 10),
+                const SizedBox(
+                  width: 12,
+                  height: 12,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ],
               const SizedBox(width: 15),
               const Icon(Icons.calendar_month),
             ],

@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/hijri_date_settings.dart';
+import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/helpers/adjusted_hijri_date.dart';
 import 'package:native_app/widgets/location/index.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
@@ -16,14 +16,69 @@ import 'package:native_app/theme/colors.dart';
 import 'calendar_dates.dart';
 import 'namaz_time_items.dart';
 
-class NamazTimes extends ConsumerStatefulWidget {
+class NamazTimes extends ConsumerWidget {
   const NamazTimes({super.key});
 
   @override
-  NamazTimesState createState() => NamazTimesState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    var locales = AppLocalizations.of(context)!;
+    var settingsProvider = ref.watch(hijriDateSettingsProvider);
+
+    return AppScaffold(
+      title: Text(locales.namazTime),
+      body: settingsProvider.when(
+        loading: () {
+          var dataProvider = ref.watch(preferencesAndGeolocationProvider);
+
+          return dataProvider.when(
+            loading: () => Container(
+              margin: const EdgeInsets.only(top: 100),
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+            error: (error, _) => Text(error.toString()),
+            data: (Map data) {
+              int? localAdjustment =
+                  data['preferences'].getInt('hijriLocalAdjustment');
+              int adjustment = localAdjustment ?? 0;
+
+              return NamazTimesPage(
+                settings: {
+                  'preferences': data['preferences'],
+                  'coordinates': data['geolocation']['coordinates'],
+                  'timezone': data['geolocation']['timezone'],
+                  'hijriAdjustment': adjustment,
+                },
+                isHijriLoading: true,
+              );
+            },
+          );
+        },
+        error: (error, _) => Text(error.toString()),
+        data: (settings) {
+          return NamazTimesPage(settings: settings);
+        },
+      ),
+    );
+  }
 }
 
-class NamazTimesState extends ConsumerState<NamazTimes> {
+class NamazTimesPage extends ConsumerStatefulWidget {
+  const NamazTimesPage({
+    super.key,
+    required this.settings,
+    this.isHijriLoading = false,
+  });
+
+  final Map settings;
+  final bool isHijriLoading;
+
+  @override
+  NamazTimesPageState createState() => NamazTimesPageState();
+}
+
+class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
   HijriCalendar? selectedHijriDate;
   DateTime? selectedGregorianDate;
   bool isStartTime = true;
@@ -52,190 +107,170 @@ class NamazTimesState extends ConsumerState<NamazTimes> {
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    var settingsProvider = ref.watch(hijriDateSettingsProvider);
+    String theme =
+        widget.settings['preferences'].getString('theme') ?? 'classic';
 
-    return AppScaffold(
-      title: Text(locales.namazTime),
-      body: settingsProvider.when(
-        loading: () => Container(
-          margin: const EdgeInsets.only(top: 100),
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
+    int adjustment = widget.settings['hijriAdjustment'];
+    DateTime currentTime = DateTime.now();
+
+    if (selectedHijriDate != null) {
+      DateTime date = HijriCalendar().hijriToGregorian(
+        selectedHijriDate!.hYear,
+        selectedHijriDate!.hMonth,
+        selectedHijriDate!.hDay - adjustment,
+      );
+
+      date = DateTime(
+        date.year,
+        date.month,
+        date.day,
+        currentTime.hour,
+        currentTime.minute,
+        currentTime.second,
+      );
+
+      if (isAfterDateStartTime(date, widget.settings)) {
+        date = DateTime(date.year, date.month, date.day - 1);
+      }
+
+      selectedGregorianDate = DateTime(
+        date.year,
+        date.month,
+        date.day,
+        currentTime.hour,
+        currentTime.minute,
+        currentTime.second,
+      );
+    } else if (selectedGregorianDate != null) {
+      DateTime date = DateTime(
+        selectedGregorianDate!.year,
+        selectedGregorianDate!.month,
+        selectedGregorianDate!.day,
+        currentTime.hour,
+        currentTime.minute,
+        currentTime.second,
+      );
+
+      if (isAfterDateStartTime(date, widget.settings)) {
+        date = DateTime(date.year, date.month, date.day + 1);
+      }
+
+      selectedHijriDate = HijriCalendar.fromDate(
+        DateTime(
+          date.year,
+          date.month,
+          date.day + adjustment,
         ),
-        error: (error, _) => Text(error.toString()),
-        data: (settings) {
-          int adjustment = settings['hijriAdjustment'];
-          DateTime currentTime = DateTime.now();
+      );
+    }
 
-          if (selectedHijriDate != null) {
-            DateTime date = HijriCalendar().hijriToGregorian(
-              selectedHijriDate!.hYear,
-              selectedHijriDate!.hMonth,
-              selectedHijriDate!.hDay - adjustment,
-            );
-
-            date = DateTime(
-              date.year,
-              date.month,
-              date.day,
-              currentTime.hour,
-              currentTime.minute,
-              currentTime.second,
-            );
-
-            if (isAfterDateStartTime(date, settings)) {
-              date = DateTime(date.year, date.month, date.day - 1);
-            }
-
-            selectedGregorianDate = DateTime(
-              date.year,
-              date.month,
-              date.day,
-              currentTime.hour,
-              currentTime.minute,
-              currentTime.second,
-            );
-          } else if (selectedGregorianDate != null) {
-            DateTime date = DateTime(
-              selectedGregorianDate!.year,
-              selectedGregorianDate!.month,
-              selectedGregorianDate!.day,
-              currentTime.hour,
-              currentTime.minute,
-              currentTime.second,
-            );
-
-            if (isAfterDateStartTime(date, settings)) {
-              date = DateTime(date.year, date.month, date.day + 1);
-            }
-
-            selectedHijriDate = HijriCalendar.fromDate(
-              DateTime(
-                date.year,
-                date.month,
-                date.day + adjustment,
-              ),
-            );
-          }
-
-          return ItemContent(
-            children: [
-              Column(
-                children: [
-                  CalendarDates(
-                    selectedHijriDate: selectedHijriDate,
-                    selectedGregorianDate: selectedGregorianDate,
-                    updateHijriDate: updateHijriDate,
-                    updateGregorianDate: updateGregorianDate,
+    return ItemContent(
+      children: [
+        Column(
+          children: [
+            CalendarDates(
+              selectedHijriDate: selectedHijriDate,
+              selectedGregorianDate: selectedGregorianDate,
+              updateHijriDate: updateHijriDate,
+              updateGregorianDate: updateGregorianDate,
+              isHijriLoading: widget.isHijriLoading,
+            ),
+            const SizedBox(height: 10),
+            const CurrentLocation(alignment: MainAxisAlignment.center),
+            const SizedBox(height: 5),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                InkWell(
+                  onTap: () => QR.to('qiblah'),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 7,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(locales.qiblah),
+                        const SizedBox(width: 8),
+                        SvgPicture.asset(
+                          'assets/images/icons/kaaba.svg',
+                          fit: BoxFit.scaleDown,
+                          width: 20,
+                          height: 20,
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  const CurrentLocation(alignment: MainAxisAlignment.center),
-                  const SizedBox(height: 5),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      InkWell(
-                        onTap: () => QR.to('qiblah'),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 7,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(locales.qiblah),
-                              const SizedBox(width: 8),
-                              SvgPicture.asset(
-                                'assets/images/icons/kaaba.svg',
-                                fit: BoxFit.scaleDown,
-                                width: 20,
-                                height: 20,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      InkWell(
-                        onTap: () => QR.to('namaz-times/settings'),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 7,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(locales.settings),
-                              const SizedBox(width: 6),
-                              const Icon(Icons.settings),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                ),
+                const SizedBox(width: 10),
+                InkWell(
+                  onTap: () => QR.to('namaz-times/settings'),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 7,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(locales.settings),
+                        const SizedBox(width: 6),
+                        const Icon(Icons.settings),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 8),
-                  WithPreferences(
-                    builder: (context, preferences) {
-                      String theme =
-                          preferences.getString('theme') ?? 'classic';
-
-                      return AnimatedToggleSwitch<bool>.dual(
-                        current: isStartTime,
-                        first: true,
-                        second: false,
-                        spacing: 80,
-                        style: const ToggleStyle(
-                          borderColor: Colors.transparent,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black26,
-                              spreadRadius: 1,
-                              blurRadius: 2,
-                              offset: Offset(0, 1.5),
-                            ),
-                          ],
-                        ),
-                        borderWidth: 5,
-                        height: 36,
-                        onChanged: (b) => toggleTime(b),
-                        indicatorSize: const Size.fromWidth(26),
-                        styleBuilder: (b) => ToggleStyle(
-                          backgroundColor: AppTheme.backgroundColor[theme],
-                          indicatorColor: b
-                              ? AppTheme.iconColor[theme]
-                              : ThemeColors.danger,
-                        ),
-                        textBuilder: (value) => value
-                            ? Center(
-                                child: Text(
-                                  locales.waqtStarts,
-                                  style: textTheme.labelMedium,
-                                ),
-                              )
-                            : Center(
-                                child: Text(
-                                  locales.waqtEnds,
-                                  style: textTheme.labelMedium,
-                                ),
-                              ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  NamazTimeItems(
-                    currentDate: selectedGregorianDate,
-                    isStartTime: isStartTime,
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            AnimatedToggleSwitch<bool>.dual(
+              current: isStartTime,
+              first: true,
+              second: false,
+              spacing: 80,
+              style: const ToggleStyle(
+                borderColor: Colors.transparent,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    spreadRadius: 1,
+                    blurRadius: 2,
+                    offset: Offset(0, 1.5),
                   ),
                 ],
               ),
-            ],
-          );
-        },
-      ),
+              borderWidth: 5,
+              height: 36,
+              onChanged: (b) => toggleTime(b),
+              indicatorSize: const Size.fromWidth(26),
+              styleBuilder: (b) => ToggleStyle(
+                backgroundColor: AppTheme.backgroundColor[theme],
+                indicatorColor:
+                    b ? AppTheme.iconColor[theme] : ThemeColors.danger,
+              ),
+              textBuilder: (value) => value
+                  ? Center(
+                      child: Text(
+                        locales.waqtStarts,
+                        style: textTheme.labelMedium,
+                      ),
+                    )
+                  : Center(
+                      child: Text(
+                        locales.waqtEnds,
+                        style: textTheme.labelMedium,
+                      ),
+                    ),
+            ),
+            const SizedBox(height: 10),
+            NamazTimeItems(
+              currentDate: selectedGregorianDate,
+              isStartTime: isStartTime,
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
