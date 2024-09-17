@@ -404,7 +404,7 @@ class LocalResourceAPI extends _$LocalResourceAPI {
         .getSingleOrNull();
   }
 
-  Future<List<AyahTranslation>> queryAyahTranslation(Map params) async {
+  Future<List> queryAyahTranslation(Map params) async {
     var query = select(ayahTranslations);
 
     if (params.containsKey('page') && params.containsKey('per_page')) {
@@ -415,6 +415,8 @@ class LocalResourceAPI extends _$LocalResourceAPI {
     } else {
       query.limit(params['quantity'] ?? 20);
     }
+
+    List translationItems;
 
     if (params.containsKey('surahId') && params.containsKey('ayahNo')) {
       String surahId = params['surahId'];
@@ -433,11 +435,37 @@ class LocalResourceAPI extends _$LocalResourceAPI {
             ))
           .get();
 
-      return Future.value(
-        rows.map((row) => row.readTable(ayahTranslations)).toList(),
-      );
+      translationItems =
+          rows.map((row) => row.readTable(ayahTranslations)).toList();
     } else {
-      return query.get();
+      translationItems = await query.get();
+    }
+
+    if (params.containsKey('include') && params['include'] == 'ayah') {
+      var ayahIds = translationItems
+          .map((item) => item.ayahId.toString())
+          .toSet()
+          .toList();
+
+      var ayahItems =
+          await (select(ayahs)..where((s) => s.id.isIn(ayahIds))).get();
+
+      Map<String, Ayah> idToAyahs = <String, Ayah>{
+        for (var v in ayahItems) v.id: v,
+      };
+
+      var translationsWithAyah = translationItems.map((item) {
+        return {
+          'ayahTranslations': item,
+          'relationships': {
+            'ayah': idToAyahs[item.ayahId],
+          },
+        };
+      }).toList();
+
+      return translationsWithAyah;
+    } else {
+      return translationItems;
     }
   }
 

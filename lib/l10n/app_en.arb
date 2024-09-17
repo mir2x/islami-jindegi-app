@@ -222,6 +222,7 @@
   "pageNotFoundMsg": "We cannot seem to find the page you are looking for.",
   "noItemsTitle": "No items found",
   "noItemsMsg": "The list is currently empty.\nIf you are using any filter, please try with other filter options.",
+  "noAyahTranslation": "No translation found for this ayah",
   "applicationErrorTitle": "Something went wrong",
   "applicationErrorMsg": "The application has encountered an unknown error.\n Please try again later.",
   "newPageErrorTitle": "Something went wrong. Tap to try again.",

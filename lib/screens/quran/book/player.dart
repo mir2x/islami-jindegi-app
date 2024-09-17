@@ -5,9 +5,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart' hide TextDirection;
-import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/qirat_player.dart';
 import 'package:native_app/providers/bismillah_player.dart';
+import 'package:native_app/providers/quran_settings.dart';
+import 'package:native_app/providers/ayah_translation.dart';
 import 'package:native_app/objects/qirat_audio.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/widgets/presentation/popup_dialog.dart';
@@ -42,7 +43,6 @@ class QuranBookPlayer extends ConsumerStatefulWidget {
 class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
   StreamSubscription? _playerStateSubscription;
   bool isPlaying = false;
-
   int currentAyah = -1;
 
   updateCurrentAyah(ayah) {
@@ -61,6 +61,8 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
         if (s.processingState == ProcessingState.completed) {
           if (currentAyah < widget.toAyah) {
             currentAyah = currentAyah + 1;
+            var notifier = ref.read(quranSettingsProvider.notifier);
+            notifier.updateParams('currentAyah', currentAyah);
           } else {
             widget.player.pause();
             widget.player.seek(const Duration(seconds: 0));
@@ -206,58 +208,93 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
                   color: AppTheme.titleContrastColor[theme],
                 ),
               ),
-              onPressed: () async {
-                var translations = await ref.ayahTranslations.findAll(
-                  params: {
-                    'ayahNo': currentAyah,
-                    'surahId': widget.surahId,
-                    'quantity': 1,
-                  },
-                );
+              onPressed: () {
+                var notifier = ref.read(quranSettingsProvider.notifier);
+                notifier.updateParams('currentAyah', currentAyah);
 
-                if (context.mounted) {
-                  await showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      var textTheme = Theme.of(context).textTheme;
-                      var item = translations.first;
-
-                      return PopupDialog(
-                        child: Container(
-                          padding: const EdgeInsets.all(20),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  margin: const EdgeInsets.only(bottom: 15),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        widget.surahTitle,
-                                        style: textTheme.headlineMedium,
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        ', ${locales.ayah}: ${numFormatter.format(currentAyah)}',
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.only(bottom: 20),
-                                  child: HtmlText(text: item.body),
-                                ),
-                              ],
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return PopupDialog(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.all(20),
+                              child: const SingleChildScrollView(
+                                child: AyahTranslation(),
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  );
-                }
+                        ],
+                      ),
+                    );
+                  },
+                );
               },
             ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class AyahTranslation extends ConsumerWidget {
+  const AyahTranslation({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    String currentLang = Localizations.localeOf(context).languageCode;
+    var locales = AppLocalizations.of(context)!;
+    var numFormatter = NumberFormat('#', currentLang);
+    var textTheme = Theme.of(context).textTheme;
+
+    var qSettings = ref.watch(quranSettingsProvider);
+    var ayahTranslation = ref.watch(ayahTranslationProvider);
+
+    return ayahTranslation.when(
+      loading: () => Container(
+        margin: const EdgeInsets.only(top: 30),
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (error, _) => Text(locales.noAyahTranslation),
+      data: (var translation) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              child: Row(
+                children: [
+                  Text(
+                    qSettings['surahTitle'],
+                    style: textTheme.headlineMedium,
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    ', ${locales.ayah}: ${numFormatter.format(qSettings['currentAyah'])}',
+                  ),
+                ],
+              ),
+            ),
+            if (translation.ayah.value != null) ...[
+              Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                child: SelectableText(
+                  translation.ayah.value.title.trim(),
+                  textDirection: TextDirection.rtl,
+                  style: textTheme.headlineMedium?.copyWith(
+                    fontSize: 24,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+            ],
+            HtmlText(text: translation.body),
           ],
         );
       },
