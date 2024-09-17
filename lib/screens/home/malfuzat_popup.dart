@@ -93,7 +93,9 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
                                 margin: const EdgeInsets.only(bottom: 10),
                                 child: Text(
                                   author,
-                                  style: textTheme.labelMedium,
+                                  style: textTheme.labelMedium?.copyWith(
+                                    fontFamily: 'bangla/ben-sen-handwriting',
+                                  ),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
