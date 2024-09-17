@@ -25,7 +25,7 @@ class DateButton extends ConsumerWidget {
       child: TextButton(
         style: TextButton.styleFrom(
           backgroundColor:
-              selectedValue == value ? ThemeColors.color1 : ThemeColors.color3,
+              selectedValue == value ? ThemeColors.color1 : ThemeColors.color9,
           padding: EdgeInsets.all(isSmallMobile ? 9 : 12),
           shape: const CircleBorder(),
         ),
@@ -33,7 +33,7 @@ class DateButton extends ConsumerWidget {
           label,
           style: textTheme.labelLarge?.copyWith(
             color: selectedValue == value
-                ? ThemeColors.color3
+                ? ThemeColors.color9
                 : ThemeColors.color1,
           ),
         ),
