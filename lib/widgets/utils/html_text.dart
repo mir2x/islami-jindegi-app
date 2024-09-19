@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/theme/app_theme.dart';
 
 class HtmlText extends StatelessWidget {
   const HtmlText({
@@ -57,45 +60,93 @@ class HtmlText extends StatelessWidget {
       fontSize: FontSize(17 * fontSizeRatio),
     );
 
-    return SelectionArea(
-      child: Html(
-        data: text,
-        extensions: [
-          ImageExtension(
-            builder: (extensionContext) {
-              String src = extensionContext.attributes['src']!;
-              return CachedNetworkImage(imageUrl: src);
+    return WithPreferences(
+      builder: (context, preferences) {
+        String theme = preferences.getString('theme') ?? 'classic';
+
+        return SelectionArea(
+          child: Html(
+            data: text,
+            extensions: [
+              ImageExtension(
+                builder: (extensionContext) {
+                  String src = extensionContext.attributes['src']!;
+                  return CachedNetworkImage(imageUrl: src);
+                },
+              ),
+              TagWrapExtension(
+                tagsToWrap: {'table'},
+                builder: (child) {
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: SizedBox(
+                      width: 1000,
+                      child: child,
+                    ),
+                  );
+                },
+              ),
+              const TableHtmlExtension(),
+              MatcherExtension(
+                matcher: (p0) {
+                  var parent = p0.element?.parent?.localName;
+                  return ['th', 'td'].contains(parent);
+                },
+                builder: (extensionContext) {
+                  return Text(
+                    extensionContext.element!.text,
+                    style: TextStyle(
+                      fontSize: 17 * fontSizeRatio,
+                    ),
+                  );
+                },
+              ),
+            ],
+            onLinkTap: (String? url, _, __) async {
+              if (url != null) {
+                final uri = Uri.parse(url);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri);
+                } else {
+                  throw 'Could not launch $url';
+                }
+              }
+            },
+            style: {
+              'body': bodyMedium,
+              'h6': bodyMedium,
+              'h5': bodyLarge,
+              'h4': bodyExtraLarge,
+              'h3': bodyExtraLarge,
+              'h2': bodyExtraLarge,
+              'h1': bodyExtraLarge,
+              'p': paragraph,
+              'th': Style(
+                textAlign: TextAlign.start,
+                padding: HtmlPaddings.all(10),
+                border: Border.all(
+                  color: AppTheme.tableBorderColor[theme],
+                  width: 0.5,
+                ),
+              ),
+              'td': Style(
+                padding: HtmlPaddings.all(10),
+                border: Border.all(
+                  color: AppTheme.tableBorderColor[theme],
+                  width: 0.5,
+                ),
+              ),
+              '.tiptap-sm-font': bodySmall,
+              '.tiptap-md-font': bodyMedium,
+              '.tiptap-lg-font': bodyLarge,
+              '.tiptap-xl-font': bodyExtraLarge,
+              '[dir="rtl"]': Style(
+                direction: TextDirection.rtl,
+              ),
             },
           ),
-        ],
-        onLinkTap: (String? url, _, __) async {
-          if (url != null) {
-            final uri = Uri.parse(url);
-            if (await canLaunchUrl(uri)) {
-              await launchUrl(uri);
-            } else {
-              throw 'Could not launch $url';
-            }
-          }
-        },
-        style: {
-          'body': bodyMedium,
-          'h6': bodyMedium,
-          'h5': bodyLarge,
-          'h4': bodyExtraLarge,
-          'h3': bodyExtraLarge,
-          'h2': bodyExtraLarge,
-          'h1': bodyExtraLarge,
-          'p': paragraph,
-          '.tiptap-sm-font': bodySmall,
-          '.tiptap-md-font': bodyMedium,
-          '.tiptap-lg-font': bodyLarge,
-          '.tiptap-xl-font': bodyExtraLarge,
-          '[dir="rtl"]': Style(
-            direction: TextDirection.rtl,
-          ),
-        },
-      ),
+        );
+      },
     );
   }
 }

@@ -158,4 +158,10 @@ class AppTheme {
     'light': ThemeColors.color3,
     'classic': ThemeColors.color14,
   };
+
+  static const Map tableBorderColor = {
+    'dark': ThemeColors.color3,
+    'light': ThemeColors.color2,
+    'classic': ThemeColors.color13,
+  };
 }
