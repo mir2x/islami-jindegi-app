@@ -11,6 +11,7 @@ import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/providers/quran_settings.dart';
+import 'package:native_app/providers/player.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/objects/all_models_query.dart';
@@ -30,6 +31,8 @@ import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/settings/image.dart';
 import 'drawer.dart';
 import 'tilawat.dart';
+import 'player.dart';
+import 'ayah.dart';
 import '../qari_list.dart';
 
 class QuranBook extends ConsumerWidget {
@@ -379,6 +382,10 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                         var notifier = ref.read(quranSettingsProvider.notifier);
 
                         notifier.updateParams(
+                          'currentAyah',
+                          qitabSurah.startAyah,
+                        );
+                        notifier.updateParams(
                           'qitabFromAyah',
                           qitabSurah.startAyah,
                         );
@@ -454,9 +461,14 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
               String theme = widget.preferences.getString('theme') ?? 'classic';
               double screenWidth = MediaQuery.of(context).size.width;
               bool isSmallMobile = screenWidth < 340;
+              var qSettings = ref.watch(quranSettingsProvider);
 
               return Row(
                 children: [
+                  QuranBookTilawat(
+                    bookId: book.id,
+                    pdfController: pdfController,
+                  ),
                   TextButton(
                     style: TextButton.styleFrom(
                       minimumSize: Size.zero,
@@ -489,10 +501,23 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                       );
                     },
                   ),
-                  QuranBookTilawat(
-                    bookId: book.id,
-                    pdfController: pdfController,
-                  ),
+                  if (qSettings.containsKey('qari') &&
+                      qSettings.containsKey('surahId') &&
+                      qSettings.containsKey('surahNo') &&
+                      qSettings.containsKey('surahTitle') &&
+                      qSettings.containsKey('qitabFromAyah') &&
+                      qSettings.containsKey('qitabToAyah')) ...[
+                    QuranBookPlayer(
+                      player: ref.read(playerProvider),
+                      qari: qSettings['qari'],
+                      surahId: qSettings['surahId'],
+                      surahNo: qSettings['surahNo'],
+                      surahTitle: qSettings['surahTitle'],
+                      fromAyah: qSettings['qitabFromAyah'],
+                      toAyah: qSettings['qitabToAyah'],
+                    ),
+                  ],
+                  const QuranBookAyah(),
                 ],
               );
             },
