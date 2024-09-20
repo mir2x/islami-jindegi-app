@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/audio_player.dart';
 import 'package:native_app/objects/audio_resource.dart';
@@ -131,7 +132,7 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
     _playbackEventSubscription = widget.player.playbackEventStream.listen(
       (event) {
         if (isPlaying && (event.processingState == ProcessingState.idle)) {
-          Future.delayed(const Duration(seconds: 10), () {
+          EasyDebounce.debounce('player-idle', const Duration(seconds: 10), () {
             if (isPlaying && isIdle) {
               widget.player.stop();
             }
