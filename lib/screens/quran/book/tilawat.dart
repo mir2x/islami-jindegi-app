@@ -274,19 +274,22 @@ class _QuranBookTilawatRangeState extends ConsumerState<QuranBookTilawatRange> {
             ),
             onPressed: () {
               var notifier = ref.read(quranSettingsProvider.notifier);
+              int currentAyah = (fromValue! == 1 && widget.surah.position != 9)
+                  ? 0
+                  : fromValue!;
 
-              notifier.updateParams('qitabFromAyah', fromValue);
-              notifier.updateParams('qitabToAyah', toValue);
-              notifier.updateParams('surahNo', widget.surah.position);
-              notifier.updateParams('surahId', widget.surah.id);
-              notifier.updateParams(
-                'surahTitle',
-                contextualTranslation(
+              notifier.updateMultipleParams({
+                'currentAyah': currentAyah,
+                'qitabFromAyah': fromValue,
+                'qitabToAyah': toValue,
+                'surahNo': widget.surah.position,
+                'surahId': widget.surah.id,
+                'surahTitle': contextualTranslation(
                   locale: currentLang,
                   enText: widget.surah.title,
                   bnText: widget.surah.titleBn,
                 ),
-              );
+              });
 
               Navigator.of(context).pop();
             },

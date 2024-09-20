@@ -6,8 +6,8 @@ import 'package:native_app/providers/quran_settings.dart';
 import 'package:native_app/providers/ayah_translation.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/widgets/presentation/popup_dialog.dart';
-import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/theme/app_theme.dart';
 
 class QuranBookAyah extends ConsumerWidget {
   const QuranBookAyah({
@@ -23,57 +23,94 @@ class QuranBookAyah extends ConsumerWidget {
     bool isSmallMobile = screenWidth < 340;
     var textTheme = Theme.of(context).textTheme;
     var qSettings = ref.watch(quranSettingsProvider);
-    int currentAyah = qSettings['currentAyah'] ?? 1;
+    int? currentAyah =
+        qSettings.containsKey('currentAyah') ? qSettings['currentAyah'] : null;
 
     return WithPreferences(
       builder: (context, preferences) {
         String theme = preferences.getString('theme') ?? 'classic';
 
-        return Row(
-          children: [
-            Text(
-              numFormatter.format(currentAyah),
-              style: textTheme.titleMedium?.copyWith(
-                color: AppTheme.titleContrastColor[theme],
-              ),
-            ),
-            const SizedBox(width: 5),
-            TextButton(
-              style: TextButton.styleFrom(
-                minimumSize: Size.zero,
-                padding: EdgeInsets.all(isSmallMobile ? 0 : 5),
-              ),
-              child: Text(
-                locales.translation,
-                style: textTheme.titleMedium?.copyWith(
-                  color: AppTheme.titleContrastColor[theme],
+        if (currentAyah != null) {
+          int ayah = currentAyah == 0 ? 1 : currentAyah;
+
+          return Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(left: 10),
+                child: Text(
+                  numFormatter.format(ayah),
+                  style: textTheme.titleMedium?.copyWith(
+                    color: AppTheme.titleContrastColor[theme],
+                  ),
                 ),
               ),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return PopupDialog(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.all(20),
-                              child: const SingleChildScrollView(
-                                child: AyahTranslation(),
+              Previous(
+                onPrevious: () {
+                  if (qSettings.containsKey('qitabFromAyah') &&
+                      ayah > qSettings['qitabFromAyah']) {
+                    var notifier = ref.read(quranSettingsProvider.notifier);
+                    notifier.updateParams(
+                      'currentAyah',
+                      ayah - 1,
+                    );
+                  }
+
+                  return;
+                },
+              ),
+              Next(
+                onNext: () {
+                  if (qSettings.containsKey('qitabToAyah') &&
+                      ayah < qSettings['qitabToAyah']) {
+                    var notifier = ref.read(quranSettingsProvider.notifier);
+                    notifier.updateParams(
+                      'currentAyah',
+                      ayah + 1,
+                    );
+                  }
+
+                  return;
+                },
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  minimumSize: Size.zero,
+                  padding: EdgeInsets.all(isSmallMobile ? 0 : 5),
+                ),
+                child: Text(
+                  locales.translation,
+                  style: textTheme.titleMedium?.copyWith(
+                    color: AppTheme.titleContrastColor[theme],
+                  ),
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return PopupDialog(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: Container(
+                                padding: const EdgeInsets.all(20),
+                                child: const SingleChildScrollView(
+                                  child: AyahTranslation(),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ],
-        );
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
       },
     );
   }
@@ -101,6 +138,8 @@ class AyahTranslation extends ConsumerWidget {
       ),
       error: (error, _) => Text(locales.noAyahTranslation),
       data: (var translation) {
+        int ayah = qSettings['currentAyah'] == 0 ? 1 : qSettings['currentAyah'];
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -113,9 +152,7 @@ class AyahTranslation extends ConsumerWidget {
                     style: textTheme.headlineMedium,
                   ),
                   const SizedBox(width: 5),
-                  Text(
-                    ', ${locales.ayah}: ${numFormatter.format(qSettings['currentAyah'])}',
-                  ),
+                  Text(', ${locales.ayah}: ${numFormatter.format(ayah)}'),
                 ],
               ),
             ),
@@ -135,6 +172,85 @@ class AyahTranslation extends ConsumerWidget {
             ],
             HtmlText(text: translation.body),
           ],
+        );
+      },
+    );
+  }
+}
+
+class Previous extends StatelessWidget {
+  const Previous({
+    super.key,
+    required this.onPrevious,
+    this.previousDisabled = false,
+    this.contrastColor = true,
+  });
+
+  final Future? Function() onPrevious;
+  final bool previousDisabled;
+  final bool contrastColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return WithPreferences(
+      builder: (context, preferences) {
+        String theme = preferences.getString('theme') ?? 'classic';
+
+        Color? iconColor = previousDisabled
+            ? Colors.grey
+            : contrastColor
+                ? AppTheme.titleContrastColor[theme]
+                : null;
+
+        return IconButton(
+          icon: const Icon(Icons.keyboard_arrow_left),
+          color: iconColor,
+          padding: const EdgeInsets.only(
+            top: 10,
+            bottom: 10,
+            left: 5,
+          ),
+          constraints: const BoxConstraints(),
+          onPressed: onPrevious,
+        );
+      },
+    );
+  }
+}
+
+class Next extends StatelessWidget {
+  const Next({
+    super.key,
+    required this.onNext,
+    this.nextDisabled = false,
+    this.contrastColor = true,
+  });
+
+  final Future? Function() onNext;
+  final bool nextDisabled;
+  final bool contrastColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return WithPreferences(
+      builder: (context, preferences) {
+        String theme = preferences.getString('theme') ?? 'classic';
+
+        Color? iconColor = nextDisabled
+            ? Colors.grey
+            : contrastColor
+                ? AppTheme.titleContrastColor[theme]
+                : null;
+
+        return IconButton(
+          icon: const Icon(Icons.keyboard_arrow_right),
+          color: iconColor,
+          padding: const EdgeInsets.only(
+            top: 10,
+            bottom: 10,
+          ),
+          constraints: const BoxConstraints(),
+          onPressed: onNext,
         );
       },
     );

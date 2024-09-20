@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:pdfrx/pdfrx.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/local_file.dart';
 import 'package:native_app/providers/single_model.dart';
@@ -327,89 +328,86 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                         documentSize: Size(width, height),
                       );
                     },
-                    onPageChanged: (page) async {
+                    onPageChanged: (page) {
                       if (page == null) {
                         return;
                       }
 
-                      var scaffoldMessenger = ScaffoldMessenger.of(context);
+                      EasyDebounce.debounce(
+                          'quran-page', const Duration(milliseconds: 500),
+                          () async {
+                        var scaffoldMessenger = ScaffoldMessenger.of(context);
 
-                      var query = AllModelsQuery(
-                        repository: ref.quranBookPages,
-                        params: {
-                          'quranBookId': book.id,
-                          'position': page,
-                          'quantity': 1,
-                          'offline': true,
-                        },
-                      );
+                        var query = AllModelsQuery(
+                          repository: ref.quranBookPages,
+                          params: {
+                            'quranBookId': book.id,
+                            'position': page,
+                            'quantity': 1,
+                            'offline': true,
+                          },
+                        );
 
-                      var resources =
-                          await ref.watch(allModelsProvider(query).future);
+                        var resources =
+                            await ref.watch(allModelsProvider(query).future);
 
-                      if (resources.isNotEmpty) {
-                        await widget.preferences
-                            .setInt('pdfResource-${widget.qitab.id}', page);
-                        scaffoldMessenger.removeCurrentSnackBar();
+                        if (resources.isNotEmpty) {
+                          await widget.preferences
+                              .setInt('pdfResource-${widget.qitab.id}', page);
+                          scaffoldMessenger.removeCurrentSnackBar();
 
-                        scaffoldMessenger.showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              resources.first.title,
-                              textAlign: TextAlign.center,
+                          scaffoldMessenger.showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                resources.first.title,
+                                textAlign: TextAlign.center,
+                              ),
+                              duration: const Duration(seconds: 3),
                             ),
-                            duration: const Duration(seconds: 3),
-                          ),
-                        );
-                      }
+                          );
+                        }
 
-                      var qitabSurahQuery = AllModelsQuery(
-                        repository: ref.quranBookSurahs,
-                        params: {
-                          'bookId': book.id,
-                          'page': page,
-                          'include': 'surah',
-                          'offline': true,
-                        },
-                      );
+                        var qitabSurahQuery = AllModelsQuery(
+                          repository: ref.quranBookSurahs,
+                          params: {
+                            'bookId': book.id,
+                            'page': page,
+                            'include': 'surah',
+                            'offline': true,
+                          },
+                        );
 
-                      var qitabSurahs = await ref.read(
-                        allModelsProvider(qitabSurahQuery).future,
-                      );
+                        var qitabSurahs = await ref.read(
+                          allModelsProvider(qitabSurahQuery).future,
+                        );
 
-                      if (qitabSurahs.length == 1) {
-                        var qitabSurah = qitabSurahs.first;
-                        var notifier = ref.read(quranSettingsProvider.notifier);
+                        var notifier = ref.read(
+                          quranSettingsProvider.notifier,
+                        );
 
-                        notifier.updateParams(
-                          'currentAyah',
-                          qitabSurah.startAyah,
-                        );
-                        notifier.updateParams(
-                          'qitabFromAyah',
-                          qitabSurah.startAyah,
-                        );
-                        notifier.updateParams(
-                          'qitabToAyah',
-                          qitabSurah.endAyah,
-                        );
-                        notifier.updateParams(
-                          'surahNo',
-                          qitabSurah.surah.value.position,
-                        );
-                        notifier.updateParams(
-                          'surahId',
-                          qitabSurah.surah.value.id,
-                        );
-                        notifier.updateParams(
-                          'surahTitle',
-                          contextualTranslation(
-                            locale: currentLang,
-                            enText: qitabSurah.surah.value.title,
-                            bnText: qitabSurah.surah.value.titleBn,
-                          ),
-                        );
-                      }
+                        if (qitabSurahs.length == 1) {
+                          var qitabSurah = qitabSurahs.first;
+                          int currentAyah = (qitabSurah.startAyah == 1 &&
+                                  qitabSurah.surah.value.position != 9)
+                              ? 0
+                              : qitabSurah.startAyah;
+
+                          notifier.updateMultipleParams({
+                            'currentAyah': currentAyah,
+                            'qitabFromAyah': qitabSurah.startAyah,
+                            'qitabToAyah': qitabSurah.endAyah,
+                            'surahNo': qitabSurah.surah.value.position,
+                            'surahId': qitabSurah.surah.value.id,
+                            'surahTitle': contextualTranslation(
+                              locale: currentLang,
+                              enText: qitabSurah.surah.value.title,
+                              bnText: qitabSurah.surah.value.titleBn,
+                            ),
+                          });
+                        } else {
+                          notifier.updateParams('currentAyah', null);
+                        }
+                      });
                     },
                     onViewSizeChanged: (_, __, controller) {
                       if (controller.pageNumber != null) {

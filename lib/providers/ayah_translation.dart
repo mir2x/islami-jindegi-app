@@ -16,12 +16,15 @@ final ayahTranslationProvider = FutureProvider.autoDispose((ref) async {
 
   if (hasCurrentAyah && hasSurahId) {
     try {
+      int ayah = qSettings['currentAyah'] == 0 ? 1 : qSettings['currentAyah'];
+
       resources = await ref.ayahTranslations.findAll(
         params: {
-          'ayahNo': qSettings['currentAyah'],
+          'ayahNo': ayah,
           'surahId': qSettings['surahId'],
           'quantity': 1,
           'include': 'ayah',
+          'offline': true,
         },
       );
     } catch (error) {

@@ -17,6 +17,13 @@ class QuranSettingsNotifier extends Notifier<Map<String, dynamic>> {
       state = {...state};
     }
   }
+
+  void updateMultipleParams(Map<String, dynamic> map) {
+    state = {
+      ...state,
+      ...map,
+    };
+  }
 }
 
 final quranSettingsProvider =
