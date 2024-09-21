@@ -144,7 +144,7 @@ class Tafseer extends ConsumerWidget {
                                 title: ayah.title,
                                 subtitle: '$surah, $ayahNo, $qitab',
                                 body: tafseer.body,
-                                link: 'quran/tafseers/${QR.params['ayah_id']}',
+                                // link: 'quran/tafseers/${QR.params['ayah_id']}',
                               );
                             } else {
                               return const SizedBox.shrink();
