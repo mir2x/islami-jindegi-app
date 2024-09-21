@@ -253,6 +253,7 @@ class AppScaffold extends ConsumerWidget {
                   DrawerLink(title: locales.madrasah, route: 'madrasahs'),
                   DrawerLink(title: locales.namazTime, route: 'namaz-times'),
                   DrawerLink(title: locales.qiblah, route: 'qiblah'),
+                  DrawerLink(title: locales.mosques, route: 'mosques'),
                   DrawerLink(title: locales.donation, route: 'donation'),
                   DrawerLink(title: locales.location, route: 'location'),
                   DrawerLink(title: locales.settings, route: 'settings'),

@@ -62,6 +62,7 @@ import '../screens/settings/index.dart';
 import '../screens/bookmarks/index.dart';
 import '../screens/donation/index.dart';
 import '../screens/qiblah/index.dart';
+import '../screens/mosques/index.dart';
 import '../screens/about/index.dart';
 import '../screens/contact_us/index.dart';
 import '../screens/important_matters/index.dart';
@@ -278,6 +279,7 @@ class AppRoutes {
     QRoute(path: '/bookmarks', builder: () => const Bookmarks()),
     QRoute(path: '/donation', builder: () => const Donation()),
     QRoute(path: '/qiblah', builder: () => const Qiblah()),
+    QRoute(path: '/mosques', builder: () => const Mosques()),
     QRoute(path: '/about', builder: () => const About()),
     QRoute(path: '/contact-us', builder: () => const ContactUs()),
     QRoute(path: '/important-matters', builder: () => const ImportantMatters()),

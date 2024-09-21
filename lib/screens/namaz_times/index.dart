@@ -109,6 +109,8 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
     var textTheme = Theme.of(context).textTheme;
     String theme =
         widget.settings['preferences'].getString('theme') ?? 'classic';
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallMobile = screenWidth < 340;
 
     int adjustment = widget.settings['hijriAdjustment'];
     DateTime currentTime = DateTime.now();
@@ -177,22 +179,22 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
             ),
             const SizedBox(height: 10),
             const CurrentLocation(alignment: MainAxisAlignment.center),
-            const SizedBox(height: 5),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 InkWell(
                   onTap: () => QR.to('qiblah'),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isSmallMobile ? 5 : 10,
                       vertical: 7,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(locales.qiblah),
-                        const SizedBox(width: 8),
+                        SizedBox(width: isSmallMobile ? 4 : 6),
                         SvgPicture.asset(
                           'assets/images/icons/kaaba.svg',
                           fit: BoxFit.scaleDown,
@@ -203,19 +205,37 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: isSmallMobile ? 6 : 10),
+                InkWell(
+                  onTap: () => QR.to('mosques'),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isSmallMobile ? 5 : 10,
+                      vertical: 7,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(locales.mosques),
+                        SizedBox(width: isSmallMobile ? 4 : 6),
+                        const Icon(Icons.mosque),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(width: isSmallMobile ? 6 : 10),
                 InkWell(
                   onTap: () => QR.to('namaz-times/settings'),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isSmallMobile ? 5 : 10,
                       vertical: 7,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(locales.settings),
-                        const SizedBox(width: 6),
+                        SizedBox(width: isSmallMobile ? 4 : 6),
                         const Icon(Icons.settings),
                       ],
                     ),
@@ -223,7 +243,7 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             AnimatedToggleSwitch<bool>.dual(
               current: isStartTime,
               first: true,
