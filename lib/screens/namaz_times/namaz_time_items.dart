@@ -239,6 +239,8 @@ class NamazTimeItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallMobile = screenWidth < 340;
     bool alarmable =
         Platform.isAndroid && alarmTime != null && alarmLabel != null;
 
@@ -253,9 +255,9 @@ class NamazTimeItem extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(15),
                 color: isActive ? ThemeColors.color5 : ThemeColors.color7,
               ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 15,
-                vertical: 12,
+              padding: EdgeInsets.symmetric(
+                horizontal: isSmallMobile ? 8 : 12,
+                vertical: isSmallMobile ? 10 : 12,
               ),
               child: Text(
                 label,
@@ -267,7 +269,7 @@ class NamazTimeItem extends ConsumerWidget {
             ),
           ),
         ),
-        const SizedBox(width: 10),
+        SizedBox(width: isSmallMobile ? 8 : 10),
         Expanded(
           flex: 5,
           child: InkWell(
@@ -280,9 +282,9 @@ class NamazTimeItem extends ConsumerWidget {
                   color: ThemeColors.color2,
                 ),
               ),
-              padding: const EdgeInsets.symmetric(
-                vertical: 2,
-                horizontal: 5,
+              padding: EdgeInsets.symmetric(
+                vertical: isSmallMobile ? 0 : 2,
+                horizontal: isSmallMobile ? 3 : 5,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -302,7 +304,7 @@ class NamazTimeItem extends ConsumerWidget {
                     ),
                   ),
                   if (alarmable) ...[
-                    const SizedBox(width: 5),
+                    SizedBox(width: isSmallMobile ? 3 : 5),
                     IconButton(
                       constraints: const BoxConstraints(
                         maxHeight: 40,
