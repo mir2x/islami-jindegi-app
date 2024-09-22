@@ -97,7 +97,8 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
         return InkWell(
           onTap: () {
             if (!isPlaying) {
-              ref.read(bismillahPlayerProvider);
+              String firstAyahPath = '${widget.qari}/${widget.surahNo}/1.mp3';
+              ref.read(bismillahPlayerProvider(firstAyahPath));
             }
           },
           child: isPlaying

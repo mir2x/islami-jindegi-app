@@ -353,7 +353,9 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
         if (widget.qari != null && currentAyah == -1) {
           if (widget.fromAyah == 1 && widget.chapter.position != 9) {
             currentAyah = 0;
-            ref.read(bismillahPlayerProvider);
+            String firstAyahPath =
+                '${widget.qari}/${widget.chapter.position}/1.mp3';
+            ref.read(bismillahPlayerProvider(firstAyahPath));
           } else {
             currentAyah = widget.fromAyah;
           }
@@ -436,7 +438,9 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
                           selectedAyah.surahPosition == 1 &&
                           widget.chapter.position != 9) {
                         updateCurrentAyah(0);
-                        ref.read(bismillahPlayerProvider);
+                        String firstAyahPath =
+                            '${widget.qari}/${widget.chapter.position}/1.mp3';
+                        ref.read(bismillahPlayerProvider(firstAyahPath));
                       } else {
                         var scaffoldMessenger = ScaffoldMessenger.of(context);
 
