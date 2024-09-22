@@ -214,6 +214,7 @@
   "link": "Link",
   "file": "File",
   "deleteFile": "Delete File",
+  "openFile": "Open File",
   "switchMode": "Switch Mode",
   "landscape": "Landscape",
   "portrait": "Portrait",

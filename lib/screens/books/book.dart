@@ -26,6 +26,7 @@ import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
 import 'package:native_app/widgets/buttons/download.dart';
+import 'package:native_app/widgets/buttons/open_file.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/presentation/connect_to_internet.dart';
@@ -609,6 +610,7 @@ class _PDFBookState extends ConsumerState<PDFBook> {
                 title: widget.book.title,
                 link: 'books/${widget.book.id}',
               ),
+              OpenFile(filePath: widget.filePath),
               PDFMenu(
                 filePath: widget.filePath,
                 darkMode: darkMode,

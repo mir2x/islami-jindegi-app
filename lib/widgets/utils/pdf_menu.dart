@@ -1,7 +1,12 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
+import 'package:open_filex/open_filex.dart';
 import 'package:native_app/helpers/delete_file.dart';
+import 'package:native_app/helpers/file_fallback_path.dart';
 import 'package:native_app/theme/colors.dart';
 
 class PDFMenu extends ConsumerWidget {
@@ -63,6 +68,20 @@ class PDFMenu extends ConsumerWidget {
                 style: textTheme.labelMedium,
               ),
               const SizedBox(width: 10),
+              const Icon(Icons.file_open),
+            ],
+          ),
+        ),
+        PopupMenuItem<int>(
+          value: 2,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                locales.switchMode,
+                style: textTheme.labelMedium,
+              ),
+              const SizedBox(width: 10),
               Icon(
                 Icons.dark_mode,
                 color: darkMode ? Colors.white : Colors.black,
@@ -71,7 +90,7 @@ class PDFMenu extends ConsumerWidget {
           ),
         ),
         PopupMenuItem<int>(
-          value: 2,
+          value: 3,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -89,7 +108,7 @@ class PDFMenu extends ConsumerWidget {
           ),
         ),
       ],
-      onSelected: (int item) {
+      onSelected: (int item) async {
         switch (item) {
           case 0:
             deleteFile(
@@ -98,11 +117,26 @@ class PDFMenu extends ConsumerWidget {
               filePath: filePath,
               callback: deleteCallback,
             );
+
             break;
           case 1:
-            toggleMode();
+            var path = await fileFallbackPath(filePath);
+
+            var downloadDir = Platform.isAndroid
+                ? await getExternalStorageDirectory()
+                : await getApplicationSupportDirectory();
+
+            if (downloadDir != null && path != null) {
+              await OpenFilex.open(
+                p.join(downloadDir.path, path),
+              );
+            }
+
             break;
           case 2:
+            toggleMode();
+            break;
+          case 3:
             toggleOrientation();
             break;
         }
