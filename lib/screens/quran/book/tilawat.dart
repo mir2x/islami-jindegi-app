@@ -40,7 +40,7 @@ class QuranBookTilawat extends ConsumerWidget {
             TextButton(
               style: TextButton.styleFrom(
                 minimumSize: Size.zero,
-                padding: EdgeInsets.all(isSmallMobile ? 0 : 5),
+                padding: EdgeInsets.all(isSmallMobile ? 2 : 4),
               ),
               child: Text(
                 locales.ayah,

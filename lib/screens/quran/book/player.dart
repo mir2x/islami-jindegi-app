@@ -94,24 +94,27 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
 
     if (currentAyah != null) {
       if (currentAyah == 0) {
-        return InkWell(
-          onTap: () {
-            if (!isPlaying) {
-              String firstAyahPath = '${widget.qari}/${widget.surahNo}/1.mp3';
-              ref.read(bismillahPlayerProvider(firstAyahPath));
-            }
-          },
-          child: isPlaying
-              ? SvgPicture.asset(
-                  'assets/images/icons/pause.svg',
-                  width: 30,
-                  height: 30,
-                )
-              : SvgPicture.asset(
-                  'assets/images/icons/play.svg',
-                  width: 30,
-                  height: 30,
-                ),
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: InkWell(
+            onTap: () {
+              if (!isPlaying) {
+                String firstAyahPath = '${widget.qari}/${widget.surahNo}/1.mp3';
+                ref.read(bismillahPlayerProvider(firstAyahPath));
+              }
+            },
+            child: isPlaying
+                ? SvgPicture.asset(
+                    'assets/images/icons/pause.svg',
+                    width: 30,
+                    height: 30,
+                  )
+                : SvgPicture.asset(
+                    'assets/images/icons/play.svg',
+                    width: 30,
+                    height: 30,
+                  ),
+          ),
         );
       } else {
         String currentLang = Localizations.localeOf(context).languageCode;
@@ -135,50 +138,53 @@ class _QuranBookPlayerState extends ConsumerState<QuranBookPlayer> {
           ),
         );
 
-        return qiratProvider.when(
-          loading: () => Row(
-            children: [
-              SvgPicture.asset(
-                'assets/images/icons/pause.svg',
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: qiratProvider.when(
+            loading: () => Row(
+              children: [
+                SvgPicture.asset(
+                  'assets/images/icons/pause.svg',
+                  width: 30,
+                  height: 30,
+                ),
+              ],
+            ),
+            error: (error, _) => InkWell(
+              onTap: () {},
+              child: SvgPicture.asset(
+                'assets/images/icons/play.svg',
                 width: 30,
                 height: 30,
               ),
-            ],
-          ),
-          error: (error, _) => InkWell(
-            onTap: () {},
-            child: SvgPicture.asset(
-              'assets/images/icons/play.svg',
-              width: 30,
-              height: 30,
             ),
+            data: (updatedPlayer) {
+              return Row(
+                children: [
+                  InkWell(
+                    onTap: () async {
+                      if (isPlaying) {
+                        await updatedPlayer.pause();
+                      } else {
+                        await updatedPlayer.play();
+                      }
+                    },
+                    child: isPlaying
+                        ? SvgPicture.asset(
+                            'assets/images/icons/pause.svg',
+                            width: 30,
+                            height: 30,
+                          )
+                        : SvgPicture.asset(
+                            'assets/images/icons/play.svg',
+                            width: 30,
+                            height: 30,
+                          ),
+                  ),
+                ],
+              );
+            },
           ),
-          data: (updatedPlayer) {
-            return Row(
-              children: [
-                InkWell(
-                  onTap: () async {
-                    if (isPlaying) {
-                      await updatedPlayer.pause();
-                    } else {
-                      await updatedPlayer.play();
-                    }
-                  },
-                  child: isPlaying
-                      ? SvgPicture.asset(
-                          'assets/images/icons/pause.svg',
-                          width: 30,
-                          height: 30,
-                        )
-                      : SvgPicture.asset(
-                          'assets/images/icons/play.svg',
-                          width: 30,
-                          height: 30,
-                        ),
-                ),
-              ],
-            );
-          },
         );
       }
     } else {

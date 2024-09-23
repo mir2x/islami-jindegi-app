@@ -463,6 +463,7 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
               var qSettings = ref.watch(quranSettingsProvider);
 
               return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   QuranBookTilawat(
                     bookId: book.id,
@@ -471,7 +472,7 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                   TextButton(
                     style: TextButton.styleFrom(
                       minimumSize: Size.zero,
-                      padding: EdgeInsets.all(isSmallMobile ? 0 : 5),
+                      padding: EdgeInsets.all(isSmallMobile ? 2 : 4),
                     ),
                     child: Text(
                       locales.qaris,
@@ -544,10 +545,7 @@ class QuranMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 15,
-        vertical: 10,
-      ),
+      padding: const EdgeInsets.all(10),
       child: GestureDetector(
         onTap: () => Scaffold.of(context).openDrawer(),
         child: SvgPicture.asset(

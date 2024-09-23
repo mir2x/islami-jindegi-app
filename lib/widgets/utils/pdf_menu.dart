@@ -34,7 +34,7 @@ class PDFMenu extends ConsumerWidget {
 
     return PopupMenuButton<int>(
       child: const SizedBox(
-        width: 45,
+        width: 35,
         height: 50,
         child: Icon(
           Icons.more_vert,

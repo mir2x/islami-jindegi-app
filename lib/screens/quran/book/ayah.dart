@@ -19,8 +19,6 @@ class QuranBookAyah extends ConsumerWidget {
     String currentLang = Localizations.localeOf(context).languageCode;
     var locales = AppLocalizations.of(context)!;
     var numFormatter = NumberFormat('#', currentLang);
-    double screenWidth = MediaQuery.of(context).size.width;
-    bool isSmallMobile = screenWidth < 340;
     var textTheme = Theme.of(context).textTheme;
     var qSettings = ref.watch(quranSettingsProvider);
     int? currentAyah =
@@ -36,7 +34,7 @@ class QuranBookAyah extends ConsumerWidget {
           return Row(
             children: [
               Container(
-                margin: const EdgeInsets.only(left: 10),
+                margin: const EdgeInsets.only(left: 3),
                 child: Text(
                   numFormatter.format(ayah),
                   style: textTheme.titleMedium?.copyWith(
@@ -72,10 +70,15 @@ class QuranBookAyah extends ConsumerWidget {
                   return;
                 },
               ),
+              const SizedBox(width: 3),
               TextButton(
                 style: TextButton.styleFrom(
                   minimumSize: Size.zero,
-                  padding: EdgeInsets.all(isSmallMobile ? 0 : 5),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 0,
+                  ),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Text(
                   locales.translation,
@@ -205,12 +208,11 @@ class Previous extends StatelessWidget {
         return IconButton(
           icon: const Icon(Icons.keyboard_arrow_left),
           color: iconColor,
-          padding: const EdgeInsets.only(
-            top: 10,
-            bottom: 10,
-            left: 5,
+          splashRadius: 22,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          constraints: const BoxConstraints(
+            maxWidth: 22,
           ),
-          constraints: const BoxConstraints(),
           onPressed: onPrevious,
         );
       },
@@ -245,11 +247,11 @@ class Next extends StatelessWidget {
         return IconButton(
           icon: const Icon(Icons.keyboard_arrow_right),
           color: iconColor,
-          padding: const EdgeInsets.only(
-            top: 10,
-            bottom: 10,
+          splashRadius: 22,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          constraints: const BoxConstraints(
+            maxWidth: 22,
           ),
-          constraints: const BoxConstraints(),
           onPressed: onNext,
         );
       },
