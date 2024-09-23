@@ -25,6 +25,7 @@ import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/widgets/utils/pdf_menu.dart';
 import 'package:native_app/widgets/buttons/download.dart';
+import 'package:native_app/widgets/buttons/open_file.dart';
 import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/helpers/file_size.dart';
@@ -516,6 +517,10 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                     ),
                   ],
                   const QuranBookAyah(),
+                  if (!(qSettings.containsKey('currentAyah') &&
+                      qSettings['currentAyah'] != null)) ...[
+                    OpenFile(filePath: widget.filePath),
+                  ],
                 ],
               );
             },
