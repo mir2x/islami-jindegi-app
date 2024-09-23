@@ -20,6 +20,8 @@ class QuranBookAyah extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var numFormatter = NumberFormat('#', currentLang);
     var textTheme = Theme.of(context).textTheme;
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallMobile = screenWidth < 340;
     var qSettings = ref.watch(quranSettingsProvider);
     int? currentAyah =
         qSettings.containsKey('currentAyah') ? qSettings['currentAyah'] : null;
@@ -34,7 +36,7 @@ class QuranBookAyah extends ConsumerWidget {
           return Row(
             children: [
               Container(
-                margin: const EdgeInsets.only(left: 3),
+                margin: EdgeInsets.only(left: isSmallMobile ? 0 : 3),
                 child: Text(
                   numFormatter.format(ayah),
                   style: textTheme.titleMedium?.copyWith(
@@ -70,7 +72,7 @@ class QuranBookAyah extends ConsumerWidget {
                   return;
                 },
               ),
-              const SizedBox(width: 3),
+              SizedBox(width: isSmallMobile ? 0 : 3),
               TextButton(
                 style: TextButton.styleFrom(
                   minimumSize: Size.zero,
@@ -195,6 +197,9 @@ class Previous extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallMobile = screenWidth < 340;
+
     return WithPreferences(
       builder: (context, preferences) {
         String theme = preferences.getString('theme') ?? 'classic';
@@ -208,10 +213,10 @@ class Previous extends StatelessWidget {
         return IconButton(
           icon: const Icon(Icons.keyboard_arrow_left),
           color: iconColor,
-          splashRadius: 22,
+          splashRadius: isSmallMobile ? 20 : 22,
           padding: const EdgeInsets.symmetric(vertical: 10),
-          constraints: const BoxConstraints(
-            maxWidth: 22,
+          constraints: BoxConstraints(
+            maxWidth: isSmallMobile ? 20 : 22,
           ),
           onPressed: onPrevious,
         );
@@ -234,6 +239,9 @@ class Next extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallMobile = screenWidth < 340;
+
     return WithPreferences(
       builder: (context, preferences) {
         String theme = preferences.getString('theme') ?? 'classic';
@@ -247,10 +255,10 @@ class Next extends StatelessWidget {
         return IconButton(
           icon: const Icon(Icons.keyboard_arrow_right),
           color: iconColor,
-          splashRadius: 22,
+          splashRadius: isSmallMobile ? 20 : 22,
           padding: const EdgeInsets.symmetric(vertical: 10),
-          constraints: const BoxConstraints(
-            maxWidth: 22,
+          constraints: BoxConstraints(
+            maxWidth: isSmallMobile ? 20 : 22,
           ),
           onPressed: onNext,
         );
