@@ -89,7 +89,7 @@ class AppTheme {
 
   static const Map inputSelectedBgColor = {
     'dark': ThemeColors.color1,
-    'light': ThemeColors.color3,
+    'light': ThemeColors.color9,
     'classic': ThemeColors.color14,
   };
 
