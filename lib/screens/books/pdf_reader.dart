@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,18 +41,23 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
     var checkDownloadedFile = ref.watch(checkFileProvider);
 
     return checkDownloadedFile.when(
-      loading: () => const CircularProgressIndicator(),
+      loading: () {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
       error: (error, stackTrace) => Text(error.toString()),
       data: (isDownloaded) {
         if (isDownloaded) {
           double screenWidth = MediaQuery.of(context).size.width;
           double screenHeight = MediaQuery.of(context).size.height;
+          int platformAjdustment = Platform.isAndroid ? -4 : 30;
           double barHeight = kToolbarHeight +
               MediaQueryData.fromView(
                 ui.PlatformDispatcher.instance.implicitView!,
               ).padding.top +
-              kBottomNavigationBarHeight -
-              4;
+              kBottomNavigationBarHeight +
+              platformAjdustment;
           double heightAdjustment = widget.isFullScreen ? 0 : barHeight;
 
           var pdfFile = ref.watch(localFileProvider(widget.filePath));

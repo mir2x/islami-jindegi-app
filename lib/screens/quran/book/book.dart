@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -251,10 +252,11 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
 
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    int platformAjdustment = Platform.isAndroid ? -4 : 30;
     double barHeight = kToolbarHeight +
         MediaQuery.of(context).padding.top +
-        kBottomNavigationBarHeight -
-        4;
+        kBottomNavigationBarHeight +
+        platformAjdustment;
     double heightAdjustment = isFullScreen ? 0 : barHeight;
 
     var pdfFile = ref.watch(localFileProvider(widget.filePath));
