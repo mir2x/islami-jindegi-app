@@ -64,7 +64,7 @@ class PDFMenu extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text(
-                locales.switchMode,
+                locales.openFile,
                 style: textTheme.labelMedium,
               ),
               const SizedBox(width: 10),
