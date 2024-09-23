@@ -159,6 +159,12 @@ class AppTheme {
     'classic': ThemeColors.color14,
   };
 
+  static const Map linkColor = {
+    'dark': ThemeColors.color4,
+    'light': ThemeColors.color8,
+    'classic': ThemeColors.color12,
+  };
+
   static const Map tableBorderColor = {
     'dark': ThemeColors.color3,
     'light': ThemeColors.color2,

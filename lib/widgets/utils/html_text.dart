@@ -20,44 +20,12 @@ class HtmlText extends StatelessWidget {
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
 
-    Style bodySmall = Style.fromTextStyle(
-      textTheme.bodySmall!,
-    ).copyWith(
-      lineHeight: const LineHeight(1.45),
-      margin: Margins.zero,
-      fontSize: FontSize(14 * fontSizeRatio),
-    );
-
-    Style bodyMedium = Style.fromTextStyle(
-      textTheme.bodyMedium!,
-    ).copyWith(
-      lineHeight: const LineHeight(1.45),
-      margin: Margins.zero,
-      fontSize: FontSize(17 * fontSizeRatio),
-    );
-
-    Style bodyLarge = Style.fromTextStyle(
-      textTheme.headlineMedium!,
-    ).copyWith(
-      lineHeight: const LineHeight(1.45),
-      margin: Margins.zero,
-      fontSize: FontSize(20 * fontSizeRatio),
-    );
-
-    Style bodyExtraLarge = Style.fromTextStyle(
+    Style hx = Style.fromTextStyle(
       textTheme.headlineLarge!,
     ).copyWith(
       lineHeight: const LineHeight(1.45),
       margin: Margins.zero,
       fontSize: FontSize(24 * fontSizeRatio),
-    );
-
-    Style paragraph = Style.fromTextStyle(
-      textTheme.bodyMedium!,
-    ).copyWith(
-      lineHeight: const LineHeight(1.45),
-      margin: Margins.only(bottom: 16),
-      fontSize: FontSize(17 * fontSizeRatio),
     );
 
     return WithPreferences(
@@ -113,14 +81,36 @@ class HtmlText extends StatelessWidget {
               }
             },
             style: {
-              'body': bodyMedium,
-              'h6': bodyMedium,
-              'h5': bodyLarge,
-              'h4': bodyExtraLarge,
-              'h3': bodyExtraLarge,
-              'h2': bodyExtraLarge,
-              'h1': bodyExtraLarge,
-              'p': paragraph,
+              'body': Style(margin: Margins.zero),
+              'h6': Style.fromTextStyle(
+                textTheme.bodyMedium!,
+              ).copyWith(
+                lineHeight: const LineHeight(1.45),
+                margin: Margins.zero,
+                fontSize: FontSize(17 * fontSizeRatio),
+              ),
+              'h5': Style.fromTextStyle(
+                textTheme.headlineMedium!,
+              ).copyWith(
+                lineHeight: const LineHeight(1.45),
+                margin: Margins.zero,
+                fontSize: FontSize(20 * fontSizeRatio),
+              ),
+              'h4': hx,
+              'h3': hx,
+              'h2': hx,
+              'h1': hx,
+              'p': Style.fromTextStyle(
+                textTheme.bodyMedium!,
+              ).copyWith(
+                lineHeight: const LineHeight(1.45),
+                margin: Margins.only(bottom: 16),
+                fontSize: FontSize(17 * fontSizeRatio),
+              ),
+              'a': Style(
+                color: AppTheme.linkColor[theme],
+                textDecoration: TextDecoration.none,
+              ),
               'th': Style(
                 textAlign: TextAlign.start,
                 padding: HtmlPaddings.all(10),
@@ -136,13 +126,11 @@ class HtmlText extends StatelessWidget {
                   width: 0.5,
                 ),
               ),
-              '.tiptap-sm-font': bodySmall,
-              '.tiptap-md-font': bodyMedium,
-              '.tiptap-lg-font': bodyLarge,
-              '.tiptap-xl-font': bodyExtraLarge,
-              '[dir="rtl"]': Style(
-                direction: TextDirection.rtl,
-              ),
+              '.tiptap-sm-font': Style(fontSize: FontSize(14 * fontSizeRatio)),
+              '.tiptap-md-font': Style(fontSize: FontSize(17 * fontSizeRatio)),
+              '.tiptap-lg-font': Style(fontSize: FontSize(20 * fontSizeRatio)),
+              '.tiptap-xl-font': Style(fontSize: FontSize(24 * fontSizeRatio)),
+              '[dir="rtl"]': Style(direction: TextDirection.rtl),
             },
           ),
         );
