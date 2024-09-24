@@ -934,8 +934,8 @@ class LocalResourceAPI extends _$LocalResourceAPI {
         params['per_page'],
         offset: (params['page'] - 1) * params['per_page'],
       );
-    } else {
-      query.limit(params['quantity'] ?? 20);
+    } else if (params.containsKey('quantity')) {
+      query.limit(params['quantity']);
     }
 
     if (params.containsKey('search')) {

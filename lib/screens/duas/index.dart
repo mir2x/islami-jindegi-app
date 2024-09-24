@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
-import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/objects/all_models_query.dart';
@@ -14,15 +14,79 @@ import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
+import 'package:native_app/widgets/utils/with_preferences.dart';
 
-class Duas extends ConsumerWidget {
+class Duas extends StatelessWidget {
   const Duas({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    return WithPreferences(
+      builder: (context, preferences) {
+        return OfflineDuas(preferences: preferences);
+      },
+    );
+  }
+}
+
+class OfflineDuas extends ConsumerStatefulWidget {
+  const OfflineDuas({
+    super.key,
+    required this.preferences,
+  });
+
+  final dynamic preferences;
+
+  @override
+  OfflineDuasState createState() => OfflineDuasState();
+}
+
+class OfflineDuasState extends ConsumerState<OfflineDuas> {
+  ScrollController? duaController;
+
+  void updateLastDuaPosition() {
+    EasyDebounce.debounce(
+      'dua-position',
+      const Duration(milliseconds: 250),
+      () {
+        if (duaController!.hasClients) {
+          widget.preferences.setDouble(
+            'lastDuaPosition',
+            duaController!.position.pixels,
+          );
+        }
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    double lastDuaPosition =
+        widget.preferences.getDouble('lastDuaPosition') ?? 0.0;
+
+    duaController = ScrollController(initialScrollOffset: lastDuaPosition);
+    duaController!.addListener(updateLastDuaPosition);
+  }
+
+  @override
+  void dispose() {
+    duaController!.removeListener(updateLastDuaPosition);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(queryParamsProvider);
+
+    AllModelsQuery query = AllModelsQuery(
+      repository: ref.duas,
+      params: {...qParams, 'published': true, 'offline': true},
+    );
+
+    var modelQuery = ref.watch(allModelsProvider(query));
 
     return AppScaffold(
       title: Text(locales.duaDurud),
@@ -84,36 +148,42 @@ class Duas extends ConsumerWidget {
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: InfiniteList(
-                qParams: qParams,
-                resourceFetcher: (Map<String, dynamic> params) async {
-                  AllModelsQuery query = AllModelsQuery(
-                    repository: ref.duas,
-                    params: {...params, 'published': true, 'offline': true},
+              child: modelQuery.when(
+                loading: () {
+                  return const Center(
+                    child: CircularProgressIndicator(),
                   );
-
-                  return await ref.watch(allModelsProvider(query).future);
                 },
-                itemBuilder: (_, item, __) {
-                  return InkWell(
-                    onTap: () => QR.to('duas/${item.id}'),
-                    child: ListItem(
-                      item: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              item.title,
-                              style: textTheme.titleMedium,
-                            ),
+                error: (error, _) => Text(error.toString()),
+                data: (resources) {
+                  return ListView.builder(
+                    controller: duaController,
+                    padding: const EdgeInsets.symmetric(vertical: 25),
+                    itemCount: resources.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      var item = resources[index];
+
+                      return InkWell(
+                        onTap: () => QR.to('duas/${item.id}'),
+                        child: ListItem(
+                          item: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  item.title,
+                                  style: textTheme.titleMedium,
+                                ),
+                              ),
+                              LastVisited(
+                                resourceKey: 'lastDuaDurud',
+                                resourceId: item.id,
+                              ),
+                            ],
                           ),
-                          LastVisited(
-                            resourceKey: 'lastDuaDurud',
-                            resourceId: item.id,
-                          ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
