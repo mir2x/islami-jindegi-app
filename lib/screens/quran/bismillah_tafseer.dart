@@ -83,6 +83,7 @@ class BismillahTafseer extends ConsumerWidget {
                   SocialShare(
                     title: arabicBismillah,
                     body: item.body,
+                    link: 'quran/bismillah-tafseer',
                   ),
                   FontResizer(
                     fontSizeRatio: fontSizeRatio,
