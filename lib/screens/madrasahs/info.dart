@@ -39,7 +39,7 @@ class MadrasahInfo extends ConsumerWidget {
           if (resource.position > 1) {
             var previousResources = await ref.madrasahInfos.findAll(
               params: {
-                'madrasahId': resource.madrasah.value.id,
+                'madrasahId': resource.madrasah.id,
                 'quantity': 1,
                 'position': resource.position - 1,
                 'localFirst': true,
@@ -48,12 +48,12 @@ class MadrasahInfo extends ConsumerWidget {
 
             if (previousResources.isNotEmpty) {
               await QR.to(
-                'madrasahs/${resource.madrasah.value.id}/infos/${previousResources.first.id}',
+                'madrasahs/${resource.madrasah.id}/infos/${previousResources.first.id}',
               );
             }
           } else {
             await QR.to(
-              'madrasahs/${resource.madrasah.value.id}/introduction',
+              'madrasahs/${resource.madrasah.id}/introduction',
             );
           }
         }
@@ -61,7 +61,7 @@ class MadrasahInfo extends ConsumerWidget {
         Future? nextPage() async {
           var nextResources = await ref.madrasahInfos.findAll(
             params: {
-              'madrasahId': resource.madrasah.value.id,
+              'madrasahId': resource.madrasah.id,
               'quantity': 1,
               'position': resource.position + 1,
               'localFirst': true,
@@ -70,11 +70,11 @@ class MadrasahInfo extends ConsumerWidget {
 
           if (nextResources.isNotEmpty) {
             await QR.to(
-              'madrasahs/${resource.madrasah.value.id}/infos/${nextResources.first.id}',
+              'madrasahs/${resource.madrasah.id}/infos/${nextResources.first.id}',
             );
           } else {
             await QR.to(
-              'madrasahs/${resource.madrasah.value.id}/gallery',
+              'madrasahs/${resource.madrasah.id}/gallery',
             );
           }
         }
@@ -84,7 +84,7 @@ class MadrasahInfo extends ConsumerWidget {
           builder: (context, fontSizeRatio) {
             return AppScaffold(
               onBackPressed: () async =>
-                  await QR.to('madrasahs/${resource.madrasah.value.id}'),
+                  await QR.to('madrasahs/${resource.madrasah.id}'),
               showPattern: false,
               title: Text(resource.madrasah.value.title),
               body: NextPageSwipe(

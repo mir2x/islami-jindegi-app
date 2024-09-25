@@ -180,7 +180,7 @@ class _ParasState extends ConsumerState<StatefulParas> {
                           repository: ref.quranBookPages,
                           params: {
                             'quranBookId': widget.book.id,
-                            'paraId': selectedBookPara.para.value.id,
+                            'paraId': selectedBookPara.para.id,
                             'paraPage': number,
                             'quantity': 1,
                             'offline': true,

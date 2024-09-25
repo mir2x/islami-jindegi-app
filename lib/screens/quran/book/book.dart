@@ -400,7 +400,7 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                             'qitabFromAyah': qitabSurah.startAyah,
                             'qitabToAyah': qitabSurah.endAyah,
                             'surahNo': qitabSurah.surah.value.position,
-                            'surahId': qitabSurah.surah.value.id,
+                            'surahId': qitabSurah.surah.id,
                             'surahTitle': contextualTranslation(
                               locale: currentLang,
                               enText: qitabSurah.surah.value.title,

@@ -45,7 +45,7 @@ class Subchapter extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
-        var chapterId = resource.chapter.value.id;
+        var chapterId = resource.chapter.id;
 
         Future? previousPage() async {
           var previousResources = await ref.subchapters.findAll(
