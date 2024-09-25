@@ -53,6 +53,7 @@ class NewsItem extends ConsumerWidget {
           var previousResources = await ref.news.findAll(
             params: {
               'quantity': 1,
+              'published': true,
               'gtPublishedAt': resource.publishedAt,
             },
           );
@@ -68,6 +69,7 @@ class NewsItem extends ConsumerWidget {
           var nextResources = await ref.news.findAll(
             params: {
               'quantity': 1,
+              'published': true,
               'ltPublishedAt': resource.publishedAt,
             },
           );
