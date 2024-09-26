@@ -1125,7 +1125,7 @@ class LocalResourceAPI extends _$LocalResourceAPI {
           .getSingle();
 
       var infoWithMadrasah = {
-        'madrasahInfo': info,
+        'madrasahInfos': info,
         'relationships': {
           'madrasah': madrasah,
         },
