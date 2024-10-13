@@ -633,7 +633,18 @@ class LocalResourceAPI extends _$LocalResourceAPI {
       query.limit(params['quantity'] ?? 20);
     }
 
-    query.orderBy([(t) => OrderingTerm(expression: t.position)]);
+    if (params.containsKey('sort') && params['sort'] == '-position') {
+      query.orderBy(
+        [
+          (t) => OrderingTerm(
+                expression: t.position,
+                mode: OrderingMode.desc,
+              ),
+        ],
+      );
+    } else {
+      query.orderBy([(t) => OrderingTerm(expression: t.position)]);
+    }
 
     var chapterItems = await query.get();
 
@@ -722,12 +733,14 @@ class LocalResourceAPI extends _$LocalResourceAPI {
       query.limit(params['quantity'] ?? 20);
     }
 
-    query.orderBy([
-      (t) => OrderingTerm(
-            expression: t.position,
-            mode: OrderingMode.desc,
-          ),
-    ]);
+    query.orderBy(
+      [
+        (t) => OrderingTerm(
+              expression: t.position,
+              mode: OrderingMode.desc,
+            ),
+      ],
+    );
 
     var bayanItems = await query.get();
 

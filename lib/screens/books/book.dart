@@ -6,7 +6,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/main.data.dart';
-import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/single_model.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
@@ -90,7 +89,12 @@ class BookItem extends ConsumerWidget {
 
         var cQuery = AllModelsQuery(
           repository: ref.chapters,
-          params: {'bookId': book.id, 'quantity': 1, 'localFirst': true},
+          params: {
+            'bookId': book.id,
+            'quantity': 1,
+            'sort': '-position',
+            'localFirst': true,
+          },
         );
 
         var chapterQuery = ref.watch(allModelsProvider(cQuery));
@@ -112,6 +116,8 @@ class BookItem extends ConsumerWidget {
           error: (error, _) => Text(error.toString()),
           data: (chapters) {
             if (chapters.isNotEmpty) {
+              var lastChapter = chapters.first;
+
               return AppScaffold(
                 onBackPressed: () async => await QR.to('books'),
                 showPattern: false,
@@ -149,7 +155,7 @@ class BookItem extends ConsumerWidget {
                       ),
                       Container(
                         padding: const EdgeInsets.only(
-                          bottom: 3,
+                          bottom: 10,
                           left: 15,
                           right: 15,
                         ),
@@ -173,80 +179,94 @@ class BookItem extends ConsumerWidget {
                                 lastChapterId = books[book.id.toString()];
                               }
 
-                              return InfiniteList(
-                                padding: 0,
-                                resourceFetcher:
-                                    (Map<String, dynamic> params) async {
-                                  AllModelsQuery query = AllModelsQuery(
-                                    repository: ref.chapters,
-                                    params: {
-                                      ...params,
-                                      'bookId': book.id,
-                                      'include': 'subchapters',
-                                      'localFirst': true,
-                                    },
-                                  );
-
-                                  return await ref
-                                      .watch(allModelsProvider(query).future);
+                              var cQuery = AllModelsQuery(
+                                repository: ref.chapters,
+                                params: {
+                                  'bookId': book.id,
+                                  'quantity': lastChapter.position,
+                                  'include': 'subchapters',
+                                  'localFirst': true,
                                 },
-                                itemBuilder: (_, chapter, __) {
-                                  if (chapter.subchapters.length > 0) {
-                                    return Subchapters(
-                                      book: book,
-                                      chapter: chapter,
-                                      lastSubchapterId: lastChapterId,
-                                      isOpen: chapter.subchapters
-                                          .map((s) => s.id.toString())
-                                          .any((id) => id == lastChapterId),
-                                    );
-                                  } else {
-                                    return InkWell(
-                                      onTap: () => QR.to(
-                                        'books/${book.id}/chapters/${chapter.id}',
-                                      ),
-                                      child: Container(
-                                        decoration: const BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color: ThemeColors.color4,
+                              );
+
+                              var chaptersQuery =
+                                  ref.watch(allModelsProvider(cQuery));
+
+                              return chaptersQuery.when(
+                                loading: () {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                },
+                                error: (error, _) => Text(error.toString()),
+                                data: (resources) {
+                                  return ListView.builder(
+                                    key: PageStorageKey<String>(book.id),
+                                    itemCount: resources.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      var chapter = resources[index];
+
+                                      if (chapter.subchapters.length > 0) {
+                                        return Subchapters(
+                                          book: book,
+                                          chapter: chapter,
+                                          lastSubchapterId: lastChapterId,
+                                          isOpen: chapter.subchapters
+                                              .map((s) => s.id.toString())
+                                              .any((id) => id == lastChapterId),
+                                        );
+                                      } else {
+                                        return InkWell(
+                                          onTap: () => QR.to(
+                                            'books/${book.id}/chapters/${chapter.id}',
+                                          ),
+                                          child: Container(
+                                            decoration: const BoxDecoration(
+                                              border: Border(
+                                                bottom: BorderSide(
+                                                  color: ThemeColors.color4,
+                                                ),
+                                              ),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 15,
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Flexible(
+                                                  child: Text(
+                                                    chapter.title,
+                                                    style: textTheme.titleLarge,
+                                                  ),
+                                                ),
+                                                if (lastChapterId ==
+                                                    chapter.id.toString()) ...[
+                                                  Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                      left: 10,
+                                                    ),
+                                                    child: SvgPicture.asset(
+                                                      'assets/images/icons/open-book.svg',
+                                                      fit: BoxFit.scaleDown,
+                                                      width: 25,
+                                                      height: 20,
+                                                    ),
+                                                  ),
+                                                ] else ...[
+                                                  const SizedBox.shrink(),
+                                                ],
+                                              ],
                                             ),
                                           ),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 15,
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Flexible(
-                                              child: Text(
-                                                chapter.title,
-                                                style: textTheme.titleLarge,
-                                              ),
-                                            ),
-                                            if (lastChapterId ==
-                                                chapter.id.toString()) ...[
-                                              Container(
-                                                margin: const EdgeInsets.only(
-                                                  left: 10,
-                                                ),
-                                                child: SvgPicture.asset(
-                                                  'assets/images/icons/open-book.svg',
-                                                  fit: BoxFit.scaleDown,
-                                                  width: 25,
-                                                  height: 20,
-                                                ),
-                                              ),
-                                            ] else ...[
-                                              const SizedBox.shrink(),
-                                            ],
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  }
+                                        );
+                                      }
+                                    },
+                                  );
                                 },
                               );
                             },

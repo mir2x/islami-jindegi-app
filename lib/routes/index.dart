@@ -148,7 +148,10 @@ class AppRoutes {
       children: [
         QRoute(
           path: '/:id',
-          builder: () => const BookItem(),
+          builder: () => PageStorage(
+            bucket: _bucket,
+            child: const BookItem(),
+          ),
           children: [
             QRoute(
               path: '/chapters/:chapter_id',
