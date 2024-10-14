@@ -73,55 +73,19 @@
         android:paddingBottom="5dp"
         android:orientation="vertical">
 
-        <LinearLayout
+        <ImageView
           android:id="@+id/sunrise"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:orientation="horizontal">
+          android:contentDescription="@string/sunrise"
+          android:scaleType="fitStart" />
 
-          <ImageView
-            android:id="@+id/sunriseTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.2"
-            android:contentDescription="@string/sunrise"
-            android:scaleType="fitStart" />
-
-          <ImageView
-            android:id="@+id/sunriseTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="3dp"
-            android:layout_marginTop="1dp"
-            android:contentDescription="@string/time"
-            android:scaleType="fitStart" />
-        </LinearLayout>
-
-        <LinearLayout
+        <ImageView
           android:id="@+id/sunset"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:orientation="horizontal">
-
-          <ImageView
-            android:id="@+id/sunsetTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.2"
-            android:contentDescription="@string/sunset"
-            android:scaleType="fitStart" />
-
-          <ImageView
-            android:id="@+id/sunsetTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="3dp"
-            android:layout_marginTop="1dp"
-            android:contentDescription="@string/time"
-            android:scaleType="fitStart" />
-        </LinearLayout>
+          android:contentDescription="@string/sunset"
+          android:scaleType="fitStart" />
 
         <LinearLayout
           android:id="@+id/locationContainer"
@@ -150,28 +114,12 @@
       android:layout_marginTop="14dp"
       android:layout_marginBottom="14dp">
 
-      <LinearLayout
+      <ImageView
         android:id="@+id/currentPrayer"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <ImageView
-          android:id="@+id/currentPrayerTitle"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:contentDescription="@string/current_prayer"
-          android:scaleType="fitStart" />
-
-        <ImageView
-          android:id="@+id/currentPrayerTime"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginStart="2dp"
-          android:layout_marginTop="3dp"
-          android:contentDescription="@string/time"
-          android:scaleType="fitStart" />
-      </LinearLayout>
+        android:contentDescription="@string/current_prayer"
+        android:scaleType="fitStart" />
 
       <ImageView
         android:id="@+id/nextPrayer"

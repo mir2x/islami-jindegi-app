@@ -150,30 +150,29 @@ class Prayers extends StatelessWidget {
         Color titleColor = AppTheme.titleOppositeColor[theme];
         Color labelColor = AppTheme.labelOppsititeColor[theme];
 
-        Map updatableParams = {};
-
         bool hasCurrentPrayer = prayerTimes.containsKey('current') &&
             (prayerTimes['current'] != null);
 
-        if (hasCurrentPrayer &&
-            (preferences.getString('currentPrayerTitle') !=
-                prayerTimes['current']['title'])) {
-          preferences.setString(
-            'currentPrayerTitle',
-            prayerTimes['current']['title'],
-          );
-          updatableParams['currentPrayerTitle'] =
-              prayerTimes['current']['title'];
-        }
+        Map updatableParams = {};
 
-        if (hasCurrentPrayer &&
-            (preferences.getString('currentPrayerTime') !=
-                prayerTimes['current']['time'])) {
-          preferences.setString(
-            'currentPrayerTime',
-            prayerTimes['current']['time'],
-          );
-          updatableParams['currentPrayerTime'] = prayerTimes['current']['time'];
+        if (hasCurrentPrayer) {
+          String currentPrayerTitle = prayerTimes['current']['title'];
+          String currentPrayerTime = prayerTimes['current']['time'];
+          String currentPrayer = '$currentPrayerTitle $currentPrayerTime';
+
+          if (preferences.getString('currentPrayerTitle') !=
+              currentPrayerTitle) {
+            preferences.setString('currentPrayerTitle', currentPrayerTitle);
+          }
+
+          if (preferences.getString('currentPrayerTime') != currentPrayerTime) {
+            preferences.setString('currentPrayerTime', currentPrayerTime);
+          }
+
+          if (preferences.getString('currentPrayer') != currentPrayer) {
+            preferences.setString('currentPrayer', currentPrayer);
+            updatableParams['currentPrayer'] = currentPrayer;
+          }
         }
 
         if (preferences.getString('nextPrayer') != prayerTimes['next']) {

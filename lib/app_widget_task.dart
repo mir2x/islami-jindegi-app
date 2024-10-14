@@ -57,6 +57,21 @@ void callbackDispatcher() {
       currentLang,
     );
 
+    String sunrise =
+        "${sunriseSunset['sunrise']['title']} ${sunriseSunset['sunrise']['time']}";
+    String sunset =
+        "${sunriseSunset['sunset']['title']}  ${sunriseSunset['sunset']['time']}";
+
+    bool hasCurrentPrayer =
+        prayerTimes.containsKey('current') && (prayerTimes['current'] != null);
+
+    String? currentPrayer;
+
+    if (hasCurrentPrayer) {
+      currentPrayer =
+          "${prayerTimes['current']['title']} ${prayerTimes['current']['time']}";
+    }
+
     String nextPrayer =
         '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}';
 
@@ -65,15 +80,11 @@ void callbackDispatcher() {
       'hijriDate': hijriDate,
       'bangaliDate': bangaliDate,
       'gregorianDate': gregorianDate,
-      'sunriseTitle': sunriseSunset['sunrise']['title'],
-      'sunriseTime': sunriseSunset['sunrise']['time'],
-      'sunsetTitle': sunriseSunset['sunset']['title'],
-      'sunsetTime': sunriseSunset['sunset']['time'],
+      'sunrise': sunrise,
+      'sunset': sunset,
       'location': locationName,
-      if (prayerTimes.containsKey('current') &&
-          prayerTimes['current'] != null) ...{
-        'currentPrayerTitle': prayerTimes['current']['title'],
-        'currentPrayerTime': prayerTimes['current']['time'],
+      if (hasCurrentPrayer) ...{
+        'currentPrayer': currentPrayer,
       },
       'nextPrayer': nextPrayer,
     });
@@ -83,15 +94,8 @@ void callbackDispatcher() {
     await preferences.setString('gregorianDate', gregorianDate);
     await preferences.setString('location', locationName);
 
-    if (prayerTimes.containsKey('current') && prayerTimes['current'] != null) {
-      await preferences.setString(
-        'currentPrayerTitle',
-        prayerTimes['current']['title'],
-      );
-      await preferences.setString(
-        'currentPrayerTime',
-        prayerTimes['current']['time'],
-      );
+    if (hasCurrentPrayer) {
+      await preferences.setString('currentPrayer', currentPrayer!);
     }
 
     await preferences.setString('nextPrayer', nextPrayer);

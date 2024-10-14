@@ -51,13 +51,10 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
     val hijriDate = widgetData.getString("hijriDate", "Hijri Date")
     val bangaliDate = widgetData.getString("bangaliDate", "Bangali Date")
     val gregorianDate = widgetData.getString("gregorianDate", "Gregorian Date")
-    val sunriseTitle = widgetData.getString("sunriseTitle", "Sunrise")
-    val sunriseTime = widgetData.getString("sunriseTime", "")
-    val sunsetTitle = widgetData.getString("sunsetTitle", "Sunset")
-    val sunsetTime = widgetData.getString("sunsetTime", "")
+    val sunrise = widgetData.getString("sunrise", "Sunrise")
+    val sunset = widgetData.getString("sunset", "Sunset")
     val location = widgetData.getString("location", "Location")
-    val currentPrayerTitle = widgetData.getString("currentPrayerTitle", "")
-    val currentPrayerTime = widgetData.getString("currentPrayerTime", "")
+    val currentPrayer = widgetData.getString("currentPrayer", "Current Prayer")
     val nextPrayer = widgetData.getString("nextPrayer", "Prayers")
 
     if (theme == "light") {
@@ -102,32 +99,20 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
       getFontBitmap(context, gregorianDate, textColor, ratio, 14f),
     )
     setImageViewBitmap(
-      R.id.sunriseTitle,
-      getFontBitmap(context, sunriseTitle, textColor, ratio, 14f),
+      R.id.sunrise,
+      getFontBitmap(context, sunrise, textColor, ratio, 14f),
     )
     setImageViewBitmap(
-      R.id.sunriseTime,
-      getFontBitmap(context, sunriseTime, textColor, ratio, 14f),
-    )
-    setImageViewBitmap(
-      R.id.sunsetTitle,
-      getFontBitmap(context, sunsetTitle, textColor, ratio, 14f),
-    )
-    setImageViewBitmap(
-      R.id.sunsetTime,
-      getFontBitmap(context, sunsetTime, textColor, ratio, 14f),
+      R.id.sunset,
+      getFontBitmap(context, sunset, textColor, ratio, 14f),
     )
     setImageViewBitmap(
       R.id.location,
       getFontBitmap(context, location, highlightTextColor, ratio, 14f),
     )
     setImageViewBitmap(
-      R.id.currentPrayerTitle,
-      getFontBitmap(context, currentPrayerTitle, highlightTextColor, ratio, 18f),
-    )
-    setImageViewBitmap(
-      R.id.currentPrayerTime,
-      getFontBitmap(context, currentPrayerTime, highlightTextColor, ratio, 15f),
+      R.id.currentPrayer,
+      getFontBitmap(context, currentPrayer, highlightTextColor, ratio, 18f),
     )
     setImageViewBitmap(
       R.id.nextPrayer,
