@@ -209,6 +209,9 @@ class BookItem extends ConsumerWidget {
 
                                       if (chapter.subchapters.length > 0) {
                                         return Subchapters(
+                                          key: PageStorageKey<String>(
+                                            chapter.id,
+                                          ),
                                           book: book,
                                           chapter: chapter,
                                           lastSubchapterId: lastChapterId,
