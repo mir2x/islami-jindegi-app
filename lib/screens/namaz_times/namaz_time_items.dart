@@ -309,6 +309,7 @@ class NamazTimeItem extends ConsumerWidget {
                       constraints: const BoxConstraints(
                         maxHeight: 40,
                       ),
+                      padding: const EdgeInsets.only(top: 8, bottom: 13),
                       icon: const Icon(
                         Icons.add_alarm,
                       ),
