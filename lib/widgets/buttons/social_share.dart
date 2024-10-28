@@ -71,7 +71,7 @@ class SocialShare extends StatelessWidget {
             }
 
             if (link != null) {
-              text += '\n\n${locales.link}: https://islamidars.com/$link';
+              text += '\n\n${locales.link}: https://islamijindegi.com/$link';
             }
 
             text += '\n\n$appLink';
