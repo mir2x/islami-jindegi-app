@@ -47,17 +47,12 @@ class Malfuzat extends ConsumerWidget {
                         children: [
                           Expanded(
                             child: FilterButton(
-                              active: qParams.keys.any(
-                                (k) => [
-                                  'malfuzatAuthorId',
-                                  'malfuzatCategoryId',
-                                  'malfuzatSubcategoryId',
-                                ].contains(k),
-                              ),
+                              label: locales.authorsOrSpeakers,
+                              active: qParams.containsKey('malfuzatAuthorId'),
                               children: [
                                 Expanded(
                                   child: FilterList(
-                                    title: locales.authors,
+                                    title: locales.authorsOrSpeakers,
                                     paramKeys: const ['malfuzatAuthorId'],
                                     searchEnabled: true,
                                     queryBuilder:
@@ -76,7 +71,22 @@ class Malfuzat extends ConsumerWidget {
                                     },
                                   ),
                                 ),
-                                const SizedBox(height: 40),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          Expanded(
+                            child: FilterButton(
+                              label: locales.categories,
+                              active: qParams.keys.any(
+                                (k) => [
+                                  'malfuzatCategoryId',
+                                  'malfuzatSubcategoryId',
+                                ].contains(k),
+                              ),
+                              children: [
                                 Expanded(
                                   child: FilterList(
                                     title: locales.categories,
@@ -123,20 +133,19 @@ class Malfuzat extends ConsumerWidget {
                               ],
                             ),
                           ),
-                          const SizedBox(
-                            width: 15,
-                          ),
-                          Expanded(
-                            child: SearchButtonField(
-                              value: qParams['search'],
-                              onUpdate: (value) {
-                                ref
-                                    .read(queryParamsProvider.notifier)
-                                    .updateParams('search', value);
-                              },
-                            ),
-                          ),
                         ],
+                      ),
+                    ),
+                    Container(
+                      padding:
+                          const EdgeInsets.only(top: 10, left: 15, right: 15),
+                      child: SearchButtonField(
+                        value: qParams['search'],
+                        onUpdate: (value) {
+                          ref
+                              .read(queryParamsProvider.notifier)
+                              .updateParams('search', value);
+                        },
                       ),
                     ),
                   ],
@@ -147,12 +156,7 @@ class Malfuzat extends ConsumerWidget {
             },
           ),
           Container(
-            padding: const EdgeInsets.only(
-              left: 15,
-              right: 15,
-              top: 10,
-              bottom: 5,
-            ),
+            padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
             child: TripleSwitchButton(
               firstLabel: locales.all,
               secondLabel: locales.text,

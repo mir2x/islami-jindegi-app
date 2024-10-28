@@ -72,6 +72,7 @@
 
   "authors": "লেখক",
   "author": "লেখক",
+  "authorsOrSpeakers": "লেখক/বক্তা",
   "contents": "সূচীপত্র",
   "bookInfo": "বই পরিচিতি",
   "publisher": "প্রকাশক",

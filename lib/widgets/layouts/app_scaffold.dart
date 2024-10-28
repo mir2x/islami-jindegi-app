@@ -204,8 +204,9 @@ class AppScaffold extends ConsumerWidget {
                                       }
                                       break;
                                     case 5:
-                                      final Uri url =
-                                          Uri.parse('https://islamijindegi.com');
+                                      final Uri url = Uri.parse(
+                                        'https://islamijindegi.com',
+                                      );
                                       launchUrl(url);
                                       break;
                                     case 6:

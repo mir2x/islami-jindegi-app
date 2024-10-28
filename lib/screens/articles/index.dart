@@ -34,101 +34,118 @@ class Articles extends ConsumerWidget {
           WithConnectivity(
             builder: (context, isConnected) {
               if (isConnected) {
-                return Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: FilterButton(
-                          active: qParams.keys.any(
-                            (k) => [
-                              'articleAuthorId',
-                              'articleCategoryId',
-                              'articleSubcategoryId',
-                            ].contains(k),
-                          ),
-                          children: [
-                            Expanded(
-                              child: FilterList(
-                                title: locales.authors,
-                                paramKeys: const ['articleAuthorId'],
-                                searchEnabled: true,
-                                queryBuilder: (Map<String, dynamic> params) {
-                                  return AllModelsQuery(
-                                    repository: ref.articleAuthors,
-                                    params: params,
-                                  );
-                                },
-                                itemBuilder: (_, item, __) {
-                                  return FilterItem(
-                                    itemId: item.id,
-                                    itemTitle: item.name,
-                                    paramKey: 'articleAuthorId',
-                                  );
-                                },
-                              ),
+                return Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding:
+                          const EdgeInsets.only(top: 20, left: 15, right: 15),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: FilterButton(
+                              label: locales.authors,
+                              active: qParams.containsKey('articleAuthorId'),
+                              children: [
+                                Expanded(
+                                  child: FilterList(
+                                    title: locales.authors,
+                                    paramKeys: const ['articleAuthorId'],
+                                    searchEnabled: true,
+                                    queryBuilder:
+                                        (Map<String, dynamic> params) {
+                                      return AllModelsQuery(
+                                        repository: ref.articleAuthors,
+                                        params: params,
+                                      );
+                                    },
+                                    itemBuilder: (_, item, __) {
+                                      return FilterItem(
+                                        itemId: item.id,
+                                        itemTitle: item.name,
+                                        paramKey: 'articleAuthorId',
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 40),
-                            Expanded(
-                              child: FilterList(
-                                title: locales.categories,
-                                paramKeys: const [
+                          ),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          Expanded(
+                            child: FilterButton(
+                              label: locales.categories,
+                              active: qParams.keys.any(
+                                (k) => [
                                   'articleCategoryId',
                                   'articleSubcategoryId',
-                                ],
-                                queryBuilder: (Map<String, dynamic> params) {
-                                  return AllModelsQuery(
-                                    repository: ref.articleCategories,
-                                    params: {
-                                      ...params,
-                                      'include': 'article-subcategories',
-                                    },
-                                  );
-                                },
-                                itemBuilder: (_, item, __) {
-                                  if (item.articleSubcategories.length > 0) {
-                                    return FilterNestedItem(
-                                      itemId: item.id,
-                                      itemTitle: item.title,
-                                      paramKey: 'articleSubcategoryId',
-                                      subitems: item.articleSubcategories,
-                                      subitemBuilder: (var subitem) {
-                                        return FilterSubitem(
-                                          itemId: subitem.id,
-                                          itemTitle: subitem.title,
-                                          paramKey: 'articleSubcategoryId',
-                                        );
-                                      },
-                                    );
-                                  } else {
-                                    return FilterItem(
-                                      itemId: item.id,
-                                      itemTitle: item.title,
-                                      paramKey: 'articleCategoryId',
-                                    );
-                                  }
-                                },
+                                ].contains(k),
                               ),
+                              children: [
+                                Expanded(
+                                  child: FilterList(
+                                    title: locales.categories,
+                                    paramKeys: const [
+                                      'articleCategoryId',
+                                      'articleSubcategoryId',
+                                    ],
+                                    queryBuilder:
+                                        (Map<String, dynamic> params) {
+                                      return AllModelsQuery(
+                                        repository: ref.articleCategories,
+                                        params: {
+                                          ...params,
+                                          'include': 'article-subcategories',
+                                        },
+                                      );
+                                    },
+                                    itemBuilder: (_, item, __) {
+                                      if (item.articleSubcategories.length >
+                                          0) {
+                                        return FilterNestedItem(
+                                          itemId: item.id,
+                                          itemTitle: item.title,
+                                          paramKey: 'articleSubcategoryId',
+                                          subitems: item.articleSubcategories,
+                                          subitemBuilder: (var subitem) {
+                                            return FilterSubitem(
+                                              itemId: subitem.id,
+                                              itemTitle: subitem.title,
+                                              paramKey: 'articleSubcategoryId',
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        return FilterItem(
+                                          itemId: item.id,
+                                          itemTitle: item.title,
+                                          paramKey: 'articleCategoryId',
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(
-                        width: 15,
+                    ),
+                    Container(
+                      padding:
+                          const EdgeInsets.only(top: 10, left: 15, right: 15),
+                      child: SearchButtonField(
+                        value: qParams['search'],
+                        onUpdate: (value) {
+                          ref
+                              .read(queryParamsProvider.notifier)
+                              .updateParams('search', value);
+                        },
                       ),
-                      Expanded(
-                        child: SearchButtonField(
-                          value: qParams['search'],
-                          onUpdate: (value) {
-                            ref
-                                .read(queryParamsProvider.notifier)
-                                .updateParams('search', value);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 );
               } else {
                 return const SizedBox.shrink();
