@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:native_app/providers/single_model.dart';
+import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/theme/app_theme.dart';
+import 'package:native_app/helpers/trancate_with_ellipsis.dart';
 
 class FilterButton extends ConsumerWidget {
   const FilterButton({
@@ -10,19 +13,23 @@ class FilterButton extends ConsumerWidget {
     required this.children,
     this.label,
     this.active = false,
+    this.selectedItemQuery,
+    required this.selectedItemLabel,
   });
 
   final List<Widget> children;
   final String? label;
   final bool active;
+  final SingleModelQuery? selectedItemQuery;
+  final Function(dynamic) selectedItemLabel;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    String filterLabel = label ?? locales.filter;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isSmallMobile = screenWidth < 340;
-    String filterLabel = label ?? locales.filter;
 
     return WithPreferences(
       builder: (context, preferences) {
@@ -58,7 +65,10 @@ class FilterButton extends ConsumerWidget {
             side: BorderSide(color: AppTheme.inputBorderOutlineColor[theme]),
             backgroundColor:
                 active == true ? AppTheme.inputSelectedBgColor[theme] : null,
-            padding: EdgeInsets.symmetric(horizontal: isSmallMobile ? 13 : 16),
+            padding: EdgeInsets.only(
+              left: isSmallMobile ? 10 : 12,
+              right: isSmallMobile ? 6 : 8,
+            ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),
             ),
@@ -67,10 +77,40 @@ class FilterButton extends ConsumerWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                filterLabel,
-                style: textTheme.labelMedium,
-              ),
+              if (selectedItemQuery != null) ...[
+                Builder(
+                  builder: (context) {
+                    var selectedItemProvider = ref.watch(
+                      singleModelProvider(selectedItemQuery!),
+                    );
+
+                    return selectedItemProvider.when(
+                      loading: () {
+                        return const SizedBox(
+                          width: 12,
+                          height: 12,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        );
+                      },
+                      error: (error, _) => Text(error.toString()),
+                      data: (item) {
+                        String label = selectedItemLabel(item);
+                        int cutoff = isSmallMobile ? 13 : 15;
+
+                        return Text(
+                          truncateWithEllipsis(label, cutoff),
+                          style: textTheme.labelMedium,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ] else ...[
+                Text(
+                  filterLabel,
+                  style: textTheme.labelMedium,
+                ),
+              ],
               Icon(
                 Icons.arrow_drop_down,
                 color: AppTheme.iconColor[theme],

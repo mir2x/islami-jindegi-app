@@ -8,6 +8,7 @@ import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/objects/all_models_query.dart';
+import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/widgets/filter/button.dart';
@@ -51,6 +52,15 @@ class Books extends ConsumerWidget {
                             child: FilterButton(
                               label: locales.authors,
                               active: qParams.containsKey('authorId'),
+                              selectedItemQuery: qParams.containsKey('authorId')
+                                  ? SingleModelQuery(
+                                      repository: ref.authors,
+                                      id: qParams['authorId'],
+                                    )
+                                  : null,
+                              selectedItemLabel: (dynamic item) {
+                                return item.name;
+                              },
                               children: [
                                 Expanded(
                                   child: FilterList(
@@ -81,59 +91,83 @@ class Books extends ConsumerWidget {
                             width: 15,
                           ),
                           Expanded(
-                            child: FilterButton(
-                              label: locales.categories,
-                              active: qParams.keys.any(
-                                (k) => [
-                                  'bookCategoryId',
-                                  'bookSubcategoryId',
-                                ].contains(k),
-                              ),
-                              children: [
-                                Expanded(
-                                  child: FilterList(
-                                    title: locales.categories,
-                                    paramKeys: const [
+                            child: Builder(
+                              builder: (context) {
+                                SingleModelQuery? itemQuery;
+
+                                if (qParams.containsKey('bookCategoryId')) {
+                                  itemQuery = SingleModelQuery(
+                                    repository: ref.bookCategories,
+                                    id: qParams['bookCategoryId'],
+                                  );
+                                } else if (qParams
+                                    .containsKey('bookSubategoryId')) {
+                                  itemQuery = SingleModelQuery(
+                                    repository: ref.bookSubcategories,
+                                    id: qParams['bookSubcategoryId'],
+                                  );
+                                }
+
+                                return FilterButton(
+                                  label: locales.categories,
+                                  active: qParams.keys.any(
+                                    (k) => [
                                       'bookCategoryId',
                                       'bookSubcategoryId',
-                                    ],
-                                    pageSize: 16,
-                                    queryBuilder:
-                                        (Map<String, dynamic> params) {
-                                      return AllModelsQuery(
-                                        repository: ref.bookCategories,
-                                        params: {
-                                          ...params,
-                                          'include': 'book-subcategories',
-                                        },
-                                      );
-                                    },
-                                    itemBuilder: (_, item, __) {
-                                      if (item.bookSubcategories.length > 0) {
-                                        return FilterNestedItem(
-                                          itemId: item.id,
-                                          itemTitle: item.title,
-                                          paramKey: 'bookSubcategoryId',
-                                          subitems: item.bookSubcategories,
-                                          subitemBuilder: (var subitem) {
-                                            return FilterSubitem(
-                                              itemId: subitem.id,
-                                              itemTitle: subitem.title,
-                                              paramKey: 'bookSubcategoryId',
-                                            );
-                                          },
-                                        );
-                                      } else {
-                                        return FilterItem(
-                                          itemId: item.id,
-                                          itemTitle: item.title,
-                                          paramKey: 'bookCategoryId',
-                                        );
-                                      }
-                                    },
+                                    ].contains(k),
                                   ),
-                                ),
-                              ],
+                                  selectedItemQuery: itemQuery,
+                                  selectedItemLabel: (dynamic item) {
+                                    return item.title;
+                                  },
+                                  children: [
+                                    Expanded(
+                                      child: FilterList(
+                                        title: locales.categories,
+                                        paramKeys: const [
+                                          'bookCategoryId',
+                                          'bookSubcategoryId',
+                                        ],
+                                        pageSize: 16,
+                                        queryBuilder:
+                                            (Map<String, dynamic> params) {
+                                          return AllModelsQuery(
+                                            repository: ref.bookCategories,
+                                            params: {
+                                              ...params,
+                                              'include': 'book-subcategories',
+                                            },
+                                          );
+                                        },
+                                        itemBuilder: (_, item, __) {
+                                          if (item.bookSubcategories.length >
+                                              0) {
+                                            return FilterNestedItem(
+                                              itemId: item.id,
+                                              itemTitle: item.title,
+                                              paramKey: 'bookSubcategoryId',
+                                              subitems: item.bookSubcategories,
+                                              subitemBuilder: (var subitem) {
+                                                return FilterSubitem(
+                                                  itemId: subitem.id,
+                                                  itemTitle: subitem.title,
+                                                  paramKey: 'bookSubcategoryId',
+                                                );
+                                              },
+                                            );
+                                          } else {
+                                            return FilterItem(
+                                              itemId: item.id,
+                                              itemTitle: item.title,
+                                              paramKey: 'bookCategoryId',
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
                             ),
                           ),
                         ],

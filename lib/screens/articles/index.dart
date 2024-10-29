@@ -8,6 +8,7 @@ import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/objects/all_models_query.dart';
+import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/widgets/filter/button.dart';
@@ -46,6 +47,16 @@ class Articles extends ConsumerWidget {
                             child: FilterButton(
                               label: locales.authors,
                               active: qParams.containsKey('articleAuthorId'),
+                              selectedItemQuery:
+                                  qParams.containsKey('articleAuthorId')
+                                      ? SingleModelQuery(
+                                          repository: ref.articleAuthors,
+                                          id: qParams['articleAuthorId'],
+                                        )
+                                      : null,
+                              selectedItemLabel: (dynamic item) {
+                                return item.name;
+                              },
                               children: [
                                 Expanded(
                                   child: FilterList(
@@ -75,59 +86,85 @@ class Articles extends ConsumerWidget {
                             width: 15,
                           ),
                           Expanded(
-                            child: FilterButton(
-                              label: locales.categories,
-                              active: qParams.keys.any(
-                                (k) => [
-                                  'articleCategoryId',
-                                  'articleSubcategoryId',
-                                ].contains(k),
-                              ),
-                              children: [
-                                Expanded(
-                                  child: FilterList(
-                                    title: locales.categories,
-                                    paramKeys: const [
+                            child: Builder(
+                              builder: (context) {
+                                SingleModelQuery? itemQuery;
+
+                                if (qParams.containsKey('articleCategoryId')) {
+                                  itemQuery = SingleModelQuery(
+                                    repository: ref.articleCategories,
+                                    id: qParams['articleCategoryId'],
+                                  );
+                                } else if (qParams
+                                    .containsKey('articleSubategoryId')) {
+                                  itemQuery = SingleModelQuery(
+                                    repository: ref.articleSubcategories,
+                                    id: qParams['articleSubcategoryId'],
+                                  );
+                                }
+
+                                return FilterButton(
+                                  label: locales.categories,
+                                  active: qParams.keys.any(
+                                    (k) => [
                                       'articleCategoryId',
                                       'articleSubcategoryId',
-                                    ],
-                                    queryBuilder:
-                                        (Map<String, dynamic> params) {
-                                      return AllModelsQuery(
-                                        repository: ref.articleCategories,
-                                        params: {
-                                          ...params,
-                                          'include': 'article-subcategories',
-                                        },
-                                      );
-                                    },
-                                    itemBuilder: (_, item, __) {
-                                      if (item.articleSubcategories.length >
-                                          0) {
-                                        return FilterNestedItem(
-                                          itemId: item.id,
-                                          itemTitle: item.title,
-                                          paramKey: 'articleSubcategoryId',
-                                          subitems: item.articleSubcategories,
-                                          subitemBuilder: (var subitem) {
-                                            return FilterSubitem(
-                                              itemId: subitem.id,
-                                              itemTitle: subitem.title,
-                                              paramKey: 'articleSubcategoryId',
-                                            );
-                                          },
-                                        );
-                                      } else {
-                                        return FilterItem(
-                                          itemId: item.id,
-                                          itemTitle: item.title,
-                                          paramKey: 'articleCategoryId',
-                                        );
-                                      }
-                                    },
+                                    ].contains(k),
                                   ),
-                                ),
-                              ],
+                                  selectedItemQuery: itemQuery,
+                                  selectedItemLabel: (dynamic item) {
+                                    return item.title;
+                                  },
+                                  children: [
+                                    Expanded(
+                                      child: FilterList(
+                                        title: locales.categories,
+                                        paramKeys: const [
+                                          'articleCategoryId',
+                                          'articleSubcategoryId',
+                                        ],
+                                        queryBuilder:
+                                            (Map<String, dynamic> params) {
+                                          return AllModelsQuery(
+                                            repository: ref.articleCategories,
+                                            params: {
+                                              ...params,
+                                              'include':
+                                                  'article-subcategories',
+                                            },
+                                          );
+                                        },
+                                        itemBuilder: (_, item, __) {
+                                          if (item.articleSubcategories.length >
+                                              0) {
+                                            return FilterNestedItem(
+                                              itemId: item.id,
+                                              itemTitle: item.title,
+                                              paramKey: 'articleSubcategoryId',
+                                              subitems:
+                                                  item.articleSubcategories,
+                                              subitemBuilder: (var subitem) {
+                                                return FilterSubitem(
+                                                  itemId: subitem.id,
+                                                  itemTitle: subitem.title,
+                                                  paramKey:
+                                                      'articleSubcategoryId',
+                                                );
+                                              },
+                                            );
+                                          } else {
+                                            return FilterItem(
+                                              itemId: item.id,
+                                              itemTitle: item.title,
+                                              paramKey: 'articleCategoryId',
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
                             ),
                           ),
                         ],

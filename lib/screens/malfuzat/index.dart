@@ -10,6 +10,7 @@ import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/objects/all_models_query.dart';
+import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
@@ -49,6 +50,16 @@ class Malfuzat extends ConsumerWidget {
                             child: FilterButton(
                               label: locales.authorsOrSpeakers,
                               active: qParams.containsKey('malfuzatAuthorId'),
+                              selectedItemQuery:
+                                  qParams.containsKey('malfuzatAuthorId')
+                                      ? SingleModelQuery(
+                                          repository: ref.malfuzatAuthors,
+                                          id: qParams['malfuzatAuthorId'],
+                                        )
+                                      : null,
+                              selectedItemLabel: (dynamic item) {
+                                return item.name;
+                              },
                               children: [
                                 Expanded(
                                   child: FilterList(
@@ -78,59 +89,86 @@ class Malfuzat extends ConsumerWidget {
                             width: 15,
                           ),
                           Expanded(
-                            child: FilterButton(
-                              label: locales.categories,
-                              active: qParams.keys.any(
-                                (k) => [
-                                  'malfuzatCategoryId',
-                                  'malfuzatSubcategoryId',
-                                ].contains(k),
-                              ),
-                              children: [
-                                Expanded(
-                                  child: FilterList(
-                                    title: locales.categories,
-                                    paramKeys: const [
+                            child: Builder(
+                              builder: (context) {
+                                SingleModelQuery? itemQuery;
+
+                                if (qParams.containsKey('malfuzatCategoryId')) {
+                                  itemQuery = SingleModelQuery(
+                                    repository: ref.malfuzatCategories,
+                                    id: qParams['malfuzatCategoryId'],
+                                  );
+                                } else if (qParams
+                                    .containsKey('malfuzatSubategoryId')) {
+                                  itemQuery = SingleModelQuery(
+                                    repository: ref.malfuzatSubcategories,
+                                    id: qParams['malfuzatSubcategoryId'],
+                                  );
+                                }
+
+                                return FilterButton(
+                                  label: locales.categories,
+                                  active: qParams.keys.any(
+                                    (k) => [
                                       'malfuzatCategoryId',
                                       'malfuzatSubcategoryId',
-                                    ],
-                                    queryBuilder:
-                                        (Map<String, dynamic> params) {
-                                      return AllModelsQuery(
-                                        repository: ref.malfuzatCategories,
-                                        params: {
-                                          ...params,
-                                          'include': 'malfuzat-subcategories',
-                                        },
-                                      );
-                                    },
-                                    itemBuilder: (_, item, __) {
-                                      if (item.malfuzatSubcategories.length >
-                                          0) {
-                                        return FilterNestedItem(
-                                          itemId: item.id,
-                                          itemTitle: item.title,
-                                          paramKey: 'malfuzatSubcategoryId',
-                                          subitems: item.malfuzatSubcategories,
-                                          subitemBuilder: (var subitem) {
-                                            return FilterSubitem(
-                                              itemId: subitem.id,
-                                              itemTitle: subitem.title,
-                                              paramKey: 'malfuzatSubcategoryId',
-                                            );
-                                          },
-                                        );
-                                      } else {
-                                        return FilterItem(
-                                          itemId: item.id,
-                                          itemTitle: item.title,
-                                          paramKey: 'malfuzatCategoryId',
-                                        );
-                                      }
-                                    },
+                                    ].contains(k),
                                   ),
-                                ),
-                              ],
+                                  selectedItemQuery: itemQuery,
+                                  selectedItemLabel: (dynamic item) {
+                                    return item.title;
+                                  },
+                                  children: [
+                                    Expanded(
+                                      child: FilterList(
+                                        title: locales.categories,
+                                        paramKeys: const [
+                                          'malfuzatCategoryId',
+                                          'malfuzatSubcategoryId',
+                                        ],
+                                        queryBuilder:
+                                            (Map<String, dynamic> params) {
+                                          return AllModelsQuery(
+                                            repository: ref.malfuzatCategories,
+                                            params: {
+                                              ...params,
+                                              'include':
+                                                  'malfuzat-subcategories',
+                                            },
+                                          );
+                                        },
+                                        itemBuilder: (_, item, __) {
+                                          if (item.malfuzatSubcategories
+                                                  .length >
+                                              0) {
+                                            return FilterNestedItem(
+                                              itemId: item.id,
+                                              itemTitle: item.title,
+                                              paramKey: 'malfuzatSubcategoryId',
+                                              subitems:
+                                                  item.malfuzatSubcategories,
+                                              subitemBuilder: (var subitem) {
+                                                return FilterSubitem(
+                                                  itemId: subitem.id,
+                                                  itemTitle: subitem.title,
+                                                  paramKey:
+                                                      'malfuzatSubcategoryId',
+                                                );
+                                              },
+                                            );
+                                          } else {
+                                            return FilterItem(
+                                              itemId: item.id,
+                                              itemTitle: item.title,
+                                              paramKey: 'malfuzatCategoryId',
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
                             ),
                           ),
                         ],

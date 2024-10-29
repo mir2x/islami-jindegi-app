@@ -7,6 +7,7 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/providers/all_models.dart';
+import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
@@ -49,6 +50,16 @@ class Bayans extends ConsumerWidget {
                             child: FilterButton(
                               label: locales.speakers,
                               active: qParams.containsKey('speakerId'),
+                              selectedItemQuery:
+                                  qParams.containsKey('speakerId')
+                                      ? SingleModelQuery(
+                                          repository: ref.speakers,
+                                          id: qParams['speakerId'],
+                                        )
+                                      : null,
+                              selectedItemLabel: (dynamic item) {
+                                return item.name;
+                              },
                               children: [
                                 Expanded(
                                   child: FilterList(
@@ -82,6 +93,16 @@ class Bayans extends ConsumerWidget {
                             child: FilterButton(
                               label: locales.categories,
                               active: qParams.containsKey('bayanCategoryId'),
+                              selectedItemQuery:
+                                  qParams.containsKey('bayanCategoryId')
+                                      ? SingleModelQuery(
+                                          repository: ref.bayanCategories,
+                                          id: qParams['bayanCategoryId'],
+                                        )
+                                      : null,
+                              selectedItemLabel: (dynamic item) {
+                                return item.title;
+                              },
                               children: [
                                 Expanded(
                                   child: FilterList(

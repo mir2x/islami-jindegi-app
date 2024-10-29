@@ -9,6 +9,7 @@ import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/providers/all_models.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/objects/all_models_query.dart';
+import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
@@ -100,9 +101,16 @@ class OfflineDuasState extends ConsumerState<OfflineDuas> {
                 Expanded(
                   child: FilterButton(
                     label: locales.categories,
-                    active: qParams.keys.any(
-                      (k) => k == 'duaCategoryId',
-                    ),
+                    active: qParams.containsKey('duaCategoryId'),
+                    selectedItemQuery: qParams.containsKey('duaCategoryId')
+                        ? SingleModelQuery(
+                            repository: ref.duaCategories,
+                            id: qParams['duaCategoryId'],
+                          )
+                        : null,
+                    selectedItemLabel: (dynamic item) {
+                      return item.title;
+                    },
                     children: [
                       Expanded(
                         child: FilterList(
