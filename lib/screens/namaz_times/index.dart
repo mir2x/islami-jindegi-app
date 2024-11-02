@@ -207,7 +207,12 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
                 ),
                 SizedBox(width: isSmallMobile ? 6 : 10),
                 InkWell(
-                  onTap: () => QR.to('mosques'),
+                  onTap: () async {
+                    await ref
+                        .read(geolocationProvider.notifier)
+                        .updateCoordinates();
+                    QR.to('mosques');
+                  },
                   child: Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: isSmallMobile ? 5 : 10,
