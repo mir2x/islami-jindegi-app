@@ -1,32 +1,36 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml
+    version="1.0"
+    encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
-  package="com.islami_jindegi.native_app">
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.islami_jindegi.native_app">
+    <uses-permission
+        android:name="android.permission.INTERNET"/>
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission
+        android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission
+        android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission
+        android:name="com.google.android.gms.permission.AD_ID"
+        tools:node="remove"/>
+    <uses-permission
+        android:name="android.permission.WAKE_LOCK"/>
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
         android:label="Islami Jindegi"
         android:enableOnBackInvokedCallback="true"
         android:usesCleartextTraffic="true">
-
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:exported="true"
             android:hardwareAccelerated="true"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
             android:theme="@style/LaunchTheme"
             android:windowSoftInputMode="adjustResize">
-
             <!--
                  Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
@@ -35,57 +39,56 @@
             -->
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
-                android:resource="@style/NormalTheme" />
-
+                android:resource="@style/NormalTheme"/>
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-
             <intent-filter>
-                <action android:name="es.antonborri.home_widget.action.LAUNCH" />
+                <action
+                    android:name="es.antonborri.home_widget.action.LAUNCH"/>
             </intent-filter>
         </activity>
-
         <receiver
             android:name=".AppWidget"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action
+                    android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
-
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/app_widget_info" />
+                android:resource="@xml/app_widget_info"/>
         </receiver>
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="push_notification_channel" />
+            android:value="push_notification_channel"/>
         <!--
  Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java
         -->
         <meta-data
             android:name="flutterEmbedding"
-            android:value="2" />
+            android:value="2"/>
     </application>
-
     <queries>
         <intent>
-            <action android:name="android.intent.action.VIEW" />
-            <data android:scheme="http" />
+            <action
+                android:name="android.intent.action.VIEW"/>
+            <data
+                android:scheme="http"/>
         </intent>
-
         <intent>
-            <action android:name="android.intent.action.VIEW" />
-            <data android:scheme="https" />
+            <action
+                android:name="android.intent.action.VIEW"/>
+            <data
+                android:scheme="https"/>
         </intent>
-
         <intent>
-            <action android:name="android.intent.action.DIAL" />
-            <data android:scheme="tel" />
+            <action
+                android:name="android.intent.action.DIAL"/>
+            <data
+                android:scheme="tel"/>
         </intent>
     </queries>
 </manifest>
