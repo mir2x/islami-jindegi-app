@@ -85,7 +85,7 @@ Masail _$MasailFromJson(Map<String, dynamic> json) => Masail(
       hasAudio: json['has-audio'] as bool?,
       audio: json['audio'] as Map<dynamic, dynamic>?,
       document: json['document'] as Map<dynamic, dynamic>?,
-      position: json['position'] as int?,
+      position: (json['position'] as num?)?.toInt(),
       published: json['published'] as bool?,
       publishedAt: json['published-at'] as String?,
       createdAt: json['created-at'] as String?,

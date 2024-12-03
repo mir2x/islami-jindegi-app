@@ -99,7 +99,7 @@ Madrasah _$MadrasahFromJson(Map<String, dynamic> json) => Madrasah(
       introduction: json['introduction'] as String,
       excerpt: json['excerpt'] as String?,
       document: json['document'] as Map<dynamic, dynamic>?,
-      position: json['position'] as int?,
+      position: (json['position'] as num?)?.toInt(),
       published: json['published'] as bool?,
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,

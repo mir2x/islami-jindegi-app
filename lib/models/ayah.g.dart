@@ -120,9 +120,9 @@ extension AyahRelationshipGraphNodeX on RelationshipGraphNode<Ayah> {
 Ayah _$AyahFromJson(Map<String, dynamic> json) => Ayah(
       id: json['id'] as String?,
       title: json['title'] as String,
-      surahPosition: json['surah-position'] as int?,
-      paraPosition: json['para-position'] as int?,
-      ruku: json['ruku'] as int?,
+      surahPosition: (json['surah-position'] as num?)?.toInt(),
+      paraPosition: (json['para-position'] as num?)?.toInt(),
+      ruku: (json['ruku'] as num?)?.toInt(),
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
       surah: json['surah'] == null

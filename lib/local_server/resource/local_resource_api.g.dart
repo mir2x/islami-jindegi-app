@@ -244,6 +244,27 @@ class Surah extends DataClass implements Insertable<Surah> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
+  Surah copyWithCompanion(SurahsCompanion data) {
+    return Surah(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      titleBn: data.titleBn.present ? data.titleBn.value : this.titleBn,
+      searchTitle:
+          data.searchTitle.present ? data.searchTitle.value : this.searchTitle,
+      slug: data.slug.present ? data.slug.value : this.slug,
+      introduction: data.introduction.present
+          ? data.introduction.value
+          : this.introduction,
+      excerpt: data.excerpt.present ? data.excerpt.value : this.excerpt,
+      totalAyat: data.totalAyat.present ? data.totalAyat.value : this.totalAyat,
+      totalRuku: data.totalRuku.present ? data.totalRuku.value : this.totalRuku,
+      location: data.location.present ? data.location.value : this.location,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Surah(')
@@ -683,6 +704,22 @@ class Para extends DataClass implements Insertable<Para> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
+  Para copyWithCompanion(ParasCompanion data) {
+    return Para(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      titleBn: data.titleBn.present ? data.titleBn.value : this.titleBn,
+      searchTitle:
+          data.searchTitle.present ? data.searchTitle.value : this.searchTitle,
+      slug: data.slug.present ? data.slug.value : this.slug,
+      totalAyat: data.totalAyat.present ? data.totalAyat.value : this.totalAyat,
+      totalRuku: data.totalRuku.present ? data.totalRuku.value : this.totalRuku,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Para(')
@@ -1065,6 +1102,24 @@ class Ayah extends DataClass implements Insertable<Ayah> {
         surahId: surahId ?? this.surahId,
         paraId: paraId ?? this.paraId,
       );
+  Ayah copyWithCompanion(AyahsCompanion data) {
+    return Ayah(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      surahPosition: data.surahPosition.present
+          ? data.surahPosition.value
+          : this.surahPosition,
+      paraPosition: data.paraPosition.present
+          ? data.paraPosition.value
+          : this.paraPosition,
+      ruku: data.ruku.present ? data.ruku.value : this.ruku,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      surahId: data.surahId.present ? data.surahId.value : this.surahId,
+      paraId: data.paraId.present ? data.paraId.value : this.paraId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Ayah(')
@@ -1380,6 +1435,17 @@ class AyahTranslation extends DataClass implements Insertable<AyahTranslation> {
         updatedAt: updatedAt ?? this.updatedAt,
         ayahId: ayahId ?? this.ayahId,
       );
+  AyahTranslation copyWithCompanion(AyahTranslationsCompanion data) {
+    return AyahTranslation(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      body: data.body.present ? data.body.value : this.body,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      ayahId: data.ayahId.present ? data.ayahId.value : this.ayahId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('AyahTranslation(')
@@ -1665,6 +1731,18 @@ class Qari extends DataClass implements Insertable<Qari> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
+  Qari copyWithCompanion(QarisCompanion data) {
+    return Qari(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      nameBn: data.nameBn.present ? data.nameBn.value : this.nameBn,
+      slug: data.slug.present ? data.slug.value : this.slug,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Qari(')
@@ -1949,6 +2027,17 @@ class TafseerQitab extends DataClass implements Insertable<TafseerQitab> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
+  TafseerQitab copyWithCompanion(TafseerQitabsCompanion data) {
+    return TafseerQitab(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      author: data.author.present ? data.author.value : this.author,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('TafseerQitab(')
@@ -2225,6 +2314,19 @@ class Tafseer extends DataClass implements Insertable<Tafseer> {
         tafseerQitabId: tafseerQitabId ?? this.tafseerQitabId,
         ayahId: ayahId ?? this.ayahId,
       );
+  Tafseer copyWithCompanion(TafseersCompanion data) {
+    return Tafseer(
+      id: data.id.present ? data.id.value : this.id,
+      body: data.body.present ? data.body.value : this.body,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      tafseerQitabId: data.tafseerQitabId.present
+          ? data.tafseerQitabId.value
+          : this.tafseerQitabId,
+      ayahId: data.ayahId.present ? data.ayahId.value : this.ayahId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Tafseer(')
@@ -2617,6 +2719,26 @@ class Book extends DataClass implements Insertable<Book> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
+  Book copyWithCompanion(BooksCompanion data) {
+    return Book(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      excerpt: data.excerpt.present ? data.excerpt.value : this.excerpt,
+      publisher: data.publisher.present ? data.publisher.value : this.publisher,
+      price: data.price.present ? data.price.value : this.price,
+      language: data.language.present ? data.language.value : this.language,
+      imageData: data.imageData.present ? data.imageData.value : this.imageData,
+      documentData: data.documentData.present
+          ? data.documentData.value
+          : this.documentData,
+      position: data.position.present ? data.position.value : this.position,
+      publishedAt:
+          data.publishedAt.present ? data.publishedAt.value : this.publishedAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Book(')
@@ -2996,6 +3118,18 @@ class Chapter extends DataClass implements Insertable<Chapter> {
         updatedAt: updatedAt ?? this.updatedAt,
         bookId: bookId ?? this.bookId,
       );
+  Chapter copyWithCompanion(ChaptersCompanion data) {
+    return Chapter(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      body: data.body.present ? data.body.value : this.body,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      bookId: data.bookId.present ? data.bookId.value : this.bookId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Chapter(')
@@ -3296,6 +3430,18 @@ class Subchapter extends DataClass implements Insertable<Subchapter> {
         updatedAt: updatedAt ?? this.updatedAt,
         chapterId: chapterId ?? this.chapterId,
       );
+  Subchapter copyWithCompanion(SubchaptersCompanion data) {
+    return Subchapter(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      body: data.body.present ? data.body.value : this.body,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      chapterId: data.chapterId.present ? data.chapterId.value : this.chapterId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Subchapter(')
@@ -3582,6 +3728,17 @@ class Author extends DataClass implements Insertable<Author> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
+  Author copyWithCompanion(AuthorsCompanion data) {
+    return Author(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      info: data.info.present ? data.info.value : this.info,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Author(')
@@ -3813,6 +3970,14 @@ class BooksAuthor extends DataClass implements Insertable<BooksAuthor> {
         bookId: bookId ?? this.bookId,
         authorId: authorId ?? this.authorId,
       );
+  BooksAuthor copyWithCompanion(BooksAuthorsCompanion data) {
+    return BooksAuthor(
+      id: data.id.present ? data.id.value : this.id,
+      bookId: data.bookId.present ? data.bookId.value : this.bookId,
+      authorId: data.authorId.present ? data.authorId.value : this.authorId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('BooksAuthor(')
@@ -4042,6 +4207,17 @@ class Speaker extends DataClass implements Insertable<Speaker> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
+  Speaker copyWithCompanion(SpeakersCompanion data) {
+    return Speaker(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      info: data.info.present ? data.info.value : this.info,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Speaker(')
@@ -4405,6 +4581,23 @@ class Bayan extends DataClass implements Insertable<Bayan> {
         updatedAt: updatedAt ?? this.updatedAt,
         speakerId: speakerId ?? this.speakerId,
       );
+  Bayan copyWithCompanion(BayansCompanion data) {
+    return Bayan(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      excerpt: data.excerpt.present ? data.excerpt.value : this.excerpt,
+      language: data.language.present ? data.language.value : this.language,
+      location: data.location.present ? data.location.value : this.location,
+      audioData: data.audioData.present ? data.audioData.value : this.audioData,
+      position: data.position.present ? data.position.value : this.position,
+      publishedAt:
+          data.publishedAt.present ? data.publishedAt.value : this.publishedAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      speakerId: data.speakerId.present ? data.speakerId.value : this.speakerId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Bayan(')
@@ -4746,6 +4939,17 @@ class MalfuzatAuthor extends DataClass implements Insertable<MalfuzatAuthor> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
+  MalfuzatAuthor copyWithCompanion(MalfuzatAuthorsCompanion data) {
+    return MalfuzatAuthor(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      info: data.info.present ? data.info.value : this.info,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('MalfuzatAuthor(')
@@ -5157,6 +5361,29 @@ class Malfuzat extends DataClass implements Insertable<Malfuzat> {
         updatedAt: updatedAt ?? this.updatedAt,
         malfuzatAuthorId: malfuzatAuthorId ?? this.malfuzatAuthorId,
       );
+  Malfuzat copyWithCompanion(MalfuzatsCompanion data) {
+    return Malfuzat(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      body: data.body.present ? data.body.value : this.body,
+      excerpt: data.excerpt.present ? data.excerpt.value : this.excerpt,
+      language: data.language.present ? data.language.value : this.language,
+      hasAudio: data.hasAudio.present ? data.hasAudio.value : this.hasAudio,
+      audioData: data.audioData.present ? data.audioData.value : this.audioData,
+      documentData: data.documentData.present
+          ? data.documentData.value
+          : this.documentData,
+      position: data.position.present ? data.position.value : this.position,
+      publishedAt:
+          data.publishedAt.present ? data.publishedAt.value : this.publishedAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      malfuzatAuthorId: data.malfuzatAuthorId.present
+          ? data.malfuzatAuthorId.value
+          : this.malfuzatAuthorId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Malfuzat(')
@@ -5536,6 +5763,17 @@ class MasailAuthor extends DataClass implements Insertable<MasailAuthor> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
+  MasailAuthor copyWithCompanion(MasailAuthorsCompanion data) {
+    return MasailAuthor(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      info: data.info.present ? data.info.value : this.info,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('MasailAuthor(')
@@ -5947,6 +6185,29 @@ class Masail extends DataClass implements Insertable<Masail> {
         masailAuthorId:
             masailAuthorId.present ? masailAuthorId.value : this.masailAuthorId,
       );
+  Masail copyWithCompanion(MasailsCompanion data) {
+    return Masail(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      question: data.question.present ? data.question.value : this.question,
+      answer: data.answer.present ? data.answer.value : this.answer,
+      language: data.language.present ? data.language.value : this.language,
+      hasAudio: data.hasAudio.present ? data.hasAudio.value : this.hasAudio,
+      audioData: data.audioData.present ? data.audioData.value : this.audioData,
+      documentData: data.documentData.present
+          ? data.documentData.value
+          : this.documentData,
+      position: data.position.present ? data.position.value : this.position,
+      publishedAt:
+          data.publishedAt.present ? data.publishedAt.value : this.publishedAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      masailAuthorId: data.masailAuthorId.present
+          ? data.masailAuthorId.value
+          : this.masailAuthorId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Masail(')
@@ -6311,6 +6572,16 @@ class DuaCategory extends DataClass implements Insertable<DuaCategory> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
+  DuaCategory copyWithCompanion(DuaCategoriesCompanion data) {
+    return DuaCategory(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('DuaCategory(')
@@ -6654,6 +6925,23 @@ class Dua extends DataClass implements Insertable<Dua> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
+  Dua copyWithCompanion(DuasCompanion data) {
+    return Dua(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      body: data.body.present ? data.body.value : this.body,
+      excerpt: data.excerpt.present ? data.excerpt.value : this.excerpt,
+      language: data.language.present ? data.language.value : this.language,
+      audioData: data.audioData.present ? data.audioData.value : this.audioData,
+      documentData: data.documentData.present
+          ? data.documentData.value
+          : this.documentData,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Dua(')
@@ -6943,6 +7231,16 @@ class DuaCategorization extends DataClass
         duaId: duaId ?? this.duaId,
         duaCategoryId: duaCategoryId ?? this.duaCategoryId,
       );
+  DuaCategorization copyWithCompanion(DuaCategorizationsCompanion data) {
+    return DuaCategorization(
+      id: data.id.present ? data.id.value : this.id,
+      duaId: data.duaId.present ? data.duaId.value : this.duaId,
+      duaCategoryId: data.duaCategoryId.present
+          ? data.duaCategoryId.value
+          : this.duaCategoryId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('DuaCategorization(')
@@ -7173,6 +7471,17 @@ class ArticleAuthor extends DataClass implements Insertable<ArticleAuthor> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
+  ArticleAuthor copyWithCompanion(ArticleAuthorsCompanion data) {
+    return ArticleAuthor(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      info: data.info.present ? data.info.value : this.info,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('ArticleAuthor(')
@@ -7539,6 +7848,27 @@ class Article extends DataClass implements Insertable<Article> {
         updatedAt: updatedAt ?? this.updatedAt,
         articleAuthorId: articleAuthorId ?? this.articleAuthorId,
       );
+  Article copyWithCompanion(ArticlesCompanion data) {
+    return Article(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      body: data.body.present ? data.body.value : this.body,
+      excerpt: data.excerpt.present ? data.excerpt.value : this.excerpt,
+      language: data.language.present ? data.language.value : this.language,
+      documentData: data.documentData.present
+          ? data.documentData.value
+          : this.documentData,
+      position: data.position.present ? data.position.value : this.position,
+      publishedAt:
+          data.publishedAt.present ? data.publishedAt.value : this.publishedAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      articleAuthorId: data.articleAuthorId.present
+          ? data.articleAuthorId.value
+          : this.articleAuthorId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Article(')
@@ -7938,6 +8268,23 @@ class Madrasah extends DataClass implements Insertable<Madrasah> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
+  Madrasah copyWithCompanion(MadrasahsCompanion data) {
+    return Madrasah(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      introduction: data.introduction.present
+          ? data.introduction.value
+          : this.introduction,
+      excerpt: data.excerpt.present ? data.excerpt.value : this.excerpt,
+      documentData: data.documentData.present
+          ? data.documentData.value
+          : this.documentData,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Madrasah(')
@@ -8252,6 +8599,19 @@ class MadrasahInfo extends DataClass implements Insertable<MadrasahInfo> {
         updatedAt: updatedAt ?? this.updatedAt,
         madrasahId: madrasahId ?? this.madrasahId,
       );
+  MadrasahInfo copyWithCompanion(MadrasahInfosCompanion data) {
+    return MadrasahInfo(
+      id: data.id.present ? data.id.value : this.id,
+      label: data.label.present ? data.label.value : this.label,
+      info: data.info.present ? data.info.value : this.info,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      madrasahId:
+          data.madrasahId.present ? data.madrasahId.value : this.madrasahId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('MadrasahInfo(')
@@ -8589,6 +8949,20 @@ class NamazTime extends DataClass implements Insertable<NamazTime> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
+  NamazTime copyWithCompanion(NamazTimesCompanion data) {
+    return NamazTime(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      titleBn: data.titleBn.present ? data.titleBn.value : this.titleBn,
+      slug: data.slug.present ? data.slug.value : this.slug,
+      masail: data.masail.present ? data.masail.value : this.masail,
+      fazail: data.fazail.present ? data.fazail.value : this.fazail,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('NamazTime(')
@@ -8927,6 +9301,20 @@ class New extends DataClass implements Insertable<New> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
+  New copyWithCompanion(NewsCompanion data) {
+    return New(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      body: data.body.present ? data.body.value : this.body,
+      excerpt: data.excerpt.present ? data.excerpt.value : this.excerpt,
+      language: data.language.present ? data.language.value : this.language,
+      publishedAt:
+          data.publishedAt.present ? data.publishedAt.value : this.publishedAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('New(')
@@ -9248,6 +9636,18 @@ class Page extends DataClass implements Insertable<Page> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
+  Page copyWithCompanion(PagesCompanion data) {
+    return Page(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      slug: data.slug.present ? data.slug.value : this.slug,
+      body: data.body.present ? data.body.value : this.body,
+      imageData: data.imageData.present ? data.imageData.value : this.imageData,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Page(')
@@ -9520,6 +9920,16 @@ class QuranBook extends DataClass implements Insertable<QuranBook> {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
+  QuranBook copyWithCompanion(QuranBooksCompanion data) {
+    return QuranBook(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('QuranBook(')
@@ -9871,6 +10281,24 @@ class QuranBookQitab extends DataClass implements Insertable<QuranBookQitab> {
         updatedAt: updatedAt ?? this.updatedAt,
         quranBookId: quranBookId ?? this.quranBookId,
       );
+  QuranBookQitab copyWithCompanion(QuranBookQitabsCompanion data) {
+    return QuranBookQitab(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      titleBn: data.titleBn.present ? data.titleBn.value : this.titleBn,
+      imageData: data.imageData.present ? data.imageData.value : this.imageData,
+      documentData: data.documentData.present
+          ? data.documentData.value
+          : this.documentData,
+      published: data.published.present ? data.published.value : this.published,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      quranBookId:
+          data.quranBookId.present ? data.quranBookId.value : this.quranBookId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('QuranBookQitab(')
@@ -10237,6 +10665,20 @@ class QuranBookPage extends DataClass implements Insertable<QuranBookPage> {
         quranBookId: quranBookId ?? this.quranBookId,
         paraId: paraId ?? this.paraId,
       );
+  QuranBookPage copyWithCompanion(QuranBookPagesCompanion data) {
+    return QuranBookPage(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      paraPage: data.paraPage.present ? data.paraPage.value : this.paraPage,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      quranBookId:
+          data.quranBookId.present ? data.quranBookId.value : this.quranBookId,
+      paraId: data.paraId.present ? data.paraId.value : this.paraId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('QuranBookPage(')
@@ -10576,6 +11018,21 @@ class QuranBookSurah extends DataClass implements Insertable<QuranBookSurah> {
         quranBookPageId: quranBookPageId ?? this.quranBookPageId,
         surahId: surahId ?? this.surahId,
       );
+  QuranBookSurah copyWithCompanion(QuranBookSurahsCompanion data) {
+    return QuranBookSurah(
+      id: data.id.present ? data.id.value : this.id,
+      startAyah: data.startAyah.present ? data.startAyah.value : this.startAyah,
+      endAyah: data.endAyah.present ? data.endAyah.value : this.endAyah,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      quranBookPageId: data.quranBookPageId.present
+          ? data.quranBookPageId.value
+          : this.quranBookPageId,
+      surahId: data.surahId.present ? data.surahId.value : this.surahId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('QuranBookSurah(')
@@ -10894,6 +11351,19 @@ class QuranBookPara extends DataClass implements Insertable<QuranBookPara> {
         quranBookId: quranBookId ?? this.quranBookId,
         paraId: paraId ?? this.paraId,
       );
+  QuranBookPara copyWithCompanion(QuranBookParasCompanion data) {
+    return QuranBookPara(
+      id: data.id.present ? data.id.value : this.id,
+      totalPage: data.totalPage.present ? data.totalPage.value : this.totalPage,
+      position: data.position.present ? data.position.value : this.position,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      quranBookId:
+          data.quranBookId.present ? data.quranBookId.value : this.quranBookId,
+      paraId: data.paraId.present ? data.paraId.value : this.paraId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('QuranBookPara(')
@@ -11050,6 +11520,7 @@ class QuranBookParasCompanion extends UpdateCompanion<QuranBookPara> {
 
 abstract class _$LocalResourceAPI extends GeneratedDatabase {
   _$LocalResourceAPI(QueryExecutor e) : super(e);
+  $LocalResourceAPIManager get managers => $LocalResourceAPIManager(this);
   late final $SurahsTable surahs = $SurahsTable(this);
   late final $ParasTable paras = $ParasTable(this);
   late final $AyahsTable ayahs = $AyahsTable(this);
@@ -11130,4 +11601,6458 @@ abstract class _$LocalResourceAPI extends GeneratedDatabase {
   @override
   DriftDatabaseOptions get options =>
       const DriftDatabaseOptions(storeDateTimeAsText: true);
+}
+
+typedef $$SurahsTableCreateCompanionBuilder = SurahsCompanion Function({
+  required String id,
+  required String title,
+  required String titleBn,
+  required String searchTitle,
+  required String slug,
+  Value<String?> introduction,
+  Value<String?> excerpt,
+  required int totalAyat,
+  required int totalRuku,
+  Value<String?> location,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  Value<int> rowid,
+});
+typedef $$SurahsTableUpdateCompanionBuilder = SurahsCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String> titleBn,
+  Value<String> searchTitle,
+  Value<String> slug,
+  Value<String?> introduction,
+  Value<String?> excerpt,
+  Value<int> totalAyat,
+  Value<int> totalRuku,
+  Value<String?> location,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<int> rowid,
+});
+
+class $$SurahsTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $SurahsTable,
+    Surah,
+    $$SurahsTableFilterComposer,
+    $$SurahsTableOrderingComposer,
+    $$SurahsTableCreateCompanionBuilder,
+    $$SurahsTableUpdateCompanionBuilder> {
+  $$SurahsTableTableManager(_$LocalResourceAPI db, $SurahsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$SurahsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$SurahsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> titleBn = const Value.absent(),
+            Value<String> searchTitle = const Value.absent(),
+            Value<String> slug = const Value.absent(),
+            Value<String?> introduction = const Value.absent(),
+            Value<String?> excerpt = const Value.absent(),
+            Value<int> totalAyat = const Value.absent(),
+            Value<int> totalRuku = const Value.absent(),
+            Value<String?> location = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              SurahsCompanion(
+            id: id,
+            title: title,
+            titleBn: titleBn,
+            searchTitle: searchTitle,
+            slug: slug,
+            introduction: introduction,
+            excerpt: excerpt,
+            totalAyat: totalAyat,
+            totalRuku: totalRuku,
+            location: location,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            required String titleBn,
+            required String searchTitle,
+            required String slug,
+            Value<String?> introduction = const Value.absent(),
+            Value<String?> excerpt = const Value.absent(),
+            required int totalAyat,
+            required int totalRuku,
+            Value<String?> location = const Value.absent(),
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              SurahsCompanion.insert(
+            id: id,
+            title: title,
+            titleBn: titleBn,
+            searchTitle: searchTitle,
+            slug: slug,
+            introduction: introduction,
+            excerpt: excerpt,
+            totalAyat: totalAyat,
+            totalRuku: totalRuku,
+            location: location,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$SurahsTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $SurahsTable> {
+  $$SurahsTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get titleBn => $state.composableBuilder(
+      column: $state.table.titleBn,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get searchTitle => $state.composableBuilder(
+      column: $state.table.searchTitle,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get slug => $state.composableBuilder(
+      column: $state.table.slug,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get introduction => $state.composableBuilder(
+      column: $state.table.introduction,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get excerpt => $state.composableBuilder(
+      column: $state.table.excerpt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get totalAyat => $state.composableBuilder(
+      column: $state.table.totalAyat,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get totalRuku => $state.composableBuilder(
+      column: $state.table.totalRuku,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get location => $state.composableBuilder(
+      column: $state.table.location,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter ayahsRefs(
+      ComposableFilter Function($$AyahsTableFilterComposer f) f) {
+    final $$AyahsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.ayahs,
+        getReferencedColumn: (t) => t.surahId,
+        builder: (joinBuilder, parentComposers) => $$AyahsTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.ayahs, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+
+  ComposableFilter quranBookSurahsRefs(
+      ComposableFilter Function($$QuranBookSurahsTableFilterComposer f) f) {
+    final $$QuranBookSurahsTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $state.db.quranBookSurahs,
+            getReferencedColumn: (t) => t.surahId,
+            builder: (joinBuilder, parentComposers) =>
+                $$QuranBookSurahsTableFilterComposer(ComposerState($state.db,
+                    $state.db.quranBookSurahs, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$SurahsTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $SurahsTable> {
+  $$SurahsTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get titleBn => $state.composableBuilder(
+      column: $state.table.titleBn,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get searchTitle => $state.composableBuilder(
+      column: $state.table.searchTitle,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get slug => $state.composableBuilder(
+      column: $state.table.slug,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get introduction => $state.composableBuilder(
+      column: $state.table.introduction,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get excerpt => $state.composableBuilder(
+      column: $state.table.excerpt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get totalAyat => $state.composableBuilder(
+      column: $state.table.totalAyat,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get totalRuku => $state.composableBuilder(
+      column: $state.table.totalRuku,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get location => $state.composableBuilder(
+      column: $state.table.location,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$ParasTableCreateCompanionBuilder = ParasCompanion Function({
+  required String id,
+  required String title,
+  required String titleBn,
+  required String searchTitle,
+  required String slug,
+  required int totalAyat,
+  required int totalRuku,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  Value<int> rowid,
+});
+typedef $$ParasTableUpdateCompanionBuilder = ParasCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String> titleBn,
+  Value<String> searchTitle,
+  Value<String> slug,
+  Value<int> totalAyat,
+  Value<int> totalRuku,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<int> rowid,
+});
+
+class $$ParasTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $ParasTable,
+    Para,
+    $$ParasTableFilterComposer,
+    $$ParasTableOrderingComposer,
+    $$ParasTableCreateCompanionBuilder,
+    $$ParasTableUpdateCompanionBuilder> {
+  $$ParasTableTableManager(_$LocalResourceAPI db, $ParasTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$ParasTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$ParasTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> titleBn = const Value.absent(),
+            Value<String> searchTitle = const Value.absent(),
+            Value<String> slug = const Value.absent(),
+            Value<int> totalAyat = const Value.absent(),
+            Value<int> totalRuku = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ParasCompanion(
+            id: id,
+            title: title,
+            titleBn: titleBn,
+            searchTitle: searchTitle,
+            slug: slug,
+            totalAyat: totalAyat,
+            totalRuku: totalRuku,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            required String titleBn,
+            required String searchTitle,
+            required String slug,
+            required int totalAyat,
+            required int totalRuku,
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ParasCompanion.insert(
+            id: id,
+            title: title,
+            titleBn: titleBn,
+            searchTitle: searchTitle,
+            slug: slug,
+            totalAyat: totalAyat,
+            totalRuku: totalRuku,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$ParasTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $ParasTable> {
+  $$ParasTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get titleBn => $state.composableBuilder(
+      column: $state.table.titleBn,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get searchTitle => $state.composableBuilder(
+      column: $state.table.searchTitle,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get slug => $state.composableBuilder(
+      column: $state.table.slug,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get totalAyat => $state.composableBuilder(
+      column: $state.table.totalAyat,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get totalRuku => $state.composableBuilder(
+      column: $state.table.totalRuku,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter ayahsRefs(
+      ComposableFilter Function($$AyahsTableFilterComposer f) f) {
+    final $$AyahsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.ayahs,
+        getReferencedColumn: (t) => t.paraId,
+        builder: (joinBuilder, parentComposers) => $$AyahsTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.ayahs, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+
+  ComposableFilter quranBookPagesRefs(
+      ComposableFilter Function($$QuranBookPagesTableFilterComposer f) f) {
+    final $$QuranBookPagesTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.quranBookPages,
+        getReferencedColumn: (t) => t.paraId,
+        builder: (joinBuilder, parentComposers) =>
+            $$QuranBookPagesTableFilterComposer(ComposerState($state.db,
+                $state.db.quranBookPages, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+
+  ComposableFilter quranBookParasRefs(
+      ComposableFilter Function($$QuranBookParasTableFilterComposer f) f) {
+    final $$QuranBookParasTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.quranBookParas,
+        getReferencedColumn: (t) => t.paraId,
+        builder: (joinBuilder, parentComposers) =>
+            $$QuranBookParasTableFilterComposer(ComposerState($state.db,
+                $state.db.quranBookParas, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$ParasTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $ParasTable> {
+  $$ParasTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get titleBn => $state.composableBuilder(
+      column: $state.table.titleBn,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get searchTitle => $state.composableBuilder(
+      column: $state.table.searchTitle,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get slug => $state.composableBuilder(
+      column: $state.table.slug,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get totalAyat => $state.composableBuilder(
+      column: $state.table.totalAyat,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get totalRuku => $state.composableBuilder(
+      column: $state.table.totalRuku,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$AyahsTableCreateCompanionBuilder = AyahsCompanion Function({
+  required String id,
+  required String title,
+  required int surahPosition,
+  required int paraPosition,
+  Value<int?> ruku,
+  required String createdAt,
+  required String updatedAt,
+  required String surahId,
+  required String paraId,
+  Value<int> rowid,
+});
+typedef $$AyahsTableUpdateCompanionBuilder = AyahsCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<int> surahPosition,
+  Value<int> paraPosition,
+  Value<int?> ruku,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<String> surahId,
+  Value<String> paraId,
+  Value<int> rowid,
+});
+
+class $$AyahsTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $AyahsTable,
+    Ayah,
+    $$AyahsTableFilterComposer,
+    $$AyahsTableOrderingComposer,
+    $$AyahsTableCreateCompanionBuilder,
+    $$AyahsTableUpdateCompanionBuilder> {
+  $$AyahsTableTableManager(_$LocalResourceAPI db, $AyahsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$AyahsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$AyahsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<int> surahPosition = const Value.absent(),
+            Value<int> paraPosition = const Value.absent(),
+            Value<int?> ruku = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<String> surahId = const Value.absent(),
+            Value<String> paraId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              AyahsCompanion(
+            id: id,
+            title: title,
+            surahPosition: surahPosition,
+            paraPosition: paraPosition,
+            ruku: ruku,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            surahId: surahId,
+            paraId: paraId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            required int surahPosition,
+            required int paraPosition,
+            Value<int?> ruku = const Value.absent(),
+            required String createdAt,
+            required String updatedAt,
+            required String surahId,
+            required String paraId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              AyahsCompanion.insert(
+            id: id,
+            title: title,
+            surahPosition: surahPosition,
+            paraPosition: paraPosition,
+            ruku: ruku,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            surahId: surahId,
+            paraId: paraId,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$AyahsTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $AyahsTable> {
+  $$AyahsTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get surahPosition => $state.composableBuilder(
+      column: $state.table.surahPosition,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get paraPosition => $state.composableBuilder(
+      column: $state.table.paraPosition,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get ruku => $state.composableBuilder(
+      column: $state.table.ruku,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$SurahsTableFilterComposer get surahId {
+    final $$SurahsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.surahId,
+        referencedTable: $state.db.surahs,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$SurahsTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.surahs, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$ParasTableFilterComposer get paraId {
+    final $$ParasTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.paraId,
+        referencedTable: $state.db.paras,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$ParasTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.paras, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  ComposableFilter ayahTranslationsRefs(
+      ComposableFilter Function($$AyahTranslationsTableFilterComposer f) f) {
+    final $$AyahTranslationsTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $state.db.ayahTranslations,
+            getReferencedColumn: (t) => t.ayahId,
+            builder: (joinBuilder, parentComposers) =>
+                $$AyahTranslationsTableFilterComposer(ComposerState($state.db,
+                    $state.db.ayahTranslations, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+
+  ComposableFilter tafseersRefs(
+      ComposableFilter Function($$TafseersTableFilterComposer f) f) {
+    final $$TafseersTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.tafseers,
+        getReferencedColumn: (t) => t.ayahId,
+        builder: (joinBuilder, parentComposers) =>
+            $$TafseersTableFilterComposer(ComposerState(
+                $state.db, $state.db.tafseers, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$AyahsTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $AyahsTable> {
+  $$AyahsTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get surahPosition => $state.composableBuilder(
+      column: $state.table.surahPosition,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get paraPosition => $state.composableBuilder(
+      column: $state.table.paraPosition,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get ruku => $state.composableBuilder(
+      column: $state.table.ruku,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$SurahsTableOrderingComposer get surahId {
+    final $$SurahsTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.surahId,
+        referencedTable: $state.db.surahs,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$SurahsTableOrderingComposer(ComposerState(
+                $state.db, $state.db.surahs, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$ParasTableOrderingComposer get paraId {
+    final $$ParasTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.paraId,
+        referencedTable: $state.db.paras,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$ParasTableOrderingComposer(
+            ComposerState(
+                $state.db, $state.db.paras, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$AyahTranslationsTableCreateCompanionBuilder
+    = AyahTranslationsCompanion Function({
+  required String id,
+  required String title,
+  required String body,
+  required String createdAt,
+  required String updatedAt,
+  required String ayahId,
+  Value<int> rowid,
+});
+typedef $$AyahTranslationsTableUpdateCompanionBuilder
+    = AyahTranslationsCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String> body,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<String> ayahId,
+  Value<int> rowid,
+});
+
+class $$AyahTranslationsTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $AyahTranslationsTable,
+    AyahTranslation,
+    $$AyahTranslationsTableFilterComposer,
+    $$AyahTranslationsTableOrderingComposer,
+    $$AyahTranslationsTableCreateCompanionBuilder,
+    $$AyahTranslationsTableUpdateCompanionBuilder> {
+  $$AyahTranslationsTableTableManager(
+      _$LocalResourceAPI db, $AyahTranslationsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$AyahTranslationsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$AyahTranslationsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> body = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<String> ayahId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              AyahTranslationsCompanion(
+            id: id,
+            title: title,
+            body: body,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            ayahId: ayahId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            required String body,
+            required String createdAt,
+            required String updatedAt,
+            required String ayahId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              AyahTranslationsCompanion.insert(
+            id: id,
+            title: title,
+            body: body,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            ayahId: ayahId,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$AyahTranslationsTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $AyahTranslationsTable> {
+  $$AyahTranslationsTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get body => $state.composableBuilder(
+      column: $state.table.body,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$AyahsTableFilterComposer get ayahId {
+    final $$AyahsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.ayahId,
+        referencedTable: $state.db.ayahs,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$AyahsTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.ayahs, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$AyahTranslationsTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $AyahTranslationsTable> {
+  $$AyahTranslationsTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get body => $state.composableBuilder(
+      column: $state.table.body,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$AyahsTableOrderingComposer get ayahId {
+    final $$AyahsTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.ayahId,
+        referencedTable: $state.db.ayahs,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$AyahsTableOrderingComposer(
+            ComposerState(
+                $state.db, $state.db.ayahs, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$QarisTableCreateCompanionBuilder = QarisCompanion Function({
+  required String id,
+  required String name,
+  Value<String?> nameBn,
+  required String slug,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  Value<int> rowid,
+});
+typedef $$QarisTableUpdateCompanionBuilder = QarisCompanion Function({
+  Value<String> id,
+  Value<String> name,
+  Value<String?> nameBn,
+  Value<String> slug,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<int> rowid,
+});
+
+class $$QarisTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $QarisTable,
+    Qari,
+    $$QarisTableFilterComposer,
+    $$QarisTableOrderingComposer,
+    $$QarisTableCreateCompanionBuilder,
+    $$QarisTableUpdateCompanionBuilder> {
+  $$QarisTableTableManager(_$LocalResourceAPI db, $QarisTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$QarisTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$QarisTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String?> nameBn = const Value.absent(),
+            Value<String> slug = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              QarisCompanion(
+            id: id,
+            name: name,
+            nameBn: nameBn,
+            slug: slug,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String name,
+            Value<String?> nameBn = const Value.absent(),
+            required String slug,
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              QarisCompanion.insert(
+            id: id,
+            name: name,
+            nameBn: nameBn,
+            slug: slug,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$QarisTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $QarisTable> {
+  $$QarisTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get nameBn => $state.composableBuilder(
+      column: $state.table.nameBn,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get slug => $state.composableBuilder(
+      column: $state.table.slug,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$QarisTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $QarisTable> {
+  $$QarisTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get nameBn => $state.composableBuilder(
+      column: $state.table.nameBn,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get slug => $state.composableBuilder(
+      column: $state.table.slug,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$TafseerQitabsTableCreateCompanionBuilder = TafseerQitabsCompanion
+    Function({
+  required String id,
+  required String title,
+  required String author,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  Value<int> rowid,
+});
+typedef $$TafseerQitabsTableUpdateCompanionBuilder = TafseerQitabsCompanion
+    Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String> author,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<int> rowid,
+});
+
+class $$TafseerQitabsTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $TafseerQitabsTable,
+    TafseerQitab,
+    $$TafseerQitabsTableFilterComposer,
+    $$TafseerQitabsTableOrderingComposer,
+    $$TafseerQitabsTableCreateCompanionBuilder,
+    $$TafseerQitabsTableUpdateCompanionBuilder> {
+  $$TafseerQitabsTableTableManager(
+      _$LocalResourceAPI db, $TafseerQitabsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TafseerQitabsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TafseerQitabsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> author = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TafseerQitabsCompanion(
+            id: id,
+            title: title,
+            author: author,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            required String author,
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TafseerQitabsCompanion.insert(
+            id: id,
+            title: title,
+            author: author,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$TafseerQitabsTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $TafseerQitabsTable> {
+  $$TafseerQitabsTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get author => $state.composableBuilder(
+      column: $state.table.author,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter tafseersRefs(
+      ComposableFilter Function($$TafseersTableFilterComposer f) f) {
+    final $$TafseersTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.tafseers,
+        getReferencedColumn: (t) => t.tafseerQitabId,
+        builder: (joinBuilder, parentComposers) =>
+            $$TafseersTableFilterComposer(ComposerState(
+                $state.db, $state.db.tafseers, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$TafseerQitabsTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $TafseerQitabsTable> {
+  $$TafseerQitabsTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get author => $state.composableBuilder(
+      column: $state.table.author,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$TafseersTableCreateCompanionBuilder = TafseersCompanion Function({
+  required String id,
+  required String body,
+  required String createdAt,
+  required String updatedAt,
+  required String tafseerQitabId,
+  required String ayahId,
+  Value<int> rowid,
+});
+typedef $$TafseersTableUpdateCompanionBuilder = TafseersCompanion Function({
+  Value<String> id,
+  Value<String> body,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<String> tafseerQitabId,
+  Value<String> ayahId,
+  Value<int> rowid,
+});
+
+class $$TafseersTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $TafseersTable,
+    Tafseer,
+    $$TafseersTableFilterComposer,
+    $$TafseersTableOrderingComposer,
+    $$TafseersTableCreateCompanionBuilder,
+    $$TafseersTableUpdateCompanionBuilder> {
+  $$TafseersTableTableManager(_$LocalResourceAPI db, $TafseersTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TafseersTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TafseersTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> body = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<String> tafseerQitabId = const Value.absent(),
+            Value<String> ayahId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TafseersCompanion(
+            id: id,
+            body: body,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            tafseerQitabId: tafseerQitabId,
+            ayahId: ayahId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String body,
+            required String createdAt,
+            required String updatedAt,
+            required String tafseerQitabId,
+            required String ayahId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TafseersCompanion.insert(
+            id: id,
+            body: body,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            tafseerQitabId: tafseerQitabId,
+            ayahId: ayahId,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$TafseersTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $TafseersTable> {
+  $$TafseersTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get body => $state.composableBuilder(
+      column: $state.table.body,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$TafseerQitabsTableFilterComposer get tafseerQitabId {
+    final $$TafseerQitabsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.tafseerQitabId,
+        referencedTable: $state.db.tafseerQitabs,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$TafseerQitabsTableFilterComposer(ComposerState($state.db,
+                $state.db.tafseerQitabs, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$AyahsTableFilterComposer get ayahId {
+    final $$AyahsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.ayahId,
+        referencedTable: $state.db.ayahs,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$AyahsTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.ayahs, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$TafseersTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $TafseersTable> {
+  $$TafseersTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get body => $state.composableBuilder(
+      column: $state.table.body,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$TafseerQitabsTableOrderingComposer get tafseerQitabId {
+    final $$TafseerQitabsTableOrderingComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.tafseerQitabId,
+            referencedTable: $state.db.tafseerQitabs,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$TafseerQitabsTableOrderingComposer(ComposerState($state.db,
+                    $state.db.tafseerQitabs, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$AyahsTableOrderingComposer get ayahId {
+    final $$AyahsTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.ayahId,
+        referencedTable: $state.db.ayahs,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$AyahsTableOrderingComposer(
+            ComposerState(
+                $state.db, $state.db.ayahs, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$BooksTableCreateCompanionBuilder = BooksCompanion Function({
+  required String id,
+  required String title,
+  Value<String?> excerpt,
+  Value<String?> publisher,
+  Value<String?> price,
+  required String language,
+  Value<Map<dynamic, dynamic>?> imageData,
+  Value<Map<dynamic, dynamic>?> documentData,
+  required int position,
+  Value<String?> publishedAt,
+  required String createdAt,
+  required String updatedAt,
+  Value<int> rowid,
+});
+typedef $$BooksTableUpdateCompanionBuilder = BooksCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String?> excerpt,
+  Value<String?> publisher,
+  Value<String?> price,
+  Value<String> language,
+  Value<Map<dynamic, dynamic>?> imageData,
+  Value<Map<dynamic, dynamic>?> documentData,
+  Value<int> position,
+  Value<String?> publishedAt,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<int> rowid,
+});
+
+class $$BooksTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $BooksTable,
+    Book,
+    $$BooksTableFilterComposer,
+    $$BooksTableOrderingComposer,
+    $$BooksTableCreateCompanionBuilder,
+    $$BooksTableUpdateCompanionBuilder> {
+  $$BooksTableTableManager(_$LocalResourceAPI db, $BooksTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$BooksTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$BooksTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String?> excerpt = const Value.absent(),
+            Value<String?> publisher = const Value.absent(),
+            Value<String?> price = const Value.absent(),
+            Value<String> language = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> imageData = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String?> publishedAt = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              BooksCompanion(
+            id: id,
+            title: title,
+            excerpt: excerpt,
+            publisher: publisher,
+            price: price,
+            language: language,
+            imageData: imageData,
+            documentData: documentData,
+            position: position,
+            publishedAt: publishedAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            Value<String?> excerpt = const Value.absent(),
+            Value<String?> publisher = const Value.absent(),
+            Value<String?> price = const Value.absent(),
+            required String language,
+            Value<Map<dynamic, dynamic>?> imageData = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
+            required int position,
+            Value<String?> publishedAt = const Value.absent(),
+            required String createdAt,
+            required String updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              BooksCompanion.insert(
+            id: id,
+            title: title,
+            excerpt: excerpt,
+            publisher: publisher,
+            price: price,
+            language: language,
+            imageData: imageData,
+            documentData: documentData,
+            position: position,
+            publishedAt: publishedAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$BooksTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $BooksTable> {
+  $$BooksTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get excerpt => $state.composableBuilder(
+      column: $state.table.excerpt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get publisher => $state.composableBuilder(
+      column: $state.table.publisher,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get price => $state.composableBuilder(
+      column: $state.table.price,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get language => $state.composableBuilder(
+      column: $state.table.language,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnWithTypeConverterFilters<Map<dynamic, dynamic>?, Map<dynamic, dynamic>,
+          String>
+      get imageData => $state.composableBuilder(
+          column: $state.table.imageData,
+          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
+              column,
+              joinBuilders: joinBuilders));
+
+  ColumnWithTypeConverterFilters<Map<dynamic, dynamic>?, Map<dynamic, dynamic>,
+          String>
+      get documentData => $state.composableBuilder(
+          column: $state.table.documentData,
+          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
+              column,
+              joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get publishedAt => $state.composableBuilder(
+      column: $state.table.publishedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter chaptersRefs(
+      ComposableFilter Function($$ChaptersTableFilterComposer f) f) {
+    final $$ChaptersTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.chapters,
+        getReferencedColumn: (t) => t.bookId,
+        builder: (joinBuilder, parentComposers) =>
+            $$ChaptersTableFilterComposer(ComposerState(
+                $state.db, $state.db.chapters, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+
+  ComposableFilter booksAuthorsRefs(
+      ComposableFilter Function($$BooksAuthorsTableFilterComposer f) f) {
+    final $$BooksAuthorsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.booksAuthors,
+        getReferencedColumn: (t) => t.bookId,
+        builder: (joinBuilder, parentComposers) =>
+            $$BooksAuthorsTableFilterComposer(ComposerState($state.db,
+                $state.db.booksAuthors, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$BooksTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $BooksTable> {
+  $$BooksTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get excerpt => $state.composableBuilder(
+      column: $state.table.excerpt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get publisher => $state.composableBuilder(
+      column: $state.table.publisher,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get price => $state.composableBuilder(
+      column: $state.table.price,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get language => $state.composableBuilder(
+      column: $state.table.language,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get imageData => $state.composableBuilder(
+      column: $state.table.imageData,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get documentData => $state.composableBuilder(
+      column: $state.table.documentData,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get publishedAt => $state.composableBuilder(
+      column: $state.table.publishedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$ChaptersTableCreateCompanionBuilder = ChaptersCompanion Function({
+  required String id,
+  required String title,
+  Value<String?> body,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  required String bookId,
+  Value<int> rowid,
+});
+typedef $$ChaptersTableUpdateCompanionBuilder = ChaptersCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String?> body,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<String> bookId,
+  Value<int> rowid,
+});
+
+class $$ChaptersTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $ChaptersTable,
+    Chapter,
+    $$ChaptersTableFilterComposer,
+    $$ChaptersTableOrderingComposer,
+    $$ChaptersTableCreateCompanionBuilder,
+    $$ChaptersTableUpdateCompanionBuilder> {
+  $$ChaptersTableTableManager(_$LocalResourceAPI db, $ChaptersTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$ChaptersTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$ChaptersTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String?> body = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<String> bookId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ChaptersCompanion(
+            id: id,
+            title: title,
+            body: body,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            bookId: bookId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            Value<String?> body = const Value.absent(),
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            required String bookId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ChaptersCompanion.insert(
+            id: id,
+            title: title,
+            body: body,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            bookId: bookId,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$ChaptersTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $ChaptersTable> {
+  $$ChaptersTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get body => $state.composableBuilder(
+      column: $state.table.body,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$BooksTableFilterComposer get bookId {
+    final $$BooksTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.bookId,
+        referencedTable: $state.db.books,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$BooksTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.books, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  ComposableFilter subchaptersRefs(
+      ComposableFilter Function($$SubchaptersTableFilterComposer f) f) {
+    final $$SubchaptersTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.subchapters,
+        getReferencedColumn: (t) => t.chapterId,
+        builder: (joinBuilder, parentComposers) =>
+            $$SubchaptersTableFilterComposer(ComposerState($state.db,
+                $state.db.subchapters, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$ChaptersTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $ChaptersTable> {
+  $$ChaptersTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get body => $state.composableBuilder(
+      column: $state.table.body,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$BooksTableOrderingComposer get bookId {
+    final $$BooksTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.bookId,
+        referencedTable: $state.db.books,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$BooksTableOrderingComposer(
+            ComposerState(
+                $state.db, $state.db.books, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$SubchaptersTableCreateCompanionBuilder = SubchaptersCompanion
+    Function({
+  required String id,
+  required String title,
+  required String body,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  required String chapterId,
+  Value<int> rowid,
+});
+typedef $$SubchaptersTableUpdateCompanionBuilder = SubchaptersCompanion
+    Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String> body,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<String> chapterId,
+  Value<int> rowid,
+});
+
+class $$SubchaptersTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $SubchaptersTable,
+    Subchapter,
+    $$SubchaptersTableFilterComposer,
+    $$SubchaptersTableOrderingComposer,
+    $$SubchaptersTableCreateCompanionBuilder,
+    $$SubchaptersTableUpdateCompanionBuilder> {
+  $$SubchaptersTableTableManager(_$LocalResourceAPI db, $SubchaptersTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$SubchaptersTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$SubchaptersTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> body = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<String> chapterId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              SubchaptersCompanion(
+            id: id,
+            title: title,
+            body: body,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            chapterId: chapterId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            required String body,
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            required String chapterId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              SubchaptersCompanion.insert(
+            id: id,
+            title: title,
+            body: body,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            chapterId: chapterId,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$SubchaptersTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $SubchaptersTable> {
+  $$SubchaptersTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get body => $state.composableBuilder(
+      column: $state.table.body,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$ChaptersTableFilterComposer get chapterId {
+    final $$ChaptersTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.chapterId,
+        referencedTable: $state.db.chapters,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$ChaptersTableFilterComposer(ComposerState(
+                $state.db, $state.db.chapters, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$SubchaptersTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $SubchaptersTable> {
+  $$SubchaptersTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get body => $state.composableBuilder(
+      column: $state.table.body,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$ChaptersTableOrderingComposer get chapterId {
+    final $$ChaptersTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.chapterId,
+        referencedTable: $state.db.chapters,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$ChaptersTableOrderingComposer(ComposerState(
+                $state.db, $state.db.chapters, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$AuthorsTableCreateCompanionBuilder = AuthorsCompanion Function({
+  required String id,
+  required String name,
+  Value<String?> info,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  Value<int> rowid,
+});
+typedef $$AuthorsTableUpdateCompanionBuilder = AuthorsCompanion Function({
+  Value<String> id,
+  Value<String> name,
+  Value<String?> info,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<int> rowid,
+});
+
+class $$AuthorsTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $AuthorsTable,
+    Author,
+    $$AuthorsTableFilterComposer,
+    $$AuthorsTableOrderingComposer,
+    $$AuthorsTableCreateCompanionBuilder,
+    $$AuthorsTableUpdateCompanionBuilder> {
+  $$AuthorsTableTableManager(_$LocalResourceAPI db, $AuthorsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$AuthorsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$AuthorsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String?> info = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              AuthorsCompanion(
+            id: id,
+            name: name,
+            info: info,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String name,
+            Value<String?> info = const Value.absent(),
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              AuthorsCompanion.insert(
+            id: id,
+            name: name,
+            info: info,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$AuthorsTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $AuthorsTable> {
+  $$AuthorsTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get info => $state.composableBuilder(
+      column: $state.table.info,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter booksAuthorsRefs(
+      ComposableFilter Function($$BooksAuthorsTableFilterComposer f) f) {
+    final $$BooksAuthorsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.booksAuthors,
+        getReferencedColumn: (t) => t.authorId,
+        builder: (joinBuilder, parentComposers) =>
+            $$BooksAuthorsTableFilterComposer(ComposerState($state.db,
+                $state.db.booksAuthors, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$AuthorsTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $AuthorsTable> {
+  $$AuthorsTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get info => $state.composableBuilder(
+      column: $state.table.info,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$BooksAuthorsTableCreateCompanionBuilder = BooksAuthorsCompanion
+    Function({
+  required String id,
+  required String bookId,
+  required String authorId,
+  Value<int> rowid,
+});
+typedef $$BooksAuthorsTableUpdateCompanionBuilder = BooksAuthorsCompanion
+    Function({
+  Value<String> id,
+  Value<String> bookId,
+  Value<String> authorId,
+  Value<int> rowid,
+});
+
+class $$BooksAuthorsTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $BooksAuthorsTable,
+    BooksAuthor,
+    $$BooksAuthorsTableFilterComposer,
+    $$BooksAuthorsTableOrderingComposer,
+    $$BooksAuthorsTableCreateCompanionBuilder,
+    $$BooksAuthorsTableUpdateCompanionBuilder> {
+  $$BooksAuthorsTableTableManager(
+      _$LocalResourceAPI db, $BooksAuthorsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$BooksAuthorsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$BooksAuthorsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> bookId = const Value.absent(),
+            Value<String> authorId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              BooksAuthorsCompanion(
+            id: id,
+            bookId: bookId,
+            authorId: authorId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String bookId,
+            required String authorId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              BooksAuthorsCompanion.insert(
+            id: id,
+            bookId: bookId,
+            authorId: authorId,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$BooksAuthorsTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $BooksAuthorsTable> {
+  $$BooksAuthorsTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$BooksTableFilterComposer get bookId {
+    final $$BooksTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.bookId,
+        referencedTable: $state.db.books,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$BooksTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.books, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$AuthorsTableFilterComposer get authorId {
+    final $$AuthorsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.authorId,
+        referencedTable: $state.db.authors,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$AuthorsTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.authors, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$BooksAuthorsTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $BooksAuthorsTable> {
+  $$BooksAuthorsTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$BooksTableOrderingComposer get bookId {
+    final $$BooksTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.bookId,
+        referencedTable: $state.db.books,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$BooksTableOrderingComposer(
+            ComposerState(
+                $state.db, $state.db.books, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$AuthorsTableOrderingComposer get authorId {
+    final $$AuthorsTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.authorId,
+        referencedTable: $state.db.authors,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$AuthorsTableOrderingComposer(ComposerState(
+                $state.db, $state.db.authors, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$SpeakersTableCreateCompanionBuilder = SpeakersCompanion Function({
+  required String id,
+  required String name,
+  Value<String?> info,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  Value<int> rowid,
+});
+typedef $$SpeakersTableUpdateCompanionBuilder = SpeakersCompanion Function({
+  Value<String> id,
+  Value<String> name,
+  Value<String?> info,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<int> rowid,
+});
+
+class $$SpeakersTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $SpeakersTable,
+    Speaker,
+    $$SpeakersTableFilterComposer,
+    $$SpeakersTableOrderingComposer,
+    $$SpeakersTableCreateCompanionBuilder,
+    $$SpeakersTableUpdateCompanionBuilder> {
+  $$SpeakersTableTableManager(_$LocalResourceAPI db, $SpeakersTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$SpeakersTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$SpeakersTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String?> info = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              SpeakersCompanion(
+            id: id,
+            name: name,
+            info: info,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String name,
+            Value<String?> info = const Value.absent(),
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              SpeakersCompanion.insert(
+            id: id,
+            name: name,
+            info: info,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$SpeakersTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $SpeakersTable> {
+  $$SpeakersTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get info => $state.composableBuilder(
+      column: $state.table.info,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter bayansRefs(
+      ComposableFilter Function($$BayansTableFilterComposer f) f) {
+    final $$BayansTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.bayans,
+        getReferencedColumn: (t) => t.speakerId,
+        builder: (joinBuilder, parentComposers) => $$BayansTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.bayans, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$SpeakersTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $SpeakersTable> {
+  $$SpeakersTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get info => $state.composableBuilder(
+      column: $state.table.info,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$BayansTableCreateCompanionBuilder = BayansCompanion Function({
+  required String id,
+  required String title,
+  Value<String?> excerpt,
+  required String language,
+  Value<String?> location,
+  Value<Map<dynamic, dynamic>?> audioData,
+  required int position,
+  required String publishedAt,
+  required String createdAt,
+  required String updatedAt,
+  required String speakerId,
+  Value<int> rowid,
+});
+typedef $$BayansTableUpdateCompanionBuilder = BayansCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String?> excerpt,
+  Value<String> language,
+  Value<String?> location,
+  Value<Map<dynamic, dynamic>?> audioData,
+  Value<int> position,
+  Value<String> publishedAt,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<String> speakerId,
+  Value<int> rowid,
+});
+
+class $$BayansTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $BayansTable,
+    Bayan,
+    $$BayansTableFilterComposer,
+    $$BayansTableOrderingComposer,
+    $$BayansTableCreateCompanionBuilder,
+    $$BayansTableUpdateCompanionBuilder> {
+  $$BayansTableTableManager(_$LocalResourceAPI db, $BayansTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$BayansTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$BayansTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String?> excerpt = const Value.absent(),
+            Value<String> language = const Value.absent(),
+            Value<String?> location = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> audioData = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> publishedAt = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<String> speakerId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              BayansCompanion(
+            id: id,
+            title: title,
+            excerpt: excerpt,
+            language: language,
+            location: location,
+            audioData: audioData,
+            position: position,
+            publishedAt: publishedAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            speakerId: speakerId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            Value<String?> excerpt = const Value.absent(),
+            required String language,
+            Value<String?> location = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> audioData = const Value.absent(),
+            required int position,
+            required String publishedAt,
+            required String createdAt,
+            required String updatedAt,
+            required String speakerId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              BayansCompanion.insert(
+            id: id,
+            title: title,
+            excerpt: excerpt,
+            language: language,
+            location: location,
+            audioData: audioData,
+            position: position,
+            publishedAt: publishedAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            speakerId: speakerId,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$BayansTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $BayansTable> {
+  $$BayansTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get excerpt => $state.composableBuilder(
+      column: $state.table.excerpt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get language => $state.composableBuilder(
+      column: $state.table.language,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get location => $state.composableBuilder(
+      column: $state.table.location,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnWithTypeConverterFilters<Map<dynamic, dynamic>?, Map<dynamic, dynamic>,
+          String>
+      get audioData => $state.composableBuilder(
+          column: $state.table.audioData,
+          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
+              column,
+              joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get publishedAt => $state.composableBuilder(
+      column: $state.table.publishedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$SpeakersTableFilterComposer get speakerId {
+    final $$SpeakersTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.speakerId,
+        referencedTable: $state.db.speakers,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$SpeakersTableFilterComposer(ComposerState(
+                $state.db, $state.db.speakers, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$BayansTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $BayansTable> {
+  $$BayansTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get excerpt => $state.composableBuilder(
+      column: $state.table.excerpt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get language => $state.composableBuilder(
+      column: $state.table.language,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get location => $state.composableBuilder(
+      column: $state.table.location,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get audioData => $state.composableBuilder(
+      column: $state.table.audioData,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get publishedAt => $state.composableBuilder(
+      column: $state.table.publishedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$SpeakersTableOrderingComposer get speakerId {
+    final $$SpeakersTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.speakerId,
+        referencedTable: $state.db.speakers,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$SpeakersTableOrderingComposer(ComposerState(
+                $state.db, $state.db.speakers, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$MalfuzatAuthorsTableCreateCompanionBuilder = MalfuzatAuthorsCompanion
+    Function({
+  required String id,
+  required String name,
+  Value<String?> info,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  Value<int> rowid,
+});
+typedef $$MalfuzatAuthorsTableUpdateCompanionBuilder = MalfuzatAuthorsCompanion
+    Function({
+  Value<String> id,
+  Value<String> name,
+  Value<String?> info,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<int> rowid,
+});
+
+class $$MalfuzatAuthorsTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $MalfuzatAuthorsTable,
+    MalfuzatAuthor,
+    $$MalfuzatAuthorsTableFilterComposer,
+    $$MalfuzatAuthorsTableOrderingComposer,
+    $$MalfuzatAuthorsTableCreateCompanionBuilder,
+    $$MalfuzatAuthorsTableUpdateCompanionBuilder> {
+  $$MalfuzatAuthorsTableTableManager(
+      _$LocalResourceAPI db, $MalfuzatAuthorsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$MalfuzatAuthorsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$MalfuzatAuthorsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String?> info = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MalfuzatAuthorsCompanion(
+            id: id,
+            name: name,
+            info: info,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String name,
+            Value<String?> info = const Value.absent(),
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MalfuzatAuthorsCompanion.insert(
+            id: id,
+            name: name,
+            info: info,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$MalfuzatAuthorsTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $MalfuzatAuthorsTable> {
+  $$MalfuzatAuthorsTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get info => $state.composableBuilder(
+      column: $state.table.info,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter malfuzatsRefs(
+      ComposableFilter Function($$MalfuzatsTableFilterComposer f) f) {
+    final $$MalfuzatsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.malfuzats,
+        getReferencedColumn: (t) => t.malfuzatAuthorId,
+        builder: (joinBuilder, parentComposers) =>
+            $$MalfuzatsTableFilterComposer(ComposerState(
+                $state.db, $state.db.malfuzats, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$MalfuzatAuthorsTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $MalfuzatAuthorsTable> {
+  $$MalfuzatAuthorsTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get info => $state.composableBuilder(
+      column: $state.table.info,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$MalfuzatsTableCreateCompanionBuilder = MalfuzatsCompanion Function({
+  required String id,
+  required String title,
+  Value<String?> body,
+  Value<String?> excerpt,
+  required String language,
+  Value<bool> hasAudio,
+  Value<Map<dynamic, dynamic>?> audioData,
+  Value<Map<dynamic, dynamic>?> documentData,
+  required int position,
+  Value<String?> publishedAt,
+  required String createdAt,
+  required String updatedAt,
+  required String malfuzatAuthorId,
+  Value<int> rowid,
+});
+typedef $$MalfuzatsTableUpdateCompanionBuilder = MalfuzatsCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String?> body,
+  Value<String?> excerpt,
+  Value<String> language,
+  Value<bool> hasAudio,
+  Value<Map<dynamic, dynamic>?> audioData,
+  Value<Map<dynamic, dynamic>?> documentData,
+  Value<int> position,
+  Value<String?> publishedAt,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<String> malfuzatAuthorId,
+  Value<int> rowid,
+});
+
+class $$MalfuzatsTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $MalfuzatsTable,
+    Malfuzat,
+    $$MalfuzatsTableFilterComposer,
+    $$MalfuzatsTableOrderingComposer,
+    $$MalfuzatsTableCreateCompanionBuilder,
+    $$MalfuzatsTableUpdateCompanionBuilder> {
+  $$MalfuzatsTableTableManager(_$LocalResourceAPI db, $MalfuzatsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$MalfuzatsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$MalfuzatsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String?> body = const Value.absent(),
+            Value<String?> excerpt = const Value.absent(),
+            Value<String> language = const Value.absent(),
+            Value<bool> hasAudio = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> audioData = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String?> publishedAt = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<String> malfuzatAuthorId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MalfuzatsCompanion(
+            id: id,
+            title: title,
+            body: body,
+            excerpt: excerpt,
+            language: language,
+            hasAudio: hasAudio,
+            audioData: audioData,
+            documentData: documentData,
+            position: position,
+            publishedAt: publishedAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            malfuzatAuthorId: malfuzatAuthorId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            Value<String?> body = const Value.absent(),
+            Value<String?> excerpt = const Value.absent(),
+            required String language,
+            Value<bool> hasAudio = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> audioData = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
+            required int position,
+            Value<String?> publishedAt = const Value.absent(),
+            required String createdAt,
+            required String updatedAt,
+            required String malfuzatAuthorId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MalfuzatsCompanion.insert(
+            id: id,
+            title: title,
+            body: body,
+            excerpt: excerpt,
+            language: language,
+            hasAudio: hasAudio,
+            audioData: audioData,
+            documentData: documentData,
+            position: position,
+            publishedAt: publishedAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            malfuzatAuthorId: malfuzatAuthorId,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$MalfuzatsTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $MalfuzatsTable> {
+  $$MalfuzatsTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get body => $state.composableBuilder(
+      column: $state.table.body,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get excerpt => $state.composableBuilder(
+      column: $state.table.excerpt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get language => $state.composableBuilder(
+      column: $state.table.language,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get hasAudio => $state.composableBuilder(
+      column: $state.table.hasAudio,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnWithTypeConverterFilters<Map<dynamic, dynamic>?, Map<dynamic, dynamic>,
+          String>
+      get audioData => $state.composableBuilder(
+          column: $state.table.audioData,
+          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
+              column,
+              joinBuilders: joinBuilders));
+
+  ColumnWithTypeConverterFilters<Map<dynamic, dynamic>?, Map<dynamic, dynamic>,
+          String>
+      get documentData => $state.composableBuilder(
+          column: $state.table.documentData,
+          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
+              column,
+              joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get publishedAt => $state.composableBuilder(
+      column: $state.table.publishedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$MalfuzatAuthorsTableFilterComposer get malfuzatAuthorId {
+    final $$MalfuzatAuthorsTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.malfuzatAuthorId,
+            referencedTable: $state.db.malfuzatAuthors,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$MalfuzatAuthorsTableFilterComposer(ComposerState($state.db,
+                    $state.db.malfuzatAuthors, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$MalfuzatsTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $MalfuzatsTable> {
+  $$MalfuzatsTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get body => $state.composableBuilder(
+      column: $state.table.body,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get excerpt => $state.composableBuilder(
+      column: $state.table.excerpt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get language => $state.composableBuilder(
+      column: $state.table.language,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get hasAudio => $state.composableBuilder(
+      column: $state.table.hasAudio,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get audioData => $state.composableBuilder(
+      column: $state.table.audioData,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get documentData => $state.composableBuilder(
+      column: $state.table.documentData,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get publishedAt => $state.composableBuilder(
+      column: $state.table.publishedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$MalfuzatAuthorsTableOrderingComposer get malfuzatAuthorId {
+    final $$MalfuzatAuthorsTableOrderingComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.malfuzatAuthorId,
+            referencedTable: $state.db.malfuzatAuthors,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$MalfuzatAuthorsTableOrderingComposer(ComposerState($state.db,
+                    $state.db.malfuzatAuthors, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$MasailAuthorsTableCreateCompanionBuilder = MasailAuthorsCompanion
+    Function({
+  required String id,
+  required String name,
+  Value<String?> info,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  Value<int> rowid,
+});
+typedef $$MasailAuthorsTableUpdateCompanionBuilder = MasailAuthorsCompanion
+    Function({
+  Value<String> id,
+  Value<String> name,
+  Value<String?> info,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<int> rowid,
+});
+
+class $$MasailAuthorsTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $MasailAuthorsTable,
+    MasailAuthor,
+    $$MasailAuthorsTableFilterComposer,
+    $$MasailAuthorsTableOrderingComposer,
+    $$MasailAuthorsTableCreateCompanionBuilder,
+    $$MasailAuthorsTableUpdateCompanionBuilder> {
+  $$MasailAuthorsTableTableManager(
+      _$LocalResourceAPI db, $MasailAuthorsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$MasailAuthorsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$MasailAuthorsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String?> info = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MasailAuthorsCompanion(
+            id: id,
+            name: name,
+            info: info,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String name,
+            Value<String?> info = const Value.absent(),
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MasailAuthorsCompanion.insert(
+            id: id,
+            name: name,
+            info: info,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$MasailAuthorsTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $MasailAuthorsTable> {
+  $$MasailAuthorsTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get info => $state.composableBuilder(
+      column: $state.table.info,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter masailsRefs(
+      ComposableFilter Function($$MasailsTableFilterComposer f) f) {
+    final $$MasailsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.masails,
+        getReferencedColumn: (t) => t.masailAuthorId,
+        builder: (joinBuilder, parentComposers) => $$MasailsTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.masails, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$MasailAuthorsTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $MasailAuthorsTable> {
+  $$MasailAuthorsTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get info => $state.composableBuilder(
+      column: $state.table.info,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$MasailsTableCreateCompanionBuilder = MasailsCompanion Function({
+  required String id,
+  required String title,
+  required String question,
+  Value<String?> answer,
+  required String language,
+  Value<bool> hasAudio,
+  Value<Map<dynamic, dynamic>?> audioData,
+  Value<Map<dynamic, dynamic>?> documentData,
+  required int position,
+  Value<String?> publishedAt,
+  required String createdAt,
+  required String updatedAt,
+  Value<String?> masailAuthorId,
+  Value<int> rowid,
+});
+typedef $$MasailsTableUpdateCompanionBuilder = MasailsCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String> question,
+  Value<String?> answer,
+  Value<String> language,
+  Value<bool> hasAudio,
+  Value<Map<dynamic, dynamic>?> audioData,
+  Value<Map<dynamic, dynamic>?> documentData,
+  Value<int> position,
+  Value<String?> publishedAt,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<String?> masailAuthorId,
+  Value<int> rowid,
+});
+
+class $$MasailsTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $MasailsTable,
+    Masail,
+    $$MasailsTableFilterComposer,
+    $$MasailsTableOrderingComposer,
+    $$MasailsTableCreateCompanionBuilder,
+    $$MasailsTableUpdateCompanionBuilder> {
+  $$MasailsTableTableManager(_$LocalResourceAPI db, $MasailsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$MasailsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$MasailsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> question = const Value.absent(),
+            Value<String?> answer = const Value.absent(),
+            Value<String> language = const Value.absent(),
+            Value<bool> hasAudio = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> audioData = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String?> publishedAt = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<String?> masailAuthorId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MasailsCompanion(
+            id: id,
+            title: title,
+            question: question,
+            answer: answer,
+            language: language,
+            hasAudio: hasAudio,
+            audioData: audioData,
+            documentData: documentData,
+            position: position,
+            publishedAt: publishedAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            masailAuthorId: masailAuthorId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            required String question,
+            Value<String?> answer = const Value.absent(),
+            required String language,
+            Value<bool> hasAudio = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> audioData = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
+            required int position,
+            Value<String?> publishedAt = const Value.absent(),
+            required String createdAt,
+            required String updatedAt,
+            Value<String?> masailAuthorId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MasailsCompanion.insert(
+            id: id,
+            title: title,
+            question: question,
+            answer: answer,
+            language: language,
+            hasAudio: hasAudio,
+            audioData: audioData,
+            documentData: documentData,
+            position: position,
+            publishedAt: publishedAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            masailAuthorId: masailAuthorId,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$MasailsTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $MasailsTable> {
+  $$MasailsTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get question => $state.composableBuilder(
+      column: $state.table.question,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get answer => $state.composableBuilder(
+      column: $state.table.answer,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get language => $state.composableBuilder(
+      column: $state.table.language,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get hasAudio => $state.composableBuilder(
+      column: $state.table.hasAudio,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnWithTypeConverterFilters<Map<dynamic, dynamic>?, Map<dynamic, dynamic>,
+          String>
+      get audioData => $state.composableBuilder(
+          column: $state.table.audioData,
+          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
+              column,
+              joinBuilders: joinBuilders));
+
+  ColumnWithTypeConverterFilters<Map<dynamic, dynamic>?, Map<dynamic, dynamic>,
+          String>
+      get documentData => $state.composableBuilder(
+          column: $state.table.documentData,
+          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
+              column,
+              joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get publishedAt => $state.composableBuilder(
+      column: $state.table.publishedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$MasailAuthorsTableFilterComposer get masailAuthorId {
+    final $$MasailAuthorsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.masailAuthorId,
+        referencedTable: $state.db.masailAuthors,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$MasailAuthorsTableFilterComposer(ComposerState($state.db,
+                $state.db.masailAuthors, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$MasailsTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $MasailsTable> {
+  $$MasailsTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get question => $state.composableBuilder(
+      column: $state.table.question,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get answer => $state.composableBuilder(
+      column: $state.table.answer,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get language => $state.composableBuilder(
+      column: $state.table.language,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get hasAudio => $state.composableBuilder(
+      column: $state.table.hasAudio,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get audioData => $state.composableBuilder(
+      column: $state.table.audioData,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get documentData => $state.composableBuilder(
+      column: $state.table.documentData,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get publishedAt => $state.composableBuilder(
+      column: $state.table.publishedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$MasailAuthorsTableOrderingComposer get masailAuthorId {
+    final $$MasailAuthorsTableOrderingComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.masailAuthorId,
+            referencedTable: $state.db.masailAuthors,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$MasailAuthorsTableOrderingComposer(ComposerState($state.db,
+                    $state.db.masailAuthors, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$DuaCategoriesTableCreateCompanionBuilder = DuaCategoriesCompanion
+    Function({
+  required String id,
+  required String title,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  Value<int> rowid,
+});
+typedef $$DuaCategoriesTableUpdateCompanionBuilder = DuaCategoriesCompanion
+    Function({
+  Value<String> id,
+  Value<String> title,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<int> rowid,
+});
+
+class $$DuaCategoriesTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $DuaCategoriesTable,
+    DuaCategory,
+    $$DuaCategoriesTableFilterComposer,
+    $$DuaCategoriesTableOrderingComposer,
+    $$DuaCategoriesTableCreateCompanionBuilder,
+    $$DuaCategoriesTableUpdateCompanionBuilder> {
+  $$DuaCategoriesTableTableManager(
+      _$LocalResourceAPI db, $DuaCategoriesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$DuaCategoriesTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$DuaCategoriesTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              DuaCategoriesCompanion(
+            id: id,
+            title: title,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              DuaCategoriesCompanion.insert(
+            id: id,
+            title: title,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$DuaCategoriesTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $DuaCategoriesTable> {
+  $$DuaCategoriesTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter duaCategorizationsRefs(
+      ComposableFilter Function($$DuaCategorizationsTableFilterComposer f) f) {
+    final $$DuaCategorizationsTableFilterComposer composer = $state
+        .composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $state.db.duaCategorizations,
+            getReferencedColumn: (t) => t.duaCategoryId,
+            builder: (joinBuilder, parentComposers) =>
+                $$DuaCategorizationsTableFilterComposer(ComposerState(
+                    $state.db,
+                    $state.db.duaCategorizations,
+                    joinBuilder,
+                    parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$DuaCategoriesTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $DuaCategoriesTable> {
+  $$DuaCategoriesTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$DuasTableCreateCompanionBuilder = DuasCompanion Function({
+  required String id,
+  required String title,
+  required String body,
+  Value<String?> excerpt,
+  required String language,
+  Value<Map<dynamic, dynamic>?> audioData,
+  Value<Map<dynamic, dynamic>?> documentData,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  Value<int> rowid,
+});
+typedef $$DuasTableUpdateCompanionBuilder = DuasCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String> body,
+  Value<String?> excerpt,
+  Value<String> language,
+  Value<Map<dynamic, dynamic>?> audioData,
+  Value<Map<dynamic, dynamic>?> documentData,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<int> rowid,
+});
+
+class $$DuasTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $DuasTable,
+    Dua,
+    $$DuasTableFilterComposer,
+    $$DuasTableOrderingComposer,
+    $$DuasTableCreateCompanionBuilder,
+    $$DuasTableUpdateCompanionBuilder> {
+  $$DuasTableTableManager(_$LocalResourceAPI db, $DuasTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$DuasTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$DuasTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> body = const Value.absent(),
+            Value<String?> excerpt = const Value.absent(),
+            Value<String> language = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> audioData = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              DuasCompanion(
+            id: id,
+            title: title,
+            body: body,
+            excerpt: excerpt,
+            language: language,
+            audioData: audioData,
+            documentData: documentData,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            required String body,
+            Value<String?> excerpt = const Value.absent(),
+            required String language,
+            Value<Map<dynamic, dynamic>?> audioData = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              DuasCompanion.insert(
+            id: id,
+            title: title,
+            body: body,
+            excerpt: excerpt,
+            language: language,
+            audioData: audioData,
+            documentData: documentData,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$DuasTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $DuasTable> {
+  $$DuasTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get body => $state.composableBuilder(
+      column: $state.table.body,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get excerpt => $state.composableBuilder(
+      column: $state.table.excerpt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get language => $state.composableBuilder(
+      column: $state.table.language,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnWithTypeConverterFilters<Map<dynamic, dynamic>?, Map<dynamic, dynamic>,
+          String>
+      get audioData => $state.composableBuilder(
+          column: $state.table.audioData,
+          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
+              column,
+              joinBuilders: joinBuilders));
+
+  ColumnWithTypeConverterFilters<Map<dynamic, dynamic>?, Map<dynamic, dynamic>,
+          String>
+      get documentData => $state.composableBuilder(
+          column: $state.table.documentData,
+          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
+              column,
+              joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter duaCategorizationsRefs(
+      ComposableFilter Function($$DuaCategorizationsTableFilterComposer f) f) {
+    final $$DuaCategorizationsTableFilterComposer composer = $state
+        .composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $state.db.duaCategorizations,
+            getReferencedColumn: (t) => t.duaId,
+            builder: (joinBuilder, parentComposers) =>
+                $$DuaCategorizationsTableFilterComposer(ComposerState(
+                    $state.db,
+                    $state.db.duaCategorizations,
+                    joinBuilder,
+                    parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$DuasTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $DuasTable> {
+  $$DuasTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get body => $state.composableBuilder(
+      column: $state.table.body,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get excerpt => $state.composableBuilder(
+      column: $state.table.excerpt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get language => $state.composableBuilder(
+      column: $state.table.language,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get audioData => $state.composableBuilder(
+      column: $state.table.audioData,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get documentData => $state.composableBuilder(
+      column: $state.table.documentData,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$DuaCategorizationsTableCreateCompanionBuilder
+    = DuaCategorizationsCompanion Function({
+  required String id,
+  required String duaId,
+  required String duaCategoryId,
+  Value<int> rowid,
+});
+typedef $$DuaCategorizationsTableUpdateCompanionBuilder
+    = DuaCategorizationsCompanion Function({
+  Value<String> id,
+  Value<String> duaId,
+  Value<String> duaCategoryId,
+  Value<int> rowid,
+});
+
+class $$DuaCategorizationsTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $DuaCategorizationsTable,
+    DuaCategorization,
+    $$DuaCategorizationsTableFilterComposer,
+    $$DuaCategorizationsTableOrderingComposer,
+    $$DuaCategorizationsTableCreateCompanionBuilder,
+    $$DuaCategorizationsTableUpdateCompanionBuilder> {
+  $$DuaCategorizationsTableTableManager(
+      _$LocalResourceAPI db, $DuaCategorizationsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$DuaCategorizationsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer: $$DuaCategorizationsTableOrderingComposer(
+              ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> duaId = const Value.absent(),
+            Value<String> duaCategoryId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              DuaCategorizationsCompanion(
+            id: id,
+            duaId: duaId,
+            duaCategoryId: duaCategoryId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String duaId,
+            required String duaCategoryId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              DuaCategorizationsCompanion.insert(
+            id: id,
+            duaId: duaId,
+            duaCategoryId: duaCategoryId,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$DuaCategorizationsTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $DuaCategorizationsTable> {
+  $$DuaCategorizationsTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$DuasTableFilterComposer get duaId {
+    final $$DuasTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.duaId,
+        referencedTable: $state.db.duas,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$DuasTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.duas, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$DuaCategoriesTableFilterComposer get duaCategoryId {
+    final $$DuaCategoriesTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.duaCategoryId,
+        referencedTable: $state.db.duaCategories,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$DuaCategoriesTableFilterComposer(ComposerState($state.db,
+                $state.db.duaCategories, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$DuaCategorizationsTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $DuaCategorizationsTable> {
+  $$DuaCategorizationsTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$DuasTableOrderingComposer get duaId {
+    final $$DuasTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.duaId,
+        referencedTable: $state.db.duas,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$DuasTableOrderingComposer(
+            ComposerState(
+                $state.db, $state.db.duas, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$DuaCategoriesTableOrderingComposer get duaCategoryId {
+    final $$DuaCategoriesTableOrderingComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.duaCategoryId,
+            referencedTable: $state.db.duaCategories,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$DuaCategoriesTableOrderingComposer(ComposerState($state.db,
+                    $state.db.duaCategories, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$ArticleAuthorsTableCreateCompanionBuilder = ArticleAuthorsCompanion
+    Function({
+  required String id,
+  required String name,
+  Value<String?> info,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  Value<int> rowid,
+});
+typedef $$ArticleAuthorsTableUpdateCompanionBuilder = ArticleAuthorsCompanion
+    Function({
+  Value<String> id,
+  Value<String> name,
+  Value<String?> info,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<int> rowid,
+});
+
+class $$ArticleAuthorsTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $ArticleAuthorsTable,
+    ArticleAuthor,
+    $$ArticleAuthorsTableFilterComposer,
+    $$ArticleAuthorsTableOrderingComposer,
+    $$ArticleAuthorsTableCreateCompanionBuilder,
+    $$ArticleAuthorsTableUpdateCompanionBuilder> {
+  $$ArticleAuthorsTableTableManager(
+      _$LocalResourceAPI db, $ArticleAuthorsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$ArticleAuthorsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$ArticleAuthorsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String?> info = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ArticleAuthorsCompanion(
+            id: id,
+            name: name,
+            info: info,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String name,
+            Value<String?> info = const Value.absent(),
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ArticleAuthorsCompanion.insert(
+            id: id,
+            name: name,
+            info: info,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$ArticleAuthorsTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $ArticleAuthorsTable> {
+  $$ArticleAuthorsTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get info => $state.composableBuilder(
+      column: $state.table.info,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter articlesRefs(
+      ComposableFilter Function($$ArticlesTableFilterComposer f) f) {
+    final $$ArticlesTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.articles,
+        getReferencedColumn: (t) => t.articleAuthorId,
+        builder: (joinBuilder, parentComposers) =>
+            $$ArticlesTableFilterComposer(ComposerState(
+                $state.db, $state.db.articles, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$ArticleAuthorsTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $ArticleAuthorsTable> {
+  $$ArticleAuthorsTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get info => $state.composableBuilder(
+      column: $state.table.info,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$ArticlesTableCreateCompanionBuilder = ArticlesCompanion Function({
+  required String id,
+  required String title,
+  required String body,
+  Value<String?> excerpt,
+  required String language,
+  Value<Map<dynamic, dynamic>?> documentData,
+  required int position,
+  Value<String?> publishedAt,
+  required String createdAt,
+  required String updatedAt,
+  required String articleAuthorId,
+  Value<int> rowid,
+});
+typedef $$ArticlesTableUpdateCompanionBuilder = ArticlesCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String> body,
+  Value<String?> excerpt,
+  Value<String> language,
+  Value<Map<dynamic, dynamic>?> documentData,
+  Value<int> position,
+  Value<String?> publishedAt,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<String> articleAuthorId,
+  Value<int> rowid,
+});
+
+class $$ArticlesTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $ArticlesTable,
+    Article,
+    $$ArticlesTableFilterComposer,
+    $$ArticlesTableOrderingComposer,
+    $$ArticlesTableCreateCompanionBuilder,
+    $$ArticlesTableUpdateCompanionBuilder> {
+  $$ArticlesTableTableManager(_$LocalResourceAPI db, $ArticlesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$ArticlesTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$ArticlesTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> body = const Value.absent(),
+            Value<String?> excerpt = const Value.absent(),
+            Value<String> language = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String?> publishedAt = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<String> articleAuthorId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ArticlesCompanion(
+            id: id,
+            title: title,
+            body: body,
+            excerpt: excerpt,
+            language: language,
+            documentData: documentData,
+            position: position,
+            publishedAt: publishedAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            articleAuthorId: articleAuthorId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            required String body,
+            Value<String?> excerpt = const Value.absent(),
+            required String language,
+            Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
+            required int position,
+            Value<String?> publishedAt = const Value.absent(),
+            required String createdAt,
+            required String updatedAt,
+            required String articleAuthorId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ArticlesCompanion.insert(
+            id: id,
+            title: title,
+            body: body,
+            excerpt: excerpt,
+            language: language,
+            documentData: documentData,
+            position: position,
+            publishedAt: publishedAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            articleAuthorId: articleAuthorId,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$ArticlesTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $ArticlesTable> {
+  $$ArticlesTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get body => $state.composableBuilder(
+      column: $state.table.body,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get excerpt => $state.composableBuilder(
+      column: $state.table.excerpt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get language => $state.composableBuilder(
+      column: $state.table.language,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnWithTypeConverterFilters<Map<dynamic, dynamic>?, Map<dynamic, dynamic>,
+          String>
+      get documentData => $state.composableBuilder(
+          column: $state.table.documentData,
+          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
+              column,
+              joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get publishedAt => $state.composableBuilder(
+      column: $state.table.publishedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$ArticleAuthorsTableFilterComposer get articleAuthorId {
+    final $$ArticleAuthorsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.articleAuthorId,
+        referencedTable: $state.db.articleAuthors,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$ArticleAuthorsTableFilterComposer(ComposerState($state.db,
+                $state.db.articleAuthors, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$ArticlesTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $ArticlesTable> {
+  $$ArticlesTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get body => $state.composableBuilder(
+      column: $state.table.body,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get excerpt => $state.composableBuilder(
+      column: $state.table.excerpt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get language => $state.composableBuilder(
+      column: $state.table.language,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get documentData => $state.composableBuilder(
+      column: $state.table.documentData,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get publishedAt => $state.composableBuilder(
+      column: $state.table.publishedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$ArticleAuthorsTableOrderingComposer get articleAuthorId {
+    final $$ArticleAuthorsTableOrderingComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.articleAuthorId,
+            referencedTable: $state.db.articleAuthors,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$ArticleAuthorsTableOrderingComposer(ComposerState($state.db,
+                    $state.db.articleAuthors, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$MadrasahsTableCreateCompanionBuilder = MadrasahsCompanion Function({
+  required String id,
+  required String title,
+  required String introduction,
+  Value<String?> excerpt,
+  Value<Map<dynamic, dynamic>?> documentData,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  Value<int> rowid,
+});
+typedef $$MadrasahsTableUpdateCompanionBuilder = MadrasahsCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String> introduction,
+  Value<String?> excerpt,
+  Value<Map<dynamic, dynamic>?> documentData,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<int> rowid,
+});
+
+class $$MadrasahsTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $MadrasahsTable,
+    Madrasah,
+    $$MadrasahsTableFilterComposer,
+    $$MadrasahsTableOrderingComposer,
+    $$MadrasahsTableCreateCompanionBuilder,
+    $$MadrasahsTableUpdateCompanionBuilder> {
+  $$MadrasahsTableTableManager(_$LocalResourceAPI db, $MadrasahsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$MadrasahsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$MadrasahsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> introduction = const Value.absent(),
+            Value<String?> excerpt = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MadrasahsCompanion(
+            id: id,
+            title: title,
+            introduction: introduction,
+            excerpt: excerpt,
+            documentData: documentData,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            required String introduction,
+            Value<String?> excerpt = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MadrasahsCompanion.insert(
+            id: id,
+            title: title,
+            introduction: introduction,
+            excerpt: excerpt,
+            documentData: documentData,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$MadrasahsTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $MadrasahsTable> {
+  $$MadrasahsTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get introduction => $state.composableBuilder(
+      column: $state.table.introduction,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get excerpt => $state.composableBuilder(
+      column: $state.table.excerpt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnWithTypeConverterFilters<Map<dynamic, dynamic>?, Map<dynamic, dynamic>,
+          String>
+      get documentData => $state.composableBuilder(
+          column: $state.table.documentData,
+          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
+              column,
+              joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter madrasahInfosRefs(
+      ComposableFilter Function($$MadrasahInfosTableFilterComposer f) f) {
+    final $$MadrasahInfosTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.madrasahInfos,
+        getReferencedColumn: (t) => t.madrasahId,
+        builder: (joinBuilder, parentComposers) =>
+            $$MadrasahInfosTableFilterComposer(ComposerState($state.db,
+                $state.db.madrasahInfos, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$MadrasahsTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $MadrasahsTable> {
+  $$MadrasahsTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get introduction => $state.composableBuilder(
+      column: $state.table.introduction,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get excerpt => $state.composableBuilder(
+      column: $state.table.excerpt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get documentData => $state.composableBuilder(
+      column: $state.table.documentData,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$MadrasahInfosTableCreateCompanionBuilder = MadrasahInfosCompanion
+    Function({
+  required String id,
+  required String label,
+  required String info,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  required String madrasahId,
+  Value<int> rowid,
+});
+typedef $$MadrasahInfosTableUpdateCompanionBuilder = MadrasahInfosCompanion
+    Function({
+  Value<String> id,
+  Value<String> label,
+  Value<String> info,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<String> madrasahId,
+  Value<int> rowid,
+});
+
+class $$MadrasahInfosTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $MadrasahInfosTable,
+    MadrasahInfo,
+    $$MadrasahInfosTableFilterComposer,
+    $$MadrasahInfosTableOrderingComposer,
+    $$MadrasahInfosTableCreateCompanionBuilder,
+    $$MadrasahInfosTableUpdateCompanionBuilder> {
+  $$MadrasahInfosTableTableManager(
+      _$LocalResourceAPI db, $MadrasahInfosTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$MadrasahInfosTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$MadrasahInfosTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> label = const Value.absent(),
+            Value<String> info = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<String> madrasahId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MadrasahInfosCompanion(
+            id: id,
+            label: label,
+            info: info,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            madrasahId: madrasahId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String label,
+            required String info,
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            required String madrasahId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MadrasahInfosCompanion.insert(
+            id: id,
+            label: label,
+            info: info,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            madrasahId: madrasahId,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$MadrasahInfosTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $MadrasahInfosTable> {
+  $$MadrasahInfosTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get label => $state.composableBuilder(
+      column: $state.table.label,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get info => $state.composableBuilder(
+      column: $state.table.info,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$MadrasahsTableFilterComposer get madrasahId {
+    final $$MadrasahsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.madrasahId,
+        referencedTable: $state.db.madrasahs,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$MadrasahsTableFilterComposer(ComposerState(
+                $state.db, $state.db.madrasahs, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$MadrasahInfosTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $MadrasahInfosTable> {
+  $$MadrasahInfosTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get label => $state.composableBuilder(
+      column: $state.table.label,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get info => $state.composableBuilder(
+      column: $state.table.info,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$MadrasahsTableOrderingComposer get madrasahId {
+    final $$MadrasahsTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.madrasahId,
+        referencedTable: $state.db.madrasahs,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$MadrasahsTableOrderingComposer(ComposerState(
+                $state.db, $state.db.madrasahs, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$NamazTimesTableCreateCompanionBuilder = NamazTimesCompanion Function({
+  required String id,
+  required String title,
+  Value<String?> titleBn,
+  required String slug,
+  required String masail,
+  Value<String?> fazail,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  Value<int> rowid,
+});
+typedef $$NamazTimesTableUpdateCompanionBuilder = NamazTimesCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String?> titleBn,
+  Value<String> slug,
+  Value<String> masail,
+  Value<String?> fazail,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<int> rowid,
+});
+
+class $$NamazTimesTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $NamazTimesTable,
+    NamazTime,
+    $$NamazTimesTableFilterComposer,
+    $$NamazTimesTableOrderingComposer,
+    $$NamazTimesTableCreateCompanionBuilder,
+    $$NamazTimesTableUpdateCompanionBuilder> {
+  $$NamazTimesTableTableManager(_$LocalResourceAPI db, $NamazTimesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$NamazTimesTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$NamazTimesTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String?> titleBn = const Value.absent(),
+            Value<String> slug = const Value.absent(),
+            Value<String> masail = const Value.absent(),
+            Value<String?> fazail = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              NamazTimesCompanion(
+            id: id,
+            title: title,
+            titleBn: titleBn,
+            slug: slug,
+            masail: masail,
+            fazail: fazail,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            Value<String?> titleBn = const Value.absent(),
+            required String slug,
+            required String masail,
+            Value<String?> fazail = const Value.absent(),
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              NamazTimesCompanion.insert(
+            id: id,
+            title: title,
+            titleBn: titleBn,
+            slug: slug,
+            masail: masail,
+            fazail: fazail,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$NamazTimesTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $NamazTimesTable> {
+  $$NamazTimesTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get titleBn => $state.composableBuilder(
+      column: $state.table.titleBn,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get slug => $state.composableBuilder(
+      column: $state.table.slug,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get masail => $state.composableBuilder(
+      column: $state.table.masail,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get fazail => $state.composableBuilder(
+      column: $state.table.fazail,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$NamazTimesTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $NamazTimesTable> {
+  $$NamazTimesTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get titleBn => $state.composableBuilder(
+      column: $state.table.titleBn,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get slug => $state.composableBuilder(
+      column: $state.table.slug,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get masail => $state.composableBuilder(
+      column: $state.table.masail,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get fazail => $state.composableBuilder(
+      column: $state.table.fazail,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$NewsTableCreateCompanionBuilder = NewsCompanion Function({
+  required String id,
+  required String title,
+  required String body,
+  Value<String?> excerpt,
+  required String language,
+  required String publishedAt,
+  required String createdAt,
+  required String updatedAt,
+  Value<int> rowid,
+});
+typedef $$NewsTableUpdateCompanionBuilder = NewsCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String> body,
+  Value<String?> excerpt,
+  Value<String> language,
+  Value<String> publishedAt,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<int> rowid,
+});
+
+class $$NewsTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $NewsTable,
+    New,
+    $$NewsTableFilterComposer,
+    $$NewsTableOrderingComposer,
+    $$NewsTableCreateCompanionBuilder,
+    $$NewsTableUpdateCompanionBuilder> {
+  $$NewsTableTableManager(_$LocalResourceAPI db, $NewsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$NewsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$NewsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> body = const Value.absent(),
+            Value<String?> excerpt = const Value.absent(),
+            Value<String> language = const Value.absent(),
+            Value<String> publishedAt = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              NewsCompanion(
+            id: id,
+            title: title,
+            body: body,
+            excerpt: excerpt,
+            language: language,
+            publishedAt: publishedAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            required String body,
+            Value<String?> excerpt = const Value.absent(),
+            required String language,
+            required String publishedAt,
+            required String createdAt,
+            required String updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              NewsCompanion.insert(
+            id: id,
+            title: title,
+            body: body,
+            excerpt: excerpt,
+            language: language,
+            publishedAt: publishedAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$NewsTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $NewsTable> {
+  $$NewsTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get body => $state.composableBuilder(
+      column: $state.table.body,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get excerpt => $state.composableBuilder(
+      column: $state.table.excerpt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get language => $state.composableBuilder(
+      column: $state.table.language,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get publishedAt => $state.composableBuilder(
+      column: $state.table.publishedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$NewsTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $NewsTable> {
+  $$NewsTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get body => $state.composableBuilder(
+      column: $state.table.body,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get excerpt => $state.composableBuilder(
+      column: $state.table.excerpt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get language => $state.composableBuilder(
+      column: $state.table.language,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get publishedAt => $state.composableBuilder(
+      column: $state.table.publishedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$PagesTableCreateCompanionBuilder = PagesCompanion Function({
+  required String id,
+  required String title,
+  required String slug,
+  required String body,
+  Value<Map<dynamic, dynamic>?> imageData,
+  required String createdAt,
+  required String updatedAt,
+  Value<int> rowid,
+});
+typedef $$PagesTableUpdateCompanionBuilder = PagesCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String> slug,
+  Value<String> body,
+  Value<Map<dynamic, dynamic>?> imageData,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<int> rowid,
+});
+
+class $$PagesTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $PagesTable,
+    Page,
+    $$PagesTableFilterComposer,
+    $$PagesTableOrderingComposer,
+    $$PagesTableCreateCompanionBuilder,
+    $$PagesTableUpdateCompanionBuilder> {
+  $$PagesTableTableManager(_$LocalResourceAPI db, $PagesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$PagesTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$PagesTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> slug = const Value.absent(),
+            Value<String> body = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> imageData = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              PagesCompanion(
+            id: id,
+            title: title,
+            slug: slug,
+            body: body,
+            imageData: imageData,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            required String slug,
+            required String body,
+            Value<Map<dynamic, dynamic>?> imageData = const Value.absent(),
+            required String createdAt,
+            required String updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              PagesCompanion.insert(
+            id: id,
+            title: title,
+            slug: slug,
+            body: body,
+            imageData: imageData,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$PagesTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $PagesTable> {
+  $$PagesTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get slug => $state.composableBuilder(
+      column: $state.table.slug,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get body => $state.composableBuilder(
+      column: $state.table.body,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnWithTypeConverterFilters<Map<dynamic, dynamic>?, Map<dynamic, dynamic>,
+          String>
+      get imageData => $state.composableBuilder(
+          column: $state.table.imageData,
+          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
+              column,
+              joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$PagesTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $PagesTable> {
+  $$PagesTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get slug => $state.composableBuilder(
+      column: $state.table.slug,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get body => $state.composableBuilder(
+      column: $state.table.body,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get imageData => $state.composableBuilder(
+      column: $state.table.imageData,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$QuranBooksTableCreateCompanionBuilder = QuranBooksCompanion Function({
+  required String id,
+  required String title,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  Value<int> rowid,
+});
+typedef $$QuranBooksTableUpdateCompanionBuilder = QuranBooksCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<int> rowid,
+});
+
+class $$QuranBooksTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $QuranBooksTable,
+    QuranBook,
+    $$QuranBooksTableFilterComposer,
+    $$QuranBooksTableOrderingComposer,
+    $$QuranBooksTableCreateCompanionBuilder,
+    $$QuranBooksTableUpdateCompanionBuilder> {
+  $$QuranBooksTableTableManager(_$LocalResourceAPI db, $QuranBooksTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$QuranBooksTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$QuranBooksTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              QuranBooksCompanion(
+            id: id,
+            title: title,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              QuranBooksCompanion.insert(
+            id: id,
+            title: title,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$QuranBooksTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $QuranBooksTable> {
+  $$QuranBooksTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter quranBookQitabsRefs(
+      ComposableFilter Function($$QuranBookQitabsTableFilterComposer f) f) {
+    final $$QuranBookQitabsTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $state.db.quranBookQitabs,
+            getReferencedColumn: (t) => t.quranBookId,
+            builder: (joinBuilder, parentComposers) =>
+                $$QuranBookQitabsTableFilterComposer(ComposerState($state.db,
+                    $state.db.quranBookQitabs, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+
+  ComposableFilter quranBookPagesRefs(
+      ComposableFilter Function($$QuranBookPagesTableFilterComposer f) f) {
+    final $$QuranBookPagesTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.quranBookPages,
+        getReferencedColumn: (t) => t.quranBookId,
+        builder: (joinBuilder, parentComposers) =>
+            $$QuranBookPagesTableFilterComposer(ComposerState($state.db,
+                $state.db.quranBookPages, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+
+  ComposableFilter quranBookParasRefs(
+      ComposableFilter Function($$QuranBookParasTableFilterComposer f) f) {
+    final $$QuranBookParasTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.quranBookParas,
+        getReferencedColumn: (t) => t.quranBookId,
+        builder: (joinBuilder, parentComposers) =>
+            $$QuranBookParasTableFilterComposer(ComposerState($state.db,
+                $state.db.quranBookParas, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$QuranBooksTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $QuranBooksTable> {
+  $$QuranBooksTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$QuranBookQitabsTableCreateCompanionBuilder = QuranBookQitabsCompanion
+    Function({
+  required String id,
+  required String title,
+  Value<String?> titleBn,
+  Value<Map<dynamic, dynamic>?> imageData,
+  Value<Map<dynamic, dynamic>?> documentData,
+  Value<bool> published,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  required String quranBookId,
+  Value<int> rowid,
+});
+typedef $$QuranBookQitabsTableUpdateCompanionBuilder = QuranBookQitabsCompanion
+    Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String?> titleBn,
+  Value<Map<dynamic, dynamic>?> imageData,
+  Value<Map<dynamic, dynamic>?> documentData,
+  Value<bool> published,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<String> quranBookId,
+  Value<int> rowid,
+});
+
+class $$QuranBookQitabsTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $QuranBookQitabsTable,
+    QuranBookQitab,
+    $$QuranBookQitabsTableFilterComposer,
+    $$QuranBookQitabsTableOrderingComposer,
+    $$QuranBookQitabsTableCreateCompanionBuilder,
+    $$QuranBookQitabsTableUpdateCompanionBuilder> {
+  $$QuranBookQitabsTableTableManager(
+      _$LocalResourceAPI db, $QuranBookQitabsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$QuranBookQitabsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$QuranBookQitabsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String?> titleBn = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> imageData = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
+            Value<bool> published = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<String> quranBookId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              QuranBookQitabsCompanion(
+            id: id,
+            title: title,
+            titleBn: titleBn,
+            imageData: imageData,
+            documentData: documentData,
+            published: published,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            quranBookId: quranBookId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            Value<String?> titleBn = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> imageData = const Value.absent(),
+            Value<Map<dynamic, dynamic>?> documentData = const Value.absent(),
+            Value<bool> published = const Value.absent(),
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            required String quranBookId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              QuranBookQitabsCompanion.insert(
+            id: id,
+            title: title,
+            titleBn: titleBn,
+            imageData: imageData,
+            documentData: documentData,
+            published: published,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            quranBookId: quranBookId,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$QuranBookQitabsTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $QuranBookQitabsTable> {
+  $$QuranBookQitabsTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get titleBn => $state.composableBuilder(
+      column: $state.table.titleBn,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnWithTypeConverterFilters<Map<dynamic, dynamic>?, Map<dynamic, dynamic>,
+          String>
+      get imageData => $state.composableBuilder(
+          column: $state.table.imageData,
+          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
+              column,
+              joinBuilders: joinBuilders));
+
+  ColumnWithTypeConverterFilters<Map<dynamic, dynamic>?, Map<dynamic, dynamic>,
+          String>
+      get documentData => $state.composableBuilder(
+          column: $state.table.documentData,
+          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
+              column,
+              joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get published => $state.composableBuilder(
+      column: $state.table.published,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$QuranBooksTableFilterComposer get quranBookId {
+    final $$QuranBooksTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.quranBookId,
+        referencedTable: $state.db.quranBooks,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$QuranBooksTableFilterComposer(ComposerState($state.db,
+                $state.db.quranBooks, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$QuranBookQitabsTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $QuranBookQitabsTable> {
+  $$QuranBookQitabsTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get titleBn => $state.composableBuilder(
+      column: $state.table.titleBn,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get imageData => $state.composableBuilder(
+      column: $state.table.imageData,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get documentData => $state.composableBuilder(
+      column: $state.table.documentData,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get published => $state.composableBuilder(
+      column: $state.table.published,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$QuranBooksTableOrderingComposer get quranBookId {
+    final $$QuranBooksTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.quranBookId,
+        referencedTable: $state.db.quranBooks,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$QuranBooksTableOrderingComposer(ComposerState($state.db,
+                $state.db.quranBooks, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$QuranBookPagesTableCreateCompanionBuilder = QuranBookPagesCompanion
+    Function({
+  required String id,
+  required String title,
+  required int paraPage,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  required String quranBookId,
+  required String paraId,
+  Value<int> rowid,
+});
+typedef $$QuranBookPagesTableUpdateCompanionBuilder = QuranBookPagesCompanion
+    Function({
+  Value<String> id,
+  Value<String> title,
+  Value<int> paraPage,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<String> quranBookId,
+  Value<String> paraId,
+  Value<int> rowid,
+});
+
+class $$QuranBookPagesTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $QuranBookPagesTable,
+    QuranBookPage,
+    $$QuranBookPagesTableFilterComposer,
+    $$QuranBookPagesTableOrderingComposer,
+    $$QuranBookPagesTableCreateCompanionBuilder,
+    $$QuranBookPagesTableUpdateCompanionBuilder> {
+  $$QuranBookPagesTableTableManager(
+      _$LocalResourceAPI db, $QuranBookPagesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$QuranBookPagesTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$QuranBookPagesTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<int> paraPage = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<String> quranBookId = const Value.absent(),
+            Value<String> paraId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              QuranBookPagesCompanion(
+            id: id,
+            title: title,
+            paraPage: paraPage,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            quranBookId: quranBookId,
+            paraId: paraId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String title,
+            required int paraPage,
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            required String quranBookId,
+            required String paraId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              QuranBookPagesCompanion.insert(
+            id: id,
+            title: title,
+            paraPage: paraPage,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            quranBookId: quranBookId,
+            paraId: paraId,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$QuranBookPagesTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $QuranBookPagesTable> {
+  $$QuranBookPagesTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get paraPage => $state.composableBuilder(
+      column: $state.table.paraPage,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$QuranBooksTableFilterComposer get quranBookId {
+    final $$QuranBooksTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.quranBookId,
+        referencedTable: $state.db.quranBooks,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$QuranBooksTableFilterComposer(ComposerState($state.db,
+                $state.db.quranBooks, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$ParasTableFilterComposer get paraId {
+    final $$ParasTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.paraId,
+        referencedTable: $state.db.paras,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$ParasTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.paras, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  ComposableFilter quranBookSurahsRefs(
+      ComposableFilter Function($$QuranBookSurahsTableFilterComposer f) f) {
+    final $$QuranBookSurahsTableFilterComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $state.db.quranBookSurahs,
+            getReferencedColumn: (t) => t.quranBookPageId,
+            builder: (joinBuilder, parentComposers) =>
+                $$QuranBookSurahsTableFilterComposer(ComposerState($state.db,
+                    $state.db.quranBookSurahs, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$QuranBookPagesTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $QuranBookPagesTable> {
+  $$QuranBookPagesTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get paraPage => $state.composableBuilder(
+      column: $state.table.paraPage,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$QuranBooksTableOrderingComposer get quranBookId {
+    final $$QuranBooksTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.quranBookId,
+        referencedTable: $state.db.quranBooks,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$QuranBooksTableOrderingComposer(ComposerState($state.db,
+                $state.db.quranBooks, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$ParasTableOrderingComposer get paraId {
+    final $$ParasTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.paraId,
+        referencedTable: $state.db.paras,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$ParasTableOrderingComposer(
+            ComposerState(
+                $state.db, $state.db.paras, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$QuranBookSurahsTableCreateCompanionBuilder = QuranBookSurahsCompanion
+    Function({
+  required String id,
+  required int startAyah,
+  required int endAyah,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  required String quranBookPageId,
+  required String surahId,
+  Value<int> rowid,
+});
+typedef $$QuranBookSurahsTableUpdateCompanionBuilder = QuranBookSurahsCompanion
+    Function({
+  Value<String> id,
+  Value<int> startAyah,
+  Value<int> endAyah,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<String> quranBookPageId,
+  Value<String> surahId,
+  Value<int> rowid,
+});
+
+class $$QuranBookSurahsTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $QuranBookSurahsTable,
+    QuranBookSurah,
+    $$QuranBookSurahsTableFilterComposer,
+    $$QuranBookSurahsTableOrderingComposer,
+    $$QuranBookSurahsTableCreateCompanionBuilder,
+    $$QuranBookSurahsTableUpdateCompanionBuilder> {
+  $$QuranBookSurahsTableTableManager(
+      _$LocalResourceAPI db, $QuranBookSurahsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$QuranBookSurahsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$QuranBookSurahsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<int> startAyah = const Value.absent(),
+            Value<int> endAyah = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<String> quranBookPageId = const Value.absent(),
+            Value<String> surahId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              QuranBookSurahsCompanion(
+            id: id,
+            startAyah: startAyah,
+            endAyah: endAyah,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            quranBookPageId: quranBookPageId,
+            surahId: surahId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required int startAyah,
+            required int endAyah,
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            required String quranBookPageId,
+            required String surahId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              QuranBookSurahsCompanion.insert(
+            id: id,
+            startAyah: startAyah,
+            endAyah: endAyah,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            quranBookPageId: quranBookPageId,
+            surahId: surahId,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$QuranBookSurahsTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $QuranBookSurahsTable> {
+  $$QuranBookSurahsTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get startAyah => $state.composableBuilder(
+      column: $state.table.startAyah,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get endAyah => $state.composableBuilder(
+      column: $state.table.endAyah,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$QuranBookPagesTableFilterComposer get quranBookPageId {
+    final $$QuranBookPagesTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.quranBookPageId,
+        referencedTable: $state.db.quranBookPages,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$QuranBookPagesTableFilterComposer(ComposerState($state.db,
+                $state.db.quranBookPages, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$SurahsTableFilterComposer get surahId {
+    final $$SurahsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.surahId,
+        referencedTable: $state.db.surahs,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$SurahsTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.surahs, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$QuranBookSurahsTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $QuranBookSurahsTable> {
+  $$QuranBookSurahsTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get startAyah => $state.composableBuilder(
+      column: $state.table.startAyah,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get endAyah => $state.composableBuilder(
+      column: $state.table.endAyah,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$QuranBookPagesTableOrderingComposer get quranBookPageId {
+    final $$QuranBookPagesTableOrderingComposer composer =
+        $state.composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.quranBookPageId,
+            referencedTable: $state.db.quranBookPages,
+            getReferencedColumn: (t) => t.id,
+            builder: (joinBuilder, parentComposers) =>
+                $$QuranBookPagesTableOrderingComposer(ComposerState($state.db,
+                    $state.db.quranBookPages, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$SurahsTableOrderingComposer get surahId {
+    final $$SurahsTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.surahId,
+        referencedTable: $state.db.surahs,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$SurahsTableOrderingComposer(ComposerState(
+                $state.db, $state.db.surahs, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$QuranBookParasTableCreateCompanionBuilder = QuranBookParasCompanion
+    Function({
+  required String id,
+  required int totalPage,
+  required int position,
+  required String createdAt,
+  required String updatedAt,
+  required String quranBookId,
+  required String paraId,
+  Value<int> rowid,
+});
+typedef $$QuranBookParasTableUpdateCompanionBuilder = QuranBookParasCompanion
+    Function({
+  Value<String> id,
+  Value<int> totalPage,
+  Value<int> position,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<String> quranBookId,
+  Value<String> paraId,
+  Value<int> rowid,
+});
+
+class $$QuranBookParasTableTableManager extends RootTableManager<
+    _$LocalResourceAPI,
+    $QuranBookParasTable,
+    QuranBookPara,
+    $$QuranBookParasTableFilterComposer,
+    $$QuranBookParasTableOrderingComposer,
+    $$QuranBookParasTableCreateCompanionBuilder,
+    $$QuranBookParasTableUpdateCompanionBuilder> {
+  $$QuranBookParasTableTableManager(
+      _$LocalResourceAPI db, $QuranBookParasTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$QuranBookParasTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$QuranBookParasTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<int> totalPage = const Value.absent(),
+            Value<int> position = const Value.absent(),
+            Value<String> createdAt = const Value.absent(),
+            Value<String> updatedAt = const Value.absent(),
+            Value<String> quranBookId = const Value.absent(),
+            Value<String> paraId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              QuranBookParasCompanion(
+            id: id,
+            totalPage: totalPage,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            quranBookId: quranBookId,
+            paraId: paraId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required int totalPage,
+            required int position,
+            required String createdAt,
+            required String updatedAt,
+            required String quranBookId,
+            required String paraId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              QuranBookParasCompanion.insert(
+            id: id,
+            totalPage: totalPage,
+            position: position,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            quranBookId: quranBookId,
+            paraId: paraId,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$QuranBookParasTableFilterComposer
+    extends FilterComposer<_$LocalResourceAPI, $QuranBookParasTable> {
+  $$QuranBookParasTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get totalPage => $state.composableBuilder(
+      column: $state.table.totalPage,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$QuranBooksTableFilterComposer get quranBookId {
+    final $$QuranBooksTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.quranBookId,
+        referencedTable: $state.db.quranBooks,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$QuranBooksTableFilterComposer(ComposerState($state.db,
+                $state.db.quranBooks, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$ParasTableFilterComposer get paraId {
+    final $$ParasTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.paraId,
+        referencedTable: $state.db.paras,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$ParasTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.paras, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$QuranBookParasTableOrderingComposer
+    extends OrderingComposer<_$LocalResourceAPI, $QuranBookParasTable> {
+  $$QuranBookParasTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get totalPage => $state.composableBuilder(
+      column: $state.table.totalPage,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get position => $state.composableBuilder(
+      column: $state.table.position,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get updatedAt => $state.composableBuilder(
+      column: $state.table.updatedAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$QuranBooksTableOrderingComposer get quranBookId {
+    final $$QuranBooksTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.quranBookId,
+        referencedTable: $state.db.quranBooks,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$QuranBooksTableOrderingComposer(ComposerState($state.db,
+                $state.db.quranBooks, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$ParasTableOrderingComposer get paraId {
+    final $$ParasTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.paraId,
+        referencedTable: $state.db.paras,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$ParasTableOrderingComposer(
+            ComposerState(
+                $state.db, $state.db.paras, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $LocalResourceAPIManager {
+  final _$LocalResourceAPI _db;
+  $LocalResourceAPIManager(this._db);
+  $$SurahsTableTableManager get surahs =>
+      $$SurahsTableTableManager(_db, _db.surahs);
+  $$ParasTableTableManager get paras =>
+      $$ParasTableTableManager(_db, _db.paras);
+  $$AyahsTableTableManager get ayahs =>
+      $$AyahsTableTableManager(_db, _db.ayahs);
+  $$AyahTranslationsTableTableManager get ayahTranslations =>
+      $$AyahTranslationsTableTableManager(_db, _db.ayahTranslations);
+  $$QarisTableTableManager get qaris =>
+      $$QarisTableTableManager(_db, _db.qaris);
+  $$TafseerQitabsTableTableManager get tafseerQitabs =>
+      $$TafseerQitabsTableTableManager(_db, _db.tafseerQitabs);
+  $$TafseersTableTableManager get tafseers =>
+      $$TafseersTableTableManager(_db, _db.tafseers);
+  $$BooksTableTableManager get books =>
+      $$BooksTableTableManager(_db, _db.books);
+  $$ChaptersTableTableManager get chapters =>
+      $$ChaptersTableTableManager(_db, _db.chapters);
+  $$SubchaptersTableTableManager get subchapters =>
+      $$SubchaptersTableTableManager(_db, _db.subchapters);
+  $$AuthorsTableTableManager get authors =>
+      $$AuthorsTableTableManager(_db, _db.authors);
+  $$BooksAuthorsTableTableManager get booksAuthors =>
+      $$BooksAuthorsTableTableManager(_db, _db.booksAuthors);
+  $$SpeakersTableTableManager get speakers =>
+      $$SpeakersTableTableManager(_db, _db.speakers);
+  $$BayansTableTableManager get bayans =>
+      $$BayansTableTableManager(_db, _db.bayans);
+  $$MalfuzatAuthorsTableTableManager get malfuzatAuthors =>
+      $$MalfuzatAuthorsTableTableManager(_db, _db.malfuzatAuthors);
+  $$MalfuzatsTableTableManager get malfuzats =>
+      $$MalfuzatsTableTableManager(_db, _db.malfuzats);
+  $$MasailAuthorsTableTableManager get masailAuthors =>
+      $$MasailAuthorsTableTableManager(_db, _db.masailAuthors);
+  $$MasailsTableTableManager get masails =>
+      $$MasailsTableTableManager(_db, _db.masails);
+  $$DuaCategoriesTableTableManager get duaCategories =>
+      $$DuaCategoriesTableTableManager(_db, _db.duaCategories);
+  $$DuasTableTableManager get duas => $$DuasTableTableManager(_db, _db.duas);
+  $$DuaCategorizationsTableTableManager get duaCategorizations =>
+      $$DuaCategorizationsTableTableManager(_db, _db.duaCategorizations);
+  $$ArticleAuthorsTableTableManager get articleAuthors =>
+      $$ArticleAuthorsTableTableManager(_db, _db.articleAuthors);
+  $$ArticlesTableTableManager get articles =>
+      $$ArticlesTableTableManager(_db, _db.articles);
+  $$MadrasahsTableTableManager get madrasahs =>
+      $$MadrasahsTableTableManager(_db, _db.madrasahs);
+  $$MadrasahInfosTableTableManager get madrasahInfos =>
+      $$MadrasahInfosTableTableManager(_db, _db.madrasahInfos);
+  $$NamazTimesTableTableManager get namazTimes =>
+      $$NamazTimesTableTableManager(_db, _db.namazTimes);
+  $$NewsTableTableManager get news => $$NewsTableTableManager(_db, _db.news);
+  $$PagesTableTableManager get pages =>
+      $$PagesTableTableManager(_db, _db.pages);
+  $$QuranBooksTableTableManager get quranBooks =>
+      $$QuranBooksTableTableManager(_db, _db.quranBooks);
+  $$QuranBookQitabsTableTableManager get quranBookQitabs =>
+      $$QuranBookQitabsTableTableManager(_db, _db.quranBookQitabs);
+  $$QuranBookPagesTableTableManager get quranBookPages =>
+      $$QuranBookPagesTableTableManager(_db, _db.quranBookPages);
+  $$QuranBookSurahsTableTableManager get quranBookSurahs =>
+      $$QuranBookSurahsTableTableManager(_db, _db.quranBookSurahs);
+  $$QuranBookParasTableTableManager get quranBookParas =>
+      $$QuranBookParasTableTableManager(_db, _db.quranBookParas);
 }

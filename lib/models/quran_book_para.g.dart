@@ -96,8 +96,8 @@ extension QuranBookParaRelationshipGraphNodeX
 QuranBookPara _$QuranBookParaFromJson(Map<String, dynamic> json) =>
     QuranBookPara(
       id: json['id'] as String?,
-      totalPage: json['total-page'] as int,
-      position: json['position'] as int?,
+      totalPage: (json['total-page'] as num).toInt(),
+      position: (json['position'] as num?)?.toInt(),
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
       quranBook: json['quran-book'] == null

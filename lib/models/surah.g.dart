@@ -84,10 +84,10 @@ Surah _$SurahFromJson(Map<String, dynamic> json) => Surah(
       slug: json['slug'] as String,
       introduction: json['introduction'] as String?,
       excerpt: json['excerpt'] as String?,
-      totalAyat: json['total-ayat'] as int,
-      totalRuku: json['total-ruku'] as int,
+      totalAyat: (json['total-ayat'] as num).toInt(),
+      totalRuku: (json['total-ruku'] as num).toInt(),
       location: json['location'] as String?,
-      position: json['position'] as int?,
+      position: (json['position'] as num?)?.toInt(),
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
       ayahs: json['ayahs'] == null

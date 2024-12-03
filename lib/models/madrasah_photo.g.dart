@@ -81,7 +81,7 @@ MadrasahPhoto _$MadrasahPhotoFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String?,
       title: json['title'] as String?,
       image: json['image'] as Map<dynamic, dynamic>?,
-      position: json['position'] as int?,
+      position: (json['position'] as num?)?.toInt(),
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
       madrasah: json['madrasah'] == null

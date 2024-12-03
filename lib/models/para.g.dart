@@ -67,9 +67,9 @@ Para _$ParaFromJson(Map<String, dynamic> json) => Para(
       titleBn: json['title-bn'] as String,
       searchTitle: json['search-title'] as String?,
       slug: json['slug'] as String,
-      totalAyat: json['total-ayat'] as int,
-      totalRuku: json['total-ruku'] as int,
-      position: json['position'] as int?,
+      totalAyat: (json['total-ayat'] as num).toInt(),
+      totalRuku: (json['total-ruku'] as num).toInt(),
+      position: (json['position'] as num?)?.toInt(),
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
     );

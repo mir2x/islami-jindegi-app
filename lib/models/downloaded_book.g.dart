@@ -106,7 +106,7 @@ const DownloadedBookSchema = CollectionSchema(
   getId: _downloadedBookGetId,
   getLinks: _downloadedBookGetLinks,
   attach: _downloadedBookAttach,
-  version: '3.1.0+1',
+  version: '3.1.8',
 );
 
 int _downloadedBookEstimateSize(

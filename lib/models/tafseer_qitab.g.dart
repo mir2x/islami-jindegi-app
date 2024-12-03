@@ -69,7 +69,7 @@ TafseerQitab _$TafseerQitabFromJson(Map<String, dynamic> json) => TafseerQitab(
       id: json['id'] as String?,
       title: json['title'] as String,
       author: json['author'] as String,
-      position: json['position'] as int?,
+      position: (json['position'] as num?)?.toInt(),
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
     );

@@ -84,7 +84,7 @@ MadrasahInfo _$MadrasahInfoFromJson(Map<String, dynamic> json) => MadrasahInfo(
       id: json['id'] as String?,
       label: json['label'] as String,
       info: json['info'] as String,
-      position: json['position'] as int?,
+      position: (json['position'] as num?)?.toInt(),
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
       madrasah: json['madrasah'] == null

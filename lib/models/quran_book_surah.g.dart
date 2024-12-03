@@ -96,9 +96,9 @@ extension QuranBookSurahRelationshipGraphNodeX
 QuranBookSurah _$QuranBookSurahFromJson(Map<String, dynamic> json) =>
     QuranBookSurah(
       id: json['id'] as String?,
-      startAyah: json['start-ayah'] as int,
-      endAyah: json['end-ayah'] as int,
-      position: json['position'] as int?,
+      startAyah: (json['start-ayah'] as num).toInt(),
+      endAyah: (json['end-ayah'] as num).toInt(),
+      position: (json['position'] as num?)?.toInt(),
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
       quranBookPage: json['quran-book-page'] == null

@@ -91,7 +91,7 @@ const AyahBookmarkSchema = CollectionSchema(
   getId: _ayahBookmarkGetId,
   getLinks: _ayahBookmarkGetLinks,
   attach: _ayahBookmarkAttach,
-  version: '3.1.0+1',
+  version: '3.1.8',
 );
 
 int _ayahBookmarkEstimateSize(

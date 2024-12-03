@@ -84,7 +84,7 @@ Bayan _$BayanFromJson(Map<String, dynamic> json) => Bayan(
       audio: json['audio'] as Map<dynamic, dynamic>?,
       published: json['published'] as bool?,
       publishedAt: json['published-at'] as String,
-      position: json['position'] as int?,
+      position: (json['position'] as num?)?.toInt(),
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
       speaker: json['speaker'] == null

@@ -69,7 +69,7 @@ NamazTime _$NamazTimeFromJson(Map<String, dynamic> json) => NamazTime(
       slug: json['slug'] as String,
       masail: json['masail'] as String,
       fazail: json['fazail'] as String?,
-      position: json['position'] as int?,
+      position: (json['position'] as num?)?.toInt(),
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
     );

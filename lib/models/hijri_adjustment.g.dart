@@ -66,7 +66,7 @@ HijriAdjustment _$HijriAdjustmentFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String?,
       country: json['country'] as String,
       countryCode: json['country-code'] as String,
-      adjustment: json['adjustment'] as int,
+      adjustment: (json['adjustment'] as num).toInt(),
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
     );

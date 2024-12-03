@@ -84,7 +84,7 @@ Article _$ArticleFromJson(Map<String, dynamic> json) => Article(
       excerpt: json['excerpt'] as String?,
       language: json['language'] as String,
       document: json['document'] as Map<dynamic, dynamic>?,
-      position: json['position'] as int?,
+      position: (json['position'] as num?)?.toInt(),
       published: json['published'] as bool?,
       publishedAt: json['published-at'] as String?,
       createdAt: json['created-at'] as String?,

@@ -25,16 +25,10 @@ Future initLocalNotifications() async {
   const androidSettings =
       AndroidInitializationSettings('@drawable/launcher_icon');
 
-  final DarwinInitializationSettings iOSSettings = DarwinInitializationSettings(
-    onDidReceiveLocalNotification: (_, __, ___, payload) {
-      if (payload != null) {
-        final message = RemoteMessage.fromMap(jsonDecode(payload));
-        handleMessage(message);
-      }
-    },
-  );
+  const DarwinInitializationSettings iOSSettings =
+      DarwinInitializationSettings();
 
-  final initializationSettings = InitializationSettings(
+  const initializationSettings = InitializationSettings(
     android: androidSettings,
     iOS: iOSSettings,
   );

@@ -81,7 +81,7 @@ ArticleCategory _$ArticleCategoryFromJson(Map<String, dynamic> json) =>
     ArticleCategory(
       id: json['id'] as String?,
       title: json['title'] as String,
-      position: json['position'] as int?,
+      position: (json['position'] as num?)?.toInt(),
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
       articleSubcategories: json['article-subcategories'] == null

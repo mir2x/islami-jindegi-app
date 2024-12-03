@@ -94,7 +94,7 @@ Chapter _$ChapterFromJson(Map<String, dynamic> json) => Chapter(
       id: json['id'] as String?,
       title: json['title'] as String,
       body: json['body'] as String?,
-      position: json['position'] as int?,
+      position: (json['position'] as num?)?.toInt(),
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
       book: json['book'] == null

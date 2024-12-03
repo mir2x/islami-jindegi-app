@@ -88,7 +88,7 @@ QuranBookQitab _$QuranBookQitabFromJson(Map<String, dynamic> json) =>
       image: json['image'] as Map<dynamic, dynamic>?,
       document: json['document'] as Map<dynamic, dynamic>?,
       published: json['published'] as bool,
-      position: json['position'] as int?,
+      position: (json['position'] as num?)?.toInt(),
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
       quranBook: json['quran-book'] == null

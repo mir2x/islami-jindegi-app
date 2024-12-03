@@ -66,7 +66,7 @@ Author _$AuthorFromJson(Map<String, dynamic> json) => Author(
       id: json['id'] as String?,
       name: json['name'] as String,
       info: json['info'] as String?,
-      position: json['position'] as int?,
+      position: (json['position'] as num?)?.toInt(),
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
     );

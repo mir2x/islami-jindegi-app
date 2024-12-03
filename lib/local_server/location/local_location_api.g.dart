@@ -106,6 +106,15 @@ class Country extends DataClass implements Insertable<Country> {
         nameBn: nameBn.present ? nameBn.value : this.nameBn,
         code: code ?? this.code,
       );
+  Country copyWithCompanion(CountriesCompanion data) {
+    return Country(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      nameBn: data.nameBn.present ? data.nameBn.value : this.nameBn,
+      code: data.code.present ? data.code.value : this.code,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Country(')
@@ -363,6 +372,19 @@ class City extends DataClass implements Insertable<City> {
         longitude: longitude ?? this.longitude,
         timezone: timezone.present ? timezone.value : this.timezone,
       );
+  City copyWithCompanion(CitiesCompanion data) {
+    return City(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      nameBn: data.nameBn.present ? data.nameBn.value : this.nameBn,
+      countryCode:
+          data.countryCode.present ? data.countryCode.value : this.countryCode,
+      latitude: data.latitude.present ? data.latitude.value : this.latitude,
+      longitude: data.longitude.present ? data.longitude.value : this.longitude,
+      timezone: data.timezone.present ? data.timezone.value : this.timezone,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('City(')
@@ -517,6 +539,7 @@ class CitiesCompanion extends UpdateCompanion<City> {
 
 abstract class _$LocalLocationAPI extends GeneratedDatabase {
   _$LocalLocationAPI(QueryExecutor e) : super(e);
+  $LocalLocationAPIManager get managers => $LocalLocationAPIManager(this);
   late final $CountriesTable countries = $CountriesTable(this);
   late final $CitiesTable cities = $CitiesTable(this);
   @override
@@ -527,4 +550,281 @@ abstract class _$LocalLocationAPI extends GeneratedDatabase {
   @override
   DriftDatabaseOptions get options =>
       const DriftDatabaseOptions(storeDateTimeAsText: true);
+}
+
+typedef $$CountriesTableCreateCompanionBuilder = CountriesCompanion Function({
+  required String id,
+  required String name,
+  Value<String?> nameBn,
+  required String code,
+  Value<int> rowid,
+});
+typedef $$CountriesTableUpdateCompanionBuilder = CountriesCompanion Function({
+  Value<String> id,
+  Value<String> name,
+  Value<String?> nameBn,
+  Value<String> code,
+  Value<int> rowid,
+});
+
+class $$CountriesTableTableManager extends RootTableManager<
+    _$LocalLocationAPI,
+    $CountriesTable,
+    Country,
+    $$CountriesTableFilterComposer,
+    $$CountriesTableOrderingComposer,
+    $$CountriesTableCreateCompanionBuilder,
+    $$CountriesTableUpdateCompanionBuilder> {
+  $$CountriesTableTableManager(_$LocalLocationAPI db, $CountriesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$CountriesTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$CountriesTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String?> nameBn = const Value.absent(),
+            Value<String> code = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              CountriesCompanion(
+            id: id,
+            name: name,
+            nameBn: nameBn,
+            code: code,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String name,
+            Value<String?> nameBn = const Value.absent(),
+            required String code,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              CountriesCompanion.insert(
+            id: id,
+            name: name,
+            nameBn: nameBn,
+            code: code,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$CountriesTableFilterComposer
+    extends FilterComposer<_$LocalLocationAPI, $CountriesTable> {
+  $$CountriesTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get nameBn => $state.composableBuilder(
+      column: $state.table.nameBn,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get code => $state.composableBuilder(
+      column: $state.table.code,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$CountriesTableOrderingComposer
+    extends OrderingComposer<_$LocalLocationAPI, $CountriesTable> {
+  $$CountriesTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get nameBn => $state.composableBuilder(
+      column: $state.table.nameBn,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get code => $state.composableBuilder(
+      column: $state.table.code,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$CitiesTableCreateCompanionBuilder = CitiesCompanion Function({
+  required String id,
+  required String name,
+  Value<String?> nameBn,
+  required String countryCode,
+  required double latitude,
+  required double longitude,
+  Value<String?> timezone,
+  Value<int> rowid,
+});
+typedef $$CitiesTableUpdateCompanionBuilder = CitiesCompanion Function({
+  Value<String> id,
+  Value<String> name,
+  Value<String?> nameBn,
+  Value<String> countryCode,
+  Value<double> latitude,
+  Value<double> longitude,
+  Value<String?> timezone,
+  Value<int> rowid,
+});
+
+class $$CitiesTableTableManager extends RootTableManager<
+    _$LocalLocationAPI,
+    $CitiesTable,
+    City,
+    $$CitiesTableFilterComposer,
+    $$CitiesTableOrderingComposer,
+    $$CitiesTableCreateCompanionBuilder,
+    $$CitiesTableUpdateCompanionBuilder> {
+  $$CitiesTableTableManager(_$LocalLocationAPI db, $CitiesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$CitiesTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$CitiesTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String?> nameBn = const Value.absent(),
+            Value<String> countryCode = const Value.absent(),
+            Value<double> latitude = const Value.absent(),
+            Value<double> longitude = const Value.absent(),
+            Value<String?> timezone = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              CitiesCompanion(
+            id: id,
+            name: name,
+            nameBn: nameBn,
+            countryCode: countryCode,
+            latitude: latitude,
+            longitude: longitude,
+            timezone: timezone,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String name,
+            Value<String?> nameBn = const Value.absent(),
+            required String countryCode,
+            required double latitude,
+            required double longitude,
+            Value<String?> timezone = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              CitiesCompanion.insert(
+            id: id,
+            name: name,
+            nameBn: nameBn,
+            countryCode: countryCode,
+            latitude: latitude,
+            longitude: longitude,
+            timezone: timezone,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$CitiesTableFilterComposer
+    extends FilterComposer<_$LocalLocationAPI, $CitiesTable> {
+  $$CitiesTableFilterComposer(super.$state);
+  ColumnFilters<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get nameBn => $state.composableBuilder(
+      column: $state.table.nameBn,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get countryCode => $state.composableBuilder(
+      column: $state.table.countryCode,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get latitude => $state.composableBuilder(
+      column: $state.table.latitude,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get longitude => $state.composableBuilder(
+      column: $state.table.longitude,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get timezone => $state.composableBuilder(
+      column: $state.table.timezone,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$CitiesTableOrderingComposer
+    extends OrderingComposer<_$LocalLocationAPI, $CitiesTable> {
+  $$CitiesTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get nameBn => $state.composableBuilder(
+      column: $state.table.nameBn,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get countryCode => $state.composableBuilder(
+      column: $state.table.countryCode,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get latitude => $state.composableBuilder(
+      column: $state.table.latitude,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get longitude => $state.composableBuilder(
+      column: $state.table.longitude,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get timezone => $state.composableBuilder(
+      column: $state.table.timezone,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+class $LocalLocationAPIManager {
+  final _$LocalLocationAPI _db;
+  $LocalLocationAPIManager(this._db);
+  $$CountriesTableTableManager get countries =>
+      $$CountriesTableTableManager(_db, _db.countries);
+  $$CitiesTableTableManager get cities =>
+      $$CitiesTableTableManager(_db, _db.cities);
 }

@@ -97,8 +97,8 @@ QuranBookPage _$QuranBookPageFromJson(Map<String, dynamic> json) =>
     QuranBookPage(
       id: json['id'] as String?,
       title: json['title'] as String,
-      paraPage: json['para-page'] as int,
-      position: json['position'] as int?,
+      paraPage: (json['para-page'] as num).toInt(),
+      position: (json['position'] as num?)?.toInt(),
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
       quranBook: json['quran-book'] == null
