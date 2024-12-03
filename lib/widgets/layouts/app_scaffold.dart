@@ -31,7 +31,7 @@ class AppScaffold extends ConsumerWidget {
     this.tabletBodyPadding = true,
   });
 
-  final Text title;
+  final Widget title;
   final Widget body;
   final Widget? drawer;
   final Widget? bottomBar;
