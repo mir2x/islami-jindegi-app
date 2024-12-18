@@ -72,12 +72,19 @@ class AppScaffold extends ConsumerWidget {
                     leading: Padding(
                       padding: const EdgeInsets.only(left: 15),
                       child: isHome
-                          ? SvgPicture.asset(
-                              'assets/images/logos/logo.svg',
-                              fit: BoxFit.scaleDown,
-                              width: 35,
-                              height: 35,
-                            )
+                          ? theme == 'light'
+                              ? SvgPicture.asset(
+                                  'assets/images/logos/logo-dark.svg',
+                                  fit: BoxFit.scaleDown,
+                                  width: 43,
+                                  height: 35,
+                                )
+                              : SvgPicture.asset(
+                                  'assets/images/logos/logo-light.svg',
+                                  fit: BoxFit.scaleDown,
+                                  width: 43,
+                                  height: 35,
+                                )
                           : IconButton(
                               icon: const Icon(Icons.arrow_back),
                               onPressed: () async {
