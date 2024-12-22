@@ -37,14 +37,14 @@ class Home extends StatelessWidget {
               ? SvgPicture.asset(
                   'assets/images/logos/brand-name-dark.svg',
                   fit: BoxFit.scaleDown,
-                  width: 130,
-                  height: 22,
+                  width: 150,
+                  height: 25,
                 )
               : SvgPicture.asset(
                   'assets/images/logos/brand-name-light.svg',
                   fit: BoxFit.scaleDown,
-                  width: 130,
-                  height: 22,
+                  width: 150,
+                  height: 25,
                 ),
           body: SingleChildScrollView(
             child: Column(
