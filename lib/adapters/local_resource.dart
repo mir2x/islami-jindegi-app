@@ -28,8 +28,10 @@ mixin LocalResourceAdapter<T extends DataModel<T>> on RemoteAdapter<T> {
         params.containsKey('quantity') &&
         params['quantity'] == 1;
 
-    bool hasNoConnection =
-        await Connectivity().checkConnectivity() == ConnectivityResult.none;
+    final List<ConnectivityResult> connectivityResult =
+        await (Connectivity().checkConnectivity());
+
+    bool hasNoConnection = connectivityResult.contains(ConnectivityResult.none);
 
     if (localFirst || onlyLocal || hasOneItem || hasNoConnection) {
       final localResource = ref.read(localResourceProvider);

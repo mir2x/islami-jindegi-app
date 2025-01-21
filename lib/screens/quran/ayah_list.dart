@@ -447,9 +447,11 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
                         String audioPath =
                             '${widget.qari}/${widget.chapter.position}/${selectedAyah.surahPosition}.mp3';
 
-                        bool hasNoConnection =
-                            await Connectivity().checkConnectivity() ==
-                                ConnectivityResult.none;
+                        final List<ConnectivityResult> connectivityResult =
+                            await (Connectivity().checkConnectivity());
+
+                        bool hasNoConnection = connectivityResult
+                            .contains(ConnectivityResult.none);
 
                         var localFile = await ref.watch(
                           localFileProvider('al-quran/qirats/$audioPath')

@@ -23,7 +23,7 @@ final bismillahPlayerProvider =
   if (nextLocalFile == null) {
     var connectivityResult = await ref.watch(connectivityResultProvider.future);
 
-    if (connectivityResult != ConnectivityResult.none) {
+    if (!connectivityResult.contains(ConnectivityResult.none)) {
       var params = DownloadParams(
         url: nextFileUrl,
         savePath: nextFilePath,

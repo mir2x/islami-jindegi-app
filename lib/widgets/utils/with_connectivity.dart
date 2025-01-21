@@ -19,7 +19,8 @@ class WithConnectivity extends ConsumerWidget {
       loading: () => const CircularProgressIndicator(),
       error: (error, stackTrace) => Text(error.toString()),
       data: (connectivityResult) {
-        return builder(context, connectivityResult != ConnectivityResult.none);
+        return builder(
+            context, !connectivityResult.contains(ConnectivityResult.none));
       },
     );
   }

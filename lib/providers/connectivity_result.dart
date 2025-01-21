@@ -1,12 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-class ConnectivityResultNotifier extends AsyncNotifier<ConnectivityResult> {
+class ConnectivityResultNotifier
+    extends AsyncNotifier<List<ConnectivityResult>> {
   @override
-  Future<ConnectivityResult> build() async {
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      if (result == ConnectivityResult.none ||
-          state.value == ConnectivityResult.none) {
+  Future<List<ConnectivityResult>> build() async {
+    Connectivity()
+        .onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      var current = state.value;
+
+      if (result.contains(ConnectivityResult.none) ||
+          (current != null && current.contains(ConnectivityResult.none))) {
         state = AsyncValue.data(result);
       }
     });
@@ -17,6 +22,7 @@ class ConnectivityResultNotifier extends AsyncNotifier<ConnectivityResult> {
 }
 
 final connectivityResultProvider =
-    AsyncNotifierProvider<ConnectivityResultNotifier, ConnectivityResult>(() {
+    AsyncNotifierProvider<ConnectivityResultNotifier, List<ConnectivityResult>>(
+        () {
   return ConnectivityResultNotifier();
 });

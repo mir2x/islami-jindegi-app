@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:smooth_compass/utils/src/compass_ui.dart';
+import 'package:smooth_compass_plus/utils/src/compass_ui.dart';
 import 'package:adhan/adhan.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
@@ -45,7 +45,7 @@ class Qiblah extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const CurrentLocation(alignment: MainAxisAlignment.center),
-                SmoothCompass(
+                SmoothCompassWidget(
                   compassBuilder: (context, snapshot, child) {
                     return SizedBox(
                       height: compassSize,

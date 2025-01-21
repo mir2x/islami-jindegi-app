@@ -30,7 +30,7 @@ final audioPlayerProvider =
   } else {
     final connectivityResult = await Connectivity().checkConnectivity();
 
-    if (connectivityResult != ConnectivityResult.none) {
+    if (!connectivityResult.contains(ConnectivityResult.none)) {
       String url = fileSrcUrl({
         'id': audioResource.id,
         'storage': audioResource.storage,
