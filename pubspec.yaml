@@ -203,6 +203,7 @@ flutter:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
+  remove_alpha_ios: true
   image_path: assets/images/logos/logo-icon.png
 
 flutter_native_splash:
