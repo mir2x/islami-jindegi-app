@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:pdfrx/pdfrx.dart';
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/providers/local_file.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
@@ -129,11 +130,21 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
                               documentSize: Size(width, height),
                             );
                           },
-                          onPageChanged: (page) async {
-                            await widget.preferences.setInt(
-                              'pdfResource-${widget.bookId}',
-                              page,
-                            );
+                          onPageChanged: (page) {
+                            if (page == null) {
+                              return;
+                            }
+
+                            EasyDebounce.debounce(
+                                'book-page', const Duration(milliseconds: 500),
+                                () async {
+                              await widget.preferences.setInt(
+                                'pdfResource-${widget.bookId}',
+                                page,
+                              );
+
+                              pdfController.goToPage(pageNumber: page);
+                            });
                           },
                           onViewSizeChanged: (_, __, controller) {
                             if (controller.pageNumber != null) {

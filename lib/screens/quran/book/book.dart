@@ -339,6 +339,8 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                       EasyDebounce.debounce(
                           'quran-page', const Duration(milliseconds: 500),
                           () async {
+                        pdfController.goToPage(pageNumber: page);
+
                         var scaffoldMessenger = ScaffoldMessenger.of(context);
 
                         var query = AllModelsQuery(
