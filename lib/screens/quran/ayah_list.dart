@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import 'package:just_audio/just_audio.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:easy_debounce/easy_debounce.dart';
@@ -381,6 +382,8 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
 
   @override
   Widget build(BuildContext context) {
+    String currentLang = Localizations.localeOf(context).languageCode;
+    var numFormatter = NumberFormat('#', currentLang);
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     String theme = widget.preferences.getString('theme') ?? 'classic';
@@ -505,7 +508,7 @@ class _ReadingModeAyahListState extends ConsumerState<ReadingModeAyahList> {
                   horizontal: 6,
                 ),
                 child: Text(
-                  marks[index].toString(),
+                  numFormatter.format(marks[index]),
                   style: textTheme.labelSmall?.copyWith(
                     fontSize: 10,
                   ),
