@@ -96,6 +96,7 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
                         initialPageNumber: initalPage,
                         params: PdfViewerParams(
                           margin: 0,
+                          panAxis: PanAxis.aligned,
                           layoutPages: (pages, params) {
                             final pageCount = pages.length;
                             double height;

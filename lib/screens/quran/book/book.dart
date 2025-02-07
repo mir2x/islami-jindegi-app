@@ -297,6 +297,7 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                   initialPageNumber: initalPage,
                   params: PdfViewerParams(
                     margin: 0,
+                    panAxis: PanAxis.aligned,
                     layoutPages: (pages, params) {
                       final pageCount = pages.length;
                       double height;
