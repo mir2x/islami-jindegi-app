@@ -147,6 +147,49 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
                               pdfController.goToPage(pageNumber: page);
                             });
                           },
+                          onInteractionUpdate: (gesture) {
+                            EasyDebounce.debounce('page-interaction',
+                                const Duration(milliseconds: 500), () {
+                              if (pdfController.pageNumber != null) {
+                                int page = pdfController.pageNumber!;
+
+                                double calcIntersectionArea() {
+                                  final rect = pdfController
+                                      .layout.pageLayouts[page - 1];
+                                  final intersection =
+                                      rect.intersect(pdfController.visibleRect);
+                                  if (intersection.isEmpty) return 0;
+                                  final area =
+                                      intersection.width * intersection.height;
+                                  return area / (rect.width * rect.height);
+                                }
+
+                                final delta = gesture.focalPointDelta;
+                                final ratio = calcIntersectionArea();
+                                final threshold = widget.landscape ? 0.36 : 0.9;
+
+                                if (ratio > threshold) {
+                                  if (widget.landscape) {
+                                    if ((delta.dx / delta.dy).abs() >= 1) {
+                                      pdfController.goToPage(pageNumber: page);
+                                    }
+                                  } else {
+                                    pdfController.goToPage(pageNumber: page);
+                                  }
+                                } else {
+                                  if (delta.dx > 0) {
+                                    pdfController.goToPage(
+                                      pageNumber: page - 1,
+                                    );
+                                  } else {
+                                    pdfController.goToPage(
+                                      pageNumber: page + 1,
+                                    );
+                                  }
+                                }
+                              }
+                            });
+                          },
                           onViewSizeChanged: (_, __, controller) {
                             if (controller.pageNumber != null) {
                               int pageNumber = controller.pageNumber!;
