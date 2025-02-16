@@ -158,18 +158,17 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
                                       .layout.pageLayouts[page - 1];
                                   final intersection =
                                       rect.intersect(pdfController.visibleRect);
+
                                   if (intersection.isEmpty) return 0;
-                                  final area =
-                                      intersection.width * intersection.height;
-                                  return area / (rect.width * rect.height);
+
+                                  return intersection.width / rect.width;
                                 }
 
+                                final ratio = calcIntersectionArea();
                                 final delta = gesture.focalPointDelta;
 
                                 if (widget.landscape) {
-                                  final ratio = calcIntersectionArea();
-
-                                  if (ratio < 0.365) {
+                                  if (ratio < 0.98) {
                                     if (delta.dx > 0) {
                                       pdfController.goToPage(
                                         pageNumber: page - 1,
@@ -183,14 +182,18 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
                                     }
                                   }
                                 } else {
-                                  if (delta.dx > 1) {
-                                    pdfController.goToPage(
-                                      pageNumber: page - 1,
-                                    );
-                                  } else if (delta.dx < 1) {
-                                    pdfController.goToPage(
-                                      pageNumber: page + 1,
-                                    );
+                                  if (ratio < 0.98) {
+                                    if (delta.dx > 0) {
+                                      pdfController.goToPage(
+                                        pageNumber: page - 1,
+                                      );
+                                    } else if (delta.dx < 0) {
+                                      pdfController.goToPage(
+                                        pageNumber: page + 1,
+                                      );
+                                    } else {
+                                      pdfController.goToPage(pageNumber: page);
+                                    }
                                   } else {
                                     pdfController.goToPage(pageNumber: page);
                                   }
