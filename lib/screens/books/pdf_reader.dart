@@ -150,7 +150,8 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
                           onInteractionUpdate: (gesture) {
                             EasyDebounce.debounce('page-interaction',
                                 const Duration(milliseconds: 200), () {
-                              if (pdfController.pageNumber != null) {
+                              if (pdfController.pageNumber != null &&
+                                  gesture.scale == 1) {
                                 int page = pdfController.pageNumber!;
 
                                 double calcIntersectionArea() {
@@ -167,8 +168,10 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
                                 final ratio = calcIntersectionArea();
                                 final delta = gesture.focalPointDelta;
 
-                                if (widget.landscape) {
-                                  if (ratio < 0.98) {
+                                if (ratio < 0.98) {
+                                  double scale = pdfController.currentZoom;
+
+                                  if (scale < 1.01 && scale > 0.99) {
                                     if (delta.dx > 0) {
                                       pdfController.goToPage(
                                         pageNumber: page - 1,
@@ -182,19 +185,7 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
                                     }
                                   }
                                 } else {
-                                  if (ratio < 0.98) {
-                                    if (delta.dx > 0) {
-                                      pdfController.goToPage(
-                                        pageNumber: page - 1,
-                                      );
-                                    } else if (delta.dx < 0) {
-                                      pdfController.goToPage(
-                                        pageNumber: page + 1,
-                                      );
-                                    } else {
-                                      pdfController.goToPage(pageNumber: page);
-                                    }
-                                  } else {
+                                  if (!widget.landscape) {
                                     pdfController.goToPage(pageNumber: page);
                                   }
                                 }

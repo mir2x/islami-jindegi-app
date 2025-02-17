@@ -415,6 +415,52 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                         }
                       });
                     },
+                    onInteractionUpdate: (gesture) {
+                      EasyDebounce.debounce(
+                          'page-interaction', const Duration(milliseconds: 200),
+                          () {
+                        if (pdfController.pageNumber != null &&
+                            gesture.scale == 1) {
+                          int page = pdfController.pageNumber!;
+
+                          double calcIntersectionArea() {
+                            final rect =
+                                pdfController.layout.pageLayouts[page - 1];
+                            final intersection =
+                                rect.intersect(pdfController.visibleRect);
+
+                            if (intersection.isEmpty) return 0;
+
+                            return intersection.width / rect.width;
+                          }
+
+                          final ratio = calcIntersectionArea();
+                          final delta = gesture.focalPointDelta;
+
+                          if (ratio < 0.98) {
+                            double scale = pdfController.currentZoom;
+
+                            if (scale < 1.01 && scale > 0.99) {
+                              if (delta.dx > 0) {
+                                pdfController.goToPage(
+                                  pageNumber: page + 1,
+                                );
+                              } else if (delta.dx < 0) {
+                                pdfController.goToPage(
+                                  pageNumber: page - 1,
+                                );
+                              } else {
+                                pdfController.goToPage(pageNumber: page);
+                              }
+                            }
+                          } else {
+                            if (!landscape) {
+                              pdfController.goToPage(pageNumber: page);
+                            }
+                          }
+                        }
+                      });
+                    },
                     onViewSizeChanged: (_, __, controller) {
                       if (controller.pageNumber != null) {
                         int pageNumber = controller.pageNumber!;
