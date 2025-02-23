@@ -297,34 +297,53 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                   initialPageNumber: initalPage,
                   params: PdfViewerParams(
                     margin: 0,
-                    panAxis: PanAxis.aligned,
                     layoutPages: (pages, params) {
                       final pageCount = pages.length;
-                      double height;
+                      var pageLayouts = <Rect>[];
                       double viewWidth;
+                      double viewHeight;
+                      double width;
+                      double height;
 
                       if (landscape) {
-                        height = (screenHeight - heightAdjustment) * 1.5;
                         viewWidth = screenHeight - heightAdjustment;
+                        viewHeight = (screenHeight - heightAdjustment) * 1.5;
+
+                        width = viewWidth;
+                        height = pageCount * viewHeight;
+                        double y = 0;
+                        double heightLimit = height - 10;
+
+                        while (y < heightLimit) {
+                          pageLayouts.add(
+                            Rect.fromLTWH(
+                              0,
+                              y,
+                              viewWidth,
+                              viewHeight,
+                            ),
+                          );
+                          y += viewHeight;
+                        }
                       } else {
-                        height = screenHeight - heightAdjustment;
                         viewWidth = screenWidth;
-                      }
+                        viewHeight = screenHeight - heightAdjustment;
 
-                      final width = pageCount * viewWidth;
-                      final pageLayouts = <Rect>[];
-                      double x = width;
+                        width = pageCount * viewWidth;
+                        height = viewHeight;
+                        double x = width;
 
-                      while (x > 10) {
-                        x -= viewWidth;
-                        pageLayouts.add(
-                          Rect.fromLTWH(
-                            x,
-                            0,
-                            viewWidth,
-                            height,
-                          ),
-                        );
+                        while (x > 10) {
+                          x -= viewWidth;
+                          pageLayouts.add(
+                            Rect.fromLTWH(
+                              x,
+                              0,
+                              viewWidth,
+                              viewHeight,
+                            ),
+                          );
+                        }
                       }
 
                       return PdfPageLayout(
@@ -340,7 +359,9 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                       EasyDebounce.debounce(
                           'quran-page', const Duration(milliseconds: 500),
                           () async {
-                        pdfController.goToPage(pageNumber: page);
+                        if (!landscape) {
+                          pdfController.goToPage(pageNumber: page);
+                        }
 
                         var scaffoldMessenger = ScaffoldMessenger.of(context);
 
@@ -416,6 +437,10 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                       });
                     },
                     onInteractionUpdate: (gesture) {
+                      if (landscape) {
+                        return;
+                      }
+
                       EasyDebounce.debounce(
                           'page-interaction', const Duration(milliseconds: 200),
                           () {
@@ -454,9 +479,7 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                               }
                             }
                           } else {
-                            if (!landscape) {
-                              pdfController.goToPage(pageNumber: page);
-                            }
+                            pdfController.goToPage(pageNumber: page);
                           }
                         }
                       });

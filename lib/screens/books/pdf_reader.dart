@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 import 'dart:ui' as ui;
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -96,34 +97,55 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
                         initialPageNumber: initalPage,
                         params: PdfViewerParams(
                           margin: 0,
-                          panAxis: PanAxis.aligned,
                           layoutPages: (pages, params) {
                             final pageCount = pages.length;
-                            double height;
+                            var pageLayouts = <Rect>[];
                             double viewWidth;
+                            double viewHeight;
+                            double width;
+                            double height;
 
                             if (widget.landscape) {
-                              height = (screenHeight - heightAdjustment) * 1.5;
                               viewWidth = screenHeight - heightAdjustment;
+                              viewHeight =
+                                  (screenHeight - heightAdjustment) * 1.5;
+
+                              width = viewWidth;
+                              height = pageCount * viewHeight;
+                              double y = 0;
+                              double heightLimit = height - 10;
+
+                              while (y < heightLimit) {
+                                pageLayouts.add(
+                                  Rect.fromLTWH(
+                                    0,
+                                    y,
+                                    viewWidth,
+                                    viewHeight,
+                                  ),
+                                );
+                                y += viewHeight;
+                              }
                             } else {
-                              height = screenHeight - heightAdjustment;
                               viewWidth = screenWidth;
-                            }
+                              viewHeight = screenHeight - heightAdjustment;
 
-                            final width = pageCount * viewWidth;
-                            final pageLayouts = <Rect>[];
-                            double x = 0;
+                              width = pageCount * viewWidth;
+                              height = viewHeight;
+                              double x = 0;
+                              double widthLimit = width - 10;
 
-                            while (x < (width - 10)) {
-                              pageLayouts.add(
-                                Rect.fromLTWH(
-                                  x,
-                                  0,
-                                  viewWidth,
-                                  height,
-                                ),
-                              );
-                              x += viewWidth;
+                              while (x < widthLimit) {
+                                pageLayouts.add(
+                                  Rect.fromLTWH(
+                                    x,
+                                    0,
+                                    viewWidth,
+                                    viewHeight,
+                                  ),
+                                );
+                                x += viewWidth;
+                              }
                             }
 
                             return PdfPageLayout(
@@ -144,10 +166,16 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
                                 page,
                               );
 
-                              pdfController.goToPage(pageNumber: page);
+                              if (!widget.landscape) {
+                                pdfController.goToPage(pageNumber: page);
+                              }
                             });
                           },
                           onInteractionUpdate: (gesture) {
+                            if (widget.landscape) {
+                              return;
+                            }
+
                             EasyDebounce.debounce('page-interaction',
                                 const Duration(milliseconds: 200), () {
                               if (pdfController.pageNumber != null &&
@@ -185,9 +213,7 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
                                     }
                                   }
                                 } else {
-                                  if (!widget.landscape) {
-                                    pdfController.goToPage(pageNumber: page);
-                                  }
+                                  pdfController.goToPage(pageNumber: page);
                                 }
                               }
                             });
@@ -208,7 +234,9 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
                               (context, size, handleLinkTap) => [
                             PdfViewerScrollThumb(
                               controller: pdfController,
-                              orientation: ScrollbarOrientation.top,
+                              orientation: widget.landscape
+                                  ? ScrollbarOrientation.right
+                                  : ScrollbarOrientation.top,
                               thumbSize: const Size(100, 25),
                               thumbBuilder:
                                   (context, thumbSize, pageNumber, controller) {
