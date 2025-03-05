@@ -1,6 +1,5 @@
 import 'dart:io' show Platform;
 import 'dart:ui' as ui;
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -36,6 +35,7 @@ class PDFReader extends ConsumerStatefulWidget {
 
 class _PDFReaderState extends ConsumerState<PDFReader> {
   final pdfController = PdfViewerController();
+  int? stickyPageNumber;
 
   @override
   Widget build(BuildContext context) {
@@ -68,9 +68,8 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
             height: screenHeight - heightAdjustment,
             child: GestureDetector(
               onTap: () {
-                if (!widget.landscape) {
-                  widget.toggleFullScreen();
-                }
+                stickyPageNumber = pdfController.pageNumber;
+                widget.toggleFullScreen();
               },
               child: pdfFile.when(
                 loading: () {
@@ -219,9 +218,10 @@ class _PDFReaderState extends ConsumerState<PDFReader> {
                             });
                           },
                           onViewSizeChanged: (_, __, controller) {
-                            if (controller.pageNumber != null) {
-                              int pageNumber = controller.pageNumber!;
+                            int? pageNumber =
+                                stickyPageNumber ?? controller.pageNumber;
 
+                            if (pageNumber != null) {
                               Future.delayed(
                                 const Duration(milliseconds: 100),
                                 () {

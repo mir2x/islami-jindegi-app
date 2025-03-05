@@ -198,6 +198,7 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
   bool darkMode = false;
   bool landscape = false;
   final pdfController = PdfViewerController();
+  int? stickyPageNumber;
 
   @override
   void initState() {
@@ -268,9 +269,8 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
       tabletBodyPadding: false,
       body: GestureDetector(
         onTap: () {
-          if (!landscape) {
-            toggleFullScreen();
-          }
+          stickyPageNumber = pdfController.pageNumber;
+          toggleFullScreen();
         },
         child: pdfFile.when(
           loading: () {
@@ -485,9 +485,10 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
                       });
                     },
                     onViewSizeChanged: (_, __, controller) {
-                      if (controller.pageNumber != null) {
-                        int pageNumber = controller.pageNumber!;
+                      int? pageNumber =
+                          stickyPageNumber ?? controller.pageNumber;
 
+                      if (pageNumber != null) {
                         Future.delayed(const Duration(milliseconds: 100), () {
                           controller.goToPage(pageNumber: pageNumber);
                         });
