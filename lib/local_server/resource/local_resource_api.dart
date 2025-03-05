@@ -823,6 +823,10 @@ class LocalResourceAPI extends _$LocalResourceAPI {
       }
     }
 
+    if (params.containsKey('malfuzatAuthorId')) {
+      query.where((r) => r.malfuzatAuthorId.equals(params['malfuzatAuthorId']));
+    }
+
     if (params.containsKey('random') && params['random'] == true) {
       query.orderBy([(t) => OrderingTerm.random()]);
     } else {

@@ -37,7 +37,9 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
         params: const {
           'include': 'malfuzat-author',
           'hasAudio': 'false',
+          'malfuzatAuthorId': '6842ab90-27d0-4ef9-b783-3b03388a2304',
           'random': true,
+          'offline': true,
           'quantity': 1,
         },
       );
