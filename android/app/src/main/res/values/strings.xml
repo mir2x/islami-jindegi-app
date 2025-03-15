@@ -9,6 +9,7 @@
     <string name="location">Location</string>
     <string name="current_prayer">Current Prayer</string>
     <string name="next_prayer">Next Prayer</string>
+    <string name="reload">Reload</string>
     <string name="quran">Quran</string>
     <string name="books">Books</string>
     <string name="bayans">Bayans</string>

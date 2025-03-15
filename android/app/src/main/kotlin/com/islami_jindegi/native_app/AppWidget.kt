@@ -12,11 +12,16 @@ import android.graphics.Typeface
 import android.net.Uri
 import android.util.TypedValue
 import android.widget.RemoteViews
+import android.widget.ImageView
+import android.view.View
+import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
-import es.antonborri.home_widget.HomeWidgetLaunchIntent
 import es.antonborri.home_widget.HomeWidgetPlugin
+import es.antonborri.home_widget.HomeWidgetLaunchIntent
+import es.antonborri.home_widget.HomeWidgetBackgroundIntent
 import kotlin.math.max
 import kotlin.math.min
+import android.util.Log
 
 class AppWidget : AppWidgetProvider() {
   override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
@@ -119,6 +124,7 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
       getFontBitmap(context, nextPrayer, textColor, ratio, 14f),
     )
 
+    setOnClickPendingIntent(R.id.reload, reloadContent(context))
     setOnClickPendingIntent(R.id.quran, openLink(context, "quran"))
     setOnClickPendingIntent(R.id.books, openLink(context, "books"))
     setOnClickPendingIntent(R.id.bayans, openLink(context, "bayans"))
@@ -170,5 +176,18 @@ fun openLink(context: Context, message: String): PendingIntent {
     context,
     MainActivity::class.java,
     Uri.parse("appWidget://message?route=$message")
+  )
+}
+
+fun reloadContent(context: Context): PendingIntent {
+  val rotation = AnimationUtils.loadAnimation(context, R.anim.reload)
+  val view = View.inflate(context, R.layout.app_widget, null)
+  val iv: ImageView = view.findViewById(R.id.reload)
+
+  iv.startAnimation(rotation)
+
+  return HomeWidgetBackgroundIntent.getBroadcast(
+    context,
+    Uri.parse("appWidgetReload://reload")
   )
 }

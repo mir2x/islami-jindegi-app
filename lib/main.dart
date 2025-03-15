@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'dart:io' show Platform, HttpOverrides;
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
@@ -18,7 +17,8 @@ import 'package:native_app/theme/themes.dart';
 import 'routes/index.dart';
 import 'screens/error_pages/page_404.dart';
 import 'firebase_options.dart';
-import 'app_widget_task.dart';
+import 'app_widget/task.dart';
+import 'app_widget/background.dart';
 import 'main.data.dart';
 
 Future main() async {
@@ -73,6 +73,8 @@ Future main() async {
       frequency: const Duration(minutes: 15),
       initialDelay: const Duration(seconds: 35),
     );
+
+    await setAppWidgetBackground();
   }
 
   runApp(
