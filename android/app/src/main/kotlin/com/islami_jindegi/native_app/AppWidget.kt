@@ -180,12 +180,6 @@ fun openLink(context: Context, message: String): PendingIntent {
 }
 
 fun reloadContent(context: Context): PendingIntent {
-  val rotation = AnimationUtils.loadAnimation(context, R.anim.reload)
-  val view = View.inflate(context, R.layout.app_widget, null)
-  val iv: ImageView = view.findViewById(R.id.reload)
-
-  iv.startAnimation(rotation)
-
   return HomeWidgetBackgroundIntent.getBroadcast(
     context,
     Uri.parse("appWidgetReload://reload")
