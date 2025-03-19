@@ -139,7 +139,7 @@
       <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="6"
+        android:layout_weight="5"
         android:layout_marginStart="5dp"
         android:gravity="right"
         android:orientation="vertical">
@@ -148,12 +148,13 @@
           android:id="@+id/reload"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:paddingStart="10dp"
-          android:paddingEnd="10dp"
-          android:paddingTop="10dp"
-          android:paddingBottom="10dp"
+          android:paddingStart="8dp"
+          android:paddingEnd="8dp"
+          android:paddingTop="8dp"
+          android:paddingBottom="8dp"
           android:adjustViewBounds="true"
-          android:maxWidth="45dp"
+          android:maxWidth="40dp"
+          android:minWidth="40dp"
           android:background="?android:attr/selectableItemBackground"
           android:contentDescription="@string/reload"
           android:src="@drawable/reload" />
