@@ -20,7 +20,9 @@ class WithConnectivity extends ConsumerWidget {
       error: (error, stackTrace) => Text(error.toString()),
       data: (connectivityResult) {
         return builder(
-            context, !connectivityResult.contains(ConnectivityResult.none));
+          context,
+          !connectivityResult.contains(ConnectivityResult.none),
+        );
       },
     );
   }
