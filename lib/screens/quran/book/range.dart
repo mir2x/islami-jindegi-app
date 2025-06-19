@@ -13,8 +13,8 @@ import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/widgets/inputs/input_field.dart';
 import 'package:native_app/theme/colors.dart';
 
-class QuranBookTilawat extends ConsumerWidget {
-  const QuranBookTilawat({
+class QuranBookRange extends ConsumerWidget {
+  const QuranBookRange({
     super.key,
     required this.bookId,
     required this.pdfController,
@@ -43,7 +43,7 @@ class QuranBookTilawat extends ConsumerWidget {
                 padding: EdgeInsets.all(isSmallMobile ? 2 : 4),
               ),
               child: Text(
-                locales.ayah,
+                locales.range,
                 style: textTheme.titleMedium?.copyWith(
                   color: AppTheme.titleContrastColor[theme],
                 ),

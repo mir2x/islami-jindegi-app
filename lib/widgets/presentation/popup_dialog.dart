@@ -6,9 +6,11 @@ class PopupDialog extends StatelessWidget {
   const PopupDialog({
     super.key,
     required this.child,
+    this.direction = 'ltr',
   });
 
   final Widget child;
+  final String direction;
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +20,10 @@ class PopupDialog extends StatelessWidget {
     return WithPreferences(
       builder: (context, preferences) {
         String theme = preferences.getString('theme') ?? 'classic';
+
+        dynamic dialogMargin = direction == 'ltr'
+            ? const EdgeInsets.only(top: 12.0, right: 7.0)
+            : const EdgeInsets.only(top: 12.0, left: 7.0);
 
         return Center(
           child: Dialog(
@@ -29,7 +35,7 @@ class PopupDialog extends StatelessWidget {
               child: Stack(
                 children: <Widget>[
                   Container(
-                    margin: const EdgeInsets.only(top: 12.0, right: 7.0),
+                    margin: dialogMargin,
                     decoration: BoxDecoration(
                       color: AppTheme.dialogBgColor[theme],
                       shape: BoxShape.rectangle,
@@ -44,31 +50,54 @@ class PopupDialog extends StatelessWidget {
                     ),
                     child: child,
                   ),
-                  Positioned(
-                    right: 0,
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Align(
-                        alignment: Alignment.topRight,
-                        child: CircleAvatar(
-                          radius: 16.0,
-                          backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.close,
-                            color: AppTheme.iconColor[theme],
-                          ),
-                        ),
-                      ),
+                  if (direction == 'ltr') ...[
+                    Positioned(
+                      right: 0,
+                      child: CloseButton(preferences: preferences),
                     ),
-                  ),
+                  ] else if (direction == 'rtl') ...[
+                    Positioned(
+                      left: 0,
+                      child: CloseButton(preferences: preferences),
+                    ),
+                  ],
                 ],
               ),
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class CloseButton extends StatelessWidget {
+  const CloseButton({
+    super.key,
+    required this.preferences,
+  });
+
+  final dynamic preferences;
+
+  @override
+  Widget build(BuildContext context) {
+    String theme = preferences.getString('theme') ?? 'classic';
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pop();
+      },
+      child: Align(
+        alignment: Alignment.topRight,
+        child: CircleAvatar(
+          radius: 16.0,
+          backgroundColor: Colors.white,
+          child: Icon(
+            Icons.close,
+            color: AppTheme.iconColor[theme],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -15,6 +15,8 @@ class AyahBookmark {
 
   int? position;
 
+  String? surahId;
+
   String? surahTitle;
 
   String? surahTitleBn;

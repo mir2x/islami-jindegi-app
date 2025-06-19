@@ -8,6 +8,7 @@ import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/widgets/presentation/popup_dialog.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/theme/app_theme.dart';
+import '../ayah_actions.dart';
 
 class QuranBookAyah extends ConsumerWidget {
   const QuranBookAyah({
@@ -83,7 +84,7 @@ class QuranBookAyah extends ConsumerWidget {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Text(
-                  locales.translation,
+                  locales.ayah,
                   style: textTheme.titleMedium?.copyWith(
                     color: AppTheme.titleContrastColor[theme],
                   ),
@@ -93,6 +94,7 @@ class QuranBookAyah extends ConsumerWidget {
                     context: context,
                     builder: (BuildContext context) {
                       return PopupDialog(
+                        direction: 'rtl',
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -100,7 +102,7 @@ class QuranBookAyah extends ConsumerWidget {
                               child: Container(
                                 padding: const EdgeInsets.all(20),
                                 child: const SingleChildScrollView(
-                                  child: AyahTranslation(),
+                                  child: AyahDetails(),
                                 ),
                               ),
                             ),
@@ -121,8 +123,8 @@ class QuranBookAyah extends ConsumerWidget {
   }
 }
 
-class AyahTranslation extends ConsumerWidget {
-  const AyahTranslation({super.key});
+class AyahDetails extends ConsumerWidget {
+  const AyahDetails({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -151,13 +153,22 @@ class AyahTranslation extends ConsumerWidget {
             Container(
               margin: const EdgeInsets.only(bottom: 10),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    qSettings['surahTitle'],
-                    style: textTheme.headlineMedium,
+                  AyahActions(ayah: translation.ayah.value),
+                  Row(
+                    children: [
+                      Text(
+                        qSettings['surahTitle'],
+                        style: textTheme.labelMedium,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        ', ${locales.ayah}: ${numFormatter.format(ayah)}',
+                        style: textTheme.labelMedium,
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 5),
-                  Text(', ${locales.ayah}: ${numFormatter.format(ayah)}'),
                 ],
               ),
             ),

@@ -32,23 +32,28 @@ const AyahBookmarkSchema = CollectionSchema(
       name: r'position',
       type: IsarType.long,
     ),
-    r'surahTitle': PropertySchema(
+    r'surahId': PropertySchema(
       id: 3,
+      name: r'surahId',
+      type: IsarType.string,
+    ),
+    r'surahTitle': PropertySchema(
+      id: 4,
       name: r'surahTitle',
       type: IsarType.string,
     ),
     r'surahTitleBn': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'surahTitleBn',
       type: IsarType.string,
     ),
     r'title': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'title',
       type: IsarType.string,
     ),
     r'translation': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'translation',
       type: IsarType.string,
     )
@@ -107,6 +112,12 @@ int _ayahBookmarkEstimateSize(
     }
   }
   {
+    final value = object.surahId;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.surahTitle;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -142,10 +153,11 @@ void _ayahBookmarkSerialize(
   writer.writeString(offsets[0], object.ayahId);
   writer.writeDateTime(offsets[1], object.createdAt);
   writer.writeLong(offsets[2], object.position);
-  writer.writeString(offsets[3], object.surahTitle);
-  writer.writeString(offsets[4], object.surahTitleBn);
-  writer.writeString(offsets[5], object.title);
-  writer.writeString(offsets[6], object.translation);
+  writer.writeString(offsets[3], object.surahId);
+  writer.writeString(offsets[4], object.surahTitle);
+  writer.writeString(offsets[5], object.surahTitleBn);
+  writer.writeString(offsets[6], object.title);
+  writer.writeString(offsets[7], object.translation);
 }
 
 AyahBookmark _ayahBookmarkDeserialize(
@@ -159,10 +171,11 @@ AyahBookmark _ayahBookmarkDeserialize(
   object.createdAt = reader.readDateTimeOrNull(offsets[1]);
   object.id = id;
   object.position = reader.readLongOrNull(offsets[2]);
-  object.surahTitle = reader.readStringOrNull(offsets[3]);
-  object.surahTitleBn = reader.readStringOrNull(offsets[4]);
-  object.title = reader.readStringOrNull(offsets[5]);
-  object.translation = reader.readStringOrNull(offsets[6]);
+  object.surahId = reader.readStringOrNull(offsets[3]);
+  object.surahTitle = reader.readStringOrNull(offsets[4]);
+  object.surahTitleBn = reader.readStringOrNull(offsets[5]);
+  object.title = reader.readStringOrNull(offsets[6]);
+  object.translation = reader.readStringOrNull(offsets[7]);
   return object;
 }
 
@@ -186,6 +199,8 @@ P _ayahBookmarkDeserializeProp<P>(
     case 5:
       return (reader.readStringOrNull(offset)) as P;
     case 6:
+      return (reader.readStringOrNull(offset)) as P;
+    case 7:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -883,6 +898,160 @@ extension AyahBookmarkQueryFilter
   }
 
   QueryBuilder<AyahBookmark, AyahBookmark, QAfterFilterCondition>
+      surahIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'surahId',
+      ));
+    });
+  }
+
+  QueryBuilder<AyahBookmark, AyahBookmark, QAfterFilterCondition>
+      surahIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'surahId',
+      ));
+    });
+  }
+
+  QueryBuilder<AyahBookmark, AyahBookmark, QAfterFilterCondition>
+      surahIdEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'surahId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AyahBookmark, AyahBookmark, QAfterFilterCondition>
+      surahIdGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'surahId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AyahBookmark, AyahBookmark, QAfterFilterCondition>
+      surahIdLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'surahId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AyahBookmark, AyahBookmark, QAfterFilterCondition>
+      surahIdBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'surahId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AyahBookmark, AyahBookmark, QAfterFilterCondition>
+      surahIdStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'surahId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AyahBookmark, AyahBookmark, QAfterFilterCondition>
+      surahIdEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'surahId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AyahBookmark, AyahBookmark, QAfterFilterCondition>
+      surahIdContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'surahId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AyahBookmark, AyahBookmark, QAfterFilterCondition>
+      surahIdMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'surahId',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AyahBookmark, AyahBookmark, QAfterFilterCondition>
+      surahIdIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'surahId',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<AyahBookmark, AyahBookmark, QAfterFilterCondition>
+      surahIdIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'surahId',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<AyahBookmark, AyahBookmark, QAfterFilterCondition>
       surahTitleIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1541,6 +1710,18 @@ extension AyahBookmarkQuerySortBy
     });
   }
 
+  QueryBuilder<AyahBookmark, AyahBookmark, QAfterSortBy> sortBySurahId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'surahId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AyahBookmark, AyahBookmark, QAfterSortBy> sortBySurahIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'surahId', Sort.desc);
+    });
+  }
+
   QueryBuilder<AyahBookmark, AyahBookmark, QAfterSortBy> sortBySurahTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'surahTitle', Sort.asc);
@@ -1643,6 +1824,18 @@ extension AyahBookmarkQuerySortThenBy
     });
   }
 
+  QueryBuilder<AyahBookmark, AyahBookmark, QAfterSortBy> thenBySurahId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'surahId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AyahBookmark, AyahBookmark, QAfterSortBy> thenBySurahIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'surahId', Sort.desc);
+    });
+  }
+
   QueryBuilder<AyahBookmark, AyahBookmark, QAfterSortBy> thenBySurahTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'surahTitle', Sort.asc);
@@ -1716,6 +1909,13 @@ extension AyahBookmarkQueryWhereDistinct
     });
   }
 
+  QueryBuilder<AyahBookmark, AyahBookmark, QDistinct> distinctBySurahId(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'surahId', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<AyahBookmark, AyahBookmark, QDistinct> distinctBySurahTitle(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1768,6 +1968,12 @@ extension AyahBookmarkQueryProperty
   QueryBuilder<AyahBookmark, int?, QQueryOperations> positionProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'position');
+    });
+  }
+
+  QueryBuilder<AyahBookmark, String?, QQueryOperations> surahIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'surahId');
     });
   }
 

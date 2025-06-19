@@ -7,6 +7,7 @@ import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/theme/colors.dart';
 import 'surahs.dart';
 import 'paras.dart';
+import 'bookmarks.dart';
 
 class QuranDrawer extends ConsumerStatefulWidget {
   const QuranDrawer({
@@ -111,25 +112,29 @@ class _QuranDrawerState extends ConsumerState<QuranDrawer> {
                   ),
                   Expanded(
                     flex: 1,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: ThemeColors.color7,
-                          width: 0.5,
+                    child: GestureDetector(
+                      onTap: () => updateSelectedSection('Bookmark'),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: ThemeColors.color7,
+                            width: 0.5,
+                          ),
+                          color: selectedSection == 'Bookmark'
+                              ? AppTheme.activeItemColor[theme]
+                              : null,
                         ),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 10,
-                      ),
-                      child: Text(
-                        selectedSection == 'Surah'
-                            ? locales.ayah
-                            : locales.page,
-                        style: textTheme.labelMedium?.copyWith(
-                          color: AppTheme.labelContrastColor[theme],
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 5,
+                          vertical: 10,
                         ),
-                        textAlign: TextAlign.center,
+                        child: Text(
+                          locales.bookmark,
+                          style: textTheme.labelMedium?.copyWith(
+                            color: AppTheme.labelContrastColor[theme],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   ),
@@ -141,8 +146,14 @@ class _QuranDrawerState extends ConsumerState<QuranDrawer> {
                   pdfController: widget.pdfController,
                   closeDrawer: () => Scaffold.of(context).closeDrawer(),
                 ),
-              ] else ...[
+              ] else if (selectedSection == 'Para') ...[
                 QuranBookParas(
+                  book: widget.book,
+                  pdfController: widget.pdfController,
+                  closeDrawer: () => Scaffold.of(context).closeDrawer(),
+                ),
+              ] else if (selectedSection == 'Bookmark') ...[
+                QuranBookBookmarks(
                   book: widget.book,
                   pdfController: widget.pdfController,
                   closeDrawer: () => Scaffold.of(context).closeDrawer(),

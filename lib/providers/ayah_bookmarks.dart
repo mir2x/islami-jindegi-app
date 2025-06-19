@@ -32,6 +32,7 @@ class AyahBookmarkNotifier
       ..title = attrs['title']
       ..translation = attrs['translation']
       ..position = attrs['position']
+      ..surahId = attrs['surahId']
       ..surahTitle = attrs['surahTitle']
       ..surahTitleBn = attrs['surahTitleBn']
       ..createdAt = DateTime.now();

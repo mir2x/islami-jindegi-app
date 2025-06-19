@@ -33,7 +33,7 @@ import 'package:native_app/helpers/file_size.dart';
 import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/settings/image.dart';
 import 'drawer.dart';
-import 'tilawat.dart';
+import 'range.dart';
 import 'player.dart';
 import 'ayah.dart';
 import '../qari_list.dart';
@@ -540,7 +540,7 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  QuranBookTilawat(
+                  QuranBookRange(
                     bookId: book.id,
                     pdfController: pdfController,
                   ),

@@ -108,6 +108,7 @@ class _ParasState extends ConsumerState<StatefulParas> {
 
   @override
   Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
     var numFormatter = NumberFormat('#', currentLang);
     var textTheme = Theme.of(context).textTheme;
@@ -117,109 +118,142 @@ class _ParasState extends ConsumerState<StatefulParas> {
         String theme = preferences.getString('theme') ?? 'classic';
 
         return Expanded(
-          child: Row(
+          child: Column(
             children: [
-              Expanded(
-                flex: 2,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    border: Border(
-                      left: BorderSide(color: ThemeColors.color7, width: 0.5),
+              Row(
+                children: [
+                  const Expanded(
+                    flex: 2,
+                    child: SizedBox.shrink(),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                      ),
+                      child: Text(
+                        locales.page,
+                        style: textTheme.labelSmall?.copyWith(
+                          color: AppTheme.labelContrastColor[theme],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
-                  child: ListView.builder(
-                    itemCount: widget.bookParas.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      var bookPara = widget.bookParas[index];
-                      var para = bookPara.para.value;
-
-                      String paraTitle = contextualTranslation(
-                        locale: currentLang,
-                        enText: para.title,
-                        bnText: para.titleBn,
-                      );
-
-                      return GestureDetector(
-                        onTap: () => updateSelectedBookPara(bookPara),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 15,
-                            vertical: 10,
+                ],
+              ),
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            left: BorderSide(
+                              color: ThemeColors.color7,
+                              width: 0.5,
+                            ),
                           ),
-                          decoration: BoxDecoration(
-                            color: selectedBookPara.id == bookPara.id
-                                ? AppTheme.activeItemColor[theme]
-                                : null,
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                paraTitle,
+                        ),
+                        child: ListView.builder(
+                          itemCount: widget.bookParas.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            var bookPara = widget.bookParas[index];
+                            var para = bookPara.para.value;
+
+                            String paraTitle = contextualTranslation(
+                              locale: currentLang,
+                              enText: para.title,
+                              bnText: para.titleBn,
+                            );
+
+                            return GestureDetector(
+                              onTap: () => updateSelectedBookPara(bookPara),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                  vertical: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: selectedBookPara.id == bookPara.id
+                                      ? AppTheme.activeItemColor[theme]
+                                      : null,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      paraTitle,
+                                      style: textTheme.titleMedium?.copyWith(
+                                        color:
+                                            AppTheme.titleContrastColor[theme],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: ListView.builder(
+                        itemCount: selectedBookPara.totalPage,
+                        itemBuilder: (BuildContext context, int index) {
+                          var number = index + 1;
+
+                          return InkWell(
+                            onTap: () async {
+                              var query = AllModelsQuery(
+                                repository: ref.quranBookPages,
+                                params: {
+                                  'quranBookId': widget.book.id,
+                                  'paraId': selectedBookPara.para.id,
+                                  'paraPage': number,
+                                  'quantity': 1,
+                                  'offline': true,
+                                },
+                              );
+
+                              var resources = await ref
+                                  .watch(allModelsProvider(query).future);
+
+                              if (resources.isNotEmpty) {
+                                var bookPage = resources.first;
+                                widget.pdfController.goToPage(
+                                  pageNumber: bookPage.position,
+                                );
+                              }
+
+                              widget.closeDrawer();
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: ThemeColors.color7,
+                                  width: 0.5,
+                                ),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 25,
+                                vertical: 10,
+                              ),
+                              child: Text(
+                                numFormatter.format(number),
                                 style: textTheme.titleMedium?.copyWith(
                                   color: AppTheme.titleContrastColor[theme],
                                 ),
+                                textAlign: TextAlign.center,
                               ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: ListView.builder(
-                  itemCount: selectedBookPara.totalPage,
-                  itemBuilder: (BuildContext context, int index) {
-                    var number = index + 1;
-
-                    return InkWell(
-                      onTap: () async {
-                        var query = AllModelsQuery(
-                          repository: ref.quranBookPages,
-                          params: {
-                            'quranBookId': widget.book.id,
-                            'paraId': selectedBookPara.para.id,
-                            'paraPage': number,
-                            'quantity': 1,
-                            'offline': true,
-                          },
-                        );
-
-                        var resources =
-                            await ref.watch(allModelsProvider(query).future);
-
-                        if (resources.isNotEmpty) {
-                          var bookPage = resources.first;
-                          widget.pdfController.goToPage(
-                            pageNumber: bookPage.position,
+                            ),
                           );
-                        }
-
-                        widget.closeDrawer();
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: ThemeColors.color7,
-                            width: 0.5,
-                          ),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 25,
-                          vertical: 10,
-                        ),
-                        child: Text(
-                          numFormatter.format(number),
-                          style: textTheme.titleMedium?.copyWith(
-                            color: AppTheme.titleContrastColor[theme],
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+                        },
                       ),
-                    );
-                  },
+                    ),
+                  ],
                 ),
               ),
             ],

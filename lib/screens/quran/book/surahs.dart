@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:pdfrx/pdfrx.dart';
 import 'package:native_app/main.data.dart';
@@ -91,6 +92,7 @@ class _SurahsState extends ConsumerState<StatefulSurahs> {
 
   @override
   Widget build(BuildContext context) {
+    var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
     var numFormatter = NumberFormat('#', currentLang);
     var textTheme = Theme.of(context).textTheme;
@@ -100,115 +102,149 @@ class _SurahsState extends ConsumerState<StatefulSurahs> {
         String theme = preferences.getString('theme') ?? 'classic';
 
         return Expanded(
-          child: Row(
+          child: Column(
             children: [
-              Expanded(
-                flex: 2,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    border: Border(
-                      left: BorderSide(color: ThemeColors.color7, width: 0.5),
+              Row(
+                children: [
+                  const Expanded(
+                    flex: 2,
+                    child: SizedBox.shrink(),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                      ),
+                      child: Text(
+                        locales.ayah,
+                        style: textTheme.labelSmall?.copyWith(
+                          color: AppTheme.labelContrastColor[theme],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
-                  child: ListView.builder(
-                    itemCount: widget.surahs.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      var item = widget.surahs[index];
-
-                      String surahTitle = contextualTranslation(
-                        locale: currentLang,
-                        enText: item.title,
-                        bnText: item.titleBn,
-                      );
-
-                      return GestureDetector(
-                        onTap: () => updateSelectedSurah(item),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 15,
-                            vertical: 10,
-                          ),
-                          decoration: BoxDecoration(
-                            color: selectedSurah.id == item.id
-                                ? AppTheme.activeItemColor[theme]
-                                : null,
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                '${numFormatter.format(item.position)}.',
-                                style: textTheme.titleMedium?.copyWith(
-                                  color: AppTheme.titleContrastColor[theme],
-                                ),
-                              ),
-                              const SizedBox(width: 3),
-                              Text(
-                                surahTitle,
-                                style: textTheme.titleMedium?.copyWith(
-                                  color: AppTheme.titleContrastColor[theme],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                ],
               ),
               Expanded(
-                flex: 1,
-                child: ListView.builder(
-                  itemCount: selectedSurah.totalAyat,
-                  itemBuilder: (BuildContext context, int index) {
-                    var number = index + 1;
-
-                    return InkWell(
-                      onTap: () async {
-                        var query = AllModelsQuery(
-                          repository: ref.quranBookPages,
-                          params: {
-                            'quranBookId': widget.book.id,
-                            'surahId': selectedSurah.id,
-                            'ayahNo': number,
-                            'quantity': 1,
-                            'offline': true,
-                          },
-                        );
-
-                        var resources =
-                            await ref.watch(allModelsProvider(query).future);
-
-                        if (resources.isNotEmpty) {
-                          var bookPage = resources.first;
-                          widget.pdfController.goToPage(
-                            pageNumber: bookPage.position,
-                          );
-                        }
-
-                        widget.closeDrawer();
-                      },
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
                       child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: ThemeColors.color7,
-                            width: 0.5,
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            left: BorderSide(
+                              color: ThemeColors.color7,
+                              width: 0.5,
+                            ),
                           ),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 25,
-                          vertical: 10,
-                        ),
-                        child: Text(
-                          numFormatter.format(number),
-                          style: textTheme.titleMedium?.copyWith(
-                            color: AppTheme.titleContrastColor[theme],
-                          ),
-                          textAlign: TextAlign.center,
+                        child: ListView.builder(
+                          itemCount: widget.surahs.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            var item = widget.surahs[index];
+
+                            String surahTitle = contextualTranslation(
+                              locale: currentLang,
+                              enText: item.title,
+                              bnText: item.titleBn,
+                            );
+
+                            return GestureDetector(
+                              onTap: () => updateSelectedSurah(item),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                  vertical: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: selectedSurah.id == item.id
+                                      ? AppTheme.activeItemColor[theme]
+                                      : null,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      '${numFormatter.format(item.position)}.',
+                                      style: textTheme.titleMedium?.copyWith(
+                                        color:
+                                            AppTheme.titleContrastColor[theme],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 3),
+                                    Text(
+                                      surahTitle,
+                                      style: textTheme.titleMedium?.copyWith(
+                                        color:
+                                            AppTheme.titleContrastColor[theme],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
-                    );
-                  },
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: ListView.builder(
+                        itemCount: selectedSurah.totalAyat,
+                        itemBuilder: (BuildContext context, int index) {
+                          var number = index + 1;
+
+                          return InkWell(
+                            onTap: () async {
+                              var query = AllModelsQuery(
+                                repository: ref.quranBookPages,
+                                params: {
+                                  'quranBookId': widget.book.id,
+                                  'surahId': selectedSurah.id,
+                                  'ayahNo': number,
+                                  'quantity': 1,
+                                  'offline': true,
+                                },
+                              );
+
+                              var resources = await ref
+                                  .watch(allModelsProvider(query).future);
+
+                              if (resources.isNotEmpty) {
+                                var bookPage = resources.first;
+                                widget.pdfController.goToPage(
+                                  pageNumber: bookPage.position,
+                                );
+                              }
+
+                              widget.closeDrawer();
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: ThemeColors.color7,
+                                  width: 0.5,
+                                ),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 25,
+                                vertical: 10,
+                              ),
+                              child: Text(
+                                numFormatter.format(number),
+                                style: textTheme.titleMedium?.copyWith(
+                                  color: AppTheme.titleContrastColor[theme],
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
