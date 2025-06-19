@@ -36,10 +36,10 @@ import 'drawer.dart';
 import 'range.dart';
 import 'player.dart';
 import 'ayah.dart';
-import '../qari_list.dart';
+import '../shared/qari_list.dart';
 
-class QuranBook extends ConsumerWidget {
-  const QuranBook({super.key});
+class PdfQuran extends ConsumerWidget {
+  const PdfQuran({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

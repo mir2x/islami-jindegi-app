@@ -5,15 +5,15 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import '../screens/home/index.dart';
 
 import '../screens/quran/quran_list.dart';
-import '../screens/quran/offline_quran.dart';
-import '../screens/quran/surah.dart';
-import '../screens/quran/surah_description.dart';
-import '../screens/quran/para.dart';
-import '../screens/quran/tafseer.dart';
-import '../screens/quran/bismillah_tafseer.dart';
+import '../screens/quran/digital/quran.dart';
+import '../screens/quran/digital/surah.dart';
+import '../screens/quran/digital/surah_description.dart';
+import '../screens/quran/digital/para.dart';
+import '../screens/quran/book/quran.dart';
+import '../screens/quran/tafseer/ayah.dart';
+import '../screens/quran/tafseer/bismillah.dart';
 import '../screens/quran/bookmarks.dart';
 import '../screens/quran/search.dart';
-import '../screens/quran/book/book.dart';
 
 import '../screens/books/index.dart';
 import '../screens/books/book.dart';
@@ -78,7 +78,7 @@ class AppRoutes {
       children: [
         QRoute(
           path: '/books/:id',
-          builder: () => const QuranBook(),
+          builder: () => const PdfQuran(),
           middleware: [
             QMiddlewareBuilder(
               onEnterFunc: () => WakelockPlus.enable(),
@@ -90,7 +90,7 @@ class AppRoutes {
     ),
     QRoute(
       path: '/quran',
-      builder: () => const OfflineQuran(),
+      builder: () => const DigitalQuran(),
       children: [
         QRoute(
           path: '/surah/:slug',
@@ -126,7 +126,7 @@ class AppRoutes {
         ),
         QRoute(
           path: '/tafseers/:ayah_id',
-          builder: () => const Tafseer(),
+          builder: () => const AyahTafseer(),
         ),
         QRoute(
           path: '/bismillah-tafseer',

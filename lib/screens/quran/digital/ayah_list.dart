@@ -32,7 +32,7 @@ import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/theme/colors.dart';
 import 'bismillah.dart';
 import 'ayah.dart';
-import 'qari_list.dart';
+import '../shared/qari_list.dart';
 
 class AyahList extends ConsumerWidget {
   const AyahList({

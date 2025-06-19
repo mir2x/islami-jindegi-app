@@ -11,7 +11,7 @@ import 'package:native_app/providers/qirat_player.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/theme/app_theme.dart';
-import 'ayah_actions.dart';
+import '../shared/ayah_actions.dart';
 
 class Ayah extends ConsumerWidget {
   const Ayah({

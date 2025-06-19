@@ -24,8 +24,8 @@ import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 
-class Tafseer extends ConsumerWidget {
-  const Tafseer({super.key});
+class AyahTafseer extends ConsumerWidget {
+  const AyahTafseer({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

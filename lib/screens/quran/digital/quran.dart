@@ -19,8 +19,8 @@ import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/theme/app_theme.dart';
 
-class OfflineQuran extends StatelessWidget {
-  const OfflineQuran({super.key});
+class DigitalQuran extends StatelessWidget {
+  const DigitalQuran({super.key});
 
   @override
   Widget build(BuildContext context) {

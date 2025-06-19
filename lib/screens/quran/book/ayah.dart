@@ -8,7 +8,7 @@ import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/widgets/presentation/popup_dialog.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/theme/app_theme.dart';
-import '../ayah_actions.dart';
+import '../shared/ayah_actions.dart';
 
 class QuranBookAyah extends ConsumerWidget {
   const QuranBookAyah({
