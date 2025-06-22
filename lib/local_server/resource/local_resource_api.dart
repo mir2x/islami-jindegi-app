@@ -200,6 +200,10 @@ class LocalResourceAPI extends _$LocalResourceAPI {
       query.where((t) => t.slug.equals(params['slug'].toString()));
     }
 
+    if (params.containsKey('title')) {
+      query.where((t) => t.title.equals(params['title'].toString()));
+    }
+
     if (params.containsKey('position')) {
       query.where((r) => r.position.equals(params['position']));
     }
