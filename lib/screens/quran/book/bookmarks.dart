@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart' hide TextDirection;
+import 'package:native_app/providers/quran_settings.dart';
 import 'package:pdfrx/pdfrx.dart';
 import 'package:native_app/main.data.dart';
 import 'package:native_app/providers/ayah_bookmarks.dart';
@@ -98,6 +99,12 @@ class QuranBookBookmarks extends ConsumerWidget {
                           await ref.watch(allModelsProvider(query).future);
 
                       if (resources.isNotEmpty) {
+                        var notifier = ref.read(quranSettingsProvider.notifier);
+                        notifier.updateParams(
+                          'currentBookmarkAyah',
+                          item.position,
+                        );
+
                         var bookPage = resources.first;
                         pdfController.goToPage(
                           pageNumber: bookPage.position,

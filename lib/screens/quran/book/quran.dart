@@ -414,10 +414,20 @@ class _QuranDisplayState extends ConsumerState<QuranDisplay> {
 
                         if (qitabSurahs.length == 1) {
                           var qitabSurah = qitabSurahs.first;
-                          int currentAyah = (qitabSurah.startAyah == 1 &&
-                                  qitabSurah.surah.value.position != 9)
-                              ? 0
-                              : qitabSurah.startAyah;
+
+                          var qSettings = ref.watch(quranSettingsProvider);
+
+                          int? currentAyah;
+
+                          if (qSettings['currentBookmarkAyah'] != null) {
+                            currentAyah = qSettings['currentBookmarkAyah'];
+                            notifier.updateParams('currentBookmarkAyah', null);
+                          } else {
+                            currentAyah = (qitabSurah.startAyah == 1 &&
+                                    qitabSurah.surah.value.position != 9)
+                                ? 0
+                                : qitabSurah.startAyah;
+                          }
 
                           notifier.updateMultipleParams({
                             'currentAyah': currentAyah,
