@@ -100,10 +100,10 @@ class QuranBookBookmarks extends ConsumerWidget {
 
                       if (resources.isNotEmpty) {
                         var notifier = ref.read(quranSettingsProvider.notifier);
-                        notifier.updateParams(
-                          'currentBookmarkAyah',
-                          item.position,
-                        );
+                        notifier.updateMultipleParams({
+                          'currentAyah': item.position,
+                          'currentBookmarkAyah': item.position,
+                        });
 
                         var bookPage = resources.first;
                         pdfController.goToPage(
