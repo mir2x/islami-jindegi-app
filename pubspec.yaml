@@ -76,7 +76,7 @@ dependencies:
   open_filex: ^4.6.0
   share_plus: ^10.1.4
   wakelock_plus: ^1.2.10
-  flutter_alarm_clock: ^0.1.1
+  flutter_alarm_clock: ^0.1.2
   webview_flutter: ^4.8.0
 
   # http
@@ -103,7 +103,7 @@ dependencies:
   adhan: ^2.0.0-nullsafety.2
   timezone_utc_offset: ^1.1.0
   date_picker_plus: ^4.1.0
-  smooth_compass_plus: ^0.0.4
+  flutter_compass: ^0.8.1
 
   # app widget
   home_widget: ^0.6.0
