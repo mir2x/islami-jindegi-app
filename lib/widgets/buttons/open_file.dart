@@ -32,15 +32,6 @@ class OpenFile extends StatelessWidget {
                 : await getApplicationSupportDirectory();
 
             if (downloadDir != null && path != null) {
-              // String fullPath = p.join(downloadDir.path, path);
-              // List list = fullPath.split('/');
-              // String directoryPath = list.sublist(0, list.length - 1).join('/');
-              // Process.run(
-              //   'explorer',
-              //   [directoryPath],
-              //   workingDirectory: directoryPath,
-              // );
-
               await OpenFilex.open(
                 p.join(downloadDir.path, path),
               );
