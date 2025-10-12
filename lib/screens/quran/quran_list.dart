@@ -8,6 +8,7 @@ import 'package:native_app/main.data.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/objects/all_models_query.dart';
 import 'package:native_app/providers/all_models.dart';
+import 'package:native_app/providers/first_model.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
 import 'package:native_app/settings/image.dart';
 
@@ -33,33 +34,55 @@ class QuranList extends ConsumerWidget {
 
     var modelQuery = ref.watch(allModelsProvider(query));
 
+    var settingsQuery = ref.watch(
+      firstModelProvider(
+        AllModelsQuery(
+          repository: ref.settings,
+          params: const {'quantity': 1},
+        ),
+      ),
+    );
+
     return AppScaffold(
       title: Text(locales.quran),
       body: ItemContent(
         children: [
-          InkWell(
-            onTap: () => QR.to('quran'),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(left: 5, bottom: 15),
-                  child: Text(
-                    '${locales.offline} ${locales.quran}',
-                    style: textTheme.labelLarge,
+          settingsQuery.when(
+            loading: () => const SizedBox.shrink(),
+            error: (error, _) => const SizedBox.shrink(),
+            data: (settings) {
+              if (settings.displayOfflineQuran) {
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 35),
+                  child: InkWell(
+                    onTap: () => QR.to('quran'),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(left: 5, bottom: 15),
+                          child: Text(
+                            '${locales.offline} ${locales.quran}',
+                            style: textTheme.labelLarge,
+                          ),
+                        ),
+                        SvgPicture.asset(
+                          'assets/images/quran-qitabs/offline.svg',
+                          fit: BoxFit.contain,
+                          width: isMobile ? 175 : 250,
+                          height: isMobile ? 270 : 386,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                SvgPicture.asset(
-                  'assets/images/quran-qitabs/offline.svg',
-                  fit: BoxFit.contain,
-                  width: isMobile ? 175 : 250,
-                  height: isMobile ? 270 : 386,
-                ),
-              ],
-            ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
           ),
           Container(
-            margin: const EdgeInsets.only(top: 50, left: 5, bottom: 20),
+            margin: const EdgeInsets.only(top: 15, left: 5, bottom: 20),
             child: Text(locales.pageBasedQuran, style: textTheme.labelLarge),
           ),
           modelQuery.when(

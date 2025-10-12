@@ -11,12 +11,14 @@ class Setting extends DataModel<Setting> {
   @override
   final String? id;
   final bool askQuestion;
+  final bool displayOfflineQuran;
   final String? createdAt;
   final String? updatedAt;
 
   Setting({
     this.id,
     required this.askQuestion,
+    required this.displayOfflineQuran,
     this.createdAt,
     this.updatedAt,
   });

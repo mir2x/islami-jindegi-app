@@ -60,6 +60,7 @@ extension SettingRelationshipGraphNodeX on RelationshipGraphNode<Setting> {}
 Setting _$SettingFromJson(Map<String, dynamic> json) => Setting(
       id: json['id'] as String?,
       askQuestion: json['ask-question'] as bool,
+      displayOfflineQuran: json['display-offline-quran'] as bool,
       createdAt: json['created-at'] as String?,
       updatedAt: json['updated-at'] as String?,
     );
@@ -67,6 +68,7 @@ Setting _$SettingFromJson(Map<String, dynamic> json) => Setting(
 Map<String, dynamic> _$SettingToJson(Setting instance) => <String, dynamic>{
       'id': instance.id,
       'ask-question': instance.askQuestion,
+      'display-offline-quran': instance.displayOfflineQuran,
       'created-at': instance.createdAt,
       'updated-at': instance.updatedAt,
     };
