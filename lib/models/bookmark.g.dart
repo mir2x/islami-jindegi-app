@@ -89,7 +89,7 @@ const BookmarkSchema = CollectionSchema(
   getId: _bookmarkGetId,
   getLinks: _bookmarkGetLinks,
   attach: _bookmarkAttach,
-  version: '3.1.8',
+  version: '3.2.0-dev.4',
 );
 
 int _bookmarkEstimateSize(

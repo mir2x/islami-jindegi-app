@@ -303,7 +303,7 @@ packages:
     source: hosted
     version: "0.17.3"
   dart_style:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: dart_style
       sha256: "7856d364b589d1f08986e140938578ed36ed948581fbc3bc9aef1805039ac5ab"
@@ -916,30 +916,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
-  isar:
+  isar_community:
     dependency: "direct main"
     description:
-      name: isar
-      sha256: e17a9555bc7f22ff26568b8c64d019b4ffa2dc6bd4cb1c8d9b269aefd32e53ad
-      url: "https://pub.isar-community.dev"
+      name: isar_community
+      sha256: "601f94c3885b5302d5574a0561c67161aaebd73705815e98081b7d099b693b87"
+      url: "https://pub.dev"
     source: hosted
-    version: "3.1.8"
-  isar_flutter_libs:
+    version: "3.2.0-dev.4"
+  isar_community_flutter_libs:
     dependency: "direct main"
     description:
-      name: isar_flutter_libs
-      sha256: "78710781e658ce4bff59b3f38c5b2735e899e627f4e926e1221934e77b95231a"
-      url: "https://pub.isar-community.dev"
+      name: isar_community_flutter_libs
+      sha256: afb84dd89bf8973536c5a81c70db56c773e4949798b19f4cbec603f7665e5e41
+      url: "https://pub.dev"
     source: hosted
-    version: "3.1.8"
-  isar_generator:
+    version: "3.2.0-dev.4"
+  isar_community_generator:
     dependency: "direct dev"
     description:
-      name: isar_generator
-      sha256: "484e73d3b7e81dbd816852fe0b9497333118a9aeb646fd2d349a62cc8980ffe1"
-      url: "https://pub.isar-community.dev"
+      name: isar_community_generator
+      sha256: "985b34c6f39b537dd03b0d6a8695c8ed930380adacd61c602c0f2b0828c84ba3"
+      url: "https://pub.dev"
     source: hosted
-    version: "3.1.8"
+    version: "3.2.0-dev.4"
   js:
     dependency: transitive
     description:
@@ -1466,7 +1466,7 @@ packages:
     source: hosted
     version: "0.2.12"
   source_gen:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: source_gen
       sha256: "14658ba5f669685cd3d63701d01b31ea748310f7ab854e471962670abcf57832"
@@ -1909,10 +1909,10 @@ packages:
     dependency: transitive
     description:
       name: xxh3
-      sha256: cbeb0e1d10f4c6bf67b650f395eac0cc689425b5efc2ba0cc3d3e069a0beaeec
+      sha256: "399a0438f5d426785723c99da6b16e136f4953fb1e9db0bf270bd41dd4619916"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0"
+    version: "1.2.0"
   yaml:
     dependency: transitive
     description:

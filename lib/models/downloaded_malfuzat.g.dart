@@ -102,7 +102,7 @@ const DownloadedMalfuzatSchema = CollectionSchema(
   getId: _downloadedMalfuzatGetId,
   getLinks: _downloadedMalfuzatGetLinks,
   attach: _downloadedMalfuzatAttach,
-  version: '3.1.8',
+  version: '3.2.0-dev.4',
 );
 
 int _downloadedMalfuzatEstimateSize(

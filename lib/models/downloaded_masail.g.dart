@@ -101,7 +101,7 @@ const DownloadedMasailSchema = CollectionSchema(
   getId: _downloadedMasailGetId,
   getLinks: _downloadedMasailGetLinks,
   attach: _downloadedMasailAttach,
-  version: '3.1.8',
+  version: '3.2.0-dev.4',
 );
 
 int _downloadedMasailEstimateSize(

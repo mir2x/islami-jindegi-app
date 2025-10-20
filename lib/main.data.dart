@@ -1,3 +1,5 @@
+
+
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: directives_ordering, top_level_function_literal_block, depend_on_referenced_packages
 
@@ -53,17 +55,13 @@ import 'package:native_app/models/tafseer_qitab.dart';
 import 'package:native_app/models/tafseer.dart';
 
 // ignore: prefer_function_declarations_over_variables
-ConfigureRepositoryLocalStorage configureRepositoryLocalStorage = (
-    {FutureFn<String>? baseDirFn,
-    List<int>? encryptionKey,
-    LocalStorageClearStrategy? clear}) {
+ConfigureRepositoryLocalStorage configureRepositoryLocalStorage = ({FutureFn<String>? baseDirFn, List<int>? encryptionKey, LocalStorageClearStrategy? clear}) {
   if (!kIsWeb) {
-    baseDirFn ??=
-        () => getApplicationDocumentsDirectory().then((dir) => dir.path);
+    baseDirFn ??= () => getApplicationDocumentsDirectory().then((dir) => dir.path);
   } else {
     baseDirFn ??= () => '';
   }
-
+  
   return hiveLocalStorageProvider.overrideWith(
     (ref) => HiveLocalStorage(
       hive: ref.read(hiveProvider),
@@ -76,445 +74,210 @@ ConfigureRepositoryLocalStorage configureRepositoryLocalStorage = (
 
 final repositoryProviders = <String, Provider<Repository<DataModelMixin>>>{
   'articleAuthors': articleAuthorsRepositoryProvider,
-  'articleCategories': articleCategoriesRepositoryProvider,
-  'articleSubcategories': articleSubcategoriesRepositoryProvider,
-  'articles': articlesRepositoryProvider,
-  'authors': authorsRepositoryProvider,
-  'ayahTranslations': ayahTranslationsRepositoryProvider,
-  'ayahs': ayahsRepositoryProvider,
-  'bayanCategories': bayanCategoriesRepositoryProvider,
-  'bayans': bayansRepositoryProvider,
-  'bookCategories': bookCategoriesRepositoryProvider,
-  'bookSubcategories': bookSubcategoriesRepositoryProvider,
-  'books': booksRepositoryProvider,
-  'chapters': chaptersRepositoryProvider,
-  'cities': citiesRepositoryProvider,
-  'countries': countriesRepositoryProvider,
-  'duaCategories': duaCategoriesRepositoryProvider,
-  'duas': duasRepositoryProvider,
-  'hijriAdjustments': hijriAdjustmentsRepositoryProvider,
-  'madrasahInfos': madrasahInfosRepositoryProvider,
-  'madrasahPhotos': madrasahPhotosRepositoryProvider,
-  'madrasahs': madrasahsRepositoryProvider,
-  'malfuzatAuthors': malfuzatAuthorsRepositoryProvider,
-  'malfuzatCategories': malfuzatCategoriesRepositoryProvider,
-  'malfuzatSubcategories': malfuzatSubcategoriesRepositoryProvider,
-  'malfuzats': malfuzatsRepositoryProvider,
-  'masailAuthors': masailAuthorsRepositoryProvider,
-  'masailCategories': masailCategoriesRepositoryProvider,
-  'masailSubcategories': masailSubcategoriesRepositoryProvider,
-  'masails': masailsRepositoryProvider,
-  'namazTimes': namazTimesRepositoryProvider,
-  'news': newsRepositoryProvider,
-  'pages': pagesRepositoryProvider,
-  'paras': parasRepositoryProvider,
-  'qaris': qarisRepositoryProvider,
-  'quranBookPages': quranBookPagesRepositoryProvider,
-  'quranBookParas': quranBookParasRepositoryProvider,
-  'quranBookQitabs': quranBookQitabsRepositoryProvider,
-  'quranBookSurahs': quranBookSurahsRepositoryProvider,
-  'quranBooks': quranBooksRepositoryProvider,
-  'settings': settingsRepositoryProvider,
-  'speakers': speakersRepositoryProvider,
-  'subchapters': subchaptersRepositoryProvider,
-  'surahs': surahsRepositoryProvider,
-  'tafseerQitabs': tafseerQitabsRepositoryProvider,
-  'tafseers': tafseersRepositoryProvider
+'articleCategories': articleCategoriesRepositoryProvider,
+'articleSubcategories': articleSubcategoriesRepositoryProvider,
+'articles': articlesRepositoryProvider,
+'authors': authorsRepositoryProvider,
+'ayahTranslations': ayahTranslationsRepositoryProvider,
+'ayahs': ayahsRepositoryProvider,
+'bayanCategories': bayanCategoriesRepositoryProvider,
+'bayans': bayansRepositoryProvider,
+'bookCategories': bookCategoriesRepositoryProvider,
+'bookSubcategories': bookSubcategoriesRepositoryProvider,
+'books': booksRepositoryProvider,
+'chapters': chaptersRepositoryProvider,
+'cities': citiesRepositoryProvider,
+'countries': countriesRepositoryProvider,
+'duaCategories': duaCategoriesRepositoryProvider,
+'duas': duasRepositoryProvider,
+'hijriAdjustments': hijriAdjustmentsRepositoryProvider,
+'madrasahInfos': madrasahInfosRepositoryProvider,
+'madrasahPhotos': madrasahPhotosRepositoryProvider,
+'madrasahs': madrasahsRepositoryProvider,
+'malfuzatAuthors': malfuzatAuthorsRepositoryProvider,
+'malfuzatCategories': malfuzatCategoriesRepositoryProvider,
+'malfuzatSubcategories': malfuzatSubcategoriesRepositoryProvider,
+'malfuzats': malfuzatsRepositoryProvider,
+'masailAuthors': masailAuthorsRepositoryProvider,
+'masailCategories': masailCategoriesRepositoryProvider,
+'masailSubcategories': masailSubcategoriesRepositoryProvider,
+'masails': masailsRepositoryProvider,
+'namazTimes': namazTimesRepositoryProvider,
+'news': newsRepositoryProvider,
+'pages': pagesRepositoryProvider,
+'paras': parasRepositoryProvider,
+'qaris': qarisRepositoryProvider,
+'quranBookPages': quranBookPagesRepositoryProvider,
+'quranBookParas': quranBookParasRepositoryProvider,
+'quranBookQitabs': quranBookQitabsRepositoryProvider,
+'quranBookSurahs': quranBookSurahsRepositoryProvider,
+'quranBooks': quranBooksRepositoryProvider,
+'settings': settingsRepositoryProvider,
+'speakers': speakersRepositoryProvider,
+'subchapters': subchaptersRepositoryProvider,
+'surahs': surahsRepositoryProvider,
+'tafseerQitabs': tafseerQitabsRepositoryProvider,
+'tafseers': tafseersRepositoryProvider
 };
 
 final repositoryInitializerProvider =
-    FutureProvider<RepositoryInitializer>((ref) async {
-  DataHelpers.setInternalType<ArticleAuthor>('articleAuthors');
-  DataHelpers.setInternalType<ArticleCategory>('articleCategories');
-  DataHelpers.setInternalType<ArticleSubcategory>('articleSubcategories');
-  DataHelpers.setInternalType<Article>('articles');
-  DataHelpers.setInternalType<Author>('authors');
-  DataHelpers.setInternalType<AyahTranslation>('ayahTranslations');
-  DataHelpers.setInternalType<Ayah>('ayahs');
-  DataHelpers.setInternalType<BayanCategory>('bayanCategories');
-  DataHelpers.setInternalType<Bayan>('bayans');
-  DataHelpers.setInternalType<BookCategory>('bookCategories');
-  DataHelpers.setInternalType<BookSubcategory>('bookSubcategories');
-  DataHelpers.setInternalType<Book>('books');
-  DataHelpers.setInternalType<Chapter>('chapters');
-  DataHelpers.setInternalType<City>('cities');
-  DataHelpers.setInternalType<Country>('countries');
-  DataHelpers.setInternalType<DuaCategory>('duaCategories');
-  DataHelpers.setInternalType<Dua>('duas');
-  DataHelpers.setInternalType<HijriAdjustment>('hijriAdjustments');
-  DataHelpers.setInternalType<MadrasahInfo>('madrasahInfos');
-  DataHelpers.setInternalType<MadrasahPhoto>('madrasahPhotos');
-  DataHelpers.setInternalType<Madrasah>('madrasahs');
-  DataHelpers.setInternalType<MalfuzatAuthor>('malfuzatAuthors');
-  DataHelpers.setInternalType<MalfuzatCategory>('malfuzatCategories');
-  DataHelpers.setInternalType<MalfuzatSubcategory>('malfuzatSubcategories');
-  DataHelpers.setInternalType<Malfuzat>('malfuzats');
-  DataHelpers.setInternalType<MasailAuthor>('masailAuthors');
-  DataHelpers.setInternalType<MasailCategory>('masailCategories');
-  DataHelpers.setInternalType<MasailSubcategory>('masailSubcategories');
-  DataHelpers.setInternalType<Masail>('masails');
-  DataHelpers.setInternalType<NamazTime>('namazTimes');
-  DataHelpers.setInternalType<News>('news');
-  DataHelpers.setInternalType<Page>('pages');
-  DataHelpers.setInternalType<Para>('paras');
-  DataHelpers.setInternalType<Qari>('qaris');
-  DataHelpers.setInternalType<QuranBookPage>('quranBookPages');
-  DataHelpers.setInternalType<QuranBookPara>('quranBookParas');
-  DataHelpers.setInternalType<QuranBookQitab>('quranBookQitabs');
-  DataHelpers.setInternalType<QuranBookSurah>('quranBookSurahs');
-  DataHelpers.setInternalType<QuranBook>('quranBooks');
-  DataHelpers.setInternalType<Setting>('settings');
-  DataHelpers.setInternalType<Speaker>('speakers');
-  DataHelpers.setInternalType<Subchapter>('subchapters');
-  DataHelpers.setInternalType<Surah>('surahs');
-  DataHelpers.setInternalType<TafseerQitab>('tafseerQitabs');
-  DataHelpers.setInternalType<Tafseer>('tafseers');
-  final adapters = <String, RemoteAdapter>{
-    'articleAuthors': ref.watch(internalArticleAuthorsRemoteAdapterProvider),
-    'articleCategories':
-        ref.watch(internalArticleCategoriesRemoteAdapterProvider),
-    'articleSubcategories':
-        ref.watch(internalArticleSubcategoriesRemoteAdapterProvider),
-    'articles': ref.watch(internalArticlesRemoteAdapterProvider),
-    'authors': ref.watch(internalAuthorsRemoteAdapterProvider),
-    'ayahTranslations':
-        ref.watch(internalAyahTranslationsRemoteAdapterProvider),
-    'ayahs': ref.watch(internalAyahsRemoteAdapterProvider),
-    'bayanCategories': ref.watch(internalBayanCategoriesRemoteAdapterProvider),
-    'bayans': ref.watch(internalBayansRemoteAdapterProvider),
-    'bookCategories': ref.watch(internalBookCategoriesRemoteAdapterProvider),
-    'bookSubcategories':
-        ref.watch(internalBookSubcategoriesRemoteAdapterProvider),
-    'books': ref.watch(internalBooksRemoteAdapterProvider),
-    'chapters': ref.watch(internalChaptersRemoteAdapterProvider),
-    'cities': ref.watch(internalCitiesRemoteAdapterProvider),
-    'countries': ref.watch(internalCountriesRemoteAdapterProvider),
-    'duaCategories': ref.watch(internalDuaCategoriesRemoteAdapterProvider),
-    'duas': ref.watch(internalDuasRemoteAdapterProvider),
-    'hijriAdjustments':
-        ref.watch(internalHijriAdjustmentsRemoteAdapterProvider),
-    'madrasahInfos': ref.watch(internalMadrasahInfosRemoteAdapterProvider),
-    'madrasahPhotos': ref.watch(internalMadrasahPhotosRemoteAdapterProvider),
-    'madrasahs': ref.watch(internalMadrasahsRemoteAdapterProvider),
-    'malfuzatAuthors': ref.watch(internalMalfuzatAuthorsRemoteAdapterProvider),
-    'malfuzatCategories':
-        ref.watch(internalMalfuzatCategoriesRemoteAdapterProvider),
-    'malfuzatSubcategories':
-        ref.watch(internalMalfuzatSubcategoriesRemoteAdapterProvider),
-    'malfuzats': ref.watch(internalMalfuzatsRemoteAdapterProvider),
-    'masailAuthors': ref.watch(internalMasailAuthorsRemoteAdapterProvider),
-    'masailCategories':
-        ref.watch(internalMasailCategoriesRemoteAdapterProvider),
-    'masailSubcategories':
-        ref.watch(internalMasailSubcategoriesRemoteAdapterProvider),
-    'masails': ref.watch(internalMasailsRemoteAdapterProvider),
-    'namazTimes': ref.watch(internalNamazTimesRemoteAdapterProvider),
-    'news': ref.watch(internalNewsRemoteAdapterProvider),
-    'pages': ref.watch(internalPagesRemoteAdapterProvider),
-    'paras': ref.watch(internalParasRemoteAdapterProvider),
-    'qaris': ref.watch(internalQarisRemoteAdapterProvider),
-    'quranBookPages': ref.watch(internalQuranBookPagesRemoteAdapterProvider),
-    'quranBookParas': ref.watch(internalQuranBookParasRemoteAdapterProvider),
-    'quranBookQitabs': ref.watch(internalQuranBookQitabsRemoteAdapterProvider),
-    'quranBookSurahs': ref.watch(internalQuranBookSurahsRemoteAdapterProvider),
-    'quranBooks': ref.watch(internalQuranBooksRemoteAdapterProvider),
-    'settings': ref.watch(internalSettingsRemoteAdapterProvider),
-    'speakers': ref.watch(internalSpeakersRemoteAdapterProvider),
-    'subchapters': ref.watch(internalSubchaptersRemoteAdapterProvider),
-    'surahs': ref.watch(internalSurahsRemoteAdapterProvider),
-    'tafseerQitabs': ref.watch(internalTafseerQitabsRemoteAdapterProvider),
-    'tafseers': ref.watch(internalTafseersRemoteAdapterProvider)
-  };
-  final remotes = <String, bool>{
-    'articleAuthors': true,
-    'articleCategories': true,
-    'articleSubcategories': true,
-    'articles': true,
-    'authors': true,
-    'ayahTranslations': true,
-    'ayahs': true,
-    'bayanCategories': true,
-    'bayans': true,
-    'bookCategories': true,
-    'bookSubcategories': true,
-    'books': true,
-    'chapters': true,
-    'cities': true,
-    'countries': true,
-    'duaCategories': true,
-    'duas': true,
-    'hijriAdjustments': true,
-    'madrasahInfos': true,
-    'madrasahPhotos': true,
-    'madrasahs': true,
-    'malfuzatAuthors': true,
-    'malfuzatCategories': true,
-    'malfuzatSubcategories': true,
-    'malfuzats': true,
-    'masailAuthors': true,
-    'masailCategories': true,
-    'masailSubcategories': true,
-    'masails': true,
-    'namazTimes': true,
-    'news': true,
-    'pages': true,
-    'paras': true,
-    'qaris': true,
-    'quranBookPages': true,
-    'quranBookParas': true,
-    'quranBookQitabs': true,
-    'quranBookSurahs': true,
-    'quranBooks': true,
-    'settings': true,
-    'speakers': true,
-    'subchapters': true,
-    'surahs': true,
-    'tafseerQitabs': true,
-    'tafseers': true
-  };
+  FutureProvider<RepositoryInitializer>((ref) async {
+    DataHelpers.setInternalType<ArticleAuthor>('articleAuthors');
+    DataHelpers.setInternalType<ArticleCategory>('articleCategories');
+    DataHelpers.setInternalType<ArticleSubcategory>('articleSubcategories');
+    DataHelpers.setInternalType<Article>('articles');
+    DataHelpers.setInternalType<Author>('authors');
+    DataHelpers.setInternalType<AyahTranslation>('ayahTranslations');
+    DataHelpers.setInternalType<Ayah>('ayahs');
+    DataHelpers.setInternalType<BayanCategory>('bayanCategories');
+    DataHelpers.setInternalType<Bayan>('bayans');
+    DataHelpers.setInternalType<BookCategory>('bookCategories');
+    DataHelpers.setInternalType<BookSubcategory>('bookSubcategories');
+    DataHelpers.setInternalType<Book>('books');
+    DataHelpers.setInternalType<Chapter>('chapters');
+    DataHelpers.setInternalType<City>('cities');
+    DataHelpers.setInternalType<Country>('countries');
+    DataHelpers.setInternalType<DuaCategory>('duaCategories');
+    DataHelpers.setInternalType<Dua>('duas');
+    DataHelpers.setInternalType<HijriAdjustment>('hijriAdjustments');
+    DataHelpers.setInternalType<MadrasahInfo>('madrasahInfos');
+    DataHelpers.setInternalType<MadrasahPhoto>('madrasahPhotos');
+    DataHelpers.setInternalType<Madrasah>('madrasahs');
+    DataHelpers.setInternalType<MalfuzatAuthor>('malfuzatAuthors');
+    DataHelpers.setInternalType<MalfuzatCategory>('malfuzatCategories');
+    DataHelpers.setInternalType<MalfuzatSubcategory>('malfuzatSubcategories');
+    DataHelpers.setInternalType<Malfuzat>('malfuzats');
+    DataHelpers.setInternalType<MasailAuthor>('masailAuthors');
+    DataHelpers.setInternalType<MasailCategory>('masailCategories');
+    DataHelpers.setInternalType<MasailSubcategory>('masailSubcategories');
+    DataHelpers.setInternalType<Masail>('masails');
+    DataHelpers.setInternalType<NamazTime>('namazTimes');
+    DataHelpers.setInternalType<News>('news');
+    DataHelpers.setInternalType<Page>('pages');
+    DataHelpers.setInternalType<Para>('paras');
+    DataHelpers.setInternalType<Qari>('qaris');
+    DataHelpers.setInternalType<QuranBookPage>('quranBookPages');
+    DataHelpers.setInternalType<QuranBookPara>('quranBookParas');
+    DataHelpers.setInternalType<QuranBookQitab>('quranBookQitabs');
+    DataHelpers.setInternalType<QuranBookSurah>('quranBookSurahs');
+    DataHelpers.setInternalType<QuranBook>('quranBooks');
+    DataHelpers.setInternalType<Setting>('settings');
+    DataHelpers.setInternalType<Speaker>('speakers');
+    DataHelpers.setInternalType<Subchapter>('subchapters');
+    DataHelpers.setInternalType<Surah>('surahs');
+    DataHelpers.setInternalType<TafseerQitab>('tafseerQitabs');
+    DataHelpers.setInternalType<Tafseer>('tafseers');
+    final adapters = <String, RemoteAdapter>{'articleAuthors': ref.watch(internalArticleAuthorsRemoteAdapterProvider), 'articleCategories': ref.watch(internalArticleCategoriesRemoteAdapterProvider), 'articleSubcategories': ref.watch(internalArticleSubcategoriesRemoteAdapterProvider), 'articles': ref.watch(internalArticlesRemoteAdapterProvider), 'authors': ref.watch(internalAuthorsRemoteAdapterProvider), 'ayahTranslations': ref.watch(internalAyahTranslationsRemoteAdapterProvider), 'ayahs': ref.watch(internalAyahsRemoteAdapterProvider), 'bayanCategories': ref.watch(internalBayanCategoriesRemoteAdapterProvider), 'bayans': ref.watch(internalBayansRemoteAdapterProvider), 'bookCategories': ref.watch(internalBookCategoriesRemoteAdapterProvider), 'bookSubcategories': ref.watch(internalBookSubcategoriesRemoteAdapterProvider), 'books': ref.watch(internalBooksRemoteAdapterProvider), 'chapters': ref.watch(internalChaptersRemoteAdapterProvider), 'cities': ref.watch(internalCitiesRemoteAdapterProvider), 'countries': ref.watch(internalCountriesRemoteAdapterProvider), 'duaCategories': ref.watch(internalDuaCategoriesRemoteAdapterProvider), 'duas': ref.watch(internalDuasRemoteAdapterProvider), 'hijriAdjustments': ref.watch(internalHijriAdjustmentsRemoteAdapterProvider), 'madrasahInfos': ref.watch(internalMadrasahInfosRemoteAdapterProvider), 'madrasahPhotos': ref.watch(internalMadrasahPhotosRemoteAdapterProvider), 'madrasahs': ref.watch(internalMadrasahsRemoteAdapterProvider), 'malfuzatAuthors': ref.watch(internalMalfuzatAuthorsRemoteAdapterProvider), 'malfuzatCategories': ref.watch(internalMalfuzatCategoriesRemoteAdapterProvider), 'malfuzatSubcategories': ref.watch(internalMalfuzatSubcategoriesRemoteAdapterProvider), 'malfuzats': ref.watch(internalMalfuzatsRemoteAdapterProvider), 'masailAuthors': ref.watch(internalMasailAuthorsRemoteAdapterProvider), 'masailCategories': ref.watch(internalMasailCategoriesRemoteAdapterProvider), 'masailSubcategories': ref.watch(internalMasailSubcategoriesRemoteAdapterProvider), 'masails': ref.watch(internalMasailsRemoteAdapterProvider), 'namazTimes': ref.watch(internalNamazTimesRemoteAdapterProvider), 'news': ref.watch(internalNewsRemoteAdapterProvider), 'pages': ref.watch(internalPagesRemoteAdapterProvider), 'paras': ref.watch(internalParasRemoteAdapterProvider), 'qaris': ref.watch(internalQarisRemoteAdapterProvider), 'quranBookPages': ref.watch(internalQuranBookPagesRemoteAdapterProvider), 'quranBookParas': ref.watch(internalQuranBookParasRemoteAdapterProvider), 'quranBookQitabs': ref.watch(internalQuranBookQitabsRemoteAdapterProvider), 'quranBookSurahs': ref.watch(internalQuranBookSurahsRemoteAdapterProvider), 'quranBooks': ref.watch(internalQuranBooksRemoteAdapterProvider), 'settings': ref.watch(internalSettingsRemoteAdapterProvider), 'speakers': ref.watch(internalSpeakersRemoteAdapterProvider), 'subchapters': ref.watch(internalSubchaptersRemoteAdapterProvider), 'surahs': ref.watch(internalSurahsRemoteAdapterProvider), 'tafseerQitabs': ref.watch(internalTafseerQitabsRemoteAdapterProvider), 'tafseers': ref.watch(internalTafseersRemoteAdapterProvider)};
+    final remotes = <String, bool>{'articleAuthors': true, 'articleCategories': true, 'articleSubcategories': true, 'articles': true, 'authors': true, 'ayahTranslations': true, 'ayahs': true, 'bayanCategories': true, 'bayans': true, 'bookCategories': true, 'bookSubcategories': true, 'books': true, 'chapters': true, 'cities': true, 'countries': true, 'duaCategories': true, 'duas': true, 'hijriAdjustments': true, 'madrasahInfos': true, 'madrasahPhotos': true, 'madrasahs': true, 'malfuzatAuthors': true, 'malfuzatCategories': true, 'malfuzatSubcategories': true, 'malfuzats': true, 'masailAuthors': true, 'masailCategories': true, 'masailSubcategories': true, 'masails': true, 'namazTimes': true, 'news': true, 'pages': true, 'paras': true, 'qaris': true, 'quranBookPages': true, 'quranBookParas': true, 'quranBookQitabs': true, 'quranBookSurahs': true, 'quranBooks': true, 'settings': true, 'speakers': true, 'subchapters': true, 'surahs': true, 'tafseerQitabs': true, 'tafseers': true};
 
-  await ref.watch(graphNotifierProvider).initialize();
+    await ref.watch(graphNotifierProvider).initialize();
 
-  // initialize and register
-  for (final type in repositoryProviders.keys) {
-    final repository = ref.read(repositoryProviders[type]!);
-    repository.dispose();
-    await repository.initialize(
-      remote: remotes[type],
-      adapters: adapters,
-    );
-    internalRepositories[type] = repository;
-  }
+    // initialize and register
+    for (final type in repositoryProviders.keys) {
+      final repository = ref.read(repositoryProviders[type]!);
+      repository.dispose();
+      await repository.initialize(
+        remote: remotes[type],
+        adapters: adapters,
+      );
+      internalRepositories[type] = repository;
+    }
 
-  return RepositoryInitializer();
+    return RepositoryInitializer();
 });
-
 extension RepositoryWidgetRefX on WidgetRef {
-  Repository<ArticleAuthor> get articleAuthors =>
-      watch(articleAuthorsRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<ArticleCategory> get articleCategories =>
-      watch(articleCategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<ArticleSubcategory> get articleSubcategories =>
-      watch(articleSubcategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<Article> get articles =>
-      watch(articlesRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<Author> get authors =>
-      watch(authorsRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<AyahTranslation> get ayahTranslations =>
-      watch(ayahTranslationsRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<Ayah> get ayahs =>
-      watch(ayahsRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<BayanCategory> get bayanCategories =>
-      watch(bayanCategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<Bayan> get bayans =>
-      watch(bayansRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<BookCategory> get bookCategories =>
-      watch(bookCategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<BookSubcategory> get bookSubcategories =>
-      watch(bookSubcategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<Book> get books =>
-      watch(booksRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<Chapter> get chapters =>
-      watch(chaptersRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<City> get cities =>
-      watch(citiesRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<Country> get countries =>
-      watch(countriesRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<DuaCategory> get duaCategories =>
-      watch(duaCategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<Dua> get duas =>
-      watch(duasRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<HijriAdjustment> get hijriAdjustments =>
-      watch(hijriAdjustmentsRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<MadrasahInfo> get madrasahInfos =>
-      watch(madrasahInfosRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<MadrasahPhoto> get madrasahPhotos =>
-      watch(madrasahPhotosRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<Madrasah> get madrasahs =>
-      watch(madrasahsRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<MalfuzatAuthor> get malfuzatAuthors =>
-      watch(malfuzatAuthorsRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<MalfuzatCategory> get malfuzatCategories =>
-      watch(malfuzatCategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<MalfuzatSubcategory> get malfuzatSubcategories =>
-      watch(malfuzatSubcategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<Malfuzat> get malfuzats =>
-      watch(malfuzatsRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<MasailAuthor> get masailAuthors =>
-      watch(masailAuthorsRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<MasailCategory> get masailCategories =>
-      watch(masailCategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<MasailSubcategory> get masailSubcategories =>
-      watch(masailSubcategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<Masail> get masails =>
-      watch(masailsRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<NamazTime> get namazTimes =>
-      watch(namazTimesRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<News> get news =>
-      watch(newsRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<Page> get pages =>
-      watch(pagesRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<Para> get paras =>
-      watch(parasRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<Qari> get qaris =>
-      watch(qarisRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<QuranBookPage> get quranBookPages =>
-      watch(quranBookPagesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<QuranBookPara> get quranBookParas =>
-      watch(quranBookParasRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<QuranBookQitab> get quranBookQitabs =>
-      watch(quranBookQitabsRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<QuranBookSurah> get quranBookSurahs =>
-      watch(quranBookSurahsRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<QuranBook> get quranBooks =>
-      watch(quranBooksRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<Setting> get settings =>
-      watch(settingsRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<Speaker> get speakers =>
-      watch(speakersRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<Subchapter> get subchapters =>
-      watch(subchaptersRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<Surah> get surahs =>
-      watch(surahsRepositoryProvider)..remoteAdapter.internalWatch = watch;
-  Repository<TafseerQitab> get tafseerQitabs =>
-      watch(tafseerQitabsRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch;
-  Repository<Tafseer> get tafseers =>
-      watch(tafseersRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<ArticleAuthor> get articleAuthors => watch(articleAuthorsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<ArticleCategory> get articleCategories => watch(articleCategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<ArticleSubcategory> get articleSubcategories => watch(articleSubcategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Article> get articles => watch(articlesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Author> get authors => watch(authorsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<AyahTranslation> get ayahTranslations => watch(ayahTranslationsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Ayah> get ayahs => watch(ayahsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<BayanCategory> get bayanCategories => watch(bayanCategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Bayan> get bayans => watch(bayansRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<BookCategory> get bookCategories => watch(bookCategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<BookSubcategory> get bookSubcategories => watch(bookSubcategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Book> get books => watch(booksRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Chapter> get chapters => watch(chaptersRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<City> get cities => watch(citiesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Country> get countries => watch(countriesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<DuaCategory> get duaCategories => watch(duaCategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Dua> get duas => watch(duasRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<HijriAdjustment> get hijriAdjustments => watch(hijriAdjustmentsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<MadrasahInfo> get madrasahInfos => watch(madrasahInfosRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<MadrasahPhoto> get madrasahPhotos => watch(madrasahPhotosRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Madrasah> get madrasahs => watch(madrasahsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<MalfuzatAuthor> get malfuzatAuthors => watch(malfuzatAuthorsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<MalfuzatCategory> get malfuzatCategories => watch(malfuzatCategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<MalfuzatSubcategory> get malfuzatSubcategories => watch(malfuzatSubcategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Malfuzat> get malfuzats => watch(malfuzatsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<MasailAuthor> get masailAuthors => watch(masailAuthorsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<MasailCategory> get masailCategories => watch(masailCategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<MasailSubcategory> get masailSubcategories => watch(masailSubcategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Masail> get masails => watch(masailsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<NamazTime> get namazTimes => watch(namazTimesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<News> get news => watch(newsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Page> get pages => watch(pagesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Para> get paras => watch(parasRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Qari> get qaris => watch(qarisRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<QuranBookPage> get quranBookPages => watch(quranBookPagesRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<QuranBookPara> get quranBookParas => watch(quranBookParasRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<QuranBookQitab> get quranBookQitabs => watch(quranBookQitabsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<QuranBookSurah> get quranBookSurahs => watch(quranBookSurahsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<QuranBook> get quranBooks => watch(quranBooksRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Setting> get settings => watch(settingsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Speaker> get speakers => watch(speakersRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Subchapter> get subchapters => watch(subchaptersRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Surah> get surahs => watch(surahsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<TafseerQitab> get tafseerQitabs => watch(tafseerQitabsRepositoryProvider)..remoteAdapter.internalWatch = watch;
+  Repository<Tafseer> get tafseers => watch(tafseersRepositoryProvider)..remoteAdapter.internalWatch = watch;
 }
 
 extension RepositoryRefX on Ref {
-  Repository<ArticleAuthor> get articleAuthors =>
-      watch(articleAuthorsRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<ArticleCategory> get articleCategories =>
-      watch(articleCategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<ArticleSubcategory> get articleSubcategories =>
-      watch(articleSubcategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Article> get articles => watch(articlesRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Author> get authors => watch(authorsRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<AyahTranslation> get ayahTranslations =>
-      watch(ayahTranslationsRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Ayah> get ayahs => watch(ayahsRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<BayanCategory> get bayanCategories =>
-      watch(bayanCategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Bayan> get bayans => watch(bayansRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<BookCategory> get bookCategories =>
-      watch(bookCategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<BookSubcategory> get bookSubcategories =>
-      watch(bookSubcategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Book> get books => watch(booksRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Chapter> get chapters => watch(chaptersRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<City> get cities => watch(citiesRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Country> get countries => watch(countriesRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<DuaCategory> get duaCategories =>
-      watch(duaCategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Dua> get duas => watch(duasRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<HijriAdjustment> get hijriAdjustments =>
-      watch(hijriAdjustmentsRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<MadrasahInfo> get madrasahInfos =>
-      watch(madrasahInfosRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<MadrasahPhoto> get madrasahPhotos =>
-      watch(madrasahPhotosRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Madrasah> get madrasahs => watch(madrasahsRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<MalfuzatAuthor> get malfuzatAuthors =>
-      watch(malfuzatAuthorsRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<MalfuzatCategory> get malfuzatCategories =>
-      watch(malfuzatCategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<MalfuzatSubcategory> get malfuzatSubcategories =>
-      watch(malfuzatSubcategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Malfuzat> get malfuzats => watch(malfuzatsRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<MasailAuthor> get masailAuthors =>
-      watch(masailAuthorsRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<MasailCategory> get masailCategories =>
-      watch(masailCategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<MasailSubcategory> get masailSubcategories =>
-      watch(masailSubcategoriesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Masail> get masails => watch(masailsRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<NamazTime> get namazTimes => watch(namazTimesRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<News> get news => watch(newsRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Page> get pages => watch(pagesRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Para> get paras => watch(parasRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Qari> get qaris => watch(qarisRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<QuranBookPage> get quranBookPages =>
-      watch(quranBookPagesRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<QuranBookPara> get quranBookParas =>
-      watch(quranBookParasRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<QuranBookQitab> get quranBookQitabs =>
-      watch(quranBookQitabsRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<QuranBookSurah> get quranBookSurahs =>
-      watch(quranBookSurahsRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<QuranBook> get quranBooks => watch(quranBooksRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Setting> get settings => watch(settingsRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Speaker> get speakers => watch(speakersRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Subchapter> get subchapters => watch(subchaptersRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Surah> get surahs => watch(surahsRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<TafseerQitab> get tafseerQitabs =>
-      watch(tafseerQitabsRepositoryProvider)
-        ..remoteAdapter.internalWatch = watch as Watcher;
-  Repository<Tafseer> get tafseers => watch(tafseersRepositoryProvider)
-    ..remoteAdapter.internalWatch = watch as Watcher;
+
+  Repository<ArticleAuthor> get articleAuthors => watch(articleAuthorsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<ArticleCategory> get articleCategories => watch(articleCategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<ArticleSubcategory> get articleSubcategories => watch(articleSubcategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Article> get articles => watch(articlesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Author> get authors => watch(authorsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<AyahTranslation> get ayahTranslations => watch(ayahTranslationsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Ayah> get ayahs => watch(ayahsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<BayanCategory> get bayanCategories => watch(bayanCategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Bayan> get bayans => watch(bayansRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<BookCategory> get bookCategories => watch(bookCategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<BookSubcategory> get bookSubcategories => watch(bookSubcategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Book> get books => watch(booksRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Chapter> get chapters => watch(chaptersRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<City> get cities => watch(citiesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Country> get countries => watch(countriesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<DuaCategory> get duaCategories => watch(duaCategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Dua> get duas => watch(duasRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<HijriAdjustment> get hijriAdjustments => watch(hijriAdjustmentsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<MadrasahInfo> get madrasahInfos => watch(madrasahInfosRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<MadrasahPhoto> get madrasahPhotos => watch(madrasahPhotosRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Madrasah> get madrasahs => watch(madrasahsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<MalfuzatAuthor> get malfuzatAuthors => watch(malfuzatAuthorsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<MalfuzatCategory> get malfuzatCategories => watch(malfuzatCategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<MalfuzatSubcategory> get malfuzatSubcategories => watch(malfuzatSubcategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Malfuzat> get malfuzats => watch(malfuzatsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<MasailAuthor> get masailAuthors => watch(masailAuthorsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<MasailCategory> get masailCategories => watch(masailCategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<MasailSubcategory> get masailSubcategories => watch(masailSubcategoriesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Masail> get masails => watch(masailsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<NamazTime> get namazTimes => watch(namazTimesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<News> get news => watch(newsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Page> get pages => watch(pagesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Para> get paras => watch(parasRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Qari> get qaris => watch(qarisRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<QuranBookPage> get quranBookPages => watch(quranBookPagesRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<QuranBookPara> get quranBookParas => watch(quranBookParasRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<QuranBookQitab> get quranBookQitabs => watch(quranBookQitabsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<QuranBookSurah> get quranBookSurahs => watch(quranBookSurahsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<QuranBook> get quranBooks => watch(quranBooksRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Setting> get settings => watch(settingsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Speaker> get speakers => watch(speakersRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Subchapter> get subchapters => watch(subchaptersRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Surah> get surahs => watch(surahsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<TafseerQitab> get tafseerQitabs => watch(tafseerQitabsRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
+  Repository<Tafseer> get tafseers => watch(tafseersRepositoryProvider)..remoteAdapter.internalWatch = watch as Watcher;
 }

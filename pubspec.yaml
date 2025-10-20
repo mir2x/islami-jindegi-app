@@ -8,7 +8,7 @@ version: 5.1.7+137
 environment:
   sdk: '>=3.0.0 <4.0.0'
 
-isar_version: &isar_version 3.1.8
+isar_version: &isar_version 3.2.0-dev.4
 
 dependencies:
   flutter:
@@ -28,12 +28,10 @@ dependencies:
   flutter_data_json_api_adapter:
     git:
       url: https://github.com/flutterdata/flutter_data_json_api_adapter.git
-  isar:
+  isar_community:
     version: *isar_version
-    hosted: https://pub.isar-community.dev/
-  isar_flutter_libs:
+  isar_community_flutter_libs:
     version: *isar_version
-    hosted: https://pub.isar-community.dev/
   equatable: ^2.0.5
 
   # local db
@@ -123,6 +121,11 @@ dependencies:
   flutter_native_splash: ^2.3.2
   # flutter_gen: any
 
+dependency_overrides:
+  # flutter_data and isar_community_generator conflicts
+  source_gen: ^1.0.1
+  dart_style: ^2.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -130,9 +133,8 @@ dev_dependencies:
   flutter_lints: ^3.0.1
 
   build_runner: ^2.4.13
-  isar_generator:
+  isar_community_generator:
     version: *isar_version
-    hosted: https://pub.isar-community.dev/
 
   json_serializable: ^6.3.1
   faker: ^2.0.0
