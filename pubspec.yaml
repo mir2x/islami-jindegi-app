@@ -8,8 +8,6 @@ version: 5.1.7+137
 environment:
   sdk: '>=3.0.0 <4.0.0'
 
-isar_version: &isar_version 3.2.0-dev.4
-
 dependencies:
   flutter:
     sdk: flutter
@@ -28,10 +26,9 @@ dependencies:
   flutter_data_json_api_adapter:
     git:
       url: https://github.com/flutterdata/flutter_data_json_api_adapter.git
-  isar_community:
-    version: *isar_version
-  isar_community_flutter_libs:
-    version: *isar_version
+      ref: 5af6c88
+  isar_community: 3.2.0-dev.4
+  isar_community_flutter_libs: 3.2.0-dev.4
   equatable: ^2.0.5
 
   # local db
@@ -133,8 +130,7 @@ dev_dependencies:
   flutter_lints: ^3.0.1
 
   build_runner: ^2.4.13
-  isar_community_generator:
-    version: *isar_version
+  isar_community_generator: 3.2.0-dev.4
 
   json_serializable: ^6.3.1
   faker: ^2.0.0

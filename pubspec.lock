@@ -567,7 +567,7 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: HEAD
+      ref: "5af6c88"
       resolved-ref: "5af6c88f09019bfe74b174c8279578e5f09bb040"
       url: "https://github.com/flutterdata/flutter_data_json_api_adapter.git"
     source: git
