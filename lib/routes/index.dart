@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:native_app/features/home/presentation/screens/home_screen.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
@@ -74,7 +75,7 @@ class AppRoutes {
     QRoute(path: '/', name: 'root', builder: () => const Home()),
     QRoute(
       path: '/qurans',
-      builder: () => const QuranList(),
+      builder: () => const HomeScreen(),
       children: [
         QRoute(
           path: '/books/:id',

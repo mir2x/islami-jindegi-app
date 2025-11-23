@@ -1,0 +1,220 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../downloader/view/show_download_dialog.dart';
+import '../../../downloader/view/show_download_permission_dialog.dart';
+import '../../../downloader/viewmodel/download_providers.dart';
+import '../../../quran/view/quran_viewer_screen.dart';
+import '../../../sura/view/sura_page.dart';
+import '../../../sura_list/view/sura_list_page.dart';
+import '../../model/quran_edition.dart';
+import '../providers/home_providers.dart';
+
+class HomeScreen extends ConsumerWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final quranEditions = ref.watch(quranEditionProvider);
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF0F2F5),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 24.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(height: 48.h),
+            OutlinedButton(
+              onPressed: () async {
+                final prefs = await SharedPreferences.getInstance();
+                final int? lastSura = prefs.getInt('last_read_sura');
+                final int? lastAyahIndex = prefs.getInt('last_read_ayah_index');
+
+                if (!context.mounted) return;
+
+                if (lastSura != null && lastAyahIndex != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SuraListPage()),
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SurahPage(
+                        suraNumber: lastSura,
+                        initialScrollIndex: lastAyahIndex,
+                      ),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SuraListPage()),
+                  );
+                }
+              },
+              style: OutlinedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 14.h),
+                side: BorderSide(
+                  color: Theme.of(context).primaryColor,
+                  width: 1.5,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                foregroundColor: Theme.of(context).primaryColor,
+              ),
+              child: Text(
+                'তাফসীর',
+                style: TextStyle(
+                  fontFamily: 'SolaimanLipi',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.sp,
+                ),
+              ),
+            ),
+            SizedBox(height: 24.h),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: quranEditions.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16.r,
+                mainAxisSpacing: 16.r,
+                childAspectRatio: 0.5,
+              ),
+              itemBuilder: (context, index) {
+                return _QuranEditionGridItem(edition: quranEditions[index]);
+              },
+            ),
+            SizedBox(height: 24.h),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _QuranEditionGridItem extends ConsumerWidget {
+  final QuranEdition edition;
+
+  const _QuranEditionGridItem({required this.edition});
+
+  bool get hasCheckmark => edition.isDownloaded;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          flex: 4,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8.r),
+            onTap: () async {
+              // Your onTap logic is correct and does not need to change.
+              if (!edition.isDownloaded) {
+                final confirmed = await showDownloadPermissionDialog(
+                  context,
+                  assetName: edition.title,
+                  sizeInfo:
+                      "(${(edition.sizeBytes / 1048576).toStringAsFixed(1)} MB)",
+                );
+                if (!confirmed || !context.mounted) return;
+
+                final mushafDownloadTask = ZipDownloadTask(
+                  id: edition.id,
+                  displayName: edition.title,
+                  zipUrl: edition.url,
+                );
+
+                showDownloadDialog(context);
+                ref
+                    .read(downloadManagerProvider)
+                    .startDownload(mushafDownloadTask);
+              } else {
+                final dirPath = await getLocalPath(edition.id);
+                final editionDirectory = Directory(dirPath);
+                if (await editionDirectory.exists() && context.mounted) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => QuranViewerScreen(
+                        editionDir: editionDirectory,
+                        imageWidth: edition.imageWidth,
+                        imageHeight: edition.imageHeight,
+                        imageExt: edition.imageExt,
+                      ),
+                    ),
+                  );
+                } else if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Error: Mushaf files not found. Please try downloading again.',
+                      ),
+                    ),
+                  );
+                }
+              }
+            },
+            child: Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.topCenter,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(8.r),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    // By setting an empty boxShadow, we ensure no shadow is drawn.
+                    boxShadow: [],
+                  ),
+                  child: ClipRRect(
+                    child: Image.asset(
+                      edition.coverImagePath,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                if (hasCheckmark)
+                  Positioned(
+                    top: -15.h,
+                    child: HugeIcon(
+                      // HugeIcons.solidRoundedLocationCheck02,
+                      icon: HugeIcons.strokeRoundedLocationCheck01,
+                      size: 36.r,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        // The text part remains unchanged.
+        Expanded(
+          flex: 1,
+          child: Center(
+            child: Text(
+              edition.title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFF333333),
+                fontFamily: 'SolaimanLipi',
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

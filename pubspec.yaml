@@ -116,6 +116,13 @@ dependencies:
   cached_network_image: ^3.2.3
   transparent_image: ^2.0.0
   flutter_native_splash: ^2.3.2
+  flutter_screenutil: ^5.9.3
+  sqflite_common_ffi: ^2.3.4+4
+  google_fonts: ^6.3.0
+  archive: ^4.0.7
+  sqflite: ^2.4.1
+  hugeicons: ^0.0.8
+  scroll_to_index: ^3.0.1
   # flutter_gen: any
 
 dependency_overrides:
@@ -144,6 +151,9 @@ flutter:
 
   assets:
     - .env
+    - assets/
+    - assets/image/
+    - assets/image/front_page/
     - assets/images/logos/
     - assets/images/background/
     - assets/images/icons/

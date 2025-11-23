@@ -14,6 +14,9 @@ import 'package:workmanager/workmanager.dart';
 import 'package:lehttp_overrides/lehttp_overrides.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/theme/themes.dart';
+// --- 1. ADDED IMPORT ---
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'routes/index.dart';
 import 'screens/error_pages/page_404.dart';
 import 'firebase_options.dart';
@@ -111,16 +114,26 @@ class MyApp extends ConsumerWidget {
           'fontFamilyFallback': [arabicFont, 'Roboto'],
         };
 
-        return MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          routeInformationParser: const QRouteInformationParser(),
-          routerDelegate: QRouterDelegate(AppRoutes().routes),
-          theme: theme == 'light' ? lightTheme(fonts) : classicTheme(fonts),
-          darkTheme: darkTheme(fonts),
-          themeMode: theme == 'dark' ? ThemeMode.dark : ThemeMode.light,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          locale: Locale(preferences.getString('locale') ?? 'bn'),
+        // --- 2. WRAPPED MATERIALAPP WITH SCREENUTILINIT ---
+        return ScreenUtilInit(
+          // Set this to your design's width and height
+          designSize: const Size(360, 690),
+          minTextAdapt: true,
+          splitScreenMode: true,
+          builder: (context, child) {
+            // Return your MaterialApp.router here
+            return MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              routeInformationParser: const QRouteInformationParser(),
+              routerDelegate: QRouterDelegate(AppRoutes().routes),
+              theme: theme == 'light' ? lightTheme(fonts) : classicTheme(fonts),
+              darkTheme: darkTheme(fonts),
+              themeMode: theme == 'dark' ? ThemeMode.dark : ThemeMode.light,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              locale: Locale(preferences.getString('locale') ?? 'bn'),
+            );
+          },
         );
       },
     );
