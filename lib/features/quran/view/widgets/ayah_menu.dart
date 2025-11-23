@@ -1,8 +1,11 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:quran_flutter/quran.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../model/bookmark.dart';
 import '../../viewmodel/audio_providers.dart';
 import '../../viewmodel/ayah_highlight_viewmodel.dart';
@@ -135,34 +138,47 @@ class AyahMenu extends ConsumerWidget {
                 ),
               ),
 
-              // --- Copy Icon Button (Unchanged) ---
-              // Expanded(
-              //   child: IconButton(
-              //     icon: Icon(Icons.copy, color: Colors.white, size: 24.r),
-              //     onPressed: () async {
-              //       // ... (This logic is correct and remains unchanged)
-              //       final arabicText = quran.getVerse(selectedSura, selectedAyah);
-              //       final formattedText = '(সূরা ${toBengaliNumber(selectedSura)}, আয়াত ${toBengaliNumber(selectedAyah)}) $arabicText';
-              //       await Clipboard.setData(ClipboardData(text: formattedText));
-              //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('আয়াতটি কপি করা হয়েছে', style: TextStyle(fontSize: 14.sp))));
-              //       ref.read(selectedAyahProvider.notifier).clear();
-              //     },
-              //   ),
-              // ),
+              Expanded(
+                child: IconButton(
+                  icon: Icon(Icons.copy, color: Colors.white, size: 24.r),
+                  onPressed: () async {
+                    final arabicText = Quran.getVerse(
+                      surahNumber: selectedSura,
+                      verseNumber: selectedAyah,
+                    );
+                    print(arabicText.text);
+                    final formattedText =
+                        '(সূরা ${toBengaliNumber(selectedSura)}, আয়াত ${toBengaliNumber(selectedAyah)}) ${arabicText.text.trim()}';
+                    await Clipboard.setData(ClipboardData(text: formattedText));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'আয়াতটি কপি করা হয়েছে',
+                          style: TextStyle(fontSize: 14.sp),
+                        ),
+                      ),
+                    );
+                    ref.read(selectedAyahProvider.notifier).clear();
+                  },
+                ),
+              ),
 
               // --- Share Icon Button (Unchanged) ---
-              // Expanded(
-              //   child: IconButton(
-              //     icon: Icon(Icons.share, color: Colors.white, size: 24.r),
-              //     onPressed: () async {
-              //       // ... (This logic is correct and remains unchanged)
-              //       final arabicText = quran.getVerse(selectedSura, selectedAyah);
-              //       final formattedText = '(সূরা ${toBengaliNumber(selectedSura)}, আয়াত ${toBengaliNumber(selectedAyah)}) $arabicText';
-              //       await Share.share(formattedText);
-              //       ref.read(selectedAyahProvider.notifier).clear();
-              //     },
-              //   ),
-              // ),
+              Expanded(
+                child: IconButton(
+                  icon: Icon(Icons.share, color: Colors.white, size: 24.r),
+                  onPressed: () async {
+                    final arabicText = Quran.getVerse(
+                      surahNumber: selectedSura,
+                      verseNumber: selectedAyah,
+                    );
+                    final formattedText =
+                        '(সূরা ${toBengaliNumber(selectedSura)}, আয়াত ${toBengaliNumber(selectedAyah)}) ${arabicText.text.trim()}';
+                    await Share.share(formattedText);
+                    ref.read(selectedAyahProvider.notifier).clear();
+                  },
+                ),
+              ),
 
               // --- Fullscreen Icon Button (Unchanged) ---
               Expanded(

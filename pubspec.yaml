@@ -123,6 +123,8 @@ dependencies:
   sqflite: ^2.4.1
   hugeicons: ^0.0.8
   scroll_to_index: ^3.0.1
+  quran_flutter: ^1.0.3
+
   # flutter_gen: any
 
 dependency_overrides:

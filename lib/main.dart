@@ -23,6 +23,7 @@ import 'firebase_options.dart';
 import 'app_widget/task.dart';
 import 'app_widget/background.dart';
 import 'main.data.dart';
+import 'package:quran_flutter/quran_flutter.dart';
 
 Future main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -79,7 +80,7 @@ Future main() async {
 
     await setAppWidgetBackground();
   }
-
+  await Quran.initialize();
   runApp(
     UncontrolledProviderScope(
       container: container,
