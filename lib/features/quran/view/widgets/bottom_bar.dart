@@ -12,8 +12,14 @@ import '../../../../../core/theme.dart';
 class BottomBar extends ConsumerWidget {
   final bool drawerOpen;
   final GlobalKey<ScaffoldState> rootKey;
+  final bool isLandscape;
 
-  const BottomBar({super.key, required this.drawerOpen, required this.rootKey});
+  const BottomBar({
+    super.key,
+    required this.drawerOpen,
+    required this.rootKey,
+    required this.isLandscape,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,24 +35,20 @@ class BottomBar extends ConsumerWidget {
         bookmarkNotifier.isPageBookmarked(currentPage);
 
     return Container(
-      // Changed from BottomAppBar
-      // Scale height using .h
-      height: bottomBarHeight.h, // Set the desired height
-      color: const Color(0xFF294B39), // Set the background color
-      // Remove padding here, let the Row manage its internal spacing
+      height: isLandscape ? 50.0 : bottomBarHeight.h,
+      color: const Color(0xFF294B39),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _iconBtn(
             icon: HugeIcons.strokeRoundedPlay,
+            isLandscape: isLandscape,
             onPressed: () {
               final sura = ref.watch(currentSuraProvider);
               final page = ref.watch(currentPageProvider);
 
               showModalBottomSheet(
                 context: context,
-                // Ensure the bottom sheet is responsive
-                // The content inside AudioBottomSheet will use ScreenUtil.
                 builder: (BuildContext context) {
                   return AudioBottomSheet(
                       currentSura: ref.read(currentSuraProvider));
@@ -54,19 +56,14 @@ class BottomBar extends ConsumerWidget {
               );
             },
           ),
-
           Expanded(
             child: Container(
-              // Scale height using .h
-              height: 40.h,
-              // Scale margin using .h and .w
-              margin: EdgeInsets.symmetric(vertical: 12.h),
-              // Scale padding using .w
+              height: isLandscape ? 32.0 : 40.h,
+              margin: EdgeInsets.symmetric(vertical: isLandscape ? 8.0 : 12.h),
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               decoration: BoxDecoration(
                 color: const Color(0xFF294B39),
                 border: Border.all(color: Colors.white24),
-                // Scale border radius using .r
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: DropdownButtonHideUnderline(
@@ -76,8 +73,7 @@ class BottomBar extends ConsumerWidget {
                   iconEnabledColor: Colors.white,
                   style: TextStyle(
                     color: Colors.white,
-                    // Scale font size using .sp
-                    fontSize: 14.sp, // Example size
+                    fontSize: isLandscape ? 14.0 : 14.sp,
                   ),
                   value: displayReciterName,
                   items: reciters.keys.map((displayName) {
@@ -88,15 +84,13 @@ class BottomBar extends ConsumerWidget {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: Colors.white,
-                          // Scale font size using .sp
-                          fontSize: 14.sp, // Example size
+                          fontSize: isLandscape ? 14.0 : 14.sp,
                         ),
                       ),
                     );
                   }).toList(),
                   onChanged: (val) {
                     if (val != null) {
-                      // Ensure selectedReciterProvider is accessible
                       ref.read(selectedReciterProvider.notifier).state =
                           reciters[val]!;
                     }
@@ -105,7 +99,6 @@ class BottomBar extends ConsumerWidget {
               ),
             ),
           ),
-          // Scale width using .w
           SizedBox(width: 5.w),
           Consumer(
             builder: (_, ref, __) {
@@ -113,8 +106,8 @@ class BottomBar extends ConsumerWidget {
               return _iconBtn(
                 icon: HugeIcons.strokeRoundedTouchLocked03,
                 color: on ? Colors.orangeAccent : Colors.white,
-                // Scale size using .r
-                size: 26.r,
+                size: isLandscape ? 20.0 : 26.r,
+                isLandscape: isLandscape,
                 onPressed: () {
                   ref.read(touchModeProvider.notifier).toggle();
                   if (!ref.read(touchModeProvider)) {
@@ -126,18 +119,17 @@ class BottomBar extends ConsumerWidget {
           ),
           _iconBtn(
             icon: HugeIcons.strokeRoundedScreenRotation,
-            // Scale size using .r
-            size: 24.r,
+            size: isLandscape ? 20.0 : 24.r,
+            isLandscape: isLandscape,
             onPressed: () => OrientationToggle.toggle(),
           ),
-          // Bookmark Button (Enhanced)
           _iconBtn(
             icon: isPageBookmarked
                 ? HugeIcons.strokeRoundedStarOff
                 : HugeIcons.strokeRoundedStar,
             color: isPageBookmarked ? Colors.orangeAccent : Colors.white,
-            // Scale size using .r
-            size: 24.r,
+            size: isLandscape ? 20.0 : 24.r,
+            isLandscape: isLandscape,
             onPressed: () {
               if (!context.mounted) return;
 
@@ -145,14 +137,14 @@ class BottomBar extends ConsumerWidget {
               final identifier = 'page-$pageToBookmark';
 
               if (isPageBookmarked) {
-                // Remove bookmark
                 bookmarkNotifier.remove(identifier);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                      content: Text(
-                    'পৃষ্ঠা বুকমার্ক থেকে সরানো হয়েছে',
-                    style: TextStyle(fontSize: 14.sp), // Scale text
-                  )),
+                    content: Text(
+                      'পৃষ্ঠা বুকমার্ক থেকে সরানো হয়েছে',
+                      style: TextStyle(fontSize: 14.sp),
+                    ),
+                  ),
                 );
               } else {
                 final quranInfoService = ref.read(quranInfoServiceProvider);
@@ -160,32 +152,32 @@ class BottomBar extends ConsumerWidget {
                 final sura = quranInfoService.getSuraByPage(pageToBookmark);
                 final para = quranInfoService.getParaByPage(pageToBookmark);
 
-                // Ensure sura and para are found before creating bookmark
                 if (sura != null && para != null) {
                   final bookmark = Bookmark(
-                    type: 'page', // Assuming Bookmark type is 'page'
+                    type: 'page',
                     identifier: identifier,
-                    sura: sura, // Store representative Sura
-                    para: para, // Store Para
-                    page: pageToBookmark, // Store Page
-                    // ayah is null for page bookmarks
+                    sura: sura,
+                    para: para,
+                    page: pageToBookmark,
                   );
 
                   bookmarkNotifier.add(bookmark);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                        content: Text(
-                      'পৃষ্ঠা বুকমার্ক করা হয়েছে',
-                      style: TextStyle(fontSize: 14.sp), // Scale text
-                    )),
+                      content: Text(
+                        'পৃষ্ঠা বুকমার্ক করা হয়েছে',
+                        style: TextStyle(fontSize: 14.sp),
+                      ),
+                    ),
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                        content: Text(
-                      'এই পৃষ্ঠার জন্য সূরা/পারা নির্ধারণ করা যায়নি',
-                      style: TextStyle(fontSize: 14.sp), // Scale text
-                    )),
+                      content: Text(
+                        'এই পৃষ্ঠার জন্য সূরা/পারা নির্ধারণ করা যায়নি',
+                        style: TextStyle(fontSize: 14.sp),
+                      ),
+                    ),
                   );
                 }
               }
@@ -193,7 +185,8 @@ class BottomBar extends ConsumerWidget {
           ),
           _iconBtn(
             icon: HugeIcons.strokeRoundedNavigation05,
-            size: 24.r,
+            size: isLandscape ? 20.0 : 24.r,
+            isLandscape: isLandscape,
             onPressed: () {
               if (drawerOpen) {
                 rootKey.currentState?.closeDrawer();
@@ -212,10 +205,14 @@ class BottomBar extends ConsumerWidget {
     required VoidCallback onPressed,
     double? size,
     Color color = Colors.white,
+    bool isLandscape = false,
   }) {
     return IconButton(
-      iconSize: size ?? 24.r,
-      constraints: BoxConstraints(minHeight: 64.h, minWidth: 48.w),
+      iconSize: size ?? (isLandscape ? 20.0 : 24.r),
+      constraints: BoxConstraints(
+        minHeight: isLandscape ? 50.0 : 64.h,
+        minWidth: isLandscape ? 40.0 : 48.w,
+      ),
       padding: EdgeInsets.zero,
       icon: Center(child: HugeIcon(icon: icon, color: color)),
       onPressed: onPressed,

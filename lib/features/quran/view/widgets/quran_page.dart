@@ -162,8 +162,8 @@ class QuranPage extends ConsumerWidget {
               PageInfoOverlay(pageIndex: pageIndex),
             ],
           );
-        }, //
-      ), //
+        },
+      ),
     );
   }
 }

@@ -7,9 +7,7 @@ import 'package:native_app/features/quran/view/widgets/drawer/sura_navigation_vi
 import '../../../../../core/theme.dart';
 import '../../../viewmodel/ayah_highlight_viewmodel.dart';
 
-// --- NEW State Provider for the active tab index ---
-final drawerTabIndexProvider =
-    StateProvider<int>((_) => 0); // Default to the first tab (Surah)
+final drawerTabIndexProvider = StateProvider<int>((_) => 0);
 
 class SideDrawer extends ConsumerStatefulWidget {
   const SideDrawer({super.key});
@@ -20,22 +18,18 @@ class SideDrawer extends ConsumerStatefulWidget {
 
 class _SideDrawerState extends ConsumerState<SideDrawer>
     with SingleTickerProviderStateMixin {
-  // --- NEW: TabController to control the TabBar ---
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    // Initialize the TabController and set its initial index from our provider.
+
     _tabController = TabController(
       length: 3,
       vsync: this,
-      initialIndex:
-          ref.read(drawerTabIndexProvider), // Read the last saved index
+      initialIndex: ref.read(drawerTabIndexProvider),
     );
 
-    // Add a listener to the controller. When the user swipes or taps a tab,
-    // this listener will update our Riverpod state provider.
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
         ref.read(drawerTabIndexProvider.notifier).state = _tabController.index;
@@ -51,7 +45,6 @@ class _SideDrawerState extends ConsumerState<SideDrawer>
 
   @override
   Widget build(BuildContext context) {
-    // --- The rest of your build logic is almost identical ---
     return Align(
       alignment: Alignment.topLeft,
       child: Builder(
@@ -60,7 +53,6 @@ class _SideDrawerState extends ConsumerState<SideDrawer>
           final double topInset = kToolbarHeight + media.padding.top;
           final double bottomInset = bottomBarHeight.h + media.padding.bottom;
 
-          // Data loading checks remain the same
           final allBoxesAsync = ref.watch(allBoxesProvider);
           final totalPageCountAsync = ref.watch(totalPageCountProvider);
           final suraMapping = ref.watch(suraPageMappingProvider);
@@ -83,9 +75,8 @@ class _SideDrawerState extends ConsumerState<SideDrawer>
           } else if (!isDataReady) {
             tabContent = const Center(child: Text('Processing data...'));
           } else {
-            // --- CHANGE: Pass the controller to TabBarView ---
             tabContent = TabBarView(
-              controller: _tabController, // Connect the controller
+              controller: _tabController,
               children: [
                 const SurahNavigationView(),
                 const ParaNavigationView(),
@@ -101,7 +92,6 @@ class _SideDrawerState extends ConsumerState<SideDrawer>
               child: Material(
                 elevation: 0,
                 clipBehavior: Clip.antiAlias,
-                // --- REMOVED: DefaultTabController is no longer needed ---
                 child: Column(
                   children: [
                     Expanded(
@@ -109,9 +99,8 @@ class _SideDrawerState extends ConsumerState<SideDrawer>
                     ),
                     Container(
                       color: const Color(0xFF1B5E20),
-                      // --- CHANGE: Pass the controller to TabBar ---
                       child: TabBar(
-                        controller: _tabController, // Connect the controller
+                        controller: _tabController,
                         labelColor: Colors.white,
                         dividerColor: Colors.transparent,
                         unselectedLabelColor: Colors.white,

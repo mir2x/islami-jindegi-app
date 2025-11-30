@@ -3,7 +3,6 @@ import 'package:native_app/features/sura/model/ayah.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../../core/utils/database_helper.dart';
 
-// --- NO CHANGES TO THESE TOP PROVIDERS ---
 final databaseProvider = FutureProvider<Database>((ref) async {
   return DatabaseHelper().database;
 });
@@ -13,9 +12,7 @@ final quranDataServiceProvider = Provider<QuranDataService>((ref) {
 });
 
 class QuranDataService {
-  // --- NEW METHOD TO FETCH ALL AYAH DATA FOR A SURAH ---
   Future<List<Ayah>> getAyahsForSura(Database db, int suraNumber) async {
-    // 1. Fetch all data for the given surah in parallel
     final allDataFuture = Future.wait([
       db.query('ayahs', where: 'sura = ?', whereArgs: [suraNumber]),
       db.query('translations', where: 'sura = ?', whereArgs: [suraNumber]),
@@ -29,10 +26,9 @@ class QuranDataService {
     final List<Map<String, dynamic>> wordData = allData[2];
 
     if (ayahData.isEmpty) {
-      return []; // Return an empty list if the surah has no ayahs
+      return [];
     }
 
-    // 2. Process translations and words into maps for efficient lookup
     final Map<int, List<Translation>> translationsByAyah = {};
     for (final row in translationData) {
       final ayahNum = row['ayah'] as int;
@@ -47,7 +43,6 @@ class QuranDataService {
       wordsByAyah.putIfAbsent(ayahNum, () => []).add(WordByWord.fromDb(row));
     }
 
-    // 3. Stitch everything together into a list of Ayah objects
     final List<Ayah> resultAyahs = [];
     for (final row in ayahData) {
       final ayahNum = row['ayah'] as int;
@@ -60,10 +55,8 @@ class QuranDataService {
 
     return resultAyahs;
   }
-  // --- END OF NEW METHOD ---
 
   Future<int> getVerseCount(Database db, int suraNumber) async {
-    // ... existing method is unchanged
     final result = await db.rawQuery(
       'SELECT COUNT(*) as count FROM ayahs WHERE sura = ?',
       [suraNumber],
@@ -72,7 +65,6 @@ class QuranDataService {
   }
 
   Future<Ayah> getAyah(Database db, int suraNumber, int ayahNumber) async {
-    // ... existing method is unchanged
     final ayahMap = await db.query(
       'ayahs',
       where: 'sura = ? AND ayah = ?',
@@ -103,7 +95,6 @@ class QuranDataService {
   }
 
   Future<List<Ayah>> searchQuran(Database db, String query) async {
-    // ... existing method is unchanged
     final String searchTerm = '%$query%';
     final List<Map<String, dynamic>> idResults = await db.rawQuery('''
     SELECT DISTINCT sura, ayah FROM ayahs WHERE arabic_text LIKE ?
@@ -167,7 +158,6 @@ class QuranDataService {
   }
 }
 
-// --- NEW PROVIDER FOR THE REFACTORED SURAH PAGE ---
 final suraDataProvider = FutureProvider.family<List<Ayah>, int>((
   ref,
   suraNumber,
@@ -175,20 +165,16 @@ final suraDataProvider = FutureProvider.family<List<Ayah>, int>((
   final db = await ref.watch(databaseProvider.future);
   return ref.read(quranDataServiceProvider).getAyahsForSura(db, suraNumber);
 });
-// --- END OF NEW PROVIDER ---
 
-// --- OLD PROVIDERS (can be kept for other parts of the app, but not used by the new SurahPage) ---
 final ayahCountProvider = FutureProvider.family<int, int>((
   ref,
   suraNumber,
 ) async {
-  // ... implementation unchanged
   final db = await ref.watch(databaseProvider.future);
   return ref.read(quranDataServiceProvider).getVerseCount(db, suraNumber);
 });
 
 class AyahProviderParams {
-  // ... implementation unchanged
   final int suraNumber;
   final int index;
   AyahProviderParams({required this.suraNumber, required this.index});
@@ -207,7 +193,6 @@ final ayahByIndexProvider = FutureProvider.family<Ayah, AyahProviderParams>((
   ref,
   params,
 ) async {
-  // ... implementation unchanged
   final db = await ref.watch(databaseProvider.future);
   final ayahNumber = params.index + 1;
   return ref
@@ -215,7 +200,6 @@ final ayahByIndexProvider = FutureProvider.family<Ayah, AyahProviderParams>((
       .getAyah(db, params.suraNumber, ayahNumber);
 });
 
-// --- UI STATE PROVIDERS (unchanged) ---
 final selectedTranslatorsProvider = StateProvider<List<String>>(
   (ref) => [],
 );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
-import 'package:native_app/core/utils/sura_page_router.dart';
+import '../../../../core/utils/sura_page_router.dart';
 import '../../../../shared/quran_data.dart';
 import '../../viewmodel/search_viewmodel.dart';
 import '../../viewmodel/sura_viewmodel.dart';
@@ -64,7 +64,6 @@ class SearchPage extends ConsumerWidget {
                       color: Colors.black),
                 ),
                 onTap: () {
-                  // Schedule the navigation to avoid race conditions
                   Future.delayed(Duration.zero, () {
                     if (!context.mounted) return;
 
@@ -105,7 +104,6 @@ class SearchPage extends ConsumerWidget {
   }
 }
 
-// Helper widget for highlighting text
 class HighlightedText extends StatelessWidget {
   final String text;
   final String query;
@@ -151,13 +149,9 @@ class HighlightedText extends StatelessWidget {
     }
 
     return RichText(
-      // Apply textAlign and textDirection directly to RichText
-      textAlign: TextAlign.start, // Or whatever you need
-      textDirection: TextDirection.rtl, // Set this if your text is Arabic
-      text: TextSpan(
-          // The style for the children is defined here
-          style: style,
-          children: spans),
+      textAlign: TextAlign.start,
+      textDirection: TextDirection.rtl,
+      text: TextSpan(style: style, children: spans),
     );
   }
 }

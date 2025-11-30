@@ -1,20 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:native_app/features/home/presentation/screens/home_screen.dart';
+import 'package:native_app/features/sura/view/sura_page.dart';
+import 'package:native_app/features/sura_list/view/sura_list_page.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../screens/home/index.dart';
-
-import '../screens/quran/quran_list.dart';
-import '../screens/quran/digital/quran.dart';
-import '../screens/quran/digital/surah.dart';
-import '../screens/quran/digital/surah_description.dart';
-import '../screens/quran/digital/para.dart';
-import '../screens/quran/book/quran.dart';
-import '../screens/quran/tafseer/ayah.dart';
-import '../screens/quran/tafseer/bismillah.dart';
-import '../screens/quran/bookmarks.dart';
-import '../screens/quran/search.dart';
 
 import '../screens/books/index.dart';
 import '../screens/books/book.dart';
@@ -76,70 +67,10 @@ class AppRoutes {
     QRoute(
       path: '/qurans',
       builder: () => const HomeScreen(),
-      children: [
-        QRoute(
-          path: '/books/:id',
-          builder: () => const PdfQuran(),
-          middleware: [
-            QMiddlewareBuilder(
-              onEnterFunc: () => WakelockPlus.enable(),
-              onExitFunc: () => WakelockPlus.disable(),
-            ),
-          ],
-        ),
-      ],
-    ),
-    QRoute(
-      path: '/quran',
-      builder: () => const DigitalQuran(),
-      children: [
-        QRoute(
-          path: '/surah/:slug',
-          builder: () => PageStorage(
-            bucket: _bucket,
-            child: const Surah(),
-          ),
-          middleware: [
-            QMiddlewareBuilder(
-              onEnterFunc: () => WakelockPlus.enable(),
-              onExitFunc: () => WakelockPlus.disable(),
-            ),
-          ],
-          children: [
-            QRoute(
-              path: '/description',
-              builder: () => const SurahDescription(),
-            ),
-          ],
-        ),
-        QRoute(
-          path: '/para/:slug',
-          builder: () => PageStorage(
-            bucket: _bucket,
-            child: const Para(),
-          ),
-          middleware: [
-            QMiddlewareBuilder(
-              onEnterFunc: () => WakelockPlus.enable(),
-              onExitFunc: () => WakelockPlus.disable(),
-            ),
-          ],
-        ),
-        QRoute(
-          path: '/tafseers/:ayah_id',
-          builder: () => const AyahTafseer(),
-        ),
-        QRoute(
-          path: '/bismillah-tafseer',
-          builder: () => const BismillahTafseer(),
-        ),
-        QRoute(
-          path: '/bookmarks',
-          builder: () => const QuranBookmarks(),
-        ),
-        QRoute(
-          path: '/search',
-          builder: () => const QuranSearch(),
+      middleware: [
+        QMiddlewareBuilder(
+          onEnterFunc: () => WakelockPlus.enable(),
+          onExitFunc: () => WakelockPlus.disable(),
         ),
       ],
     ),
@@ -287,5 +218,23 @@ class AppRoutes {
     QRoute(path: '/about', builder: () => const About()),
     QRoute(path: '/contact-us', builder: () => const ContactUs()),
     QRoute(path: '/important-matters', builder: () => const ImportantMatters()),
+    QRoute(path: '/important-matters', builder: () => const ImportantMatters()),
+    QRoute(
+      path: '/sura-list',
+      builder: () => const SuraListPage(),
+    ),
+    QRoute(
+      path: '/sura-view/:id',
+      builder: () {
+        final id = int.parse(QR.params['id'].toString());
+        final scroll = QR.params['scroll'];
+        final initialScrollIndex =
+            scroll != null ? int.parse(scroll.toString()) : null;
+        return SurahPage(
+          suraNumber: id,
+          initialScrollIndex: initialScrollIndex,
+        );
+      },
+    ),
   ];
 }

@@ -2,10 +2,7 @@ import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-// Import screenutil
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:native_app/features/quran/view/widgets/audio_control_bar.dart';
 import 'package:native_app/features/quran/view/widgets/bottom_bar.dart';
 import 'package:native_app/features/quran/view/widgets/custom_app_bar.dart';
@@ -100,7 +97,32 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
           } else if (currentOrientation == Orientation.landscape &&
               _landscapeController != null) {
             final itemH = width / _aspectRatio;
-            final offset = targetPageIndex * itemH;
+            double offset = targetPageIndex * itemH;
+
+            // Auto-scroll to specific Ayah if selected
+            final selectedAyah = ref.read(selectedAyahProvider);
+            if (selectedAyah != null) {
+              final boxes =
+                  ref.read(boxesForPageProvider(newPageNum)); // 1-based page
+              final ayahBoxes = boxes
+                  .where((b) =>
+                      b.suraNumber == selectedAyah.suraNumber &&
+                      b.ayahNumber == selectedAyah.ayahNumber)
+                  .toList();
+
+              if (ayahBoxes.isNotEmpty) {
+                // Find the top-most box for this Ayah
+                final firstBox =
+                    ayahBoxes.reduce((a, b) => a.minY < b.minY ? a : b);
+
+                final scaleY = itemH / widget.imageHeight;
+                final ayahOffset = firstBox.minY * scaleY;
+
+                // Add some padding so it's not at the very top edge
+                // But ensure we don't scroll before the start of the page
+                offset += math.max(0, ayahOffset - 100);
+              }
+            }
 
             _landscapeController!.animateTo(
               offset,
@@ -190,7 +212,6 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
                     },
                     itemBuilder: (_, idx) => QuranPage(
                       pageIndex: idx,
-                      // Pass 0-based index
                       editionDir: widget.editionDir,
                       imageWidth: widget.imageWidth,
                       imageHeight: widget.imageHeight,
@@ -271,7 +292,9 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
                                 curve: Curves.easeInOut,
                                 child: IgnorePointer(
                                   ignoring: !barsVisible,
-                                  child: CustomAppBar(),
+                                  child: CustomAppBar(
+                                    isLandscape: ori == Orientation.landscape,
+                                  ),
                                 ),
                               ),
                             ),
@@ -288,6 +311,7 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
                                   child: BottomBar(
                                     drawerOpen: ref.watch(drawerOpenProvider),
                                     rootKey: _rootKey,
+                                    isLandscape: ori == Orientation.landscape,
                                   ),
                                 ),
                               ),
@@ -297,18 +321,15 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
                                 final audio = ref.watch(quranAudioProvider);
                                 final isAudioPlaying = audio != null;
                                 if (!isAudioPlaying) {
-                                  return const SizedBox
-                                      .shrink(); // Hide when not playing
+                                  return const SizedBox.shrink();
                                 }
 
                                 final double safeAreaBottom = MediaQuery.of(
                                   context,
                                 ).padding.bottom;
 
-                                // Use scaled bottom bar height
                                 final double dynamicBottom = barsVisible
-                                    ? _bottomBarHeight
-                                        .h // Scale the static bottom bar height
+                                    ? _bottomBarHeight.h
                                     : safeAreaBottom;
 
                                 return AnimatedPositioned(

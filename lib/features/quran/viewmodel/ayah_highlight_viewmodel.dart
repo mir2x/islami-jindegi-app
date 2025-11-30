@@ -515,7 +515,7 @@ class BarsVisibilityNotifier extends StateNotifier<bool> {
 
   void show() {
     if (!state) {
-      state = true; // Show the bars
+      state = true;
     }
   }
 

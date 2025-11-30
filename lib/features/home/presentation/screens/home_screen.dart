@@ -117,7 +117,6 @@ class _QuranEditionGridItem extends ConsumerWidget {
           child: InkWell(
             borderRadius: BorderRadius.circular(8.r),
             onTap: () async {
-              // Your onTap logic is correct and does not need to change.
               if (!edition.isDownloaded) {
                 final confirmed = await showDownloadPermissionDialog(
                   context,
@@ -172,7 +171,6 @@ class _QuranEditionGridItem extends ConsumerWidget {
                   padding: EdgeInsets.all(8.r),
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    // By setting an empty boxShadow, we ensure no shadow is drawn.
                     boxShadow: [],
                   ),
                   child: ClipRRect(
@@ -186,7 +184,6 @@ class _QuranEditionGridItem extends ConsumerWidget {
                   Positioned(
                     top: -15.h,
                     child: HugeIcon(
-                      // HugeIcons.solidRoundedLocationCheck02,
                       icon: HugeIcons.strokeRoundedLocationCheck01,
                       size: 36.r,
                       color: Theme.of(context).primaryColor,
@@ -196,7 +193,6 @@ class _QuranEditionGridItem extends ConsumerWidget {
             ),
           ),
         ),
-        // The text part remains unchanged.
         Expanded(
           flex: 1,
           child: Center(

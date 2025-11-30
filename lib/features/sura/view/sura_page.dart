@@ -10,8 +10,10 @@ import 'package:native_app/features/sura/view/widgets/sura_app_bar.dart';
 import 'package:native_app/features/sura/view/widgets/sura_bottom_nav_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../viewmodel/sura_reciter_viewmodel.dart';
-import '../viewmodel/sura_viewmodel.dart';
+import 'package:native_app/features/sura/viewmodel/sura_viewmodel.dart';
 import '../../../shared/quran_data.dart';
+
+import 'package:native_app/features/sura/view/widgets/drawer/sura_selection_drawer.dart';
 
 class SurahPage extends ConsumerStatefulWidget {
   final int suraNumber;
@@ -24,11 +26,6 @@ class SurahPage extends ConsumerStatefulWidget {
 }
 
 class _SurahPageState extends ConsumerState<SurahPage> {
-  // REMOVED: HugeListView variables
-  // final GlobalKey<HugeListViewState> _hugeListKey = GlobalKey<HugeListViewState>();
-  // late final HugeListViewController _hugeListController;
-
-  // ADDED: Listener for positions
   final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
@@ -47,7 +44,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
   @override
   void initState() {
     super.initState();
-    // Setup position listener
+
     _itemPositionsListener.itemPositions
         .addListener(_onVisiblePositionsChanged);
     _activePagesNotifier = ref.read(activeSurahPagesProvider.notifier);
@@ -65,12 +62,10 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     super.dispose();
   }
 
-  // Logic to track visible items and show/hide "Scroll to Top" button
   void _onVisiblePositionsChanged() {
     final positions = _itemPositionsListener.itemPositions.value;
     if (positions.isEmpty) return;
 
-    // Find the smallest index currently visible
     final minIndex = positions
         .where((ItemPosition position) => position.itemTrailingEdge > 0)
         .reduce((min, position) => position.index < min.index ? position : min)
@@ -89,7 +84,6 @@ class _SurahPageState extends ConsumerState<SurahPage> {
   }
 
   int _getTopVisibleIndex() {
-    // Use the local variable synced by the listener
     return _topVisibleIndex;
   }
 
@@ -120,7 +114,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
           index: currentIndex,
           duration: perItemDuration,
           curve: Curves.easeInOut,
-          alignment: 0.3, // Align near top
+          alignment: 0.3,
         );
       }
     });
@@ -185,6 +179,8 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     }
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     final suraDataAsync = ref.watch(suraDataProvider(widget.suraNumber));
@@ -193,14 +189,13 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     final isTimedScrolling = ref.watch(isAutoScrollingProvider);
     final showBottomNav = !isTimedScrolling && quranAudioState == null;
 
-    // Listeners for external scroll commands
     ref.listen<ScrollCommand?>(suraScrollCommandProvider, (previous, next) {
       if (next != null &&
           next.suraNumber == widget.suraNumber &&
           _itemScrollController.isAttached) {
         _itemScrollController.scrollTo(
           index: next.scrollIndex,
-          alignment: 0.1, // 0.1 is better for reading than 0.5
+          alignment: 0.1,
           duration: const Duration(milliseconds: 700),
           curve: Curves.easeInOutCubic,
         );
@@ -208,7 +203,6 @@ class _SurahPageState extends ConsumerState<SurahPage> {
       }
     });
 
-    // Listener for initial data load scroll
     ref.listen<AsyncValue<List<dynamic>>>(suraDataProvider(widget.suraNumber),
         (previous, next) {
       if (previous is AsyncLoading && next is AsyncData) {
@@ -224,7 +218,6 @@ class _SurahPageState extends ConsumerState<SurahPage> {
       }
     });
 
-    // Listener for Audio Sync
     ref.listen<SuraAudioState?>(suraAudioProvider, (previous, next) {
       if (next != null && next.isPlaying) {
         final ayahIndex = next.ayah - 1;
@@ -233,7 +226,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
             _itemScrollController.isAttached) {
           _itemScrollController.scrollTo(
             index: ayahIndex,
-            alignment: 0.1, // Aligns ayah near top of screen
+            alignment: 0.1,
             duration: const Duration(milliseconds: 700),
             curve: Curves.easeInOutCubic,
           );
@@ -241,10 +234,17 @@ class _SurahPageState extends ConsumerState<SurahPage> {
       }
     });
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: SuraAppBar(title: suraName),
-        body: Column(
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: SuraAppBar(
+        key: ValueKey(widget.suraNumber),
+        title: suraName,
+        suraNumber: widget.suraNumber,
+        scaffoldKey: _scaffoldKey,
+      ),
+      drawer: SuraSelectionDrawer(currentSuraNumber: widget.suraNumber),
+      body: SafeArea(
+        child: Column(
           children: [
             Expanded(
               child: suraDataAsync.when(
@@ -259,7 +259,6 @@ class _SurahPageState extends ConsumerState<SurahPage> {
 
                   return Stack(
                     children: [
-                      // REPLACEMENT WIDGET
                       ScrollablePositionedList.builder(
                         itemScrollController: _itemScrollController,
                         itemPositionsListener: _itemPositionsListener,
@@ -280,7 +279,6 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                           );
                         },
                       ),
-
                       if (ref.watch(isAutoScrollingProvider))
                         _buildAutoScrollController(context),
                     ],
@@ -292,23 +290,23 @@ class _SurahPageState extends ConsumerState<SurahPage> {
               AudioControllerBar(color: Theme.of(context).primaryColor),
           ],
         ),
-        bottomNavigationBar: showBottomNav
-            ? SuraBottomNavBar(
-                totalAyahs: _totalItems,
-                suraNumber: widget.suraNumber,
-                onStartAutoScroll: _startAutoScroll,
-                onStopAutoScroll: () => _stopAutoScroll(resetSpeed: true),
-              )
-            : null,
-        floatingActionButton: _showScrollToTopButton
-            ? FloatingActionButton(
-                onPressed: _scrollToTop,
-                mini: true,
-                backgroundColor: Colors.green,
-                child: const Icon(Icons.arrow_upward, color: Colors.white),
-              )
-            : null,
       ),
+      bottomNavigationBar: showBottomNav
+          ? SuraBottomNavBar(
+              totalAyahs: _totalItems,
+              suraNumber: widget.suraNumber,
+              onStartAutoScroll: _startAutoScroll,
+              onStopAutoScroll: () => _stopAutoScroll(resetSpeed: true),
+            )
+          : null,
+      floatingActionButton: _showScrollToTopButton
+          ? FloatingActionButton(
+              onPressed: _scrollToTop,
+              mini: true,
+              backgroundColor: Colors.green,
+              child: const Icon(Icons.arrow_upward, color: Colors.white),
+            )
+          : null,
     );
   }
 

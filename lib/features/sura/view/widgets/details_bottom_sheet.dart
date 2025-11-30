@@ -13,7 +13,6 @@ void showDetailsBottomSheet(BuildContext context, {required int suraNumber}) {
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
-    // Pass the suraNumber down to the DetailsBottomSheet widget
     builder: (BuildContext context) =>
         DetailsBottomSheet(suraNumber: suraNumber),
   );
