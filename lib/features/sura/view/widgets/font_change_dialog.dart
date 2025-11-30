@@ -29,6 +29,20 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
     'Noto Sans Bengali',
     'Siyam Rupali',
   ];
+  final Map<String, String> _arabicFontMap = {
+    'Al Mushaf Quran': 'arabic/al-mushaf',
+    'Al Qalam Kolkatta Quranic': 'arabic/al-qalam-kolkatta',
+    'Al Qalam Quran': 'arabic/al-qalam-quran',
+    'Al Qalam Quran Majeed': 'arabic/al-qalam-quran-majeed',
+  };
+
+  final Map<String, String> _bengaliFontMap = {
+    'SolaimanLipi': 'bangla/solaimanlipi',
+    'Kalpurush': 'bangla/kalpurush',
+    'Noto Sans Bengali': 'bangla/noto-sans-bengali',
+    'Siyam Rupali': 'bangla/siyamrupali',
+  };
+
   final List<double> _fontSizes =
       List.generate(15, (index) => 14.0 + (index * 2));
 
@@ -36,15 +50,28 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
   void initState() {
     super.initState();
     _selectedLanguage = _languages.first;
-    _selectedArabicFont = ref.read(arabicFontProvider);
-    _selectedBengaliFont = ref.read(bengaliFontProvider);
+
+    final arabicFamily = ref.read(arabicFontProvider);
+    _selectedArabicFont = _arabicFontMap.entries
+        .firstWhere((e) => e.value == arabicFamily,
+            orElse: () => _arabicFontMap.entries.first)
+        .key;
+
+    final bengaliFamily = ref.read(bengaliFontProvider);
+    _selectedBengaliFont = _bengaliFontMap.entries
+        .firstWhere((e) => e.value == bengaliFamily,
+            orElse: () => _bengaliFontMap.entries.first)
+        .key;
+
     _selectedArabicSize = ref.read(arabicFontSizeProvider);
     _selectedBengaliSize = ref.read(bengaliFontSizeProvider);
   }
 
   void _onConfirm() {
-    ref.read(arabicFontProvider.notifier).state = _selectedArabicFont;
-    ref.read(bengaliFontProvider.notifier).state = _selectedBengaliFont;
+    ref.read(arabicFontProvider.notifier).state =
+        _arabicFontMap[_selectedArabicFont]!;
+    ref.read(bengaliFontProvider.notifier).state =
+        _bengaliFontMap[_selectedBengaliFont]!;
     ref.read(arabicFontSizeProvider.notifier).state = _selectedArabicSize;
     ref.read(bengaliFontSizeProvider.notifier).state = _selectedBengaliSize;
     Navigator.of(context).pop();
@@ -68,7 +95,7 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
 
     return AlertDialog(
       title: const Text('ফন্ট পরিবর্তন',
-          style: TextStyle(fontFamily: 'SolaimanLipi')),
+          style: TextStyle(fontFamily: 'bangla/solaimanlipi')),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -97,8 +124,11 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
                   });
                 }
               },
-              itemBuilder: (font) =>
-                  Text(font, style: TextStyle(fontFamily: font)),
+              itemBuilder: (font) {
+                final family =
+                    isArabic ? _arabicFontMap[font] : _bengaliFontMap[font];
+                return Text(font, style: TextStyle(fontFamily: family));
+              },
             ),
             const SizedBox(height: 16),
             _buildDropdown<double>(
@@ -123,13 +153,13 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child:
-              const Text('বাতিল', style: TextStyle(fontFamily: 'SolaimanLipi')),
+          child: const Text('বাতিল',
+              style: TextStyle(fontFamily: 'bangla/solaimanlipi')),
         ),
         FilledButton(
           onPressed: _onConfirm,
           child: const Text('নিশ্চিত করুন',
-              style: TextStyle(fontFamily: 'SolaimanLipi')),
+              style: TextStyle(fontFamily: 'bangla/solaimanlipi')),
         ),
       ],
     );

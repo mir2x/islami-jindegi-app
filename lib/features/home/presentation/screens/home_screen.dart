@@ -56,7 +56,7 @@ class HomeScreen extends ConsumerWidget {
               child: Text(
                 'তাফসীর',
                 style: TextStyle(
-                  fontFamily: 'SolaimanLipi',
+                  fontFamily: 'bangla/solaimanlipi',
                   fontWeight: FontWeight.bold,
                   fontSize: 16.sp,
                 ),
@@ -180,7 +180,7 @@ class _QuranEditionGridItem extends ConsumerWidget {
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w500,
                 color: const Color(0xFF333333),
-                fontFamily: 'SolaimanLipi',
+                fontFamily: 'bangla/solaimanlipi',
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,

@@ -188,7 +188,7 @@ class AyahCard extends ConsumerWidget {
                 AdaptiveText(
                   translation.translatorName,
                   style: const TextStyle(
-                    fontFamily: 'SolaimanLipi',
+                    fontFamily: 'bangla/solaimanlipi',
                     color: Colors.grey,
                     fontSize: 13,
                     fontWeight: FontWeight.w500,

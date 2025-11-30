@@ -48,7 +48,7 @@ class SuraListItem extends ConsumerWidget {
       child: Text(
         sura.number.toBengaliDigit(),
         style: TextStyle(
-          fontFamily: 'SolaimanLipi',
+          fontFamily: 'bangla/solaimanlipi',
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: Colors.green.shade700,
@@ -64,7 +64,7 @@ class SuraListItem extends ConsumerWidget {
         Text(
           sura.nameBangla,
           style: const TextStyle(
-            fontFamily: 'SolaimanLipi',
+            fontFamily: 'bangla/solaimanlipi',
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -73,7 +73,7 @@ class SuraListItem extends ConsumerWidget {
         Text(
           sura.meaningBangla,
           style: TextStyle(
-            fontFamily: 'SolaimanLipi',
+            fontFamily: 'bangla/solaimanlipi',
             fontSize: 14,
             color: Colors.grey.shade600,
           ),

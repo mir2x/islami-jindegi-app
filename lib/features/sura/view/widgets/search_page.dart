@@ -19,12 +19,14 @@ class SearchPage extends ConsumerWidget {
           autofocus: true,
           decoration: const InputDecoration(
             hintText: 'আরবি বা বাংলায় খুঁজুন...',
-            hintStyle:
-                TextStyle(fontFamily: 'SolaimanLipi', color: Colors.white70),
+            hintStyle: TextStyle(
+                fontFamily: 'bangla/solaimanlipi', color: Colors.white70),
             border: InputBorder.none,
           ),
           style: const TextStyle(
-              fontFamily: 'SolaimanLipi', color: Colors.white, fontSize: 18),
+              fontFamily: 'bangla/solaimanlipi',
+              color: Colors.white,
+              fontSize: 18),
           onChanged: (value) {
             ref.read(searchQueryProvider.notifier).state = value;
           },
@@ -35,13 +37,13 @@ class SearchPage extends ConsumerWidget {
           if (searchQuery.isEmpty) {
             return const Center(
               child: Text('আয়াত বা অনুবাদ খুঁজতে টাইপ করুন।',
-                  style: TextStyle(fontFamily: 'SolaimanLipi')),
+                  style: TextStyle(fontFamily: 'bangla/solaimanlipi')),
             );
           }
           if (ayahs.isEmpty) {
             return const Center(
               child: Text('কোন ফলাফল পাওয়া যায়নি।',
-                  style: TextStyle(fontFamily: 'SolaimanLipi')),
+                  style: TextStyle(fontFamily: 'bangla/solaimanlipi')),
             );
           }
           return ListView.builder(
@@ -52,13 +54,14 @@ class SearchPage extends ConsumerWidget {
                 title: Text(
                   'সূরা ${suraNames[ayah.sura - 1] ?? ayah.sura}: আয়াত ${ayah.ayah.toBengaliDigit()}',
                   style: const TextStyle(
-                      fontFamily: 'SolaimanLipi', fontWeight: FontWeight.bold),
+                      fontFamily: 'bangla/solaimanlipi',
+                      fontWeight: FontWeight.bold),
                 ),
                 subtitle: HighlightedText(
                   text: ayah.arabicText,
                   query: searchQuery,
                   style: const TextStyle(
-                      fontFamily: 'Al Mushaf Quran',
+                      fontFamily: 'arabic/al-mushaf',
                       fontSize: 20,
                       color: Colors.black),
                 ),

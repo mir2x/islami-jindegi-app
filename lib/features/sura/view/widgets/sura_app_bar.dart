@@ -30,7 +30,7 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              fontFamily: 'SolaimanLipi',
+              fontFamily: 'bangla/solaimanlipi',
             ),
             onChanged: (int? newValue) async {
               if (newValue != null && newValue != suraNumber) {
@@ -52,7 +52,7 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
                   '${suraNum.toBengaliDigit()}. ${suraNames[index]}',
                   style: const TextStyle(
                     color: Colors.white,
-                    fontFamily: 'SolaimanLipi',
+                    fontFamily: 'bangla/solaimanlipi',
                   ),
                 ),
               );
@@ -67,7 +67,7 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'SolaimanLipi',
+                      fontFamily: 'bangla/solaimanlipi',
                     ),
                   ),
                 );
