@@ -7,9 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../downloader/view/show_download_dialog.dart';
 import '../../../downloader/view/show_download_permission_dialog.dart';
 import '../../../downloader/viewmodel/download_providers.dart';
-import '../../../quran/view/quran_viewer_screen.dart';
-import '../../../sura/view/sura_page.dart';
-import '../../../sura_list/view/sura_list_page.dart';
+
+import 'package:qlevar_router/qlevar_router.dart';
 import '../../model/quran_edition.dart';
 import '../providers/home_providers.dart';
 
@@ -37,24 +36,10 @@ class HomeScreen extends ConsumerWidget {
                 if (!context.mounted) return;
 
                 if (lastSura != null && lastAyahIndex != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const SuraListPage()),
-                  );
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => SurahPage(
-                        suraNumber: lastSura,
-                        initialScrollIndex: lastAyahIndex,
-                      ),
-                    ),
-                  );
+                  await QR.to('/qurans/sura-list');
+                  QR.to('/qurans/sura/$lastSura?scroll=$lastAyahIndex');
                 } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const SuraListPage()),
-                  );
+                  QR.to('/qurans/sura-list');
                 }
               },
               style: OutlinedButton.styleFrom(
@@ -140,16 +125,8 @@ class _QuranEditionGridItem extends ConsumerWidget {
                 final dirPath = await getLocalPath(edition.id);
                 final editionDirectory = Directory(dirPath);
                 if (await editionDirectory.exists() && context.mounted) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => QuranViewerScreen(
-                        editionDir: editionDirectory,
-                        imageWidth: edition.imageWidth,
-                        imageHeight: edition.imageHeight,
-                        imageExt: edition.imageExt,
-                      ),
-                    ),
+                  QR.to(
+                    '/qurans/quran?path=${Uri.encodeComponent(dirPath)}&width=${edition.imageWidth}&height=${edition.imageHeight}&ext=${edition.imageExt}',
                   );
                 } else if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(

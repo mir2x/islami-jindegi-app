@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
-import '../../../../core/utils/sura_page_router.dart';
+import 'package:qlevar_router/qlevar_router.dart';
 import '../../../../shared/quran_data.dart';
 import '../../viewmodel/search_viewmodel.dart';
-import '../../viewmodel/sura_viewmodel.dart';
 
 class SearchPage extends ConsumerWidget {
   const SearchPage({super.key});
@@ -70,27 +69,7 @@ class SearchPage extends ConsumerWidget {
                     final targetSura = ayah.sura;
                     final targetIndex = ayah.ayah - 1;
 
-                    final activeSurahs = ref.read(activeSurahPagesProvider);
-                    final bool routeExists = activeSurahs.contains(targetSura);
-
-                    if (routeExists) {
-                      debugPrint(
-                          "Surah $targetSura page exists. Issuing scroll command to index $targetIndex.");
-                      ref.read(suraScrollCommandProvider.notifier).state =
-                          ScrollCommand(
-                        suraNumber: targetSura,
-                        scrollIndex: targetIndex,
-                      );
-                      Navigator.popUntil(
-                          context,
-                          (route) =>
-                              route.settings.name == '/surah/$targetSura');
-                    } else {
-                      debugPrint(
-                          "Surah $targetSura page does not exist. Pushing new page.");
-                      Navigator.push(context,
-                          createSurahPageRoute(targetSura, targetIndex));
-                    }
+                    QR.to('/qurans/sura/$targetSura?scroll=$targetIndex');
                   });
                 },
               );

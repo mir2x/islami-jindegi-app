@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
-import 'package:native_app/features/sura/view/sura_page.dart';
-import 'package:native_app/features/sura/view/widgets/search_page.dart';
-import 'package:native_app/features/sura/view/widgets/tilawat_page.dart';
+import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/shared/quran_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -42,12 +40,8 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
 
                 if (!context.mounted) return;
 
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SurahPage(suraNumber: newValue),
-                  ),
-                );
+                await QR.back();
+                QR.to('/qurans/sura/$newValue');
               }
             },
             items: List.generate(suraNames.length, (index) {
@@ -89,24 +83,13 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
           onPressed: () {
             debugPrint(
                 'Navigating to TilawatPage with suraNumber: $suraNumber');
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => TilawatPage(
-                  initialSuraNumber: suraNumber,
-                  initialAyahNumber: 1,
-                ),
-              ),
-            );
+            QR.to('/qurans/tilawat?sura=$suraNumber&ayah=1');
           },
         ),
         IconButton(
           icon: const Icon(Icons.search, color: Colors.white),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const SearchPage()),
-            );
+            QR.to('/qurans/search');
           },
         ),
       ],

@@ -4,7 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:native_app/features/quran/viewmodel/ayah_highlight_viewmodel.dart';
 import 'package:native_app/features/sura/viewmodel/sura_viewmodel.dart';
-import 'package:native_app/features/sura/view/sura_page.dart';
+
+import 'package:qlevar_router/qlevar_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final selectedDrawerSurahProvider = StateProvider<int>((ref) => 1);
@@ -222,15 +223,8 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
       Navigator.pop(context);
     } else {
       Navigator.pop(context);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SurahPage(
-            suraNumber: suraNumber,
-            initialScrollIndex: ayahNumber - 1,
-          ),
-        ),
-      );
+      await QR.back();
+      QR.to('/qurans/sura/$suraNumber?scroll=${ayahNumber - 1}');
     }
   }
 }

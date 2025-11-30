@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../sura/view/sura_page.dart';
-import '../../../sura/view/widgets/search_page.dart';
+import 'package:qlevar_router/qlevar_router.dart';
 import '../../viewmodel/ayah_highlight_viewmodel.dart';
 
 class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
@@ -32,10 +31,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
             icon: const Icon(Icons.search),
             iconSize: isLandscape ? 20.0 : 24.0,
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SearchPage()),
-              );
+              QR.to('/qurans/search');
             }),
         IconButton(
             icon: const Icon(Icons.nightlight_outlined),
@@ -46,12 +42,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
           iconSize: isLandscape ? 20.0 : 24.0,
           onPressed: () {
             final int suraNumber = ref.watch(currentSuraProvider);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SurahPage(suraNumber: suraNumber),
-              ),
-            );
+            QR.to('/qurans/sura/$suraNumber');
           },
         ),
       ],

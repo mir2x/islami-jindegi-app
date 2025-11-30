@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
-import '../../../../core/utils/sura_page_router.dart';
-import '../../../sura/viewmodel/sura_viewmodel.dart';
+import 'package:qlevar_router/qlevar_router.dart';
 import '../../model/sura_list_item.dart';
 
 class SuraListItem extends ConsumerWidget {
@@ -19,22 +18,7 @@ class SuraListItem extends ConsumerWidget {
         Future.delayed(Duration.zero, () {
           if (!context.mounted) return;
 
-          final targetSura = sura.number;
-          final int? targetIndex = null;
-
-          final activeSurahs = ref.read(activeSurahPagesProvider);
-          final bool routeExists = activeSurahs.contains(targetSura);
-
-          if (routeExists) {
-            debugPrint("Surah $targetSura page exists. Popping back to it.");
-            Navigator.popUntil(context,
-                (route) => route.settings.name == '/surah/$targetSura');
-          } else {
-            debugPrint(
-                "Surah $targetSura page does not exist. Pushing new page.");
-            Navigator.push(
-                context, createSurahPageRoute(targetSura, targetIndex));
-          }
+          QR.to('/qurans/sura/${sura.number}');
         });
       },
       child: Padding(
