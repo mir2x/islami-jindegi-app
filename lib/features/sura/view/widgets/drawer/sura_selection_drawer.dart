@@ -222,7 +222,6 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
       );
       Navigator.pop(context);
     } else {
-      Navigator.pop(context);
       await QR.back();
       QR.to('/qurans/sura/$suraNumber?scroll=${ayahNumber - 1}');
     }
