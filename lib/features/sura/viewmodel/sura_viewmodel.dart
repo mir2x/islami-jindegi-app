@@ -213,6 +213,17 @@ class ScrollCommand {
 
 final activeSurahPagesProvider = StateProvider<Set<int>>((ref) => {});
 final suraScrollCommandProvider = StateProvider<ScrollCommand?>((ref) => null);
+
+/// Command to open tafsir after navigation - contains sura and ayah number
+class OpenTafsirCommand {
+  final int suraNumber;
+  final int ayahNumber;
+
+  OpenTafsirCommand({required this.suraNumber, required this.ayahNumber});
+}
+
+final openTafsirCommandProvider =
+    StateProvider<OpenTafsirCommand?>((ref) => null);
 final showTranslationsProvider = StateProvider<bool>((ref) => true);
 final showWordByWordProvider = StateProvider<bool>((ref) => false);
 final isAutoScrollingProvider = StateProvider<bool>((ref) => false);

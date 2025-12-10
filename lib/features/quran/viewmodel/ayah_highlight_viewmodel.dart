@@ -272,6 +272,14 @@ class OrientationToggle {
       ]);
     }
   }
+
+  /// Explicitly set portrait mode regardless of current state
+  static Future<void> setPortrait() async {
+    _isPortraitOnly = true;
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+  }
 }
 
 class DrawerNotifier extends StateNotifier<bool> {

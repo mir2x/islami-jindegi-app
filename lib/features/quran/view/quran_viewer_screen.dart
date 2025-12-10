@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/features/quran/view/widgets/audio_control_bar.dart';
 import 'package:native_app/features/quran/view/widgets/bottom_bar.dart';
 import 'package:native_app/features/quran/view/widgets/custom_app_bar.dart';
@@ -263,11 +264,16 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
                   onPopInvokedWithResult: (didPop, result) async {
                     if (didPop) return;
                     final orientation = MediaQuery.of(context).orientation;
+                    debugPrint('PopScope invoked, orientation: $orientation');
                     if (orientation == Orientation.landscape) {
-                      await OrientationToggle.toggle();
+                      debugPrint('Setting portrait orientation...');
+                      await OrientationToggle.setPortrait();
+                      // Wait for the device to actually rotate to portrait
+                      await Future.delayed(const Duration(milliseconds: 500));
+                      debugPrint('Orientation set, navigating back...');
                     }
                     if (context.mounted) {
-                      Navigator.pop(context);
+                      await QR.back();
                     }
                   },
                   child: Scaffold(

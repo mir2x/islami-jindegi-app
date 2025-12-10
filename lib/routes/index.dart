@@ -5,6 +5,7 @@ import 'package:native_app/features/sura/view/widgets/search_page.dart';
 import 'package:native_app/features/sura/view/widgets/tilawat_page.dart';
 import 'package:native_app/features/sura_list/view/sura_list_page.dart';
 import 'package:native_app/features/quran/view/quran_viewer_screen.dart';
+import 'package:native_app/features/quran/viewmodel/ayah_highlight_viewmodel.dart';
 import 'dart:io';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -83,6 +84,14 @@ class AppRoutes {
         QRoute(path: '/home', builder: () => const HomeScreen()),
         QRoute(
           path: '/quran',
+          middleware: [
+            QMiddlewareBuilder(
+              onExitFunc: () async {
+                // Reset to portrait when leaving quran viewer
+                await OrientationToggle.setPortrait();
+              },
+            ),
+          ],
           builder: () {
             final path = QR.params['path'].toString();
             final width = int.parse(QR.params['width'].toString());

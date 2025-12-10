@@ -14,6 +14,7 @@ import 'package:native_app/features/sura/viewmodel/sura_viewmodel.dart';
 import '../../../shared/quran_data.dart';
 
 import 'package:native_app/features/sura/view/widgets/drawer/sura_selection_drawer.dart';
+import 'package:native_app/features/sura/view/widgets/tafsir_view.dart';
 
 class SurahPage extends ConsumerStatefulWidget {
   final int suraNumber;
@@ -200,6 +201,25 @@ class _SurahPageState extends ConsumerState<SurahPage> {
           curve: Curves.easeInOutCubic,
         );
         ref.read(suraScrollCommandProvider.notifier).state = null;
+      }
+    });
+
+    // Listen for tafsir command (from tilawat mode tap menu)
+    ref.listen<OpenTafsirCommand?>(openTafsirCommandProvider, (previous, next) {
+      if (next != null && next.suraNumber == widget.suraNumber) {
+        // Clear the command
+        ref.read(openTafsirCommandProvider.notifier).state = null;
+        // Wait for scroll to complete, then open tafsir
+        Future.delayed(const Duration(milliseconds: 800), () {
+          if (!mounted) return;
+          final ayahs =
+              ref.read(suraDataProvider(widget.suraNumber)).valueOrNull;
+          if (ayahs != null && next.ayahNumber <= ayahs.length) {
+            final ayah = ayahs[next.ayahNumber - 1];
+            showTafsirBottomSheet(
+                context, suraNames[widget.suraNumber - 1], ayah);
+          }
+        });
       }
     });
 

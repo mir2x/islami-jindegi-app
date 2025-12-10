@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:native_app/core/utils/arabic_digit_extension.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
+import 'package:native_app/shared/quran_data.dart';
 import '../../model/tilawat_models.dart';
 
 import 'package:flutter/gestures.dart';
@@ -38,24 +39,22 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
 
     for (var contentItem in widget.page.content) {
       for (var ayah in contentItem.ayahs) {
-        final doubleTapRecognizer = DoubleTapGestureRecognizer()
-          ..onDoubleTap = () {
-            ref.read(suraScrollCommandProvider.notifier).state = ScrollCommand(
+        final tapRecognizer = TapGestureRecognizer()
+          ..onTap = () {
+            _showAyahMenu(
               suraNumber: contentItem.suraNumber,
-              scrollIndex: ayah.ayahNumber - 1,
+              ayahNumber: ayah.ayahNumber,
+              suraNameBengali: suraNames[contentItem.suraNumber - 1],
             );
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
           };
 
-        _recognizers.add(doubleTapRecognizer);
+        _recognizers.add(tapRecognizer);
 
         // Text first, then ayah number (standard Quran format)
         spans.add(
           TextSpan(
             text: '${ayah.text} ',
-            recognizer: doubleTapRecognizer,
+            recognizer: tapRecognizer,
             style: const TextStyle(
               fontFamily: 'Al Qalam Quran Majeed',
               fontSize: 30,
@@ -69,6 +68,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
         spans.add(
           TextSpan(
             text: '\u{FD3F}${ayah.ayahNumber.toArabicDigit()}\u{FD3E} ',
+            recognizer: tapRecognizer,
             style: const TextStyle(
               fontFamily: 'Al Qalam Quran Majeed',
               fontSize: 32,
@@ -82,6 +82,119 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
       }
     }
     return spans;
+  }
+
+  void _showAyahMenu({
+    required int suraNumber,
+    required int ayahNumber,
+    required String suraNameBengali,
+  }) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          backgroundColor: const Color(0xFFF0F5F0),
+          title: Text(
+            '$suraNameBengali ${suraNumber.toBengaliDigit()}ঃ${ayahNumber.toBengaliDigit()}',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontFamily: 'SolaimanLipi',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1E4D2B),
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Option 1: View Arabic & Translation
+              _buildMenuOption(
+                icon: Icons.chrome_reader_mode,
+                label: 'আরবি ও তরজমা দেখুন',
+                onTap: () {
+                  Navigator.pop(dialogContext);
+                  _navigateToSuraPage(suraNumber, ayahNumber);
+                },
+              ),
+              const SizedBox(height: 12),
+              // Option 2: View Tafsir
+              _buildMenuOption(
+                icon: Icons.menu_book,
+                label: 'তাফসীর দেখুন',
+                onTap: () {
+                  Navigator.pop(dialogContext);
+                  _navigateToSuraPageWithTafsir(suraNumber, ayahNumber);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMenuOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1E4D2B),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: Colors.white, size: 22),
+            const SizedBox(width: 10),
+            Text(
+              label,
+              style: const TextStyle(
+                fontFamily: 'SolaimanLipi',
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _navigateToSuraPage(int suraNumber, int ayahNumber) {
+    ref.read(suraScrollCommandProvider.notifier).state = ScrollCommand(
+      suraNumber: suraNumber,
+      scrollIndex: ayahNumber - 1,
+    );
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
+  }
+
+  void _navigateToSuraPageWithTafsir(int suraNumber, int ayahNumber) {
+    // Set scroll command
+    ref.read(suraScrollCommandProvider.notifier).state = ScrollCommand(
+      suraNumber: suraNumber,
+      scrollIndex: ayahNumber - 1,
+    );
+    // Set tafsir command to open after navigation
+    ref.read(openTafsirCommandProvider.notifier).state = OpenTafsirCommand(
+      suraNumber: suraNumber,
+      ayahNumber: ayahNumber,
+    );
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
   }
 
   List<Widget> _buildHeaderWidgets() {
