@@ -58,7 +58,8 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
             recognizer: doubleTapRecognizer,
             style: const TextStyle(
               fontFamily: 'Al Qalam Quran Majeed',
-              fontSize: 28,
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
               height: 2.2,
               color: Color(0xFF2D2D2D),
               letterSpacing: 0,
@@ -70,7 +71,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
             text: '\u{FD3F}${ayah.ayahNumber.toArabicDigit()}\u{FD3E} ',
             style: const TextStyle(
               fontFamily: 'Al Qalam Quran Majeed',
-              fontSize: 28,
+              fontSize: 32,
               color: Color(0xFF2D2D2D),
               fontWeight: FontWeight.bold,
               letterSpacing: 0,
@@ -156,7 +157,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
               ),
               lineColor: const Color(0xFF2D2D2D),
               lineThickness: 1.5,
-              lineOffset: 8.0, // pixels below baseline
+              lineOffset: 20.0, // pixels below baseline
             ),
           ),
         ],
