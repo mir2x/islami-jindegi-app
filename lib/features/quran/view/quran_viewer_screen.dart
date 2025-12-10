@@ -264,8 +264,9 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
                     if (didPop) return;
                     final orientation = MediaQuery.of(context).orientation;
                     if (orientation == Orientation.landscape) {
-                      OrientationToggle.toggle();
-                    } else {
+                      await OrientationToggle.toggle();
+                    }
+                    if (context.mounted) {
                       Navigator.pop(context);
                     }
                   },
