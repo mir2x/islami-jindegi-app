@@ -71,17 +71,14 @@ class AppRoutes {
     QRoute(path: '/', name: 'root', builder: () => const Home()),
     QRoute(
       path: '/qurans',
-      builder: () => const SizedBox(),
+      builder: () => const HomeScreen(),
       middleware: [
         QMiddlewareBuilder(
-          redirectGuardFunc: (path) async =>
-              path == '/qurans' ? '/qurans/home' : null,
           onEnterFunc: () => WakelockPlus.enable(),
           onExitFunc: () => WakelockPlus.disable(),
         ),
       ],
       children: [
-        QRoute(path: '/home', builder: () => const HomeScreen()),
         QRoute(
           path: '/quran',
           middleware: [
