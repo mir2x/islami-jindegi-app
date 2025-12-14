@@ -125,12 +125,12 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
     )
 
     setOnClickPendingIntent(R.id.reload, reloadContent(context))
-    setOnClickPendingIntent(R.id.quran, openLink(context, "quran"))
-    setOnClickPendingIntent(R.id.books, openLink(context, "books"))
-    setOnClickPendingIntent(R.id.bayans, openLink(context, "bayans"))
-    setOnClickPendingIntent(R.id.malfuzat, openLink(context, "malfuzat"))
-    setOnClickPendingIntent(R.id.masail, openLink(context, "masail"))
-    setOnClickPendingIntent(R.id.duas, openLink(context, "duas"))
+    setOnClickPendingIntent(R.id.quran, openLink(context, "/qurans"))
+    setOnClickPendingIntent(R.id.books, openLink(context, "/books"))
+    setOnClickPendingIntent(R.id.bayans, openLink(context, "/bayans"))
+    setOnClickPendingIntent(R.id.malfuzat, openLink(context, "/malfuzat"))
+    setOnClickPendingIntent(R.id.masail, openLink(context, "/masail"))
+    setOnClickPendingIntent(R.id.duas, openLink(context, "/duas"))
   }
 
   appWidgetManager.updateAppWidget(appWidgetId, views)
