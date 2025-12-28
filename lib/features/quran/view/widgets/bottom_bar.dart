@@ -110,8 +110,10 @@ class BottomBar extends ConsumerWidget {
                 size: isLandscape ? 20.0 : 26.r,
                 isLandscape: isLandscape,
                 onPressed: () {
+                  final wasOn = ref.read(touchModeProvider);
                   ref.read(touchModeProvider.notifier).toggle();
-                  if (!ref.read(touchModeProvider)) {
+                  // If touch mode was ON and is now turning OFF, clear selection
+                  if (wasOn) {
                     ref.read(selectedAyahProvider.notifier).clear();
                   }
                 },
@@ -126,7 +128,7 @@ class BottomBar extends ConsumerWidget {
           ),
           _iconBtn(
             icon: isPageBookmarked
-                ? HugeIcons.strokeRoundedStarOff
+                ? Icons.star_rounded
                 : HugeIcons.strokeRoundedStar,
             color: isPageBookmarked ? Colors.orangeAccent : Colors.white,
             size: isLandscape ? 20.0 : 24.r,
@@ -215,7 +217,7 @@ class BottomBar extends ConsumerWidget {
         minWidth: isLandscape ? 40.0 : 48.w,
       ),
       padding: EdgeInsets.zero,
-      icon: Center(child: HugeIcon(icon: icon, color: color)),
+      icon: Center(child: Icon(icon, color: color)),
       onPressed: onPressed,
     );
   }

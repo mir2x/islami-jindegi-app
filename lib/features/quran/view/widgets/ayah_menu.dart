@@ -1,13 +1,16 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:native_app/theme/colors.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../model/bookmark.dart';
 import '../../viewmodel/audio_providers.dart';
 import '../../viewmodel/ayah_highlight_viewmodel.dart';
 import '../../viewmodel/bookmark_viewmodel.dart';
+import '../../../sura/viewmodel/sura_viewmodel.dart';
 
 import '../widgets/audio_bottom_sheet.dart';
 
@@ -64,7 +67,7 @@ class AyahMenu extends ConsumerWidget {
                 child: IconButton(
                   icon: HugeIcon(
                     icon: isBookmarked
-                        ? HugeIcons.strokeRoundedStarOff
+                        ? Icons.star_rounded
                         : HugeIcons.strokeRoundedStar,
                     color: isBookmarked ? Colors.orangeAccent : Colors.white,
                     size: 24.r,
@@ -73,9 +76,14 @@ class AyahMenu extends ConsumerWidget {
                     if (isBookmarked) {
                       final identifier = 'ayah-$selectedSura-$selectedAyah';
                       bookmarkNotifier.remove(identifier);
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('আয়াতটি বুকমার্ক থেকে সরানো হয়েছে',
-                              style: TextStyle(fontSize: 14.sp))));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'আয়াতটি বুকমার্ক থেকে সরানো হয়েছে',
+                            style: TextStyle(fontSize: 14.sp),
+                          ),
+                        ),
+                      );
                     } else {
                       final quranInfoService =
                           ref.read(quranInfoServiceProvider);
@@ -120,9 +128,80 @@ class AyahMenu extends ConsumerWidget {
                       context: context,
                       builder: (BuildContext context) {
                         return AudioBottomSheet(
-                            currentSura: selectedState.suraNumber);
+                          currentSura: selectedState.suraNumber,
+                        );
                       },
                     );
+                  },
+                ),
+              ),
+              Expanded(
+                child: IconButton(
+                  icon: HugeIcon(
+                    icon: HugeIcons.strokeRoundedCopy01,
+                    color: Colors.white,
+                    size: 24.r,
+                  ),
+                  onPressed: () async {
+                    try {
+                      final db = await ref.read(databaseProvider.future);
+                      final ayah = await ref
+                          .read(quranDataServiceProvider)
+                          .getAyah(db, selectedSura, selectedAyah);
+                      await Clipboard.setData(
+                          ClipboardData(text: ayah.arabicText));
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'আয়াতটি কপি হয়েছে',
+                              style: TextStyle(fontSize: 14.sp),
+                            ),
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'কপি করতে ব্যর্থ হয়েছে',
+                              style: TextStyle(fontSize: 14.sp),
+                            ),
+                          ),
+                        );
+                      }
+                    }
+                    ref.read(selectedAyahProvider.notifier).clear();
+                  },
+                ),
+              ),
+              Expanded(
+                child: IconButton(
+                  icon: HugeIcon(
+                      icon: HugeIcons.strokeRoundedShare01,
+                      color: Colors.white,
+                      size: 24.r),
+                  onPressed: () async {
+                    try {
+                      final db = await ref.read(databaseProvider.future);
+                      final ayah = await ref
+                          .read(quranDataServiceProvider)
+                          .getAyah(db, selectedSura, selectedAyah);
+                      await Share.share(ayah.arabicText);
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'শেয়ার করতে ব্যর্থ হয়েছে',
+                              style: TextStyle(fontSize: 14.sp),
+                            ),
+                          ),
+                        );
+                      }
+                    }
+                    ref.read(selectedAyahProvider.notifier).clear();
                   },
                 ),
               ),

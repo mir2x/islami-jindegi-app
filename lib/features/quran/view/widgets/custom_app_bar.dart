@@ -28,15 +28,17 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
       centerTitle: true,
       actions: [
         IconButton(
-            icon: const Icon(Icons.search),
-            iconSize: isLandscape ? 20.0 : 24.0,
-            onPressed: () {
-              QR.to('/qurans/search');
-            }),
-        IconButton(
-            icon: const Icon(Icons.nightlight_outlined),
-            iconSize: isLandscape ? 20.0 : 24.0,
-            onPressed: () {}),
+          icon: const Icon(Icons.search),
+          iconSize: isLandscape ? 20.0 : 24.0,
+          onPressed: () {
+            QR.to('/qurans/search');
+          },
+        ),
+        // IconButton(
+        //   icon: const Icon(Icons.nightlight_outlined),
+        //   iconSize: isLandscape ? 20.0 : 24.0,
+        //   onPressed: () {},
+        // ),
         IconButton(
           icon: const Icon(Icons.g_translate),
           iconSize: isLandscape ? 20.0 : 24.0,

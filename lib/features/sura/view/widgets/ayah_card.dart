@@ -88,7 +88,7 @@ class AyahCard extends ConsumerWidget {
           child: Center(
             child: Text(
               ayah.ayah.toBengaliDigit(),
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'SolaimanLipi',
                 color: ThemeColors.color5,
                 fontSize: 16,

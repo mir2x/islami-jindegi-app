@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/features/quran/viewmodel/ayah_highlight_viewmodel.dart';
+import 'package:native_app/theme/colors.dart';
 
 class PageInfoOverlay extends ConsumerWidget {
   final int pageIndex;
@@ -24,7 +25,7 @@ class PageInfoOverlay extends ConsumerWidget {
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 24.w),
             decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
+              color: ThemeColors.color6,
               borderRadius: BorderRadius.circular(20.r),
             ),
             child: Column(

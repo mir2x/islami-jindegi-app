@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/features/sura/view/widgets/tafsir_view.dart';
 import 'package:native_app/features/sura/view/widgets/tilawat_page.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../model/ayah.dart';
 import '../../viewmodel/sura_reciter_viewmodel.dart';
 
@@ -35,14 +37,14 @@ void showAyahActionBottomSheet(
     ),
     builder: (BuildContext bottomSheetContext) {
       final List<AyahActionItem> actions = [
-        AyahActionItem(
-          icon: Icons.bookmark_border,
-          label: 'বুকমার্ক',
-          onTap: () {
-            print('Bookmark Ayah ${ayah.ayah}');
-            Navigator.pop(bottomSheetContext);
-          },
-        ),
+        // AyahActionItem(
+        //   icon: Icons.bookmark_border,
+        //   label: 'বুকমার্ক',
+        //   onTap: () {
+        //     print('Bookmark Ayah ${ayah.ayah}');
+        //     Navigator.pop(bottomSheetContext);
+        //   },
+        // ),
         AyahActionItem(
           icon: Icons.play_arrow,
           label: 'অডিও শুনুন',
@@ -84,6 +86,32 @@ void showAyahActionBottomSheet(
                 ),
               ),
             );
+          },
+        ),
+        AyahActionItem(
+          icon: Icons.copy,
+          label: 'কপি',
+          onTap: () async {
+            await Clipboard.setData(ClipboardData(text: ayah.arabicText));
+            Navigator.pop(bottomSheetContext);
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'আয়াতটি কপি হয়েছে',
+                    style: TextStyle(fontFamily: 'SolaimanLipi'),
+                  ),
+                ),
+              );
+            }
+          },
+        ),
+        AyahActionItem(
+          icon: Icons.share,
+          label: 'শেয়ার',
+          onTap: () async {
+            Navigator.pop(bottomSheetContext);
+            await Share.share(ayah.arabicText);
           },
         ),
       ];

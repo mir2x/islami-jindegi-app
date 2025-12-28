@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:native_app/features/sura/view/widgets/reciter_selection_dialog.dart';
+import 'package:native_app/features/sura/view/widgets/search_page.dart';
 import 'package:native_app/features/sura/view/widgets/tilawat_page.dart';
 import 'package:native_app/features/sura/view/widgets/translation_selection_dialog.dart';
 import '../../model/grid_item_data.dart';
@@ -36,11 +37,17 @@ class DetailsBottomSheet extends StatelessWidget {
               title: 'ফিচার',
               items: [
                 GridItemData(
-                    icon: Icons.search, label: 'অনুসন্ধান', onTap: () {}),
-                GridItemData(
-                    icon: Icons.fullscreen_exit_outlined,
-                    label: 'স্ক্রীন বড়-ছোট',
-                    onTap: () {}),
+                    icon: Icons.search,
+                    label: 'অনুসন্ধান',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SearchPage(),
+                        ),
+                      );
+                    }),
               ],
             ),
             _DetailsSection(

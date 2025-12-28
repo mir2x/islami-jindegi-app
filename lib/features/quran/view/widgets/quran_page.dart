@@ -153,8 +153,9 @@ class QuranPage extends ConsumerWidget {
               ),
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onTapDown: (details) =>
-                    onTapDown(details, scaleX, scaleY, boxes),
+                onTapDown: touchModeOn
+                    ? (_) => ref.read(barsVisibilityProvider.notifier).toggle()
+                    : (details) => onTapDown(details, scaleX, scaleY, boxes),
                 child: Container(),
               ),
               if (showMenuOnThisPage && menuAnchorRectOnThisPage != null)
