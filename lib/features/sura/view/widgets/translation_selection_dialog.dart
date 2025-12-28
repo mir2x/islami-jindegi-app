@@ -6,6 +6,7 @@ const List<String> availableTranslators = [
   'মুফতী তাকী উসমানী',
   'মাওলানা মুহিউদ্দিন খান',
   'ইসলামিক ফাউন্ডেশন',
+  'Taqi Usmani',
 ];
 
 class TranslatorSelectionDialog extends ConsumerWidget {
