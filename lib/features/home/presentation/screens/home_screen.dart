@@ -20,13 +20,19 @@ class HomeScreen extends ConsumerWidget {
     final quranEditions = ref.watch(quranEditionProvider);
 
     return Scaffold(
-      backgroundColor: ThemeColors.color10,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text(
+          'কুরআন',
+          style: TextStyle(fontFamily: 'SolaimanLipi'),
+        ),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 24.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 48.h),
             GestureDetector(
               onTap: () async {
                 final prefs = await SharedPreferences.getInstance();

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/features/sura/view/widgets/quran_page_widget.dart';
-import 'package:native_app/theme/colors.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../../model/tilawat_models.dart';
 import '../../viewmodel/tilawat_providers.dart';
@@ -45,7 +44,6 @@ class TilawatPage extends ConsumerWidget {
           loading: () => const Text(''),
           error: (_, __) => const Text(''),
         ),
-        backgroundColor: ThemeColors.color5,
       ),
       body: pagesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),

@@ -6,6 +6,7 @@ import 'package:native_app/features/sura/model/ayah.dart';
 import 'package:native_app/features/sura/view/widgets/ayah_action_bottom_sheet.dart';
 import 'package:native_app/features/sura/viewmodel/font_settings_viewmodel.dart';
 import 'package:native_app/features/sura/viewmodel/sura_viewmodel.dart';
+import 'package:native_app/theme/colors.dart';
 import '../../../../core/utils/adaptive_text.dart';
 
 class AyahCard extends ConsumerWidget {
@@ -80,7 +81,7 @@ class AyahCard extends ConsumerWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: Theme.of(context).primaryColor,
+              color: ThemeColors.color5,
               width: 1.0,
             ),
           ),
@@ -89,7 +90,7 @@ class AyahCard extends ConsumerWidget {
               ayah.ayah.toBengaliDigit(),
               style: TextStyle(
                 fontFamily: 'SolaimanLipi',
-                color: Theme.of(context).primaryColor,
+                color: ThemeColors.color5,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),

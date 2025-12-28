@@ -48,7 +48,7 @@ class BookmarkNavigationView extends ConsumerWidget {
           return Column(
             children: [
               Container(
-                color: ThemeColors.color12,
+                color: ThemeColors.color5,
                 child: TabBar(
                   dividerColor: Colors.transparent,
                   labelColor: Colors.white,

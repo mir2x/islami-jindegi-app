@@ -7,6 +7,7 @@ import 'package:native_app/features/sura/viewmodel/sura_viewmodel.dart';
 
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:native_app/theme/colors.dart';
 
 final selectedDrawerSurahProvider = StateProvider<int>((ref) => 1);
 final selectedDrawerAyahProvider = StateProvider<int?>((ref) => null);
@@ -97,7 +98,7 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
 
   Widget _buildHeader(BuildContext context) {
     return Container(
-      color: Theme.of(context).primaryColor,
+      color: ThemeColors.color5,
       padding: EdgeInsets.symmetric(vertical: 12.h),
       child: Row(
         children: [

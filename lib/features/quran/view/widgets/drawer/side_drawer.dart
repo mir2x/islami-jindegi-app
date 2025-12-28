@@ -99,7 +99,7 @@ class _SideDrawerState extends ConsumerState<SideDrawer>
                       child: tabContent,
                     ),
                     Container(
-                      color: ThemeColors.color12,
+                      color: ThemeColors.color5,
                       child: TabBar(
                         controller: _tabController,
                         labelColor: Colors.white,

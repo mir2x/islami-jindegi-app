@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:native_app/features/sura_list/view/widgets/sura_list_item.dart';
-
 import '../model/sources/sura_information.dart';
 
 class SuraListPage extends StatelessWidget {

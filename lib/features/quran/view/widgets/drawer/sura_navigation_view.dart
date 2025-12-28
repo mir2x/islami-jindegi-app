@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:native_app/theme/colors.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../../../viewmodel/ayah_highlight_viewmodel.dart';
 
@@ -103,7 +103,7 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
     final fontSize = isLandscape ? 14.0 : 16.sp;
 
     return Container(
-      color: Theme.of(context).primaryColor,
+      color: ThemeColors.color5,
       padding: EdgeInsets.symmetric(vertical: 12.h),
       child: Row(
         children: [
@@ -151,13 +151,13 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
         final isSelected = suraNumber == selectedSurah;
 
         return ListTile(
-          tileColor: isSelected ? Theme.of(context).primaryColor : null,
+          tileColor: isSelected ? ThemeColors.color5.withOpacity(0.1) : null,
           title: Text(
             '${toBengaliNumber(suraNumber)}. ${suraNames[index]}',
             style: TextStyle(
               fontSize: fontSize,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected ? Colors.white : Colors.black87,
+              color: isSelected ? ThemeColors.color5 : Colors.black87,
             ),
           ),
           contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -205,13 +205,13 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
             selectedSurah == selectedSurah && ayahNumber == selectedAyah;
 
         return ListTile(
-          tileColor: isSelected ? Theme.of(context).primaryColor : null,
+          tileColor: isSelected ? ThemeColors.color5.withOpacity(0.1) : null,
           title: Center(
             child: Text(
               toBengaliNumber(ayahNumber),
               style: TextStyle(
                 fontSize: fontSize,
-                color: isSelected ? Colors.white : Colors.black87,
+                color: isSelected ? ThemeColors.color5 : Colors.black87,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
