@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../downloader/view/show_download_dialog.dart';
@@ -28,8 +27,8 @@ class HomeScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SizedBox(height: 48.h),
-            OutlinedButton(
-              onPressed: () async {
+            GestureDetector(
+              onTap: () async {
                 final prefs = await SharedPreferences.getInstance();
                 final int? lastSura = prefs.getInt('last_read_sura');
                 final int? lastAyahIndex = prefs.getInt('last_read_ayah_index');
@@ -43,23 +42,45 @@ class HomeScreen extends ConsumerWidget {
                   QR.to('/qurans/sura-list');
                 }
               },
-              style: OutlinedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 14.h),
-                side: BorderSide(
-                  color: Theme.of(context).primaryColor,
-                  width: 1.5,
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      ThemeColors.color5,
+                      ThemeColors.color12,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(12.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ThemeColors.color12.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                foregroundColor: Theme.of(context).primaryColor,
-              ),
-              child: Text(
-                'তাফসীর',
-                style: TextStyle(
-                  fontFamily: 'bangla/solaimanlipi',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.sp,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.menu_book_rounded,
+                      color: Colors.white,
+                      size: 28.r,
+                    ),
+                    SizedBox(width: 12.w),
+                    Text(
+                      'তাফসীর',
+                      style: TextStyle(
+                        fontFamily: 'bangla/solaimanlipi',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -98,89 +119,95 @@ class _QuranEditionGridItem extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Expanded(
-          flex: 4,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(8.r),
-            onTap: () async {
-              if (!edition.isDownloaded) {
-                final confirmed = await showDownloadPermissionDialog(
-                  context,
-                  assetName: edition.title,
-                  sizeInfo:
-                      "(${(edition.sizeBytes / 1048576).toStringAsFixed(1)} MB)",
-                );
-                if (!confirmed || !context.mounted) return;
+        InkWell(
+          borderRadius: BorderRadius.circular(8.r),
+          onTap: () async {
+            if (!edition.isDownloaded) {
+              final confirmed = await showDownloadPermissionDialog(
+                context,
+                assetName: edition.title,
+                sizeInfo:
+                    "(${(edition.sizeBytes / 1048576).toStringAsFixed(1)} MB)",
+              );
+              if (!confirmed || !context.mounted) return;
 
-                final mushafDownloadTask = ZipDownloadTask(
-                  id: edition.id,
-                  displayName: edition.title,
-                  zipUrl: edition.url,
-                );
+              final mushafDownloadTask = ZipDownloadTask(
+                id: edition.id,
+                displayName: edition.title,
+                zipUrl: edition.url,
+              );
 
-                showDownloadDialog(context);
-                ref
-                    .read(downloadManagerProvider)
-                    .startDownload(mushafDownloadTask);
-              } else {
-                final dirPath = await getLocalPath(edition.id);
-                final editionDirectory = Directory(dirPath);
-                if (await editionDirectory.exists() && context.mounted) {
-                  QR.to(
-                    '/qurans/quran?path=${Uri.encodeComponent(dirPath)}&width=${edition.imageWidth}&height=${edition.imageHeight}&ext=${edition.imageExt}',
-                  );
-                } else if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'Error: Mushaf files not found. Please try downloading again.',
-                      ),
+              showDownloadDialog(context);
+              ref
+                  .read(downloadManagerProvider)
+                  .startDownload(mushafDownloadTask);
+            } else {
+              final dirPath = await getLocalPath(edition.id);
+              final editionDirectory = Directory(dirPath);
+              if (await editionDirectory.exists() && context.mounted) {
+                QR.to(
+                  '/qurans/quran?path=${Uri.encodeComponent(dirPath)}&width=${edition.imageWidth}&height=${edition.imageHeight}&ext=${edition.imageExt}',
+                );
+              } else if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Error: Mushaf files not found. Please try downloading again.',
                     ),
-                  );
-                }
+                  ),
+                );
               }
-            },
-            child: Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.topCenter,
-              children: [
-                Container(
-                  width: double.infinity,
-                  child: ClipRRect(
-                    child: Image.asset(
-                      edition.coverImagePath,
-                      fit: BoxFit.cover,
+            }
+          },
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.topCenter,
+            children: [
+              Container(
+                width: double.infinity,
+                child: ClipRRect(
+                  child: Image.asset(
+                    edition.coverImagePath,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              if (hasCheckmark)
+                Positioned(
+                  top: -12.h,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(4.r),
+                      decoration: const BoxDecoration(
+                        color: ThemeColors.color5,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.check,
+                        size: 16.r,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
-                if (hasCheckmark)
-                  Positioned(
-                    top: -15.h,
-                    child: HugeIcon(
-                      icon: HugeIcons.strokeRoundedLocationCheck01,
-                      size: 36.r,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-              ],
-            ),
+            ],
           ),
         ),
-        Expanded(
-          flex: 1,
-          child: Center(
-            child: Text(
-              edition.title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w500,
-                color: ThemeColors.color13,
-                fontFamily: 'bangla/solaimanlipi',
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+        Padding(
+          padding: EdgeInsets.only(top: 8.h),
+          child: Text(
+            edition.title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
+              color: ThemeColors.color13,
+              fontFamily: 'bangla/solaimanlipi',
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
