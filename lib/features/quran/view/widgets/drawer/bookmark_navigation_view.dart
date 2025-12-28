@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:native_app/theme/colors.dart';
 import '../../../viewmodel/ayah_highlight_viewmodel.dart';
 import '../../../viewmodel/bookmark_viewmodel.dart';
 
@@ -47,13 +48,13 @@ class BookmarkNavigationView extends ConsumerWidget {
           return Column(
             children: [
               Container(
-                color: const Color(0xFF1B5E20),
+                color: ThemeColors.color12,
                 child: TabBar(
                   dividerColor: Colors.transparent,
                   labelColor: Colors.white,
                   unselectedLabelColor: Colors.white,
                   indicator: const BoxDecoration(
-                    color: Color(0xFF144910),
+                    color: ThemeColors.color6,
                     borderRadius: BorderRadius.zero,
                   ),
                   indicatorSize: TabBarIndicatorSize.tab,

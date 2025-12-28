@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:native_app/theme/colors.dart';
 import '../../viewmodel/audio_providers.dart';
 import '../../viewmodel/ayah_highlight_viewmodel.dart';
 import '../../viewmodel/reciter_providers.dart';
@@ -38,7 +39,7 @@ class _AudioBottomSheetState extends ConsumerState<AudioBottomSheet> {
     final suraNameOptions = suraNames;
 
     return Container(
-      color: const Color(0xFF294B39),
+      color: ThemeColors.color6,
       padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 24.h),
       child: SingleChildScrollView(
         child: Column(
@@ -160,7 +161,7 @@ class _AudioBottomSheetState extends ConsumerState<AudioBottomSheet> {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
             decoration: BoxDecoration(
-              color: const Color(0xFF294B39),
+              color: ThemeColors.color6,
               border: Border.all(color: Colors.white24),
               borderRadius: BorderRadius.circular(8.r),
             ),
@@ -168,7 +169,7 @@ class _AudioBottomSheetState extends ConsumerState<AudioBottomSheet> {
               child: DropdownButton<T>(
                 isExpanded: true,
                 value: value,
-                dropdownColor: const Color(0xFF294B39),
+                dropdownColor: ThemeColors.color6,
                 iconEnabledColor: Colors.white,
                 style: TextStyle(color: Colors.white, fontSize: 16.sp),
                 items: items.map((e) {

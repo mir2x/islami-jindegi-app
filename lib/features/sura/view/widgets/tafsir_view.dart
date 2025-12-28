@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
+import 'package:native_app/theme/colors.dart';
 import '../../../../core/utils/adaptive_text.dart';
 import '../../../downloader/view/show_download_dialog.dart';
 import '../../../downloader/viewmodel/download_providers.dart';
@@ -46,7 +47,7 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
 
               return ExpansionPanel(
                 canTapOnHeader: true,
-                backgroundColor: const Color(0xFFE6F0E6),
+                backgroundColor: ThemeColors.color14,
                 isExpanded: _expandedPanelIndex == index,
                 headerBuilder: (context, isExpanded) {
                   return ListTile(
@@ -56,7 +57,7 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
                         fontFamily: 'SolaimanLipi',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF1E4D2B),
+                        color: ThemeColors.color12,
                       ),
                       textAlign: TextAlign.left,
                     ),
@@ -146,7 +147,7 @@ void showTafsirBottomSheet(BuildContext context, String suraName, Ayah ayah) {
         expand: false,
         builder: (_, scrollController) {
           return Container(
-            color: const Color(0xFFF0F5F0),
+            color: ThemeColors.color10,
             child: Column(
               children: [
                 Padding(

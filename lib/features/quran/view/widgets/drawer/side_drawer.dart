@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/features/quran/view/widgets/drawer/bookmark_navigation_view.dart';
 import 'package:native_app/features/quran/view/widgets/drawer/para_navigation_view.dart';
 import 'package:native_app/features/quran/view/widgets/drawer/sura_navigation_view.dart';
+import 'package:native_app/theme/colors.dart';
 import '../../../../../core/theme.dart';
 import '../../../viewmodel/ayah_highlight_viewmodel.dart';
 
@@ -98,14 +99,14 @@ class _SideDrawerState extends ConsumerState<SideDrawer>
                       child: tabContent,
                     ),
                     Container(
-                      color: const Color(0xFF1B5E20),
+                      color: ThemeColors.color12,
                       child: TabBar(
                         controller: _tabController,
                         labelColor: Colors.white,
                         dividerColor: Colors.transparent,
                         unselectedLabelColor: Colors.white,
                         indicator: const BoxDecoration(
-                          color: Color(0xFF144910),
+                          color: ThemeColors.color6,
                           borderRadius: BorderRadius.zero,
                         ),
                         indicatorWeight: 0,

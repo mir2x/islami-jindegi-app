@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:native_app/theme/colors.dart';
 import '../../model/bookmark.dart';
 import '../../viewmodel/audio_providers.dart';
 import '../../viewmodel/ayah_highlight_viewmodel.dart';
@@ -52,7 +53,7 @@ class AyahMenu extends ConsumerWidget {
       child: Material(
         elevation: 3,
         borderRadius: BorderRadius.circular(8.r),
-        color: const Color(0xFF294B39),
+        color: ThemeColors.color6,
         child: SizedBox(
           height: menuHeight,
           width: menuWidth,

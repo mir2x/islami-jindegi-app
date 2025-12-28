@@ -9,6 +9,7 @@ import '../../../downloader/view/show_download_permission_dialog.dart';
 import '../../../downloader/viewmodel/download_providers.dart';
 
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:native_app/theme/colors.dart';
 import '../../model/quran_edition.dart';
 import '../providers/home_providers.dart';
 
@@ -20,7 +21,7 @@ class HomeScreen extends ConsumerWidget {
     final quranEditions = ref.watch(quranEditionProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F2F5),
+      backgroundColor: ThemeColors.color10,
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 24.h),
         child: Column(
@@ -145,11 +146,6 @@ class _QuranEditionGridItem extends ConsumerWidget {
               children: [
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.all(8.r),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [],
-                  ),
                   child: ClipRRect(
                     child: Image.asset(
                       edition.coverImagePath,
@@ -179,7 +175,7 @@ class _QuranEditionGridItem extends ConsumerWidget {
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w500,
-                color: const Color(0xFF333333),
+                color: ThemeColors.color13,
                 fontFamily: 'bangla/solaimanlipi',
               ),
               maxLines: 2,

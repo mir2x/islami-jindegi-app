@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:native_app/theme/colors.dart';
 import '../../model/bookmark.dart';
 import '../../viewmodel/ayah_highlight_viewmodel.dart';
 import '../../viewmodel/bookmark_viewmodel.dart';
@@ -36,7 +37,7 @@ class BottomBar extends ConsumerWidget {
 
     return Container(
       height: isLandscape ? 50.0 : bottomBarHeight.h,
-      color: const Color(0xFF294B39),
+      color: ThemeColors.color6,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -62,14 +63,14 @@ class BottomBar extends ConsumerWidget {
               margin: EdgeInsets.symmetric(vertical: isLandscape ? 8.0 : 12.h),
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               decoration: BoxDecoration(
-                color: const Color(0xFF294B39),
+                color: ThemeColors.color6,
                 border: Border.all(color: Colors.white24),
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   isExpanded: true,
-                  dropdownColor: const Color(0xFF294B39),
+                  dropdownColor: ThemeColors.color6,
                   iconEnabledColor: Colors.white,
                   style: TextStyle(
                     color: Colors.white,

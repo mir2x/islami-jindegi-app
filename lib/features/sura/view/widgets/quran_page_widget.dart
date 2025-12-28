@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:native_app/core/utils/arabic_digit_extension.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/shared/quran_data.dart';
+import 'package:native_app/theme/colors.dart';
 import '../../model/tilawat_models.dart';
 
 import 'package:flutter/gestures.dart';
@@ -60,7 +61,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
               fontSize: 30,
               fontWeight: FontWeight.bold,
               height: 2.2,
-              color: Color(0xFF2D2D2D),
+              color: ThemeColors.color13,
               // letterSpacing: 0,
             ),
           ),
@@ -72,7 +73,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
             style: const TextStyle(
               fontFamily: 'arabic/noorehuda',
               fontSize: 32,
-              color: Color(0xFF2D2D2D),
+              color: ThemeColors.color13,
               fontWeight: FontWeight.normal,
               letterSpacing: 0,
               height: 2.2,
@@ -96,7 +97,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          backgroundColor: const Color(0xFFF0F5F0),
+          backgroundColor: ThemeColors.color10,
           title: Text(
             '$suraNameBengali ${suraNumber.toBengaliDigit()}ঃ${ayahNumber.toBengaliDigit()}',
             textAlign: TextAlign.center,
@@ -104,7 +105,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
               fontFamily: 'SolaimanLipi',
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF1E4D2B),
+              color: ThemeColors.color12,
             ),
           ),
           content: Column(
@@ -148,7 +149,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
         decoration: BoxDecoration(
-          color: const Color(0xFF1E4D2B),
+          color: ThemeColors.color12,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -216,7 +217,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
     final headerWidgets = _buildHeaderWidgets();
 
     return Container(
-      color: const Color(0xFFF1FCFE),
+      color: ThemeColors.color10,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -225,10 +226,10 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
             padding:
                 const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
             decoration: BoxDecoration(
-              color: const Color(0xFFE8DFC8),
+              color: ThemeColors.color14,
               border: Border(
                 bottom: BorderSide(
-                  color: const Color(0xFFD4AF37).withOpacity(0.5),
+                  color: ThemeColors.border.withOpacity(0.5),
                   width: 1,
                 ),
               ),
@@ -242,7 +243,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
                     fontFamily: 'SolaimanLipi',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF2D2D2D),
+                    color: ThemeColors.color13,
                   ),
                 ),
                 Text(
@@ -251,7 +252,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
                     fontFamily: 'SolaimanLipi',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF2D2D2D),
+                    color: ThemeColors.color13,
                   ),
                 ),
               ],
@@ -268,7 +269,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
                 style: DefaultTextStyle.of(context).style,
                 children: _buildAyahOnlySpans(),
               ),
-              lineColor: const Color(0xFF2D2D2D),
+              lineColor: ThemeColors.color13,
               lineThickness: 1.5,
               lineOffset: 20.0, // pixels below baseline
             ),
@@ -292,7 +293,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
                 fontSize: 34,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0,
-                color: Color(0xFF2D2D2D),
+                color: ThemeColors.color13,
               ),
             ),
             // const SizedBox(height: 8),
@@ -316,7 +317,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
                 fontWeight: FontWeight.bold,
                 fontSize: 32,
                 letterSpacing: 0,
-                color: Color(0xFF2D2D2D),
+                color: ThemeColors.color13,
               ),
             ),
           ],
