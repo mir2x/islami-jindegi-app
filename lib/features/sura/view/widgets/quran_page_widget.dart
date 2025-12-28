@@ -56,12 +56,12 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
             text: '${ayah.text} ',
             recognizer: tapRecognizer,
             style: const TextStyle(
-              fontFamily: 'Al Qalam Quran Majeed',
+              fontFamily: 'arabic/noorehuda',
               fontSize: 30,
               fontWeight: FontWeight.bold,
               height: 2.2,
               color: Color(0xFF2D2D2D),
-              letterSpacing: 0,
+              // letterSpacing: 0,
             ),
           ),
         );
@@ -70,10 +70,10 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
             text: '\u{FD3F}${ayah.ayahNumber.toArabicDigit()}\u{FD3E} ',
             recognizer: tapRecognizer,
             style: const TextStyle(
-              fontFamily: 'Al Qalam Quran Majeed',
+              fontFamily: 'arabic/noorehuda',
               fontSize: 32,
               color: Color(0xFF2D2D2D),
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.normal,
               letterSpacing: 0,
               height: 2.2,
             ),
@@ -262,7 +262,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
           // Ayah content area with ruled lines
           Padding(
             padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
             child: _RuledTextWidget(
               textSpan: TextSpan(
                 style: DefaultTextStyle.of(context).style,
@@ -280,7 +280,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
 
   Widget _buildSurahHeader(String name) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -288,19 +288,14 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
             Text(
               'سُورَةُ $name',
               style: const TextStyle(
-                fontFamily: 'Al Qalam Quran Majeed',
+                fontFamily: 'arabic/noorehuda',
                 fontSize: 34,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0,
                 color: Color(0xFF2D2D2D),
               ),
             ),
-            const SizedBox(height: 8),
-            Container(
-              width: 200,
-              height: 2,
-              color: const Color(0xFF2D2D2D),
-            ),
+            // const SizedBox(height: 8),
           ],
         ),
       ),
@@ -308,26 +303,21 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
   }
 
   Widget _buildBismillah() {
-    return Center(
+    return const Center(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 24.0),
+        padding: EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 12.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
+            Text(
               'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
               style: TextStyle(
-                fontFamily: 'Al Qalam Quran Majeed',
+                fontFamily: 'arabic/noorehuda',
+                fontWeight: FontWeight.bold,
                 fontSize: 32,
                 letterSpacing: 0,
                 color: Color(0xFF2D2D2D),
               ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              width: 280,
-              height: 2,
-              color: const Color(0xFF2D2D2D),
             ),
           ],
         ),

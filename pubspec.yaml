@@ -210,6 +210,26 @@ flutter:
       fonts:
         - asset: assets/fonts/al-qalam-quran.ttf
 
+    - family: arabic/Uthman
+      fonts:
+        - asset: assets/fonts/uthman.ttf
+
+    - family: arabic/Uthmani
+      fonts:
+        - asset: assets/fonts/uthmani.ttf
+
+    - family: arabic/Me-Quran
+      fonts:
+        - asset: assets/fonts/Me_Quran.ttf
+
+    - family: arabic/noorehuda
+      fonts:
+        - asset: assets/fonts/noorehuda.ttf
+
+    - family: arabic/Kitab
+      fonts:
+        - asset: assets/fonts/kitab.ttf
+
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
