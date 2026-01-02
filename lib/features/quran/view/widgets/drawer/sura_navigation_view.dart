@@ -226,7 +226,7 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
               // THEN Navigate
               ref.read(navigateToPageCommandProvider.notifier).state =
                   targetPage;
-              Navigator.of(context).pop();
+              Scaffold.of(context).closeDrawer();
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(

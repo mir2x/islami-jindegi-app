@@ -280,8 +280,10 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
                     key: _rootKey,
                     drawer: const SideDrawer(),
                     onDrawerChanged: (isOpen) {
-                      final drawer = ref.read(drawerOpenProvider.notifier);
-                      isOpen ? drawer.open() : drawer.close();
+                      Future(() {
+                        final drawer = ref.read(drawerOpenProvider.notifier);
+                        isOpen ? drawer.open() : drawer.close();
+                      });
                     },
                     body: GestureDetector(
                       onDoubleTap: barsVisibilityNotifier.toggle,

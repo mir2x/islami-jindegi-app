@@ -176,7 +176,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                                           .read(navigateToPageCommandProvider
                                               .notifier)
                                           .state = targetPage;
-                                      Navigator.of(context).pop();
+                                      Scaffold.of(context).closeDrawer();
                                     } catch (e) {
                                       debugPrint(
                                           'Error during ayah bookmark navigation: $e');
@@ -317,7 +317,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                                           .read(navigateToPageCommandProvider
                                               .notifier)
                                           .state = page;
-                                      Navigator.of(context).pop();
+                                      Scaffold.of(context).closeDrawer();
                                     } catch (e) {
                                       debugPrint(
                                           'Error during page bookmark navigation: $e');

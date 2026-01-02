@@ -220,7 +220,7 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
             // THEN Navigate
             ref.read(navigateToPageCommandProvider.notifier).state =
                 actualPageNumber;
-            Navigator.of(context).pop();
+            Scaffold.of(context).closeDrawer();
           },
         );
       },
