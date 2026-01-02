@@ -91,7 +91,6 @@ class SuraListItem extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         HugeIcon(icon: iconData, color: Colors.grey.shade400, size: 28),
-        HugeIcon(icon: iconData, color: Colors.grey.shade400, size: 28),
         const SizedBox(width: 8.0),
         Text(
           sura.nameArabic,

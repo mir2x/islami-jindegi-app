@@ -59,7 +59,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
             style: const TextStyle(
               fontFamily: 'arabic/noorehuda',
               fontSize: 30,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.normal,
               height: 2.2,
               color: ThemeColors.color13,
               // letterSpacing: 0,
@@ -104,7 +104,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
             style: const TextStyle(
               fontFamily: 'SolaimanLipi',
               fontSize: 18,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.normal,
               color: ThemeColors.color12,
             ),
           ),
@@ -162,7 +162,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
               style: const TextStyle(
                 fontFamily: 'SolaimanLipi',
                 fontSize: 16,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.normal,
                 color: Colors.white,
               ),
             ),
@@ -242,7 +242,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
                   style: const TextStyle(
                     fontFamily: 'SolaimanLipi',
                     fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.normal,
                     color: ThemeColors.color13,
                   ),
                 ),
@@ -251,7 +251,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
                   style: const TextStyle(
                     fontFamily: 'SolaimanLipi',
                     fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.normal,
                     color: ThemeColors.color13,
                   ),
                 ),
@@ -291,7 +291,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
               style: const TextStyle(
                 fontFamily: 'arabic/noorehuda',
                 fontSize: 34,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.normal,
                 letterSpacing: 0,
                 color: ThemeColors.color13,
               ),
@@ -314,7 +314,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
               'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
               style: TextStyle(
                 fontFamily: 'arabic/noorehuda',
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.normal,
                 fontSize: 32,
                 letterSpacing: 0,
                 color: ThemeColors.color13,
