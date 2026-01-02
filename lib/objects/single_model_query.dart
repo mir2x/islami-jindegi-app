@@ -14,6 +14,9 @@ class SingleModelQuery extends Equatable {
   final Map<String, dynamic> params;
   final bool remote;
 
+  // Use repository.runtimeType.toString() instead of the repository instance
+  // to prevent equality issues when repository references change
   @override
-  List<Object> get props => [repository, id, params, remote];
+  List<Object> get props =>
+      [repository.runtimeType.toString(), id, params, remote];
 }

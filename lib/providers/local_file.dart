@@ -1,4 +1,5 @@
 import 'dart:io' show File, Platform;
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
@@ -6,6 +7,10 @@ import 'package:path/path.dart' as p;
 class LocalFileNotifier extends AutoDisposeFamilyAsyncNotifier<File?, String> {
   @override
   Future<File?> build(String arg) async {
+    // Keep the provider alive to prevent auto-dispose during widget tree changes
+    ref.keepAlive();
+
+    debugPrint('[LocalFileNotifier] build called for: $arg');
     return _getFile(arg);
   }
 

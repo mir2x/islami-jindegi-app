@@ -12,6 +12,9 @@ class AllModelsQuery extends Equatable {
   final Map<String, dynamic> params;
   final bool syncLocal;
 
+  // Use repository.runtimeType.toString() instead of the repository instance
+  // to prevent equality issues when repository references change
   @override
-  List<Object> get props => [repository, params, syncLocal];
+  List<Object> get props =>
+      [repository.runtimeType.toString(), params, syncLocal];
 }
