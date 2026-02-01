@@ -15,6 +15,7 @@ import '../../../shared/quran_data.dart';
 
 import 'package:native_app/features/sura/view/widgets/drawer/sura_selection_drawer.dart';
 import 'package:native_app/features/sura/view/widgets/tafsir_view.dart';
+import 'package:native_app/features/sura_list/viewmodel/sura_list_providers.dart';
 
 class SurahPage extends ConsumerStatefulWidget {
   final int suraNumber;
@@ -254,79 +255,90 @@ class _SurahPageState extends ConsumerState<SurahPage> {
       }
     });
 
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: SuraAppBar(
-        key: ValueKey(widget.suraNumber),
-        title: suraName,
-        suraNumber: widget.suraNumber,
-        scaffoldKey: _scaffoldKey,
-      ),
-      drawer: SuraSelectionDrawer(currentSuraNumber: widget.suraNumber),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: suraDataAsync.when(
-                loading: () => ListView.builder(
-                  itemCount: 15,
-                  itemBuilder: (_, __) => const AyahPlaceholder(),
-                ),
-                error: (error, stack) =>
-                    Center(child: Text('Failed to load Sura details:\n$error')),
-                data: (ayahs) {
-                  _totalItems = ayahs.length;
-
-                  return Stack(
-                    children: [
-                      ScrollablePositionedList.builder(
-                        itemScrollController: _itemScrollController,
-                        itemPositionsListener: _itemPositionsListener,
-                        itemCount: _totalItems,
-                        initialScrollIndex: widget.initialScrollIndex ?? 0,
-                        padding: const EdgeInsets.only(bottom: 80.0),
-                        itemBuilder: (context, index) {
-                          final entry = ayahs[index];
-                          final isHighlighted = quranAudioState != null &&
-                              quranAudioState.surah == widget.suraNumber &&
-                              quranAudioState.ayah == entry.ayah;
-
-                          return AyahCard(
-                            suraNumber: widget.suraNumber,
-                            ayah: entry,
-                            suraName: suraName,
-                            isHighlighted: isHighlighted,
-                          );
-                        },
-                      ),
-                      if (ref.watch(isAutoScrollingProvider))
-                        _buildAutoScrollController(context),
-                    ],
-                  );
-                },
-              ),
-            ),
-            if (quranAudioState != null)
-              AudioControllerBar(color: Theme.of(context).primaryColor),
-          ],
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          // Delay the provider update to avoid modifying during widget tree building
+          Future(() {
+            ref.read(lastViewedSuraProvider.notifier).state = widget.suraNumber;
+          });
+        }
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: SuraAppBar(
+          key: ValueKey(widget.suraNumber),
+          title: suraName,
+          suraNumber: widget.suraNumber,
+          scaffoldKey: _scaffoldKey,
         ),
+        drawer: SuraSelectionDrawer(currentSuraNumber: widget.suraNumber),
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: suraDataAsync.when(
+                  loading: () => ListView.builder(
+                    itemCount: 15,
+                    itemBuilder: (_, __) => const AyahPlaceholder(),
+                  ),
+                  error: (error, stack) =>
+                      Center(child: Text('Failed to load Sura details:\n$error')),
+                  data: (ayahs) {
+                    _totalItems = ayahs.length;
+
+                    return Stack(
+                      children: [
+                        ScrollablePositionedList.builder(
+                          itemScrollController: _itemScrollController,
+                          itemPositionsListener: _itemPositionsListener,
+                          itemCount: _totalItems,
+                          initialScrollIndex: widget.initialScrollIndex ?? 0,
+                          padding: const EdgeInsets.only(bottom: 80.0),
+                          itemBuilder: (context, index) {
+                            final entry = ayahs[index];
+                            final isHighlighted = quranAudioState != null &&
+                                quranAudioState.surah == widget.suraNumber &&
+                                quranAudioState.ayah == entry.ayah;
+
+                            return AyahCard(
+                              suraNumber: widget.suraNumber,
+                              ayah: entry,
+                              suraName: suraName,
+                              isHighlighted: isHighlighted,
+                            );
+                          },
+                        ),
+                        if (ref.watch(isAutoScrollingProvider))
+                          _buildAutoScrollController(context),
+                      ],
+                    );
+                  },
+                ),
+              ),
+              if (quranAudioState != null)
+                AudioControllerBar(color: Theme.of(context).primaryColor),
+            ],
+          ),
+        ),
+        bottomNavigationBar: showBottomNav
+            ? SuraBottomNavBar(
+                totalAyahs: _totalItems,
+                suraNumber: widget.suraNumber,
+                onStartAutoScroll: _startAutoScroll,
+                onStopAutoScroll: () => _stopAutoScroll(resetSpeed: true),
+              )
+            : null,
+        floatingActionButton: _showScrollToTopButton
+            ? FloatingActionButton(
+                onPressed: _scrollToTop,
+                mini: true,
+                backgroundColor: Colors.green,
+                child: const Icon(Icons.arrow_upward, color: Colors.white),
+              )
+            : null,
       ),
-      bottomNavigationBar: showBottomNav
-          ? SuraBottomNavBar(
-              totalAyahs: _totalItems,
-              suraNumber: widget.suraNumber,
-              onStartAutoScroll: _startAutoScroll,
-              onStopAutoScroll: () => _stopAutoScroll(resetSpeed: true),
-            )
-          : null,
-      floatingActionButton: _showScrollToTopButton
-          ? FloatingActionButton(
-              onPressed: _scrollToTop,
-              mini: true,
-              backgroundColor: Colors.green,
-              child: const Icon(Icons.arrow_upward, color: Colors.white),
-            )
-          : null,
     );
   }
 

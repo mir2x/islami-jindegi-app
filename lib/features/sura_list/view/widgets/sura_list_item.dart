@@ -6,31 +6,86 @@ import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import '../../model/sura_list_item.dart';
 
-class SuraListItem extends ConsumerWidget {
+class SuraListItem extends ConsumerStatefulWidget {
   final SuraListItemModel sura;
+  final bool isHighlighted;
 
-  const SuraListItem({super.key, required this.sura});
+  const SuraListItem({
+    super.key,
+    required this.sura,
+    this.isHighlighted = false,
+  });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return InkWell(
-      onTap: () {
-        Future.delayed(Duration.zero, () {
-          if (!context.mounted) return;
+  ConsumerState<SuraListItem> createState() => _SuraListItemState();
+}
 
-          QR.to('/qurans/sura/${sura.number}');
-        });
+class _SuraListItemState extends ConsumerState<SuraListItem>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+
+    // Create a blink animation (2 blinks = forward, reverse, forward, reverse)
+    _animation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.0), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.0), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0), weight: 1),
+    ]).animate(_animationController);
+  }
+
+  @override
+  void didUpdateWidget(covariant SuraListItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isHighlighted && !oldWidget.isHighlighted) {
+      _animationController.forward(from: 0.0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Container(
+          color: widget.isHighlighted
+              ? Colors.green.withOpacity(_animation.value * 0.3)
+              : Colors.transparent,
+          child: child,
+        );
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-        child: Row(
-          children: [
-            _buildSuraNumber(),
-            const SizedBox(width: 16.0),
-            _buildSuraNames(),
-            const Spacer(),
-            _buildRevelationInfo(),
-          ],
+      child: InkWell(
+        onTap: () {
+          Future.delayed(Duration.zero, () {
+            if (!context.mounted) return;
+            QR.to('/qurans/sura/${widget.sura.number}');
+          });
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+          child: Row(
+            children: [
+              _buildSuraNumber(),
+              const SizedBox(width: 16.0),
+              _buildSuraNames(),
+              const Spacer(),
+              _buildRevelationInfo(),
+            ],
+          ),
         ),
       ),
     );
@@ -46,7 +101,7 @@ class SuraListItem extends ConsumerWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
-        sura.number.toBengaliDigit(),
+        widget.sura.number.toBengaliDigit(),
         style: TextStyle(
           fontFamily: 'bangla/solaimanlipi',
           fontSize: 18,
@@ -62,7 +117,7 @@ class SuraListItem extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          sura.nameBangla,
+          widget.sura.nameBangla,
           style: const TextStyle(
             fontFamily: 'bangla/solaimanlipi',
             fontSize: 18,
@@ -71,7 +126,7 @@ class SuraListItem extends ConsumerWidget {
         ),
         const SizedBox(height: 2),
         Text(
-          sura.meaningBangla,
+          widget.sura.meaningBangla,
           style: TextStyle(
             fontFamily: 'bangla/solaimanlipi',
             fontSize: 14,
@@ -83,7 +138,7 @@ class SuraListItem extends ConsumerWidget {
   }
 
   Widget _buildRevelationInfo() {
-    IconData iconData = sura.revelationType == RevelationType.Makki
+    IconData iconData = widget.sura.revelationType == RevelationType.Makki
         ? HugeIcons.strokeRoundedKaaba01
         : HugeIcons.strokeRoundedMosque04;
 
@@ -93,7 +148,7 @@ class SuraListItem extends ConsumerWidget {
         HugeIcon(icon: iconData, color: Colors.grey.shade400, size: 28),
         const SizedBox(width: 8.0),
         Text(
-          sura.nameArabic,
+          widget.sura.nameArabic,
           style: GoogleFonts.amiri(
             fontSize: 18,
             color: Colors.green.shade800,
