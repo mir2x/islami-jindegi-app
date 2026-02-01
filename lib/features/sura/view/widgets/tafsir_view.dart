@@ -68,7 +68,9 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
                   alignment: Alignment.centerLeft,
                   child: item.isDownloaded
                       ? AdaptiveText(
-                          item.content ?? "তাফসীর লোড হচ্ছে...",
+                          (item.content != null && item.content!.isNotEmpty)
+                              ? item.content!
+                              : "এই আয়াতের জন্য কোনো তাফসীর পাওয়া যায়নি।",
                           style: const TextStyle(
                             fontFamily: 'SolaimanLipi',
                             fontSize: 15,
