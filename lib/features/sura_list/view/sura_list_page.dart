@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/features/sura_list/view/widgets/bookmark_list.dart';
+import 'package:native_app/features/sura_list/view/widgets/para_list.dart';
 import 'package:native_app/features/sura_list/view/widgets/sura_list_item.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../model/sources/sura_information.dart';
@@ -23,7 +24,7 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -88,11 +89,12 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
             fontFamily: 'SolaimanLipi',
             fontSize: 16,
           ),
-          indicatorColor: Colors.green,
-          labelColor: Colors.green.shade700,
-          unselectedLabelColor: Colors.grey.shade600,
+          indicatorColor: Colors.white,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
           tabs: const [
             Tab(text: 'সূরা'),
+            Tab(text: 'পারা'),
             Tab(text: 'বুকমার্ক'),
           ],
         ),
@@ -120,6 +122,8 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
               );
             },
           ),
+          // Para Tab
+          const ParaList(),
           // Bookmark Tab
           const BookmarkList(),
         ],
