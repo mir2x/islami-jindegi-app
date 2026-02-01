@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/features/sura/view/widgets/tafsir_view.dart';
 import 'package:native_app/features/sura/view/widgets/tilawat_page.dart';
+import 'package:native_app/features/sura_list/viewmodel/bookmark_providers.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../model/ayah.dart';
 import '../../viewmodel/sura_reciter_viewmodel.dart';
@@ -36,135 +37,158 @@ void showAyahActionBottomSheet(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
     ),
     builder: (BuildContext bottomSheetContext) {
-      final List<AyahActionItem> actions = [
-        // AyahActionItem(
-        //   icon: Icons.bookmark_border,
-        //   label: 'বুকমার্ক',
-        //   onTap: () {
-        //     print('Bookmark Ayah ${ayah.ayah}');
-        //     Navigator.pop(bottomSheetContext);
-        //   },
-        // ),
-        AyahActionItem(
-          icon: Icons.play_arrow,
-          label: 'অডিও শুনুন',
-          onTap: () async {
-            final audioPlayer = ref.read(suraAudioPlayerProvider);
-            ref.read(selectedAudioSuraProvider.notifier).state = suraNumber;
-            ref.read(selectedStartAyahProvider.notifier).state =
-                selectedStartAyah;
-            ref.read(selectedEndAyahProvider.notifier).state = selectedEndAyah;
+      return Consumer(
+        builder: (context, ref, child) {
+          final isBookmarked = ref.watch(
+              isAyahBookmarkedProvider((sura: suraNumber, ayah: ayah.ayah)));
 
-            Navigator.pop(bottomSheetContext);
-
-            await audioPlayer.playAyahs(
-              selectedStartAyah,
-              selectedEndAyah,
-              context,
-            );
-          },
-        ),
-        AyahActionItem(
-          icon: Icons.menu_book,
-          label: 'তাফসীর',
-          onTap: () {
-            Navigator.pop(bottomSheetContext);
-            showTafsirBottomSheet(context, suraName, ayah);
-          },
-        ),
-        AyahActionItem(
-          icon: Icons.chrome_reader_mode,
-          label: 'তিলাওয়াত মোড',
-          onTap: () {
-            Navigator.pop(bottomSheetContext);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => TilawatPage(
-                  initialSuraNumber: suraNumber,
-                  initialAyahNumber: ayah.ayah,
-                ),
-              ),
-            );
-          },
-        ),
-        AyahActionItem(
-          icon: Icons.copy,
-          label: 'কপি',
-          onTap: () async {
-            await Clipboard.setData(ClipboardData(text: ayah.arabicText));
-            Navigator.pop(bottomSheetContext);
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'আয়াতটি কপি হয়েছে',
-                    style: TextStyle(fontFamily: 'SolaimanLipi'),
-                  ),
-                ),
-              );
-            }
-          },
-        ),
-        AyahActionItem(
-          icon: Icons.share,
-          label: 'শেয়ার',
-          onTap: () async {
-            Navigator.pop(bottomSheetContext);
-            await Share.share(ayah.arabicText);
-          },
-        ),
-      ];
-
-      return Container(
-        padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 32.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              '$suraName, আয়াত ${ayah.ayah.toBengaliDigit()}',
-              style: const TextStyle(
-                fontFamily: 'SolaimanLipi',
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 20),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 20,
-                childAspectRatio: 1.0,
-              ),
-              itemCount: actions.length,
-              itemBuilder: (context, index) {
-                final item = actions[index];
-                return InkWell(
-                  borderRadius: BorderRadius.circular(8),
-                  onTap: item.onTap,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(item.icon, size: 36, color: Colors.grey.shade700),
-                      const SizedBox(height: 8),
-                      Text(
-                        item.label,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontFamily: 'SolaimanLipi',
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
+          final List<AyahActionItem> actions = [
+            AyahActionItem(
+              icon: isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+              label: isBookmarked ? 'বুকমার্ক সরান' : 'বুকমার্ক',
+              onTap: () {
+                ref.read(bookmarkProvider.notifier).toggleBookmark(
+                      suraNumber: suraNumber,
+                      ayahNumber: ayah.ayah,
+                      suraName: suraName,
+                      arabicText: ayah.arabicText,
+                    );
+                Navigator.pop(bottomSheetContext);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      isBookmarked
+                          ? 'বুকমার্ক সরানো হয়েছে'
+                          : 'বুকমার্ক যোগ হয়েছে',
+                      style: const TextStyle(fontFamily: 'SolaimanLipi'),
+                    ),
                   ),
                 );
               },
             ),
-          ],
-        ),
+            AyahActionItem(
+              icon: Icons.play_arrow,
+              label: 'অডিও শুনুন',
+              onTap: () async {
+                final audioPlayer = ref.read(suraAudioPlayerProvider);
+                ref.read(selectedAudioSuraProvider.notifier).state = suraNumber;
+                ref.read(selectedStartAyahProvider.notifier).state =
+                    selectedStartAyah;
+                ref.read(selectedEndAyahProvider.notifier).state =
+                    selectedEndAyah;
+
+                Navigator.pop(bottomSheetContext);
+
+                await audioPlayer.playAyahs(
+                  selectedStartAyah,
+                  selectedEndAyah,
+                  context,
+                );
+              },
+            ),
+            AyahActionItem(
+              icon: Icons.menu_book,
+              label: 'তাফসীর',
+              onTap: () {
+                Navigator.pop(bottomSheetContext);
+                showTafsirBottomSheet(context, suraName, ayah);
+              },
+            ),
+            AyahActionItem(
+              icon: Icons.chrome_reader_mode,
+              label: 'তিলাওয়াত মোড',
+              onTap: () {
+                Navigator.pop(bottomSheetContext);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TilawatPage(
+                      initialSuraNumber: suraNumber,
+                      initialAyahNumber: ayah.ayah,
+                    ),
+                  ),
+                );
+              },
+            ),
+            AyahActionItem(
+              icon: Icons.copy,
+              label: 'কপি',
+              onTap: () async {
+                await Clipboard.setData(ClipboardData(text: ayah.arabicText));
+                Navigator.pop(bottomSheetContext);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'আয়াতটি কপি হয়েছে',
+                        style: TextStyle(fontFamily: 'SolaimanLipi'),
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+            AyahActionItem(
+              icon: Icons.share,
+              label: 'শেয়ার',
+              onTap: () async {
+                Navigator.pop(bottomSheetContext);
+                await Share.share(ayah.arabicText);
+              },
+            ),
+          ];
+
+          return Container(
+            padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 32.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  '$suraName, আয়াত ${ayah.ayah.toBengaliDigit()}',
+                  style: const TextStyle(
+                    fontFamily: 'SolaimanLipi',
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 20,
+                    childAspectRatio: 1.0,
+                  ),
+                  itemCount: actions.length,
+                  itemBuilder: (context, index) {
+                    final item = actions[index];
+                    return InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: item.onTap,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(item.icon, size: 36, color: Colors.grey.shade700),
+                          const SizedBox(height: 8),
+                          Text(
+                            item.label,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontFamily: 'SolaimanLipi',
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          );
+        },
       );
     },
   );
