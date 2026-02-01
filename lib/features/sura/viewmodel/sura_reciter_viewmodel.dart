@@ -137,13 +137,16 @@ class SuraAudioPlayer {
       return false;
     }
 
-    _setupStateListeners();
     _ref.read(suraAudioProvider.notifier).start(sura, startAyah);
     debugPrint("Fired suraAudioProvider.start with $sura:$startAyah");
 
     final playlist = ConcatenatingAudioSource(children: audioSources);
     await _player.setAudioSource(playlist,
         initialIndex: 0, initialPosition: Duration.zero);
+    
+    // Set up listeners AFTER loading the new playlist to prevent stale events
+    // from the previous playback session from triggering stop logic
+    _setupStateListeners();
     _player.play();
 
     return true;

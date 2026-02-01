@@ -11,4 +11,4 @@ final Map<String, String> reciters = {
 };
 
 final selectedReciterProvider =
-    StateProvider<String>((_) => reciters.values.first);
+    StateProvider<String>((_) => 'qari-maher-al-muaiqly');
