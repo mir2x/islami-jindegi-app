@@ -24,9 +24,14 @@ class Settings extends ConsumerWidget {
     {'label': 'Siyam Rupali', 'value': 'bangla/siyamrupali'},
     {'label': 'Kalpurush', 'value': 'bangla/kalpurush'},
     {'label': 'Noto Sans Bengali', 'value': 'bangla/noto-sans-bengali'},
+    {'label': 'Ben Sen Handwriting', 'value': 'bangla/ben-sen-handwriting'},
   ];
 
   final List<Map<String, String>> arabicFonts = const [
+    {
+      'label': 'Noorehuda (Default)',
+      'value': 'arabic/noorehuda',
+    },
     {
       'label': 'Al Qalam Quran Majeed',
       'value': 'arabic/al-qalam-quran-majeed',
@@ -42,7 +47,23 @@ class Settings extends ConsumerWidget {
     {
       'label': 'Al Qalam Quran',
       'value': 'arabic/al-qalam-quran',
-    }
+    },
+    {
+      'label': 'Uthman',
+      'value': 'arabic/Uthman',
+    },
+    {
+      'label': 'Uthmani',
+      'value': 'arabic/Uthmani',
+    },
+    {
+      'label': 'Me-Quran',
+      'value': 'arabic/Me-Quran',
+    },
+    {
+      'label': 'Kitab',
+      'value': 'arabic/Kitab',
+    },
   ];
 
   final List<Map<String, String>> themes = const [

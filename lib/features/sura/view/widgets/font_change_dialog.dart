@@ -18,22 +18,33 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
 
   final List<String> _languages = ['Arabic', 'Bengali'];
   final List<String> _arabicFonts = [
+    'Noorehuda (Default)',
     'Al Mushaf Quran',
     'Al Qalam Kolkatta Quranic',
     'Al Qalam Quran',
     'Al Qalam Quran Majeed',
+    'Uthman',
+    'Uthmani',
+    'Me-Quran',
+    'Kitab',
   ];
   final List<String> _bengaliFonts = [
     'SolaimanLipi',
     'Kalpurush',
     'Noto Sans Bengali',
     'Siyam Rupali',
+    'Ben Sen Handwriting',
   ];
   final Map<String, String> _arabicFontMap = {
+    'Noorehuda (Default)': 'arabic/noorehuda',
     'Al Mushaf Quran': 'arabic/al-mushaf',
     'Al Qalam Kolkatta Quranic': 'arabic/al-qalam-kolkatta',
     'Al Qalam Quran': 'arabic/al-qalam-quran',
     'Al Qalam Quran Majeed': 'arabic/al-qalam-quran-majeed',
+    'Uthman': 'arabic/Uthman',
+    'Uthmani': 'arabic/Uthmani',
+    'Me-Quran': 'arabic/Me-Quran',
+    'Kitab': 'arabic/Kitab',
   };
 
   final Map<String, String> _bengaliFontMap = {
@@ -41,6 +52,7 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
     'Kalpurush': 'bangla/kalpurush',
     'Noto Sans Bengali': 'bangla/noto-sans-bengali',
     'Siyam Rupali': 'bangla/siyamrupali',
+    'Ben Sen Handwriting': 'bangla/ben-sen-handwriting',
   };
 
   final List<double> _fontSizes =

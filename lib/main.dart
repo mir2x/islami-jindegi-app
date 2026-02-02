@@ -112,7 +112,7 @@ class MyApp extends ConsumerWidget {
 
         Map fonts = {
           'fontFamily': banglaFont,
-          'fontFamilyFallback': [arabicFont, 'Roboto'],
+          'fontFamilyFallback': ['Roboto', arabicFont],
         };
 
         // --- 2. WRAPPED MATERIALAPP WITH SCREENUTILINIT ---
