@@ -114,14 +114,14 @@ class _AudioRangeSelectionDialogState
         }
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.grey.shade200,
-        foregroundColor: Colors.black,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
         elevation: 1,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         padding: const EdgeInsets.symmetric(vertical: 12),
       ),
       child: const Text(
-        'অডিও শুনু`ন',
+        'অডিও শুনুন',
         style: TextStyle(
             fontFamily: 'bangla/solaimanlipi',
               wordSpacing: 3,
@@ -135,12 +135,12 @@ class _AudioRangeSelectionDialogState
     return Container(
       height: 180,
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(vertical: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -149,18 +149,20 @@ class _AudioRangeSelectionDialogState
                   'শুরু',
                   style: TextStyle(
                     fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+                    wordSpacing: 3,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.titleMedium?.color,
                   ),
                 ),
                 Text(
                   'শেষ',
                   style: TextStyle(
                     fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+                    wordSpacing: 3,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.titleMedium?.color,
                   ),
                 ),
               ],
@@ -220,7 +222,7 @@ class _AudioRangeSelectionDialogState
           Container(
             height: 40,
             decoration: BoxDecoration(
-              color: Colors.green.shade700.withOpacity(0.8),
+              color: Theme.of(context).colorScheme.primary,
               borderRadius: BorderRadius.circular(8),
             ),
           ),
@@ -242,8 +244,8 @@ class _AudioRangeSelectionDialogState
                     style: TextStyle(
                       fontSize: 22,
                       fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
-                      color: isSelected ? Colors.white : Colors.black,
+                      wordSpacing: 3,
+                      color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).textTheme.bodyLarge?.color,
                       fontWeight:
                           isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
@@ -268,16 +270,20 @@ class _AudioRangeSelectionDialogState
           child: Checkbox(
             value: _isFullSura,
             onChanged: _onFullSuraChanged,
-            activeColor: Colors.green.shade700,
+            activeColor: Theme.of(context).colorScheme.primary,
           ),
         ),
         const SizedBox(width: 8),
         GestureDetector(
           onTap: () => _onFullSuraChanged(!_isFullSura),
-          child: const Text(
+          child: Text(
             'সম্পূর্ণ সূরা',
-            style: TextStyle(fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3, fontSize: 16),
+            style: TextStyle(
+              fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
+              fontSize: 16,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+            ),
           ),
         ),
       ],
@@ -290,8 +296,11 @@ class _AudioRangeSelectionDialogState
       children: [
         const Text(
           'আয়াতের পুনরাবৃত্তি',
-          style: TextStyle(fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3, fontSize: 16),
+          style: TextStyle(
+            fontFamily: 'bangla/solaimanlipi',
+            wordSpacing: 3,
+            fontSize: 16,
+          ),
         ),
         const SizedBox(width: 16),
         IconButton(
@@ -301,14 +310,14 @@ class _AudioRangeSelectionDialogState
               setState(() => _repeatCount--);
             }
           },
-          color: Colors.grey.shade600,
+          color: Theme.of(context).dividerColor,
         ),
         Text(
           toBengaliDigit(_repeatCount),
           style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.green.shade700,
+              color: Theme.of(context).colorScheme.primary,
               fontFamily: 'bangla/solaimanlipi'),
         ),
         IconButton(
@@ -316,7 +325,7 @@ class _AudioRangeSelectionDialogState
           onPressed: () {
             setState(() => _repeatCount++);
           },
-          color: Colors.grey.shade600,
+          color: Theme.of(context).dividerColor,
         ),
       ],
     );

@@ -38,8 +38,10 @@ class _AudioBottomSheetState extends ConsumerState<AudioBottomSheet> {
     final ayahOptions = List.generate(lastAyah, (i) => i + 1);
     final suraNameOptions = suraNames;
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
-      color: ThemeColors.color6,
+      color: colorScheme.surface,
       padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 24.h),
       child: SingleChildScrollView(
         child: Column(
@@ -114,8 +116,11 @@ class _AudioBottomSheetState extends ConsumerState<AudioBottomSheet> {
                 icon: HugeIcon(
                     icon: HugeIcons.strokeRoundedPlay,
                     size: 24.r,
-                    color: Colors.white),
-                label: Text('Play', style: TextStyle(fontSize: 16.sp)),
+                    color: colorScheme.onPrimary),
+                label: Text('Play', style: TextStyle(fontSize: 16.sp, color: colorScheme.onPrimary)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colorScheme.primary,
+                ),
                 onPressed: () async {
                   final service = ref.read(quranAudioPlayerProvider);
                   final from = ref.read(selectedStartAyahProvider);
@@ -143,15 +148,18 @@ class _AudioBottomSheetState extends ConsumerState<AudioBottomSheet> {
     required List<T> items,
     required void Function(T?) onChanged,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        HugeIcon(icon: icon, color: Colors.white, size: 20.r),
+        HugeIcon(icon: icon, color: colorScheme.primary, size: 20.r),
         SizedBox(width: 8.w),
         Text(
           "$label:",
           style: TextStyle(
-            color: Colors.white,
+            color: textTheme.bodyLarge?.color,
             fontWeight: FontWeight.w600,
             fontSize: 16.sp,
           ),
@@ -161,24 +169,24 @@ class _AudioBottomSheetState extends ConsumerState<AudioBottomSheet> {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
             decoration: BoxDecoration(
-              color: ThemeColors.color6,
-              border: Border.all(color: Colors.white24),
+              color: colorScheme.surfaceVariant.withOpacity(0.5),
+              border: Border.all(color: colorScheme.outline.withOpacity(0.2)),
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<T>(
                 isExpanded: true,
                 value: value,
-                dropdownColor: ThemeColors.color6,
-                iconEnabledColor: Colors.white,
-                style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                dropdownColor: colorScheme.surface,
+                iconEnabledColor: colorScheme.primary,
+                style: TextStyle(color: textTheme.bodyLarge?.color, fontSize: 16.sp),
                 items: items.map((e) {
                   return DropdownMenuItem<T>(
                     value: e,
                     child: Text(
                       e.toString(),
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                      style: TextStyle(color: textTheme.bodyLarge?.color, fontSize: 16.sp),
                     ),
                   );
                 }).toList(),

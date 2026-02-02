@@ -56,13 +56,13 @@ class AyahCard extends ConsumerWidget {
                 _buildCardHeader(context),
                 const SizedBox(height: 16),
                 if (showWords)
-                  _buildWordByWordView(ayah.words, ref)
+                  _buildWordByWordView(ayah.words, ref, context)
                 else
-                  _buildArabicText(ref),
+                  _buildArabicText(ref, context),
                 if (showTranslations &&
                     selectedTranslators.isNotEmpty &&
                     !showWords)
-                  _buildTranslations(selectedTranslators, ref),
+                  _buildTranslations(selectedTranslators, ref, context),
               ],
             ),
           ),
@@ -72,6 +72,7 @@ class AyahCard extends ConsumerWidget {
   }
 
   Widget _buildCardHeader(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -81,17 +82,17 @@ class AyahCard extends ConsumerWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: ThemeColors.color5,
+              color: colorScheme.primary,
               width: 1.0,
             ),
           ),
           child: Center(
             child: Text(
               ayah.ayah.toBengaliDigit(),
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
-                color: ThemeColors.color5,
+                wordSpacing: 3,
+                color: colorScheme.primary,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -109,11 +110,13 @@ class AyahCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildWordByWordView(List<WordByWord> words, WidgetRef ref) {
+  Widget _buildWordByWordView(List<WordByWord> words, WidgetRef ref, BuildContext context) {
     final arabicFont = ref.watch(arabicFontProvider);
     final arabicFontSize = ref.watch(arabicFontSizeProvider);
     final bengaliFont = ref.watch(bengaliFontProvider);
     final bengaliFontSize = ref.watch(bengaliFontSizeProvider);
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -136,6 +139,7 @@ class AyahCard extends ConsumerWidget {
                     style: TextStyle(
                       fontFamily: arabicFont,
                       fontSize: arabicFontSize,
+                      color: textTheme.bodyLarge?.color,
                       letterSpacing: 0,
                     ),
                     textAlign: TextAlign.center,
@@ -151,7 +155,7 @@ class AyahCard extends ConsumerWidget {
                   style: TextStyle(
                     fontFamily: bengaliFont,
                     fontSize: bengaliFontSize,
-                    color: Colors.green,
+                    color: colorScheme.primary,
                     wordSpacing: 3,
                     height: 1.3,
                   ),
@@ -166,7 +170,7 @@ class AyahCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildArabicText(WidgetRef ref) {
+  Widget _buildArabicText(WidgetRef ref, BuildContext context) {
     final arabicFont = ref.watch(arabicFontProvider);
     final arabicFontSize = ref.watch(arabicFontSizeProvider);
 
@@ -176,7 +180,7 @@ class AyahCard extends ConsumerWidget {
         fontFamily: arabicFont,
         fontSize: arabicFontSize,
         height: 1.8,
-        color: Colors.black87,
+        color: Theme.of(context).textTheme.bodyLarge?.color,
         letterSpacing: 0,
       ),
       textAlign: TextAlign.right,
@@ -184,9 +188,10 @@ class AyahCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildTranslations(List<String> selectedTranslators, WidgetRef ref) {
+  Widget _buildTranslations(List<String> selectedTranslators, WidgetRef ref, BuildContext context) {
     final bengaliFont = ref.watch(bengaliFontProvider);
     final bengaliFontSize = ref.watch(bengaliFontSizeProvider);
+    final textTheme = Theme.of(context).textTheme;
 
     final translationsToShow = ayah.translations
         .where((t) => selectedTranslators.contains(t.translatorName))
@@ -195,7 +200,7 @@ class AyahCard extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Divider(height: 30, thickness: 0.5, color: Colors.grey),
+        Divider(height: 30, thickness: 0.5, color: Theme.of(context).dividerColor),
         ...translationsToShow.map((translation) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 12.0),
@@ -204,10 +209,10 @@ class AyahCard extends ConsumerWidget {
               children: [
                 AdaptiveText(
                   translation.translatorName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
-                    color: Colors.grey,
+                    wordSpacing: 3,
+                    color: textTheme.bodySmall?.color?.withOpacity(0.7),
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),
@@ -219,7 +224,7 @@ class AyahCard extends ConsumerWidget {
                     fontFamily: bengaliFont,
                     fontSize: bengaliFontSize,
                     height: 1.5,
-                    color: Colors.grey.shade900,
+                    color: textTheme.bodyMedium?.color,
                   ),
                 )
               ],

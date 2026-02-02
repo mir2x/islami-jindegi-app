@@ -101,9 +101,10 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
-      color: ThemeColors.color5,
+      color: colorScheme.primary,
       padding: EdgeInsets.symmetric(vertical: 12.h),
       child: Row(
         children: [
@@ -112,7 +113,7 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
             child: Text('সুরা',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: Colors.white,
+                    color: colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
                     fontSize: fontSize,
                     fontFamily: 'bangla/solaimanlipi')),
@@ -122,7 +123,7 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
             child: Text('আয়াত',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: Colors.white,
+                    color: colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
                     fontSize: fontSize,
                     fontFamily: 'bangla/solaimanlipi')),
@@ -145,19 +146,19 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
       padding: EdgeInsets.zero,
       itemCount: 114,
       separatorBuilder: (context, index) =>
-          Divider(height: 1.h, color: Colors.grey.shade300),
+          Divider(height: 1.h, color: Theme.of(context).dividerColor),
       itemBuilder: (context, index) {
         final suraNumber = index + 1;
         final isSelected = suraNumber == selectedSurah;
 
         return ListTile(
-          tileColor: isSelected ? ThemeColors.color5.withOpacity(0.1) : null,
+          tileColor: isSelected ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : null,
           title: Text(
             '${toBengaliNumber(suraNumber)}. ${suraNames[index]}',
             style: TextStyle(
               fontSize: fontSize,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected ? ThemeColors.color5 : Colors.black87,
+              color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).textTheme.bodyLarge?.color,
             ),
           ),
           contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -197,7 +198,7 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
       itemScrollController: _ayahScrollController,
       padding: EdgeInsets.zero,
       separatorBuilder: (context, index) =>
-          Divider(height: 1.h, color: Colors.grey.shade300),
+          Divider(height: 1.h, color: Theme.of(context).dividerColor),
       itemCount: totalAyahs,
       itemBuilder: (context, index) {
         final ayahNumber = index + 1;
@@ -205,13 +206,13 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
             selectedSurah == selectedSurah && ayahNumber == selectedAyah;
 
         return ListTile(
-          tileColor: isSelected ? ThemeColors.color5.withOpacity(0.1) : null,
+          tileColor: isSelected ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : null,
           title: Center(
             child: Text(
               toBengaliNumber(ayahNumber),
               style: TextStyle(
                 fontSize: fontSize,
-                color: isSelected ? ThemeColors.color5 : Colors.black87,
+                color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),

@@ -147,11 +147,12 @@ void showAyahActionBottomSheet(
               children: <Widget>[
                 Text(
                   '$suraName, আয়াত ${ayah.ayah.toBengaliDigit()}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+                    wordSpacing: 3,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.titleLarge?.color,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -173,15 +174,16 @@ void showAyahActionBottomSheet(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(item.icon, size: 36, color: Colors.grey.shade700),
+                          Icon(item.icon, size: 36, color: Theme.of(context).colorScheme.primary),
                           const SizedBox(height: 8),
                           Text(
                             item.label,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+                              wordSpacing: 3,
                               fontSize: 14,
+                              color: Theme.of(context).textTheme.bodyMedium?.color,
                             ),
                           ),
                         ],

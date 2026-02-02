@@ -45,20 +45,23 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
               int index = entry.key;
               var item = entry.value;
 
+              final colorScheme = Theme.of(context).colorScheme;
+              final textTheme = Theme.of(context).textTheme;
+
               return ExpansionPanel(
                 canTapOnHeader: true,
-                backgroundColor: ThemeColors.color14,
+                backgroundColor: colorScheme.surfaceVariant.withOpacity(0.5),
                 isExpanded: _expandedPanelIndex == index,
                 headerBuilder: (context, isExpanded) {
                   return ListTile(
                     title: Text(
                       item.title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+                        wordSpacing: 3,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: ThemeColors.color12,
+                        color: colorScheme.primary,
                       ),
                       textAlign: TextAlign.left,
                     ),
@@ -72,12 +75,12 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
                           (item.content != null && item.content!.isNotEmpty)
                               ? item.content!
                               : "এই আয়াতের জন্য কোনো তাফসীর পাওয়া যায়নি।",
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+                            wordSpacing: 3,
                             fontSize: 15,
                             height: 1.8,
-                            color: Colors.black87,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
                           ),
                         )
                       : _buildDownloadButton(item, ayahIdentifier),
@@ -152,23 +155,27 @@ void showTafsirBottomSheet(BuildContext context, String suraName, Ayah ayah) {
         expand: false,
         builder: (_, scrollController) {
           return Container(
-            color: ThemeColors.color10,
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
+            ),
             child: Column(
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: Text(
                     'তাফসীর: $suraName, আয়াত ${ayah.ayah.toBengaliDigit()}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+                      wordSpacing: 3,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: Theme.of(context).textTheme.titleLarge?.color,
                     ),
                     textAlign: TextAlign.left,
                   ),
                 ),
-                const Divider(height: 1, thickness: 1),
+                Divider(height: 1, thickness: 1, color: Theme.of(context).dividerColor),
                 Expanded(
                   child: SingleChildScrollView(
                     controller: scrollController,

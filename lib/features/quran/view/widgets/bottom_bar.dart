@@ -35,13 +35,16 @@ class BottomBar extends ConsumerWidget {
     final bool isPageBookmarked =
         bookmarkNotifier.isPageBookmarked(currentPage);
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       height: isLandscape ? 50.0 : bottomBarHeight.h,
-      color: ThemeColors.color6,
+      color: colorScheme.primary,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _iconBtn(
+            context: context,
             icon: HugeIcons.strokeRoundedPlay,
             isLandscape: isLandscape,
             onPressed: () {
@@ -63,17 +66,17 @@ class BottomBar extends ConsumerWidget {
               margin: EdgeInsets.symmetric(vertical: isLandscape ? 8.0 : 12.h),
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               decoration: BoxDecoration(
-                color: ThemeColors.color6,
-                border: Border.all(color: Colors.white24),
+                color: colorScheme.primary,
+                border: Border.all(color: colorScheme.onPrimary.withOpacity(0.24)),
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   isExpanded: true,
-                  dropdownColor: ThemeColors.color6,
-                  iconEnabledColor: Colors.white,
+                  dropdownColor: colorScheme.primary,
+                  iconEnabledColor: colorScheme.onPrimary,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: colorScheme.onPrimary,
                     fontSize: isLandscape ? 14.0 : 14.sp,
                   ),
                   value: displayReciterName,
@@ -84,7 +87,7 @@ class BottomBar extends ConsumerWidget {
                         displayName,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: Colors.white,
+                          color: colorScheme.onPrimary,
                           fontSize: isLandscape ? 14.0 : 14.sp,
                         ),
                       ),
@@ -105,8 +108,9 @@ class BottomBar extends ConsumerWidget {
             builder: (_, ref, __) {
               final on = ref.watch(touchModeProvider);
               return _iconBtn(
+                context: context,
                 icon: HugeIcons.strokeRoundedTouchLocked03,
-                color: on ? Colors.orangeAccent : Colors.white,
+                color: on ? Colors.orangeAccent : colorScheme.onPrimary,
                 size: isLandscape ? 20.0 : 26.r,
                 isLandscape: isLandscape,
                 onPressed: () {
@@ -121,16 +125,18 @@ class BottomBar extends ConsumerWidget {
             },
           ),
           _iconBtn(
+            context: context,
             icon: HugeIcons.strokeRoundedScreenRotation,
             size: isLandscape ? 20.0 : 24.r,
             isLandscape: isLandscape,
             onPressed: () => OrientationToggle.toggle(),
           ),
           _iconBtn(
+            context: context,
             icon: isPageBookmarked
                 ? Icons.star_rounded
                 : HugeIcons.strokeRoundedStar,
-            color: isPageBookmarked ? Colors.orangeAccent : Colors.white,
+            color: isPageBookmarked ? Colors.orangeAccent : colorScheme.onPrimary,
             size: isLandscape ? 20.0 : 24.r,
             isLandscape: isLandscape,
             onPressed: () {
@@ -187,6 +193,7 @@ class BottomBar extends ConsumerWidget {
             },
           ),
           _iconBtn(
+            context: context,
             icon: HugeIcons.strokeRoundedNavigation05,
             size: isLandscape ? 20.0 : 24.r,
             isLandscape: isLandscape,
@@ -204,12 +211,14 @@ class BottomBar extends ConsumerWidget {
   }
 
   Widget _iconBtn({
+    required BuildContext context,
     required IconData icon,
     required VoidCallback onPressed,
     double? size,
-    Color color = Colors.white,
+    Color? color,
     bool isLandscape = false,
   }) {
+    final iconColor = color ?? Theme.of(context).colorScheme.onPrimary;
     return IconButton(
       iconSize: size ?? (isLandscape ? 20.0 : 24.r),
       constraints: BoxConstraints(
@@ -217,7 +226,7 @@ class BottomBar extends ConsumerWidget {
         minWidth: isLandscape ? 40.0 : 48.w,
       ),
       padding: EdgeInsets.zero,
-      icon: Center(child: Icon(icon, color: color)),
+      icon: Center(child: Icon(icon, color: iconColor)),
       onPressed: onPressed,
     );
   }

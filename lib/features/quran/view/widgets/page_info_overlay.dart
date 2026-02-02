@@ -15,6 +15,8 @@ class PageInfoOverlay extends ConsumerWidget {
     final pageInfo = ref.watch(pageInfoProvider(pageIndex + 1));
     final suraNamesList = ref.watch(suraNamesProvider);
     final isVisible = ref.watch(pageInfoVisibilityProvider);
+    final colorScheme = Theme.of(context).colorScheme;
+
     return AnimatedOpacity(
       opacity: isVisible ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 500),
@@ -25,7 +27,7 @@ class PageInfoOverlay extends ConsumerWidget {
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 24.w),
             decoration: BoxDecoration(
-              color: ThemeColors.color6,
+              color: colorScheme.secondaryContainer.withOpacity(0.9),
               borderRadius: BorderRadius.circular(20.r),
             ),
             child: Column(
@@ -35,7 +37,7 @@ class PageInfoOverlay extends ConsumerWidget {
                   Text(
                     'পারা ${pageInfo.paraNumber?.toBengaliDigit()}: ${pageInfo.pageNumber.toBengaliDigit()}',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: colorScheme.onSecondaryContainer,
                       fontSize: 22.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -49,8 +51,8 @@ class PageInfoOverlay extends ConsumerWidget {
                   return Padding(
                     padding: const EdgeInsets.only(top: 4.0),
                     child: Text(
-                      '$suraName : ${startAyah.toBengaliDigit()} - ${endAyah.toBengaliDigit()}',
-                      style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                       '$suraName : ${startAyah.toBengaliDigit()} - ${endAyah.toBengaliDigit()}',
+                      style: TextStyle(color: colorScheme.onSecondaryContainer, fontSize: 16.sp),
                     ),
                   );
                 }).toList(),

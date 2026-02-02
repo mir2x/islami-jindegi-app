@@ -26,8 +26,8 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
               fontSize: 18,
               fontWeight: FontWeight.bold,
               fontFamily: 'bangla/solaimanlipi',
@@ -36,8 +36,8 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           Text(
             subtitle,
-            style: const TextStyle(
-              color: Colors.white70,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
               fontSize: 12,
               fontFamily: 'bangla/solaimanlipi',
               wordSpacing: 3,
@@ -46,9 +46,10 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       centerTitle: true,
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
       actions: [
         IconButton(
-          icon: const Icon(Icons.menu_book, color: Colors.white),
+          icon: Icon(Icons.menu_book, color: Theme.of(context).colorScheme.primary),
           onPressed: () {
             debugPrint(
                 'Navigating to TilawatPage with suraNumber: $suraNumber');
@@ -56,7 +57,7 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
           },
         ),
         IconButton(
-          icon: const Icon(Icons.search, color: Colors.white),
+          icon: Icon(Icons.search, color: Theme.of(context).colorScheme.primary),
           onPressed: () {
             QR.to('/qurans/search');
           },

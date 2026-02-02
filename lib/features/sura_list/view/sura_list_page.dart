@@ -91,9 +91,9 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
               wordSpacing: 3,
             fontSize: 16,
           ),
-          indicatorColor: Colors.white,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
+          indicatorColor: Theme.of(context).colorScheme.primary,
+          labelColor: Theme.of(context).colorScheme.primary,
+          unselectedLabelColor: Theme.of(context).colorScheme.primary.withOpacity(0.6),
           tabs: const [
             Tab(text: 'সূরা'),
             Tab(text: 'পারা'),

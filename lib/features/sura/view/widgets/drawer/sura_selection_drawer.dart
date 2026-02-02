@@ -68,13 +68,13 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
         padding: EdgeInsets.only(top: topInset, bottom: bottomInset),
         child: SizedBox(
           width: 280.w,
-          child: Material(
-            elevation: 16,
-            color: Colors.white,
-            borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(16),
-              bottomRight: Radius.circular(16),
-            ),
+            child: Material(
+              elevation: 16,
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(16),
+                bottomRight: Radius.circular(16),
+              ),
             clipBehavior: Clip.antiAlias,
             child: Column(
               children: [
@@ -83,7 +83,7 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
                   child: Row(
                     children: [
                       Expanded(flex: 3, child: _buildSurahList(ref)),
-                      const VerticalDivider(width: 1, thickness: 1),
+                      VerticalDivider(width: 1, thickness: 1, color: Theme.of(context).dividerColor),
                       Expanded(flex: 2, child: _buildAyahList(ref)),
                     ],
                   ),
@@ -98,7 +98,7 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
 
   Widget _buildHeader(BuildContext context) {
     return Container(
-      color: ThemeColors.color5,
+      color: Theme.of(context).colorScheme.secondary,
       padding: EdgeInsets.symmetric(vertical: 12.h),
       child: Row(
         children: [
@@ -108,7 +108,7 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
               'সুরা',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
                 fontSize: 16.sp,
                 fontFamily: 'bangla/solaimanlipi',
@@ -122,7 +122,7 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
               'আয়াত',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
                 fontSize: 16.sp,
                 fontFamily: 'bangla/solaimanlipi',
@@ -144,14 +144,14 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
       padding: EdgeInsets.zero,
       itemCount: 114,
       separatorBuilder: (context, index) =>
-          Divider(height: 1.h, color: Colors.grey.shade300),
+          Divider(height: 1.h, color: Theme.of(context).dividerColor),
       itemBuilder: (context, index) {
         final suraNumber = index + 1;
         final isSelected = suraNumber == selectedSurah;
 
         return ListTile(
           tileColor: isSelected
-              ? Theme.of(context).primaryColor.withOpacity(0.1)
+              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
               : null,
           title: Text(
             '${toBengaliNumber(suraNumber)}. ${suraNames[index]}',
@@ -159,7 +159,7 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
               fontSize: 15.sp,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               color:
-                  isSelected ? Theme.of(context).primaryColor : Colors.black87,
+                  isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).textTheme.bodyLarge?.color,
             ),
           ),
           contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
@@ -187,7 +187,7 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
       itemScrollController: _ayahScrollController,
       padding: EdgeInsets.zero,
       separatorBuilder: (context, index) =>
-          Divider(height: 1.h, color: Colors.grey.shade300),
+          Divider(height: 1.h, color: Theme.of(context).dividerColor),
       itemCount: totalAyahs,
       itemBuilder: (context, index) {
         final ayahNumber = index + 1;
@@ -198,7 +198,7 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
               toBengaliNumber(ayahNumber),
               style: TextStyle(
                 fontSize: 14.sp,
-                color: Colors.black87,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
             ),
           ),

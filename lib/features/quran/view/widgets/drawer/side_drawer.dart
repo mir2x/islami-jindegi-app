@@ -99,14 +99,14 @@ class _SideDrawerState extends ConsumerState<SideDrawer>
                       child: tabContent,
                     ),
                     Container(
-                      color: ThemeColors.color5,
+                      color: Theme.of(context).colorScheme.primary,
                       child: TabBar(
                         controller: _tabController,
-                        labelColor: Colors.white,
+                        labelColor: Theme.of(context).colorScheme.onPrimary,
                         dividerColor: Colors.transparent,
-                        unselectedLabelColor: Colors.white,
-                        indicator: const BoxDecoration(
-                          color: ThemeColors.color6,
+                        unselectedLabelColor: Theme.of(context).colorScheme.onPrimary.withOpacity(0.7),
+                        indicator: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary,
                           borderRadius: BorderRadius.zero,
                         ),
                         indicatorWeight: 0,

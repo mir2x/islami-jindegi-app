@@ -17,6 +17,8 @@ class AudioControllerBar extends ConsumerWidget {
     final ayah = quranState.ayah;
     final isPlaying = quranState.isPlaying;
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Material(
       elevation: 6,
       color: color,
@@ -28,7 +30,7 @@ class AudioControllerBar extends ConsumerWidget {
             Expanded(
               child: Text('$surah : $ayah',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: colorScheme.onPrimary,
                     fontSize: 16.sp,
                   )),
             ),
@@ -37,7 +39,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     Icons.skip_previous,
-                    color: Colors.white,
+                    color: colorScheme.onPrimary,
                     size: 24.r,
                   ),
                   tooltip: 'Previous Ayah',
@@ -46,7 +48,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     isPlaying ? Icons.pause : Icons.play_arrow,
-                    color: Colors.white,
+                    color: colorScheme.onPrimary,
                     size: 24.r,
                   ),
                   tooltip: isPlaying ? 'Pause' : 'Play',
@@ -55,7 +57,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     Icons.stop,
-                    color: Colors.white,
+                    color: colorScheme.onPrimary,
                     size: 24.r,
                   ),
                   tooltip: 'Stop',
@@ -64,7 +66,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     Icons.skip_next,
-                    color: Colors.white,
+                    color: colorScheme.onPrimary,
                     size: 24.r,
                   ),
                   tooltip: 'Next Ayah',

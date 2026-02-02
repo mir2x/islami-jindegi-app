@@ -36,6 +36,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
     _recognizers.clear();
 
     final List<InlineSpan> spans = [];
+    final textTheme = Theme.of(context).textTheme;
 
     for (var contentItem in widget.page.content) {
       for (var ayah in contentItem.ayahs) {
@@ -53,13 +54,12 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
           TextSpan(
             text: '${ayah.text} ',
             recognizer: tapRecognizer,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'arabic/noorehuda',
               fontSize: 30,
               fontWeight: FontWeight.normal,
               height: 2.2,
-              color: ThemeColors.color13,
-              // letterSpacing: 0,
+              color: textTheme.bodyLarge?.color,
             ),
           ),
         );
@@ -67,10 +67,10 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
           TextSpan(
             text: '\u{FD3F}${ayah.ayahNumber.toArabicDigit()}\u{FD3E} ',
             recognizer: tapRecognizer,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'arabic/noorehuda',
               fontSize: 32,
-              color: ThemeColors.color13,
+              color: textTheme.bodyLarge?.color,
               fontWeight: FontWeight.normal,
               letterSpacing: 0,
               height: 2.2,
@@ -90,20 +90,21 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
+        final colorScheme = Theme.of(context).colorScheme;
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          backgroundColor: ThemeColors.color10,
+          backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
           title: Text(
             '$suraNameBengali ${suraNumber.toBengaliDigit()}ঃ${ayahNumber.toBengaliDigit()}',
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'bangla/solaimanlipi',
               wordSpacing: 3,
               fontSize: 18,
               fontWeight: FontWeight.normal,
-              color: ThemeColors.color12,
+              color: Theme.of(context).textTheme.titleLarge?.color,
             ),
           ),
           content: Column(
@@ -140,6 +141,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
     required String label,
     required VoidCallback onTap,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -147,22 +149,22 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
         decoration: BoxDecoration(
-          color: ThemeColors.color12,
+          color: colorScheme.secondary,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white, size: 22),
+            Icon(icon, color: colorScheme.onSecondary, size: 22),
             const SizedBox(width: 10),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+                wordSpacing: 3,
                 fontSize: 16,
                 fontWeight: FontWeight.normal,
-                color: Colors.white,
+                color: colorScheme.onSecondary,
               ),
             ),
           ],
@@ -214,9 +216,11 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
   @override
   Widget build(BuildContext context) {
     final headerWidgets = _buildHeaderWidgets();
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Container(
-      color: ThemeColors.color10,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -225,10 +229,10 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
             padding:
                 const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
             decoration: BoxDecoration(
-              color: ThemeColors.color14,
+              color: colorScheme.surface,
               border: Border(
                 bottom: BorderSide(
-                  color: ThemeColors.border.withOpacity(0.5),
+                  color: Theme.of(context).dividerColor.withOpacity(0.5),
                   width: 1,
                 ),
               ),
@@ -238,22 +242,22 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
               children: [
                 Text(
                   'পারা-${widget.page.paraNumber.toBengaliDigit()}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+                    wordSpacing: 3,
                     fontSize: 16,
                     fontWeight: FontWeight.normal,
-                    color: ThemeColors.color13,
+                    color: textTheme.bodyLarge?.color,
                   ),
                 ),
                 Text(
                   'পৃষ্ঠা-${widget.page.pageNumberInSurah.toBengaliDigit()}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+                    wordSpacing: 3,
                     fontSize: 16,
                     fontWeight: FontWeight.normal,
-                    color: ThemeColors.color13,
+                    color: textTheme.bodyLarge?.color,
                   ),
                 ),
               ],
@@ -270,7 +274,8 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
                 style: DefaultTextStyle.of(context).style,
                 children: _buildAyahOnlySpans(),
               ),
-              lineColor: ThemeColors.color13,
+              lineColor: textTheme.bodyLarge?.color?.withOpacity(0.5) ??
+                  colorScheme.onSurface.withOpacity(0.5),
               lineThickness: 1.5,
               lineOffset: 20.0, // pixels below baseline
             ),
@@ -289,12 +294,12 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
           children: [
             Text(
               'سُورَةُ $name',
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'arabic/noorehuda',
                 fontSize: 34,
                 fontWeight: FontWeight.normal,
                 letterSpacing: 0,
-                color: ThemeColors.color13,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
             ),
             // const SizedBox(height: 8),
@@ -305,9 +310,9 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
   }
 
   Widget _buildBismillah() {
-    return const Center(
+    return Center(
       child: Padding(
-        padding: EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 12.0),
+        padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 12.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -318,7 +323,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
                 fontWeight: FontWeight.normal,
                 fontSize: 32,
                 letterSpacing: 0,
-                color: ThemeColors.color13,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
             ),
           ],

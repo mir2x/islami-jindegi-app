@@ -19,12 +19,18 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final quranEditions = ref.watch(quranEditionProvider);
 
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'কুরআন',
-          style: TextStyle(fontFamily: 'bangla/solaimanlipi'),
+          style: TextStyle(
+            fontFamily: 'bangla/solaimanlipi',
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
         centerTitle: true,
       ),
@@ -51,18 +57,18 @@ class HomeScreen extends ConsumerWidget {
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
+                  gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      ThemeColors.color5,
-                      ThemeColors.color12,
+                      colorScheme.primary,
+                      colorScheme.secondary,
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
-                      color: ThemeColors.color12.withOpacity(0.3),
+                      color: colorScheme.secondary.withOpacity(0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -73,7 +79,7 @@ class HomeScreen extends ConsumerWidget {
                   children: [
                     Icon(
                       Icons.menu_book_rounded,
-                      color: Colors.white,
+                      color: colorScheme.onPrimary,
                       size: 28.r,
                     ),
                     SizedBox(width: 12.w),
@@ -81,10 +87,10 @@ class HomeScreen extends ConsumerWidget {
                       'তাফসীর',
                       style: TextStyle(
                         fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+                        wordSpacing: 3,
                         fontWeight: FontWeight.bold,
                         fontSize: 20.sp,
-                        color: Colors.white,
+                        color: colorScheme.onPrimary,
                       ),
                     ),
                   ],
@@ -123,6 +129,9 @@ class _QuranEditionGridItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -170,7 +179,7 @@ class _QuranEditionGridItem extends ConsumerWidget {
             clipBehavior: Clip.none,
             alignment: Alignment.topCenter,
             children: [
-              Container(
+              SizedBox(
                 width: double.infinity,
                 child: ClipRRect(
                   child: Image.asset(
@@ -187,14 +196,14 @@ class _QuranEditionGridItem extends ConsumerWidget {
                   child: Center(
                     child: Container(
                       padding: EdgeInsets.all(4.r),
-                      decoration: const BoxDecoration(
-                        color: ThemeColors.color5,
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         Icons.check,
                         size: 16.r,
-                        color: Colors.white,
+                        color: colorScheme.onPrimary,
                       ),
                     ),
                   ),
@@ -210,7 +219,7 @@ class _QuranEditionGridItem extends ConsumerWidget {
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.w500,
-              color: ThemeColors.color13,
+              color: textTheme.bodyLarge?.color,
               fontFamily: 'bangla/solaimanlipi',
               wordSpacing: 3,
             ),

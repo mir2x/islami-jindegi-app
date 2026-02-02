@@ -48,13 +48,13 @@ class BookmarkNavigationView extends ConsumerWidget {
           return Column(
             children: [
               Container(
-                color: ThemeColors.color5,
+                color: Theme.of(context).colorScheme.primary,
                 child: TabBar(
                   dividerColor: Colors.transparent,
-                  labelColor: Colors.white,
-                  unselectedLabelColor: Colors.white,
-                  indicator: const BoxDecoration(
-                    color: ThemeColors.color6,
+                  labelColor: Theme.of(context).colorScheme.onPrimary,
+                  unselectedLabelColor: Theme.of(context).colorScheme.onPrimary.withOpacity(0.7),
+                  indicator: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondary,
                     borderRadius: BorderRadius.zero,
                   ),
                   indicatorSize: TabBarIndicatorSize.tab,
@@ -64,14 +64,14 @@ class BookmarkNavigationView extends ConsumerWidget {
                       child: Text(
                         'আয়াত',
                         style: TextStyle(
-                            fontSize: tabFontSize, color: Colors.white),
+                            fontSize: tabFontSize, color: Theme.of(context).colorScheme.onPrimary),
                       ),
                     ),
                     Tab(
                       child: Text(
                         'পৃষ্ঠা',
                         style: TextStyle(
-                            fontSize: tabFontSize, color: Colors.white),
+                            fontSize: tabFontSize, color: Theme.of(context).colorScheme.onPrimary),
                       ),
                     ),
                   ],
@@ -92,7 +92,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                             padding: EdgeInsets.zero,
                             itemCount: ayahBookmarks.length,
                             separatorBuilder: (context, index) => Divider(
-                                height: 1.h, color: Colors.grey.shade300),
+                                height: 1.h, color: Theme.of(context).dividerColor),
                             itemBuilder: (_, i) {
                               final b = ayahBookmarks[i];
                               final suraName = (b.sura != null &&
@@ -131,7 +131,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                                               fontSize:
                                                   listTileSubtitleFontSize,
                                               fontWeight: FontWeight.w500,
-                                              color: Colors.grey.shade800,
+                                              color: Theme.of(context).textTheme.bodyLarge?.color,
                                             ),
                                           ),
                                           SizedBox(height: 2.h),
@@ -140,7 +140,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                                             style: TextStyle(
                                               fontSize:
                                                   listTileSubtitleFontSize,
-                                              color: Colors.grey.shade600,
+                                              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
                                             ),
                                           ),
                                         ],
@@ -237,7 +237,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                             itemCount: pageBookmarks.length,
                             separatorBuilder: (context, index) => Divider(
                               height: 1.h,
-                              color: Colors.grey.shade300,
+                              color: Theme.of(context).dividerColor,
                             ),
                             itemBuilder: (_, i) {
                               final b = pageBookmarks[i];
@@ -276,7 +276,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                                               fontSize:
                                                   listTileSubtitleFontSize,
                                               fontWeight: FontWeight.w500,
-                                              color: Colors.grey.shade800,
+                                              color: Theme.of(context).textTheme.bodyLarge?.color,
                                             ),
                                           ),
                                           SizedBox(height: 2.h),
@@ -285,7 +285,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                                             style: TextStyle(
                                               fontSize:
                                                   listTileSubtitleFontSize,
-                                              color: Colors.grey.shade600,
+                                              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
                                             ),
                                           ),
                                         ],

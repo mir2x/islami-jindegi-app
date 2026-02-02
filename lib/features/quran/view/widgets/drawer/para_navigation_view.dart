@@ -93,9 +93,10 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
-      color: Theme.of(context).primaryColor,
+      color: colorScheme.primary,
       padding: EdgeInsets.symmetric(vertical: 12.h),
       child: Row(
         children: [
@@ -104,7 +105,7 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
             child: Text('পারা',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: Colors.white,
+                    color: colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
                     fontSize: fontSize,
                     fontFamily: 'bangla/solaimanlipi')),
@@ -114,7 +115,7 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
             child: Text('পাতা',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: Colors.white,
+                    color: colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
                     fontSize: fontSize,
                     fontFamily: 'bangla/solaimanlipi')),
@@ -136,20 +137,20 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
       padding: EdgeInsets.zero,
       itemCount: 30,
       separatorBuilder: (context, index) =>
-          Divider(height: 1.h, color: Colors.grey.shade300),
+          Divider(height: 1.h, color: Theme.of(context).dividerColor),
       itemBuilder: (context, index) {
         final paraNumber = index + 1;
         final isSelected = paraNumber == selectedPara;
 
         return ListTile(
-          tileColor: isSelected ? Theme.of(context).primaryColor : null,
+          tileColor: isSelected ? Theme.of(context).colorScheme.primary : null,
           title: Center(
             child: Text(
               toBengaliNumber(paraNumber),
               style: TextStyle(
                 fontSize: fontSize,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected ? Colors.white : Colors.black87,
+                color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).textTheme.bodyLarge?.color,
               ),
             ),
           ),
@@ -193,7 +194,7 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
       itemScrollController: _pageScrollController,
       padding: EdgeInsets.zero,
       separatorBuilder: (context, index) =>
-          Divider(height: 1.h, color: Colors.grey.shade300),
+          Divider(height: 1.h, color: Theme.of(context).dividerColor),
       itemCount: pageNumbers.length,
       itemBuilder: (context, index) {
         final actualPageNumber = pageNumbers[index];
@@ -203,13 +204,13 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
         final isSelected = actualPageNumber == selectedPage;
 
         return ListTile(
-          tileColor: isSelected ? Theme.of(context).primaryColor : null,
+          tileColor: isSelected ? Theme.of(context).colorScheme.primary : null,
           title: Center(
             child: Text(
               toBengaliNumber(displayPageNumber),
               style: TextStyle(
                 fontSize: fontSize,
-                color: isSelected ? Colors.white : Colors.black87,
+                color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
