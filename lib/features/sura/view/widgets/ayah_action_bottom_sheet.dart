@@ -77,13 +77,15 @@ void showAyahActionBottomSheet(
                 ref.read(selectedEndAyahProvider.notifier).state =
                     selectedEndAyah;
 
-                Navigator.pop(bottomSheetContext);
-
-                await audioPlayer.playAyahs(
+                if (!context.mounted) return;
+                final bool playbackStarted = await audioPlayer.playAyahs(
                   selectedStartAyah,
                   selectedEndAyah,
                   context,
                 );
+                if (playbackStarted && bottomSheetContext.mounted) {
+                  Navigator.pop(bottomSheetContext);
+                }
               },
             ),
             AyahActionItem(
