@@ -39,7 +39,7 @@ class TilawatPage extends ConsumerWidget {
             pages.isNotEmpty
                 ? pages.first.content.first.suraNameBengali
                 : "তিলাওয়াত মোড",
-            style: const TextStyle(fontFamily: 'SolaimanLipi'),
+            style: const TextStyle(fontFamily: 'bangla/solaimanlipi'),
           ),
           loading: () => const Text(''),
           error: (_, __) => const Text(''),

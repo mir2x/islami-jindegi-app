@@ -60,7 +60,7 @@ void showAyahActionBottomSheet(
                       isBookmarked
                           ? 'বুকমার্ক সরানো হয়েছে'
                           : 'বুকমার্ক যোগ হয়েছে',
-                      style: const TextStyle(fontFamily: 'SolaimanLipi'),
+                      style: const TextStyle(fontFamily: 'bangla/solaimanlipi'),
                     ),
                   ),
                 );
@@ -123,7 +123,7 @@ void showAyahActionBottomSheet(
                     const SnackBar(
                       content: Text(
                         'আয়াতটি কপি হয়েছে',
-                        style: TextStyle(fontFamily: 'SolaimanLipi'),
+                        style: TextStyle(fontFamily: 'bangla/solaimanlipi'),
                       ),
                     ),
                   );
@@ -148,7 +148,8 @@ void showAyahActionBottomSheet(
                 Text(
                   '$suraName, আয়াত ${ayah.ayah.toBengaliDigit()}',
                   style: const TextStyle(
-                    fontFamily: 'SolaimanLipi',
+                    fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -178,7 +179,8 @@ void showAyahActionBottomSheet(
                             item.label,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
-                              fontFamily: 'SolaimanLipi',
+                              fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                               fontSize: 14,
                             ),
                           ),

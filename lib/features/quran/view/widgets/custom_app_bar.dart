@@ -22,6 +22,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
         'কুরআন মাজীদ',
         style: TextStyle(
           fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
           fontSize: isLandscape ? 18.0 : 22.sp,
         ),
       ),

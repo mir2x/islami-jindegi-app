@@ -30,7 +30,6 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
   }
 
   List<InlineSpan> _buildAyahOnlySpans() {
-    // Clear old recognizers before building new ones to avoid leaks on rebuilds
     for (final recognizer in _recognizers) {
       recognizer.dispose();
     }
@@ -50,8 +49,6 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
           };
 
         _recognizers.add(tapRecognizer);
-
-        // Text first, then ayah number (standard Quran format)
         spans.add(
           TextSpan(
             text: '${ayah.text} ',
@@ -102,7 +99,8 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
             '$suraNameBengali ${suraNumber.toBengaliDigit()}ঃ${ayahNumber.toBengaliDigit()}',
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontFamily: 'SolaimanLipi',
+              fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
               fontSize: 18,
               fontWeight: FontWeight.normal,
               color: ThemeColors.color12,
@@ -160,7 +158,8 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
             Text(
               label,
               style: const TextStyle(
-                fontFamily: 'SolaimanLipi',
+                fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                 fontSize: 16,
                 fontWeight: FontWeight.normal,
                 color: Colors.white,
@@ -240,7 +239,8 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
                 Text(
                   'পারা-${widget.page.paraNumber.toBengaliDigit()}',
                   style: const TextStyle(
-                    fontFamily: 'SolaimanLipi',
+                    fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                     fontSize: 16,
                     fontWeight: FontWeight.normal,
                     color: ThemeColors.color13,
@@ -249,7 +249,8 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
                 Text(
                   'পৃষ্ঠা-${widget.page.pageNumberInSurah.toBengaliDigit()}',
                   style: const TextStyle(
-                    fontFamily: 'SolaimanLipi',
+                    fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                     fontSize: 16,
                     fontWeight: FontWeight.normal,
                     color: ThemeColors.color13,

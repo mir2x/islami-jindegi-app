@@ -123,7 +123,8 @@ class _AudioRangeSelectionDialogState
       child: const Text(
         'অডিও শুনু`ন',
         style: TextStyle(
-            fontFamily: 'SolaimanLipi',
+            fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
             fontSize: 18,
             fontWeight: FontWeight.bold),
       ),
@@ -147,7 +148,8 @@ class _AudioRangeSelectionDialogState
                 Text(
                   'শুরু',
                   style: TextStyle(
-                    fontFamily: 'SolaimanLipi',
+                    fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -155,7 +157,8 @@ class _AudioRangeSelectionDialogState
                 Text(
                   'শেষ',
                   style: TextStyle(
-                    fontFamily: 'SolaimanLipi',
+                    fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -238,7 +241,8 @@ class _AudioRangeSelectionDialogState
                     toBengaliDigit(ayahNumber),
                     style: TextStyle(
                       fontSize: 22,
-                      fontFamily: 'SolaimanLipi',
+                      fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                       color: isSelected ? Colors.white : Colors.black,
                       fontWeight:
                           isSelected ? FontWeight.bold : FontWeight.normal,
@@ -272,7 +276,8 @@ class _AudioRangeSelectionDialogState
           onTap: () => _onFullSuraChanged(!_isFullSura),
           child: const Text(
             'সম্পূর্ণ সূরা',
-            style: TextStyle(fontFamily: 'SolaimanLipi', fontSize: 16),
+            style: TextStyle(fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3, fontSize: 16),
           ),
         ),
       ],
@@ -285,7 +290,8 @@ class _AudioRangeSelectionDialogState
       children: [
         const Text(
           'আয়াতের পুনরাবৃত্তি',
-          style: TextStyle(fontFamily: 'SolaimanLipi', fontSize: 16),
+          style: TextStyle(fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3, fontSize: 16),
         ),
         const SizedBox(width: 16),
         IconButton(
@@ -303,7 +309,7 @@ class _AudioRangeSelectionDialogState
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.green.shade700,
-              fontFamily: 'SolaimanLipi'),
+              fontFamily: 'bangla/solaimanlipi'),
         ),
         IconButton(
           icon: const Icon(Icons.add_circle_outline),

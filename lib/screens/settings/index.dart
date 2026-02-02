@@ -81,7 +81,7 @@ class Settings extends ConsumerWidget {
               arabicFonts.map((i) => i['value']).firstWhereOrNull((i) {
                     return i == preferences.getString('arabicFont');
                   }) ??
-                  'arabic/al-qalam-quran-majeed';
+                  'arabic/noorehuda';
 
           String selectedBanglaFont =
               banglaFonts.map((i) => i['value']).firstWhereOrNull((i) {

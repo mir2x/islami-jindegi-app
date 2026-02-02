@@ -177,7 +177,8 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
       children: [
         Text(label,
             style: const TextStyle(
-                fontFamily: 'SolaimanLipi', fontWeight: FontWeight.bold)),
+                fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         DropdownButtonFormField<T>(
           value: value,

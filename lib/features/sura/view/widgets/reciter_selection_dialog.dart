@@ -17,7 +17,8 @@ class ReciterSelectionDialog extends ConsumerWidget {
       title: const Text(
         'ক্বারী নির্বাচন করুন',
         style:
-            TextStyle(fontFamily: 'SolaimanLipi', fontWeight: FontWeight.bold),
+            TextStyle(fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3, fontWeight: FontWeight.bold),
       ),
       content: SingleChildScrollView(
         child: Column(
@@ -26,7 +27,7 @@ class ReciterSelectionDialog extends ConsumerWidget {
             return RadioListTile<String>(
               title: Text(
                 reciterName,
-                style: const TextStyle(fontFamily: 'SolaimanLipi'),
+                style: const TextStyle(fontFamily: 'bangla/solaimanlipi'),
               ),
               value: reciterName,
               groupValue: selectedReciterName,
@@ -48,7 +49,8 @@ class ReciterSelectionDialog extends ConsumerWidget {
           child: Text(
             'বন্ধ করুন',
             style: TextStyle(
-                fontFamily: 'SolaimanLipi', color: Colors.green.shade800),
+                fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3, color: Colors.green.shade800),
           ),
           onPressed: () {
             Navigator.of(context).pop();

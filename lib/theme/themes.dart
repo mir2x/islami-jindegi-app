@@ -21,55 +21,67 @@ ThemeData darkTheme(Map fonts) {
       headlineLarge: TextStyle(
         color: ThemeColors.color3,
         fontSize: 24,
+        wordSpacing: 3,
       ),
       headlineMedium: TextStyle(
         color: ThemeColors.color3,
         fontSize: 20,
+        wordSpacing: 3,
       ),
       headlineSmall: TextStyle(
         color: ThemeColors.color3,
         fontSize: 17,
+        wordSpacing: 3,
       ),
       titleLarge: TextStyle(
         color: ThemeColors.color4,
         fontSize: 20,
         fontWeight: FontWeight.normal,
+        wordSpacing: 3,
       ),
       titleMedium: TextStyle(
         color: ThemeColors.color4,
         fontSize: 17,
+        wordSpacing: 3,
       ),
       titleSmall: TextStyle(
         color: ThemeColors.color4,
         fontSize: 14,
+        wordSpacing: 3,
       ),
       bodyLarge: TextStyle(
         color: ThemeColors.color3,
         fontSize: 20,
         fontWeight: FontWeight.normal,
+        wordSpacing: 3,
       ),
       bodyMedium: TextStyle(
         color: ThemeColors.color3,
         fontSize: 17,
+        wordSpacing: 3,
       ),
       bodySmall: TextStyle(
         color: ThemeColors.color3,
         fontSize: 14,
         letterSpacing: 0,
+        wordSpacing: 3,
       ),
       labelLarge: TextStyle(
         color: ThemeColors.color3,
         fontSize: 20,
         fontWeight: FontWeight.normal,
+        wordSpacing: 3,
       ),
       labelMedium: TextStyle(
         color: ThemeColors.color3,
         fontSize: 17,
+        wordSpacing: 3,
       ),
       labelSmall: TextStyle(
         color: ThemeColors.color3,
         fontSize: 14,
         letterSpacing: 0,
+        wordSpacing: 3,
       ),
     ),
     appBarTheme: const AppBarTheme(
@@ -128,55 +140,67 @@ ThemeData lightTheme(Map fonts) {
       headlineLarge: TextStyle(
         color: ThemeColors.color2,
         fontSize: 24,
+        wordSpacing: 3,
       ),
       headlineMedium: TextStyle(
         color: ThemeColors.color2,
         fontSize: 20,
+        wordSpacing: 3,
       ),
       headlineSmall: TextStyle(
         color: ThemeColors.color2,
         fontSize: 17,
+        wordSpacing: 3,
       ),
       titleLarge: TextStyle(
         color: ThemeColors.color8,
         fontSize: 20,
         fontWeight: FontWeight.normal,
+        wordSpacing: 3,
       ),
       titleMedium: TextStyle(
         color: ThemeColors.color8,
         fontSize: 17,
+        wordSpacing: 3,
       ),
       titleSmall: TextStyle(
         color: ThemeColors.color8,
         fontSize: 14,
+        wordSpacing: 3,
       ),
       bodyLarge: TextStyle(
         color: ThemeColors.color2,
         fontSize: 20,
         fontWeight: FontWeight.normal,
+        wordSpacing: 3,
       ),
       bodyMedium: TextStyle(
         color: ThemeColors.color2,
         fontSize: 17,
+        wordSpacing: 3,
       ),
       bodySmall: TextStyle(
         color: ThemeColors.color2,
         fontSize: 14,
         letterSpacing: 0,
+        wordSpacing: 3,
       ),
       labelLarge: TextStyle(
         color: ThemeColors.color2,
         fontSize: 20,
         fontWeight: FontWeight.normal,
+        wordSpacing: 3,
       ),
       labelMedium: TextStyle(
         color: ThemeColors.color2,
         fontSize: 17,
+        wordSpacing: 3,
       ),
       labelSmall: TextStyle(
         color: ThemeColors.color2,
         fontSize: 14,
         letterSpacing: 0,
+        wordSpacing: 3,
       ),
     ),
     appBarTheme: const AppBarTheme(
@@ -238,55 +262,67 @@ ThemeData classicTheme(Map fonts) {
       headlineLarge: TextStyle(
         color: ThemeColors.color13,
         fontSize: 24,
+        wordSpacing: 3,
       ),
       headlineMedium: TextStyle(
         color: ThemeColors.color13,
         fontSize: 20,
+        wordSpacing: 3,
       ),
       headlineSmall: TextStyle(
         color: ThemeColors.color13,
         fontSize: 17,
+        wordSpacing: 3,
       ),
       titleLarge: TextStyle(
         color: ThemeColors.color2,
         fontSize: 20,
         fontWeight: FontWeight.normal,
+        wordSpacing: 3,
       ),
       titleMedium: TextStyle(
         color: ThemeColors.color2,
         fontSize: 17,
+        wordSpacing: 3,
       ),
       titleSmall: TextStyle(
         color: ThemeColors.color2,
         fontSize: 14,
+        wordSpacing: 3,
       ),
       bodyLarge: TextStyle(
         color: ThemeColors.color13,
         fontSize: 20,
         fontWeight: FontWeight.normal,
+        wordSpacing: 3,
       ),
       bodyMedium: TextStyle(
         color: ThemeColors.color13,
         fontSize: 17,
+        wordSpacing: 3,
       ),
       bodySmall: TextStyle(
         color: ThemeColors.color13,
         fontSize: 14,
         letterSpacing: 0,
+        wordSpacing: 3,
       ),
       labelLarge: TextStyle(
         color: ThemeColors.color13,
         fontSize: 20,
         fontWeight: FontWeight.normal,
+        wordSpacing: 3,
       ),
       labelMedium: TextStyle(
         color: ThemeColors.color13,
         fontSize: 17,
+        wordSpacing: 3,
       ),
       labelSmall: TextStyle(
         color: ThemeColors.color13,
         fontSize: 14,
         letterSpacing: 0,
+        wordSpacing: 3,
       ),
     ),
     appBarTheme: const AppBarTheme(

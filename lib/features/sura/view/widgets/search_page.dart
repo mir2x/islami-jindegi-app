@@ -20,11 +20,13 @@ class SearchPage extends ConsumerWidget {
           decoration: const InputDecoration(
             hintText: 'আরবি বা বাংলায় খুঁজুন...',
             hintStyle: TextStyle(
-                fontFamily: 'bangla/solaimanlipi', color: Colors.white70),
+                fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3, color: Colors.white70),
             border: InputBorder.none,
           ),
           style: const TextStyle(
               fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
               color: Colors.white,
               fontSize: 18),
           onChanged: (value) {
@@ -55,13 +57,14 @@ class SearchPage extends ConsumerWidget {
                   'সূরা ${suraNames[ayah.sura - 1] ?? ayah.sura}: আয়াত ${ayah.ayah.toBengaliDigit()}',
                   style: const TextStyle(
                       fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                       fontWeight: FontWeight.bold),
                 ),
                 subtitle: HighlightedText(
                   text: ayah.arabicText,
                   query: searchQuery,
                   style: const TextStyle(
-                      fontFamily: 'arabic/al-mushaf',
+                      fontFamily: 'arabic/noorehuda',
                       fontSize: 20,
                       color: Colors.black),
                 ),

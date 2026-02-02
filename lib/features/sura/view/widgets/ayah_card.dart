@@ -89,7 +89,8 @@ class AyahCard extends ConsumerWidget {
             child: Text(
               ayah.ayah.toBengaliDigit(),
               style: const TextStyle(
-                fontFamily: 'SolaimanLipi',
+                fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                 color: ThemeColors.color5,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -190,6 +191,7 @@ class AyahCard extends ConsumerWidget {
                   translation.translatorName,
                   style: const TextStyle(
                     fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                     color: Colors.grey,
                     fontSize: 13,
                     fontWeight: FontWeight.w500,

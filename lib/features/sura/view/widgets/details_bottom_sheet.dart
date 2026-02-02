@@ -143,6 +143,7 @@ class _DetailsSection extends StatelessWidget {
             title,
             style: const TextStyle(
               fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
               fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
@@ -174,6 +175,7 @@ class _DetailsSection extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                       fontSize: 12,
                       color: Colors.grey.shade800,
                     ),

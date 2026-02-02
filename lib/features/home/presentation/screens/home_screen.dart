@@ -24,7 +24,7 @@ class HomeScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text(
           'কুরআন',
-          style: TextStyle(fontFamily: 'SolaimanLipi'),
+          style: TextStyle(fontFamily: 'bangla/solaimanlipi'),
         ),
         centerTitle: true,
       ),
@@ -81,6 +81,7 @@ class HomeScreen extends ConsumerWidget {
                       'তাফসীর',
                       style: TextStyle(
                         fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                         fontWeight: FontWeight.bold,
                         fontSize: 20.sp,
                         color: Colors.white,
@@ -211,6 +212,7 @@ class _QuranEditionGridItem extends ConsumerWidget {
               fontWeight: FontWeight.w500,
               color: ThemeColors.color13,
               fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,

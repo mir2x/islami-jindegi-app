@@ -104,6 +104,7 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
         widget.sura.number.toBengaliDigit(),
         style: TextStyle(
           fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: Colors.green.shade700,
@@ -120,6 +121,7 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
           widget.sura.nameBangla,
           style: const TextStyle(
             fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -129,6 +131,7 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
           widget.sura.meaningBangla,
           style: TextStyle(
             fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
             fontSize: 14,
             color: Colors.grey.shade600,
           ),

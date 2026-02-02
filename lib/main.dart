@@ -108,7 +108,7 @@ class MyApp extends ConsumerWidget {
         String banglaFont =
             preferences.getString('banglaFont') ?? 'bangla/solaimanlipi';
         String arabicFont = preferences.getString('arabicFont') ??
-            'arabic/al-qalam-quran-majeed';
+            'arabic/noorehuda';
 
         Map fonts = {
           'fontFamily': banglaFont,

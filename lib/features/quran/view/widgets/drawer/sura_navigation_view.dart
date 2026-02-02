@@ -115,7 +115,7 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: fontSize,
-                    fontFamily: 'SolaimanLipi')),
+                    fontFamily: 'bangla/solaimanlipi')),
           ),
           Expanded(
             flex: 2,
@@ -125,7 +125,7 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: fontSize,
-                    fontFamily: 'SolaimanLipi')),
+                    fontFamily: 'bangla/solaimanlipi')),
           ),
         ],
       ),

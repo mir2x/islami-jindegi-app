@@ -54,7 +54,8 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
                     title: Text(
                       item.title,
                       style: const TextStyle(
-                        fontFamily: 'SolaimanLipi',
+                        fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: ThemeColors.color12,
@@ -72,7 +73,8 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
                               ? item.content!
                               : "এই আয়াতের জন্য কোনো তাফসীর পাওয়া যায়নি।",
                           style: const TextStyle(
-                            fontFamily: 'SolaimanLipi',
+                            fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                             fontSize: 15,
                             height: 1.8,
                             color: Colors.black87,
@@ -97,7 +99,8 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
       children: [
         const Text(
           "এই তাফসীরটি ডাউনলোড করা নেই।",
-          style: TextStyle(fontFamily: 'SolaimanLipi', fontSize: 15),
+          style: TextStyle(fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3, fontSize: 15),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 16),
@@ -157,7 +160,8 @@ void showTafsirBottomSheet(BuildContext context, String suraName, Ayah ayah) {
                   child: Text(
                     'তাফসীর: $suraName, আয়াত ${ayah.ayah.toBengaliDigit()}',
                     style: const TextStyle(
-                      fontFamily: 'SolaimanLipi',
+                      fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),

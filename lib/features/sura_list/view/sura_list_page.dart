@@ -75,18 +75,20 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
       appBar: AppBar(
         title: const Text(
           'সকল সূরা',
-          style: TextStyle(fontFamily: 'SolaimanLipi'),
+          style: TextStyle(fontFamily: 'bangla/solaimanlipi'),
         ),
         centerTitle: true,
         bottom: TabBar(
           controller: _tabController,
           labelStyle: const TextStyle(
-            fontFamily: 'SolaimanLipi',
+            fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
           unselectedLabelStyle: const TextStyle(
-            fontFamily: 'SolaimanLipi',
+            fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
             fontSize: 16,
           ),
           indicatorColor: Colors.white,

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final arabicFontProvider = StateProvider<String>((ref) => 'arabic/al-mushaf');
+final arabicFontProvider = StateProvider<String>((ref) => 'arabic/noorehuda');
 final arabicFontSizeProvider = StateProvider<double>((ref) => 32.0);
 
 final bengaliFontProvider =

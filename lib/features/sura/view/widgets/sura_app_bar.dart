@@ -31,6 +31,7 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
               fontSize: 18,
               fontWeight: FontWeight.bold,
               fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
             ),
           ),
           Text(
@@ -39,6 +40,7 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
               color: Colors.white70,
               fontSize: 12,
               fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
             ),
           ),
         ],
