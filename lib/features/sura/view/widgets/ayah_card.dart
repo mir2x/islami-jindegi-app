@@ -119,32 +119,47 @@ class AyahCard extends ConsumerWidget {
       textDirection: TextDirection.rtl,
       child: Wrap(
         alignment: WrapAlignment.start,
-        runSpacing: 16.0,
-        spacing: 12.0,
+        crossAxisAlignment: WrapCrossAlignment.start,
+        runSpacing: 24.0,
+        spacing: 8.0,
         children: words.map((word) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                word.arabic,
-                style: TextStyle(
-                  fontFamily: arabicFont,
-                  fontSize: arabicFontSize,
-                  letterSpacing: 0,
+          return SizedBox(
+            width: 75.w,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Arabic text - never wraps, scales down if too wide
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    word.arabic,
+                    style: TextStyle(
+                      fontFamily: arabicFont,
+                      fontSize: arabicFontSize,
+                      letterSpacing: 0,
+                    ),
+                    textAlign: TextAlign.center,
+                    textDirection: TextDirection.rtl,
+                    maxLines: 1,
+                    softWrap: false,
+                  ),
                 ),
-                textAlign: TextAlign.right,
-                textDirection: TextDirection.rtl,
-              ),
-              SizedBox(height: 4.0.h),
-              AdaptiveText(
-                word.bengali,
-                style: TextStyle(
-                  fontFamily: bengaliFont,
-                  fontSize: bengaliFontSize,
-                  color: Colors.green,
+                SizedBox(height: 8.0.h),
+                // Bangla text - wraps to multiple lines
+                Text(
+                  word.bengali,
+                  style: TextStyle(
+                    fontFamily: bengaliFont,
+                    fontSize: bengaliFontSize,
+                    color: Colors.green,
+                    wordSpacing: 3,
+                    height: 1.3,
+                  ),
+                  textAlign: TextAlign.center,
+                  softWrap: true,
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         }).toList(),
       ),
