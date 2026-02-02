@@ -1,4 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+const String _selectedReciterKey = 'sura_selected_reciter';
 
 final Map<String, String> reciters = {
   'আব্দুল্লাহ আল জুহানী': 'abdullah-al-joohani',
@@ -10,5 +13,27 @@ final Map<String, String> reciters = {
   'সৌদ আল-শুরাইম': 'qari-saud-bin-ibrahim-ash-shuraim',
 };
 
+class SelectedReciterNotifier extends StateNotifier<String> {
+  SelectedReciterNotifier() : super('qari-maher-al-muaiqly') {
+    _loadFromPrefs();
+  }
+
+  Future<void> _loadFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getString(_selectedReciterKey);
+    if (saved != null && reciters.containsValue(saved)) {
+      state = saved;
+    }
+  }
+
+  Future<void> setReciter(String reciterId) async {
+    state = reciterId;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_selectedReciterKey, reciterId);
+  }
+}
+
 final selectedReciterProvider =
-    StateProvider<String>((_) => 'qari-maher-al-muaiqly');
+    StateNotifierProvider<SelectedReciterNotifier, String>((ref) {
+  return SelectedReciterNotifier();
+});

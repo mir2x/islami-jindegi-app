@@ -33,17 +33,8 @@ class TranslatorSelectionDialog extends ConsumerWidget {
               ),
               value: selected.contains(translatorName),
               onChanged: (bool? isSelected) {
-                final currentSelection =
-                    List<String>.from(ref.read(selectedTranslatorsProvider));
-
-                if (isSelected == true) {
-                  currentSelection.add(translatorName);
-                } else {
-                  currentSelection.remove(translatorName);
-                }
-
-                ref.read(selectedTranslatorsProvider.notifier).state =
-                    currentSelection;
+                ref.read(selectedTranslatorsProvider.notifier)
+                    .toggleTranslator(translatorName);
               },
               activeColor: Colors.green.shade700,
             );

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/features/sura/model/ayah.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../../core/utils/database_helper.dart';
 
@@ -200,9 +201,54 @@ final ayahByIndexProvider = FutureProvider.family<Ayah, AyahProviderParams>((
       .getAyah(db, params.suraNumber, ayahNumber);
 });
 
-final selectedTranslatorsProvider = StateProvider<List<String>>(
-  (ref) => [],
-);
+const String _selectedTranslatorsKey = 'sura_selected_translators';
+
+class SelectedTranslatorsNotifier extends StateNotifier<List<String>> {
+  SelectedTranslatorsNotifier() : super([]) {
+    _loadFromPrefs();
+  }
+
+  Future<void> _loadFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getStringList(_selectedTranslatorsKey);
+    if (saved != null) {
+      state = saved;
+    }
+  }
+
+  Future<void> setTranslators(List<String> translators) async {
+    state = translators;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_selectedTranslatorsKey, translators);
+  }
+
+  Future<void> addTranslator(String translator) async {
+    if (!state.contains(translator)) {
+      state = [...state, translator];
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList(_selectedTranslatorsKey, state);
+    }
+  }
+
+  Future<void> removeTranslator(String translator) async {
+    state = state.where((t) => t != translator).toList();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_selectedTranslatorsKey, state);
+  }
+
+  Future<void> toggleTranslator(String translator) async {
+    if (state.contains(translator)) {
+      await removeTranslator(translator);
+    } else {
+      await addTranslator(translator);
+    }
+  }
+}
+
+final selectedTranslatorsProvider =
+    StateNotifierProvider<SelectedTranslatorsNotifier, List<String>>((ref) {
+  return SelectedTranslatorsNotifier();
+});
 
 class ScrollCommand {
   final int suraNumber;

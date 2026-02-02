@@ -33,8 +33,8 @@ class ReciterSelectionDialog extends ConsumerWidget {
               groupValue: selectedReciterName,
               onChanged: (String? value) {
                 if (value != null && reciters.containsKey(value)) {
-                  ref.read(selectedReciterProvider.notifier).state =
-                      reciters[value]!;
+                  ref.read(selectedReciterProvider.notifier).setReciter(
+                      reciters[value]!);
 
                   Navigator.of(context).pop();
                 }

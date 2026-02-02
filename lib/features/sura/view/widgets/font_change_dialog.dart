@@ -68,12 +68,12 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
   }
 
   void _onConfirm() {
-    ref.read(arabicFontProvider.notifier).state =
-        _arabicFontMap[_selectedArabicFont]!;
-    ref.read(bengaliFontProvider.notifier).state =
-        _bengaliFontMap[_selectedBengaliFont]!;
-    ref.read(arabicFontSizeProvider.notifier).state = _selectedArabicSize;
-    ref.read(bengaliFontSizeProvider.notifier).state = _selectedBengaliSize;
+    ref.read(arabicFontProvider.notifier).setFont(
+        _arabicFontMap[_selectedArabicFont]!);
+    ref.read(bengaliFontProvider.notifier).setFont(
+        _bengaliFontMap[_selectedBengaliFont]!);
+    ref.read(arabicFontSizeProvider.notifier).setSize(_selectedArabicSize);
+    ref.read(bengaliFontSizeProvider.notifier).setSize(_selectedBengaliSize);
     Navigator.of(context).pop();
   }
 
@@ -145,7 +145,10 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
                   });
                 }
               },
-              itemBuilder: (size) => Text(size.toInt().toString()),
+              itemBuilder: (size) => Text(
+                size.toInt().toString(),
+                style: const TextStyle(fontFamily: 'Roboto'),
+              ),
             ),
           ],
         ),
