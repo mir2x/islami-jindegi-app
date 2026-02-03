@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:native_app/features/quran/view/widgets/audio_control_bar.dart';
 import 'package:native_app/features/quran/view/widgets/bottom_bar.dart';
 import 'package:native_app/features/quran/view/widgets/custom_app_bar.dart';
@@ -37,6 +38,8 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
   ScrollController? _landscapeController;
 
   Orientation? _lastOrientation;
+  int _initialPage = 0;
+  bool _isInitialized = false;
 
   double get _aspectRatio => widget.imageWidth / widget.imageHeight;
 
@@ -44,10 +47,15 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
 
   static const double _bottomBarHeight = 64.0;
 
+  /// Get the storage key for this mushaf edition
+  String get _mushafKey => 'mushaf_page_${widget.editionDir.path.split('/').last}';
+
   @override
   void initState() {
     super.initState();
+    // Reset current page to 0 immediately to prevent inheriting from previous mushaf
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(currentPageProvider.notifier).state = 0;
       ref.read(pageInfoVisibilityProvider.notifier).show();
       ref.read(editionConfigProvider.notifier).set(
             EditionConfig(
@@ -57,7 +65,29 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
               imageExt: widget.imageExt,
             ),
           );
+      // Load the saved page AFTER resetting
+      _loadLastPage();
     });
+  }
+
+  /// Load the last visited page for this mushaf
+  Future<void> _loadLastPage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedPage = prefs.getInt(_mushafKey) ?? 0;
+    if (mounted) {
+      setState(() {
+        _initialPage = savedPage;
+        _isInitialized = true;
+      });
+      // Update the current page provider
+      ref.read(currentPageProvider.notifier).state = savedPage;
+    }
+  }
+
+  /// Save the current page for this mushaf
+  Future<void> _saveCurrentPage(int page) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_mushafKey, page);
   }
 
   @override
@@ -146,6 +176,11 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
       }
     });
 
+    // Wait for initialization to complete before building the viewer
+    if (!_isInitialized) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return allBoxesAsync.when(
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
@@ -203,6 +238,7 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
                     onPageChanged: (idx) {
                       ref.read(currentPageProvider.notifier).state = idx;
                       ref.read(pageInfoVisibilityProvider.notifier).show();
+                      _saveCurrentPage(idx); // Persist page
                       final currentSelectedState = ref.read(
                         selectedAyahProvider,
                       );
@@ -230,6 +266,7 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
                         ref.read(currentPageProvider.notifier).state =
                             p.toInt();
                         ref.read(pageInfoVisibilityProvider.notifier).show();
+                        _saveCurrentPage(p.toInt()); // Persist page
                         final currentSelectedState = ref.read(
                           selectedAyahProvider,
                         );
