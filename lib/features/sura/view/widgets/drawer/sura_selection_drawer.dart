@@ -211,22 +211,35 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
   }
 
   void _onAyahSelected(
-      BuildContext context, int suraNumber, int ayahNumber) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('last_read_sura', suraNumber);
-    await prefs.setInt('last_read_ayah_index', ayahNumber - 1);
+      BuildContext context, int suraNumber, int ayahNumber) {
+    // Save last read position asynchronously (non-blocking)
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setInt('last_read_sura', suraNumber);
+      prefs.setInt('last_read_ayah_index', ayahNumber - 1);
+    });
 
-    if (!mounted) return;
+    // Close the drawer first
+    Scaffold.of(context).closeDrawer();
 
     if (suraNumber == widget.currentSuraNumber) {
+      // Same sura - just scroll to the ayah
       ref.read(suraScrollCommandProvider.notifier).state = ScrollCommand(
         suraNumber: suraNumber,
         scrollIndex: ayahNumber - 1,
       );
-      Navigator.pop(context);
     } else {
-      await QR.back();
-      QR.to('/qurans/sura/$suraNumber?scroll=${ayahNumber - 1}');
+      // Different sura:
+      // 1. Go back to sura-list
+      // 2. Then navigate to the new sura
+      // This ensures only one sura is in the stack at any time
+      Future.delayed(const Duration(milliseconds: 200), () async {
+        // Go back to sura-list first
+        await QR.back();
+        // Small delay to ensure navigation completes
+        await Future.delayed(const Duration(milliseconds: 50));
+        // Navigate to the new sura
+        QR.to('/qurans/sura/$suraNumber?scroll=${ayahNumber - 1}');
+      });
     }
   }
 }
