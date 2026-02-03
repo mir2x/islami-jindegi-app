@@ -20,6 +20,8 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
     final subtitle =
         '${surahInfo.typeLabel} | আয়াত সংখ্যা: ${surahInfo.ayatCount.toBengaliDigit()}';
 
+    final appBarForeground = Theme.of(context).appBarTheme.foregroundColor;
+
     return AppBar(
       title: Column(
         mainAxisSize: MainAxisSize.min,
@@ -27,7 +29,7 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
           Text(
             title,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
+              color: appBarForeground,
               fontSize: 18,
               fontWeight: FontWeight.bold,
               fontFamily: 'bangla/solaimanlipi',
@@ -37,7 +39,7 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
           Text(
             subtitle,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
+              color: appBarForeground?.withOpacity(0.7),
               fontSize: 12,
               fontFamily: 'bangla/solaimanlipi',
               wordSpacing: 3,
@@ -46,10 +48,10 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       centerTitle: true,
-      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.primary),
+      iconTheme: IconThemeData(color: appBarForeground),
       actions: [
         IconButton(
-          icon: Icon(Icons.menu_book, color: Theme.of(context).colorScheme.primary),
+          icon: Icon(Icons.menu_book, color: appBarForeground),
           onPressed: () {
             debugPrint(
                 'Navigating to TilawatPage with suraNumber: $suraNumber');
@@ -57,7 +59,7 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
           },
         ),
         IconButton(
-          icon: Icon(Icons.search, color: Theme.of(context).colorScheme.primary),
+          icon: Icon(Icons.search, color: appBarForeground),
           onPressed: () {
             QR.to('/qurans/search');
           },

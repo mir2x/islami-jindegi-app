@@ -108,7 +108,7 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
               'সুরা',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.onSecondary,
                 fontWeight: FontWeight.bold,
                 fontSize: 16.sp,
                 fontFamily: 'bangla/solaimanlipi',
@@ -122,7 +122,7 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
               'আয়াত',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.onSecondary,
                 fontWeight: FontWeight.bold,
                 fontSize: 16.sp,
                 fontFamily: 'bangla/solaimanlipi',

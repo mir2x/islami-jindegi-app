@@ -29,7 +29,7 @@ class HomeScreen extends ConsumerWidget {
           'কুরআন',
           style: TextStyle(
             fontFamily: 'bangla/solaimanlipi',
-            color: Theme.of(context).colorScheme.primary,
+            color: Theme.of(context).appBarTheme.foregroundColor,
           ),
         ),
         centerTitle: true,
