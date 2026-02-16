@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -29,10 +28,12 @@ class SurahPage extends ConsumerStatefulWidget {
 
 class _SurahPageState extends ConsumerState<SurahPage> {
   final ItemScrollController _itemScrollController = ItemScrollController();
+  final ScrollOffsetController _scrollOffsetController =
+      ScrollOffsetController();
   final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
 
-  Timer? _timedScrollTimer;
+  bool _isAutoScrollAnimating = false;
   int _totalItems = 0;
   int _topVisibleIndex = 0;
   bool _showScrollToTopButton = false;
@@ -60,7 +61,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     _itemPositionsListener.itemPositions
         .removeListener(_onVisiblePositionsChanged);
     _activePagesNotifier.update((state) => state..remove(widget.suraNumber));
-    _timedScrollTimer?.cancel();
+    _isAutoScrollAnimating = false;
     super.dispose();
   }
 
@@ -85,47 +86,52 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     }
   }
 
-  int _getTopVisibleIndex() {
-    return _topVisibleIndex;
-  }
-
   void _startAutoScroll() {
-    if (_timedScrollTimer?.isActive == true || _totalItems == 0) return;
+    if (_isAutoScrollAnimating || _totalItems == 0) return;
 
     ref.read(isAutoScrollingProvider.notifier).state = true;
     ref.read(isAutoScrollPausedProvider.notifier).state = false;
+    _isAutoScrollAnimating = true;
 
-    final speedFactor = ref.read(scrollSpeedFactorProvider);
-    final perItemDuration = Duration(milliseconds: (800 ~/ speedFactor));
+    _smoothScrollLoop();
+  }
 
-    int currentIndex = _getTopVisibleIndex();
+  /// Continuously scrolls by small pixel increments for silky-smooth movement.
+  /// Each iteration scrolls a fixed pixel chunk over a short duration.
+  /// Speed factor controls how many pixels we move per tick.
+  Future<void> _smoothScrollLoop() async {
+    const tickDuration = Duration(milliseconds: 50);
+    const basePixelsPerTick = 1.2; // pixels at 1.0x speed
 
-    _timedScrollTimer = Timer.periodic(perItemDuration, (timer) {
-      if (!mounted) {
-        timer.cancel();
-        return;
+    while (_isAutoScrollAnimating && mounted) {
+      // Check pause state each tick
+      if (ref.read(isAutoScrollPausedProvider)) {
+        await Future.delayed(tickDuration);
+        continue;
       }
-      if (currentIndex >= _totalItems - 1) {
-        _stopAutoScroll(resetSpeed: true);
-        return;
-      }
-      currentIndex++;
 
-      if (_itemScrollController.isAttached) {
-        _itemScrollController.scrollTo(
-          index: currentIndex,
-          duration: perItemDuration,
-          curve: Curves.easeInOut,
-          alignment: 0.3,
+      final speedFactor = ref.read(scrollSpeedFactorProvider);
+      final pixelsToScroll = basePixelsPerTick * speedFactor;
+
+      try {
+        await _scrollOffsetController.animateScroll(
+          offset: pixelsToScroll,
+          duration: tickDuration,
+          curve: Curves.linear,
         );
+      } catch (_) {
+        // Controller may not be attached yet or widget disposed
+        break;
       }
-    });
+
+      if (!mounted) break;
+    }
   }
 
   void _stopAutoScroll({bool resetSpeed = false}) {
     _log('Stopping auto scroll. resetSpeed=$resetSpeed');
     if (!mounted) return;
-    _timedScrollTimer?.cancel();
+    _isAutoScrollAnimating = false;
 
     ref.read(isAutoScrollingProvider.notifier).state = false;
     ref.read(isAutoScrollPausedProvider.notifier).state = false;
@@ -138,9 +144,8 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     final bool isPaused = ref.read(isAutoScrollPausedProvider);
     if (isPaused) {
       ref.read(isAutoScrollPausedProvider.notifier).state = false;
-      _startAutoScroll();
+      // Loop will resume automatically via the pause check
     } else {
-      _timedScrollTimer?.cancel();
       ref.read(isAutoScrollPausedProvider.notifier).state = true;
     }
   }
@@ -149,13 +154,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     final currentSpeed = ref.read(scrollSpeedFactorProvider);
     final newSpeed = (currentSpeed + delta).clamp(0.5, 3.0);
     ref.read(scrollSpeedFactorProvider.notifier).state = newSpeed;
-
-    final isPlaying = ref.read(isAutoScrollingProvider) &&
-        !ref.read(isAutoScrollPausedProvider);
-    if (isPlaying) {
-      _timedScrollTimer?.cancel();
-      _startAutoScroll();
-    }
+    // Speed change takes effect immediately — the loop reads speed each tick
   }
 
   void _scrollToTop() {
@@ -283,8 +282,8 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                     itemCount: 15,
                     itemBuilder: (_, __) => const AyahPlaceholder(),
                   ),
-                  error: (error, stack) =>
-                      Center(child: Text('Failed to load Sura details:\n$error')),
+                  error: (error, stack) => Center(
+                      child: Text('Failed to load Sura details:\n$error')),
                   data: (ayahs) {
                     _totalItems = ayahs.length;
 
@@ -292,6 +291,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                       children: [
                         ScrollablePositionedList.builder(
                           itemScrollController: _itemScrollController,
+                          scrollOffsetController: _scrollOffsetController,
                           itemPositionsListener: _itemPositionsListener,
                           itemCount: _totalItems,
                           initialScrollIndex: widget.initialScrollIndex ?? 0,
