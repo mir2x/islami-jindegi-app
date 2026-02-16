@@ -27,7 +27,7 @@ class Next extends StatelessWidget {
                 : null;
 
         return IconButton(
-          icon: const Icon(Icons.arrow_forward),
+          icon: const Icon(Icons.skip_next_rounded),
           color: iconColor,
           padding: const EdgeInsets.only(
             top: 10,

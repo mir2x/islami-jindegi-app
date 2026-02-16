@@ -26,12 +26,12 @@ import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
 import 'package:native_app/widgets/buttons/download.dart';
-import 'package:native_app/widgets/buttons/open_file.dart';
+
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/presentation/connect_to_internet.dart';
 import 'package:native_app/widgets/presentation/description_item.dart';
-import 'package:native_app/widgets/utils/pdf_menu.dart';
+
 import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/theme/colors.dart';
@@ -520,24 +520,6 @@ class BookContent extends ConsumerWidget {
                     alignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Previous(onPrevious: () => _previousPage(ref)),
-                      Row(
-                        children: [
-                          SocialShare(
-                            title: book.title,
-                            subtitle: (book.authors?.toList() ?? [])
-                                .map((e) => e.name)
-                                .toList()
-                                .join(', '),
-                            link: 'books/${book.id}',
-                            fileLink: fileLink,
-                          ),
-                          BookmarkButton(
-                            type: 'Book',
-                            title: book.title,
-                            link: 'books/${book.id}',
-                          ),
-                        ],
-                      ),
                       Next(onNext: () => _nextPage(ref)),
                     ],
                   ),
@@ -551,7 +533,7 @@ class BookContent extends ConsumerWidget {
   }
 }
 
-class PDFBook extends ConsumerStatefulWidget {
+class PDFBook extends ConsumerWidget {
   const PDFBook({
     super.key,
     required this.book,
@@ -568,110 +550,23 @@ class PDFBook extends ConsumerStatefulWidget {
   final Future? Function() nextPage;
 
   @override
-  ConsumerState<PDFBook> createState() => _PDFBookState();
-}
-
-class _PDFBookState extends ConsumerState<PDFBook> {
-  bool isFullScreen = false;
-  bool darkMode = false;
-  bool landscape = false;
-
-  @override
-  void initState() {
-    super.initState();
-    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-  }
-
-  @override
-  void dispose() {
-    /*SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual,
-      overlays: SystemUiOverlay.values,
-    );*/
-    super.dispose();
-  }
-
-  void toggleFullScreen() {
-    setState(() {
-      isFullScreen = !isFullScreen;
-
-      /*isFullScreen
-          ? SystemChrome.setEnabledSystemUIMode(
-              SystemUiMode.manual,
-              overlays: [],
-            )
-          : SystemChrome.setEnabledSystemUIMode(
-              SystemUiMode.manual,
-              overlays: SystemUiOverlay.values,
-            );*/
-    });
-  }
-
-  void toggleMode() {
-    setState(() {
-      darkMode = !darkMode;
-    });
-  }
-
-  void toggleOrientation() {
-    setState(() {
-      landscape = !landscape;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    debugPrint('[PDFBook] build called for book: ${widget.book.id}');
-    return AppScaffold(
-      onBackPressed: () async => await QR.to('books'),
-      showPattern: false,
-      showAppBar: !isFullScreen,
-      showBottomBar: !isFullScreen,
-      title: Text(widget.book.title),
-      body: WithPreferences(
-        builder: (context, preferences) {
-          return PDFReader(
-            bookId: widget.book.id,
-            filePath: widget.filePath,
-            preferences: preferences,
-            isFullScreen: isFullScreen,
-            darkMode: darkMode,
-            landscape: landscape,
-            toggleFullScreen: toggleFullScreen,
-          );
-        },
-      ),
-      bottomBar: BottomBar(
-        alignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Previous(onPrevious: widget.previousPage),
-          Row(
-            children: [
-              SocialShare(
-                title: widget.book.title,
-                subtitle:
-                    widget.book.authors.map((e) => e.name).toList().join(', '),
-                link: 'books/${widget.book.id}',
-                fileLink: widget.fileLink,
-              ),
-              BookmarkButton(
-                type: 'Book',
-                title: widget.book.title,
-                link: 'books/${widget.book.id}',
-              ),
-              OpenFile(filePath: widget.filePath),
-              PDFMenu(
-                filePath: widget.filePath,
-                darkMode: darkMode,
-                landscape: landscape,
-                toggleMode: toggleMode,
-                toggleOrientation: toggleOrientation,
-              ),
-            ],
-          ),
-          Next(onNext: widget.nextPage),
-        ],
-      ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    return WithPreferences(
+      builder: (context, preferences) {
+        return PDFReader(
+          bookId: book.id,
+          filePath: filePath,
+          preferences: preferences,
+          title: book.title,
+          authors: (book.authors?.toList() ?? [])
+              .map((e) => e.name)
+              .toList()
+              .join(', '),
+          fileLink: fileLink,
+          onPreviousPdf: previousPage,
+          onNextPdf: nextPage,
+        );
+      },
     );
   }
 }
