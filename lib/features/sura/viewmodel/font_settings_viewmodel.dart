@@ -35,7 +35,7 @@ final arabicFontProvider =
 
 // Arabic Font Size Provider
 class ArabicFontSizeNotifier extends StateNotifier<double> {
-  ArabicFontSizeNotifier() : super(32.0) {
+  ArabicFontSizeNotifier() : super(30.0) {
     _loadFromPrefs();
   }
 

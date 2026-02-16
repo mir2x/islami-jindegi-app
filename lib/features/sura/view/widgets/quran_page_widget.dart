@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:native_app/core/utils/arabic_digit_extension.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/shared/quran_data.dart';
-import 'package:native_app/theme/colors.dart';
 import '../../model/tilawat_models.dart';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../viewmodel/sura_viewmodel.dart';
+import '../../viewmodel/font_settings_viewmodel.dart';
 
 class QuranPageWidget extends ConsumerStatefulWidget {
   final QuranPage page;
@@ -37,6 +37,8 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
 
     final List<InlineSpan> spans = [];
     final textTheme = Theme.of(context).textTheme;
+    final arabicFont = ref.watch(arabicFontProvider);
+    final arabicFontSize = ref.watch(arabicFontSizeProvider);
 
     for (var contentItem in widget.page.content) {
       for (var ayah in contentItem.ayahs) {
@@ -55,8 +57,8 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
             text: '${ayah.text} ',
             recognizer: tapRecognizer,
             style: TextStyle(
-              fontFamily: 'arabic/noorehuda',
-              fontSize: 30,
+              fontFamily: arabicFont,
+              fontSize: arabicFontSize,
               fontWeight: FontWeight.normal,
               height: 2.2,
               color: textTheme.bodyLarge?.color,
@@ -68,8 +70,8 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
             text: '\u{FD3F}${ayah.ayahNumber.toArabicDigit()}\u{FD3E} ',
             recognizer: tapRecognizer,
             style: TextStyle(
-              fontFamily: 'arabic/noorehuda',
-              fontSize: 32,
+              fontFamily: arabicFont,
+              fontSize: arabicFontSize + 2,
               color: textTheme.bodyLarge?.color,
               fontWeight: FontWeight.normal,
               letterSpacing: 0,
@@ -90,7 +92,6 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
-        final colorScheme = Theme.of(context).colorScheme;
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -286,6 +287,8 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
   }
 
   Widget _buildSurahHeader(String name) {
+    final arabicFont = ref.watch(arabicFontProvider);
+    final arabicFontSize = ref.watch(arabicFontSizeProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Center(
@@ -295,14 +298,13 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
             Text(
               'سُورَةُ $name',
               style: TextStyle(
-                fontFamily: 'arabic/noorehuda',
-                fontSize: 34,
+                fontFamily: arabicFont,
+                fontSize: arabicFontSize + 4,
                 fontWeight: FontWeight.normal,
                 letterSpacing: 0,
                 color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
             ),
-            // const SizedBox(height: 8),
           ],
         ),
       ),
@@ -310,6 +312,8 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
   }
 
   Widget _buildBismillah() {
+    final arabicFont = ref.watch(arabicFontProvider);
+    final arabicFontSize = ref.watch(arabicFontSizeProvider);
     return Center(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 12.0),
@@ -319,9 +323,9 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
             Text(
               'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
               style: TextStyle(
-                fontFamily: 'arabic/noorehuda',
+                fontFamily: arabicFont,
                 fontWeight: FontWeight.normal,
-                fontSize: 32,
+                fontSize: arabicFontSize + 2,
                 letterSpacing: 0,
                 color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
