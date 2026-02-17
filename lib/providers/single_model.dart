@@ -4,7 +4,12 @@ import 'package:native_app/main.data.dart';
 
 final singleModelProvider = FutureProvider.autoDispose
     .family<dynamic, SingleModelQuery>((ref, SingleModelQuery query) async {
-  await ref.watch(repositoryInitializerProvider.future);
+  // Keep the provider alive to prevent auto-dispose during widget tree changes
+  ref.keepAlive();
+
+  // Use ref.read instead of ref.watch to avoid continuous dependency on the initializer
+  // We only need to wait for initialization once, not continuously watch it
+  await ref.read(repositoryInitializerProvider.future);
 
   var resource = await query.repository.findOne(
     query.id,

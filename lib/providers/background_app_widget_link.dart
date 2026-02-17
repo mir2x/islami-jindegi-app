@@ -7,7 +7,10 @@ final backgroundAppWidgetLinkProvider = Provider((ref) {
     (Uri? uri) {
       if (uri == null) return;
 
-      QR.to(uri.queryParameters['route']!);
+      final route = uri.queryParameters['route'];
+      if (route != null && route.isNotEmpty) {
+        QR.navigator.replaceAll(route);
+      }
     },
   );
 });

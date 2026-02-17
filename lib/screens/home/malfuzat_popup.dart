@@ -69,7 +69,8 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
                       locales.malfuzat,
                       style: textTheme.headlineLarge?.copyWith(
                         color: AppTheme.labelOppsititeColor[theme],
-                        fontFamily: 'bangla/ben-sen-handwriting',
+                        fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -85,7 +86,8 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
                               child: Text(
                                 item.title,
                                 style: textTheme.headlineLarge?.copyWith(
-                                  fontFamily: 'bangla/ben-sen-handwriting',
+                                  fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -96,7 +98,8 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
                                 child: Text(
                                   author,
                                   style: textTheme.labelMedium?.copyWith(
-                                    fontFamily: 'bangla/ben-sen-handwriting',
+                                    fontFamily: 'bangla/solaimanlipi',
+              wordSpacing: 3,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),

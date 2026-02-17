@@ -1,0 +1,242 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:native_app/theme/colors.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import '../../../viewmodel/ayah_highlight_viewmodel.dart';
+
+final selectedNavigationSurahProvider = StateProvider<int>((_) => 1);
+
+final selectedNavigationAyahProvider = StateProvider<int?>((_) => null);
+
+class SurahNavigationView extends ConsumerStatefulWidget {
+  const SurahNavigationView({super.key});
+
+  @override
+  ConsumerState<SurahNavigationView> createState() =>
+      _SurahNavigationViewState();
+}
+
+class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
+  final ItemScrollController _surahScrollController = ItemScrollController();
+  final ItemScrollController _ayahScrollController = ItemScrollController();
+
+  bool _isInitialStateSet = false;
+
+  String toBengaliNumber(int number) {
+    const bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    String numberStr = number.toString();
+    String bengaliStr = '';
+    for (int i = 0; i < numberStr.length; i++) {
+      int digit = int.parse(numberStr[i]);
+      bengaliStr += bengaliNumbers[digit];
+    }
+    return bengaliStr;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final allBoxesAsync = ref.watch(allBoxesProvider);
+    if (allBoxesAsync.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (allBoxesAsync.hasError) {
+      return Center(
+          child: Text('Error loading Surah/Ayah data',
+              style: TextStyle(fontSize: 14.sp)));
+    }
+
+    final suraPageMapping = ref.watch(suraPageMappingProvider);
+    final selectedAyah = ref.watch(selectedAyahProvider);
+
+    if (!_isInitialStateSet && suraPageMapping.isNotEmpty) {
+      int currentSurah = selectedAyah?.suraNumber ?? 1;
+      int? currentAyah = selectedAyah?.ayahNumber;
+
+      if (currentAyah == null) {
+        final currentPage = ref.read(currentPageProvider) + 1;
+        for (int i = 1; i <= 114; i++) {
+          if (suraPageMapping.containsKey(i) &&
+              suraPageMapping[i]! <= currentPage) {
+            currentSurah = i;
+          } else {
+            break;
+          }
+        }
+      }
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ref.read(selectedNavigationSurahProvider.notifier).state =
+              currentSurah;
+          ref.read(selectedNavigationAyahProvider.notifier).state = currentAyah;
+
+          _surahScrollController.jumpTo(index: currentSurah - 1);
+
+          if (currentAyah != null) {
+            _ayahScrollController.jumpTo(index: currentAyah - 1);
+          }
+        }
+      });
+      _isInitialStateSet = true;
+    }
+
+    return Column(
+      children: [
+        _buildHeader(context),
+        Expanded(
+          child: Row(
+            children: [
+              Expanded(flex: 3, child: _buildSurahList(ref)),
+              const VerticalDivider(width: 1, thickness: 1),
+              Expanded(flex: 2, child: _buildRightPane(ref)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final fontSize = isLandscape ? 14.0 : 16.sp;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      color: colorScheme.primary,
+      padding: EdgeInsets.symmetric(vertical: 12.h),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Text('সুরা',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: colorScheme.onPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: fontSize,
+                    fontFamily: 'bangla/solaimanlipi')),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text('আয়াত',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: colorScheme.onPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: fontSize,
+                    fontFamily: 'bangla/solaimanlipi')),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSurahList(WidgetRef ref) {
+    final selectedSurah = ref.watch(selectedNavigationSurahProvider);
+    final suraNames = ref.watch(suraNamesProvider);
+    final selectedAyah = ref.watch(selectedAyahProvider);
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final fontSize = isLandscape ? 14.0 : 16.sp;
+
+    return ScrollablePositionedList.separated(
+      itemScrollController: _surahScrollController,
+      padding: EdgeInsets.zero,
+      itemCount: 114,
+      separatorBuilder: (context, index) =>
+          Divider(height: 1.h, color: Theme.of(context).dividerColor),
+      itemBuilder: (context, index) {
+        final suraNumber = index + 1;
+        final isSelected = suraNumber == selectedSurah;
+
+        return ListTile(
+          tileColor: isSelected ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : null,
+          title: Text(
+            '${toBengaliNumber(suraNumber)}. ${suraNames[index]}',
+            style: TextStyle(
+              fontSize: fontSize,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).textTheme.bodyLarge?.color,
+            ),
+          ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
+          onTap: () {
+            ref.read(selectedNavigationSurahProvider.notifier).state =
+                suraNumber;
+
+            ref.read(selectedNavigationAyahProvider.notifier).state =
+                selectedAyah?.ayahNumber;
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildRightPane(WidgetRef ref) {
+    final selectedSurah = ref.watch(selectedNavigationSurahProvider);
+    final selectedAyah = ref.watch(selectedNavigationAyahProvider);
+    final ayahCounts = ref.watch(ayahCountsProvider);
+    final ayahPageMapping = ref.watch(ayahPageMappingProvider);
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final fontSize = isLandscape ? 12.0 : 14.sp;
+
+    final totalAyahs = ayahCounts[selectedSurah - 1];
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _ayahScrollController.isAttached) {
+        final currentAyah = ref.read(selectedAyahProvider)?.ayahNumber;
+        if (currentAyah != null) {
+          _ayahScrollController.jumpTo(index: currentAyah - 1);
+        }
+      }
+    });
+
+    return ScrollablePositionedList.separated(
+      itemScrollController: _ayahScrollController,
+      padding: EdgeInsets.zero,
+      separatorBuilder: (context, index) =>
+          Divider(height: 1.h, color: Theme.of(context).dividerColor),
+      itemCount: totalAyahs,
+      itemBuilder: (context, index) {
+        final ayahNumber = index + 1;
+        final isSelected =
+            selectedSurah == selectedSurah && ayahNumber == selectedAyah;
+
+        return ListTile(
+          tileColor: isSelected ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : null,
+          title: Center(
+            child: Text(
+              toBengaliNumber(ayahNumber),
+              style: TextStyle(
+                fontSize: fontSize,
+                color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).textTheme.bodyLarge?.color,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ),
+          onTap: () {
+            final targetPage = ayahPageMapping[(selectedSurah, ayahNumber)];
+            if (targetPage != null) {
+              // Select Ayah FIRST
+              ref
+                  .read(selectedAyahProvider.notifier)
+                  .selectByNavigation(selectedSurah, ayahNumber);
+              // THEN Navigate
+              ref.read(navigateToPageCommandProvider.notifier).state =
+                  targetPage;
+              Scaffold.of(context).closeDrawer();
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    content: Text('Page data not found for this Ayah')),
+              );
+            }
+          },
+        );
+      },
+    );
+  }
+}

@@ -27,7 +27,7 @@ class Previous extends StatelessWidget {
                 : null;
 
         return IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.skip_previous_rounded),
           color: iconColor,
           padding: const EdgeInsets.only(
             top: 10,

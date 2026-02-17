@@ -14,12 +14,16 @@ import 'package:workmanager/workmanager.dart';
 import 'package:lehttp_overrides/lehttp_overrides.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/theme/themes.dart';
+// --- 1. ADDED IMPORT ---
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'routes/index.dart';
 import 'screens/error_pages/page_404.dart';
 import 'firebase_options.dart';
 import 'app_widget/task.dart';
 import 'app_widget/background.dart';
 import 'main.data.dart';
+import 'package:quran_flutter/quran_flutter.dart';
 
 Future main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -76,7 +80,7 @@ Future main() async {
 
     await setAppWidgetBackground();
   }
-
+  await Quran.initialize();
   runApp(
     UncontrolledProviderScope(
       container: container,
@@ -103,24 +107,34 @@ class MyApp extends ConsumerWidget {
         String theme = preferences.getString('theme') ?? 'classic';
         String banglaFont =
             preferences.getString('banglaFont') ?? 'bangla/solaimanlipi';
-        String arabicFont = preferences.getString('arabicFont') ??
-            'arabic/al-qalam-quran-majeed';
+        String arabicFont =
+            preferences.getString('arabicFont') ?? 'arabic/noorehuda';
 
         Map fonts = {
           'fontFamily': banglaFont,
-          'fontFamilyFallback': [arabicFont, 'Roboto'],
+          'fontFamilyFallback': ['Roboto', arabicFont],
         };
 
-        return MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          routeInformationParser: const QRouteInformationParser(),
-          routerDelegate: QRouterDelegate(AppRoutes().routes),
-          theme: theme == 'light' ? lightTheme(fonts) : classicTheme(fonts),
-          darkTheme: darkTheme(fonts),
-          themeMode: theme == 'dark' ? ThemeMode.dark : ThemeMode.light,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          locale: Locale(preferences.getString('locale') ?? 'bn'),
+        // --- 2. WRAPPED MATERIALAPP WITH SCREENUTILINIT ---
+        return ScreenUtilInit(
+          // Set this to your design's width and height
+          designSize: const Size(360, 690),
+          minTextAdapt: true,
+          splitScreenMode: true,
+          builder: (context, child) {
+            // Return your MaterialApp.router here
+            return MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              routeInformationParser: const QRouteInformationParser(),
+              routerDelegate: QRouterDelegate(AppRoutes().routes),
+              theme: theme == 'light' ? lightTheme(fonts) : classicTheme(fonts),
+              darkTheme: darkTheme(fonts),
+              themeMode: theme == 'dark' ? ThemeMode.dark : ThemeMode.light,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              locale: Locale(preferences.getString('locale') ?? 'bn'),
+            );
+          },
         );
       },
     );

@@ -125,12 +125,12 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
     )
 
     setOnClickPendingIntent(R.id.reload, reloadContent(context))
-    setOnClickPendingIntent(R.id.quran, openLink(context, "quran"))
-    setOnClickPendingIntent(R.id.books, openLink(context, "books"))
-    setOnClickPendingIntent(R.id.bayans, openLink(context, "bayans"))
-    setOnClickPendingIntent(R.id.malfuzat, openLink(context, "malfuzat"))
-    setOnClickPendingIntent(R.id.masail, openLink(context, "masail"))
-    setOnClickPendingIntent(R.id.duas, openLink(context, "duas"))
+    setOnClickPendingIntent(R.id.quran, openLink(context, "/qurans"))
+    setOnClickPendingIntent(R.id.books, openLink(context, "/books"))
+    setOnClickPendingIntent(R.id.bayans, openLink(context, "/bayans"))
+    setOnClickPendingIntent(R.id.malfuzat, openLink(context, "/malfuzat"))
+    setOnClickPendingIntent(R.id.masail, openLink(context, "/masail"))
+    setOnClickPendingIntent(R.id.duas, openLink(context, "/duas"))
   }
 
   appWidgetManager.updateAppWidget(appWidgetId, views)
@@ -172,16 +172,27 @@ fun getRatio(context: Context): Float {
 }
 
 fun openLink(context: Context, message: String): PendingIntent {
-  return HomeWidgetLaunchIntent.getActivity(
-    context,
-    MainActivity::class.java,
-    Uri.parse("appWidget://message?route=$message")
-  )
+  val intent = Intent(context, MainActivity::class.java)
+  intent.action = "es.antonborri.home_widget.action.LAUNCH"
+  intent.data = Uri.parse("appWidget://message?route=$message")
+
+  var flags = PendingIntent.FLAG_UPDATE_CURRENT
+  if (android.os.Build.VERSION.SDK_INT >= 23) {
+    flags = flags or PendingIntent.FLAG_IMMUTABLE
+  }
+
+  return PendingIntent.getActivity(context, 0, intent, flags)
 }
 
 fun reloadContent(context: Context): PendingIntent {
-  return HomeWidgetBackgroundIntent.getBroadcast(
-    context,
-    Uri.parse("appWidgetReload://reload")
-  )
+  val intent = Intent("es.antonborri.home_widget.action.BACKGROUND")
+  intent.setPackage(context.packageName)
+  intent.data = Uri.parse("appWidgetReload://reload")
+  
+  var flags = PendingIntent.FLAG_UPDATE_CURRENT
+  if (android.os.Build.VERSION.SDK_INT >= 23) {
+    flags = flags or PendingIntent.FLAG_IMMUTABLE
+  }
+
+  return PendingIntent.getBroadcast(context, 0, intent, flags)
 }
