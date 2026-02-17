@@ -51,7 +51,7 @@ app.*.map.json
 
 .env
 
-/assets/db/
+# /assets/db/
 
 # FVM Version Cache
 .fvm/
