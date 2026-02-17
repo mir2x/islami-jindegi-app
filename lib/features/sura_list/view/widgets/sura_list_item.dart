@@ -9,11 +9,13 @@ import '../../model/sura_list_item.dart';
 class SuraListItem extends ConsumerStatefulWidget {
   final SuraListItemModel sura;
   final bool isHighlighted;
+  final VoidCallback? onTap;
 
   const SuraListItem({
     super.key,
     required this.sura,
     this.isHighlighted = false,
+    this.onTap,
   });
 
   @override
@@ -29,7 +31,7 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 1400),
       vsync: this,
     );
 
@@ -58,18 +60,39 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
 
   @override
   Widget build(BuildContext context) {
+    final highlightColor = Theme.of(context).colorScheme.primary;
+
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
+        final isActive = widget.isHighlighted;
         return Container(
-          color: widget.isHighlighted
-              ? Colors.green.withOpacity(_animation.value * 0.3)
-              : Colors.transparent,
+          decoration: BoxDecoration(
+            color: isActive
+                ? highlightColor.withOpacity(0.08 + _animation.value * 0.12)
+                : Colors.transparent,
+            border: isActive
+                ? Border(
+                    left: BorderSide(
+                      color: highlightColor
+                          .withOpacity(0.6 + _animation.value * 0.4),
+                      width: 4.0,
+                    ),
+                  )
+                : null,
+            borderRadius: isActive
+                ? const BorderRadius.only(
+                    topRight: Radius.circular(8),
+                    bottomRight: Radius.circular(8),
+                  )
+                : null,
+          ),
           child: child,
         );
       },
       child: InkWell(
         onTap: () {
+          widget.onTap?.call();
           Future.delayed(Duration.zero, () {
             if (!context.mounted) return;
             QR.to('/qurans/sura/${widget.sura.number}');
@@ -104,7 +127,7 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
         widget.sura.number.toBengaliDigit(),
         style: TextStyle(
           fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+          wordSpacing: 3,
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: Colors.green.shade700,
@@ -121,7 +144,7 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
           widget.sura.nameBangla,
           style: const TextStyle(
             fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+            wordSpacing: 3,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -131,7 +154,7 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
           widget.sura.meaningBangla,
           style: TextStyle(
             fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+            wordSpacing: 3,
             fontSize: 14,
             color: Colors.grey.shade600,
           ),

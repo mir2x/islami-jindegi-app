@@ -18,7 +18,6 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
     with SingleTickerProviderStateMixin {
   final ItemScrollController _itemScrollController = ItemScrollController();
   int? _highlightedSuraNumber;
-  bool _hasHandledLastViewed = false;
   late TabController _tabController;
 
   @override
@@ -37,8 +36,7 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
   Widget build(BuildContext context) {
     // Listen to the lastViewedSuraProvider for changes
     ref.listen<int?>(lastViewedSuraProvider, (previous, next) {
-      if (next != null && !_hasHandledLastViewed) {
-        _hasHandledLastViewed = true;
+      if (next != null) {
         // Switch to sura tab if not already there
         if (_tabController.index != 0) {
           _tabController.animateTo(0);
@@ -56,8 +54,7 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
 
     // Also check on first build in case the value is already set
     final lastViewedSura = ref.watch(lastViewedSuraProvider);
-    if (lastViewedSura != null && !_hasHandledLastViewed) {
-      _hasHandledLastViewed = true;
+    if (lastViewedSura != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_tabController.index != 0) {
           _tabController.animateTo(0);
@@ -82,18 +79,19 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
           controller: _tabController,
           labelStyle: const TextStyle(
             fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+            wordSpacing: 3,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
           unselectedLabelStyle: const TextStyle(
             fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+            wordSpacing: 3,
             fontSize: 16,
           ),
           indicatorColor: Theme.of(context).appBarTheme.foregroundColor,
           labelColor: Theme.of(context).appBarTheme.foregroundColor,
-          unselectedLabelColor: Theme.of(context).appBarTheme.foregroundColor?.withOpacity(0.6),
+          unselectedLabelColor:
+              Theme.of(context).appBarTheme.foregroundColor?.withOpacity(0.6),
           tabs: const [
             Tab(text: 'সূরা'),
             Tab(text: 'পারা'),
@@ -113,6 +111,11 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
               return SuraListItem(
                 sura: sura,
                 isHighlighted: _highlightedSuraNumber == sura.number,
+                onTap: () {
+                  setState(() {
+                    _highlightedSuraNumber = null;
+                  });
+                },
               );
             },
             separatorBuilder: (context, index) {
@@ -151,16 +154,6 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
         if (mounted) {
           setState(() {
             _highlightedSuraNumber = suraNumber;
-          });
-
-          // Clear highlight after animation completes (800ms animation)
-          Future.delayed(const Duration(milliseconds: 900), () {
-            if (mounted) {
-              setState(() {
-                _highlightedSuraNumber = null;
-                _hasHandledLastViewed = false;
-              });
-            }
           });
         }
       });

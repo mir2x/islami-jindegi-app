@@ -53,6 +53,8 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     _activePagesNotifier = ref.read(activeSurahPagesProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _activePagesNotifier.update((state) => {...state, widget.suraNumber});
+      // Save immediately so tafsir button always points to the latest sura
+      _saveLastReadPosition(widget.suraNumber, widget.initialScrollIndex ?? 0);
     });
   }
 

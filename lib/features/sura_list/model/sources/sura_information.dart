@@ -663,7 +663,7 @@ const List<SuraListItemModel> allSuras = [
       nameArabic: 'سُورَةُ النَّصْرِ'),
   SuraListItemModel(
       number: 111,
-      nameBangla: 'আল মাসাদ',
+      nameBangla: 'লাহাব',
       meaningBangla: 'তাবা',
       revelationType: RevelationType.Makki,
       nameArabic: 'سُورَةُ الْمَسَدِ'),
