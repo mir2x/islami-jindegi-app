@@ -104,7 +104,7 @@ class SuraAudioPlayer {
 
       final audioDownloadTask = MultiFileDownloadTask(
         id: 'reciter_${reciterId}_sura_$sura',
-        displayName: 'সুরা ${suraNames[sura]}',
+        displayName: 'সুরা ${suraNames[sura - 1]}',
         urlToPathMap: urlToPathMap,
       );
 
@@ -143,7 +143,7 @@ class SuraAudioPlayer {
     final playlist = ConcatenatingAudioSource(children: audioSources);
     await _player.setAudioSource(playlist,
         initialIndex: 0, initialPosition: Duration.zero);
-    
+
     // Set up listeners AFTER loading the new playlist to prevent stale events
     // from the previous playback session from triggering stop logic
     _setupStateListeners();
