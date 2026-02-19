@@ -18,9 +18,17 @@ workflows:
       - name: Set up code signing
         script: |
           keychain initialize
-          app-store-connect fetch-signing-files "com.topofstacksoftware.IslamiJindegi" \
+
+          # Generate a fresh private key for the distribution certificate
+          openssl genrsa -out /tmp/cert_key.pem 2048
+
+          # Fetch or create signing files using the new key
+          app-store-connect fetch-signing-files \
+            "com.topofstacksoftware.IslamiJindegi" \
             --type IOS_APP_STORE \
+            --certificate-key /tmp/cert_key.pem \
             --create
+
           keychain add-certificates
 
       - name: Set up Xcode project settings
