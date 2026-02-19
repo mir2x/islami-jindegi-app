@@ -21,12 +21,13 @@ workflows:
 
           # Generate a fresh private key for the distribution certificate
           openssl genrsa -out /tmp/cert_key.pem 2048
+          export CERTIFICATE_PRIVATE_KEY=$(cat /tmp/cert_key.pem)
 
           # Fetch or create signing files using the new key
           app-store-connect fetch-signing-files \
             "com.topofstacksoftware.IslamiJindegi" \
             --type IOS_APP_STORE \
-            --certificate-key /tmp/cert_key.pem \
+            --certificate-key "$CERTIFICATE_PRIVATE_KEY" \
             --create
 
           keychain add-certificates
