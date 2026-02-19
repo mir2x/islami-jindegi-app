@@ -36,5 +36,5 @@ workflows:
 
     publishing:
       app_store_connect:
-        auth: api_key
+        auth: integration
         submit_to_testflight: true
