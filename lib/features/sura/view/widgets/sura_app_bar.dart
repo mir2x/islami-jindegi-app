@@ -23,6 +23,10 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
     final appBarForeground = Theme.of(context).appBarTheme.foregroundColor;
 
     return AppBar(
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back, color: appBarForeground),
+        onPressed: () => Navigator.of(context).maybePop(),
+      ),
       title: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -50,6 +54,11 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: true,
       iconTheme: IconThemeData(color: appBarForeground),
       actions: [
+        if (scaffoldKey != null)
+          IconButton(
+            icon: Icon(Icons.menu, color: appBarForeground),
+            onPressed: () => scaffoldKey!.currentState?.openDrawer(),
+          ),
         IconButton(
           icon: Icon(Icons.menu_book, color: appBarForeground),
           onPressed: () {

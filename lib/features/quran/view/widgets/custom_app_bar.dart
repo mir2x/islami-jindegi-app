@@ -11,23 +11,28 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AppBar(
-      leading: Builder(
-        builder: (ctx) => IconButton(
-          icon: const Icon(Icons.menu),
-          iconSize: isLandscape ? 20.0 : 24.0,
-          onPressed: () => Scaffold.of(ctx).openDrawer(),
-        ),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        iconSize: isLandscape ? 20.0 : 24.0,
+        onPressed: () => Navigator.of(context).maybePop(),
       ),
       title: Text(
         'কুরআন মাজীদ',
         style: TextStyle(
           fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+          wordSpacing: 3,
           fontSize: isLandscape ? 18.0 : 22.sp,
         ),
       ),
       centerTitle: true,
       actions: [
+        Builder(
+          builder: (ctx) => IconButton(
+            icon: const Icon(Icons.menu),
+            iconSize: isLandscape ? 20.0 : 24.0,
+            onPressed: () => Scaffold.of(ctx).openDrawer(),
+          ),
+        ),
         IconButton(
           icon: const Icon(Icons.search),
           iconSize: isLandscape ? 20.0 : 24.0,
@@ -35,11 +40,6 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
             QR.to('/qurans/search');
           },
         ),
-        // IconButton(
-        //   icon: const Icon(Icons.nightlight_outlined),
-        //   iconSize: isLandscape ? 20.0 : 24.0,
-        //   onPressed: () {},
-        // ),
         IconButton(
           icon: const Icon(Icons.g_translate),
           iconSize: isLandscape ? 20.0 : 24.0,

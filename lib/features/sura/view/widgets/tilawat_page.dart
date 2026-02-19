@@ -53,8 +53,8 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
       key: _scaffoldKey,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.menu, color: appBarForeground),
-          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+          icon: Icon(Icons.arrow_back, color: appBarForeground),
+          onPressed: () => Navigator.of(context).maybePop(),
         ),
         title: Column(
           mainAxisSize: MainAxisSize.min,
@@ -83,6 +83,10 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
         centerTitle: true,
         iconTheme: IconThemeData(color: appBarForeground),
         actions: [
+          IconButton(
+            icon: Icon(Icons.menu, color: appBarForeground),
+            onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+          ),
           IconButton(
             icon: Icon(Icons.text_fields_rounded, color: appBarForeground),
             tooltip: 'ফন্ট পরিবর্তন',

@@ -37,6 +37,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
   int _totalItems = 0;
   int _topVisibleIndex = 0;
   bool _showScrollToTopButton = false;
+  int? _resolvedScrollIndex;
 
   late final StateController<Set<int>> _activePagesNotifier;
 
@@ -51,11 +52,46 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     _itemPositionsListener.itemPositions
         .addListener(_onVisiblePositionsChanged);
     _activePagesNotifier = ref.read(activeSurahPagesProvider.notifier);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+
+    // If initialScrollIndex is provided (e.g. from tafsir or search), use it directly.
+    // Otherwise, load the last saved position from SharedPreferences.
+    if (widget.initialScrollIndex != null) {
+      _resolvedScrollIndex = widget.initialScrollIndex;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _activePagesNotifier.update((state) => {...state, widget.suraNumber});
+        _saveLastReadPosition(
+            widget.suraNumber, widget.initialScrollIndex ?? 0);
+      });
+    } else {
+      _loadSavedScrollIndex();
+    }
+  }
+
+  Future<void> _loadSavedScrollIndex() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedSura = prefs.getInt('last_read_sura');
+    final savedIndex = prefs.getInt('last_read_ayah_index');
+
+    if (mounted) {
+      if (savedSura == widget.suraNumber &&
+          savedIndex != null &&
+          savedIndex > 0) {
+        setState(() {
+          _resolvedScrollIndex = savedIndex;
+        });
+        // Scroll to the saved position if the list is already attached
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_itemScrollController.isAttached) {
+            _itemScrollController.jumpTo(
+              index: savedIndex,
+              alignment: 0.1,
+            );
+          }
+        });
+      }
       _activePagesNotifier.update((state) => {...state, widget.suraNumber});
-      // Save immediately so tafsir button always points to the latest sura
-      _saveLastReadPosition(widget.suraNumber, widget.initialScrollIndex ?? 0);
-    });
+      _saveLastReadPosition(widget.suraNumber, _resolvedScrollIndex ?? 0);
+    }
   }
 
   @override
@@ -228,11 +264,13 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     ref.listen<AsyncValue<List<dynamic>>>(suraDataProvider(widget.suraNumber),
         (previous, next) {
       if (previous is AsyncLoading && next is AsyncData) {
-        if (widget.initialScrollIndex != null &&
+        final scrollTarget = _resolvedScrollIndex;
+        if (scrollTarget != null &&
+            scrollTarget > 0 &&
             _itemScrollController.isAttached) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _itemScrollController.jumpTo(
-              index: widget.initialScrollIndex!,
+              index: scrollTarget,
               alignment: 0.1,
             );
           });
@@ -296,7 +334,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                           scrollOffsetController: _scrollOffsetController,
                           itemPositionsListener: _itemPositionsListener,
                           itemCount: _totalItems,
-                          initialScrollIndex: widget.initialScrollIndex ?? 0,
+                          initialScrollIndex: _resolvedScrollIndex ?? 0,
                           padding: const EdgeInsets.only(bottom: 80.0),
                           itemBuilder: (context, index) {
                             final entry = ayahs[index];
