@@ -19,6 +19,14 @@ import '../screens/books/subchapter.dart';
 import '../screens/books/downloads.dart';
 import '../screens/books/downloaded_book.dart';
 
+// New book feature (v2) — clean architecture
+import '../features/book/views/book_list_screen.dart';
+import '../features/book/views/book_detail_screen.dart';
+import '../features/book/views/chapter_screen.dart' as book_v2;
+import '../features/book/views/subchapter_screen.dart' as book_v2;
+import '../features/book/views/downloads_screen.dart' as book_v2;
+import '../features/book/views/downloaded_book_screen.dart' as book_v2;
+
 import '../screens/bayans/index.dart';
 import '../screens/bayans/bayan.dart';
 import '../screens/bayans/downloads.dart';
@@ -162,6 +170,40 @@ class AppRoutes {
           builder: () => const BookDownloads(),
           children: [
             QRoute(path: '/:id', builder: () => const DownloadedBook()),
+          ],
+        ),
+      ],
+    ),
+    // ───── New Book Feature (v2) — side-by-side for testing ─────
+    QRoute(
+      path: '/books-v2',
+      builder: () => const BookListScreen(),
+      children: [
+        QRoute(
+          path: '/:id',
+          builder: () => PageStorage(
+            bucket: _bucket,
+            child: const BookDetailScreen(),
+          ),
+          children: [
+            QRoute(
+              path: '/chapters/:chapter_id',
+              builder: () => const book_v2.ChapterScreen(),
+            ),
+            QRoute(
+              path: '/subchapters/:subchapter_id',
+              builder: () => const book_v2.SubchapterScreen(),
+            ),
+          ],
+        ),
+        QRoute(
+          path: '/downloads',
+          builder: () => const book_v2.DownloadsScreen(),
+          children: [
+            QRoute(
+              path: '/:id',
+              builder: () => const book_v2.DownloadedBookScreen(),
+            ),
           ],
         ),
       ],
