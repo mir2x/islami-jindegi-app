@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:native_app/features/home/presentation/screens/home_screen.dart';
-import 'package:native_app/features/sura/view/sura_page.dart';
-import 'package:native_app/features/sura/view/widgets/search_page.dart';
-import 'package:native_app/features/sura/view/widgets/tilawat_page.dart';
-import 'package:native_app/features/sura_list/view/sura_list_page.dart';
-import 'package:native_app/features/quran/view/quran_viewer_screen.dart';
-import 'package:native_app/features/quran/viewmodel/ayah_highlight_viewmodel.dart';
+import 'package:native_app/features/quran_catalogue/views/quran_catalogue_screen.dart';
+import 'package:native_app/features/sura/views/sura_page.dart';
+import 'package:native_app/features/sura/views/widgets/search_page.dart';
+import 'package:native_app/features/sura/views/widgets/tilawat_page.dart';
+import 'package:native_app/features/sura_list/views/sura_list_page.dart';
+import 'package:native_app/features/quran/views/quran_viewer_screen.dart';
+import 'package:native_app/features/quran/providers/ayah_highlight_viewmodel.dart';
 import 'dart:io';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -71,7 +71,7 @@ class AppRoutes {
     QRoute(path: '/', name: 'root', builder: () => const Home()),
     QRoute(
       path: '/qurans',
-      builder: () => const HomeScreen(),
+      builder: () => const QuranCatalogueScreen(),
       middleware: [
         QMiddlewareBuilder(
           onEnterFunc: () => WakelockPlus.enable(),
