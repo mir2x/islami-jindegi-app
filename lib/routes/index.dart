@@ -5,7 +5,7 @@ import 'package:native_app/features/sura/views/widgets/search_page.dart';
 import 'package:native_app/features/sura/views/widgets/tilawat_page.dart';
 import 'package:native_app/features/sura_list/views/sura_list_page.dart';
 import 'package:native_app/features/quran/views/quran_viewer_screen.dart';
-import 'package:native_app/features/quran/providers/ayah_highlight_viewmodel.dart';
+import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
 import 'dart:io';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';

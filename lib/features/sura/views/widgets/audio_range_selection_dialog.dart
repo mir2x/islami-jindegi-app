@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/sura_reciter_viewmodel.dart';
+import '../../providers/sura_reciter_providers.dart';
 
 String toBengaliDigit(int number) {
   const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];

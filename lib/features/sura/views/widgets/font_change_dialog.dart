@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/font_settings_viewmodel.dart';
+import '../../providers/font_settings_providers.dart';
 
 class FontChangeDialog extends ConsumerStatefulWidget {
   const FontChangeDialog({super.key});

@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/features/sura/views/widgets/audio_range_selection_dialog.dart';
 import 'package:native_app/features/sura/views/widgets/details_bottom_sheet.dart';
 import 'package:native_app/features/sura/views/widgets/translation_selection_dialog.dart';
-import 'package:native_app/features/sura/providers/sura_reciter_viewmodel.dart';
-import 'package:native_app/features/sura/providers/sura_viewmodel.dart';
+import 'package:native_app/features/sura/providers/sura_reciter_providers.dart';
+import 'package:native_app/features/sura/providers/sura_providers.dart';
 
 class SuraBottomNavBar extends ConsumerWidget {
   final int totalAyahs;

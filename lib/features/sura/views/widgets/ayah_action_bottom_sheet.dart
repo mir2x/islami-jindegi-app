@@ -7,7 +7,7 @@ import 'package:native_app/features/sura/views/widgets/tilawat_page.dart';
 import 'package:native_app/features/sura_list/providers/bookmark_providers.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../models/ayah.dart';
-import '../../providers/sura_reciter_viewmodel.dart';
+import '../../providers/sura_reciter_providers.dart';
 
 class AyahActionItem {
   final IconData icon;

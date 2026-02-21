@@ -12,7 +12,7 @@ import 'package:native_app/features/quran/views/widgets/drawer/side_drawer.dart'
 import '../models/selected_ayah_state.dart';
 import '../providers/audio_providers.dart';
 import 'widgets/quran_page.dart';
-import '../providers/ayah_highlight_viewmodel.dart';
+import '../providers/ayah_highlight_providers.dart';
 
 class QuranViewerScreen extends ConsumerStatefulWidget {
   final Directory editionDir;

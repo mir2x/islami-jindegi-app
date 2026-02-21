@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import '../../../../shared/quran_data.dart';
-import '../../providers/search_viewmodel.dart';
+import '../../providers/search_providers.dart';
 
 class SearchPage extends ConsumerWidget {
   const SearchPage({super.key});

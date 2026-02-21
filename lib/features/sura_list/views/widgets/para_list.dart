@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
-import 'package:native_app/features/quran/providers/ayah_highlight_viewmodel.dart';
+import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
 import 'package:native_app/shared/quran_data.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 

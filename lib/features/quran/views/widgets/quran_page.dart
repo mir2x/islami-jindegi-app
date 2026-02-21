@@ -6,7 +6,7 @@ import 'package:native_app/features/quran/views/widgets/page_info_overlay.dart';
 import '../../../../core/constants.dart';
 import '../../models/ayah_box.dart';
 import '../../models/selected_ayah_state.dart';
-import '../../providers/ayah_highlight_viewmodel.dart';
+import '../../providers/ayah_highlight_providers.dart';
 import 'ayah_highlighter.dart';
 import 'ayah_menu.dart';
 

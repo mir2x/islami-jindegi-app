@@ -6,8 +6,8 @@ import '../../models/tilawat_models.dart';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/sura_viewmodel.dart';
-import '../../providers/font_settings_viewmodel.dart';
+import '../../providers/sura_providers.dart';
+import '../../providers/font_settings_providers.dart';
 
 class QuranPageWidget extends ConsumerStatefulWidget {
   final QuranPage page;

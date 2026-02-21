@@ -8,9 +8,9 @@ import 'package:native_app/theme/colors.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../models/bookmark.dart';
 import '../../providers/audio_providers.dart';
-import '../../providers/ayah_highlight_viewmodel.dart';
-import '../../providers/bookmark_viewmodel.dart';
-import '../../../sura/providers/sura_viewmodel.dart';
+import '../../providers/ayah_highlight_providers.dart';
+import '../../providers/bookmark_providers.dart';
+import '../../../sura/providers/sura_providers.dart';
 
 import 'audio_bottom_sheet.dart';
 

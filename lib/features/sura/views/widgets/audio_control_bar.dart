@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../providers/sura_reciter_viewmodel.dart';
+import '../../providers/sura_reciter_providers.dart';
 
 class AudioControllerBar extends ConsumerWidget {
   final Color color;

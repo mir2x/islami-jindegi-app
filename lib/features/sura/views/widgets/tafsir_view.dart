@@ -6,8 +6,8 @@ import '../../../../core/utils/adaptive_text.dart';
 import '../../../downloader/views/show_download_dialog.dart';
 import '../../../downloader/providers/download_providers.dart';
 import '../../models/ayah.dart';
-import '../../models/tafsir.dart';
-import '../../providers/tafsir_provider.dart';
+import '../../models/tafsir_source.dart';
+import '../../providers/tafsir_providers.dart';
 
 class TafsirView extends ConsumerStatefulWidget {
   final int suraNumber;

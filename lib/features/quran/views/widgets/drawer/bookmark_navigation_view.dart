@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/theme/colors.dart';
-import '../../../providers/ayah_highlight_viewmodel.dart';
-import '../../../providers/bookmark_viewmodel.dart';
+import '../../../providers/ayah_highlight_providers.dart';
+import '../../../providers/bookmark_providers.dart';
 
 class BookmarkNavigationView extends ConsumerWidget {
   const BookmarkNavigationView({super.key});

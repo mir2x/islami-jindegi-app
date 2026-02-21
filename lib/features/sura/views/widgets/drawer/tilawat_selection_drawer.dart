@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:qlevar_router/qlevar_router.dart';
-import 'package:native_app/features/quran/providers/ayah_highlight_viewmodel.dart';
+import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
 
 final _selectedTilawatSurahProvider = StateProvider<int>((ref) => 1);
 

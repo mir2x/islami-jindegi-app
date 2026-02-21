@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/sura_viewmodel.dart';
+import '../../providers/sura_providers.dart';
 
 const List<String> availableTranslators = [
   'মুফতী তাকী উসমানী',

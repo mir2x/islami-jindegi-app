@@ -12,9 +12,9 @@ import '../../../shared/quran_data.dart';
 import '../../downloader/views/show_download_dialog.dart';
 import '../../downloader/views/show_download_permission_dialog.dart';
 import '../../downloader/providers/download_providers.dart';
-import '../models/audio_state.dart';
+import '../models/quran_audio_state.dart';
 import '../models/sura_audio_data.dart';
-import 'ayah_highlight_viewmodel.dart';
+import 'ayah_highlight_providers.dart';
 
 class AudioDataSource {
   final Dio _dio = Dio();

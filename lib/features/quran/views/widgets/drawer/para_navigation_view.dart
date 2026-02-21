@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import '../../../providers/ayah_highlight_viewmodel.dart';
+import '../../../providers/ayah_highlight_providers.dart';
 
 final selectedNavigationParaProvider = StateProvider<int>((_) => 1);
 final selectedNavigationPageProvider = StateProvider<int?>((_) => null);

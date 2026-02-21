@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:native_app/theme/colors.dart';
 import '../../providers/audio_providers.dart';
-import '../../providers/ayah_highlight_viewmodel.dart';
+import '../../providers/ayah_highlight_providers.dart';
 import '../../providers/reciter_providers.dart';
 
 class AudioBottomSheet extends ConsumerStatefulWidget {

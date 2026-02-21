@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/features/sura/models/ayah.dart';
-import 'package:native_app/features/sura/providers/sura_viewmodel.dart';
+import 'package:native_app/features/sura/providers/sura_providers.dart';
 
 final searchQueryProvider = StateProvider<String>((ref) => '');
 

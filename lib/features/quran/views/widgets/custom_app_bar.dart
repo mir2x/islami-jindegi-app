@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:qlevar_router/qlevar_router.dart';
-import '../../providers/ayah_highlight_viewmodel.dart';
+import '../../providers/ayah_highlight_providers.dart';
 
 class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final bool isLandscape;

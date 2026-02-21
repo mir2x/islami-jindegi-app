@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as p;
-import '../../home/providers/home_providers.dart';
+import '../../quran_catalogue/providers/quran_catalogue_providers.dart';
 import '../models/download_state.dart';
 
 Future<bool> isAssetDownloaded(String id) async {

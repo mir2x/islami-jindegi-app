@@ -6,7 +6,7 @@ import 'package:native_app/features/quran/views/widgets/drawer/para_navigation_v
 import 'package:native_app/features/quran/views/widgets/drawer/sura_navigation_view.dart';
 import 'package:native_app/theme/colors.dart';
 import '../../../../../core/theme.dart';
-import '../../../providers/ayah_highlight_viewmodel.dart';
+import '../../../providers/ayah_highlight_providers.dart';
 
 final drawerTabIndexProvider = StateProvider<int>((_) => 0);
 

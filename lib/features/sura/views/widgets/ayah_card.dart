@@ -4,8 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/features/sura/models/ayah.dart';
 import 'package:native_app/features/sura/views/widgets/ayah_action_bottom_sheet.dart';
-import 'package:native_app/features/sura/providers/font_settings_viewmodel.dart';
-import 'package:native_app/features/sura/providers/sura_viewmodel.dart';
+import 'package:native_app/features/sura/providers/font_settings_providers.dart';
+import 'package:native_app/features/sura/providers/sura_providers.dart';
 import 'package:native_app/theme/colors.dart';
 import '../../../../core/utils/adaptive_text.dart';
 

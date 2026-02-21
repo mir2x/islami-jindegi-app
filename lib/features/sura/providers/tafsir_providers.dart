@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../downloader/providers/download_providers.dart';
-import '../models/tafsir.dart';
+import '../models/tafsir_source.dart';
 
 class AyahIdentifier {
   final int sura;
