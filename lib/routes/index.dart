@@ -12,20 +12,12 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../screens/home/index.dart';
 
-import '../screens/books/index.dart';
-import '../screens/books/book.dart';
-import '../screens/books/chapter.dart';
-import '../screens/books/subchapter.dart';
-import '../screens/books/downloads.dart';
-import '../screens/books/downloaded_book.dart';
-
-// New book feature (v2) — clean architecture
 import '../features/book/views/book_list_screen.dart';
 import '../features/book/views/book_detail_screen.dart';
-import '../features/book/views/chapter_screen.dart' as book_v2;
-import '../features/book/views/subchapter_screen.dart' as book_v2;
-import '../features/book/views/downloads_screen.dart' as book_v2;
-import '../features/book/views/downloaded_book_screen.dart' as book_v2;
+import '../features/book/views/chapter_screen.dart' as book_feat;
+import '../features/book/views/subchapter_screen.dart' as book_feat;
+import '../features/book/views/downloads_screen.dart' as book_feat;
+import '../features/book/views/downloaded_book_screen.dart' as book_feat;
 
 import '../screens/bayans/index.dart';
 import '../screens/bayans/bayan.dart';
@@ -146,37 +138,6 @@ class AppRoutes {
     ),
     QRoute(
       path: '/books',
-      builder: () => const Books(),
-      children: [
-        QRoute(
-          path: '/:id',
-          builder: () => PageStorage(
-            bucket: _bucket,
-            child: const BookItem(),
-          ),
-          children: [
-            QRoute(
-              path: '/chapters/:chapter_id',
-              builder: () => const Chapter(),
-            ),
-            QRoute(
-              path: '/subchapters/:subchapter_id',
-              builder: () => const Subchapter(),
-            ),
-          ],
-        ),
-        QRoute(
-          path: '/downloads',
-          builder: () => const BookDownloads(),
-          children: [
-            QRoute(path: '/:id', builder: () => const DownloadedBook()),
-          ],
-        ),
-      ],
-    ),
-    // ───── New Book Feature (v2) — side-by-side for testing ─────
-    QRoute(
-      path: '/books-v2',
       builder: () => const BookListScreen(),
       children: [
         QRoute(
@@ -188,21 +149,21 @@ class AppRoutes {
           children: [
             QRoute(
               path: '/chapters/:chapter_id',
-              builder: () => const book_v2.ChapterScreen(),
+              builder: () => const book_feat.ChapterScreen(),
             ),
             QRoute(
               path: '/subchapters/:subchapter_id',
-              builder: () => const book_v2.SubchapterScreen(),
+              builder: () => const book_feat.SubchapterScreen(),
             ),
           ],
         ),
         QRoute(
           path: '/downloads',
-          builder: () => const book_v2.DownloadsScreen(),
+          builder: () => const book_feat.DownloadsScreen(),
           children: [
             QRoute(
               path: '/:id',
-              builder: () => const book_v2.DownloadedBookScreen(),
+              builder: () => const book_feat.DownloadedBookScreen(),
             ),
           ],
         ),

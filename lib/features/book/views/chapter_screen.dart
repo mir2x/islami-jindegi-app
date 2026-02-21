@@ -47,18 +47,18 @@ class ChapterScreen extends ConsumerWidget {
           );
 
           if (previousResources.isEmpty) {
-            await QR.to('books-v2/$bookId');
+            await QR.to('books/$bookId');
           } else {
             var subchapters = previousResources.first.subchapters;
 
             if (subchapters.isNotEmpty) {
               var lastSubchapter = subchapters.last;
               await QR.to(
-                'books-v2/$bookId/subchapters/${lastSubchapter.id}',
+                'books/$bookId/subchapters/${lastSubchapter.id}',
               );
             } else {
               await QR.to(
-                'books-v2/$bookId/chapters/${previousResources.first.id}',
+                'books/$bookId/chapters/${previousResources.first.id}',
               );
             }
           }
@@ -78,11 +78,11 @@ class ChapterScreen extends ConsumerWidget {
 
             if (subchapters.isNotEmpty) {
               await QR.to(
-                'books-v2/$bookId/subchapters/${subchapters.first.id}',
+                'books/$bookId/subchapters/${subchapters.first.id}',
               );
             } else {
               await QR.to(
-                'books-v2/$bookId/chapters/${nextResources.first.id}',
+                'books/$bookId/chapters/${nextResources.first.id}',
               );
             }
           }
@@ -100,7 +100,7 @@ class ChapterScreen extends ConsumerWidget {
           storeKey: 'bookFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async => await QR.to('books-v2/$bookId'),
+              onBackPressed: () async => await QR.to('books/$bookId'),
               showPattern: false,
               title: Text(locales.book),
               body: NextPageSwipe(

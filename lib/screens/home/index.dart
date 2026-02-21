@@ -85,11 +85,6 @@ class Home extends StatelessWidget {
                       icon: 'book',
                     ),
                     Resource(
-                      route: 'books-v2',
-                      title: '${locales.books} (v2)',
-                      icon: 'book',
-                    ),
-                    Resource(
                       route: 'bayans',
                       title: locales.bayans,
                       icon: 'bayan',

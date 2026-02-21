@@ -89,12 +89,12 @@ class _BookContent extends ConsumerWidget {
       );
 
       if (previousResources.isEmpty) {
-        await QR.to('books-v2');
+        await QR.to('books');
       } else {
-        await QR.to('books-v2/${previousResources.first.id}');
+        await QR.to('books/${previousResources.first.id}');
       }
     } catch (_) {
-      await QR.to('books-v2');
+      await QR.to('books');
     }
   }
 
@@ -108,7 +108,7 @@ class _BookContent extends ConsumerWidget {
       );
 
       if (nextResources.isNotEmpty) {
-        await QR.to('books-v2/${nextResources.first.id}');
+        await QR.to('books/${nextResources.first.id}');
       }
     } catch (_) {}
   }
@@ -143,7 +143,7 @@ class _BookContent extends ConsumerWidget {
       data: (chapters) {
         if (chapters.isNotEmpty) {
           return AppScaffold(
-            onBackPressed: () async => await QR.to('books-v2'),
+            onBackPressed: () async => await QR.to('books'),
             showPattern: false,
             title: Text(locales.book),
             body: NextPageSwipe(
@@ -225,7 +225,7 @@ class _BookContent extends ConsumerWidget {
                                   } else {
                                     return InkWell(
                                       onTap: () => QR.to(
-                                        'books-v2/${book.id}/chapters/${chapter.id}',
+                                        'books/${book.id}/chapters/${chapter.id}',
                                       ),
                                       child: Container(
                                         decoration: const BoxDecoration(
@@ -341,7 +341,7 @@ class _BookContent extends ConsumerWidget {
           double screenWidth = MediaQuery.of(context).size.width;
 
           return AppScaffold(
-            onBackPressed: () async => await QR.to('books-v2'),
+            onBackPressed: () async => await QR.to('books'),
             showPattern: false,
             title: Text(locales.book),
             body: SingleChildScrollView(
@@ -629,7 +629,7 @@ class _SubchaptersState extends ConsumerState<_Subchapters> {
                       ...widget.chapter.subchapters.map((subchapter) {
                         return InkWell(
                           onTap: () => QR.to(
-                            'books-v2/${widget.book.id}/subchapters/${subchapter.id}',
+                            'books/${widget.book.id}/subchapters/${subchapter.id}',
                           ),
                           child: Container(
                             padding:

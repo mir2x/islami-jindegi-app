@@ -31,7 +31,7 @@ class DownloadsScreen extends ConsumerWidget {
                     title: Text(item.title ?? ''),
                     subtitle:
                         Text(item.authors ?? '', style: textTheme.labelSmall),
-                    onTap: () => QR.to('books-v2/downloads/${item.bookId}'),
+                    onTap: () => QR.to('books/downloads/${item.bookId}'),
                   ),
                 );
               },

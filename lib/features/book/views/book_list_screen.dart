@@ -167,7 +167,7 @@ class BookListScreen extends ConsumerWidget {
                     onTap: () {
                       debugPrint(
                           '[BookListScreen] Tapped book: ${item.id} — ${item.title}');
-                      QR.to('books-v2/${item.id}');
+                      QR.to('books/${item.id}');
                     },
                     child: Column(
                       children: [
@@ -213,7 +213,7 @@ class BookListScreen extends ConsumerWidget {
         width: 200,
         height: 40,
         child: FloatingDownloadedButton(
-          onPressed: () => QR.to('books-v2/downloads'),
+          onPressed: () => QR.to('books/downloads'),
           label: '${locales.downloaded} ${locales.books}',
         ),
       ),
