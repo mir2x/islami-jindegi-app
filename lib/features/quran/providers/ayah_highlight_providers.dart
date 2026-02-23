@@ -502,24 +502,7 @@ final quranInfoServiceProvider = Provider<QuranInfoService>(
 );
 
 class BarsVisibilityNotifier extends StateNotifier<bool> {
-  Timer? _hideTimer;
-  static const Duration _hideDuration = Duration(seconds: 5);
-  bool _autoHideArmed = true;
-  BarsVisibilityNotifier() : super(true) {
-    _startAutoHideTimer();
-  }
-
-  void _startAutoHideTimer() {
-    if (_autoHideArmed) {
-      _hideTimer?.cancel();
-      _hideTimer = Timer(_hideDuration, () {
-        if (state) {
-          state = false;
-          _autoHideArmed = false;
-        }
-      });
-    }
-  }
+  BarsVisibilityNotifier() : super(true);
 
   void show() {
     if (!state) {
@@ -528,27 +511,13 @@ class BarsVisibilityNotifier extends StateNotifier<bool> {
   }
 
   void hide() {
-    _hideTimer?.cancel();
     if (state) {
       state = false;
     }
-    _autoHideArmed = false;
   }
 
   void toggle() {
-    if (state) {
-      hide();
-    } else {
-      show();
-      _autoHideArmed = false;
-      _hideTimer?.cancel();
-    }
-  }
-
-  @override
-  void dispose() {
-    _hideTimer?.cancel();
-    super.dispose();
+    state = !state;
   }
 }
 

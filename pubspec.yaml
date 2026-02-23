@@ -127,6 +127,7 @@ dependencies:
   syncfusion_flutter_pdfviewer: ^29.1.38
   syncfusion_flutter_core: ^29.1.38
   syncfusion_flutter_pdf: ^29.1.38
+  upgrader: ^12.5.0
 
   # flutter_gen: any
 

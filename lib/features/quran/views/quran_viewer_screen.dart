@@ -328,7 +328,15 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
                       child: SafeArea(
                         child: Stack(
                           children: [
-                            viewer,
+                            AnimatedPadding(
+                              duration: _animationDuration,
+                              curve: Curves.easeInOut,
+                              padding: EdgeInsets.only(
+                                top: barsVisible ? kToolbarHeight : 0,
+                                bottom: barsVisible ? _bottomBarHeight.h : 0,
+                              ),
+                              child: viewer,
+                            ),
                             Positioned(
                               top: 0,
                               left: 0,
