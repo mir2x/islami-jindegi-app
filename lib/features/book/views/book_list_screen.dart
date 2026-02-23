@@ -6,9 +6,12 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
+import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/widgets/buttons/floating_downloaded.dart';
 import 'package:native_app/screens/books/image.dart';
+import 'package:native_app/theme/colors.dart';
+import 'package:flutter_svg/svg.dart';
 import '../providers/book_providers.dart';
 import '../providers/book_download_providers.dart';
 
@@ -58,7 +61,8 @@ class BookListScreen extends ConsumerWidget {
                                     .read(bookQueryParamsProvider.notifier)
                                     .removeParam('authorId');
                               },
-                              dialogContent: _AuthorFilterDialog(ref: ref),
+                              dialogContent:
+                                  _AuthorFilterDialog(parentRef: ref),
                             ),
                           ),
                           const SizedBox(width: 15),
@@ -90,7 +94,8 @@ class BookListScreen extends ConsumerWidget {
                                     .read(bookQueryParamsProvider.notifier)
                                     .removeParam('bookSubcategoryId');
                               },
-                              dialogContent: _CategoryFilterDialog(ref: ref),
+                              dialogContent:
+                                  _CategoryFilterDialog(parentRef: ref),
                             ),
                           ),
                         ],
@@ -328,106 +333,399 @@ class _V2FilterButton extends ConsumerWidget {
 }
 
 // ═══════════════════════════════════════════════════
-// Author filter dialog — uses InfiniteList directly
+// Author filter dialog — matches old FilterList + FilterItem layout
 // ═══════════════════════════════════════════════════
 
-class _AuthorFilterDialog extends ConsumerWidget {
-  final WidgetRef ref;
-  const _AuthorFilterDialog({required this.ref});
+class _AuthorFilterDialog extends ConsumerStatefulWidget {
+  final WidgetRef parentRef;
+  const _AuthorFilterDialog({required this.parentRef});
 
   @override
-  Widget build(BuildContext context, WidgetRef outerRef) {
-    return InfiniteList(
-      pageSize: 16,
-      padding: 2,
-      resourceFetcher: (Map<String, dynamic> params) async {
-        final api = ref.read(bookApiServiceProvider);
-        debugPrint('[AuthorFilter] fetching with params: $params');
-        try {
-          final authors = await api.fetchAuthors(
-            page: params['page'] ?? 1,
-            perPage: params['per_page'] ?? 16,
-            search: params['search'],
-          );
-          debugPrint('[AuthorFilter] got ${authors.length} authors');
-          return authors;
-        } catch (e) {
-          debugPrint('[AuthorFilter] error: $e');
-          rethrow;
-        }
-      },
-      itemBuilder: (context, item, index) {
-        return ListTile(
-          title: Text(item.name),
-          onTap: () {
-            ref
-                .read(bookQueryParamsProvider.notifier)
-                .updateParam('authorId', item.id);
-            Navigator.of(context).pop();
-          },
-        );
-      },
+  ConsumerState<_AuthorFilterDialog> createState() =>
+      _AuthorFilterDialogState();
+}
+
+class _AuthorFilterDialogState extends ConsumerState<_AuthorFilterDialog> {
+  String? _searchText;
+
+  @override
+  Widget build(BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
+    var qParams = widget.parentRef.watch(bookQueryParamsProvider);
+
+    return Column(
+      children: [
+        // ── Header row: title + clear | search field ──
+        Container(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(AppLocalizations.of(context)!.authors),
+                    if (qParams.containsKey('authorId')) ...[
+                      IconButton(
+                        constraints: const BoxConstraints(maxHeight: 40),
+                        splashRadius: 24,
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          widget.parentRef
+                              .read(bookQueryParamsProvider.notifier)
+                              .removeParam('authorId');
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SearchField(
+                  value: _searchText,
+                  maxHeight: 35,
+                  horizontalPadding: 10,
+                  onUpdate: (value) {
+                    setState(() {
+                      _searchText = value.isEmpty ? null : value;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        // ── List ──
+        Expanded(
+          child: InfiniteList(
+            key: ValueKey('author_search_$_searchText'),
+            pageSize: 8,
+            padding: 2,
+            resourceFetcher: (Map<String, dynamic> params) async {
+              final api = widget.parentRef.read(bookApiServiceProvider);
+              if (_searchText != null && _searchText!.isNotEmpty) {
+                params = {...params, 'search': _searchText};
+              }
+              return await api.fetchAuthors(
+                page: params['page'] ?? 1,
+                perPage: params['per_page'] ?? 8,
+                search: params['search'],
+              );
+            },
+            itemBuilder: (context, item, index) {
+              final isSelected = qParams.containsKey('authorId') &&
+                  qParams['authorId'] == item.id;
+              return InkWell(
+                onTap: () {
+                  widget.parentRef
+                      .read(bookQueryParamsProvider.notifier)
+                      .updateParam('authorId', item.id);
+                  Navigator.of(context).pop();
+                },
+                child: Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: ThemeColors.color4),
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    item.name,
+                    style: isSelected
+                        ? textTheme.labelMedium
+                        : textTheme.titleMedium,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
 
 // ═══════════════════════════════════════════════════
-// Category filter dialog — uses InfiniteList directly
+// Category filter dialog — matches old FilterList + FilterNestedItem
 // ═══════════════════════════════════════════════════
 
-class _CategoryFilterDialog extends ConsumerWidget {
-  final WidgetRef ref;
-  const _CategoryFilterDialog({required this.ref});
+class _CategoryFilterDialog extends ConsumerStatefulWidget {
+  final WidgetRef parentRef;
+  const _CategoryFilterDialog({required this.parentRef});
 
   @override
-  Widget build(BuildContext context, WidgetRef outerRef) {
-    return InfiniteList(
-      pageSize: 16,
-      padding: 2,
-      resourceFetcher: (Map<String, dynamic> params) async {
-        final api = ref.read(bookApiServiceProvider);
-        debugPrint('[CategoryFilter] fetching with params: $params');
-        try {
-          final categories = await api.fetchBookCategories(
-            page: params['page'] ?? 1,
-            perPage: params['per_page'] ?? 16,
-          );
-          debugPrint('[CategoryFilter] got ${categories.length} categories');
-          return categories;
-        } catch (e) {
-          debugPrint('[CategoryFilter] error: $e');
-          rethrow;
-        }
-      },
-      itemBuilder: (context, item, index) {
-        if (item.subcategories.isNotEmpty) {
-          return ExpansionTile(
-            title: Text(item.title),
-            children: item.subcategories.map<Widget>((sub) {
-              return ListTile(
-                title: Text(sub.title),
-                contentPadding: const EdgeInsets.only(left: 32),
-                onTap: () {
-                  ref
-                      .read(bookQueryParamsProvider.notifier)
-                      .updateParam('bookSubcategoryId', sub.id);
-                  Navigator.of(context).pop();
-                },
+  ConsumerState<_CategoryFilterDialog> createState() =>
+      _CategoryFilterDialogState();
+}
+
+class _CategoryFilterDialogState extends ConsumerState<_CategoryFilterDialog> {
+  String? _searchText;
+
+  @override
+  Widget build(BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
+    var qParams = widget.parentRef.watch(bookQueryParamsProvider);
+    final hasActiveFilter = qParams.keys
+        .any((k) => ['bookCategoryId', 'bookSubcategoryId'].contains(k));
+
+    return Column(
+      children: [
+        // ── Header row: title + clear | search field ──
+        Container(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(AppLocalizations.of(context)!.categories),
+                    if (hasActiveFilter) ...[
+                      IconButton(
+                        constraints: const BoxConstraints(maxHeight: 40),
+                        splashRadius: 24,
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          widget.parentRef
+                              .read(bookQueryParamsProvider.notifier)
+                              .removeParam('bookCategoryId');
+                          widget.parentRef
+                              .read(bookQueryParamsProvider.notifier)
+                              .removeParam('bookSubcategoryId');
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SearchField(
+                  value: _searchText,
+                  maxHeight: 35,
+                  horizontalPadding: 10,
+                  onUpdate: (value) {
+                    setState(() {
+                      _searchText = value.isEmpty ? null : value;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        // ── List ──
+        Expanded(
+          child: InfiniteList(
+            key: ValueKey('category_search_$_searchText'),
+            pageSize: 8,
+            padding: 2,
+            resourceFetcher: (Map<String, dynamic> params) async {
+              final api = widget.parentRef.read(bookApiServiceProvider);
+              if (_searchText != null && _searchText!.isNotEmpty) {
+                params = {...params, 'search': _searchText};
+              }
+              return await api.fetchBookCategories(
+                page: params['page'] ?? 1,
+                perPage: params['per_page'] ?? 8,
+                search: params['search'],
               );
-            }).toList(),
-          );
-        } else {
-          return ListTile(
-            title: Text(item.title),
-            onTap: () {
-              ref
-                  .read(bookQueryParamsProvider.notifier)
-                  .updateParam('bookCategoryId', item.id);
-              Navigator.of(context).pop();
             },
-          );
-        }
-      },
+            itemBuilder: (context, item, index) {
+              if (item.subcategories.isNotEmpty) {
+                return _CategoryNestedItem(
+                  category: item,
+                  parentRef: widget.parentRef,
+                );
+              } else {
+                final isSelected = qParams.containsKey('bookCategoryId') &&
+                    qParams['bookCategoryId'] == item.id;
+                return InkWell(
+                  onTap: () {
+                    widget.parentRef
+                        .read(bookQueryParamsProvider.notifier)
+                        .updateParam('bookCategoryId', item.id);
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: ThemeColors.color4),
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      item.title,
+                      style: isSelected
+                          ? textTheme.labelMedium
+                          : textTheme.titleMedium,
+                    ),
+                  ),
+                );
+              }
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// Nested category item — matches old FilterNestedItem exactly
+// ═══════════════════════════════════════════════════
+
+class _CategoryNestedItem extends ConsumerStatefulWidget {
+  final dynamic category;
+  final WidgetRef parentRef;
+  const _CategoryNestedItem({
+    required this.category,
+    required this.parentRef,
+  });
+
+  @override
+  ConsumerState<_CategoryNestedItem> createState() =>
+      _CategoryNestedItemState();
+}
+
+class _CategoryNestedItemState extends ConsumerState<_CategoryNestedItem> {
+  bool isOpen = false;
+  final ScrollController sectionController = ScrollController();
+
+  @override
+  void dispose() {
+    sectionController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
+    var qParams = widget.parentRef.watch(bookQueryParamsProvider);
+    var isSelected = qParams.containsKey('bookSubcategoryId') &&
+        widget.category.subcategories
+            .map((s) => s.id)
+            .any((id) => id == qParams['bookSubcategoryId']);
+
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: ThemeColors.color4),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (isSelected) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.category.title,
+                      style: textTheme.titleMedium,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  SvgPicture.asset(
+                    'assets/images/icons/angle-up.svg',
+                    fit: BoxFit.scaleDown,
+                    width: 20,
+                  ),
+                ],
+              ),
+            ),
+          ] else ...[
+            InkWell(
+              key: GlobalObjectKey(widget.category.id),
+              onTap: () {
+                setState(() {
+                  isOpen = !isOpen;
+                  if (isOpen) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) async {
+                      final ctx =
+                          GlobalObjectKey(widget.category.id).currentContext;
+                      if (ctx != null) {
+                        Scrollable.ensureVisible(
+                          ctx,
+                          duration: const Duration(milliseconds: 500),
+                        );
+                      }
+                    });
+                  }
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        widget.category.title,
+                        style: textTheme.titleMedium,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    SvgPicture.asset(
+                      isOpen
+                          ? 'assets/images/icons/angle-up.svg'
+                          : 'assets/images/icons/angle-down.svg',
+                      fit: BoxFit.scaleDown,
+                      width: 20,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+          if (isSelected || isOpen) ...[
+            Container(
+              padding: const EdgeInsets.only(left: 25, bottom: 5),
+              constraints: const BoxConstraints(maxHeight: 150),
+              child: Scrollbar(
+                thumbVisibility: true,
+                controller: sectionController,
+                child: SingleChildScrollView(
+                  controller: sectionController,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ...widget.category.subcategories.map<Widget>((sub) {
+                        final isSubSelected =
+                            qParams.containsKey('bookSubcategoryId') &&
+                                qParams['bookSubcategoryId'] == sub.id;
+                        return InkWell(
+                          onTap: () {
+                            widget.parentRef
+                                .read(bookQueryParamsProvider.notifier)
+                                .updateParam('bookSubcategoryId', sub.id);
+                            Navigator.of(context).pop();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            child: Text(
+                              sub.title,
+                              style: isSubSelected
+                                  ? textTheme.labelMedium
+                                  : textTheme.titleMedium,
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

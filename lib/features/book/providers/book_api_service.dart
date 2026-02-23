@@ -139,11 +139,13 @@ class BookApiService {
   Future<List<BookCategory>> fetchBookCategories({
     int page = 1,
     int perPage = 16,
+    String? search,
     bool includeSubcategories = true,
   }) async {
     final params = <String, dynamic>{
       'page': page,
       'per_page': perPage,
+      if (search != null && search.isNotEmpty) 'search': search,
       if (includeSubcategories) 'include': 'book-subcategories',
     };
 
