@@ -10,7 +10,8 @@ final launchAppWidgetLinkProvider = FutureProvider((ref) async {
     if (route != null && route.isNotEmpty) {
       // Delay to ensure this runs after the router's initial parse
       await Future.delayed(const Duration(milliseconds: 100));
-      await QR.navigator.replaceAll(route);
+      await QR.navigator.replaceAll('/');
+      await QR.to(route);
     }
   }
 });
