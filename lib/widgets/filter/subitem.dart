@@ -8,22 +8,27 @@ class FilterSubitem extends ConsumerWidget {
     required this.itemId,
     required this.itemTitle,
     required this.paramKey,
+    this.queryProvider,
   });
 
   final String itemId;
   final String itemTitle;
   final String paramKey;
 
+  /// When provided, uses this instead of the global queryParamsProvider.
+  final dynamic queryProvider;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
-    var qParams = ref.watch(queryParamsProvider);
+    var paramsProvider = queryProvider ?? queryParamsProvider;
+    var qParams = ref.watch(paramsProvider);
 
     return InkWell(
       onTap: () {
         ref
             .read(
-              queryParamsProvider.notifier,
+              paramsProvider.notifier,
             )
             .updateParams(
               paramKey,

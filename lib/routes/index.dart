@@ -24,16 +24,16 @@ import '../features/bayan/views/bayan_detail_screen.dart' as bayan_feat;
 import '../features/bayan/views/bayan_downloads_screen.dart' as bayan_feat;
 import '../features/bayan/views/downloaded_bayan_screen.dart' as bayan_feat;
 
-import '../screens/malfuzat/index.dart';
-import '../screens/malfuzat/malfuzat_item.dart';
-import '../screens/malfuzat/downloads.dart';
-import '../screens/malfuzat/downloaded_malfuzat.dart';
+import '../features/malfuzat/views/malfuzat_list_screen.dart';
+import '../features/malfuzat/views/malfuzat_detail_screen.dart';
+import '../features/malfuzat/views/malfuzat_downloads_screen.dart';
+import '../features/malfuzat/views/downloaded_malfuzat_screen.dart';
 
-import '../screens/masail/index.dart';
-import '../screens/masail/masail_item.dart';
-import '../screens/masail/ask_question.dart';
-import '../screens/masail/downloads.dart';
-import '../screens/masail/downloaded_masail.dart';
+import '../features/masail/views/masail_list_screen.dart';
+import '../features/masail/views/masail_detail_screen.dart';
+import '../features/masail/views/ask_question_screen.dart';
+import '../features/masail/views/masail_downloads_screen.dart';
+import '../features/masail/views/downloaded_masail_screen.dart';
 
 import '../screens/duas/index.dart';
 import '../screens/duas/dua.dart';
@@ -196,29 +196,30 @@ class AppRoutes {
     ),
     QRoute(
       path: '/malfuzat',
-      builder: () => const Malfuzat(),
+      builder: () => const MalfuzatListScreen(),
       children: [
-        QRoute(path: '/:id', builder: () => const MalfuzatItem()),
+        QRoute(path: '/:id', builder: () => const MalfuzatDetailScreen()),
         QRoute(
           path: '/downloads',
-          builder: () => const MalfuzatDownloads(),
+          builder: () => const MalfuzatDownloadsScreen(),
           children: [
-            QRoute(path: '/:id', builder: () => const DownloadedMalfuzat()),
+            QRoute(
+                path: '/:id', builder: () => const DownloadedMalfuzatScreen()),
           ],
         ),
       ],
     ),
     QRoute(
       path: '/masail',
-      builder: () => const Masail(),
+      builder: () => const MasailListScreen(),
       children: [
-        QRoute(path: '/:id', builder: () => const MasailItem()),
-        QRoute(path: '/ask-question', builder: () => const AskQuestion()),
+        QRoute(path: '/:id', builder: () => const MasailDetailScreen()),
+        QRoute(path: '/ask-question', builder: () => const AskQuestionScreen()),
         QRoute(
           path: '/downloads',
-          builder: () => const MasailDownloads(),
+          builder: () => const MasailDownloadsScreen(),
           children: [
-            QRoute(path: '/:id', builder: () => const DownloadedMasail()),
+            QRoute(path: '/:id', builder: () => const DownloadedMasailScreen()),
           ],
         ),
       ],
