@@ -11,20 +11,25 @@ class FilterList extends ConsumerStatefulWidget {
     super.key,
     required this.title,
     required this.paramKeys,
-    required this.queryBuilder,
+    this.queryBuilder,
     required this.itemBuilder,
     this.pageSize = 8,
     this.searchEnabled = false,
     this.queryProvider,
+    this.resourceFetcher,
   });
 
   final String title;
   final List<String> paramKeys;
-  final Function queryBuilder;
+  final Function? queryBuilder;
   final ItemWidgetBuilder itemBuilder;
   final int pageSize;
   final bool searchEnabled;
   final dynamic queryProvider;
+
+  /// When provided, bypasses queryBuilder + allModelsProvider entirely.
+  /// Accepts pagination params and returns the list of items directly.
+  final Future<List> Function(Map<String, dynamic>)? resourceFetcher;
 
   @override
   ConsumerState<FilterList> createState() => _FilterListState();
@@ -95,6 +100,9 @@ class _FilterListState extends ConsumerState<FilterList> {
         ),
         Expanded(
           child: InfiniteList(
+            key: widget.searchEnabled
+                ? ValueKey('filter_search_$searchText')
+                : null,
             pageSize: widget.pageSize,
             padding: 2,
             resourceFetcher: (Map<String, dynamic> params) async {
@@ -104,7 +112,13 @@ class _FilterListState extends ConsumerState<FilterList> {
                 params = {...params, 'search': searchText};
               }
 
-              var query = widget.queryBuilder(params);
+              // New path: use resourceFetcher directly (no Flutter Data)
+              if (widget.resourceFetcher != null) {
+                return await widget.resourceFetcher!(params);
+              }
+
+              // Legacy path: use queryBuilder + allModelsProvider
+              var query = widget.queryBuilder!(params);
 
               return await ref.watch(
                 allModelsProvider(query).future,

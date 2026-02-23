@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_data/flutter_data.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/theme/colors.dart';
@@ -13,13 +12,17 @@ class FilterNestedItem extends ConsumerStatefulWidget {
     required this.paramKey,
     required this.subitems,
     required this.subitemBuilder,
+    this.queryProvider,
   });
 
   final String itemId;
   final String itemTitle;
   final String paramKey;
-  final HasMany subitems;
+  final List<dynamic> subitems;
   final Function subitemBuilder;
+
+  /// When provided, uses this instead of the global queryParamsProvider.
+  final dynamic queryProvider;
 
   @override
   FilterNestedItemState createState() => FilterNestedItemState();
@@ -47,7 +50,8 @@ class FilterNestedItemState extends ConsumerState<FilterNestedItem> {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
-    var qParams = ref.watch(queryParamsProvider);
+    var paramsProvider = widget.queryProvider ?? queryParamsProvider;
+    var qParams = ref.watch(paramsProvider);
     var isSelected = qParams.containsKey(widget.paramKey) &&
         widget.subitems
             .map((s) => s.id)

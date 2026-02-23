@@ -9,7 +9,10 @@ import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/theme/app_theme.dart';
 
 class DateFilter extends ConsumerWidget {
-  const DateFilter({super.key});
+  const DateFilter({super.key, this.queryProvider});
+
+  /// When provided, uses this instead of the global queryParamsProvider.
+  final dynamic queryProvider;
 
   String formatDate(String date, String locale) {
     var inputDate = DateFormat('yyyy-MM-dd').parse(date);
@@ -61,7 +64,8 @@ class DateFilter extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isSmallMobile = screenWidth < 340;
-    var qParams = ref.watch(queryParamsProvider);
+    var paramsProvider = queryProvider ?? queryParamsProvider;
+    var qParams = ref.watch(paramsProvider);
 
     final List<Map> options = [
       {'value': '', 'label': locales.anyTime},
@@ -83,7 +87,7 @@ class DateFilter extends ConsumerWidget {
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                var qParamsNotifier = ref.read(queryParamsProvider.notifier);
+                var qParamsNotifier = ref.read(paramsProvider.notifier);
                 double screenWidth = MediaQuery.of(context).size.width;
                 double screenHeight = MediaQuery.of(context).size.height;
 
@@ -209,6 +213,8 @@ class CustomDateField extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(queryParamsProvider);
     var qParamsNotifier = ref.read(queryParamsProvider.notifier);
+    // Note: CustomDateField still uses global queryParamsProvider.
+    // For module-specific usage, pass the queryProvider via DateFilter.
 
     return WithPreferences(
       builder: (context, preferences) {

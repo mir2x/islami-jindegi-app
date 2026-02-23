@@ -15,6 +15,7 @@ class FilterButton extends ConsumerWidget {
     this.active = false,
     this.selectedItemQuery,
     required this.selectedItemLabel,
+    this.selectedItemProvider,
   });
 
   final List<Widget> children;
@@ -22,6 +23,10 @@ class FilterButton extends ConsumerWidget {
   final bool active;
   final SingleModelQuery? selectedItemQuery;
   final Function(dynamic) selectedItemLabel;
+
+  /// When provided, bypasses selectedItemQuery + singleModelProvider entirely.
+  /// Should be any Riverpod provider that returns an AsyncValue.
+  final dynamic selectedItemProvider;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -77,14 +82,41 @@ class FilterButton extends ConsumerWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              if (selectedItemQuery != null) ...[
+              if (selectedItemProvider != null) ...[
+                // New path: use the provider directly (no Flutter Data)
                 Builder(
                   builder: (context) {
-                    var selectedItemProvider = ref.watch(
+                    var asyncValue = ref.watch(selectedItemProvider);
+
+                    if (asyncValue is AsyncLoading) {
+                      return const SizedBox(
+                        width: 12,
+                        height: 12,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      );
+                    } else if (asyncValue is AsyncError) {
+                      return Text(filterLabel, style: textTheme.labelMedium);
+                    } else if (asyncValue is AsyncData &&
+                        asyncValue.value != null) {
+                      String label = selectedItemLabel(asyncValue.value);
+                      int cutoff = isSmallMobile ? 13 : 15;
+                      return Text(
+                        truncateWithEllipsis(label, cutoff),
+                        style: textTheme.labelMedium,
+                      );
+                    }
+                    return Text(filterLabel, style: textTheme.labelMedium);
+                  },
+                ),
+              ] else if (selectedItemQuery != null) ...[
+                // Legacy path: use singleModelProvider (Flutter Data)
+                Builder(
+                  builder: (context) {
+                    var selectedItemProviderValue = ref.watch(
                       singleModelProvider(selectedItemQuery!),
                     );
 
-                    return selectedItemProvider.when(
+                    return selectedItemProviderValue.when(
                       loading: () {
                         return const SizedBox(
                           width: 12,

@@ -19,10 +19,10 @@ import '../features/book/views/subchapter_screen.dart' as book_feat;
 import '../features/book/views/downloads_screen.dart' as book_feat;
 import '../features/book/views/downloaded_book_screen.dart' as book_feat;
 
-import '../screens/bayans/index.dart';
-import '../screens/bayans/bayan.dart';
-import '../screens/bayans/downloads.dart';
-import '../screens/bayans/downloaded_bayan.dart';
+import '../features/bayan/views/bayan_list_screen.dart' as bayan_feat;
+import '../features/bayan/views/bayan_detail_screen.dart' as bayan_feat;
+import '../features/bayan/views/bayan_downloads_screen.dart' as bayan_feat;
+import '../features/bayan/views/downloaded_bayan_screen.dart' as bayan_feat;
 
 import '../screens/malfuzat/index.dart';
 import '../screens/malfuzat/malfuzat_item.dart';
@@ -171,11 +171,11 @@ class AppRoutes {
     ),
     QRoute(
       path: '/bayans',
-      builder: () => const Bayans(),
+      builder: () => const bayan_feat.BayanListScreen(),
       children: [
         QRoute(
           path: '/:id',
-          builder: () => const Bayan(),
+          builder: () => const bayan_feat.BayanDetailScreen(),
           middleware: [
             QMiddlewareBuilder(
               onEnterFunc: () => WakelockPlus.enable(),
@@ -185,9 +185,11 @@ class AppRoutes {
         ),
         QRoute(
           path: '/downloads',
-          builder: () => const BayanDownloads(),
+          builder: () => const bayan_feat.BayanDownloadsScreen(),
           children: [
-            QRoute(path: '/:id', builder: () => const DownloadedBayan()),
+            QRoute(
+                path: '/:id',
+                builder: () => const bayan_feat.DownloadedBayanScreen()),
           ],
         ),
       ],
