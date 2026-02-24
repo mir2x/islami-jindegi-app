@@ -35,14 +35,14 @@ import '../features/masail/views/ask_question_screen.dart';
 import '../features/masail/views/masail_downloads_screen.dart';
 import '../features/masail/views/downloaded_masail_screen.dart';
 
-import '../screens/duas/index.dart';
-import '../screens/duas/dua.dart';
+import '../features/dua/views/dua_list_screen.dart';
+import '../features/dua/views/dua_detail_screen.dart';
 
-import '../screens/articles/index.dart';
-import '../screens/articles/article.dart';
+import '../features/article/views/article_list_screen.dart';
+import '../features/article/views/article_detail_screen.dart';
 
-import '../screens/news/index.dart';
-import '../screens/news/news_item.dart';
+import '../features/news/views/news_list_screen.dart';
+import '../features/news/views/news_detail_screen.dart';
 
 import '../screens/madrasahs/index.dart';
 import '../screens/madrasahs/madrasah.dart';
@@ -226,23 +226,23 @@ class AppRoutes {
     ),
     QRoute(
       path: '/duas',
-      builder: () => const Duas(),
+      builder: () => const DuaListScreen(),
       children: [
-        QRoute(path: '/:id', builder: () => const Dua()),
+        QRoute(path: '/:id', builder: () => const DuaDetailScreen()),
       ],
     ),
     QRoute(
       path: '/articles',
-      builder: () => const Articles(),
+      builder: () => const ArticleListScreen(),
       children: [
-        QRoute(path: '/:id', builder: () => const Article()),
+        QRoute(path: '/:id', builder: () => const ArticleDetailScreen()),
       ],
     ),
     QRoute(
       path: '/news',
-      builder: () => const News(),
+      builder: () => const NewsListScreen(),
       children: [
-        QRoute(path: '/:id', builder: () => const NewsItem()),
+        QRoute(path: '/:id', builder: () => const NewsDetailScreen()),
       ],
     ),
     QRoute(
