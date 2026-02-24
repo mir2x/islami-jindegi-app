@@ -10,7 +10,7 @@ import 'dart:io';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-import '../screens/home/index.dart';
+import '../features/home/views/home_screen.dart';
 
 import '../features/book/views/book_list_screen.dart';
 import '../features/book/views/book_detail_screen.dart';
@@ -44,25 +44,25 @@ import '../features/article/views/article_detail_screen.dart';
 import '../features/news/views/news_list_screen.dart';
 import '../features/news/views/news_detail_screen.dart';
 
-import '../screens/madrasahs/index.dart';
-import '../screens/madrasahs/madrasah.dart';
-import '../screens/madrasahs/introduction.dart';
-import '../screens/madrasahs/gallery.dart';
-import '../screens/madrasahs/info.dart';
+import '../features/madrasah/views/madrasah_list_screen.dart';
+import '../features/madrasah/views/madrasah_detail_screen.dart';
+import '../features/madrasah/views/madrasah_introduction_screen.dart';
+import '../features/madrasah/views/madrasah_gallery_screen.dart';
+import '../features/madrasah/views/madrasah_info_screen.dart';
 
-import '../screens/namaz_times/index.dart';
-import '../screens/namaz_times/namaz_time.dart';
-import '../screens/namaz_times/settings.dart';
+import '../features/namaz_time/views/namaz_times_screen.dart';
+import '../features/namaz_time/views/namaz_time_detail_screen.dart';
+import '../features/namaz_time/views/namaz_settings_screen.dart';
 
-import '../screens/location/index.dart';
-import '../screens/settings/index.dart';
-import '../screens/bookmarks/index.dart';
-import '../screens/donation/index.dart';
-import '../screens/qiblah/index.dart';
-import '../screens/mosques/index.dart';
-import '../screens/about/index.dart';
-import '../screens/contact_us/index.dart';
-import '../screens/important_matters/index.dart';
+import '../features/location/views/location_screen.dart';
+import '../features/settings/views/settings_screen.dart';
+import '../features/bookmarks/views/bookmarks_screen.dart';
+import '../features/page/views/donation_screen.dart';
+import '../features/qiblah/views/qiblah_screen.dart';
+import '../features/mosques/views/mosques_screen.dart';
+import '../features/page/views/about_screen.dart';
+import '../features/page/views/contact_us_screen.dart';
+import '../features/page/views/important_matters_screen.dart';
 
 final PageStorageBucket _bucket = PageStorageBucket();
 
@@ -247,23 +247,23 @@ class AppRoutes {
     ),
     QRoute(
       path: '/madrasahs',
-      builder: () => const Madrasahs(),
+      builder: () => const MadrasahListScreen(),
       children: [
         QRoute(
           path: '/:id',
-          builder: () => const Madrasah(),
+          builder: () => const MadrasahDetailScreen(),
           children: [
             QRoute(
               path: '/introduction',
-              builder: () => const MadrasahIntroduction(),
+              builder: () => const MadrasahIntroductionScreen(),
             ),
             QRoute(
               path: '/gallery',
-              builder: () => const MadrasahGallery(),
+              builder: () => const MadrasahGalleryScreen(),
             ),
             QRoute(
               path: '/infos/:info_id',
-              builder: () => const MadrasahInfo(),
+              builder: () => const MadrasahInfoScreen(),
             ),
           ],
         ),
@@ -273,19 +273,23 @@ class AppRoutes {
       path: '/namaz-times',
       builder: () => const NamazTimes(),
       children: [
-        QRoute(path: '/:slug', builder: () => const NamazTime()),
+        QRoute(path: '/:slug', builder: () => const NamazTimeDetailScreen()),
         QRoute(path: '/settings', builder: () => const NamazSettings()),
       ],
     ),
-    QRoute(path: '/location', builder: () => const Location()),
+    QRoute(path: '/location', builder: () => const LocationScreen()),
     QRoute(path: '/settings', builder: () => const Settings()),
     QRoute(path: '/bookmarks', builder: () => const Bookmarks()),
-    QRoute(path: '/donation', builder: () => const Donation()),
+    QRoute(path: '/donation', builder: () => const DonationScreen()),
     QRoute(path: '/qiblah', builder: () => const Qiblah()),
     QRoute(path: '/mosques', builder: () => const Mosques()),
-    QRoute(path: '/about', builder: () => const About()),
-    QRoute(path: '/contact-us', builder: () => const ContactUs()),
-    QRoute(path: '/important-matters', builder: () => const ImportantMatters()),
-    QRoute(path: '/important-matters', builder: () => const ImportantMatters()),
+    QRoute(path: '/about', builder: () => const AboutScreen()),
+    QRoute(path: '/contact-us', builder: () => const ContactUsScreen()),
+    QRoute(
+        path: '/important-matters',
+        builder: () => const ImportantMattersScreen()),
+    QRoute(
+        path: '/important-matters',
+        builder: () => const ImportantMattersScreen()),
   ];
 }

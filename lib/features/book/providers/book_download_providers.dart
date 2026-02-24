@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/downloaded_book.dart';
@@ -17,22 +18,24 @@ final _prefsProvider = FutureProvider<SharedPreferences>((ref) async {
 // ═══════════════════════════════════════════════════
 
 class DownloadedBooksNotifier
-    extends AutoDisposeAsyncNotifier<List<DownloadedBookEntry>> {
+    extends AutoDisposeAsyncNotifier<List<DownloadedBook>> {
   @override
-  Future<List<DownloadedBookEntry>> build() async {
+  Future<List<DownloadedBook>> build() async {
     final prefs = await ref.watch(_prefsProvider.future);
-    final raw = prefs.getString(_storageKey);
-    if (raw == null || raw.isEmpty) return [];
-    return DownloadedBookEntry.decodeList(raw);
+    final raw = prefs.getStringList(_storageKey) ?? [];
+    return raw.map((e) => DownloadedBook.fromJson(jsonDecode(e))).toList();
   }
 
-  Future<void> _save(List<DownloadedBookEntry> entries) async {
+  Future<void> _save(List<DownloadedBook> entries) async {
     final prefs = await ref.read(_prefsProvider.future);
-    await prefs.setString(_storageKey, DownloadedBookEntry.encodeList(entries));
+    await prefs.setStringList(
+      _storageKey,
+      entries.map((e) => jsonEncode(e.toJson())).toList(),
+    );
   }
 
   /// Add or update a downloaded book entry.
-  Future<void> saveBook(DownloadedBookEntry entry) async {
+  Future<void> saveBook(DownloadedBook entry) async {
     final current = state.value ?? [];
     // Remove existing entry with same bookId if any
     final updated = current.where((e) => e.bookId != entry.bookId).toList();
@@ -57,7 +60,7 @@ class DownloadedBooksNotifier
 }
 
 final downloadedBooksProvider = AsyncNotifierProvider.autoDispose<
-    DownloadedBooksNotifier, List<DownloadedBookEntry>>(() {
+    DownloadedBooksNotifier, List<DownloadedBook>>(() {
   return DownloadedBooksNotifier();
 });
 
@@ -67,7 +70,7 @@ final downloadedBooksProvider = AsyncNotifierProvider.autoDispose<
 
 /// Get a downloaded book entry by its bookId.
 final downloadedBookByBookIdProvider = FutureProvider.autoDispose
-    .family<DownloadedBookEntry?, String>((ref, bookId) async {
+    .family<DownloadedBook?, String>((ref, bookId) async {
   final books = await ref.watch(downloadedBooksProvider.future);
   try {
     return books.firstWhere((e) => e.bookId == bookId);
@@ -79,7 +82,7 @@ final downloadedBookByBookIdProvider = FutureProvider.autoDispose
 /// Create a downloaded book entry from a map (matches old Isar createDownloadedBookProvider API).
 final createDownloadedBookProvider = FutureProvider.autoDispose
     .family<void, Map<String, dynamic>>((ref, attrs) async {
-  final entry = DownloadedBookEntry(
+  final entry = DownloadedBook(
     bookId: attrs['bookId']?.toString() ?? '',
     title: attrs['title']?.toString(),
     excerpt: attrs['excerpt']?.toString(),

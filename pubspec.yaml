@@ -22,19 +22,11 @@ dependencies:
   qlevar_router: ^1.10.3
 
   # data
-  flutter_data: ^1.6.0
-  flutter_data_json_api_adapter:
-    git:
-      url: https://github.com/flutterdata/flutter_data_json_api_adapter.git
-      ref: 5af6c88
-  isar_community: 3.2.0-dev.4
-  isar_community_flutter_libs: 3.2.0-dev.4
   equatable: ^2.0.5
 
   # local db
   drift: ^2.10.0
   sqlite3_flutter_libs: ^0.5.13
-  json_api: ^7.0.1
 
   # form
   date_field: ^4.0.1
@@ -49,7 +41,6 @@ dependencies:
   animated_toggle_switch: ^0.8.0
   just_audio: ^0.9.40
   # just_audio_background: ^0.0.1-beta.11
-
 
   # text
   intl: ^0.19.0
@@ -79,8 +70,6 @@ dependencies:
   url_launcher: ^6.3.1
   lehttp_overrides: ^1.0.3
 
-  # builder
-  json_annotation: ^4.7.0
 
   # utility
   path: '^1.9.0'
@@ -129,25 +118,12 @@ dependencies:
   syncfusion_flutter_pdf: ^29.1.38
   upgrader: ^12.5.0
 
-  # flutter_gen: any
-
-dependency_overrides:
-  # flutter_data and isar_community_generator conflicts
-  source_gen: ^1.0.1
-  dart_style: ^2.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^3.0.1
-
-  build_runner: ^2.4.13
-  isar_community_generator: 3.2.0-dev.4
-
-  json_serializable: ^6.3.1
-  faker: ^2.0.0
-  drift_dev: ^2.10.0
 
   flutter_launcher_icons: "^0.13.1"
 

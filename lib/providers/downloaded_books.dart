@@ -1,89 +1,89 @@
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:native_app/models/downloaded_book.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:native_app/features/book/models/downloaded_book.dart';
 
-final downloadedBooksStoreProvider = FutureProvider((ref) async {
-  final dir = await getApplicationDocumentsDirectory();
+const _storageKey = 'downloaded_books_store';
 
-  return Isar.getInstance('downloadedBooks') ??
-      await Isar.open(
-        [DownloadedBookSchema],
-        directory: dir.path,
-        name: 'downloadedBooks',
-      );
-});
+Future<List<DownloadedBook>> _loadAll() async {
+  final prefs = await SharedPreferences.getInstance();
+  final raw = prefs.getStringList(_storageKey) ?? [];
+  return raw.map((e) => DownloadedBook.fromJson(jsonDecode(e))).toList();
+}
+
+Future<void> _saveAll(List<DownloadedBook> items) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setStringList(
+    _storageKey,
+    items.map((e) => jsonEncode(e.toJson())).toList(),
+  );
+}
+
+int _nextId(List<DownloadedBook> items) {
+  if (items.isEmpty) return 1;
+  return items.map((e) => e.id).reduce((a, b) => a > b ? a : b) + 1;
+}
 
 final getDownloadedBookProvider =
     FutureProvider.autoDispose.family<dynamic, int>((ref, int id) async {
-  final isar = await ref.watch(downloadedBooksStoreProvider.future);
-  return await isar.downloadedBooks.get(id);
+  final items = await _loadAll();
+  return items.cast<DownloadedBook?>().firstWhere(
+        (b) => b?.id == id,
+        orElse: () => null,
+      );
 });
 
 final getDownloadedBookByIdProvider = FutureProvider.autoDispose
     .family<dynamic, String>((ref, String bookId) async {
-  final isar = await ref.watch(downloadedBooksStoreProvider.future);
-  return await isar.downloadedBooks.where().bookIdEqualTo(bookId).findFirst();
+  final items = await _loadAll();
+  return items.cast<DownloadedBook?>().firstWhere(
+        (b) => b?.bookId == bookId,
+        orElse: () => null,
+      );
 });
 
 final createDownloadedBookProvider =
     FutureProvider.autoDispose.family<dynamic, Map>((ref, Map attrs) async {
-  final isar = await ref.watch(downloadedBooksStoreProvider.future);
+  final items = await _loadAll();
+  final newResource = DownloadedBook(
+    id: _nextId(items),
+    bookId: attrs['bookId'],
+    title: attrs['title'],
+    excerpt: attrs['excerpt'],
+    publisher: attrs['publisher'],
+    price: attrs['price'],
+    image: attrs['image'],
+    document: attrs['document'],
+    authors: attrs['authors'],
+    publishedAt: attrs['publishedAt'],
+  );
 
-  var newResource = DownloadedBook()
-    ..bookId = attrs['bookId']
-    ..title = attrs['title']
-    ..excerpt = attrs['excerpt']
-    ..publisher = attrs['publisher']
-    ..price = attrs['price']
-    ..image = attrs['image']
-    ..document = attrs['document']
-    ..authors = attrs['authors']
-    ..publishedAt = attrs['publishedAt'];
-
-  return await isar.writeTxn(() async {
-    await isar.downloadedBooks.put(newResource);
-  });
+  items.removeWhere((b) => b.bookId == newResource.bookId);
+  items.add(newResource);
+  await _saveAll(items);
 });
 
 final deleteDownloadedBookProvider = FutureProvider.autoDispose
     .family<dynamic, String>((ref, String bookId) async {
-  final isar = await ref.watch(downloadedBooksStoreProvider.future);
-
-  final resource =
-      await isar.downloadedBooks.where().bookIdEqualTo(bookId).findFirst();
-
-  if (resource != null) {
-    return await isar.writeTxn(() async {
-      await isar.downloadedBooks.delete(resource.id);
-    });
-  }
+  final items = await _loadAll();
+  items.removeWhere((b) => b.bookId == bookId);
+  await _saveAll(items);
 });
 
 class DownloadedBooksNotifier extends AutoDisposeAsyncNotifier<List> {
   @override
   Future<List> build() async {
-    final isar = await ref.watch(downloadedBooksStoreProvider.future);
-    var allResources =
-        await isar.downloadedBooks.where().sortByPublishedAtDesc().findAll();
-    return allResources;
+    final items = await _loadAll();
+    items.sort((a, b) => (b.publishedAt ?? '').compareTo(a.publishedAt ?? ''));
+    return items;
   }
 
   Future<dynamic> deleteItem(bookId) async {
-    final isar = await ref.watch(downloadedBooksStoreProvider.future);
-
-    final resource =
-        await isar.downloadedBooks.where().bookIdEqualTo(bookId).findFirst();
-
-    if (resource != null) {
-      await isar.writeTxn(() async {
-        await isar.downloadedBooks.delete(resource.id);
-      });
-
-      state = AsyncValue.data(
-        await isar.downloadedBooks.where().sortByPublishedAtDesc().findAll(),
-      );
-    }
+    final items = await _loadAll();
+    items.removeWhere((b) => b.bookId == bookId);
+    await _saveAll(items);
+    items.sort((a, b) => (b.publishedAt ?? '').compareTo(a.publishedAt ?? ''));
+    state = AsyncValue.data(items);
   }
 }
 

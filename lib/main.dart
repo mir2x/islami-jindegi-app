@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/widgets/error_pages/page_404.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,11 +19,9 @@ import 'package:native_app/theme/themes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'routes/index.dart';
-import 'screens/error_pages/page_404.dart';
 import 'firebase_options.dart';
 import 'app_widget/task.dart';
 import 'app_widget/background.dart';
-import 'main.data.dart';
 import 'package:quran_flutter/quran_flutter.dart';
 
 Future main() async {
@@ -60,11 +59,7 @@ Future main() async {
     builder: () => const Page404(),
   );
 
-  final container = ProviderContainer(
-    overrides: [configureRepositoryLocalStorage()],
-  );
-
-  await container.read(repositoryInitializerProvider.future);
+  final container = ProviderContainer();
 
   if (Platform.isAndroid) {
     // fixes Let's Encrypt SSL certificate problems with Android 7.1.1 and below

@@ -1,8 +1,7 @@
+import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/providers/geolocation.dart';
-import 'package:native_app/providers/all_models.dart';
-import 'package:native_app/objects/all_models_query.dart';
-import 'package:native_app/main.data.dart';
 
 final hijriDateSettingsProvider = FutureProvider((ref) async {
   final data = await ref.watch(preferencesAndGeolocationProvider.future);
@@ -13,15 +12,25 @@ final hijriDateSettingsProvider = FutureProvider((ref) async {
   int adjustment = localAdjustment ?? 0;
 
   if (localAdjustment == null && countryCode != null) {
-    var query = AllModelsQuery(
-      repository: ref.hijriAdjustments,
-      params: {'country-code': countryCode, 'quantity': 1},
-    );
+    try {
+      final dio = Dio(BaseOptions(
+        baseUrl: '${dotenv.env['API_HOST_NAME']}/api',
+        headers: {'Accept': 'application/vnd.api+json'},
+      ));
 
-    final adminAdjustment = await ref.read(allModelsProvider(query).future);
+      final response = await dio.get('/hijri_adjustments', queryParameters: {
+        'country-code': countryCode,
+        'quantity': 1,
+      });
 
-    if (adminAdjustment.isNotEmpty) {
-      adjustment = adminAdjustment.first.adjustment;
+      final dataList = response.data['data'] as List? ?? [];
+      if (dataList.isNotEmpty) {
+        final attrs =
+            dataList.first['attributes'] as Map<String, dynamic>? ?? {};
+        adjustment = attrs['adjustment'] is int ? attrs['adjustment'] : 0;
+      }
+    } catch (_) {
+      // Silently fail — use default adjustment of 0
     }
   }
 

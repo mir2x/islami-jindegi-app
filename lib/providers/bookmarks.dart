@@ -1,51 +1,62 @@
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:native_app/models/bookmark.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:native_app/features/bookmarks/models/bookmark.dart';
 
-final bookmarksStoreProvider = FutureProvider((ref) async {
-  final dir = await getApplicationDocumentsDirectory();
+const _storageKey = 'bookmarks_store';
 
-  return Isar.getInstance('bookmarks') ??
-      await Isar.open([BookmarkSchema], directory: dir.path, name: 'bookmarks');
-});
+Future<List<Bookmark>> _loadAll() async {
+  final prefs = await SharedPreferences.getInstance();
+  final raw = prefs.getStringList(_storageKey) ?? [];
+  return raw.map((e) => Bookmark.fromJson(jsonDecode(e))).toList();
+}
+
+Future<void> _saveAll(List<Bookmark> items) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setStringList(
+    _storageKey,
+    items.map((e) => jsonEncode(e.toJson())).toList(),
+  );
+}
+
+int _nextId(List<Bookmark> items) {
+  if (items.isEmpty) return 1;
+  return items.map((e) => e.id).reduce((a, b) => a > b ? a : b) + 1;
+}
 
 class BookmarkNotifier
     extends AutoDisposeFamilyAsyncNotifier<Bookmark?, String> {
   @override
   Future<Bookmark?> build(String arg) async {
-    final isar = await ref.watch(bookmarksStoreProvider.future);
-    final bookmark = await isar.bookmarks.where().linkEqualTo(arg).findFirst();
-    return bookmark;
+    final items = await _loadAll();
+    return items.cast<Bookmark?>().firstWhere(
+          (b) => b?.link == arg,
+          orElse: () => null,
+        );
   }
 
   Future<dynamic> createItem(Map attrs) async {
-    final isar = await ref.watch(bookmarksStoreProvider.future);
+    final items = await _loadAll();
+    final newBookmark = Bookmark(
+      id: _nextId(items),
+      type: attrs['type'],
+      title: attrs['title'],
+      link: attrs['link'],
+      createdAt: DateTime.now(),
+    );
 
-    var newBookmark = Bookmark()
-      ..type = attrs['type']
-      ..title = attrs['title']
-      ..link = attrs['link']
-      ..createdAt = DateTime.now();
-
-    await isar.writeTxn(() async {
-      await isar.bookmarks.put(newBookmark);
-    });
-
-    final createdBookmark =
-        await isar.bookmarks.where().linkEqualTo(newBookmark.link).findFirst();
-    state = AsyncValue.data(createdBookmark);
+    // Remove existing with same link (upsert behavior)
+    items.removeWhere((b) => b.link == newBookmark.link);
+    items.add(newBookmark);
+    await _saveAll(items);
+    state = AsyncValue.data(newBookmark);
   }
 
   Future<dynamic> deleteItem(id) async {
-    final isar = await ref.watch(bookmarksStoreProvider.future);
-
-    await isar.writeTxn(() async {
-      await isar.bookmarks.delete(id);
-    });
-
-    final deletedBookmark = await isar.bookmarks.get(id);
-    state = AsyncValue.data(deletedBookmark);
+    final items = await _loadAll();
+    items.removeWhere((b) => b.id == id);
+    await _saveAll(items);
+    state = const AsyncValue.data(null);
   }
 }
 
@@ -57,22 +68,19 @@ final bookmarkProvider = AsyncNotifierProvider.autoDispose
 class BookmarksNotifier extends AutoDisposeAsyncNotifier<List> {
   @override
   Future<List> build() async {
-    final isar = await ref.watch(bookmarksStoreProvider.future);
-    var allBookmarks =
-        await isar.bookmarks.where().sortByCreatedAtDesc().findAll();
-    return allBookmarks;
+    final items = await _loadAll();
+    items.sort((a, b) =>
+        (b.createdAt ?? DateTime(0)).compareTo(a.createdAt ?? DateTime(0)));
+    return items;
   }
 
   Future<dynamic> deleteItem(id) async {
-    final isar = await ref.watch(bookmarksStoreProvider.future);
-
-    await isar.writeTxn(() async {
-      await isar.bookmarks.delete(id);
-    });
-
-    state = AsyncValue.data(
-      await isar.bookmarks.where().sortByCreatedAtDesc().findAll(),
-    );
+    final items = await _loadAll();
+    items.removeWhere((b) => b.id == id);
+    await _saveAll(items);
+    items.sort((a, b) =>
+        (b.createdAt ?? DateTime(0)).compareTo(a.createdAt ?? DateTime(0)));
+    state = AsyncValue.data(items);
   }
 }
 

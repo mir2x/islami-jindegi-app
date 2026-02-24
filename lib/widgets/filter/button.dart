@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:native_app/providers/single_model.dart';
-import 'package:native_app/objects/single_model_query.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/helpers/trancate_with_ellipsis.dart';
@@ -13,7 +11,6 @@ class FilterButton extends ConsumerWidget {
     required this.children,
     this.label,
     this.active = false,
-    this.selectedItemQuery,
     required this.selectedItemLabel,
     this.selectedItemProvider,
   });
@@ -21,11 +18,9 @@ class FilterButton extends ConsumerWidget {
   final List<Widget> children;
   final String? label;
   final bool active;
-  final SingleModelQuery? selectedItemQuery;
   final Function(dynamic) selectedItemLabel;
 
-  /// When provided, bypasses selectedItemQuery + singleModelProvider entirely.
-  /// Should be any Riverpod provider that returns an AsyncValue.
+  /// Riverpod provider that returns an AsyncValue of the selected item.
   final dynamic selectedItemProvider;
 
   @override
@@ -83,7 +78,6 @@ class FilterButton extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               if (selectedItemProvider != null) ...[
-                // New path: use the provider directly (no Flutter Data)
                 Builder(
                   builder: (context) {
                     var asyncValue = ref.watch(selectedItemProvider);
@@ -106,35 +100,6 @@ class FilterButton extends ConsumerWidget {
                       );
                     }
                     return Text(filterLabel, style: textTheme.labelMedium);
-                  },
-                ),
-              ] else if (selectedItemQuery != null) ...[
-                // Legacy path: use singleModelProvider (Flutter Data)
-                Builder(
-                  builder: (context) {
-                    var selectedItemProviderValue = ref.watch(
-                      singleModelProvider(selectedItemQuery!),
-                    );
-
-                    return selectedItemProviderValue.when(
-                      loading: () {
-                        return const SizedBox(
-                          width: 12,
-                          height: 12,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        );
-                      },
-                      error: (error, _) => Text(error.toString()),
-                      data: (item) {
-                        String label = selectedItemLabel(item);
-                        int cutoff = isSmallMobile ? 13 : 15;
-
-                        return Text(
-                          truncateWithEllipsis(label, cutoff),
-                          style: textTheme.labelMedium,
-                        );
-                      },
-                    );
                   },
                 ),
               ] else ...[

@@ -6,7 +6,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/providers/downloaded_bayans.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
-import 'package:native_app/screens/error_pages/model_exception_handler.dart';
+import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';

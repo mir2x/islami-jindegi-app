@@ -7,7 +7,7 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/theme/colors.dart';
-import 'package:native_app/screens/error_pages/model_exception_handler.dart';
+import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import '../providers/masail_providers.dart';
 
 class AskQuestionScreen extends ConsumerWidget {

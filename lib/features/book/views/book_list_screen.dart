@@ -9,7 +9,7 @@ import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/widgets/buttons/floating_downloaded.dart';
-import 'package:native_app/screens/books/image.dart';
+import 'package:native_app/features/book/views/image.dart';
 import 'package:native_app/theme/colors.dart';
 import 'package:flutter_svg/svg.dart';
 import '../providers/book_providers.dart';

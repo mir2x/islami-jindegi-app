@@ -10,7 +10,7 @@ import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
-import 'package:native_app/screens/error_pages/model_exception_handler.dart';
+import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
