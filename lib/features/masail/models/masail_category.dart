@@ -26,4 +26,16 @@ class MasailCategory {
       masailSubcategories: resolvedSubcategories,
     );
   }
+
+  factory MasailCategory.fromDb(
+    Map<String, dynamic> row, {
+    List<MasailSubcategory> subcategories = const [],
+  }) {
+    return MasailCategory(
+      id: row['id'].toString(),
+      title: row['title'] ?? '',
+      position: row['position'] is int ? row['position'] : null,
+      masailSubcategories: subcategories,
+    );
+  }
 }

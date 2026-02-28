@@ -173,16 +173,27 @@ class BayanListScreen extends ConsumerWidget {
                 qParams: qParams,
                 resourceFetcher: (Map<String, dynamic> params) async {
                   final api = ref.read(bayanApiServiceProvider);
-                  return await api.fetchBayans(
-                    page: params['page'] ?? 1,
-                    perPage: params['per_page'] ?? 9,
-                    search: qParams['search'],
-                    speakerId: qParams['speakerId'],
-                    bayanCategoryId: qParams['bayanCategoryId'],
-                    dateRange: qParams['dateRange'],
-                    dateFrom: qParams['dateFrom'],
-                    dateTo: qParams['dateTo'],
-                  );
+                  final offline = ref.read(bayanOfflineServiceProvider);
+                  try {
+                    return await api.fetchBayans(
+                      page: params['page'] ?? 1,
+                      perPage: params['per_page'] ?? 9,
+                      search: qParams['search'],
+                      speakerId: qParams['speakerId'],
+                      bayanCategoryId: qParams['bayanCategoryId'],
+                      dateRange: qParams['dateRange'],
+                      dateFrom: qParams['dateFrom'],
+                      dateTo: qParams['dateTo'],
+                    );
+                  } catch (_) {
+                    return await offline.queryBayans(
+                      page: params['page'] ?? 1,
+                      perPage: params['per_page'] ?? 9,
+                      search: qParams['search'],
+                      speakerId: qParams['speakerId'],
+                      bayanCategoryId: qParams['bayanCategoryId'],
+                    );
+                  }
                 },
                 itemBuilder: (_, item, __) {
                   return InkWell(

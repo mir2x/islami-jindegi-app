@@ -1,4 +1,5 @@
-/// Pure Dart model for Article — no Flutter Data dependency.
+import 'dart:convert';
+
 class ArticleItem {
   final String id;
   final String title;
@@ -11,8 +12,6 @@ class ArticleItem {
   final String? publishedAt;
   final String? createdAt;
   final String? updatedAt;
-
-  /// Resolved from the included article-author relationship
   final String? authorName;
 
   ArticleItem({
@@ -49,5 +48,36 @@ class ArticleItem {
       updatedAt: attrs['updated-at'],
       authorName: resolvedAuthorName,
     );
+  }
+
+  factory ArticleItem.fromDb(
+    Map<String, dynamic> row, {
+    String? authorName,
+  }) {
+    return ArticleItem(
+      id: row['id'].toString(),
+      title: row['title'] ?? '',
+      body: row['body'] ?? '',
+      excerpt: row['excerpt'],
+      language: row['language'] ?? 'bn',
+      document: _decodeJson(row['document_data']),
+      position: row['position'] is int ? row['position'] : null,
+      published: row['published'] == 1 || row['published'] == true,
+      publishedAt: row['published_at'],
+      createdAt: row['created_at'],
+      updatedAt: row['updated_at'],
+      authorName: authorName,
+    );
+  }
+
+  static Map<dynamic, dynamic>? _decodeJson(dynamic value) {
+    if (value == null) return null;
+    if (value is Map) return value;
+    if (value is String) {
+      try {
+        return json.decode(value) as Map;
+      } catch (_) {}
+    }
+    return null;
   }
 }

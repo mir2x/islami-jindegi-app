@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 /// Pure Dart model for Bayan — no Flutter Data dependency.
 class Bayan {
   final String id;
@@ -49,5 +51,33 @@ class Bayan {
       updatedAt: attrs['updated-at'],
       speakerName: resolvedSpeakerName,
     );
+  }
+
+  factory Bayan.fromDb(Map<String, dynamic> row, {String? speakerName}) {
+    return Bayan(
+      id: row['id'].toString(),
+      title: row['title'] ?? '',
+      excerpt: row['excerpt'],
+      language: row['language'] ?? 'bn',
+      location: row['location'],
+      audio: _decodeJson(row['audio_data']),
+      published: row['published'] == 1 || row['published'] == true,
+      publishedAt: row['published_at'] ?? '',
+      position: row['position'] is int ? row['position'] : null,
+      createdAt: row['created_at'],
+      updatedAt: row['updated_at'],
+      speakerName: speakerName,
+    );
+  }
+
+  static Map<dynamic, dynamic>? _decodeJson(dynamic value) {
+    if (value == null) return null;
+    if (value is Map) return value;
+    if (value is String) {
+      try {
+        return json.decode(value) as Map;
+      } catch (_) {}
+    }
+    return null;
   }
 }

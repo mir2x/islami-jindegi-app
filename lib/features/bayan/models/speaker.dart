@@ -27,4 +27,15 @@ class Speaker {
       updatedAt: attrs['updated-at'],
     );
   }
+
+  factory Speaker.fromDb(Map<String, dynamic> row) {
+    return Speaker(
+      id: row['id'].toString(),
+      name: row['name'] ?? '',
+      info: row['info'],
+      position: row['position'] is int ? row['position'] : null,
+      createdAt: row['created_at'],
+      updatedAt: row['updated_at'],
+    );
+  }
 }

@@ -18,4 +18,12 @@ class PageContent {
       slug: attrs['slug'],
     );
   }
+
+  factory PageContent.fromDb(Map<String, dynamic> row) {
+    return PageContent(
+      id: row['id'].toString(),
+      body: row['body'],
+      slug: row['slug'],
+    );
+  }
 }

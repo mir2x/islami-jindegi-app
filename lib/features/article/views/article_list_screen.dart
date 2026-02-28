@@ -202,14 +202,26 @@ class ArticleListScreen extends ConsumerWidget {
                 qParams: qParams,
                 resourceFetcher: (Map<String, dynamic> params) async {
                   final api = ref.read(articleApiServiceProvider);
-                  return await api.fetchArticles(
-                    page: params['page'] ?? 1,
-                    perPage: params['per_page'] ?? 9,
-                    search: qParams['search'],
-                    articleAuthorId: qParams['articleAuthorId'],
-                    articleCategoryId: qParams['articleCategoryId'],
-                    articleSubcategoryId: qParams['articleSubcategoryId'],
-                  );
+                  final offline = ref.read(articleOfflineServiceProvider);
+                  try {
+                    return await api.fetchArticles(
+                      page: params['page'] ?? 1,
+                      perPage: params['per_page'] ?? 9,
+                      search: qParams['search'],
+                      articleAuthorId: qParams['articleAuthorId'],
+                      articleCategoryId: qParams['articleCategoryId'],
+                      articleSubcategoryId: qParams['articleSubcategoryId'],
+                    );
+                  } catch (_) {
+                    return await offline.queryArticles(
+                      page: params['page'] ?? 1,
+                      perPage: params['per_page'] ?? 9,
+                      search: qParams['search'],
+                      articleAuthorId: qParams['articleAuthorId'],
+                      articleCategoryId: qParams['articleCategoryId'],
+                      articleSubcategoryId: qParams['articleSubcategoryId'],
+                    );
+                  }
                 },
                 itemBuilder: (_, item, __) {
                   return InkWell(

@@ -1,4 +1,3 @@
-/// Pure Dart model for ArticleAuthor.
 class ArticleAuthor {
   final String id;
   final String name;
@@ -19,6 +18,15 @@ class ArticleAuthor {
       name: attrs['name'] ?? '',
       info: attrs['info'],
       position: attrs['position'] is int ? attrs['position'] : null,
+    );
+  }
+
+  factory ArticleAuthor.fromDb(Map<String, dynamic> row) {
+    return ArticleAuthor(
+      id: row['id'].toString(),
+      name: row['name'] ?? '',
+      info: row['info'],
+      position: row['position'] is int ? row['position'] : null,
     );
   }
 }

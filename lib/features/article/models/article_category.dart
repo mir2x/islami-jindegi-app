@@ -1,6 +1,5 @@
 import 'article_subcategory.dart';
 
-/// Pure Dart model for ArticleCategory with resolved subcategories.
 class ArticleCategory {
   final String id;
   final String title;
@@ -24,6 +23,18 @@ class ArticleCategory {
       title: attrs['title'] ?? '',
       position: attrs['position'] is int ? attrs['position'] : null,
       articleSubcategories: resolvedSubcategories,
+    );
+  }
+
+  factory ArticleCategory.fromDb(
+    Map<String, dynamic> row, {
+    List<ArticleSubcategory> subcategories = const [],
+  }) {
+    return ArticleCategory(
+      id: row['id'].toString(),
+      title: row['title'] ?? '',
+      position: row['position'] is int ? row['position'] : null,
+      articleSubcategories: subcategories,
     );
   }
 }

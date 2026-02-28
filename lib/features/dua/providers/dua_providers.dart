@@ -1,12 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dua_api_service.dart';
+import 'dua_offline_service.dart';
 import '../models/dua.dart';
 import '../models/dua_category.dart';
 
-// ───────────────────── API Service ─────────────────────
+// ───────────────────── Services ─────────────────────
 
 final duaApiServiceProvider = Provider<DuaApiService>((ref) {
   return DuaApiService();
+});
+
+final duaOfflineServiceProvider = Provider<DuaOfflineService>((ref) {
+  return DuaOfflineService();
 });
 
 // ───────────────────── Query Params ─────────────────────
@@ -28,15 +33,23 @@ final duaQueryParamsProvider =
   return DuaQueryParamsNotifier();
 });
 
-// ───────────────────── All Duas (offline) ─────────────────────
+// ───────────────────── All Duas (offline-first) ─────────────────────
 
 final allDuasProvider = FutureProvider.autoDispose
     .family<List<DuaItem>, Map<String, dynamic>>((ref, params) async {
   final api = ref.read(duaApiServiceProvider);
-  return api.fetchDuas(
-    search: params['search'],
-    duaCategoryId: params['duaCategoryId'],
-  );
+  final offline = ref.read(duaOfflineServiceProvider);
+  try {
+    return await api.fetchDuas(
+      search: params['search'],
+      duaCategoryId: params['duaCategoryId'],
+    );
+  } catch (_) {
+    return await offline.queryDuas(
+      search: params['search'],
+      duaCategoryId: params['duaCategoryId'],
+    );
+  }
 });
 
 // ───────────────────── Single Item Providers ─────────────────────
@@ -44,11 +57,25 @@ final allDuasProvider = FutureProvider.autoDispose
 final singleDuaProvider =
     FutureProvider.autoDispose.family<DuaItem, String>((ref, id) async {
   final api = ref.read(duaApiServiceProvider);
-  return api.fetchSingleDua(id);
+  final offline = ref.read(duaOfflineServiceProvider);
+  try {
+    return await api.fetchSingleDua(id);
+  } catch (_) {
+    final item = await offline.findDuaById(id);
+    if (item != null) return item;
+    rethrow;
+  }
 });
 
 final singleDuaCategoryProvider =
     FutureProvider.autoDispose.family<DuaCategory, String>((ref, id) async {
   final api = ref.read(duaApiServiceProvider);
-  return api.fetchCategory(id);
+  final offline = ref.read(duaOfflineServiceProvider);
+  try {
+    return await api.fetchCategory(id);
+  } catch (_) {
+    final item = await offline.findCategoryById(id);
+    if (item != null) return item;
+    rethrow;
+  }
 });

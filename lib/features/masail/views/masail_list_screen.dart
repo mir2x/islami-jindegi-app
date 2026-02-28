@@ -236,15 +236,28 @@ class MasailListScreen extends ConsumerWidget {
                 qParams: qParams,
                 resourceFetcher: (Map<String, dynamic> params) async {
                   final api = ref.read(masailApiServiceProvider);
-                  return await api.fetchMasail(
-                    page: params['page'] ?? 1,
-                    perPage: params['per_page'] ?? 9,
-                    search: qParams['search'],
-                    masailAuthorId: qParams['masailAuthorId'],
-                    masailCategoryId: qParams['masailCategoryId'],
-                    masailSubcategoryId: qParams['masailSubcategoryId'],
-                    hasAudio: qParams['hasAudio'],
-                  );
+                  final offline = ref.read(masailOfflineServiceProvider);
+                  try {
+                    return await api.fetchMasail(
+                      page: params['page'] ?? 1,
+                      perPage: params['per_page'] ?? 9,
+                      search: qParams['search'],
+                      masailAuthorId: qParams['masailAuthorId'],
+                      masailCategoryId: qParams['masailCategoryId'],
+                      masailSubcategoryId: qParams['masailSubcategoryId'],
+                      hasAudio: qParams['hasAudio'],
+                    );
+                  } catch (_) {
+                    return await offline.queryMasails(
+                      page: params['page'] ?? 1,
+                      perPage: params['per_page'] ?? 9,
+                      search: qParams['search'],
+                      masailAuthorId: qParams['masailAuthorId'],
+                      masailCategoryId: qParams['masailCategoryId'],
+                      masailSubcategoryId: qParams['masailSubcategoryId'],
+                      hasAudio: qParams['hasAudio'] == true,
+                    );
+                  }
                 },
                 itemBuilder: (_, item, __) {
                   return InkWell(

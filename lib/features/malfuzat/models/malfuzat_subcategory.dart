@@ -18,4 +18,12 @@ class MalfuzatSubcategory {
       position: attrs['position'] is int ? attrs['position'] : null,
     );
   }
+
+  factory MalfuzatSubcategory.fromDb(Map<String, dynamic> row) {
+    return MalfuzatSubcategory(
+      id: row['id'].toString(),
+      title: row['title'] ?? '',
+      position: row['position'] is int ? row['position'] : null,
+    );
+  }
 }

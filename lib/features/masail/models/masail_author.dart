@@ -21,4 +21,13 @@ class MasailAuthor {
       position: attrs['position'] is int ? attrs['position'] : null,
     );
   }
+
+  factory MasailAuthor.fromDb(Map<String, dynamic> row) {
+    return MasailAuthor(
+      id: row['id'].toString(),
+      name: row['name'] ?? '',
+      info: row['info'],
+      position: row['position'] is int ? row['position'] : null,
+    );
+  }
 }

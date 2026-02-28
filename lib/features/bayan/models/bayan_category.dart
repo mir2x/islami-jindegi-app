@@ -1,4 +1,3 @@
-/// Pure Dart model for BayanCategory — no Flutter Data dependency.
 class BayanCategory {
   final String id;
   final String title;
@@ -22,6 +21,16 @@ class BayanCategory {
       position: attrs['position'] is int ? attrs['position'] : null,
       createdAt: attrs['created-at'],
       updatedAt: attrs['updated-at'],
+    );
+  }
+
+  factory BayanCategory.fromDb(Map<String, dynamic> row) {
+    return BayanCategory(
+      id: row['id'].toString(),
+      title: row['title'] ?? '',
+      position: row['position'] is int ? row['position'] : null,
+      createdAt: row['created_at'],
+      updatedAt: row['updated_at'],
     );
   }
 }

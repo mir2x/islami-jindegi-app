@@ -1,14 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'malfuzat_api_service.dart';
+import 'malfuzat_offline_service.dart';
 import '../models/malfuzat.dart';
 import '../models/malfuzat_author.dart';
 import '../models/malfuzat_category.dart';
 import '../models/malfuzat_subcategory.dart';
 
-// ───────────────────── API Service ─────────────────────
+// ───────────────────── Services ─────────────────────
 
 final malfuzatApiServiceProvider = Provider<MalfuzatApiService>((ref) {
   return MalfuzatApiService();
+});
+
+final malfuzatOfflineServiceProvider =
+    Provider<MalfuzatOfflineService>((ref) {
+  return MalfuzatOfflineService();
 });
 
 // ───────────────────── Query Params ─────────────────────
@@ -36,23 +42,51 @@ final malfuzatQueryParamsProvider =
 final singleMalfuzatProvider =
     FutureProvider.autoDispose.family<MalfuzatItem, String>((ref, id) async {
   final api = ref.read(malfuzatApiServiceProvider);
-  return api.fetchSingleMalfuzat(id);
+  final offline = ref.read(malfuzatOfflineServiceProvider);
+  try {
+    return await api.fetchSingleMalfuzat(id);
+  } catch (_) {
+    final item = await offline.findMalfuzatById(id);
+    if (item != null) return item;
+    rethrow;
+  }
 });
 
 final singleMalfuzatAuthorProvider =
     FutureProvider.autoDispose.family<MalfuzatAuthor, String>((ref, id) async {
   final api = ref.read(malfuzatApiServiceProvider);
-  return api.fetchAuthor(id);
+  final offline = ref.read(malfuzatOfflineServiceProvider);
+  try {
+    return await api.fetchAuthor(id);
+  } catch (_) {
+    final item = await offline.findAuthorById(id);
+    if (item != null) return item;
+    rethrow;
+  }
 });
 
 final singleMalfuzatCategoryProvider = FutureProvider.autoDispose
     .family<MalfuzatCategory, String>((ref, id) async {
   final api = ref.read(malfuzatApiServiceProvider);
-  return api.fetchCategory(id);
+  final offline = ref.read(malfuzatOfflineServiceProvider);
+  try {
+    return await api.fetchCategory(id);
+  } catch (_) {
+    final item = await offline.findCategoryById(id);
+    if (item != null) return item;
+    rethrow;
+  }
 });
 
 final singleMalfuzatSubcategoryProvider = FutureProvider.autoDispose
     .family<MalfuzatSubcategory, String>((ref, id) async {
   final api = ref.read(malfuzatApiServiceProvider);
-  return api.fetchSubcategory(id);
+  final offline = ref.read(malfuzatOfflineServiceProvider);
+  try {
+    return await api.fetchSubcategory(id);
+  } catch (_) {
+    final item = await offline.findSubcategoryById(id);
+    if (item != null) return item;
+    rethrow;
+  }
 });

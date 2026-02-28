@@ -1,4 +1,3 @@
-/// Pure Dart model for DuaCategory.
 class DuaCategory {
   final String id;
   final String title;
@@ -16,6 +15,14 @@ class DuaCategory {
       id: resource['id']?.toString() ?? '',
       title: attrs['title'] ?? '',
       position: attrs['position'] is int ? attrs['position'] : null,
+    );
+  }
+
+  factory DuaCategory.fromDb(Map<String, dynamic> row) {
+    return DuaCategory(
+      id: row['id'].toString(),
+      title: row['title'] ?? '',
+      position: row['position'] is int ? row['position'] : null,
     );
   }
 }

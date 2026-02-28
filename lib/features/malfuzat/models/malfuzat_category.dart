@@ -26,4 +26,16 @@ class MalfuzatCategory {
       malfuzatSubcategories: resolvedSubcategories,
     );
   }
+
+  factory MalfuzatCategory.fromDb(
+    Map<String, dynamic> row, {
+    List<MalfuzatSubcategory> subcategories = const [],
+  }) {
+    return MalfuzatCategory(
+      id: row['id'].toString(),
+      title: row['title'] ?? '',
+      position: row['position'] is int ? row['position'] : null,
+      malfuzatSubcategories: subcategories,
+    );
+  }
 }

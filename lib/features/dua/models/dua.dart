@@ -1,4 +1,5 @@
-/// Pure Dart model for Dua — no Flutter Data dependency.
+import 'dart:convert';
+
 class DuaItem {
   final String id;
   final String title;
@@ -41,5 +42,32 @@ class DuaItem {
       createdAt: attrs['created-at'],
       updatedAt: attrs['updated-at'],
     );
+  }
+
+  factory DuaItem.fromDb(Map<String, dynamic> row) {
+    return DuaItem(
+      id: row['id'].toString(),
+      title: row['title'] ?? '',
+      body: row['body'] ?? '',
+      excerpt: row['excerpt'],
+      language: row['language'] ?? 'bn',
+      audio: _decodeJson(row['audio_data']),
+      document: _decodeJson(row['document_data']),
+      position: row['position'] is int ? row['position'] : null,
+      published: row['published'] == 1 || row['published'] == true,
+      createdAt: row['created_at'],
+      updatedAt: row['updated_at'],
+    );
+  }
+
+  static Map<dynamic, dynamic>? _decodeJson(dynamic value) {
+    if (value == null) return null;
+    if (value is Map) return value;
+    if (value is String) {
+      try {
+        return json.decode(value) as Map;
+      } catch (_) {}
+    }
+    return null;
   }
 }

@@ -234,15 +234,28 @@ class MalfuzatListScreen extends ConsumerWidget {
                 qParams: qParams,
                 resourceFetcher: (Map<String, dynamic> params) async {
                   final api = ref.read(malfuzatApiServiceProvider);
-                  return await api.fetchMalfuzat(
-                    page: params['page'] ?? 1,
-                    perPage: params['per_page'] ?? 9,
-                    search: qParams['search'],
-                    malfuzatAuthorId: qParams['malfuzatAuthorId'],
-                    malfuzatCategoryId: qParams['malfuzatCategoryId'],
-                    malfuzatSubcategoryId: qParams['malfuzatSubcategoryId'],
-                    hasAudio: qParams['hasAudio'],
-                  );
+                  final offline = ref.read(malfuzatOfflineServiceProvider);
+                  try {
+                    return await api.fetchMalfuzat(
+                      page: params['page'] ?? 1,
+                      perPage: params['per_page'] ?? 9,
+                      search: qParams['search'],
+                      malfuzatAuthorId: qParams['malfuzatAuthorId'],
+                      malfuzatCategoryId: qParams['malfuzatCategoryId'],
+                      malfuzatSubcategoryId: qParams['malfuzatSubcategoryId'],
+                      hasAudio: qParams['hasAudio'],
+                    );
+                  } catch (_) {
+                    return await offline.queryMalfuzats(
+                      page: params['page'] ?? 1,
+                      perPage: params['per_page'] ?? 9,
+                      search: qParams['search'],
+                      malfuzatAuthorId: qParams['malfuzatAuthorId'],
+                      malfuzatCategoryId: qParams['malfuzatCategoryId'],
+                      malfuzatSubcategoryId: qParams['malfuzatSubcategoryId'],
+                      hasAudio: qParams['hasAudio'] == true,
+                    );
+                  }
                 },
                 itemBuilder: (_, item, __) {
                   return InkWell(
