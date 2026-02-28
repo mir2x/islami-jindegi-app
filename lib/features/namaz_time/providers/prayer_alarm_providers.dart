@@ -67,21 +67,42 @@ final prayerAfterOffsetProvider =
   return PrayerAfterOffsetNotifier();
 });
 
-// ───────────────────── Custom Sound ─────────────────────
+// ───────────────────── Repeat Days ─────────────────────
 
-class AlarmSoundNotifier extends AsyncNotifier<String?> {
+class PrayerRepeatDaysNotifier
+    extends FamilyAsyncNotifier<Set<int>, String> {
   @override
-  Future<String?> build() async {
-    return await PrayerAlarmService.getCustomSound();
+  Future<Set<int>> build(String arg) async {
+    return await PrayerAlarmService.getRepeatDays(arg);
   }
 
-  Future<void> setSound(String? path) async {
-    await PrayerAlarmService.setCustomSound(path);
-    state = AsyncValue.data(path);
+  Future<void> setDays(Set<int> days) async {
+    await PrayerAlarmService.setRepeatDays(arg, days);
+    state = AsyncValue.data(days.isEmpty ? {1, 2, 3, 4, 5, 6, 7} : days);
+  }
+}
+
+final prayerRepeatDaysProvider =
+    AsyncNotifierProvider.family<PrayerRepeatDaysNotifier, Set<int>, String>(
+        () {
+  return PrayerRepeatDaysNotifier();
+});
+
+// ───────────────────── Azan Sound ─────────────────────
+
+class AlarmSoundNotifier extends AsyncNotifier<String> {
+  @override
+  Future<String> build() async {
+    return await PrayerAlarmService.getSoundKey();
+  }
+
+  Future<void> setSound(String soundKey) async {
+    await PrayerAlarmService.setSoundKey(soundKey);
+    state = AsyncValue.data(soundKey);
   }
 }
 
 final alarmSoundProvider =
-    AsyncNotifierProvider<AlarmSoundNotifier, String?>(() {
+    AsyncNotifierProvider<AlarmSoundNotifier, String>(() {
   return AlarmSoundNotifier();
 });

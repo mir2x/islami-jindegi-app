@@ -255,5 +255,8 @@
   "defaultSound": "ডিফল্ট",
   "stopAlarm": "বন্ধ করুন",
   "allAlarms": "সকল এলার্ম",
-  "noOffset": "ওয়াক্তের সময়ে"
+  "noOffset": "ওয়াক্তের সময়ে",
+  "azanSound": "আযানের সাউন্ড",
+  "repeatDays": "পুনরাবৃত্তি",
+  "everyday": "প্রতিদিন"
 }

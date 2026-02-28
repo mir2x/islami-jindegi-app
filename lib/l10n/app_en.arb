@@ -248,5 +248,8 @@
   "defaultSound": "Default",
   "stopAlarm": "Stop",
   "allAlarms": "All Alarms",
-  "noOffset": "At waqt time"
+  "noOffset": "At waqt time",
+  "azanSound": "Azan Sound",
+  "repeatDays": "Repeat",
+  "everyday": "Every day"
 }

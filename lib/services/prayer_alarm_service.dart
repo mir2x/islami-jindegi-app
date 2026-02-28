@@ -37,11 +37,18 @@ class PrayerAlarmService {
     'isha': 205,
   };
 
-  /// Default alarm sound asset path
-  static const String defaultSoundPath = 'assets/sounds/default_alarm.mp3';
+  /// Available azan sound asset paths
+  static const List<Map<String, String>> azanSounds = [
+    {'key': 'default', 'path': 'assets/sounds/azan_default.mp3', 'labelEn': 'Default Azan', 'labelBn': 'ডিফল্ট আযান'},
+    {'key': 'fajr', 'path': 'assets/sounds/azan_fajr.mp3', 'labelEn': 'Fajr Azan', 'labelBn': 'ফজরের আযান'},
+    {'key': 'full', 'path': 'assets/sounds/azan_full.mp3', 'labelEn': 'Full Azan', 'labelBn': 'পূর্ণ আযান'},
+    {'key': 'short', 'path': 'assets/sounds/azan_short.mp3', 'labelEn': 'Short Azan', 'labelBn': 'সংক্ষিপ্ত আযান'},
+  ];
 
-  /// Available offset options in minutes
-  static const List<int> offsetOptions = [0, 5, 10, 15, 20, 30];
+  static const String defaultSoundKey = 'default';
+
+  /// Maximum offset in minutes for the slider
+  static const int maxOffsetMinutes = 60;
 
   // ───────────────────── Initialization ─────────────────────
 
@@ -55,7 +62,8 @@ class PrayerAlarmService {
   static String _enabledKey(String prayerKey) => 'alarm_${prayerKey}_enabled';
   static String _beforeKey(String prayerKey) => 'alarm_${prayerKey}_before';
   static String _afterKey(String prayerKey) => 'alarm_${prayerKey}_after';
-  static const String _customSoundKey = 'alarm_custom_sound';
+  static String _repeatDaysKey(String prayerKey) => 'alarm_${prayerKey}_repeat_days';
+  static const String _soundKey = 'alarm_sound_key';
 
   // ───────────────────── State Getters ─────────────────────
 
@@ -74,9 +82,27 @@ class PrayerAlarmService {
     return prefs.getInt(_afterKey(prayerKey)) ?? 0;
   }
 
-  static Future<String?> getCustomSound() async {
+  /// Returns selected repeat days as a Set of weekday ints (1=Mon … 7=Sun).
+  /// Default is all 7 days.
+  static Future<Set<int>> getRepeatDays(String prayerKey) async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_customSoundKey);
+    final stored = prefs.getStringList(_repeatDaysKey(prayerKey));
+    if (stored == null) return {1, 2, 3, 4, 5, 6, 7};
+    return stored.map(int.parse).toSet();
+  }
+
+  /// Returns the selected sound key (defaults to 'default')
+  static Future<String> getSoundKey() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_soundKey) ?? defaultSoundKey;
+  }
+
+  static String getSoundPath(String soundKey) {
+    final match = azanSounds.firstWhere(
+      (s) => s['key'] == soundKey,
+      orElse: () => azanSounds.first,
+    );
+    return match['path']!;
   }
 
   static Future<Map<String, bool>> getAllAlarmStates() async {
@@ -125,13 +151,26 @@ class PrayerAlarmService {
     }
   }
 
-  static Future<void> setCustomSound(String? filePath) async {
+  /// Saves repeat days. Pass an empty set to mean "every day".
+  static Future<void> setRepeatDays(String prayerKey, Set<int> days) async {
     final prefs = await SharedPreferences.getInstance();
-    if (filePath != null) {
-      await prefs.setString(_customSoundKey, filePath);
-    } else {
-      await prefs.remove(_customSoundKey);
+    // Empty = every day — store all 7
+    final toStore = days.isEmpty ? {1, 2, 3, 4, 5, 6, 7} : days;
+    await prefs.setStringList(
+      _repeatDaysKey(prayerKey),
+      toStore.map((d) => d.toString()).toList(),
+    );
+
+    if (await isAlarmEnabled(prayerKey)) {
+      await _scheduleAlarmsForPrayer(prayerKey);
     }
+  }
+
+  static Future<void> setSoundKey(String soundKey) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_soundKey, soundKey);
+    // Reschedule all enabled alarms with the new sound
+    await scheduleAllAlarms();
   }
 
   // ───────────────────── Scheduling ─────────────────────
@@ -166,10 +205,16 @@ class PrayerAlarmService {
     }
   }
 
-  /// Schedule both before and after alarms for a specific prayer
+  /// Schedule both before and after alarms for a specific prayer,
+  /// only if today's weekday is in the prayer's repeat days.
   static Future<void> _scheduleAlarmsForPrayer(String prayerKey) async {
     // First cancel existing alarms for this prayer
     await cancelAlarm(prayerKey);
+
+    // Check if today is a selected repeat day
+    final repeatDays = await getRepeatDays(prayerKey);
+    final todayWeekday = DateTime.now().weekday; // 1=Mon … 7=Sun
+    if (!repeatDays.contains(todayWeekday)) return;
 
     // Get prayer time
     DateTime? prayerTime = await _getPrayerTime(prayerKey);
@@ -177,8 +222,8 @@ class PrayerAlarmService {
 
     int beforeOffset = await getBeforeOffset(prayerKey);
     int afterOffset = await getAfterOffset(prayerKey);
-    String? customSound = await getCustomSound();
-    String soundPath = customSound ?? defaultSoundPath;
+    String soundKey = await getSoundKey();
+    String soundPath = getSoundPath(soundKey);
 
     final prefs = await SharedPreferences.getInstance();
     String locale = prefs.getString('locale') ?? 'bn';
