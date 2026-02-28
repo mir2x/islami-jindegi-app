@@ -62,7 +62,6 @@ dependencies:
   open_filex: ^4.6.0
   share_plus: ^10.1.4
   wakelock_plus: ^1.2.10
-  flutter_alarm_clock: ^0.1.2
   webview_flutter: ^4.8.0
 
   # http
@@ -117,6 +116,7 @@ dependencies:
   syncfusion_flutter_core: ^29.1.38
   syncfusion_flutter_pdf: ^29.1.38
   upgrader: ^12.5.0
+  alarm: ^5.1.5
 
 
 dev_dependencies:
@@ -142,6 +142,7 @@ flutter:
     - assets/images/books/
     - assets/images/quran-qitabs/
     - assets/audios/0.mp3
+    - assets/sounds/
     - assets/db/offline_location_2.sqlite3
 
   fonts:

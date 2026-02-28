@@ -235,5 +235,18 @@
   "downloadErrorMsg": "There has been a problem while downloading the file. Please check your network connection and try again.",
   "documentLoadErrorMsg": "There has been a problem loading the document. Please try again.",
   "connectToInternetMsg": "Please connect to the Internet",
-  "tryAgain": "Please try again"
+  "tryAgain": "Please try again",
+
+  "prayerAlarm": "Prayer Alarm",
+  "alarmEnabled": "Alarm enabled",
+  "alarmDisabled": "Alarm disabled",
+  "alarmSettings": "Alarm Settings",
+  "beforeWaqt": "Before waqt",
+  "afterWaqt": "After waqt",
+  "prayerTimeAlert": "Time for prayer",
+  "customSound": "Custom Sound",
+  "defaultSound": "Default",
+  "stopAlarm": "Stop",
+  "allAlarms": "All Alarms",
+  "noOffset": "At waqt time"
 }

@@ -180,73 +180,92 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
             const SizedBox(height: 10),
             const CurrentLocation(alignment: MainAxisAlignment.center),
             const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                InkWell(
-                  onTap: () => QR.to('qiblah'),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isSmallMobile ? 5 : 10,
-                      vertical: 7,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(locales.qiblah),
-                        SizedBox(width: isSmallMobile ? 4 : 6),
-                        SvgPicture.asset(
-                          'assets/images/icons/kaaba.svg',
-                          fit: BoxFit.scaleDown,
-                          width: 20,
-                          height: 20,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(width: isSmallMobile ? 6 : 10),
-                InkWell(
-                  onTap: () async {
-                    await ref
-                        .read(geolocationProvider.notifier)
-                        .updateCoordinates();
-                    QR.to('mosques');
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isSmallMobile ? 5 : 10,
-                      vertical: 7,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(locales.mosques),
-                        SizedBox(width: isSmallMobile ? 4 : 6),
-                        const Icon(Icons.mosque),
-                      ],
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () => QR.to('qiblah'),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isSmallMobile ? 5 : 10,
+                        vertical: 7,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(locales.qiblah),
+                          SizedBox(width: isSmallMobile ? 4 : 6),
+                          SvgPicture.asset(
+                            'assets/images/icons/kaaba.svg',
+                            fit: BoxFit.scaleDown,
+                            width: 20,
+                            height: 20,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(width: isSmallMobile ? 6 : 10),
-                InkWell(
-                  onTap: () => QR.to('namaz-times/settings'),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isSmallMobile ? 5 : 10,
-                      vertical: 7,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(locales.settings),
-                        SizedBox(width: isSmallMobile ? 4 : 6),
-                        const Icon(Icons.settings),
-                      ],
+                  SizedBox(width: isSmallMobile ? 6 : 10),
+                  InkWell(
+                    onTap: () async {
+                      await ref
+                          .read(geolocationProvider.notifier)
+                          .updateCoordinates();
+                      QR.to('mosques');
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isSmallMobile ? 5 : 10,
+                        vertical: 7,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(locales.mosques),
+                          SizedBox(width: isSmallMobile ? 4 : 6),
+                          const Icon(Icons.mosque),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  SizedBox(width: isSmallMobile ? 6 : 10),
+                  InkWell(
+                    onTap: () => QR.to('namaz-times/settings'),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isSmallMobile ? 5 : 10,
+                        vertical: 7,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(locales.settings),
+                          SizedBox(width: isSmallMobile ? 4 : 6),
+                          const Icon(Icons.settings),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: isSmallMobile ? 6 : 10),
+                  InkWell(
+                    onTap: () => QR.to('namaz-times/alarms'),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isSmallMobile ? 5 : 10,
+                        vertical: 7,
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.alarm),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 10),
             AnimatedToggleSwitch<bool>.dual(

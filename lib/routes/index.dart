@@ -9,51 +9,41 @@ import 'package:native_app/features/quran/providers/ayah_highlight_providers.dar
 import 'dart:io';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
-
 import '../features/home/views/home_screen.dart';
-
 import '../features/book/views/book_list_screen.dart';
 import '../features/book/views/book_detail_screen.dart';
 import '../features/book/views/chapter_screen.dart' as book_feat;
 import '../features/book/views/subchapter_screen.dart' as book_feat;
 import '../features/book/views/downloads_screen.dart' as book_feat;
 import '../features/book/views/downloaded_book_screen.dart' as book_feat;
-
 import '../features/bayan/views/bayan_list_screen.dart' as bayan_feat;
 import '../features/bayan/views/bayan_detail_screen.dart' as bayan_feat;
 import '../features/bayan/views/bayan_downloads_screen.dart' as bayan_feat;
 import '../features/bayan/views/downloaded_bayan_screen.dart' as bayan_feat;
-
 import '../features/malfuzat/views/malfuzat_list_screen.dart';
 import '../features/malfuzat/views/malfuzat_detail_screen.dart';
 import '../features/malfuzat/views/malfuzat_downloads_screen.dart';
 import '../features/malfuzat/views/downloaded_malfuzat_screen.dart';
-
 import '../features/masail/views/masail_list_screen.dart';
 import '../features/masail/views/masail_detail_screen.dart';
 import '../features/masail/views/ask_question_screen.dart';
 import '../features/masail/views/masail_downloads_screen.dart';
 import '../features/masail/views/downloaded_masail_screen.dart';
-
 import '../features/dua/views/dua_list_screen.dart';
 import '../features/dua/views/dua_detail_screen.dart';
-
 import '../features/article/views/article_list_screen.dart';
 import '../features/article/views/article_detail_screen.dart';
-
 import '../features/news/views/news_list_screen.dart';
 import '../features/news/views/news_detail_screen.dart';
-
 import '../features/madrasah/views/madrasah_list_screen.dart';
 import '../features/madrasah/views/madrasah_detail_screen.dart';
 import '../features/madrasah/views/madrasah_introduction_screen.dart';
 import '../features/madrasah/views/madrasah_gallery_screen.dart';
 import '../features/madrasah/views/madrasah_info_screen.dart';
-
 import '../features/namaz_time/views/namaz_times_screen.dart';
 import '../features/namaz_time/views/namaz_time_detail_screen.dart';
 import '../features/namaz_time/views/namaz_settings_screen.dart';
-
+import '../features/namaz_time/views/prayer_alarm_screen.dart';
 import '../features/location/views/location_screen.dart';
 import '../features/settings/views/settings_screen.dart';
 import '../features/bookmarks/views/bookmarks_screen.dart';
@@ -275,6 +265,7 @@ class AppRoutes {
       children: [
         QRoute(path: '/:slug', builder: () => const NamazTimeDetailScreen()),
         QRoute(path: '/settings', builder: () => const NamazSettings()),
+        QRoute(path: '/alarms', builder: () => const PrayerAlarmScreen()),
       ],
     ),
     QRoute(path: '/location', builder: () => const LocationScreen()),

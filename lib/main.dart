@@ -15,8 +15,9 @@ import 'package:workmanager/workmanager.dart';
 import 'package:lehttp_overrides/lehttp_overrides.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/theme/themes.dart';
-// --- 1. ADDED IMPORT ---
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:native_app/services/prayer_alarm_service.dart';
 
 import 'routes/index.dart';
 import 'firebase_options.dart';
@@ -75,6 +76,20 @@ Future main() async {
 
     await setAppWidgetBackground();
   }
+  // Initialize prayer alarm service
+  await PrayerAlarmService.initialize();
+
+  // Request exact alarm permission on Android
+  if (Platform.isAndroid) {
+    final status = await Permission.scheduleExactAlarm.status;
+    if (status.isDenied) {
+      await Permission.scheduleExactAlarm.request();
+    }
+  }
+
+  // Schedule any enabled prayer alarms
+  await PrayerAlarmService.scheduleAllAlarms();
+
   await Quran.initialize();
   runApp(
     UncontrolledProviderScope(

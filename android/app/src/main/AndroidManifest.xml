@@ -18,6 +18,22 @@
         tools:node="remove"/>
     <uses-permission
         android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission
+        android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission
+        android:name="android.permission.VIBRATE"/>
+    <uses-permission
+        android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+    <uses-permission
+        android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
+    <uses-permission
+        android:name="android.permission.USE_EXACT_ALARM"/>
+    <uses-permission
+        android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <!-- Remove media permissions added by open_filex - not needed for our use case -->
     <uses-permission
         android:name="android.permission.READ_MEDIA_IMAGES"
@@ -101,6 +117,8 @@
         <meta-data
             android:name="io.flutter.embedding.android.EnableImpeller"
             android:value="false" />
+
+        <service android:name="com.gdelataillade.alarm.services.NotificationOnKillService"/>
     </application>
     <queries>
         <intent>

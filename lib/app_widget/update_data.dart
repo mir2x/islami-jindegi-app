@@ -12,6 +12,7 @@ import 'package:native_app/helpers/split_hijri_date.dart';
 import 'package:native_app/helpers/get_bangali_date.dart';
 import 'package:native_app/helpers/get_gregorian_date.dart';
 import 'package:native_app/helpers/get_location_name.dart';
+import 'package:native_app/services/prayer_alarm_service.dart';
 
 Future updateData() async {
   final preferences = await SharedPreferences.getInstance();
@@ -96,6 +97,13 @@ Future updateData() async {
   }
 
   await preferences.setString('nextPrayer', nextPrayer);
+
+  // Reschedule prayer alarms for today
+  try {
+    await PrayerAlarmService.scheduleAllAlarms();
+  } catch (_) {
+    // Alarm scheduling may fail in background isolate
+  }
 
   return Future.value();
 }
