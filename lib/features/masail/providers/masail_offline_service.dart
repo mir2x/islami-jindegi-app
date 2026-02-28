@@ -7,7 +7,10 @@ import '../models/masail_subcategory.dart';
 import '../models/page_content.dart';
 
 class MasailOfflineService {
-  Future<Database> get _db => OfflineDatabaseHelper().database;
+  Future<Database> get _db =>
+      OfflineDatabaseHelper(feature: 'masails', version: 1).database;
+  Future<Database> get _miscDb =>
+      OfflineDatabaseHelper(feature: 'misc', version: 1).database;
 
   // ───────────────────── Masails ─────────────────────
 
@@ -40,6 +43,8 @@ class MasailOfflineService {
     }
     if (hasAudio == true) {
       where.add('has_audio = 1');
+    } else if (hasAudio == false) {
+      where.add('has_audio = 0');
     }
     if (search != null && search.isNotEmpty) {
       where.add('(title LIKE ? OR question LIKE ?)');
@@ -204,7 +209,7 @@ class MasailOfflineService {
   // ───────────────────── Pages ─────────────────────
 
   Future<PageContent?> findPageBySlug(String slug) async {
-    final db = await _db;
+    final db = await _miscDb;
     final rows =
         await db.query('pages', where: 'slug = ?', whereArgs: [slug], limit: 1);
     if (rows.isEmpty) return null;

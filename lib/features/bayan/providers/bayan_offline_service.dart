@@ -5,7 +5,8 @@ import '../models/speaker.dart';
 import '../models/bayan_category.dart';
 
 class BayanOfflineService {
-  Future<Database> get _db => OfflineDatabaseHelper().database;
+  Future<Database> get _db =>
+      OfflineDatabaseHelper(feature: 'bayans', version: 1).database;
 
   // ───────────────────── Bayans ─────────────────────
 

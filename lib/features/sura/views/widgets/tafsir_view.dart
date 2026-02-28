@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/theme/colors.dart';
+import '../../../../core/services/static_asset_api.dart';
 import '../../../../core/utils/adaptive_text.dart';
 import '../../../downloader/views/show_download_dialog.dart';
 import '../../../downloader/providers/download_providers.dart';
@@ -112,6 +113,21 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
           icon: const Icon(Icons.download),
           label: Text("ডাউনলোড করুন ($sizeInMB MB)"),
           onPressed: () async {
+            final assetResponse =
+                await StaticAssetApi().getTafsirUrl(tafsir.id);
+            if (assetResponse == null) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'ডাউনলোড লিংক তৈরি করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।',
+                    ),
+                  ),
+                );
+              }
+              return;
+            }
+
             final localPath = await ref
                 .read(tafsirRepositoryProvider)
                 .getLocalTafsirPath(tafsir.id);
@@ -119,7 +135,7 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
             final tafsirDownloadTask = SingleFileDownloadTask(
               id: tafsir.id,
               displayName: tafsir.title,
-              fileUrl: tafsir.url,
+              fileUrl: assetResponse.url,
               localPath: localPath,
             );
 

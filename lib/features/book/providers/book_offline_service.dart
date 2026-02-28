@@ -5,11 +5,9 @@ import '../models/book_author.dart';
 import '../models/book_chapter.dart';
 import '../models/book_subchapter.dart';
 
-/// sqflite-based service that reads book data from the bundled
-/// `offline_data_15.sqlite3`. Replaces Drift's LocalResourceAPI
-/// query methods for books.
 class BookOfflineService {
-  Future<Database> get _db => OfflineDatabaseHelper().database;
+  Future<Database> get _db =>
+      OfflineDatabaseHelper(feature: 'books', version: 1).database;
 
   // ───────────────────── Books ─────────────────────
 

@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/services/static_asset_api.dart';
 import '../../downloader/views/show_download_dialog.dart';
 import '../../downloader/views/show_download_permission_dialog.dart';
 import '../../downloader/providers/download_providers.dart';
-
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/theme/colors.dart';
 import '../models/quran_edition.dart';
@@ -147,10 +147,25 @@ class _QuranEditionGridItem extends ConsumerWidget {
               );
               if (!confirmed || !context.mounted) return;
 
+              final assetResponse =
+                  await StaticAssetApi().getMushafUrl(edition.id);
+              if (assetResponse == null) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'ডাউনলোড লিংক তৈরি করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।',
+                      ),
+                    ),
+                  );
+                }
+                return;
+              }
+
               final mushafDownloadTask = ZipDownloadTask(
                 id: edition.id,
                 displayName: edition.title,
-                zipUrl: edition.url,
+                zipUrl: assetResponse.url,
               );
 
               showDownloadDialog(context);

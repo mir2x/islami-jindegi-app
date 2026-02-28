@@ -4,7 +4,8 @@ import '../models/dua.dart';
 import '../models/dua_category.dart';
 
 class DuaOfflineService {
-  Future<Database> get _db => OfflineDatabaseHelper().database;
+  Future<Database> get _db =>
+      OfflineDatabaseHelper(feature: 'duas', version: 1).database;
 
   // ───────────────────── Duas ─────────────────────
 

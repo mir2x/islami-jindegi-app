@@ -29,12 +29,7 @@ class News extends ConsumerWidget {
             height: 1.2,
           );
 
-    final api = ref.read(newsApiServiceProvider);
-    final modelQuery = ref.watch(
-      FutureProvider.autoDispose((ref) async {
-        return await api.fetchNews(perPage: 5);
-      }),
-    );
+    final modelQuery = ref.watch(latestNewsProvider);
 
     return Container(
       decoration: BoxDecoration(

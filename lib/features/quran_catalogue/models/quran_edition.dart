@@ -7,7 +7,6 @@ class QuranEdition {
   final String id;
   final String title;
   final String coverImagePath;
-  final String url;
   final int sizeBytes;
   final int imageWidth;
   final int imageHeight;
@@ -18,7 +17,6 @@ class QuranEdition {
     required this.id,
     required this.title,
     required this.coverImagePath,
-    required this.url,
     required this.sizeBytes,
     required this.imageWidth,
     required this.imageHeight,
@@ -37,7 +35,6 @@ class QuranEdition {
       imageHeight: imageHeight,
       imageExt: imageExt,
       isDownloaded: isDownloaded ?? this.isDownloaded,
-      url: url,
       sizeBytes: sizeBytes,
     );
   }
@@ -90,7 +87,6 @@ class QuranEdition {
       id: map['id'],
       title: map['title'],
       coverImagePath: map['cover'],
-      url: map['url'],
       sizeBytes: map['sizeBytes'],
       imageWidth: map['width'],
       imageHeight: map['height'],

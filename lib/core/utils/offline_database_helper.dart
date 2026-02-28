@@ -1,58 +1,78 @@
-import 'dart:io';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-/// Opens the bundled `offline_data_15.sqlite3` asset for read-only access.
-/// Similar to [DatabaseHelper] but targets the offline content database
-/// instead of the quran database.
+/// Opens a per-feature SQLite database for read-only access.
+/// The database must already be downloaded locally.
+///
+/// Usage:
+///   final helper = OfflineDatabaseHelper(feature: 'articles', version: 1);
+///   final db = await helper.database;
 class OfflineDatabaseHelper {
-  static Database? _database;
-  static const int _dataVersion = 15;
-  static const String _dbFileName = 'offline_data_$_dataVersion.sqlite3';
-  static const String _dbVersionKey = 'offline_data_db_version';
+  static final Map<String, Database> _cache = {};
+
+  final String feature;
+  final int version;
+
+  OfflineDatabaseHelper({required this.feature, required this.version});
+
+  String get _dbFileName => '${feature}.sqlite3';
+  String get _prefKey => 'offline_db_version_$feature';
+
+  /// Check if the DB file exists locally (has been downloaded).
+  static Future<bool> isAvailable(String feature) async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, '${feature}.sqlite3');
+    return await databaseExists(path);
+  }
+
+  /// Get the local file path for a feature's database.
+  static Future<String> getDbPath(String feature) async {
+    final dbPath = await getDatabasesPath();
+    return join(dbPath, '${feature}.sqlite3');
+  }
 
   Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await _initDB();
-    return _database!;
+    if (_cache.containsKey(feature)) return _cache[feature]!;
+    _cache[feature] = await _initDB();
+    return _cache[feature]!;
   }
 
   Future<Database> _initDB() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, _dbFileName);
-    final prefs = await SharedPreferences.getInstance();
-    final storedVersion = prefs.getInt(_dbVersionKey) ?? 0;
 
     final exists = await databaseExists(path);
-    final needsUpdate = !exists || storedVersion < _dataVersion;
+    if (!exists) {
+      throw Exception(
+          'Database "$feature" not available locally. Download it first.');
+    }
 
-    if (needsUpdate) {
-      // Close existing database if open
-      if (_database != null) {
-        await _database!.close();
-        _database = null;
+    final prefs = await SharedPreferences.getInstance();
+    final storedVersion = prefs.getInt(_prefKey) ?? 0;
+
+    if (storedVersion < version) {
+      if (_cache[feature] != null) {
+        await _cache[feature]!.close();
+        _cache.remove(feature);
       }
-
-      // Delete old database if exists
-      if (exists) {
-        await deleteDatabase(path);
-      }
-
-      try {
-        await Directory(dirname(path)).create(recursive: true);
-      } catch (_) {}
-
-      ByteData data = await rootBundle.load('assets/db/$_dbFileName');
-      List<int> bytes =
-          data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-      await File(path).writeAsBytes(bytes, flush: true);
-
-      // Store the new version
-      await prefs.setInt(_dbVersionKey, _dataVersion);
+      await deleteDatabase(path);
+      throw Exception(
+          'Database "$feature" needs version update. Please re-download.');
     }
 
     return await openDatabase(path, readOnly: true);
+  }
+
+  /// Mark a feature DB as downloaded with its version.
+  static Future<void> markVersion(String feature, int version) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('offline_db_version_$feature', version);
+  }
+
+  /// Call this to force-close and evict a feature's DB from cache.
+  static Future<void> evict(String feature) async {
+    final db = _cache.remove(feature);
+    await db?.close();
   }
 }

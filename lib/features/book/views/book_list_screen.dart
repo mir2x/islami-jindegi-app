@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
+import 'package:native_app/widgets/utils/offline_db_prompt.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
@@ -29,190 +30,193 @@ class BookListScreen extends ConsumerWidget {
 
     return AppScaffold(
       title: Text(locales.books),
-      body: Column(
-        children: [
-          WithConnectivity(
-            builder: (context, isConnected) {
-              if (isConnected) {
-                return Column(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      padding:
-                          const EdgeInsets.only(top: 20, left: 15, right: 15),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: _V2FilterButton(
-                              label: locales.authors,
-                              active: qParams.containsKey('authorId'),
-                              activeLabel: qParams.containsKey('authorId')
-                                  ? null // will be resolved async
-                                  : null,
-                              activeItemProvider:
-                                  qParams.containsKey('authorId')
-                                      ? singleAuthorProvider(
-                                          qParams['authorId'],
-                                        )
-                                      : null,
-                              activeItemLabel: (item) => item?.name ?? '',
-                              onClear: () {
-                                ref
-                                    .read(bookQueryParamsProvider.notifier)
-                                    .removeParam('authorId');
-                              },
-                              dialogContent:
-                                  _AuthorFilterDialog(parentRef: ref),
-                            ),
-                          ),
-                          const SizedBox(width: 15),
-                          Expanded(
-                            child: _V2FilterButton(
-                              label: locales.categories,
-                              active: qParams.keys.any(
-                                (k) => [
-                                  'bookCategoryId',
-                                  'bookSubcategoryId',
-                                ].contains(k),
+      body: OfflineDbPrompt(
+        feature: 'books',
+        child: Column(
+          children: [
+            WithConnectivity(
+              builder: (context, isConnected) {
+                if (isConnected) {
+                  return Column(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding:
+                            const EdgeInsets.only(top: 20, left: 15, right: 15),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _V2FilterButton(
+                                label: locales.authors,
+                                active: qParams.containsKey('authorId'),
+                                activeLabel: qParams.containsKey('authorId')
+                                    ? null // will be resolved async
+                                    : null,
+                                activeItemProvider:
+                                    qParams.containsKey('authorId')
+                                        ? singleAuthorProvider(
+                                            qParams['authorId'],
+                                          )
+                                        : null,
+                                activeItemLabel: (item) => item?.name ?? '',
+                                onClear: () {
+                                  ref
+                                      .read(bookQueryParamsProvider.notifier)
+                                      .removeParam('authorId');
+                                },
+                                dialogContent:
+                                    _AuthorFilterDialog(parentRef: ref),
                               ),
-                              activeItemProvider:
-                                  qParams.containsKey('bookCategoryId')
-                                      ? singleCategoryProvider(
-                                          qParams['bookCategoryId'],
-                                        )
-                                      : qParams.containsKey('bookSubcategoryId')
-                                          ? singleSubcategoryProvider(
-                                              qParams['bookSubcategoryId'],
-                                            )
-                                          : null,
-                              activeItemLabel: (item) => item?.title ?? '',
-                              onClear: () {
-                                ref
-                                    .read(bookQueryParamsProvider.notifier)
-                                    .removeParam('bookCategoryId');
-                                ref
-                                    .read(bookQueryParamsProvider.notifier)
-                                    .removeParam('bookSubcategoryId');
-                              },
-                              dialogContent:
-                                  _CategoryFilterDialog(parentRef: ref),
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 15),
+                            Expanded(
+                              child: _V2FilterButton(
+                                label: locales.categories,
+                                active: qParams.keys.any(
+                                  (k) => [
+                                    'bookCategoryId',
+                                    'bookSubcategoryId',
+                                  ].contains(k),
+                                ),
+                                activeItemProvider: qParams
+                                        .containsKey('bookCategoryId')
+                                    ? singleCategoryProvider(
+                                        qParams['bookCategoryId'],
+                                      )
+                                    : qParams.containsKey('bookSubcategoryId')
+                                        ? singleSubcategoryProvider(
+                                            qParams['bookSubcategoryId'],
+                                          )
+                                        : null,
+                                activeItemLabel: (item) => item?.title ?? '',
+                                onClear: () {
+                                  ref
+                                      .read(bookQueryParamsProvider.notifier)
+                                      .removeParam('bookCategoryId');
+                                  ref
+                                      .read(bookQueryParamsProvider.notifier)
+                                      .removeParam('bookSubcategoryId');
+                                },
+                                dialogContent:
+                                    _CategoryFilterDialog(parentRef: ref),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Container(
-                      padding:
-                          const EdgeInsets.only(top: 10, left: 15, right: 15),
-                      child: SearchButtonField(
-                        value: qParams['search'],
-                        onUpdate: (value) {
-                          ref
-                              .read(bookQueryParamsProvider.notifier)
-                              .updateParam('search', value);
-                        },
+                      Container(
+                        padding:
+                            const EdgeInsets.only(top: 10, left: 15, right: 15),
+                        child: SearchButtonField(
+                          value: qParams['search'],
+                          onUpdate: (value) {
+                            ref
+                                .read(bookQueryParamsProvider.notifier)
+                                .updateParam('search', value);
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            },
-          ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: InfiniteList(
-                qParams: qParams,
-                resourceFetcher: (Map<String, dynamic> params) async {
-                  final api = ref.read(bookApiServiceProvider);
-                  final offline = ref.read(bookOfflineServiceProvider);
+                    ],
+                  );
+                } else {
+                  return const SizedBox.shrink();
+                }
+              },
+            ),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: InfiniteList(
+                  qParams: qParams,
+                  resourceFetcher: (Map<String, dynamic> params) async {
+                    final api = ref.read(bookApiServiceProvider);
+                    final offline = ref.read(bookOfflineServiceProvider);
 
-                  debugPrint(
-                      '[BookListScreen] fetching books with params: $params');
-
-                  try {
-                    final books = await api.fetchBooks(
-                      page: params['page'] ?? 1,
-                      perPage: params['per_page'] ?? 12,
-                      search: params['search'],
-                      authorId: params['authorId'],
-                      bookCategoryId: params['bookCategoryId'],
-                      bookSubcategoryId: params['bookSubcategoryId'],
-                    );
                     debugPrint(
-                        '[BookListScreen] API returned ${books.length} books');
-                    return books;
-                  } catch (e) {
-                    debugPrint('[BookListScreen] API error: $e');
-                    debugPrint('[BookListScreen] Falling back to offline...');
+                        '[BookListScreen] fetching books with params: $params');
+
                     try {
-                      final offlineBooks = await offline.queryBooks(
-                        page: params['page'],
-                        perPage: params['per_page'],
+                      final books = await api.fetchBooks(
+                        page: params['page'] ?? 1,
+                        perPage: params['per_page'] ?? 12,
+                        search: params['search'],
+                        authorId: params['authorId'],
+                        bookCategoryId: params['bookCategoryId'],
+                        bookSubcategoryId: params['bookSubcategoryId'],
                       );
                       debugPrint(
-                          '[BookListScreen] Offline returned ${offlineBooks.length} books');
-                      return offlineBooks;
-                    } catch (offlineError) {
-                      debugPrint(
-                          '[BookListScreen] Offline error: $offlineError');
-                      rethrow;
+                          '[BookListScreen] API returned ${books.length} books');
+                      return books;
+                    } catch (e) {
+                      debugPrint('[BookListScreen] API error: $e');
+                      debugPrint('[BookListScreen] Falling back to offline...');
+                      try {
+                        final offlineBooks = await offline.queryBooks(
+                          page: params['page'],
+                          perPage: params['per_page'],
+                        );
+                        debugPrint(
+                            '[BookListScreen] Offline returned ${offlineBooks.length} books');
+                        return offlineBooks;
+                      } catch (offlineError) {
+                        debugPrint(
+                            '[BookListScreen] Offline error: $offlineError');
+                        rethrow;
+                      }
                     }
-                  }
-                },
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: isMobile ? 2 : 3,
-                  crossAxisSpacing: isMobile ? 15 : 20,
-                  mainAxisExtent: isMobile ? 300 : 360,
-                ),
-                itemBuilder: (_, item, __) {
-                  return InkWell(
-                    onTap: () {
-                      debugPrint(
-                          '[BookListScreen] Tapped book: ${item.id} — ${item.title}');
-                      QR.to('books/${item.id}');
-                    },
-                    child: Column(
-                      children: [
-                        FractionallySizedBox(
-                          widthFactor: 0.7,
-                          child: BookImage(
-                            bookId: item.id,
-                            image: item.image,
-                            highlightProvider: downloadedBookByBookIdProvider(
-                              item.id,
+                  },
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: isMobile ? 2 : 3,
+                    crossAxisSpacing: isMobile ? 15 : 20,
+                    mainAxisExtent: isMobile ? 300 : 360,
+                  ),
+                  itemBuilder: (_, item, __) {
+                    return InkWell(
+                      onTap: () {
+                        debugPrint(
+                            '[BookListScreen] Tapped book: ${item.id} — ${item.title}');
+                        QR.to('books/${item.id}');
+                      },
+                      child: Column(
+                        children: [
+                          FractionallySizedBox(
+                            widthFactor: 0.7,
+                            child: BookImage(
+                              bookId: item.id,
+                              image: item.image,
+                              highlightProvider: downloadedBookByBookIdProvider(
+                                item.id,
+                              ),
                             ),
                           ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(top: 10),
-                          child: Text(
-                            item.title,
-                            style: textTheme.titleMedium,
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        if (item.authors.isNotEmpty)
                           Container(
-                            margin: const EdgeInsets.only(top: 5),
+                            margin: const EdgeInsets.only(top: 10),
                             child: Text(
-                              item.authors.first.name,
+                              item.title,
+                              style: textTheme.titleMedium,
                               textAlign: TextAlign.center,
-                              style: textTheme.labelSmall,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                      ],
-                    ),
-                  );
-                },
+                          if (item.authors.isNotEmpty)
+                            Container(
+                              margin: const EdgeInsets.only(top: 5),
+                              child: Text(
+                                item.authors.first.name,
+                                textAlign: TextAlign.center,
+                                style: textTheme.labelSmall,
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: SizedBox(
         width: 200,

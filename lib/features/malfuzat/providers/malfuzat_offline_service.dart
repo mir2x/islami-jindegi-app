@@ -6,7 +6,8 @@ import '../models/malfuzat_category.dart';
 import '../models/malfuzat_subcategory.dart';
 
 class MalfuzatOfflineService {
-  Future<Database> get _db => OfflineDatabaseHelper().database;
+  Future<Database> get _db =>
+      OfflineDatabaseHelper(feature: 'malfuzats', version: 1).database;
 
   // ───────────────────── Malfuzats ─────────────────────
 
@@ -39,6 +40,8 @@ class MalfuzatOfflineService {
     }
     if (hasAudio == true) {
       where.add('has_audio = 1');
+    } else if (hasAudio == false) {
+      where.add('has_audio = 0');
     }
     if (search != null && search.isNotEmpty) {
       where.add('(title LIKE ? OR excerpt LIKE ?)');

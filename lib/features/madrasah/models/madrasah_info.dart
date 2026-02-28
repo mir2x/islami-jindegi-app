@@ -22,6 +22,20 @@ class MadrasahInfoItem {
     this.madrasahTitle,
   });
 
+  factory MadrasahInfoItem.fromDb(Map<String, dynamic> row,
+      {String? madrasahTitle}) {
+    return MadrasahInfoItem(
+      id: row['id'].toString(),
+      label: row['label'] ?? '',
+      info: row['info'] ?? '',
+      position: row['position'] is int ? row['position'] : null,
+      createdAt: row['created_at']?.toString(),
+      updatedAt: row['updated_at']?.toString(),
+      madrasahId: row['madrasah_id']?.toString(),
+      madrasahTitle: madrasahTitle,
+    );
+  }
+
   factory MadrasahInfoItem.fromJsonApi(
     Map<String, dynamic> resource, {
     String? resolvedMadrasahId,

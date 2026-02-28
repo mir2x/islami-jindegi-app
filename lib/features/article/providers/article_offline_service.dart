@@ -6,7 +6,8 @@ import '../models/article_category.dart';
 import '../models/article_subcategory.dart';
 
 class ArticleOfflineService {
-  Future<Database> get _db => OfflineDatabaseHelper().database;
+  Future<Database> get _db =>
+      OfflineDatabaseHelper(feature: 'articles', version: 1).database;
 
   // ───────────────────── Articles ─────────────────────
 

@@ -27,6 +27,14 @@ final newsQueryParamsProvider =
   return NewsQueryParamsNotifier();
 });
 
+// ───────────────────── Latest News (home page) ─────────────────────
+
+final latestNewsProvider =
+    FutureProvider.autoDispose<List<NewsItem>>((ref) async {
+  final api = ref.read(newsApiServiceProvider);
+  return api.fetchNews(perPage: 5);
+});
+
 // ───────────────────── Single Item ─────────────────────
 
 final singleNewsProvider =
