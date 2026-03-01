@@ -100,23 +100,23 @@ class _ParaListItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         child: Row(
           children: [
-            _buildParaNumber(),
+            _buildParaNumber(context),
             const SizedBox(width: 16),
-            Expanded(child: _buildParaInfo()),
-            _buildArrow(),
+            Expanded(child: _buildParaInfo(context)),
+            _buildArrow(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildParaNumber() {
+  Widget _buildParaNumber(BuildContext context) {
     return Container(
       width: 50,
       height: 50,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Colors.green.withOpacity(0.1),
+        color: Theme.of(context).colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
@@ -126,13 +126,13 @@ class _ParaListItem extends StatelessWidget {
           wordSpacing: 3,
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: Colors.green.shade700,
+          color: Theme.of(context).colorScheme.primary,
         ),
       ),
     );
   }
 
-  Widget _buildParaInfo() {
+  Widget _buildParaInfo(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -151,7 +151,7 @@ class _ParaListItem extends StatelessWidget {
             Icon(
               Icons.play_arrow,
               size: 16,
-              color: Colors.grey.shade600,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             const SizedBox(width: 4),
             Expanded(
@@ -161,7 +161,7 @@ class _ParaListItem extends StatelessWidget {
                   fontFamily: 'bangla/solaimanlipi',
                   wordSpacing: 3,
                   fontSize: 14,
-                  color: Colors.grey.shade600,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -172,10 +172,10 @@ class _ParaListItem extends StatelessWidget {
     );
   }
 
-  Widget _buildArrow() {
+  Widget _buildArrow(BuildContext context) {
     return Icon(
       Icons.chevron_right,
-      color: Colors.grey.shade400,
+      color: Theme.of(context).colorScheme.outlineVariant,
     );
   }
 }

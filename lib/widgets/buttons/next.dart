@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:native_app/widgets/utils/with_preferences.dart';
-import 'package:native_app/theme/app_theme.dart';
 
 class Next extends StatelessWidget {
   const Next({
@@ -16,29 +14,25 @@ class Next extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WithPreferences(
-      builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'classic';
+    var colorScheme = Theme.of(context).colorScheme;
 
-        Color? iconColor = nextDisabled
-            ? Colors.grey
-            : contrastColor
-                ? AppTheme.titleContrastColor[theme]
-                : null;
+    Color? iconColor = nextDisabled
+        ? Theme.of(context).colorScheme.outlineVariant
+        : contrastColor
+            ? colorScheme.primary
+            : null;
 
-        return IconButton(
-          icon: const Icon(Icons.skip_next_rounded),
-          color: iconColor,
-          padding: const EdgeInsets.only(
-            top: 10,
-            right: 10,
-            bottom: 10,
-            left: 5,
-          ),
-          constraints: const BoxConstraints(),
-          onPressed: onNext,
-        );
-      },
+    return IconButton(
+      icon: const Icon(Icons.skip_next_rounded),
+      color: iconColor,
+      padding: const EdgeInsets.only(
+        top: 10,
+        right: 10,
+        bottom: 10,
+        left: 5,
+      ),
+      constraints: const BoxConstraints(),
+      onPressed: onNext,
     );
   }
 }

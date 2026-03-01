@@ -41,7 +41,7 @@ class ReciterSelectionDialog extends ConsumerWidget {
                   Navigator.of(context).pop();
                 }
               },
-              activeColor: Colors.green.shade700,
+              activeColor: Theme.of(context).colorScheme.primary,
             );
           }).toList(),
         ),
@@ -53,7 +53,7 @@ class ReciterSelectionDialog extends ConsumerWidget {
             style: TextStyle(
                 fontFamily: 'bangla/solaimanlipi',
                 wordSpacing: 3,
-                color: Colors.green.shade800),
+                color: Theme.of(context).colorScheme.onPrimaryContainer),
           ),
           onPressed: () {
             Navigator.of(context).pop();

@@ -120,7 +120,7 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
       height: 45,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.05),
+        color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
@@ -130,7 +130,7 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
           wordSpacing: 3,
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: Colors.green.shade700,
+          color: Theme.of(context).colorScheme.primary,
         ),
       ),
     );
@@ -156,7 +156,7 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
             fontFamily: 'bangla/solaimanlipi',
             wordSpacing: 3,
             fontSize: 14,
-            color: Colors.grey.shade600,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
       ],
@@ -171,13 +171,16 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        HugeIcon(icon: iconData, color: Colors.grey.shade400, size: 28),
+        HugeIcon(
+            icon: iconData,
+            color: Theme.of(context).colorScheme.outlineVariant,
+            size: 28),
         const SizedBox(width: 8.0),
         Text(
           widget.sura.nameArabic,
           style: GoogleFonts.amiri(
             fontSize: 18,
-            color: Colors.green.shade800,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
             fontWeight: FontWeight.bold,
           ),
         ),

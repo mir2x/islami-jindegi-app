@@ -18,8 +18,6 @@ import 'package:native_app/providers/downloaded_masail.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/widgets/buttons/floating_downloaded.dart';
-import 'package:native_app/theme/colors.dart';
-import 'package:native_app/theme/app_theme.dart';
 import '../providers/masail_providers.dart';
 
 class MasailListScreen extends ConsumerWidget {
@@ -326,8 +324,7 @@ class MasailListScreen extends ConsumerWidget {
                     height: 40,
                     child: WithPreferences(
                       builder: (context, preferences) {
-                        String theme =
-                            preferences.getString('theme') ?? 'classic';
+                        var colorScheme = Theme.of(context).colorScheme;
 
                         return FloatingActionButton.extended(
                           heroTag: 'ask-question',
@@ -335,7 +332,8 @@ class MasailListScreen extends ConsumerWidget {
                           icon: Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(color: ThemeColors.color4),
+                              border:
+                                  Border.all(color: colorScheme.outlineVariant),
                             ),
                             padding: const EdgeInsets.all(2),
                             child: const Icon(Icons.question_mark, size: 18),
@@ -343,7 +341,7 @@ class MasailListScreen extends ConsumerWidget {
                           label: Text(
                             locales.askQuestion,
                             style: textTheme.labelMedium?.copyWith(
-                              color: AppTheme.labelContrastColor[theme],
+                              color: colorScheme.onSurface,
                             ),
                           ),
                         );

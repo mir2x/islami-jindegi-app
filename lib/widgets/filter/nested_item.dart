@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/providers/query_params.dart';
-import 'package:native_app/theme/colors.dart';
 
 class FilterNestedItem extends ConsumerStatefulWidget {
   const FilterNestedItem({
@@ -58,10 +57,10 @@ class FilterNestedItemState extends ConsumerState<FilterNestedItem> {
             .any((id) => id == qParams[widget.paramKey]);
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: ThemeColors.color4,
+            color: Theme.of(context).colorScheme.outlineVariant,
           ),
         ),
       ),

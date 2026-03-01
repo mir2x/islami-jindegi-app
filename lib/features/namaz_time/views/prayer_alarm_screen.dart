@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/theme/colors.dart';
 import 'package:native_app/services/prayer_alarm_service.dart';
 import '../providers/prayer_alarm_providers.dart';
 
@@ -25,6 +24,7 @@ class PrayerAlarmScreen extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var alarmStates = ref.watch(prayerAlarmProvider);
+    var colorScheme = Theme.of(context).colorScheme;
 
     return AppScaffold(
       title: Text(locales.alarmSettings),
@@ -43,7 +43,7 @@ class PrayerAlarmScreen extends ConsumerWidget {
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
-                  color: ThemeColors.color7,
+                  color: colorScheme.surfaceContainerHighest,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -51,7 +51,7 @@ class PrayerAlarmScreen extends ConsumerWidget {
                     Text(
                       locales.allAlarms,
                       style: textTheme.titleMedium?.copyWith(
-                        color: ThemeColors.color3,
+                        color: colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -62,7 +62,7 @@ class PrayerAlarmScreen extends ConsumerWidget {
                             .read(prayerAlarmProvider.notifier)
                             .toggleAllAlarms(value);
                       },
-                      activeColor: ThemeColors.color8,
+                      activeColor: colorScheme.tertiary,
                     ),
                   ],
                 ),
@@ -100,6 +100,7 @@ class _SoundPicker extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    var colorScheme = Theme.of(context).colorScheme;
     String lang = Localizations.localeOf(context).languageCode;
     var soundAsync = ref.watch(alarmSoundProvider);
 
@@ -107,21 +108,21 @@ class _SoundPicker extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: ThemeColors.color3,
-        border: Border.all(color: ThemeColors.border),
+        color: colorScheme.surface,
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.music_note, size: 18, color: ThemeColors.color5),
+              Icon(Icons.music_note, size: 18, color: colorScheme.primary),
               const SizedBox(width: 8),
               Text(
                 locales.azanSound,
                 style: textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: ThemeColors.color1,
+                  color: colorScheme.onSurface,
                 ),
               ),
             ],
@@ -147,28 +148,27 @@ class _SoundPicker extends ConsumerWidget {
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 150),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: isSelected
-                          ? ThemeColors.color5
-                          : ThemeColors.color7,
+                          ? colorScheme.primary
+                          : colorScheme.surfaceContainerHighest,
                       border: Border.all(
                         color: isSelected
-                            ? ThemeColors.color5
-                            : ThemeColors.border,
+                            ? colorScheme.primary
+                            : colorScheme.outlineVariant,
                       ),
                     ),
                     child: Text(
                       label,
                       style: textTheme.bodySmall?.copyWith(
                         color: isSelected
-                            ? Colors.white
-                            : ThemeColors.color13,
-                        fontWeight: isSelected
-                            ? FontWeight.w600
-                            : FontWeight.normal,
+                            ? colorScheme.onPrimary
+                            : colorScheme.onSurfaceVariant,
+                        fontWeight:
+                            isSelected ? FontWeight.w600 : FontWeight.normal,
                       ),
                     ),
                   ),
@@ -199,6 +199,7 @@ class _PrayerAlarmCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    var colorScheme = Theme.of(context).colorScheme;
     String currentLang = Localizations.localeOf(context).languageCode;
     String prayerLabel =
         PrayerAlarmService.getPrayerDisplayLabel(prayerKey, currentLang);
@@ -211,11 +212,9 @@ class _PrayerAlarmCard extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: isEnabled
-            ? ThemeColors.color5.withOpacity(0.15)
-            : ThemeColors.color3,
+        color: isEnabled ? colorScheme.primaryContainer : colorScheme.surface,
         border: Border.all(
-          color: isEnabled ? ThemeColors.color5 : ThemeColors.border,
+          color: isEnabled ? colorScheme.primary : colorScheme.outlineVariant,
           width: isEnabled ? 1.5 : 1,
         ),
       ),
@@ -231,8 +230,9 @@ class _PrayerAlarmCard extends ConsumerWidget {
                   children: [
                     Icon(
                       isEnabled ? Icons.alarm_on : Icons.alarm_off,
-                      color:
-                          isEnabled ? ThemeColors.color5 : ThemeColors.border,
+                      color: isEnabled
+                          ? colorScheme.primary
+                          : colorScheme.outlineVariant,
                       size: 22,
                     ),
                     const SizedBox(width: 10),
@@ -241,8 +241,8 @@ class _PrayerAlarmCard extends ConsumerWidget {
                       style: textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isEnabled
-                            ? ThemeColors.color1
-                            : ThemeColors.color13,
+                            ? colorScheme.onSurface
+                            : colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -265,7 +265,7 @@ class _PrayerAlarmCard extends ConsumerWidget {
                       ),
                     );
                   },
-                  activeColor: ThemeColors.color8,
+                  activeColor: colorScheme.tertiary,
                 ),
               ],
             ),
@@ -300,8 +300,7 @@ class _PrayerAlarmCard extends ConsumerWidget {
                     lang: currentLang,
                     onChanged: (value) {
                       ref
-                          .read(
-                              prayerBeforeOffsetProvider(prayerKey).notifier)
+                          .read(prayerBeforeOffsetProvider(prayerKey).notifier)
                           .setOffset(value);
                     },
                   ),
@@ -346,16 +345,17 @@ class _RepeatDaysRow extends StatelessWidget {
   final String lang;
   final AppLocalizations locales;
 
-  @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
+    var colorScheme = Theme.of(context).colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           locales.repeatDays,
-          style: textTheme.bodySmall?.copyWith(color: ThemeColors.color13),
+          style: textTheme.bodySmall
+              ?.copyWith(color: colorScheme.onSurfaceVariant),
         ),
         const SizedBox(height: 6),
         repeatDays.when(
@@ -392,8 +392,8 @@ class _RepeatDaysRow extends StatelessWidget {
                         if (isEveryDay) {
                           // Switching from "every day" to a specific day
                           ref
-                              .read(prayerRepeatDaysProvider(prayerKey)
-                                  .notifier)
+                              .read(
+                                  prayerRepeatDaysProvider(prayerKey).notifier)
                               .setDays({d});
                         } else {
                           if (current.contains(d) && current.length > 1) {
@@ -406,8 +406,8 @@ class _RepeatDaysRow extends StatelessWidget {
                               ? {1, 2, 3, 4, 5, 6, 7}
                               : current;
                           ref
-                              .read(prayerRepeatDaysProvider(prayerKey)
-                                  .notifier)
+                              .read(
+                                  prayerRepeatDaysProvider(prayerKey).notifier)
                               .setDays(next);
                         }
                       },
@@ -437,23 +437,26 @@ class _DayChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
+    var colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
-        padding:
-            const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: selected ? ThemeColors.color5 : ThemeColors.color7,
+          color: selected
+              ? colorScheme.primary
+              : colorScheme.surfaceContainerHighest,
           border: Border.all(
-            color: selected ? ThemeColors.color5 : ThemeColors.border,
+            color: selected ? colorScheme.primary : colorScheme.outlineVariant,
           ),
         ),
         child: Text(
           label,
           style: textTheme.bodySmall?.copyWith(
-            color: selected ? Colors.white : ThemeColors.color13,
+            color:
+                selected ? colorScheme.onPrimary : colorScheme.onSurfaceVariant,
             fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
           ),
         ),
@@ -486,9 +489,7 @@ class _OffsetSlider extends StatelessWidget {
       return lang == 'bn' ? 'ওয়াক্তের সময়ে' : 'At waqt time';
     }
     if (lang == 'bn') {
-      return isBefore
-          ? '$value মিনিট আগে'
-          : '$value মিনিট পরে';
+      return isBefore ? '$value মিনিট আগে' : '$value মিনিট পরে';
     }
     return isBefore ? '$value min before' : '$value min after';
   }
@@ -496,6 +497,7 @@ class _OffsetSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
+    var colorScheme = Theme.of(context).colorScheme;
 
     return offset.when(
       loading: () => const SizedBox(
@@ -512,7 +514,7 @@ class _OffsetSlider extends StatelessWidget {
               Text(
                 label,
                 style: textTheme.bodySmall
-                    ?.copyWith(color: ThemeColors.color13),
+                    ?.copyWith(color: colorScheme.onSurfaceVariant),
               ),
               Container(
                 padding:
@@ -520,19 +522,20 @@ class _OffsetSlider extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   color: value > 0
-                      ? ThemeColors.color5.withOpacity(0.15)
-                      : ThemeColors.color7,
+                      ? colorScheme.primaryContainer
+                      : colorScheme.surfaceContainerHighest,
                   border: Border.all(
-                    color:
-                        value > 0 ? ThemeColors.color5 : ThemeColors.border,
+                    color: value > 0
+                        ? colorScheme.primary
+                        : colorScheme.outlineVariant,
                   ),
                 ),
                 child: Text(
                   _formatValue(value),
                   style: textTheme.bodySmall?.copyWith(
                     color: value > 0
-                        ? ThemeColors.color5
-                        : ThemeColors.color13,
+                        ? colorScheme.primary
+                        : colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -542,14 +545,12 @@ class _OffsetSlider extends StatelessWidget {
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               trackHeight: 3,
-              thumbShape:
-                  const RoundSliderThumbShape(enabledThumbRadius: 8),
-              overlayShape:
-                  const RoundSliderOverlayShape(overlayRadius: 16),
-              activeTrackColor: ThemeColors.color5,
-              inactiveTrackColor: ThemeColors.border,
-              thumbColor: ThemeColors.color5,
-              overlayColor: ThemeColors.color5.withOpacity(0.15),
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+              overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
+              activeTrackColor: colorScheme.primary,
+              inactiveTrackColor: colorScheme.outlineVariant,
+              thumbColor: colorScheme.primary,
+              overlayColor: colorScheme.primary.withAlpha(38),
             ),
             child: Slider(
               value: value.toDouble(),

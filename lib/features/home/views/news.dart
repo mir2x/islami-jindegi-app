@@ -4,8 +4,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
-import 'package:native_app/theme/app_theme.dart';
-import 'package:native_app/theme/colors.dart';
 import 'package:native_app/features/news/providers/news_providers.dart';
 
 class News extends ConsumerWidget {
@@ -19,13 +17,15 @@ class News extends ConsumerWidget {
     bool isMobile = screenWidth < 768;
     bool isSmallMobile = screenWidth < 340;
 
+    var colorScheme = Theme.of(context).colorScheme;
+
     final fontStyle = isSmallMobile
         ? textTheme.labelSmall?.copyWith(
-            color: ThemeColors.color2,
+            color: colorScheme.onSecondaryContainer,
             height: 1.2,
           )
         : textTheme.labelMedium?.copyWith(
-            color: ThemeColors.color2,
+            color: colorScheme.onSecondaryContainer,
             height: 1.2,
           );
 
@@ -34,7 +34,7 @@ class News extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: ThemeColors.color3,
+        color: colorScheme.secondaryContainer,
       ),
       child: Row(
         children: [
@@ -53,7 +53,6 @@ class News extends ConsumerWidget {
           Expanded(
             child: WithPreferences(
               builder: (context, preferences) {
-                String theme = preferences.getString('theme') ?? 'classic';
                 double height;
 
                 if (isMobile) {
@@ -67,19 +66,19 @@ class News extends ConsumerWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                       width: 2,
                     ),
-                    color: AppTheme.backgroundHighlightColor[theme],
+                    color: colorScheme.surfaceContainerHighest,
                   ),
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                   child: modelQuery.when(
                     loading: () {
-                      return const Center(
+                      return Center(
                         child: CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            ThemeColors.color5,
+                            colorScheme.primary,
                           ),
                         ),
                       );

@@ -17,18 +17,18 @@ class SearchPage extends ConsumerWidget {
       appBar: AppBar(
         title: TextField(
           autofocus: true,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             hintText: 'আরবি বা বাংলায় খুঁজুন...',
             hintStyle: TextStyle(
                 fontFamily: 'bangla/solaimanlipi',
                 wordSpacing: 3,
-                color: Colors.white70),
+                color: Theme.of(context).colorScheme.onSurfaceVariant),
             border: InputBorder.none,
           ),
-          style: const TextStyle(
+          style: TextStyle(
               fontFamily: 'bangla/solaimanlipi',
               wordSpacing: 3,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: 18),
           onChanged: (value) {
             ref.read(searchQueryProvider.notifier).state = value;
@@ -56,7 +56,7 @@ class SearchPage extends ConsumerWidget {
               return ListTile(
                 title: Text(
                   'সূরা ${suraNames[ayah.sura - 1] ?? ayah.sura}: আয়াত ${ayah.ayah.toBengaliDigit()}',
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontFamily: 'bangla/solaimanlipi',
                       wordSpacing: 3,
                       fontWeight: FontWeight.bold),
@@ -64,10 +64,10 @@ class SearchPage extends ConsumerWidget {
                 subtitle: HighlightedText(
                   text: ayah.arabicText,
                   query: searchQuery,
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontFamily: 'arabic/noorehuda',
                       fontSize: 20,
-                      color: Colors.black),
+                      color: Theme.of(context).colorScheme.onSurface),
                 ),
                 onTap: () {
                   Future.delayed(Duration.zero, () {
@@ -128,7 +128,8 @@ class HighlightedText extends StatelessWidget {
       final endIndex = startIndex + query.length;
       spans.add(TextSpan(
         text: text.substring(startIndex, endIndex),
-        style: style.copyWith(backgroundColor: Colors.black),
+        style: style.copyWith(
+            backgroundColor: Theme.of(context).colorScheme.surface),
       ));
 
       start = endIndex;

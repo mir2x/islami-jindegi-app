@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/providers/query_params.dart';
-import 'package:native_app/theme/colors.dart';
 
 class FilterItem extends ConsumerWidget {
   const FilterItem({
@@ -29,10 +28,10 @@ class FilterItem extends ConsumerWidget {
         Navigator.of(context).pop();
       },
       child: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: ThemeColors.color4,
+              color: Theme.of(context).colorScheme.outlineVariant,
             ),
           ),
         ),

@@ -11,7 +11,7 @@ import 'package:native_app/helpers/get_location_name.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
-import 'package:native_app/theme/app_theme.dart';
+
 import '../providers/location_providers.dart';
 
 class LocationScreen extends ConsumerWidget {
@@ -53,8 +53,7 @@ class LocationScreen extends ConsumerWidget {
                       ),
                       WithPreferences(
                         builder: (context, preferences) {
-                          String theme =
-                              preferences.getString('theme') ?? 'classic';
+                          var colorScheme = Theme.of(context).colorScheme;
 
                           return Container(
                             margin: const EdgeInsets.only(top: 20),
@@ -86,11 +85,10 @@ class LocationScreen extends ConsumerWidget {
                               },
                               style: OutlinedButton.styleFrom(
                                 side: BorderSide(
-                                  color:
-                                      AppTheme.inputBorderOutlineColor[theme],
+                                  color: colorScheme.outlineVariant,
                                 ),
                                 backgroundColor:
-                                    AppTheme.inputSelectedBgColor[theme],
+                                    colorScheme.surfaceContainerHighest,
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 15),
                                 shape: RoundedRectangleBorder(
@@ -109,7 +107,7 @@ class LocationScreen extends ConsumerWidget {
                                   Icon(
                                     Icons.arrow_drop_down,
                                     size: 35,
-                                    color: AppTheme.iconColor[theme],
+                                    color: colorScheme.onSurfaceVariant,
                                   ),
                                 ],
                               ),

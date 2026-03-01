@@ -7,7 +7,6 @@ import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/widgets/location/index.dart';
 import 'package:native_app/objects/prayer_time.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
-import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/helpers/update_app_widget.dart';
 
 class CurrentLocationPrayers extends StatelessWidget {
@@ -146,9 +145,8 @@ class Prayers extends StatelessWidget {
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'classic';
-        Color titleColor = AppTheme.titleOppositeColor[theme];
-        Color labelColor = AppTheme.labelOppsititeColor[theme];
+        Color titleColor = Theme.of(context).colorScheme.onInverseSurface;
+        Color labelColor = Theme.of(context).colorScheme.onInverseSurface;
 
         bool hasCurrentPrayer = prayerTimes.containsKey('current') &&
             (prayerTimes['current'] != null);

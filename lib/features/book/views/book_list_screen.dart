@@ -11,7 +11,6 @@ import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/widgets/buttons/floating_downloaded.dart';
 import 'package:native_app/features/book/views/image.dart';
-import 'package:native_app/theme/colors.dart';
 import 'package:flutter_svg/svg.dart';
 import '../providers/book_providers.dart';
 import '../providers/book_download_providers.dart';
@@ -312,7 +311,8 @@ class _V2FilterButton extends ConsumerWidget {
         );
       },
       style: OutlinedButton.styleFrom(
-        backgroundColor: active ? Colors.blue.withOpacity(0.1) : null,
+        backgroundColor:
+            active ? Theme.of(context).colorScheme.primaryContainer : null,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),
@@ -355,6 +355,7 @@ class _AuthorFilterDialogState extends ConsumerState<_AuthorFilterDialog> {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
+    var colorScheme = Theme.of(context).colorScheme;
     var qParams = widget.parentRef.watch(bookQueryParamsProvider);
 
     return Column(
@@ -430,9 +431,9 @@ class _AuthorFilterDialogState extends ConsumerState<_AuthorFilterDialog> {
                   Navigator.of(context).pop();
                 },
                 child: Container(
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     border: Border(
-                      bottom: BorderSide(color: ThemeColors.color4),
+                      bottom: BorderSide(color: colorScheme.outlineVariant),
                     ),
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 10),
@@ -471,6 +472,7 @@ class _CategoryFilterDialogState extends ConsumerState<_CategoryFilterDialog> {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
+    var colorScheme = Theme.of(context).colorScheme;
     var qParams = widget.parentRef.watch(bookQueryParamsProvider);
     final hasActiveFilter = qParams.keys
         .any((k) => ['bookCategoryId', 'bookSubcategoryId'].contains(k));
@@ -557,9 +559,9 @@ class _CategoryFilterDialogState extends ConsumerState<_CategoryFilterDialog> {
                     Navigator.of(context).pop();
                   },
                   child: Container(
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       border: Border(
-                        bottom: BorderSide(color: ThemeColors.color4),
+                        bottom: BorderSide(color: colorScheme.outlineVariant),
                       ),
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 10),
@@ -610,6 +612,7 @@ class _CategoryNestedItemState extends ConsumerState<_CategoryNestedItem> {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
+    var colorScheme = Theme.of(context).colorScheme;
     var qParams = widget.parentRef.watch(bookQueryParamsProvider);
     var isSelected = qParams.containsKey('bookSubcategoryId') &&
         widget.category.subcategories
@@ -617,9 +620,9 @@ class _CategoryNestedItemState extends ConsumerState<_CategoryNestedItem> {
             .any((id) => id == qParams['bookSubcategoryId']);
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: ThemeColors.color4),
+          bottom: BorderSide(color: colorScheme.outlineVariant),
         ),
       ),
       child: Column(

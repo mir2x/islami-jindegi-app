@@ -4,7 +4,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:native_app/widgets/presentation/popup_dialog.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
-import 'package:native_app/theme/app_theme.dart';
 import 'package:native_app/features/malfuzat/providers/malfuzat_providers.dart';
 
 class MalfuzatPopup extends ConsumerStatefulWidget {
@@ -22,7 +21,6 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       var locales = AppLocalizations.of(context)!;
       final preferences = await SharedPreferences.getInstance();
-      String theme = preferences.getString('theme') ?? 'classic';
       int? timestamp = preferences.getInt('lastMalfuzatPopup');
 
       if (timestamp != null) {
@@ -48,6 +46,7 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
             var textTheme = Theme.of(context).textTheme;
             var item = malfuzats.first;
             String? author = item.authorName;
+            var colorScheme = Theme.of(context).colorScheme;
 
             return PopupDialog(
               child: Column(
@@ -59,13 +58,13 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
                         topLeft: Radius.circular(15),
                         topRight: Radius.circular(15),
                       ),
-                      color: AppTheme.popupBarColor[theme],
+                      color: colorScheme.surfaceContainerHigh,
                     ),
                     padding: const EdgeInsets.all(10),
                     child: Text(
                       locales.malfuzat,
                       style: textTheme.headlineLarge?.copyWith(
-                        color: AppTheme.labelOppsititeColor[theme],
+                        color: colorScheme.onInverseSurface,
                         fontFamily: 'bangla/solaimanlipi',
                         wordSpacing: 3,
                       ),

@@ -4,11 +4,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dio/dio.dart';
 import 'package:native_app/providers/downloader.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
-import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/objects/progress_percentage.dart';
 import 'package:native_app/objects/download_params.dart';
 import 'package:native_app/helpers/file_size.dart';
-import 'package:native_app/theme/app_theme.dart';
 
 class DownloadButton extends ConsumerWidget {
   const DownloadButton({
@@ -146,48 +144,43 @@ class DownloadProgress extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
+    var colorScheme = Theme.of(context).colorScheme;
 
-    return WithPreferences(
-      builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'classic';
+    return ValueListenableBuilder<Map>(
+      valueListenable: progressNotifier,
+      builder: (context, progress, child) {
+        if (progress.isNotEmpty) {
+          int received = progress['received'];
+          int total = progress['total'];
 
-        return ValueListenableBuilder<Map>(
-          valueListenable: progressNotifier,
-          builder: (context, progress, child) {
-            if (progress.isNotEmpty) {
-              int received = progress['received'];
-              int total = progress['total'];
-
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
                 children: [
-                  Column(
-                    children: [
-                      Text(
-                        '${fileSize(received)}/${fileSize(total)}',
-                        style: textTheme.labelSmall,
-                      ),
-                      const SizedBox(height: 4),
-                      SizedBox(
-                        width: 110,
-                        child: LinearProgressIndicator(
-                          backgroundColor: AppTheme.sliderBgColor[theme],
-                          value: received / total,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    '${fileSize(received)}/${fileSize(total)}',
+                    style: textTheme.labelSmall,
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => cancelToken.cancel(),
+                  const SizedBox(height: 4),
+                  SizedBox(
+                    width: 110,
+                    child: LinearProgressIndicator(
+                      backgroundColor: colorScheme.outlineVariant,
+                      value: received / total,
+                    ),
                   ),
                 ],
-              );
-            } else {
-              return const SizedBox.shrink();
-            }
-          },
-        );
+              ),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => cancelToken.cancel(),
+              ),
+            ],
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
       },
     );
   }

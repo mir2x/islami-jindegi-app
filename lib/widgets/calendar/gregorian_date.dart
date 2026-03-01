@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:native_app/helpers/get_gregorian_date.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/helpers/update_app_widget.dart';
-import 'package:native_app/theme/app_theme.dart';
 
 class GregorianDate extends StatelessWidget {
   const GregorianDate({
@@ -20,10 +19,10 @@ class GregorianDate extends StatelessWidget {
   Widget build(BuildContext context) {
     String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
+    var colorScheme = Theme.of(context).colorScheme;
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'classic';
         String gregorianDate = getGregorianDate(currentLang, null);
 
         if (preferences.getString('gregorianDate') != gregorianDate) {
@@ -34,7 +33,7 @@ class GregorianDate extends StatelessWidget {
         return Text(
           getGregorianDate(currentLang, currentDate),
           style: textTheme.labelSmall?.copyWith(
-            color: oppositeColor ? AppTheme.labelOppsititeColor[theme] : null,
+            color: oppositeColor ? colorScheme.onInverseSurface : null,
           ),
         );
       },

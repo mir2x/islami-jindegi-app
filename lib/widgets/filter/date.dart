@@ -4,9 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:collection/collection.dart';
 import 'package:date_field/date_field.dart';
 import 'package:intl/intl.dart';
-import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/query_params.dart';
-import 'package:native_app/theme/app_theme.dart';
 
 class DateFilter extends ConsumerWidget {
   const DateFilter({super.key, this.queryProvider});
@@ -78,122 +76,117 @@ class DateFilter extends ConsumerWidget {
 
     String selectedLabel = selectedDate(qParams, options, currentLang, locales);
 
-    return WithPreferences(
-      builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'classic';
+    var colorScheme = Theme.of(context).colorScheme;
 
-        return OutlinedButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                var qParamsNotifier = ref.read(paramsProvider.notifier);
-                double screenWidth = MediaQuery.of(context).size.width;
-                double screenHeight = MediaQuery.of(context).size.height;
+    return OutlinedButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            var qParamsNotifier = ref.read(paramsProvider.notifier);
+            double screenWidth = MediaQuery.of(context).size.width;
+            double screenHeight = MediaQuery.of(context).size.height;
 
-                bool isSmallMobile = screenHeight < 600;
+            bool isSmallMobile = screenHeight < 600;
 
-                return Dialog(
-                  child: Container(
-                    width: screenWidth,
-                    height: isSmallMobile
-                        ? screenHeight * 0.85
-                        : screenHeight * 0.7,
-                    padding: const EdgeInsets.only(
-                      top: 15,
-                      bottom: 25,
-                      left: 15,
-                      right: 15,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ...options.map((option) {
-                          return InkWell(
-                            onTap: () {
-                              qParamsNotifier.updateParams(
-                                'dateRange',
-                                option['value'],
-                              );
-
-                              for (var k in ['dateFrom', 'dateTo']) {
-                                qParamsNotifier.updateParams(k, '');
-                              }
-
-                              Navigator.of(context).pop();
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                vertical: isSmallMobile ? 6 : 10,
-                              ),
-                              child: Text(
-                                option['label'],
-                                style: (qParams.containsKey('dateRange') &&
-                                        qParams['dateRange'] == option['value'])
-                                    ? textTheme.labelMedium
-                                    : textTheme.titleMedium,
-                              ),
-                            ),
+            return Dialog(
+              child: Container(
+                width: screenWidth,
+                height:
+                    isSmallMobile ? screenHeight * 0.85 : screenHeight * 0.7,
+                padding: const EdgeInsets.only(
+                  top: 15,
+                  bottom: 25,
+                  left: 15,
+                  right: 15,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ...options.map((option) {
+                      return InkWell(
+                        onTap: () {
+                          qParamsNotifier.updateParams(
+                            'dateRange',
+                            option['value'],
                           );
-                        }),
-                        Container(
-                          margin: EdgeInsets.only(
-                            top: isSmallMobile ? 10 : 25,
-                            bottom: isSmallMobile ? 10 : 15,
+
+                          for (var k in ['dateFrom', 'dateTo']) {
+                            qParamsNotifier.updateParams(k, '');
+                          }
+
+                          Navigator.of(context).pop();
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            vertical: isSmallMobile ? 6 : 10,
                           ),
                           child: Text(
-                            locales.customDate,
-                            style: qParams.containsKey('dateFrom') ||
-                                    qParams.containsKey('dateTo')
+                            option['label'],
+                            style: (qParams.containsKey('dateRange') &&
+                                    qParams['dateRange'] == option['value'])
                                 ? textTheme.labelMedium
                                 : textTheme.titleMedium,
                           ),
                         ),
-                        CustomDateField(
-                          field: 'dateFrom',
-                          label: locales.dateFrom,
-                        ),
-                        SizedBox(
-                          height: isSmallMobile ? 10 : 15,
-                        ),
-                        CustomDateField(field: 'dateTo', label: locales.dateTo),
-                      ],
+                      );
+                    }),
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: isSmallMobile ? 10 : 25,
+                        bottom: isSmallMobile ? 10 : 15,
+                      ),
+                      child: Text(
+                        locales.customDate,
+                        style: qParams.containsKey('dateFrom') ||
+                                qParams.containsKey('dateTo')
+                            ? textTheme.labelMedium
+                            : textTheme.titleMedium,
+                      ),
                     ),
-                  ),
-                );
-              },
-            );
-          },
-          style: OutlinedButton.styleFrom(
-            side: BorderSide(color: AppTheme.inputBorderOutlineColor[theme]),
-            backgroundColor: selectedLabel != locales.date
-                ? AppTheme.inputSelectedBgColor[theme]
-                : null,
-            padding: EdgeInsets.symmetric(horizontal: isSmallMobile ? 13 : 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
-            ),
-            minimumSize: const Size.fromHeight(45),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: Text(
-                  selectedLabel,
-                  style: selectedLabel != locales.date
-                      ? textTheme.labelSmall?.copyWith(height: 1.1)
-                      : textTheme.labelMedium,
+                    CustomDateField(
+                      field: 'dateFrom',
+                      label: locales.dateFrom,
+                    ),
+                    SizedBox(
+                      height: isSmallMobile ? 10 : 15,
+                    ),
+                    CustomDateField(field: 'dateTo', label: locales.dateTo),
+                  ],
                 ),
               ),
-              Icon(
-                Icons.arrow_drop_down,
-                color: AppTheme.iconColor[theme],
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
+      style: OutlinedButton.styleFrom(
+        side: BorderSide(color: colorScheme.outlineVariant),
+        backgroundColor: selectedLabel != locales.date
+            ? colorScheme.surfaceContainerHighest
+            : null,
+        padding: EdgeInsets.symmetric(horizontal: isSmallMobile ? 13 : 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
+        ),
+        minimumSize: const Size.fromHeight(45),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            child: Text(
+              selectedLabel,
+              style: selectedLabel != locales.date
+                  ? textTheme.labelSmall?.copyWith(height: 1.1)
+                  : textTheme.labelMedium,
+            ),
+          ),
+          Icon(
+            Icons.arrow_drop_down,
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -216,43 +209,39 @@ class CustomDateField extends ConsumerWidget {
     // Note: CustomDateField still uses global queryParamsProvider.
     // For module-specific usage, pass the queryProvider via DateFilter.
 
-    return WithPreferences(
-      builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'classic';
+    var colorScheme = Theme.of(context).colorScheme;
 
-        return DateTimeFormField(
-          decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: AppTheme.inputBorderOutlineColor[theme],
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: AppTheme.inputBorderOutlineColor[theme],
-              ),
-            ),
-            labelStyle: textTheme.labelMedium,
-            labelText: label,
-            suffixIconColor: AppTheme.iconColor[theme],
+    return DateTimeFormField(
+      decoration: InputDecoration(
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: colorScheme.outlineVariant,
           ),
-          mode: DateTimeFieldPickerMode.date,
-          initialValue: qParams.containsKey(field)
-              ? DateFormat('yyyy-MM-dd').parse(qParams[field])
-              : null,
-          onChanged: (DateTime? value) {
-            if (value != null) {
-              qParamsNotifier.updateParams(
-                field,
-                DateFormat('yyyy-MM-dd').format(value),
-              );
-            } else {
-              qParamsNotifier.updateParams(field, '');
-            }
-            qParamsNotifier.updateParams('dateRange', '');
-            Navigator.of(context).pop();
-          },
-        );
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: colorScheme.outlineVariant,
+          ),
+        ),
+        labelStyle: textTheme.labelMedium,
+        labelText: label,
+        suffixIconColor: colorScheme.onSurfaceVariant,
+      ),
+      mode: DateTimeFieldPickerMode.date,
+      initialValue: qParams.containsKey(field)
+          ? DateFormat('yyyy-MM-dd').parse(qParams[field])
+          : null,
+      onChanged: (DateTime? value) {
+        if (value != null) {
+          qParamsNotifier.updateParams(
+            field,
+            DateFormat('yyyy-MM-dd').format(value),
+          );
+        } else {
+          qParamsNotifier.updateParams(field, '');
+        }
+        qParamsNotifier.updateParams('dateRange', '');
+        Navigator.of(context).pop();
       },
     );
   }

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:easy_debounce/easy_debounce.dart';
-import 'package:native_app/widgets/utils/with_preferences.dart';
-import 'package:native_app/theme/app_theme.dart';
 import 'input_field.dart';
 
 class SearchField extends ConsumerWidget {
@@ -33,49 +31,45 @@ class SearchField extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
 
-    return WithPreferences(
-      builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'classic';
+    var colorScheme = Theme.of(context).colorScheme;
 
-        return Directionality(
-          textDirection: reverse ? TextDirection.rtl : TextDirection.ltr,
-          child: InputField(
-            initialValue: value,
-            autofocus: autofocus,
-            decoration: InputDecoration(
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: AppTheme.inputBorderOutlineColor[theme],
-                ),
-                borderRadius: BorderRadius.circular(borderRadius),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: AppTheme.inputBorderOutlineColor[theme],
-                ),
-                borderRadius: BorderRadius.circular(borderRadius),
-              ),
-              labelText: labelText ?? locales.search,
-              labelStyle: textTheme.labelMedium,
-              constraints: BoxConstraints(maxHeight: maxHeight),
-              contentPadding: EdgeInsets.only(
-                top: 0,
-                bottom: 0,
-                left: reverse ? 0 : horizontalPadding,
-                right: reverse ? horizontalPadding : 0,
-              ),
+    return Directionality(
+      textDirection: reverse ? TextDirection.rtl : TextDirection.ltr,
+      child: InputField(
+        initialValue: value,
+        autofocus: autofocus,
+        decoration: InputDecoration(
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: colorScheme.outlineVariant,
             ),
-            onChanged: (value) {
-              EasyDebounce.debounce(
-                'search-debouncer',
-                const Duration(milliseconds: 1000),
-                () => onUpdate(value),
-              );
-            },
-            style: textTheme.labelMedium,
+            borderRadius: BorderRadius.circular(borderRadius),
           ),
-        );
-      },
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: colorScheme.outlineVariant,
+            ),
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          labelText: labelText ?? locales.search,
+          labelStyle: textTheme.labelMedium,
+          constraints: BoxConstraints(maxHeight: maxHeight),
+          contentPadding: EdgeInsets.only(
+            top: 0,
+            bottom: 0,
+            left: reverse ? 0 : horizontalPadding,
+            right: reverse ? horizontalPadding : 0,
+          ),
+        ),
+        onChanged: (value) {
+          EasyDebounce.debounce(
+            'search-debouncer',
+            const Duration(milliseconds: 1000),
+            () => onUpdate(value),
+          );
+        },
+        style: textTheme.labelMedium,
+      ),
     );
   }
 }

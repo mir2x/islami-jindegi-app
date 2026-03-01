@@ -24,7 +24,8 @@ Future deleteFile({
   Widget continueButton = TextButton(
     child: Text(
       locales.yes,
-      style: textTheme.labelLarge?.copyWith(color: Colors.red),
+      style: textTheme.labelLarge
+          ?.copyWith(color: Theme.of(context).colorScheme.error),
     ),
     onPressed: () async {
       Navigator.of(context).pop();

@@ -7,7 +7,6 @@ import 'package:path/path.dart' as p;
 import 'package:open_filex/open_filex.dart';
 import 'package:native_app/helpers/delete_file.dart';
 import 'package:native_app/helpers/file_fallback_path.dart';
-import 'package:native_app/theme/colors.dart';
 
 class PDFMenu extends ConsumerWidget {
   const PDFMenu({
@@ -31,6 +30,7 @@ class PDFMenu extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    var colorScheme = Theme.of(context).colorScheme;
 
     return PopupMenuButton<int>(
       child: const SizedBox(
@@ -51,9 +51,9 @@ class PDFMenu extends ConsumerWidget {
                 style: textTheme.labelMedium,
               ),
               const SizedBox(width: 10),
-              const Icon(
+              Icon(
                 Icons.delete,
-                color: ThemeColors.danger,
+                color: colorScheme.error,
               ),
             ],
           ),
@@ -84,7 +84,7 @@ class PDFMenu extends ConsumerWidget {
               const SizedBox(width: 10),
               Icon(
                 Icons.dark_mode,
-                color: darkMode ? Colors.white : Colors.black,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ],
           ),

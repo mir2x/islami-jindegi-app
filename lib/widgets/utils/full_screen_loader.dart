@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:native_app/theme/app_theme.dart';
 import 'with_preferences.dart';
 
 class FullScreenLoader extends ConsumerWidget {
@@ -30,7 +29,7 @@ class FullScreenLoader extends ConsumerWidget {
                         : ImageRepeat.noRepeat,
                   )
                 : null,
-            color: AppTheme.backgroundColor[theme],
+            color: Theme.of(context).colorScheme.surface,
           ),
           child: const Center(
             child: CircularProgressIndicator(),

@@ -7,7 +7,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:collection/collection.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/settings/image.dart';
-import 'package:native_app/theme/colors.dart';
 
 class ResponsiveImage extends ConsumerWidget {
   const ResponsiveImage({
@@ -54,15 +53,15 @@ class ResponsiveImage extends ConsumerWidget {
                 ),
               );
             } else {
-              return displayPlaceHolder(model, attr);
+              return displayPlaceHolder(context, model, attr);
             }
           },
         );
       } else {
-        return displayPlaceHolder(model, attr);
+        return displayPlaceHolder(context, model, attr);
       }
     } else {
-      return displayPlaceHolder(model, attr);
+      return displayPlaceHolder(context, model, attr);
     }
   }
 
@@ -78,7 +77,7 @@ class ResponsiveImage extends ConsumerWidget {
     return image[settings['width'].toString()]?['metadata'] ?? settings;
   }
 
-  Widget displayPlaceHolder(model, String attr) {
+  Widget displayPlaceHolder(BuildContext context, model, String attr) {
     Map<String, int> settings = imageSettings[model]![attr]!;
 
     if (model == 'book') {
@@ -92,9 +91,9 @@ class ResponsiveImage extends ConsumerWidget {
     } else {
       return AspectRatio(
         aspectRatio: settings['width']! / settings['height']!,
-        child: const DecoratedBox(
+        child: DecoratedBox(
           decoration: BoxDecoration(
-            color: ThemeColors.placeholder,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
           ),
         ),
       );

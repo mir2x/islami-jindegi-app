@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/objects/font_size_ratio.dart';
-import 'package:native_app/theme/app_theme.dart';
 
 class FontResizer extends ConsumerWidget {
   const FontResizer({
@@ -23,17 +22,13 @@ class FontResizer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    var colorScheme = Theme.of(context).colorScheme;
+
+    Color? textColor = contrastColor ? colorScheme.onSurface : null;
+    Color? iconColor = contrastColor ? colorScheme.primary : null;
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'classic';
-
-        Color? textColor =
-            contrastColor ? AppTheme.labelContrastColor[theme] : null;
-
-        Color? iconColor =
-            contrastColor ? AppTheme.titleContrastColor[theme] : null;
-
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 class AyahHighlighter extends CustomPainter {
   final List<Rect> highlightRects;
 
-  AyahHighlighter(this.highlightRects);
+  final Color highlightColor;
+
+  AyahHighlighter(this.highlightRects, this.highlightColor);
 
   @override
   void paint(Canvas canvas, Size size) {
     if (highlightRects.isEmpty) return;
 
     final paint = Paint()
-      ..color = Colors.yellow.withOpacity(0.6)
+      ..color = highlightColor
       ..style = PaintingStyle.fill;
 
     for (final rect in highlightRects) {

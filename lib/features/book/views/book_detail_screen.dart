@@ -25,7 +25,6 @@ import 'package:native_app/widgets/presentation/description_item.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
-import 'package:native_app/theme/colors.dart';
 import 'package:native_app/features/book/views/pdf_reader.dart';
 import 'package:native_app/features/book/views/image.dart';
 import '../providers/book_providers.dart';
@@ -228,10 +227,12 @@ class _BookContent extends ConsumerWidget {
                                         'books/${book.id}/chapters/${chapter.id}',
                                       ),
                                       child: Container(
-                                        decoration: const BoxDecoration(
+                                        decoration: BoxDecoration(
                                           border: Border(
                                             bottom: BorderSide(
-                                              color: ThemeColors.color4,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .outlineVariant,
                                             ),
                                           ),
                                         ),
@@ -575,9 +576,10 @@ class _SubchaptersState extends ConsumerState<_Subchapters> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: ThemeColors.color4),
+          bottom:
+              BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
         ),
       ),
       child: Column(

@@ -4,8 +4,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:idkit_inputformatters/idkit_inputformatters.dart';
 import 'package:native_app/widgets/inputs/input_field.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
-import 'package:native_app/theme/app_theme.dart';
-import 'package:native_app/theme/colors.dart';
 
 class TimeInput extends ConsumerStatefulWidget {
   const TimeInput({
@@ -36,7 +34,7 @@ class _TimeInputState extends ConsumerState<TimeInput> {
     var textTheme = Theme.of(context).textTheme;
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'classic';
+        var colorScheme = Theme.of(context).colorScheme;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,9 +57,9 @@ class _TimeInputState extends ConsumerState<TimeInput> {
                     decoration: InputDecoration(
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 15),
-                      enabledBorder: const UnderlineInputBorder(
+                      enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(
-                          color: ThemeColors.border,
+                          color: colorScheme.outlineVariant,
                         ),
                       ),
                       constraints: const BoxConstraints(maxHeight: 45),
@@ -76,7 +74,7 @@ class _TimeInputState extends ConsumerState<TimeInput> {
                                 padding: const EdgeInsets.only(bottom: 5),
                                 child: Icon(
                                   Icons.done,
-                                  color: AppTheme.iconColor[theme],
+                                  color: colorScheme.onSurfaceVariant,
                                   size: 15,
                                 ),
                               ),

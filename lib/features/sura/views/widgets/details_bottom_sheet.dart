@@ -10,7 +10,7 @@ void showDetailsBottomSheet(BuildContext context, {required int suraNumber}) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.white,
+    backgroundColor: Theme.of(context).colorScheme.surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
@@ -32,7 +32,7 @@ class DetailsBottomSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildDragHandle(),
+            _buildDragHandle(context),
             _DetailsSection(
               title: 'ফিচার',
               items: [
@@ -107,7 +107,7 @@ class DetailsBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildDragHandle() {
+  Widget _buildDragHandle(BuildContext context) {
     return Align(
       alignment: Alignment.center,
       child: Container(
@@ -115,7 +115,7 @@ class DetailsBottomSheet extends StatelessWidget {
         width: 40,
         height: 4,
         decoration: BoxDecoration(
-          color: Colors.grey.shade300,
+          color: Theme.of(context).colorScheme.outlineVariant,
           borderRadius: BorderRadius.circular(2),
         ),
       ),
@@ -138,7 +138,7 @@ class _DetailsSection extends StatelessWidget {
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          color: Colors.blue.shade50,
+          color: Theme.of(context).colorScheme.primaryContainer,
           child: Text(
             title,
             style: const TextStyle(
@@ -168,7 +168,8 @@ class _DetailsSection extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(item.icon, size: 28, color: Colors.green.shade700),
+                  Icon(item.icon,
+                      size: 28, color: Theme.of(context).colorScheme.primary),
                   const SizedBox(height: 4),
                   Text(
                     item.label,
@@ -177,7 +178,7 @@ class _DetailsSection extends StatelessWidget {
                       fontFamily: 'bangla/solaimanlipi',
                       wordSpacing: 3,
                       fontSize: 12,
-                      color: Colors.grey.shade800,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

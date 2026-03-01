@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/helpers/delete_file.dart';
-import 'package:native_app/theme/colors.dart';
 
 class DeleteButton extends ConsumerWidget {
   const DeleteButton({
@@ -15,13 +14,15 @@ class DeleteButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var colorScheme = Theme.of(context).colorScheme;
+
     return IconButton(
-      icon: const Icon(
+      icon: Icon(
         Icons.delete,
-        color: ThemeColors.danger,
+        color: colorScheme.error,
       ),
       iconSize: 30,
-      color: Colors.red,
+      color: colorScheme.error,
       onPressed: () async {
         await deleteFile(
           context: context,

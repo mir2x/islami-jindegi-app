@@ -21,7 +21,7 @@ class BookmarkList extends ConsumerWidget {
             Icon(
               Icons.bookmark_border,
               size: 64,
-              color: Colors.grey.shade400,
+              color: Theme.of(context).colorScheme.outlineVariant,
             ),
             const SizedBox(height: 16),
             Text(
@@ -30,7 +30,7 @@ class BookmarkList extends ConsumerWidget {
                 fontFamily: 'bangla/solaimanlipi',
                 wordSpacing: 3,
                 fontSize: 18,
-                color: Colors.grey.shade600,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: 8),
@@ -40,7 +40,7 @@ class BookmarkList extends ConsumerWidget {
                 fontFamily: 'bangla/solaimanlipi',
                 wordSpacing: 3,
                 fontSize: 14,
-                color: Colors.grey.shade500,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -92,10 +92,10 @@ class _BookmarkListItem extends ConsumerWidget {
         );
       },
       background: Container(
-        color: Colors.red,
+        color: Theme.of(context).colorScheme.error,
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 16),
-        child: const Icon(Icons.delete, color: Colors.white),
+        child: Icon(Icons.delete, color: Theme.of(context).colorScheme.onError),
       ),
       child: InkWell(
         onTap: () {
@@ -108,9 +108,9 @@ class _BookmarkListItem extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           child: Row(
             children: [
-              _buildSuraInfo(),
+              _buildSuraInfo(context),
               const SizedBox(width: 16),
-              Expanded(child: _buildArabicPreview()),
+              Expanded(child: _buildArabicPreview(context)),
               _buildDeleteButton(context, ref),
             ],
           ),
@@ -119,12 +119,12 @@ class _BookmarkListItem extends ConsumerWidget {
     );
   }
 
-  Widget _buildSuraInfo() {
+  Widget _buildSuraInfo(BuildContext context) {
     return Container(
       width: 60,
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       decoration: BoxDecoration(
-        color: Colors.green.withOpacity(0.1),
+        color: Theme.of(context).colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -137,7 +137,7 @@ class _BookmarkListItem extends ConsumerWidget {
               wordSpacing: 3,
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.green.shade700,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
           Text(
@@ -146,7 +146,7 @@ class _BookmarkListItem extends ConsumerWidget {
               fontFamily: 'bangla/solaimanlipi',
               wordSpacing: 3,
               fontSize: 12,
-              color: Colors.green.shade600,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ],
@@ -154,7 +154,7 @@ class _BookmarkListItem extends ConsumerWidget {
     );
   }
 
-  Widget _buildArabicPreview() {
+  Widget _buildArabicPreview(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -175,7 +175,7 @@ class _BookmarkListItem extends ConsumerWidget {
           style: GoogleFonts.amiri(
             fontSize: 16,
             height: 1.5,
-            color: Colors.grey.shade700,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
@@ -187,7 +187,7 @@ class _BookmarkListItem extends ConsumerWidget {
 
   Widget _buildDeleteButton(BuildContext context, WidgetRef ref) {
     return IconButton(
-      icon: Icon(Icons.bookmark, color: Colors.green.shade700),
+      icon: Icon(Icons.bookmark, color: Theme.of(context).colorScheme.primary),
       onPressed: () {
         ref.read(bookmarkProvider.notifier).removeBookmark(
               bookmark.suraNumber,

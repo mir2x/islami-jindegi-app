@@ -4,8 +4,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:open_filex/open_filex.dart';
 import 'package:native_app/helpers/file_fallback_path.dart';
-import 'package:native_app/widgets/utils/with_preferences.dart';
-import 'package:native_app/theme/app_theme.dart';
 
 class OpenFile extends StatelessWidget {
   const OpenFile({
@@ -17,27 +15,23 @@ class OpenFile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WithPreferences(
-      builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'classic';
+    var colorScheme = Theme.of(context).colorScheme;
 
-        return IconButton(
-          icon: const Icon(Icons.file_open),
-          color: AppTheme.titleContrastColor[theme],
-          onPressed: () async {
-            var path = await fileFallbackPath(filePath);
+    return IconButton(
+      icon: const Icon(Icons.file_open),
+      color: colorScheme.primary,
+      onPressed: () async {
+        var path = await fileFallbackPath(filePath);
 
-            var downloadDir = Platform.isAndroid
-                ? await getExternalStorageDirectory()
-                : await getApplicationSupportDirectory();
+        var downloadDir = Platform.isAndroid
+            ? await getExternalStorageDirectory()
+            : await getApplicationSupportDirectory();
 
-            if (downloadDir != null && path != null) {
-              await OpenFilex.open(
-                p.join(downloadDir.path, path),
-              );
-            }
-          },
-        );
+        if (downloadDir != null && path != null) {
+          await OpenFilex.open(
+            p.join(downloadDir.path, path),
+          );
+        }
       },
     );
   }

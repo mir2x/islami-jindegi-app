@@ -373,8 +373,9 @@ class _SurahPageState extends ConsumerState<SurahPage> {
             ? FloatingActionButton(
                 onPressed: _scrollToTop,
                 mini: true,
-                backgroundColor: Colors.green,
-                child: const Icon(Icons.arrow_upward, color: Colors.white),
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                child: Icon(Icons.arrow_upward,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer),
               )
             : null,
       ),
@@ -392,10 +393,11 @@ class _SurahPageState extends ConsumerState<SurahPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           boxShadow: [
             BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color:
+                    Theme.of(context).colorScheme.shadow.withValues(alpha: 0.1),
                 spreadRadius: 1,
                 blurRadius: 5,
                 offset: const Offset(0, -2))
@@ -406,22 +408,25 @@ class _SurahPageState extends ConsumerState<SurahPage> {
           children: [
             IconButton(
               icon: Icon(isPaused ? Icons.play_arrow : Icons.pause,
-                  color: Colors.green.shade900),
+                  color: Theme.of(context).colorScheme.primary),
               onPressed: _togglePlayPauseAutoScroll,
             ),
             IconButton(
-                icon: Icon(Icons.remove, color: Colors.green.shade900),
+                icon: Icon(Icons.remove,
+                    color: Theme.of(context).colorScheme.primary),
                 onPressed: () => _changeScrollSpeed(-0.5)),
             Text('${scrollSpeedFactor.toStringAsFixed(1)}x',
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.green.shade900)),
+                    color: Theme.of(context).colorScheme.primary)),
             IconButton(
-                icon: Icon(Icons.add, color: Colors.green.shade900),
+                icon: Icon(Icons.add,
+                    color: Theme.of(context).colorScheme.primary),
                 onPressed: () => _changeScrollSpeed(0.5)),
             IconButton(
-                icon: Icon(Icons.close, color: Colors.green.shade900),
+                icon: Icon(Icons.close,
+                    color: Theme.of(context).colorScheme.primary),
                 onPressed: () => _stopAutoScroll(resetSpeed: true)),
           ],
         ),

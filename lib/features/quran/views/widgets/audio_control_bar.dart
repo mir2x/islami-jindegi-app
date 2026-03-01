@@ -30,7 +30,7 @@ class AudioControllerBar extends ConsumerWidget {
               child: Text(
                 '$surah : $ayah',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onPrimary,
                   fontSize: 16.sp,
                 ),
               ),
@@ -40,7 +40,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     Icons.skip_previous,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                     size: 24.r,
                   ),
                   tooltip: 'Previous Ayah',
@@ -49,7 +49,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     isPlaying ? Icons.pause : Icons.play_arrow,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                     size: 24.r,
                   ),
                   tooltip: isPlaying ? 'Pause' : 'Play',
@@ -58,7 +58,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     Icons.stop,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                     size: 24.r,
                   ),
                   tooltip: 'Stop',
@@ -67,7 +67,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     Icons.skip_next,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                     size: 24.r,
                   ),
                   tooltip: 'Next Ayah',
@@ -76,7 +76,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     Icons.person_outline,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                     size: 24.r,
                   ),
                   tooltip: 'Change Qari',

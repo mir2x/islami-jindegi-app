@@ -7,7 +7,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/helpers/get_location_name.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
-import 'package:native_app/theme/app_theme.dart';
 
 class CurrentLocation extends ConsumerStatefulWidget {
   const CurrentLocation({
@@ -54,10 +53,10 @@ class CurrentLocationState extends ConsumerState<CurrentLocation> {
     var textTheme = Theme.of(context).textTheme;
     var geoData = ref.watch(geolocationProvider);
 
+    var colorScheme = Theme.of(context).colorScheme;
+
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'classic';
-
         return geoData.when(
           loading: () {
             String? location = preferences.getString('location');
@@ -71,7 +70,7 @@ class CurrentLocationState extends ConsumerState<CurrentLocation> {
                   locationText,
                   style: textTheme.labelSmall?.copyWith(
                     color: widget.oppositeColor
-                        ? AppTheme.labelOppsititeColor[theme]
+                        ? colorScheme.onInverseSurface
                         : null,
                   ),
                 ),
@@ -101,7 +100,7 @@ class CurrentLocationState extends ConsumerState<CurrentLocation> {
                   location,
                   style: textTheme.labelSmall?.copyWith(
                     color: widget.oppositeColor
-                        ? AppTheme.labelOppsititeColor[theme]
+                        ? colorScheme.onInverseSurface
                         : null,
                   ),
                 ),
@@ -122,7 +121,7 @@ class CurrentLocationState extends ConsumerState<CurrentLocation> {
                           locales.location,
                           style: textTheme.labelSmall?.copyWith(
                             color: widget.oppositeColor
-                                ? AppTheme.labelOppsititeColor[theme]
+                                ? colorScheme.onInverseSurface
                                 : null,
                           ),
                         ),

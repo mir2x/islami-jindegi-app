@@ -149,7 +149,13 @@ class QuranPage extends ConsumerWidget {
                 fit: BoxFit.fill,
               ),
               CustomPaint(
-                painter: AyahHighlighter(highlightRectsOnThisPage),
+                painter: AyahHighlighter(
+                  highlightRectsOnThisPage,
+                  Theme.of(context)
+                      .colorScheme
+                      .secondaryContainer
+                      .withValues(alpha: 0.6),
+                ),
               ),
               GestureDetector(
                 behavior: HitTestBehavior.opaque,

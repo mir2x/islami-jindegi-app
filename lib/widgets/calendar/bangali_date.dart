@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:native_app/helpers/get_bangali_date.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/helpers/update_app_widget.dart';
-import 'package:native_app/theme/app_theme.dart';
 
 class BangaliDate extends StatelessWidget {
   const BangaliDate({
@@ -17,10 +16,10 @@ class BangaliDate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
+    var colorScheme = Theme.of(context).colorScheme;
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'classic';
         String bangaliDate = getBangaliDate();
 
         if (preferences.getString('bangaliDate') != bangaliDate) {
@@ -33,7 +32,7 @@ class BangaliDate extends StatelessWidget {
           child: Text(
             bangaliDate,
             style: textTheme.labelSmall?.copyWith(
-              color: oppositeColor ? AppTheme.labelOppsititeColor[theme] : null,
+              color: oppositeColor ? colorScheme.onInverseSurface : null,
             ),
           ),
         );

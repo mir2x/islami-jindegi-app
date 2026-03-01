@@ -111,7 +111,7 @@ class BottomBar extends ConsumerWidget {
               return _iconBtn(
                 context: context,
                 icon: HugeIcons.strokeRoundedTouchLocked03,
-                color: on ? Colors.orangeAccent : colorScheme.onPrimary,
+                color: on ? colorScheme.tertiary : colorScheme.onPrimary,
                 size: isLandscape ? 20.0 : 26.r,
                 isLandscape: isLandscape,
                 onPressed: () {
@@ -137,8 +137,9 @@ class BottomBar extends ConsumerWidget {
             icon: isPageBookmarked
                 ? Icons.star_rounded
                 : HugeIcons.strokeRoundedStar,
-            color:
-                isPageBookmarked ? Colors.orangeAccent : colorScheme.onPrimary,
+            color: isPageBookmarked
+                ? colorScheme.secondary
+                : colorScheme.onPrimary,
             size: isLandscape ? 20.0 : 24.r,
             isLandscape: isLandscape,
             onPressed: () {

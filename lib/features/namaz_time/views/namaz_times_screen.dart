@@ -11,8 +11,7 @@ import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/helpers/adjusted_hijri_date.dart';
 import 'package:native_app/widgets/location/index.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/theme/app_theme.dart';
-import 'package:native_app/theme/colors.dart';
+
 import 'calendar_dates.dart';
 import 'namaz_time_items.dart';
 
@@ -107,8 +106,7 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    String theme =
-        widget.settings['preferences'].getString('theme') ?? 'classic';
+    var colorScheme = Theme.of(context).colorScheme;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isSmallMobile = screenWidth < 340;
 
@@ -273,14 +271,14 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
               first: true,
               second: false,
               spacing: 80,
-              style: const ToggleStyle(
+              style: ToggleStyle(
                 borderColor: Colors.transparent,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black26,
+                    color: colorScheme.shadow.withOpacity(0.26),
                     spreadRadius: 1,
                     blurRadius: 2,
-                    offset: Offset(0, 1.5),
+                    offset: const Offset(0, 1.5),
                   ),
                 ],
               ),
@@ -289,9 +287,9 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
               onChanged: (b) => toggleTime(b),
               indicatorSize: const Size.fromWidth(26),
               styleBuilder: (b) => ToggleStyle(
-                backgroundColor: AppTheme.backgroundColor[theme],
+                backgroundColor: colorScheme.surface,
                 indicatorColor:
-                    b ? AppTheme.iconColor[theme] : ThemeColors.danger,
+                    b ? colorScheme.onSurfaceVariant : colorScheme.error,
               ),
               textBuilder: (value) => value
                   ? Center(

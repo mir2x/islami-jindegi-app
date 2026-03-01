@@ -5,12 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_debounce/easy_debounce.dart';
-import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/audio_player.dart';
 import 'package:native_app/objects/audio_resource.dart';
 import 'package:native_app/widgets/presentation/connect_to_internet.dart';
 import 'package:native_app/helpers/play_time.dart';
-import 'package:native_app/theme/app_theme.dart';
 
 class AudioPlayerWidget extends ConsumerWidget {
   const AudioPlayerWidget({
@@ -161,94 +159,88 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
 
-    return WithPreferences(
-      builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'classic';
+    var colorScheme = Theme.of(context).colorScheme;
 
-        return Column(
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () async {
+            if (isPlaying) {
+              await widget.player.pause();
+            } else {
+              await widget.player.play();
+            }
+          },
+          child: isPlaying
+              ? SvgPicture.asset(
+                  'assets/images/icons/pause.svg',
+                  width: 80,
+                  height: 80,
+                )
+              : SvgPicture.asset(
+                  'assets/images/icons/play.svg',
+                  width: 80,
+                  height: 80,
+                ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(top: 15, bottom: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                playTime(position.inSeconds),
+                style: textTheme.titleMedium,
+              ),
+              Text(
+                playTime(duration.inSeconds),
+                style: textTheme.titleMedium,
+              ),
+            ],
+          ),
+        ),
+        SliderTheme(
+          data: SliderThemeData(
+            overlayShape: SliderComponentShape.noThumb,
+          ),
+          child: Slider(
+            activeColor: colorScheme.onSurfaceVariant,
+            inactiveColor: colorScheme.outlineVariant,
+            value: position.inSeconds.toDouble(),
+            min: 0,
+            max: duration.inSeconds.toDouble() + 2,
+            onChanged: (double value) async {
+              await widget.player.seek(Duration(seconds: value.toInt()));
+              value = value;
+            },
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            GestureDetector(
-              onTap: () async {
-                if (isPlaying) {
-                  await widget.player.pause();
-                } else {
-                  await widget.player.play();
+            IconButton(
+              icon: const Icon(Icons.fast_rewind),
+              onPressed: () async {
+                int tenSecondBehind = position.inSeconds - 10;
+
+                if (tenSecondBehind >= 0) {
+                  await widget.player.seek(Duration(seconds: tenSecondBehind));
                 }
               },
-              child: isPlaying
-                  ? SvgPicture.asset(
-                      'assets/images/icons/pause.svg',
-                      width: 80,
-                      height: 80,
-                    )
-                  : SvgPicture.asset(
-                      'assets/images/icons/play.svg',
-                      width: 80,
-                      height: 80,
-                    ),
             ),
-            Container(
-              margin: const EdgeInsets.only(top: 15, bottom: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    playTime(position.inSeconds),
-                    style: textTheme.titleMedium,
-                  ),
-                  Text(
-                    playTime(duration.inSeconds),
-                    style: textTheme.titleMedium,
-                  ),
-                ],
-              ),
-            ),
-            SliderTheme(
-              data: SliderThemeData(
-                overlayShape: SliderComponentShape.noThumb,
-              ),
-              child: Slider(
-                activeColor: AppTheme.sliderFgColor[theme],
-                inactiveColor: AppTheme.sliderBgColor[theme],
-                value: position.inSeconds.toDouble(),
-                min: 0,
-                max: duration.inSeconds.toDouble() + 2,
-                onChanged: (double value) async {
-                  await widget.player.seek(Duration(seconds: value.toInt()));
-                  value = value;
-                },
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.fast_rewind),
-                  onPressed: () async {
-                    int tenSecondBehind = position.inSeconds - 10;
+            IconButton(
+              icon: const Icon(Icons.fast_forward),
+              onPressed: () async {
+                int tenSecondForward = position.inSeconds + 10;
 
-                    if (tenSecondBehind >= 0) {
-                      await widget.player
-                          .seek(Duration(seconds: tenSecondBehind));
-                    }
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.fast_forward),
-                  onPressed: () async {
-                    int tenSecondForward = position.inSeconds + 10;
-
-                    if (tenSecondForward <= duration.inSeconds) {
-                      await widget.player
-                          .seek(Duration(seconds: tenSecondForward));
-                    }
-                  },
-                ),
-              ],
+                if (tenSecondForward <= duration.inSeconds) {
+                  await widget.player.seek(Duration(seconds: tenSecondForward));
+                }
+              },
             ),
           ],
-        );
-      },
+        ),
+      ],
     );
   }
 }

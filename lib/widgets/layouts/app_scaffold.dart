@@ -13,7 +13,6 @@ import 'package:native_app/providers/launch_app_widget_link.dart';
 import 'package:native_app/providers/background_app_widget_link.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/notification_status.dart';
-import 'package:native_app/theme/app_theme.dart';
 
 class AppScaffold extends ConsumerWidget {
   const AppScaffold({
@@ -236,7 +235,7 @@ class AppScaffold extends ConsumerWidget {
                       child: Text(
                         locales.home,
                         style: textTheme.titleLarge?.copyWith(
-                          color: AppTheme.titleContrastColor[theme],
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 24,
                         ),
                         textAlign: TextAlign.right,
@@ -276,7 +275,7 @@ class AppScaffold extends ConsumerWidget {
                             : ImageRepeat.noRepeat,
                       )
                     : null,
-                color: AppTheme.backgroundColor[theme],
+                color: Theme.of(context).colorScheme.surface,
               ),
               constraints: const BoxConstraints.expand(),
               child: LayoutBuilder(
@@ -343,31 +342,26 @@ class DrawerLink extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
+    var colorScheme = Theme.of(context).colorScheme;
 
-    return WithPreferences(
-      builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'classic';
+    return InkWell(
+      onTap: () {
+        Scaffold.of(context).closeEndDrawer();
 
-        return InkWell(
-          onTap: () {
-            Scaffold.of(context).closeEndDrawer();
-
-            if (QR.currentPath.substring(1) != route) {
-              QR.to(route);
-            }
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Text(
-              title,
-              style: textTheme.titleLarge?.copyWith(
-                color: AppTheme.titleContrastColor[theme],
-              ),
-              textAlign: TextAlign.right,
-            ),
-          ),
-        );
+        if (QR.currentPath.substring(1) != route) {
+          QR.to(route);
+        }
       },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Text(
+          title,
+          style: textTheme.titleLarge?.copyWith(
+            color: colorScheme.primary,
+          ),
+          textAlign: TextAlign.right,
+        ),
+      ),
     );
   }
 }

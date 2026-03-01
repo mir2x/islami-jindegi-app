@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:upgrader/upgrader.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
-import 'package:native_app/theme/app_theme.dart';
 import 'dates_prayers.dart';
 import 'resource.dart';
 import 'malfuzat_popup.dart';
@@ -53,7 +52,7 @@ class Home extends StatelessWidget {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color: AppTheme.backgroundOppositeColor[theme],
+                      color: Theme.of(context).colorScheme.inverseSurface,
                     ),
                     padding: EdgeInsets.only(
                       left: sideMargin * 2,

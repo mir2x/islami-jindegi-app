@@ -32,7 +32,7 @@ class Bookmarks extends ConsumerWidget {
                   onTap: () => QR.to(item.link!),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete),
-                    color: Colors.red,
+                    color: Theme.of(context).colorScheme.error,
                     onPressed: () async {
                       ref.read(bookmarksProvider.notifier).deleteItem(item.id);
                     },

@@ -99,11 +99,11 @@ class AyahCard extends ConsumerWidget {
             ),
           ),
         ),
-        const Row(
+        Row(
           children: [
-            _ColorDot(color: Colors.red),
-            _ColorDot(color: Colors.orange),
-            _ColorDot(color: Colors.green),
+            _ColorDot(color: colorScheme.error),
+            _ColorDot(color: colorScheme.secondary),
+            _ColorDot(color: colorScheme.tertiary),
           ],
         ),
       ],

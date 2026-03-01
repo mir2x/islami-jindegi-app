@@ -6,7 +6,6 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:adhan/adhan.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/objects/prayer_time.dart';
-import 'package:native_app/theme/colors.dart';
 import 'package:native_app/services/prayer_alarm_service.dart';
 import 'package:native_app/features/namaz_time/providers/prayer_alarm_providers.dart';
 
@@ -219,6 +218,7 @@ class NamazTimeItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    var colorScheme = Theme.of(context).colorScheme;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isSmallMobile = screenWidth < 340;
 
@@ -246,7 +246,9 @@ class NamazTimeItem extends ConsumerWidget {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: isActive ? ThemeColors.color5 : ThemeColors.color7,
+                color: isActive
+                    ? colorScheme.primary
+                    : colorScheme.surfaceContainerHighest,
               ),
               padding: EdgeInsets.symmetric(
                 horizontal: isSmallMobile ? 8 : 12,
@@ -256,7 +258,9 @@ class NamazTimeItem extends ConsumerWidget {
                 label,
                 textAlign: TextAlign.center,
                 style: textTheme.labelMedium?.copyWith(
-                  color: ThemeColors.color3,
+                  color: isActive
+                      ? colorScheme.onPrimary
+                      : colorScheme.onSurfaceVariant,
                 ),
               ),
             ),
@@ -270,9 +274,9 @@ class NamazTimeItem extends ConsumerWidget {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: ThemeColors.color3,
+                color: colorScheme.surface,
                 border: Border.all(
-                  color: ThemeColors.color2,
+                  color: colorScheme.outlineVariant,
                 ),
               ),
               padding: EdgeInsets.symmetric(
@@ -292,7 +296,7 @@ class NamazTimeItem extends ConsumerWidget {
                       value,
                       textAlign: TextAlign.center,
                       style: textTheme.labelMedium?.copyWith(
-                        color: ThemeColors.color2,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -306,8 +310,8 @@ class NamazTimeItem extends ConsumerWidget {
                       icon: Icon(
                         isAlarmEnabled ? Icons.alarm_on : Icons.alarm_off,
                         color: isAlarmEnabled
-                            ? ThemeColors.color8
-                            : ThemeColors.border,
+                            ? colorScheme.tertiary
+                            : colorScheme.outlineVariant,
                       ),
                       onPressed: () {
                         ref

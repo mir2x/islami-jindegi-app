@@ -17,7 +17,8 @@ class AyahPlaceholder extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 16,
-                  backgroundColor: Colors.grey.shade200,
+                  backgroundColor:
+                      Theme.of(context).colorScheme.surfaceContainerHighest,
                 ),
               ],
             ),
@@ -25,9 +26,12 @@ class AyahPlaceholder extends StatelessWidget {
             Container(
                 height: 16,
                 width: double.infinity,
-                color: Colors.grey.shade200),
+                color: Theme.of(context).colorScheme.surfaceContainerHighest),
             const SizedBox(height: 8),
-            Container(height: 16, width: 200, color: Colors.grey.shade200),
+            Container(
+                height: 16,
+                width: 200,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest),
           ],
         ),
       ),

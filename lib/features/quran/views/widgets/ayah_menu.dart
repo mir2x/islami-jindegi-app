@@ -72,7 +72,7 @@ class AyahMenu extends ConsumerWidget {
                         ? Icons.star_rounded
                         : HugeIcons.strokeRoundedStar,
                     color: isBookmarked
-                        ? Colors.orangeAccent
+                        ? colorScheme.tertiary
                         : colorScheme.onSecondaryContainer,
                     size: 24.r,
                   ),
