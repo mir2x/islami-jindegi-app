@@ -20,16 +20,19 @@ class QuranAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final locales = AppLocalizations.of(context)!;
     final colors = Theme.of(context).extension<AppThemeColors>()!;
     final iconSize = isLandscape ? 20.0 : 24.0;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final appBarBg = isLight ? colors.surfaceBg : colors.appBarBg;
+    final appBarFg = isLight ? colors.secondaryText : colors.appBarText;
     final isDarkBg =
-        ThemeData.estimateBrightnessForColor(colors.appBarBg) ==
+        ThemeData.estimateBrightnessForColor(appBarBg) ==
             Brightness.dark;
 
     return AppBar(
       toolbarHeight: isLandscape ? 52.0 : 64.0,
-      backgroundColor: colors.appBarBg,
-      foregroundColor: colors.appBarText,
+      backgroundColor: appBarBg,
+      foregroundColor: appBarFg,
       systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: colors.appBarBg,
+        statusBarColor: appBarBg,
         statusBarIconBrightness:
             isDarkBg ? Brightness.light : Brightness.dark,
         statusBarBrightness: isDarkBg ? Brightness.dark : Brightness.light,
@@ -41,7 +44,7 @@ class QuranAppBar extends ConsumerWidget implements PreferredSizeWidget {
       leading: _AppBarIconButton(
         icon: Icons.arrow_back,
         iconSize: iconSize,
-        color: colors.appBarText,
+        color: appBarFg,
         onPressed: () => Navigator.of(context).maybePop(),
       ),
 
@@ -49,7 +52,7 @@ class QuranAppBar extends ConsumerWidget implements PreferredSizeWidget {
       title: Text(
         locales.quran,
         style: TextStyle(
-          color: colors.appBarText,
+          color: appBarFg,
           fontSize: isLandscape ? 18.0 : 22.sp,
           fontWeight: FontWeight.w600,
           fontFamily: 'Poppins',
@@ -61,33 +64,36 @@ class QuranAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
       // ── Action Icons ─────────────────────────
       actions: [
-        // Search
+        // Drawer (menu)
         _AppBarIconButton(
-          icon: Icons.search_rounded,
+          icon: Icons.menu_rounded,
           iconSize: iconSize,
-          color: colors.appBarText,
-          onPressed: () => QR.to('/qurans/search'),
+          color: appBarFg,
+          onPressed: () {
+            final scaffold = Scaffold.maybeOf(context);
+            if (scaffold != null) {
+              scaffold.openDrawer();
+            }
+          },
         ),
 
         // Translate
         _AppBarIconButton(
           icon: Icons.g_translate_rounded,
           iconSize: iconSize,
-          color: colors.appBarText,
+          color: appBarFg,
           onPressed: () {
             final int suraNumber = ref.read(currentSuraProvider);
             QR.to('/qurans/sura/$suraNumber');
           },
         ),
 
-        // Drawer (menu) — must use Builder for Scaffold context
-        Builder(
-          builder: (ctx) => _AppBarIconButton(
-            icon: Icons.menu_rounded,
-            iconSize: iconSize,
-            color: colors.secondary, // gold — visually distinct
-            onPressed: () => Scaffold.of(ctx).openDrawer(),
-          ),
+        // Search
+        _AppBarIconButton(
+          icon: Icons.search_rounded,
+          iconSize: iconSize,
+          color: appBarFg,
+          onPressed: () => QR.to('/qurans/search'),
         ),
 
         SizedBox(width: 4.w),

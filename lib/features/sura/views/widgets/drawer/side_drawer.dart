@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/features/sura/views/widgets/drawer/bookmark_navigation_view.dart';
 import 'package:native_app/features/sura/views/widgets/drawer/para_navigation_view.dart';
 import 'package:native_app/features/sura/views/widgets/drawer/sura_navigation_view.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 final suraDrawerTabIndexProvider = StateProvider<int>((_) => 0);
 
@@ -45,17 +46,16 @@ class _SuraSideDrawerState extends ConsumerState<SuraSideDrawer>
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context);
-    final isLandscape = media.orientation == Orientation.landscape;
     final topInset = media.padding.top + kToolbarHeight;
-    final bottomInset = media.padding.bottom + (isLandscape ? 50.0 : 56.0.h);
+    final bottomInset = kBottomNavigationBarHeight + media.padding.bottom;
 
     final colorScheme = Theme.of(context).colorScheme;
-    final appBarTheme = Theme.of(context).appBarTheme;
-    final appBarBg = appBarTheme.backgroundColor ?? colorScheme.surface;
-    final appBarFg = appBarTheme.foregroundColor ?? colorScheme.onSurface;
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
     final isLight = colorScheme.brightness == Brightness.light;
+    final appBarBg = isLight ? appColors.surfaceBg : appColors.appBarBg;
+    final appBarFg = isLight ? appColors.secondaryText : appColors.appBarText;
     final indicatorColor = isLight
-        ? colorScheme.onPrimary.withOpacity(0.16)
+        ? appColors.secondaryText.withOpacity(0.14)
         : colorScheme.primary.withOpacity(0.3);
 
     return Align(

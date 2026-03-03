@@ -6,6 +6,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
 import 'package:native_app/features/sura/providers/sura_providers.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 final selectedSuraNavSurahProvider = StateProvider<int>((_) => 1);
 final selectedSuraNavAyahProvider = StateProvider<int?>((_) => null);
@@ -65,11 +66,10 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
-    final appBarTheme = Theme.of(context).appBarTheme;
-    final appBarBg =
-        appBarTheme.backgroundColor ?? Theme.of(context).colorScheme.surface;
-    final appBarFg =
-        appBarTheme.foregroundColor ?? Theme.of(context).colorScheme.onSurface;
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final appBarBg = isLight ? appColors.surfaceBg : appColors.appBarBg;
+    final appBarFg = isLight ? appColors.secondaryText : appColors.appBarText;
 
     return Container(
       color: appBarBg,
@@ -108,6 +108,17 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
   Widget _buildSurahList(WidgetRef ref) {
     final selectedSurah = ref.watch(selectedSuraNavSurahProvider);
     final suraNames = ref.watch(suraNamesProvider);
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final rowSelectedBg = Color.alphaBlend(
+      appColors.appBarBg.withOpacity(0.10),
+      appColors.surfaceBg,
+    );
+    final selectedBg = isLight
+        ? rowSelectedBg
+        : Theme.of(context).colorScheme.primary.withOpacity(0.1);
+    final selectedFg =
+        isLight ? appColors.appBarBg : Theme.of(context).colorScheme.primary;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
@@ -123,17 +134,13 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
         final isSelected = suraNumber == selectedSurah;
 
         return ListTile(
-          tileColor: isSelected
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-              : null,
+          tileColor: isSelected ? selectedBg : null,
           title: Text(
             '${_toBengaliNumber(suraNumber)}. ${suraNames[index]}',
             style: TextStyle(
               fontSize: fontSize,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).textTheme.bodyLarge?.color,
+              color: isSelected ? selectedFg : Theme.of(context).textTheme.bodyLarge?.color,
             ),
           ),
           contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -150,6 +157,17 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
     final selectedSurah = ref.watch(selectedSuraNavSurahProvider);
     final selectedAyah = ref.watch(selectedSuraNavAyahProvider);
     final ayahCounts = ref.watch(ayahCountsProvider);
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final rowSelectedBg = Color.alphaBlend(
+      appColors.appBarBg.withOpacity(0.10),
+      appColors.surfaceBg,
+    );
+    final selectedBg = isLight
+        ? rowSelectedBg
+        : Theme.of(context).colorScheme.primary.withOpacity(0.1);
+    final selectedFg =
+        isLight ? appColors.appBarBg : Theme.of(context).colorScheme.primary;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 12.0 : 14.sp;
@@ -175,17 +193,13 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
         final isSelected = ayahNumber == selectedAyah;
 
         return ListTile(
-          tileColor: isSelected
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-              : null,
+          tileColor: isSelected ? selectedBg : null,
           title: Center(
             child: Text(
               _toBengaliNumber(ayahNumber),
               style: TextStyle(
                 fontSize: fontSize,
-                color: isSelected
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).textTheme.bodyLarge?.color,
+                color: isSelected ? selectedFg : Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),

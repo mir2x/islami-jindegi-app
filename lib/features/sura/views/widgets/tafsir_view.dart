@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../../../../core/services/static_asset_api.dart';
 import '../../../../core/utils/adaptive_text.dart';
 import '../../../downloader/views/show_download_dialog.dart';
@@ -46,11 +47,14 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
               var item = entry.value;
 
               final colorScheme = Theme.of(context).colorScheme;
-              final textTheme = Theme.of(context).textTheme;
+              final colors = Theme.of(context).extension<AppThemeColors>()!;
+              final isLight = colorScheme.brightness == Brightness.light;
 
               return ExpansionPanel(
                 canTapOnHeader: true,
-                backgroundColor: colorScheme.surfaceVariant.withOpacity(0.5),
+                backgroundColor: isLight
+                    ? colors.surfaceBg.withOpacity(0.9)
+                    : colorScheme.surfaceVariant.withOpacity(0.5),
                 isExpanded: _expandedPanelIndex == index,
                 headerBuilder: (context, isExpanded) {
                   return ListTile(
@@ -61,7 +65,7 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
                         wordSpacing: 3,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: colorScheme.primary,
+                        color: isLight ? colors.secondaryText : colorScheme.primary,
                       ),
                       textAlign: TextAlign.left,
                     ),
@@ -160,6 +164,9 @@ void showTafsirBottomSheet(BuildContext context, String suraName, Ayah ayah) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
+    backgroundColor: Theme.of(context).colorScheme.brightness == Brightness.light
+        ? Theme.of(context).extension<AppThemeColors>()!.surfaceBg
+        : Theme.of(context).colorScheme.surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
     ),

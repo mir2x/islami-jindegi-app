@@ -3,6 +3,7 @@ import 'package:native_app/features/sura/views/widgets/reciter_selection_dialog.
 import 'package:native_app/features/sura/views/widgets/search_page.dart';
 import 'package:native_app/features/sura/views/widgets/tilawat_page.dart';
 import 'package:native_app/features/sura/views/widgets/translation_selection_dialog.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../../models/grid_item_data.dart';
 import 'font_change_dialog.dart';
 
@@ -10,7 +11,9 @@ void showDetailsBottomSheet(BuildContext context, {required int suraNumber}) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Theme.of(context).colorScheme.surface,
+    backgroundColor: Theme.of(context).colorScheme.brightness == Brightness.light
+        ? Theme.of(context).extension<AppThemeColors>()!.surfaceBg
+        : Theme.of(context).colorScheme.surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
@@ -131,6 +134,15 @@ class _DetailsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final sectionHeaderBg =
+        isLight ? colors.surfaceBg.withOpacity(0.9) : Theme.of(context).colorScheme.primaryContainer;
+    final sectionHeaderFg =
+        isLight ? colors.secondaryText : Theme.of(context).colorScheme.onSurface;
+    final iconColor =
+        isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -138,13 +150,14 @@ class _DetailsSection extends StatelessWidget {
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          color: Theme.of(context).colorScheme.primaryContainer,
+          color: sectionHeaderBg,
           child: Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               wordSpacing: 3,
               fontSize: 14,
               fontWeight: FontWeight.bold,
+              color: sectionHeaderFg,
             ),
           ),
         ),
@@ -167,8 +180,7 @@ class _DetailsSection extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(item.icon,
-                      size: 28, color: Theme.of(context).colorScheme.primary),
+                  Icon(item.icon, size: 28, color: iconColor),
                   const SizedBox(height: 4),
                   Text(
                     item.label,

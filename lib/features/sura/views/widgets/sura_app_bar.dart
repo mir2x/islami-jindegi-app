@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/shared/quran_data.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -24,9 +25,19 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
     final surahInfo = surahInfoList[suraNumber - 1];
     final subtitle =
         '${surahInfo.typeLabel} | আয়াত সংখ্যা: ${surahInfo.ayatCount.toBengaliDigit()}';
-    final fg = Theme.of(context).appBarTheme.foregroundColor;
+    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = colorScheme.brightness == Brightness.light;
+    final bg = isLight
+        ? colors.surfaceBg
+        : (Theme.of(context).appBarTheme.backgroundColor ?? colorScheme.surface);
+    final fg = isLight
+        ? colors.secondaryText
+        : (Theme.of(context).appBarTheme.foregroundColor ?? colorScheme.onSurface);
 
     return AppBar(
+      backgroundColor: bg,
+      foregroundColor: fg,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
         onPressed: () => Navigator.of(context).maybePop(),
@@ -45,7 +56,7 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
           Text(
             subtitle,
             style: TextStyle(
-              color: fg?.withOpacity(0.7),
+              color: fg.withOpacity(0.7),
               fontSize: 12,
               wordSpacing: 3,
             ),

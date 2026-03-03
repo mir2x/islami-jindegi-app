@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 final _selectedTilawatSurahProvider = StateProvider<int>((ref) => 1);
 
@@ -90,8 +91,13 @@ class _TilawatSelectionDrawerState
   }
 
   Widget _buildHeader(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = colorScheme.brightness == Brightness.light;
+    final headerBg = isLight ? appColors.appBarBg : colorScheme.secondary;
+    final headerFg = isLight ? appColors.appBarText : colorScheme.onSecondary;
     return Container(
-      color: Theme.of(context).colorScheme.secondary,
+      color: headerBg,
       padding: EdgeInsets.symmetric(vertical: 12.h),
       child: Row(
         children: [
@@ -101,7 +107,7 @@ class _TilawatSelectionDrawerState
               'সুরা',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onSecondary,
+                color: headerFg,
                 fontWeight: FontWeight.bold,
                 fontSize: 16.sp,
                 fontFamily: 'bangla/solaimanlipi',
@@ -115,7 +121,7 @@ class _TilawatSelectionDrawerState
               'আয়াত',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onSecondary,
+                color: headerFg,
                 fontWeight: FontWeight.bold,
                 fontSize: 16.sp,
                 fontFamily: 'bangla/solaimanlipi',
@@ -131,6 +137,13 @@ class _TilawatSelectionDrawerState
   Widget _buildSurahList(WidgetRef ref) {
     final selectedSurah = ref.watch(_selectedTilawatSurahProvider);
     final suraNames = ref.watch(suraNamesProvider);
+    final colorScheme = Theme.of(context).colorScheme;
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = colorScheme.brightness == Brightness.light;
+    final selectedBg = isLight
+        ? appColors.appBarBg.withOpacity(0.15)
+        : colorScheme.primary.withOpacity(0.1);
+    final selectedFg = isLight ? appColors.appBarBg : colorScheme.primary;
 
     return ScrollablePositionedList.separated(
       itemScrollController: _surahScrollController,
@@ -144,7 +157,7 @@ class _TilawatSelectionDrawerState
 
         return ListTile(
           tileColor: isSelected
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+              ? selectedBg
               : null,
           title: Text(
             '${_toBengaliNumber(suraNumber)}. ${suraNames[index]}',
@@ -152,7 +165,7 @@ class _TilawatSelectionDrawerState
               fontSize: 15.sp,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               color: isSelected
-                  ? Theme.of(context).colorScheme.primary
+                  ? selectedFg
                   : Theme.of(context).textTheme.bodyLarge?.color,
             ),
           ),

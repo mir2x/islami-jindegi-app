@@ -310,7 +310,11 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
 
                 final appThemeColors =
                     Theme.of(context).extension<AppThemeColors>();
-                final appBarBg = appThemeColors?.appBarBg ??
+                final isLight =
+                    Theme.of(context).colorScheme.brightness == Brightness.light;
+                final appBarBg = (isLight
+                        ? appThemeColors?.surfaceBg
+                        : appThemeColors?.appBarBg) ??
                     Theme.of(context).appBarTheme.backgroundColor ??
                     Theme.of(context).colorScheme.surface;
                 final isDarkBg =

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:qlevar_router/qlevar_router.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../../../../shared/quran_data.dart';
 import '../../providers/search_providers.dart';
 
@@ -12,9 +13,27 @@ class SearchPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final searchQuery = ref.watch(searchQueryProvider);
     final searchResults = ref.watch(searchResultsProvider);
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final appBarBg = isLight
+        ? colors.surfaceBg
+        : (Theme.of(context).appBarTheme.backgroundColor ??
+            Theme.of(context).colorScheme.surface);
+    final appBarFg = isLight
+        ? colors.secondaryText
+        : (Theme.of(context).appBarTheme.foregroundColor ??
+            Theme.of(context).colorScheme.onSurface);
+    final highlightBg = isLight
+        ? colors.divider.withOpacity(0.5)
+        : Theme.of(context).colorScheme.primaryContainer;
+    final highlightFg = isLight
+        ? colors.secondaryText
+        : Theme.of(context).colorScheme.onPrimaryContainer;
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: appBarBg,
+        foregroundColor: appBarFg,
         title: TextField(
           autofocus: true,
           decoration: InputDecoration(
@@ -28,7 +47,7 @@ class SearchPage extends ConsumerWidget {
           style: TextStyle(
               fontFamily: 'bangla/solaimanlipi',
               wordSpacing: 3,
-              color: Theme.of(context).colorScheme.onSurface,
+              color: appBarFg,
               fontSize: 18),
           onChanged: (value) {
             ref.read(searchQueryProvider.notifier).state = value;
@@ -64,6 +83,8 @@ class SearchPage extends ConsumerWidget {
                 subtitle: HighlightedText(
                   text: ayah.arabicText,
                   query: searchQuery,
+                  highlightBackground: highlightBg,
+                  highlightForeground: highlightFg,
                   style: TextStyle(
                       fontFamily: 'arabic/noorehuda',
                       fontSize: 20,
@@ -94,12 +115,16 @@ class HighlightedText extends StatelessWidget {
   final String text;
   final String query;
   final TextStyle style;
+  final Color highlightBackground;
+  final Color highlightForeground;
 
   const HighlightedText({
     super.key,
     required this.text,
     required this.query,
     required this.style,
+    required this.highlightBackground,
+    required this.highlightForeground,
   });
 
   @override
@@ -129,8 +154,7 @@ class HighlightedText extends StatelessWidget {
       spans.add(TextSpan(
         text: text.substring(startIndex, endIndex),
         style: style.copyWith(
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            color: Theme.of(context).colorScheme.onPrimaryContainer),
+            backgroundColor: highlightBackground, color: highlightForeground),
       ));
 
       start = endIndex;

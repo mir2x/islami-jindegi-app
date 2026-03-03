@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../../../providers/ayah_highlight_providers.dart';
 import '../../../providers/bookmark_providers.dart';
 
@@ -21,12 +22,12 @@ class BookmarkNavigationView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-    final appBarTheme = Theme.of(context).appBarTheme;
-    final tabBg = appBarTheme.backgroundColor ?? colorScheme.surface;
-    final tabFg = appBarTheme.foregroundColor ?? colorScheme.onSurface;
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
     final isLight = colorScheme.brightness == Brightness.light;
+    final tabBg = isLight ? appColors.surfaceBg : appColors.appBarBg;
+    final tabFg = isLight ? appColors.secondaryText : appColors.appBarText;
     final indicatorColor = isLight
-        ? colorScheme.onPrimary.withOpacity(0.16)
+        ? appColors.divider.withOpacity(0.7)
         : colorScheme.primary.withOpacity(0.3);
     final bookmarksAsync = ref.watch(bookmarkProvider);
     final suraNames = ref.watch(suraNamesProvider);

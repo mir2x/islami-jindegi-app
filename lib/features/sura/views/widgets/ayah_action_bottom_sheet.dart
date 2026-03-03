@@ -5,6 +5,7 @@ import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/features/sura/views/widgets/tafsir_view.dart';
 import 'package:native_app/features/sura/views/widgets/tilawat_page.dart';
 import 'package:native_app/features/sura_list/providers/bookmark_providers.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../models/ayah.dart';
 import '../../providers/sura_reciter_providers.dart';
@@ -33,12 +34,21 @@ void showAyahActionBottomSheet(
 
   showModalBottomSheet(
     context: context,
+    backgroundColor: Theme.of(context).colorScheme.brightness == Brightness.light
+        ? Theme.of(context).extension<AppThemeColors>()!.surfaceBg
+        : Theme.of(context).colorScheme.surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
     ),
     builder: (BuildContext bottomSheetContext) {
       return Consumer(
         builder: (context, ref, child) {
+          final colors = Theme.of(context).extension<AppThemeColors>()!;
+          final isLight =
+              Theme.of(context).colorScheme.brightness == Brightness.light;
+          final actionIconColor = isLight
+              ? colors.secondaryText
+              : Theme.of(context).colorScheme.primary;
           final isBookmarked = ref.watch(
               isAyahBookmarkedProvider((sura: suraNumber, ayah: ayah.ayah)));
 
@@ -176,7 +186,7 @@ void showAyahActionBottomSheet(
                         children: [
                           Icon(item.icon,
                               size: 36,
-                              color: Theme.of(context).colorScheme.primary),
+                              color: actionIconColor),
                           const SizedBox(height: 8),
                           Text(
                             item.label,

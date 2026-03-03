@@ -29,11 +29,14 @@ class BottomBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final barBg = isLight ? colors.surfaceBg : colors.appBarBg;
+    final barFg = isLight ? colors.secondaryText : colors.appBarText;
 
     return Container(
       height: _height,
       decoration: BoxDecoration(
-        color: colors.appBarBg,
+        color: barBg,
         border: Border(
           top: BorderSide(color: colors.divider, width: 1),
         ),
@@ -52,7 +55,7 @@ class BottomBar extends ConsumerWidget {
           _NavIconButton(
             icon: HugeIcons.strokeRoundedPlay,
             iconSize: _iconSize,
-            color: colors.appBarText,
+            color: barFg,
             isLandscape: isLandscape,
             onPressed: () => _openAudioSheet(context, ref),
           ),
@@ -76,7 +79,7 @@ class BottomBar extends ConsumerWidget {
               return _NavIconButton(
                 icon: HugeIcons.strokeRoundedTouchLocked03,
                 iconSize: isLandscape ? 20.0 : 26.0.r,
-                color: isOn ? colors.secondary : colors.appBarText,
+                color: isOn ? colors.secondary : barFg,
                 isLandscape: isLandscape,
                 onPressed: () {
                   final wasOn = ref.read(touchModeProvider);
@@ -91,7 +94,7 @@ class BottomBar extends ConsumerWidget {
           _NavIconButton(
             icon: HugeIcons.strokeRoundedScreenRotation,
             iconSize: _iconSize,
-            color: colors.appBarText,
+            color: barFg,
             isLandscape: isLandscape,
             onPressed: OrientationToggle.toggle,
           ),
@@ -107,7 +110,7 @@ class BottomBar extends ConsumerWidget {
           _NavIconButton(
             icon: HugeIcons.strokeRoundedNavigation05,
             iconSize: _iconSize,
-            color: drawerOpen ? colors.secondary : colors.appBarText,
+            color: drawerOpen ? colors.secondary : barFg,
             isLandscape: isLandscape,
             onPressed: () => drawerOpen
                 ? rootKey.currentState?.closeDrawer()
@@ -151,9 +154,9 @@ class _ReciterDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
     final fieldBg =
-        isLight ? colors.appBarBg.withOpacity(0.22) : colors.dropdownBg;
-    final menuBg = isLight ? colors.appBarBg : colors.dropdownBg;
-    final textColor = isLight ? colors.appBarText : colors.primaryText;
+        isLight ? colors.surfaceBg.withOpacity(0.9) : colors.dropdownBg;
+    final menuBg = isLight ? colors.surfaceBg : colors.dropdownBg;
+    final textColor = isLight ? colors.secondaryText : colors.primaryText;
 
     final selectedReciter = ref.watch(selectedReciterProvider);
     final displayReciterName =
@@ -231,7 +234,7 @@ class _BookmarkButton extends ConsumerWidget {
     return _NavIconButton(
       icon: isBookmarked ? Icons.star_rounded : HugeIcons.strokeRoundedStar,
       iconSize: iconSize,
-      color: isBookmarked ? colors.secondary : colors.appBarText,
+      color: isBookmarked ? colors.secondary : colors.secondaryText,
       isLandscape: isLandscape,
       onPressed: () => _handleBookmark(
           context, ref, isBookmarked, currentPage, bookmarkNotifier),

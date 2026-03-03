@@ -359,7 +359,9 @@ class _SurahPageState extends ConsumerState<SurahPage> {
               ),
               if (quranAudioState != null)
                 AudioControllerBar(
-                  color: Theme.of(context).extension<AppThemeColors>()!.primary,
+                  color: Theme.of(context).colorScheme.brightness == Brightness.light
+                      ? Theme.of(context).extension<AppThemeColors>()!.surfaceBg
+                      : Theme.of(context).extension<AppThemeColors>()!.primary,
                 ),
             ],
           ),
@@ -376,9 +378,17 @@ class _SurahPageState extends ConsumerState<SurahPage> {
             ? FloatingActionButton(
                 onPressed: _scrollToTop,
                 mini: true,
-                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                backgroundColor:
+                    Theme.of(context).colorScheme.brightness == Brightness.light
+                        ? Theme.of(context).extension<AppThemeColors>()!.surfaceBg
+                        : Theme.of(context).colorScheme.primaryContainer,
                 child: Icon(Icons.arrow_upward,
-                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+                    color:
+                        Theme.of(context).colorScheme.brightness == Brightness.light
+                            ? Theme.of(context)
+                                .extension<AppThemeColors>()!
+                                .secondaryText
+                            : Theme.of(context).colorScheme.onPrimaryContainer),
               )
             : null,
       ),
@@ -388,6 +398,11 @@ class _SurahPageState extends ConsumerState<SurahPage> {
   Widget _buildAutoScrollController(BuildContext context) {
     final scrollSpeedFactor = ref.watch(scrollSpeedFactorProvider);
     final isPaused = ref.watch(isAutoScrollPausedProvider);
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final accent = isLight
+        ? colors.secondaryText
+        : Theme.of(context).colorScheme.primary;
 
     return Positioned(
       left: 0,
@@ -410,26 +425,22 @@ class _SurahPageState extends ConsumerState<SurahPage> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             IconButton(
-              icon: Icon(isPaused ? Icons.play_arrow : Icons.pause,
-                  color: Theme.of(context).colorScheme.primary),
+              icon: Icon(isPaused ? Icons.play_arrow : Icons.pause, color: accent),
               onPressed: _togglePlayPauseAutoScroll,
             ),
             IconButton(
-                icon: Icon(Icons.remove,
-                    color: Theme.of(context).colorScheme.primary),
+                icon: Icon(Icons.remove, color: accent),
                 onPressed: () => _changeScrollSpeed(-0.5)),
             Text('${scrollSpeedFactor.toStringAsFixed(1)}x',
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary)),
+                    color: accent)),
             IconButton(
-                icon: Icon(Icons.add,
-                    color: Theme.of(context).colorScheme.primary),
+                icon: Icon(Icons.add, color: accent),
                 onPressed: () => _changeScrollSpeed(0.5)),
             IconButton(
-                icon: Icon(Icons.close,
-                    color: Theme.of(context).colorScheme.primary),
+                icon: Icon(Icons.close, color: accent),
                 onPressed: () => _stopAutoScroll(resetSpeed: true)),
           ],
         ),

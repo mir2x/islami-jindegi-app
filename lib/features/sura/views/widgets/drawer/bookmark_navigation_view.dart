@@ -5,6 +5,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/features/sura/providers/sura_providers.dart';
 import 'package:native_app/features/sura_list/providers/bookmark_providers.dart'
     as sura_bookmarks;
+import 'package:native_app/theme/app_theme_color.dart';
 
 class SuraBookmarkNavigationView extends ConsumerWidget {
   final int currentSuraNumber;
@@ -22,6 +23,10 @@ class SuraBookmarkNavigationView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bookmarks = ref.watch(sura_bookmarks.bookmarkProvider);
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final accent =
+        isLight ? appColors.secondaryText : Theme.of(context).colorScheme.primary;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final itemTitleFontSize = isLandscape ? 12.0 : 14.sp;
@@ -56,7 +61,7 @@ class SuraBookmarkNavigationView extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: itemTitleFontSize,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: accent,
                 ),
               ),
               SizedBox(width: 8.w),

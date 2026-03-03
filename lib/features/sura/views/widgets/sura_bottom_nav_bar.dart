@@ -5,6 +5,7 @@ import 'package:native_app/features/sura/views/widgets/details_bottom_sheet.dart
 import 'package:native_app/features/sura/views/widgets/translation_selection_dialog.dart';
 import 'package:native_app/features/sura/providers/sura_reciter_providers.dart';
 import 'package:native_app/features/sura/providers/sura_providers.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class SuraBottomNavBar extends ConsumerWidget {
   final int totalAyahs;
@@ -62,11 +63,14 @@ class SuraBottomNavBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      selectedItemColor: Theme.of(context).colorScheme.primary,
-      unselectedItemColor: Theme.of(context).colorScheme.onSurfaceVariant,
+      backgroundColor: isLight ? colors.surfaceBg : Theme.of(context).colorScheme.surface,
+      selectedItemColor: isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary,
+      unselectedItemColor:
+          isLight ? colors.secondaryText.withOpacity(0.85) : Theme.of(context).colorScheme.onSurfaceVariant,
       onTap: (index) => _onNavBarTapped(index, context, ref),
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'অনুবাদ'),

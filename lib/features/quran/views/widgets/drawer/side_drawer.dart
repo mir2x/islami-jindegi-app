@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/features/quran/views/widgets/drawer/bookmark_navigation_view.dart';
 import 'package:native_app/features/quran/views/widgets/drawer/para_navigation_view.dart';
 import 'package:native_app/features/quran/views/widgets/drawer/sura_navigation_view.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../../../providers/ayah_highlight_providers.dart';
 
 final drawerTabIndexProvider = StateProvider<int>((_) => 0);
@@ -101,15 +102,14 @@ class _SideDrawerState extends ConsumerState<SideDrawer>
                       child: tabContent,
                     ),
                     Builder(builder: (context) {
+                      final appColors =
+                          Theme.of(context).extension<AppThemeColors>()!;
                       final colorScheme = Theme.of(context).colorScheme;
-                      final appBarTheme = Theme.of(context).appBarTheme;
-                      final appBarBg = appBarTheme.backgroundColor ??
-                          colorScheme.surface;
-                      final appBarFg = appBarTheme.foregroundColor ??
-                          colorScheme.onSurface;
                       final isLight = colorScheme.brightness == Brightness.light;
+                      final appBarBg = isLight ? appColors.surfaceBg : appColors.appBarBg;
+                      final appBarFg = isLight ? appColors.secondaryText : appColors.appBarText;
                       final indicatorColor = isLight
-                          ? colorScheme.onPrimary.withOpacity(0.16)
+                          ? appColors.divider.withOpacity(0.7)
                           : colorScheme.primary.withOpacity(0.3);
                       return Container(
                         color: appBarBg,

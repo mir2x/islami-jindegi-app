@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class PageInfoOverlay extends ConsumerWidget {
   final int pageIndex;
@@ -15,6 +16,11 @@ class PageInfoOverlay extends ConsumerWidget {
     final suraNamesList = ref.watch(suraNamesProvider);
     final isVisible = ref.watch(pageInfoVisibilityProvider);
     final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = colorScheme.brightness == Brightness.light;
+    final overlayBg =
+        isLight ? colors.surfaceBg.withOpacity(0.95) : colorScheme.inverseSurface.withOpacity(0.9);
+    final overlayText = isLight ? colors.secondaryText : colorScheme.onInverseSurface;
 
     return AnimatedOpacity(
       opacity: isVisible ? 1.0 : 0.0,
@@ -26,7 +32,7 @@ class PageInfoOverlay extends ConsumerWidget {
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 24.w),
             decoration: BoxDecoration(
-              color: colorScheme.inverseSurface.withOpacity(0.9),
+              color: overlayBg,
               borderRadius: BorderRadius.circular(20.r),
             ),
             child: Column(
@@ -36,7 +42,7 @@ class PageInfoOverlay extends ConsumerWidget {
                   Text(
                     'পারা ${pageInfo.paraNumber?.toBengaliDigit()}: ${pageInfo.pageNumber.toBengaliDigit()}',
                     style: TextStyle(
-                      color: colorScheme.onInverseSurface,
+                      color: overlayText,
                       fontSize: 22.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -51,9 +57,7 @@ class PageInfoOverlay extends ConsumerWidget {
                     padding: const EdgeInsets.only(top: 4.0),
                     child: Text(
                       '$suraName : ${startAyah.toBengaliDigit()} - ${endAyah.toBengaliDigit()}',
-                      style: TextStyle(
-                          color: colorScheme.onInverseSurface,
-                          fontSize: 16.sp),
+                      style: TextStyle(color: overlayText, fontSize: 16.sp),
                     ),
                   );
                 }).toList(),

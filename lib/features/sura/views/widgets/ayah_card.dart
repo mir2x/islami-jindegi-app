@@ -6,6 +6,7 @@ import 'package:native_app/features/sura/models/ayah.dart';
 import 'package:native_app/features/sura/views/widgets/ayah_action_bottom_sheet.dart';
 import 'package:native_app/features/sura/providers/font_settings_providers.dart';
 import 'package:native_app/features/sura/providers/sura_providers.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../../../../core/utils/adaptive_text.dart';
 
 class AyahCard extends ConsumerWidget {
@@ -29,11 +30,16 @@ class AyahCard extends ConsumerWidget {
     final showWords = ref.watch(showWordByWordProvider);
 
     final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = colorScheme.brightness == Brightness.light;
+    final accent = isLight ? colors.secondaryText : colorScheme.primary;
+    final accentBg =
+        isLight ? colors.divider.withOpacity(0.25) : colorScheme.primary.withOpacity(0.1);
     final cardColor = isHighlighted
-        ? colorScheme.primary.withOpacity(0.1)
+        ? accentBg
         : Theme.of(context).cardTheme.color;
     final borderColor = isHighlighted
-        ? colorScheme.primary
+        ? accent
         : colorScheme.primary.withValues(alpha: 0);
     final cardElevation = isHighlighted ? 4.0 : 0.5;
 
@@ -74,6 +80,9 @@ class AyahCard extends ConsumerWidget {
 
   Widget _buildCardHeader(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = colorScheme.brightness == Brightness.light;
+    final accent = isLight ? colors.secondaryText : colorScheme.primary;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -83,7 +92,7 @@ class AyahCard extends ConsumerWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: colorScheme.primary,
+              color: accent,
               width: 1.0,
             ),
           ),
@@ -93,7 +102,7 @@ class AyahCard extends ConsumerWidget {
               style: TextStyle(
                 fontFamily: 'bangla/solaimanlipi',
                 wordSpacing: 3,
-                color: colorScheme.primary,
+                color: accent,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -118,6 +127,9 @@ class AyahCard extends ConsumerWidget {
     final bengaliFont = ref.watch(bengaliFontProvider);
     final bengaliFontSize = ref.watch(bengaliFontSizeProvider);
     final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = colorScheme.brightness == Brightness.light;
+    final accent = isLight ? colors.secondaryText : colorScheme.primary;
     final textTheme = Theme.of(context).textTheme;
 
     return Directionality(
@@ -157,7 +169,7 @@ class AyahCard extends ConsumerWidget {
                   style: TextStyle(
                     fontFamily: bengaliFont,
                     fontSize: bengaliFontSize,
-                    color: colorScheme.primary,
+                    color: accent,
                     wordSpacing: 3,
                     height: 1.3,
                   ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../../../quran/providers/reciter_providers.dart';
 
 class ReciterSelectionDialog extends ConsumerWidget {
@@ -8,6 +9,10 @@ class ReciterSelectionDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedReciterId = ref.watch(selectedReciterProvider);
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final accent =
+        isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary;
     final selectedReciterName = reciters.entries
         .firstWhere((entry) => entry.value == selectedReciterId,
             orElse: () => reciters.entries.first)
@@ -40,7 +45,7 @@ class ReciterSelectionDialog extends ConsumerWidget {
                   Navigator.of(context).pop();
                 }
               },
-              activeColor: Theme.of(context).colorScheme.primary,
+              activeColor: accent,
             );
           }).toList(),
         ),
@@ -51,7 +56,7 @@ class ReciterSelectionDialog extends ConsumerWidget {
             'বন্ধ করুন',
             style: TextStyle(
                 wordSpacing: 3,
-                color: Theme.of(context).colorScheme.primary),
+                color: accent),
           ),
           onPressed: () {
             Navigator.of(context).pop();

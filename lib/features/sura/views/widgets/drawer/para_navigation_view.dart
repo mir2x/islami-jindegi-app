@@ -5,6 +5,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart'
     show paraStarts;
 import 'package:native_app/features/sura/providers/sura_providers.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 final selectedDrawerParaProvider = StateProvider<int>((_) => 1);
 
@@ -71,11 +72,10 @@ class _SuraParaNavigationViewState extends ConsumerState<SuraParaNavigationView>
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
-    final appBarTheme = Theme.of(context).appBarTheme;
-    final appBarBg =
-        appBarTheme.backgroundColor ?? Theme.of(context).colorScheme.surface;
-    final appBarFg =
-        appBarTheme.foregroundColor ?? Theme.of(context).colorScheme.onSurface;
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final appBarBg = isLight ? appColors.surfaceBg : appColors.appBarBg;
+    final appBarFg = isLight ? appColors.secondaryText : appColors.appBarText;
 
     return Container(
       color: appBarBg,
@@ -111,6 +111,17 @@ class _SuraParaNavigationViewState extends ConsumerState<SuraParaNavigationView>
 
   Widget _buildParaList(WidgetRef ref) {
     final selectedPara = ref.watch(selectedDrawerParaProvider);
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final rowSelectedBg = Color.alphaBlend(
+      appColors.appBarBg.withOpacity(0.10),
+      appColors.surfaceBg,
+    );
+    final selectedBg = isLight
+        ? rowSelectedBg
+        : Theme.of(context).colorScheme.primary.withOpacity(0.1);
+    final selectedFg =
+        isLight ? appColors.appBarBg : Theme.of(context).colorScheme.primary;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
@@ -125,17 +136,13 @@ class _SuraParaNavigationViewState extends ConsumerState<SuraParaNavigationView>
         final isSelected = paraNumber == selectedPara;
 
         return ListTile(
-          tileColor: isSelected
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-              : null,
+          tileColor: isSelected ? selectedBg : null,
           title: Center(
             child: Text(
               _toBengaliNumber(paraNumber),
               style: TextStyle(
                 fontSize: fontSize,
-                color: isSelected
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).textTheme.bodyLarge?.color,
+                color: isSelected ? selectedFg : Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -150,6 +157,17 @@ class _SuraParaNavigationViewState extends ConsumerState<SuraParaNavigationView>
 
   Widget _buildStartList(WidgetRef ref) {
     final selectedPara = ref.watch(selectedDrawerParaProvider);
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final rowSelectedBg = Color.alphaBlend(
+      appColors.appBarBg.withOpacity(0.10),
+      appColors.surfaceBg,
+    );
+    final selectedBg = isLight
+        ? rowSelectedBg
+        : Theme.of(context).colorScheme.primary.withOpacity(0.1);
+    final selectedFg =
+        isLight ? appColors.appBarBg : Theme.of(context).colorScheme.primary;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 12.0 : 14.sp;
@@ -162,13 +180,13 @@ class _SuraParaNavigationViewState extends ConsumerState<SuraParaNavigationView>
           Divider(height: 1.h, color: Theme.of(context).dividerColor),
       itemBuilder: (context, _) {
         return ListTile(
-          tileColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          tileColor: selectedBg,
           title: Center(
             child: Text(
               '${_toBengaliNumber(suraNumber)}:${_toBengaliNumber(ayahNumber)}',
               style: TextStyle(
                 fontSize: fontSize,
-                color: Theme.of(context).colorScheme.primary,
+                color: selectedFg,
                 fontWeight: FontWeight.bold,
               ),
             ),

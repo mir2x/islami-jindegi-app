@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../../providers/sura_providers.dart';
 
 const List<String> availableTranslators = [
@@ -15,6 +16,10 @@ class TranslatorSelectionDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selected = ref.watch(selectedTranslatorsProvider);
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final accent =
+        isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary;
     return AlertDialog(
       title: const Text(
         'অনুবাদক নির্বাচন করুন',
@@ -37,7 +42,7 @@ class TranslatorSelectionDialog extends ConsumerWidget {
                     .read(selectedTranslatorsProvider.notifier)
                     .toggleTranslator(translatorName);
               },
-              activeColor: Theme.of(context).colorScheme.primary,
+              activeColor: accent,
             );
           }).toList(),
         ),
@@ -48,7 +53,7 @@ class TranslatorSelectionDialog extends ConsumerWidget {
             'বন্ধ করুন',
             style: TextStyle(
                 wordSpacing: 3,
-                color: Theme.of(context).colorScheme.primary),
+                color: accent),
           ),
           onPressed: () {
             Navigator.of(context).pop();

@@ -8,6 +8,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/sura_providers.dart';
 import '../../providers/font_settings_providers.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class QuranPageWidget extends ConsumerStatefulWidget {
   final QuranPage page;
@@ -143,6 +144,10 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
     required VoidCallback onTap,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = colorScheme.brightness == Brightness.light;
+    final optionBg = isLight ? appColors.surfaceBg.withOpacity(0.9) : colorScheme.secondary;
+    final optionFg = isLight ? appColors.secondaryText : colorScheme.onSecondary;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -150,13 +155,13 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
         decoration: BoxDecoration(
-          color: colorScheme.secondary,
+          color: optionBg,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: colorScheme.onSecondary, size: 22),
+            Icon(icon, color: optionFg, size: 22),
             const SizedBox(width: 10),
             Text(
               label,
@@ -165,7 +170,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
                 wordSpacing: 3,
                 fontSize: 16,
                 fontWeight: FontWeight.normal,
-                color: colorScheme.onSecondary,
+                color: optionFg,
               ),
             ),
           ],

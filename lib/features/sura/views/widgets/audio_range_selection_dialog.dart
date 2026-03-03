@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../../providers/sura_reciter_providers.dart';
 
 String toBengaliDigit(int number) {
@@ -75,6 +76,14 @@ class _AudioRangeSelectionDialogState
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final accent =
+        isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary;
+    final accentContainer = isLight
+        ? colors.surfaceBg.withOpacity(0.9)
+        : Theme.of(context).colorScheme.primaryContainer;
+
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       titlePadding: EdgeInsets.zero,
@@ -89,14 +98,14 @@ class _AudioRangeSelectionDialogState
             _buildFullSuraCheckbox(),
             _buildRepeatStepper(),
             const SizedBox(height: 16),
-            _buildListenButton(),
+            _buildListenButton(accentContainer, accent),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildListenButton() {
+  Widget _buildListenButton(Color background, Color foreground) {
     return ElevatedButton(
       onPressed: () async {
         final audioPlayer = ref.read(suraAudioPlayerProvider);
@@ -114,8 +123,8 @@ class _AudioRangeSelectionDialogState
         }
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+        backgroundColor: background,
+        foregroundColor: foreground,
         elevation: 1,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -132,10 +141,14 @@ class _AudioRangeSelectionDialogState
   }
 
   Widget _buildPickerUI() {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
     return Container(
       height: 180,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+        color: isLight
+            ? colors.surfaceBg.withOpacity(0.9)
+            : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -215,6 +228,14 @@ class _AudioRangeSelectionDialogState
     required FixedExtentScrollController controller,
     required ValueChanged<int> onSelectedItemChanged,
   }) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final stripBg = isLight
+        ? colors.divider.withOpacity(0.5)
+        : Theme.of(context).colorScheme.primary;
+    final selectedTextColor =
+        isLight ? colors.secondaryText : Theme.of(context).colorScheme.onPrimary;
+
     return Expanded(
       child: Stack(
         alignment: Alignment.center,
@@ -222,7 +243,7 @@ class _AudioRangeSelectionDialogState
           Container(
             height: 40,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
+              color: stripBg,
               borderRadius: BorderRadius.circular(8),
             ),
           ),
@@ -246,7 +267,7 @@ class _AudioRangeSelectionDialogState
           
                       wordSpacing: 3,
                       color: isSelected
-                          ? Theme.of(context).colorScheme.onPrimary
+                          ? selectedTextColor
                           : Theme.of(context).textTheme.bodyLarge?.color,
                       fontWeight:
                           isSelected ? FontWeight.bold : FontWeight.normal,
@@ -263,6 +284,11 @@ class _AudioRangeSelectionDialogState
   }
 
   Widget _buildFullSuraCheckbox() {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final accent =
+        isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -272,7 +298,7 @@ class _AudioRangeSelectionDialogState
           child: Checkbox(
             value: _isFullSura,
             onChanged: _onFullSuraChanged,
-            activeColor: Theme.of(context).colorScheme.primary,
+            activeColor: accent,
           ),
         ),
         const SizedBox(width: 8),
@@ -293,6 +319,10 @@ class _AudioRangeSelectionDialogState
   }
 
   Widget _buildRepeatStepper() {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final accent =
+        isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -319,7 +349,7 @@ class _AudioRangeSelectionDialogState
           style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary,
+              color: accent,
               fontFamily: 'bangla/solaimanlipi'),
         ),
         IconButton(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../../providers/sura_reciter_providers.dart';
 
 class AudioControllerBar extends ConsumerWidget {
@@ -18,6 +19,9 @@ class AudioControllerBar extends ConsumerWidget {
     final isPlaying = quranState.isPlaying;
 
     final colorScheme = Theme.of(context).colorScheme;
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = colorScheme.brightness == Brightness.light;
+    final foreground = isLight ? appColors.secondaryText : colorScheme.onPrimary;
 
     return Material(
       elevation: 6,
@@ -30,7 +34,7 @@ class AudioControllerBar extends ConsumerWidget {
             Expanded(
               child: Text('$surah : $ayah',
                   style: TextStyle(
-                    color: colorScheme.onPrimary,
+                    color: foreground,
                     fontSize: 16.sp,
                   )),
             ),
@@ -39,7 +43,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     Icons.skip_previous,
-                    color: colorScheme.onPrimary,
+                    color: foreground,
                     size: 24.r,
                   ),
                   tooltip: 'Previous Ayah',
@@ -48,7 +52,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     isPlaying ? Icons.pause : Icons.play_arrow,
-                    color: colorScheme.onPrimary,
+                    color: foreground,
                     size: 24.r,
                   ),
                   tooltip: isPlaying ? 'Pause' : 'Play',
@@ -57,7 +61,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     Icons.stop,
-                    color: colorScheme.onPrimary,
+                    color: foreground,
                     size: 24.r,
                   ),
                   tooltip: 'Stop',
@@ -66,7 +70,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     Icons.skip_next,
-                    color: colorScheme.onPrimary,
+                    color: foreground,
                     size: 24.r,
                   ),
                   tooltip: 'Next Ayah',

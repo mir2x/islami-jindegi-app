@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../../../providers/ayah_highlight_providers.dart';
 
 final selectedNavigationParaProvider = StateProvider<int>((_) => 1);
@@ -93,9 +94,10 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
-    final appBarTheme = Theme.of(context).appBarTheme;
-    final appBarBg = appBarTheme.backgroundColor ?? Theme.of(context).colorScheme.surface;
-    final appBarFg = appBarTheme.foregroundColor ?? Theme.of(context).colorScheme.onSurface;
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final appBarBg = isLight ? appColors.surfaceBg : appColors.appBarBg;
+    final appBarFg = isLight ? appColors.secondaryText : appColors.appBarText;
 
     return Container(
       color: appBarBg,

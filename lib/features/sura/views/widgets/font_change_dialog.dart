@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../../providers/font_settings_providers.dart';
 
 class FontChangeDialog extends ConsumerStatefulWidget {
@@ -133,6 +134,11 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final accent = isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary;
+    final actionBg =
+        isLight ? colors.surfaceBg.withOpacity(0.9) : Theme.of(context).colorScheme.primary;
     final bool isArabic = _selectedLanguage == 'Arabic';
     final List<String> currentFonts = isArabic ? _arabicFonts : _bengaliFonts;
     String currentFontSelection =
@@ -196,6 +202,7 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
                 IconButton(
                   onPressed: () => _decrementSize(isArabic),
                   icon: const Icon(Icons.remove_circle_outline),
+                  color: accent,
                   visualDensity: VisualDensity.compact,
                 ),
                 Expanded(
@@ -232,6 +239,7 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
                 IconButton(
                   onPressed: () => _incrementSize(isArabic),
                   icon: const Icon(Icons.add_circle_outline),
+                  color: accent,
                   visualDensity: VisualDensity.compact,
                 ),
               ],
@@ -242,13 +250,18 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('বাতিল',
-              style: TextStyle()),
+          style: TextButton.styleFrom(foregroundColor: accent),
+          child: const Text('বাতিল', style: TextStyle()),
         ),
         FilledButton(
           onPressed: _onConfirm,
-          child: const Text('নিশ্চিত করুন',
-              style: TextStyle()),
+          style: FilledButton.styleFrom(
+            backgroundColor: actionBg,
+            foregroundColor: isLight
+                ? colors.secondaryText
+                : Theme.of(context).colorScheme.onPrimary,
+          ),
+          child: const Text('নিশ্চিত করুন', style: TextStyle()),
         ),
       ],
     );
