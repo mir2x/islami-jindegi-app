@@ -8,23 +8,27 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
   final int suraNumber;
   final GlobalKey<ScaffoldState>? scaffoldKey;
 
-  const SuraAppBar(
-      {super.key,
-      required this.title,
-      required this.suraNumber,
-      this.scaffoldKey});
+  /// When provided, replaces the default actions entirely.
+  final List<Widget>? actions;
+
+  const SuraAppBar({
+    super.key,
+    required this.title,
+    required this.suraNumber,
+    this.scaffoldKey,
+    this.actions,
+  });
 
   @override
   Widget build(BuildContext context) {
     final surahInfo = surahInfoList[suraNumber - 1];
     final subtitle =
         '${surahInfo.typeLabel} | আয়াত সংখ্যা: ${surahInfo.ayatCount.toBengaliDigit()}';
-
-    final appBarForeground = Theme.of(context).appBarTheme.foregroundColor;
+    final fg = Theme.of(context).appBarTheme.foregroundColor;
 
     return AppBar(
       leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: appBarForeground),
+        icon: const Icon(Icons.arrow_back),
         onPressed: () => Navigator.of(context).maybePop(),
       ),
       title: Column(
@@ -33,47 +37,39 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
           Text(
             title,
             style: TextStyle(
-              color: appBarForeground,
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              fontFamily: 'bangla/solaimanlipi',
               wordSpacing: 3,
             ),
           ),
           Text(
             subtitle,
             style: TextStyle(
-              color: appBarForeground?.withOpacity(0.7),
+              color: fg?.withOpacity(0.7),
               fontSize: 12,
-              fontFamily: 'bangla/solaimanlipi',
               wordSpacing: 3,
             ),
           ),
         ],
       ),
       centerTitle: true,
-      iconTheme: IconThemeData(color: appBarForeground),
-      actions: [
-        if (scaffoldKey != null)
-          IconButton(
-            icon: Icon(Icons.menu, color: appBarForeground),
-            onPressed: () => scaffoldKey!.currentState?.openDrawer(),
-          ),
-        IconButton(
-          icon: Icon(Icons.menu_book, color: appBarForeground),
-          onPressed: () {
-            debugPrint(
-                'Navigating to TilawatPage with suraNumber: $suraNumber');
-            QR.to('/qurans/tilawat?sura=$suraNumber&ayah=1');
-          },
-        ),
-        IconButton(
-          icon: Icon(Icons.search, color: appBarForeground),
-          onPressed: () {
-            QR.to('/qurans/search');
-          },
-        ),
-      ],
+      actions: actions ??
+          [
+            if (scaffoldKey != null)
+              IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () => scaffoldKey!.currentState?.openDrawer(),
+              ),
+            IconButton(
+              icon: const Icon(Icons.menu_book),
+              onPressed: () =>
+                  QR.to('/qurans/tilawat?sura=$suraNumber&ayah=1'),
+            ),
+            IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () => QR.to('/qurans/search'),
+            ),
+          ],
     );
   }
 

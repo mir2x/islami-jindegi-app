@@ -19,7 +19,6 @@ class TranslatorSelectionDialog extends ConsumerWidget {
       title: const Text(
         'অনুবাদক নির্বাচন করুন',
         style: TextStyle(
-            fontFamily: 'bangla/solaimanlipi',
             wordSpacing: 3,
             fontWeight: FontWeight.bold),
       ),
@@ -30,7 +29,7 @@ class TranslatorSelectionDialog extends ConsumerWidget {
             return CheckboxListTile(
               title: Text(
                 translatorName,
-                style: const TextStyle(fontFamily: 'bangla/solaimanlipi'),
+                style: const TextStyle(wordSpacing: 3),
               ),
               value: selected.contains(translatorName),
               onChanged: (bool? isSelected) {
@@ -48,9 +47,8 @@ class TranslatorSelectionDialog extends ConsumerWidget {
           child: Text(
             'বন্ধ করুন',
             style: TextStyle(
-                fontFamily: 'bangla/solaimanlipi',
                 wordSpacing: 3,
-                color: Theme.of(context).colorScheme.onPrimaryContainer),
+                color: Theme.of(context).colorScheme.primary),
           ),
           onPressed: () {
             Navigator.of(context).pop();

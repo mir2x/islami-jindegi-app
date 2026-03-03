@@ -21,11 +21,11 @@ class News extends ConsumerWidget {
 
     final fontStyle = isSmallMobile
         ? textTheme.labelSmall?.copyWith(
-            color: colorScheme.onSecondaryContainer,
+            color: colorScheme.onSurface,
             height: 1.2,
           )
         : textTheme.labelMedium?.copyWith(
-            color: colorScheme.onSecondaryContainer,
+            color: colorScheme.onSurface,
             height: 1.2,
           );
 
@@ -66,8 +66,8 @@ class News extends ConsumerWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      width: 2,
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                      width: 1,
                     ),
                     color: colorScheme.surfaceContainerHighest,
                   ),

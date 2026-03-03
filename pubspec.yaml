@@ -143,7 +143,6 @@ flutter:
     - assets/images/quran-qitabs/
     - assets/audios/0.mp3
     - assets/sounds/
-    - assets/db/offline_location_2.sqlite3
 
   fonts:
     - family: Roboto

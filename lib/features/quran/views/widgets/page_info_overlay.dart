@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
-import 'package:native_app/theme/colors.dart';
 
 class PageInfoOverlay extends ConsumerWidget {
   final int pageIndex;
@@ -27,7 +26,7 @@ class PageInfoOverlay extends ConsumerWidget {
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 24.w),
             decoration: BoxDecoration(
-              color: colorScheme.secondaryContainer.withOpacity(0.9),
+              color: colorScheme.inverseSurface.withOpacity(0.9),
               borderRadius: BorderRadius.circular(20.r),
             ),
             child: Column(
@@ -37,7 +36,7 @@ class PageInfoOverlay extends ConsumerWidget {
                   Text(
                     'পারা ${pageInfo.paraNumber?.toBengaliDigit()}: ${pageInfo.pageNumber.toBengaliDigit()}',
                     style: TextStyle(
-                      color: colorScheme.onSecondaryContainer,
+                      color: colorScheme.onInverseSurface,
                       fontSize: 22.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -53,7 +52,7 @@ class PageInfoOverlay extends ConsumerWidget {
                     child: Text(
                       '$suraName : ${startAyah.toBengaliDigit()} - ${endAyah.toBengaliDigit()}',
                       style: TextStyle(
-                          color: colorScheme.onSecondaryContainer,
+                          color: colorScheme.onInverseSurface,
                           fontSize: 16.sp),
                     ),
                   );

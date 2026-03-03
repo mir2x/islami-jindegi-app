@@ -70,6 +70,8 @@ class Settings extends ConsumerWidget {
     {'label': 'Dark', 'value': 'dark'},
     {'label': 'Light', 'value': 'light'},
     {'label': 'Classic', 'value': 'classic'},
+    {'label': 'Dark New', 'value': 'darkNew'},
+    {'label': 'Light New', 'value': 'lightNew'},
   ];
 
   final List<Map<String, String>> backgrounds = const [

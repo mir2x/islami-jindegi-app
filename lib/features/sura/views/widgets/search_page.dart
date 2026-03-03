@@ -20,7 +20,7 @@ class SearchPage extends ConsumerWidget {
           decoration: InputDecoration(
             hintText: 'আরবি বা বাংলায় খুঁজুন...',
             hintStyle: TextStyle(
-                fontFamily: 'bangla/solaimanlipi',
+
                 wordSpacing: 3,
                 color: Theme.of(context).colorScheme.onSurfaceVariant),
             border: InputBorder.none,
@@ -57,7 +57,7 @@ class SearchPage extends ConsumerWidget {
                 title: Text(
                   'সূরা ${suraNames[ayah.sura - 1] ?? ayah.sura}: আয়াত ${ayah.ayah.toBengaliDigit()}',
                   style: TextStyle(
-                      fontFamily: 'bangla/solaimanlipi',
+      
                       wordSpacing: 3,
                       fontWeight: FontWeight.bold),
                 ),
@@ -129,7 +129,8 @@ class HighlightedText extends StatelessWidget {
       spans.add(TextSpan(
         text: text.substring(startIndex, endIndex),
         style: style.copyWith(
-            backgroundColor: Theme.of(context).colorScheme.surface),
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            color: Theme.of(context).colorScheme.onPrimaryContainer),
       ));
 
       start = endIndex;

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'app_theme_color.dart';
 import 'colors.dart';
+import 'app_colors.dart';
 
 ThemeData darkTheme(Map fonts) {
   return ThemeData(
     useMaterial3: false,
+    extensions: const [AppThemeColors.dark],
     fontFamily: fonts['fontFamily'],
     fontFamilyFallback: fonts['fontFamilyFallback'],
     colorScheme: const ColorScheme(
@@ -133,6 +136,7 @@ ThemeData darkTheme(Map fonts) {
 ThemeData lightTheme(Map fonts) {
   return ThemeData(
     useMaterial3: false,
+    extensions: const [AppThemeColors.light],
     fontFamily: fonts['fontFamily'],
     fontFamilyFallback: fonts['fontFamilyFallback'],
     colorScheme: const ColorScheme(
@@ -265,6 +269,7 @@ ThemeData lightTheme(Map fonts) {
 ThemeData classicTheme(Map fonts) {
   return ThemeData(
     useMaterial3: false,
+    extensions: const [AppThemeColors.light],
     fontFamily: fonts['fontFamily'],
     fontFamilyFallback: fonts['fontFamilyFallback'],
     colorScheme: const ColorScheme(
@@ -386,6 +391,118 @@ ThemeData classicTheme(Map fonts) {
     ),
     snackBarTheme: const SnackBarThemeData(
       backgroundColor: ThemeColors.color13,
+    ),
+  );
+}
+
+ThemeData lightThemeNew(Map fonts) {
+  return ThemeData(
+    useMaterial3: false,
+    brightness: Brightness.light,
+    extensions: const [AppThemeColors.light],
+    fontFamily: fonts['fontFamily'],
+    fontFamilyFallback: fonts['fontFamilyFallback'],
+    scaffoldBackgroundColor: AppColors.scaffoldBgLight,
+    colorScheme: const ColorScheme(
+      brightness: Brightness.light,
+      primary: AppColors.primaryLight,
+      onPrimary: AppColors.appBarTextLight,
+      primaryContainer: AppColors.activeLight,
+      secondary: AppColors.secondaryLight,
+      onSecondary: AppColors.primaryTextLight,
+      secondaryContainer: AppColors.highlightLight,
+      tertiary: AppColors.selectedItemLight,
+      error: ThemeColors.danger,
+      onError: AppColors.appBarTextLight,
+      surface: AppColors.surfaceBgLight,
+      onSurface: AppColors.primaryTextLight,
+      surfaceContainerHighest: AppColors.cardBgLight,
+      onSurfaceVariant: AppColors.secondaryTextLight,
+      inverseSurface: AppColors.appBarBgLight,
+      onInverseSurface: AppColors.appBarTextLight,
+      inversePrimary: AppColors.primaryDark,
+      outline: AppColors.dividerLight,
+      outlineVariant: AppColors.dividerLight,
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.appBarBgLight,
+      foregroundColor: AppColors.appBarTextLight,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+    ),
+    drawerTheme: const DrawerThemeData(
+      backgroundColor: AppColors.drawerBgLight,
+    ),
+    popupMenuTheme: const PopupMenuThemeData(
+      color: AppColors.dropdownBgLight,
+    ),
+    dividerColor: AppColors.dividerLight,
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(color: AppColors.primaryTextLight),
+      bodyMedium: TextStyle(color: AppColors.primaryTextLight),
+      bodySmall: TextStyle(color: AppColors.secondaryTextLight),
+      titleLarge: TextStyle(color: AppColors.primaryTextLight),
+      titleMedium: TextStyle(color: AppColors.primaryTextLight),
+      titleSmall: TextStyle(color: AppColors.secondaryTextLight),
+      labelLarge: TextStyle(color: AppColors.primaryTextLight),
+      labelMedium: TextStyle(color: AppColors.secondaryTextLight),
+      labelSmall: TextStyle(color: AppColors.secondaryTextLight),
+    ),
+  );
+}
+
+ThemeData darkThemeNew(Map fonts) {
+  return ThemeData(
+    useMaterial3: false,
+    brightness: Brightness.dark,
+    extensions: const [AppThemeColors.dark],
+    fontFamily: fonts['fontFamily'],
+    fontFamilyFallback: fonts['fontFamilyFallback'],
+    scaffoldBackgroundColor: AppColors.scaffoldBgDark,
+    colorScheme: const ColorScheme(
+      brightness: Brightness.dark,
+      primary: AppColors.primaryDark,
+      onPrimary: AppColors.primaryTextDark,
+      primaryContainer: AppColors.activeDark,
+      secondary: AppColors.secondaryDark,
+      onSecondary: AppColors.primaryTextDark,
+      secondaryContainer: AppColors.highlightDark,
+      tertiary: AppColors.selectedItemDark,
+      error: ThemeColors.danger,
+      onError: AppColors.primaryTextDark,
+      surface: AppColors.surfaceBgDark,
+      onSurface: AppColors.primaryTextDark,
+      surfaceContainerHighest: AppColors.cardBgDark,
+      onSurfaceVariant: AppColors.secondaryTextDark,
+      inverseSurface: AppColors.appBarBgDark,
+      onInverseSurface: AppColors.appBarTextDark,
+      inversePrimary: AppColors.primaryLight,
+      outline: AppColors.dividerDark,
+      outlineVariant: AppColors.dividerDark,
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.appBarBgDark,
+      foregroundColor: AppColors.appBarTextDark,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+    ),
+    drawerTheme: const DrawerThemeData(
+      backgroundColor: AppColors.drawerBgDark,
+    ),
+    popupMenuTheme: const PopupMenuThemeData(
+      color: AppColors.dropdownBgDark,
+    ),
+    dividerColor: AppColors.dividerDark,
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(color: AppColors.primaryTextDark),
+      bodyMedium: TextStyle(color: AppColors.primaryTextDark),
+      bodySmall: TextStyle(color: AppColors.secondaryTextDark),
+      titleLarge: TextStyle(color: AppColors.primaryTextDark),
+      titleMedium: TextStyle(color: AppColors.primaryTextDark),
+      titleSmall: TextStyle(color: AppColors.secondaryTextDark),
+      labelLarge: TextStyle(color: AppColors.primaryTextDark),
+      labelMedium: TextStyle(color: AppColors.secondaryTextDark),
+      labelSmall: TextStyle(color: AppColors.secondaryTextDark),
     ),
   );
 }

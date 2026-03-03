@@ -1,14 +1,16 @@
 import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:native_app/features/quran/views/widgets/audio_control_bar.dart';
 import 'package:native_app/features/quran/views/widgets/bottom_bar.dart';
-import 'package:native_app/features/quran/views/widgets/custom_app_bar.dart';
+import 'package:native_app/features/quran/views/widgets/quran_app_bar.dart';
 import 'package:native_app/features/quran/views/widgets/drawer/side_drawer.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../models/selected_ayah_state.dart';
 import '../providers/audio_providers.dart';
 import 'widgets/quran_page.dart';
@@ -45,7 +47,10 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
 
   static const Duration _animationDuration = Duration(milliseconds: 300);
 
-  static const double _bottomBarHeight = 64.0;
+  static const double _appBarHeightPortrait = 64.0;
+  static const double _appBarHeightLandscape = 52.0;
+  static const double _bottomBarHeightPortrait = 64.0;
+  static const double _bottomBarHeightLandscape = 50.0;
 
   /// Get the storage key for this mushaf edition
   String get _mushafKey =>
@@ -186,7 +191,7 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, s) => Scaffold(
-        appBar: CustomAppBar(),
+        appBar: QuranAppBar(),
         body: Center(
           child: Text(
             'Error loading Quran data: ${e.toString()}\n$s',
@@ -200,7 +205,7 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
           loading: () =>
               const Scaffold(body: Center(child: CircularProgressIndicator())),
           error: (e, s) => Scaffold(
-            appBar: CustomAppBar(),
+            appBar: QuranAppBar(),
             body: Center(
               child: Text(
                 'Error loading page count: ${e.toString()}\n$s',
@@ -213,6 +218,12 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
               builder: (_, ori) {
                 final width = MediaQuery.of(context).size.width;
                 final itemH = width / _aspectRatio;
+                final appBarHeight = ori == Orientation.landscape
+                    ? _appBarHeightLandscape
+                    : _appBarHeightPortrait;
+                final bottomBarHeight = ori == Orientation.landscape
+                    ? _bottomBarHeightLandscape
+                    : _bottomBarHeightPortrait.h;
 
                 if (ori != _lastOrientation) {
                   if (ori == Orientation.portrait) {
@@ -297,109 +308,130 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
                   );
                 }
 
-                return PopScope(
-                  canPop: false,
-                  onPopInvokedWithResult: (didPop, result) async {
-                    if (didPop) return;
-                    final orientation = MediaQuery.of(context).orientation;
-                    debugPrint('PopScope invoked, orientation: $orientation');
-                    if (orientation == Orientation.landscape) {
-                      debugPrint('Setting portrait orientation...');
-                      await OrientationToggle.setPortrait();
-                      // Wait for the device to actually rotate to portrait
-                      await Future.delayed(const Duration(milliseconds: 500));
-                      debugPrint('Orientation set, navigating back...');
-                    }
-                    if (context.mounted) {
-                      await QR.back();
-                    }
-                  },
-                  child: Scaffold(
-                    key: _rootKey,
-                    drawer: const SideDrawer(),
-                    onDrawerChanged: (isOpen) {
-                      Future(() {
-                        final drawer = ref.read(drawerOpenProvider.notifier);
-                        isOpen ? drawer.open() : drawer.close();
-                      });
+                final appThemeColors =
+                    Theme.of(context).extension<AppThemeColors>();
+                final appBarBg = appThemeColors?.appBarBg ??
+                    Theme.of(context).appBarTheme.backgroundColor ??
+                    Theme.of(context).colorScheme.surface;
+                final isDarkBg =
+                    ThemeData.estimateBrightnessForColor(appBarBg) ==
+                        Brightness.dark;
+
+                return AnnotatedRegion<SystemUiOverlayStyle>(
+                  value: SystemUiOverlayStyle(
+                    statusBarColor: appBarBg,
+                    statusBarIconBrightness:
+                        isDarkBg ? Brightness.light : Brightness.dark,
+                    statusBarBrightness:
+                        isDarkBg ? Brightness.dark : Brightness.light,
+                  ),
+                  child: PopScope(
+                    canPop: false,
+                    onPopInvokedWithResult: (didPop, result) async {
+                      if (didPop) return;
+                      final orientation = MediaQuery.of(context).orientation;
+                      debugPrint('PopScope invoked, orientation: $orientation');
+                      if (orientation == Orientation.landscape) {
+                        debugPrint('Setting portrait orientation...');
+                        await OrientationToggle.setPortrait();
+                        // Wait for the device to actually rotate to portrait
+                        await Future.delayed(const Duration(milliseconds: 500));
+                        debugPrint('Orientation set, navigating back...');
+                      }
+                      if (context.mounted) {
+                        await QR.back();
+                      }
                     },
-                    body: GestureDetector(
-                      onDoubleTap: barsVisibilityNotifier.toggle,
-                      child: SafeArea(
-                        child: Stack(
-                          children: [
-                            AnimatedPadding(
-                              duration: _animationDuration,
-                              curve: Curves.easeInOut,
-                              padding: EdgeInsets.only(
-                                top: barsVisible ? kToolbarHeight : 0,
-                                bottom: barsVisible ? _bottomBarHeight.h : 0,
-                              ),
-                              child: viewer,
-                            ),
-                            Positioned(
-                              top: 0,
-                              left: 0,
-                              right: 0,
-                              child: AnimatedOpacity(
-                                opacity: barsVisible ? 1.0 : 0.0,
+                    child: Scaffold(
+                      key: _rootKey,
+                      backgroundColor: appBarBg,
+                      drawer: const SideDrawer(),
+                      onDrawerChanged: (isOpen) {
+                        Future(() {
+                          final drawer = ref.read(drawerOpenProvider.notifier);
+                          isOpen ? drawer.open() : drawer.close();
+                        });
+                      },
+                      body: GestureDetector(
+                        onDoubleTap: barsVisibilityNotifier.toggle,
+                        child: SafeArea(
+                          child: Stack(
+                            children: [
+                              AnimatedPadding(
                                 duration: _animationDuration,
                                 curve: Curves.easeInOut,
-                                child: IgnorePointer(
-                                  ignoring: !barsVisible,
-                                  child: CustomAppBar(
-                                    isLandscape: ori == Orientation.landscape,
-                                  ),
+                                padding: EdgeInsets.only(
+                                  top: barsVisible ? appBarHeight : 0,
+                                  bottom: barsVisible ? bottomBarHeight : 0,
                                 ),
+                                child: viewer,
                               ),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              child: AnimatedOpacity(
-                                opacity: barsVisible ? 1.0 : 0.0,
-                                duration: _animationDuration,
-                                curve: Curves.easeInOut,
-                                child: IgnorePointer(
-                                  ignoring: !barsVisible,
-                                  child: BottomBar(
-                                    drawerOpen: ref.watch(drawerOpenProvider),
-                                    rootKey: _rootKey,
-                                    isLandscape: ori == Orientation.landscape,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Consumer(
-                              builder: (context, ref, _) {
-                                final audio = ref.watch(quranAudioProvider);
-                                final isAudioPlaying = audio != null;
-                                if (!isAudioPlaying) {
-                                  return const SizedBox.shrink();
-                                }
-
-                                final double safeAreaBottom = MediaQuery.of(
-                                  context,
-                                ).padding.bottom;
-
-                                final double dynamicBottom = barsVisible
-                                    ? _bottomBarHeight.h
-                                    : safeAreaBottom;
-
-                                return AnimatedPositioned(
+                              Positioned(
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                child: AnimatedOpacity(
+                                  opacity: barsVisible ? 1.0 : 0.0,
                                   duration: _animationDuration,
                                   curve: Curves.easeInOut,
-                                  left: 0,
-                                  right: 0,
-                                  bottom: dynamicBottom,
-                                  child: AudioControllerBar(
-                                    color: Theme.of(context).primaryColor,
+                                  child: IgnorePointer(
+                                    ignoring: !barsVisible,
+                                    child: QuranAppBar(
+                                      isLandscape: ori == Orientation.landscape,
+                                    ),
                                   ),
-                                );
-                              },
-                            ),
-                          ],
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                child: AnimatedOpacity(
+                                  opacity: barsVisible ? 1.0 : 0.0,
+                                  duration: _animationDuration,
+                                  curve: Curves.easeInOut,
+                                  child: IgnorePointer(
+                                    ignoring: !barsVisible,
+                                    child: BottomBar(
+                                      drawerOpen: ref.watch(drawerOpenProvider),
+                                      rootKey: _rootKey,
+                                      isLandscape: ori == Orientation.landscape,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Consumer(
+                                builder: (context, ref, _) {
+                                  final audio = ref.watch(quranAudioProvider);
+                                  final isAudioPlaying = audio != null;
+                                  if (!isAudioPlaying) {
+                                    return const SizedBox.shrink();
+                                  }
+
+                                  final double safeAreaBottom = MediaQuery.of(
+                                    context,
+                                  ).padding.bottom;
+
+                                  final double dynamicBottom = barsVisible
+                                      ? bottomBarHeight
+                                      : safeAreaBottom;
+
+                                  return AnimatedPositioned(
+                                    duration: _animationDuration,
+                                    curve: Curves.easeInOut,
+                                    left: 0,
+                                    right: 0,
+                                    bottom: dynamicBottom,
+                                    child: AudioControllerBar(
+                                      color: Theme.of(context)
+                                          .extension<AppThemeColors>()!
+                                          .primary,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

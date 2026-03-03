@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/services/prayer_alarm_service.dart';
+import 'package:native_app/core/services/prayer_alarm_service.dart';
 import '../providers/prayer_alarm_providers.dart';
 
 // Weekday order: Mon=1 … Sun=7

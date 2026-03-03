@@ -4,8 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/features/quran/views/widgets/drawer/bookmark_navigation_view.dart';
 import 'package:native_app/features/quran/views/widgets/drawer/para_navigation_view.dart';
 import 'package:native_app/features/quran/views/widgets/drawer/sura_navigation_view.dart';
-import 'package:native_app/theme/colors.dart';
-import '../../../../../core/theme.dart';
 import '../../../providers/ayah_highlight_providers.dart';
 
 final drawerTabIndexProvider = StateProvider<int>((_) => 0);
@@ -51,8 +49,11 @@ class _SideDrawerState extends ConsumerState<SideDrawer>
       child: Builder(
         builder: (context) {
           final media = MediaQuery.of(context);
-          final double topInset = kToolbarHeight + media.padding.top;
-          final double bottomInset = bottomBarHeight.h + media.padding.bottom;
+          final bool isLandscape = media.orientation == Orientation.landscape;
+          final double topInset =
+              media.padding.top + (isLandscape ? 52.0 : 64.0);
+          final double bottomInset =
+              media.padding.bottom + (isLandscape ? 50.0 : 64.0.h);
 
           final allBoxesAsync = ref.watch(allBoxesProvider);
           final totalPageCountAsync = ref.watch(totalPageCountProvider);
@@ -92,35 +93,45 @@ class _SideDrawerState extends ConsumerState<SideDrawer>
               width: 250.w,
               child: Material(
                 elevation: 0,
+                color: Theme.of(context).colorScheme.surface,
                 clipBehavior: Clip.antiAlias,
                 child: Column(
                   children: [
                     Expanded(
                       child: tabContent,
                     ),
-                    Container(
-                      color: Theme.of(context).colorScheme.primary,
-                      child: TabBar(
-                        controller: _tabController,
-                        labelColor: Theme.of(context).colorScheme.onPrimary,
-                        dividerColor: Colors.transparent,
-                        unselectedLabelColor: Theme.of(context)
-                            .colorScheme
-                            .onPrimary
-                            .withOpacity(0.7),
-                        indicator: BoxDecoration(
-                          color: Theme.of(context).colorScheme.secondary,
-                          borderRadius: BorderRadius.zero,
+                    Builder(builder: (context) {
+                      final colorScheme = Theme.of(context).colorScheme;
+                      final appBarTheme = Theme.of(context).appBarTheme;
+                      final appBarBg = appBarTheme.backgroundColor ??
+                          colorScheme.surface;
+                      final appBarFg = appBarTheme.foregroundColor ??
+                          colorScheme.onSurface;
+                      final isLight = colorScheme.brightness == Brightness.light;
+                      final indicatorColor = isLight
+                          ? colorScheme.onPrimary.withOpacity(0.16)
+                          : colorScheme.primary.withOpacity(0.3);
+                      return Container(
+                        color: appBarBg,
+                        child: TabBar(
+                          controller: _tabController,
+                          labelColor: appBarFg,
+                          dividerColor: appBarBg.withValues(alpha: 0),
+                          unselectedLabelColor: appBarFg.withOpacity(0.7),
+                          indicator: BoxDecoration(
+                            color: indicatorColor,
+                            borderRadius: BorderRadius.zero,
+                          ),
+                          indicatorWeight: 0,
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          tabs: const [
+                            Tab(text: 'সূরা'),
+                            Tab(text: 'পারা'),
+                            Tab(text: 'বুকমার্ক'),
+                          ],
                         ),
-                        indicatorWeight: 0,
-                        indicatorSize: TabBarIndicatorSize.tab,
-                        tabs: const [
-                          Tab(text: 'সূরা'),
-                          Tab(text: 'পারা'),
-                          Tab(text: 'বুকমার্ক'),
-                        ],
-                      ),
-                    ),
+                      );
+                    }),
                   ],
                 ),
               ),

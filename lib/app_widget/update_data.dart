@@ -12,7 +12,7 @@ import 'package:native_app/helpers/split_hijri_date.dart';
 import 'package:native_app/helpers/get_bangali_date.dart';
 import 'package:native_app/helpers/get_gregorian_date.dart';
 import 'package:native_app/helpers/get_location_name.dart';
-import 'package:native_app/services/prayer_alarm_service.dart';
+import 'package:native_app/core/services/prayer_alarm_service.dart';
 
 Future updateData() async {
   final preferences = await SharedPreferences.getInstance();

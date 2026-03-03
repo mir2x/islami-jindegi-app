@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/features/sura/views/widgets/quran_page_widget.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/shared/quran_data.dart';
 import '../../models/tilawat_models.dart';
 import '../../providers/tilawat_providers.dart';
 import 'font_change_dialog.dart';
 import 'drawer/tilawat_selection_drawer.dart';
+import 'sura_app_bar.dart';
 
 class TilawatPage extends ConsumerStatefulWidget {
   final int initialSuraNumber;
@@ -44,51 +44,19 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
   Widget build(BuildContext context) {
     final pagesAsync = ref.watch(quranPagesProvider(widget.initialSuraNumber));
     final suraName = 'সূরা ${suraNames[widget.initialSuraNumber - 1]}';
-    final surahInfo = surahInfoList[widget.initialSuraNumber - 1];
-    final subtitle =
-        '${surahInfo.typeLabel} | আয়াত সংখ্যা: ${surahInfo.ayatCount.toBengaliDigit()}';
-    final appBarForeground = Theme.of(context).appBarTheme.foregroundColor;
 
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: appBarForeground),
-          onPressed: () => Navigator.of(context).maybePop(),
-        ),
-        title: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              suraName,
-              style: TextStyle(
-                color: appBarForeground,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'bangla/solaimanlipi',
-                wordSpacing: 3,
-              ),
-            ),
-            Text(
-              subtitle,
-              style: TextStyle(
-                color: appBarForeground?.withOpacity(0.7),
-                fontSize: 12,
-                fontFamily: 'bangla/solaimanlipi',
-                wordSpacing: 3,
-              ),
-            ),
-          ],
-        ),
-        centerTitle: true,
-        iconTheme: IconThemeData(color: appBarForeground),
+      appBar: SuraAppBar(
+        title: suraName,
+        suraNumber: widget.initialSuraNumber,
         actions: [
           IconButton(
-            icon: Icon(Icons.menu, color: appBarForeground),
+            icon: const Icon(Icons.menu),
             onPressed: () => _scaffoldKey.currentState?.openDrawer(),
           ),
           IconButton(
-            icon: Icon(Icons.text_fields_rounded, color: appBarForeground),
+            icon: const Icon(Icons.text_fields_rounded),
             tooltip: 'ফন্ট পরিবর্তন',
             onPressed: () {
               showDialog(

@@ -6,7 +6,7 @@ import 'package:qlevar_router/qlevar_router.dart';
 import 'package:adhan/adhan.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/objects/prayer_time.dart';
-import 'package:native_app/services/prayer_alarm_service.dart';
+import 'package:native_app/core/services/prayer_alarm_service.dart';
 import 'package:native_app/features/namaz_time/providers/prayer_alarm_providers.dart';
 
 class NamazTimeItems extends ConsumerStatefulWidget {

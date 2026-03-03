@@ -7,11 +7,12 @@ import 'package:native_app/features/sura/views/widgets/ayah_card.dart';
 import 'package:native_app/features/sura/views/widgets/ayah_placeholder.dart';
 import 'package:native_app/features/sura/views/widgets/sura_app_bar.dart';
 import 'package:native_app/features/sura/views/widgets/sura_bottom_nav_bar.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/sura_reciter_providers.dart';
 import 'package:native_app/features/sura/providers/sura_providers.dart';
 import '../../../shared/quran_data.dart';
-import 'package:native_app/features/sura/views/widgets/drawer/sura_selection_drawer.dart';
+import 'package:native_app/features/sura/views/widgets/drawer/side_drawer.dart';
 import 'package:native_app/features/sura/views/widgets/tafsir_view.dart';
 import 'package:native_app/features/sura_list/providers/sura_list_providers.dart';
 
@@ -311,7 +312,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
           suraNumber: widget.suraNumber,
           scaffoldKey: _scaffoldKey,
         ),
-        drawer: SuraSelectionDrawer(currentSuraNumber: widget.suraNumber),
+        drawer: SuraSideDrawer(currentSuraNumber: widget.suraNumber),
         body: SafeArea(
           child: Column(
             children: [
@@ -357,7 +358,9 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                 ),
               ),
               if (quranAudioState != null)
-                AudioControllerBar(color: Theme.of(context).primaryColor),
+                AudioControllerBar(
+                  color: Theme.of(context).extension<AppThemeColors>()!.primary,
+                ),
             ],
           ),
         ),

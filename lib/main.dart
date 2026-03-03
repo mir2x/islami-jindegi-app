@@ -17,7 +17,7 @@ import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/theme/themes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:native_app/services/prayer_alarm_service.dart';
+import 'package:native_app/core/services/prayer_alarm_service.dart';
 
 import 'routes/index.dart';
 import 'firebase_options.dart';
@@ -132,14 +132,29 @@ class MyApp extends ConsumerWidget {
           minTextAdapt: true,
           splitScreenMode: true,
           builder: (context, child) {
+            final selectedTheme = switch (theme) {
+              'light' => lightTheme(fonts),
+              'lightNew' => lightThemeNew(fonts),
+              'darkNew' => darkThemeNew(fonts),
+              _ => classicTheme(fonts),
+            };
+            final selectedDarkTheme = switch (theme) {
+              'darkNew' => darkThemeNew(fonts),
+              _ => darkTheme(fonts),
+            };
+            final selectedThemeMode = switch (theme) {
+              'dark' || 'darkNew' => ThemeMode.dark,
+              _ => ThemeMode.light,
+            };
+
             // Return your MaterialApp.router here
             return MaterialApp.router(
               debugShowCheckedModeBanner: false,
               routeInformationParser: const QRouteInformationParser(),
               routerDelegate: QRouterDelegate(AppRoutes().routes),
-              theme: theme == 'light' ? lightTheme(fonts) : classicTheme(fonts),
-              darkTheme: darkTheme(fonts),
-              themeMode: theme == 'dark' ? ThemeMode.dark : ThemeMode.light,
+              theme: selectedTheme,
+              darkTheme: selectedDarkTheme,
+              themeMode: selectedThemeMode,
               localizationsDelegates: AppLocalizations.localizationsDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
               locale: Locale(preferences.getString('locale') ?? 'bn'),

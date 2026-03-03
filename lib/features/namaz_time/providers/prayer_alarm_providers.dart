@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:native_app/services/prayer_alarm_service.dart';
+import 'package:native_app/core/services/prayer_alarm_service.dart';
 
 // ───────────────────── Alarm Enabled States ─────────────────────
 

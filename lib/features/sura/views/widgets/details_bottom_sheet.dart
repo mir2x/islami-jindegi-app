@@ -142,7 +142,6 @@ class _DetailsSection extends StatelessWidget {
           child: Text(
             title,
             style: const TextStyle(
-              fontFamily: 'bangla/solaimanlipi',
               wordSpacing: 3,
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -175,7 +174,6 @@ class _DetailsSection extends StatelessWidget {
                     item.label,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: 'bangla/solaimanlipi',
                       wordSpacing: 3,
                       fontSize: 12,
                       color: Theme.of(context).colorScheme.onSurface,

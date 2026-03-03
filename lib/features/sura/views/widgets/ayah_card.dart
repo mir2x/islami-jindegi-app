@@ -6,7 +6,6 @@ import 'package:native_app/features/sura/models/ayah.dart';
 import 'package:native_app/features/sura/views/widgets/ayah_action_bottom_sheet.dart';
 import 'package:native_app/features/sura/providers/font_settings_providers.dart';
 import 'package:native_app/features/sura/providers/sura_providers.dart';
-import 'package:native_app/theme/colors.dart';
 import '../../../../core/utils/adaptive_text.dart';
 
 class AyahCard extends ConsumerWidget {
@@ -29,11 +28,13 @@ class AyahCard extends ConsumerWidget {
     final showTranslations = ref.watch(showTranslationsProvider);
     final showWords = ref.watch(showWordByWordProvider);
 
+    final colorScheme = Theme.of(context).colorScheme;
     final cardColor = isHighlighted
-        ? Theme.of(context).primaryColor.withOpacity(0.1)
+        ? colorScheme.primary.withOpacity(0.1)
         : Theme.of(context).cardTheme.color;
-    final borderColor =
-        isHighlighted ? Theme.of(context).primaryColor : Colors.transparent;
+    final borderColor = isHighlighted
+        ? colorScheme.primary
+        : colorScheme.primary.withValues(alpha: 0);
     final cardElevation = isHighlighted ? 4.0 : 0.5;
 
     return RepaintBoundary(

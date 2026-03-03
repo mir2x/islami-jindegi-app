@@ -8,7 +8,6 @@ import '../../downloader/views/show_download_dialog.dart';
 import '../../downloader/views/show_download_permission_dialog.dart';
 import '../../downloader/providers/download_providers.dart';
 import 'package:qlevar_router/qlevar_router.dart';
-import 'package:native_app/theme/colors.dart';
 import '../models/quran_edition.dart';
 import '../providers/quran_catalogue_providers.dart';
 
@@ -25,13 +24,7 @@ class QuranCatalogueScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(
-          'কুরআন',
-          style: TextStyle(
-            fontFamily: 'bangla/solaimanlipi',
-            color: Theme.of(context).appBarTheme.foregroundColor,
-          ),
-        ),
+        title: const Text('কুরআন'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -86,7 +79,7 @@ class QuranCatalogueScreen extends ConsumerWidget {
                     Text(
                       'তাফসীর',
                       style: TextStyle(
-                        fontFamily: 'bangla/solaimanlipi',
+  
                         wordSpacing: 3,
                         fontWeight: FontWeight.bold,
                         fontSize: 20.sp,
@@ -235,7 +228,6 @@ class _QuranEditionGridItem extends ConsumerWidget {
               fontSize: 16.sp,
               fontWeight: FontWeight.w500,
               color: textTheme.bodyLarge?.color,
-              fontFamily: 'bangla/solaimanlipi',
               wordSpacing: 3,
             ),
             maxLines: 2,

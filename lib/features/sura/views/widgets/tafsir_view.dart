@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
-import 'package:native_app/theme/colors.dart';
 import '../../../../core/services/static_asset_api.dart';
 import '../../../../core/utils/adaptive_text.dart';
 import '../../../downloader/views/show_download_dialog.dart';

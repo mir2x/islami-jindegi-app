@@ -7,7 +7,6 @@ import 'package:native_app/features/sura/providers/sura_providers.dart';
 
 import 'package:qlevar_router/qlevar_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:native_app/theme/colors.dart';
 
 final selectedDrawerSurahProvider = StateProvider<int>((ref) => 1);
 final selectedDrawerAyahProvider = StateProvider<int?>((ref) => null);

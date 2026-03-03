@@ -123,7 +123,7 @@ class _AudioRangeSelectionDialogState
       child: const Text(
         'অডিও শুনুন',
         style: TextStyle(
-            fontFamily: 'bangla/solaimanlipi',
+
             wordSpacing: 3,
             fontSize: 18,
             fontWeight: FontWeight.bold),
@@ -148,7 +148,7 @@ class _AudioRangeSelectionDialogState
                 Text(
                   'শুরু',
                   style: TextStyle(
-                    fontFamily: 'bangla/solaimanlipi',
+        
                     wordSpacing: 3,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -158,7 +158,7 @@ class _AudioRangeSelectionDialogState
                 Text(
                   'শেষ',
                   style: TextStyle(
-                    fontFamily: 'bangla/solaimanlipi',
+        
                     wordSpacing: 3,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -243,7 +243,7 @@ class _AudioRangeSelectionDialogState
                     toBengaliDigit(ayahNumber),
                     style: TextStyle(
                       fontSize: 22,
-                      fontFamily: 'bangla/solaimanlipi',
+          
                       wordSpacing: 3,
                       color: isSelected
                           ? Theme.of(context).colorScheme.onPrimary
@@ -281,7 +281,7 @@ class _AudioRangeSelectionDialogState
           child: Text(
             'সম্পূর্ণ সূরা',
             style: TextStyle(
-              fontFamily: 'bangla/solaimanlipi',
+  
               wordSpacing: 3,
               fontSize: 16,
               color: Theme.of(context).textTheme.bodyLarge?.color,
@@ -299,7 +299,7 @@ class _AudioRangeSelectionDialogState
         const Text(
           'আয়াতের পুনরাবৃত্তি',
           style: TextStyle(
-            fontFamily: 'bangla/solaimanlipi',
+
             wordSpacing: 3,
             fontSize: 16,
           ),

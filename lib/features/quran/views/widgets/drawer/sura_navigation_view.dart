@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:native_app/theme/colors.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../../../providers/ayah_highlight_providers.dart';
 
@@ -101,10 +100,12 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
-    final colorScheme = Theme.of(context).colorScheme;
+    final appBarTheme = Theme.of(context).appBarTheme;
+    final appBarBg = appBarTheme.backgroundColor ?? Theme.of(context).colorScheme.surface;
+    final appBarFg = appBarTheme.foregroundColor ?? Theme.of(context).colorScheme.onSurface;
 
     return Container(
-      color: colorScheme.primary,
+      color: appBarBg,
       padding: EdgeInsets.symmetric(vertical: 12.h),
       child: Row(
         children: [
@@ -113,20 +114,20 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
             child: Text('সুরা',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: colorScheme.onPrimary,
+                    color: appBarFg,
                     fontWeight: FontWeight.bold,
                     fontSize: fontSize,
-                    fontFamily: 'bangla/solaimanlipi')),
+)),
           ),
           Expanded(
             flex: 2,
             child: Text('আয়াত',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: colorScheme.onPrimary,
+                    color: appBarFg,
                     fontWeight: FontWeight.bold,
                     fontSize: fontSize,
-                    fontFamily: 'bangla/solaimanlipi')),
+)),
           ),
         ],
       ),

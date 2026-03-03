@@ -64,10 +64,9 @@ class SuraBottomNavBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       selectedItemColor: Theme.of(context).colorScheme.primary,
       unselectedItemColor: Theme.of(context).colorScheme.onSurfaceVariant,
-      selectedLabelStyle: const TextStyle(fontFamily: 'bangla/solaimanlipi'),
-      unselectedLabelStyle: const TextStyle(fontFamily: 'bangla/solaimanlipi'),
       onTap: (index) => _onNavBarTapped(index, context, ref),
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'অনুবাদ'),

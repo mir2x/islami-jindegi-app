@@ -70,21 +70,16 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'সকল সূরা',
-          style: TextStyle(fontFamily: 'bangla/solaimanlipi'),
-        ),
+        title: const Text('সকল সূরা'),
         centerTitle: true,
         bottom: TabBar(
           controller: _tabController,
           labelStyle: const TextStyle(
-            fontFamily: 'bangla/solaimanlipi',
             wordSpacing: 3,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
           unselectedLabelStyle: const TextStyle(
-            fontFamily: 'bangla/solaimanlipi',
             wordSpacing: 3,
             fontSize: 16,
           ),

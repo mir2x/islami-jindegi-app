@@ -122,7 +122,6 @@ class _ParaListItem extends StatelessWidget {
       child: Text(
         paraNumber.toBengaliDigit(),
         style: TextStyle(
-          fontFamily: 'bangla/solaimanlipi',
           wordSpacing: 3,
           fontSize: 20,
           fontWeight: FontWeight.bold,
@@ -139,8 +138,7 @@ class _ParaListItem extends StatelessWidget {
         Text(
           paraName,
           style: const TextStyle(
-            fontFamily: 'bangla/solaimanlipi',
-            wordSpacing: 3,
+              wordSpacing: 3,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -158,8 +156,7 @@ class _ParaListItem extends StatelessWidget {
               child: Text(
                 'সূরা $suraName, আয়াত ${ayahNumber.toBengaliDigit()}',
                 style: TextStyle(
-                  fontFamily: 'bangla/solaimanlipi',
-                  wordSpacing: 3,
+                          wordSpacing: 3,
                   fontSize: 14,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),

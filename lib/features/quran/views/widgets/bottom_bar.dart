@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:native_app/theme/colors.dart';
+import '../../../../theme/app_theme_color.dart';
 import '../../models/bookmark.dart';
 import '../../providers/ayah_highlight_providers.dart';
 import '../../providers/bookmark_providers.dart';
 import '../../providers/reciter_providers.dart';
 import 'audio_bottom_sheet.dart';
-import '../../../../../core/theme.dart';
 
 class BottomBar extends ConsumerWidget {
   final bool drawerOpen;
@@ -22,214 +21,312 @@ class BottomBar extends ConsumerWidget {
     required this.isLandscape,
   });
 
+  // ── Dimensions ───────────────────────────
+  double get _height => isLandscape ? 50.0 : 64.0.h;
+  double get _iconSize => isLandscape ? 20.0 : 24.0.r;
+  double get _dropdownHeight => isLandscape ? 32.0 : 40.0.h;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedReciter = ref.watch(selectedReciterProvider);
-    final displayReciterName =
-        reciters.entries.firstWhere((e) => e.value == selectedReciter).key;
-
-    final currentPage = ref.watch(currentPageProvider) + 1;
-    final bookmarkNotifier = ref.read(bookmarkProvider.notifier);
-    final bookmarksAsync = ref.watch(bookmarkProvider);
-
-    final bool isPageBookmarked =
-        bookmarkNotifier.isPageBookmarked(currentPage);
-
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return Container(
-      height: isLandscape ? 50.0 : bottomBarHeight.h,
-      color: colorScheme.primary,
+      height: _height,
+      decoration: BoxDecoration(
+        color: colors.appBarBg,
+        border: Border(
+          top: BorderSide(color: colors.divider, width: 1),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: colors.shadow,
+            blurRadius: 8,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _iconBtn(
-            context: context,
+          // ── Play Audio ─────────────────────
+          _NavIconButton(
             icon: HugeIcons.strokeRoundedPlay,
+            iconSize: _iconSize,
+            color: colors.appBarText,
             isLandscape: isLandscape,
-            onPressed: () {
-              final sura = ref.watch(currentSuraProvider);
-              final page = ref.watch(currentPageProvider);
-
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  return AudioBottomSheet(
-                      currentSura: ref.read(currentSuraProvider));
-                },
-              );
-            },
+            onPressed: () => _openAudioSheet(context, ref),
           ),
+
+          // ── Reciter Dropdown ───────────────
           Expanded(
-            child: Container(
-              height: isLandscape ? 32.0 : 40.h,
-              margin: EdgeInsets.symmetric(vertical: isLandscape ? 8.0 : 12.h),
-              padding: EdgeInsets.symmetric(horizontal: 12.w),
-              decoration: BoxDecoration(
-                color: colorScheme.primary,
-                border:
-                    Border.all(color: colorScheme.onPrimary.withOpacity(0.24)),
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  isExpanded: true,
-                  dropdownColor: colorScheme.primary,
-                  iconEnabledColor: colorScheme.onPrimary,
-                  style: TextStyle(
-                    color: colorScheme.onPrimary,
-                    fontSize: isLandscape ? 14.0 : 14.sp,
-                  ),
-                  value: displayReciterName,
-                  items: reciters.keys.map((displayName) {
-                    return DropdownMenuItem(
-                      value: displayName,
-                      child: Text(
-                        displayName,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: colorScheme.onPrimary,
-                          fontSize: isLandscape ? 14.0 : 14.sp,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (val) {
-                    if (val != null) {
-                      ref.read(selectedReciterProvider.notifier).state =
-                          reciters[val]!;
-                    }
-                  },
-                ),
-              ),
+            child: _ReciterDropdown(
+              isLandscape: isLandscape,
+              height: _dropdownHeight,
+              colors: colors,
+              ref: ref,
             ),
           ),
-          SizedBox(width: 5.w),
+
+          SizedBox(width: 4.w),
+
+          // ── Touch Mode Toggle ──────────────
           Consumer(
             builder: (_, ref, __) {
-              final on = ref.watch(touchModeProvider);
-              return _iconBtn(
-                context: context,
+              final isOn = ref.watch(touchModeProvider);
+              return _NavIconButton(
                 icon: HugeIcons.strokeRoundedTouchLocked03,
-                color: on ? colorScheme.tertiary : colorScheme.onPrimary,
-                size: isLandscape ? 20.0 : 26.r,
+                iconSize: isLandscape ? 20.0 : 26.0.r,
+                color: isOn ? colors.secondary : colors.appBarText,
                 isLandscape: isLandscape,
                 onPressed: () {
                   final wasOn = ref.read(touchModeProvider);
                   ref.read(touchModeProvider.notifier).toggle();
-                  // If touch mode was ON and is now turning OFF, clear selection
-                  if (wasOn) {
-                    ref.read(selectedAyahProvider.notifier).clear();
-                  }
+                  if (wasOn) ref.read(selectedAyahProvider.notifier).clear();
                 },
               );
             },
           ),
-          _iconBtn(
-            context: context,
+
+          // ── Orientation Toggle ─────────────
+          _NavIconButton(
             icon: HugeIcons.strokeRoundedScreenRotation,
-            size: isLandscape ? 20.0 : 24.r,
+            iconSize: _iconSize,
+            color: colors.appBarText,
             isLandscape: isLandscape,
-            onPressed: () => OrientationToggle.toggle(),
+            onPressed: OrientationToggle.toggle,
           ),
-          _iconBtn(
-            context: context,
-            icon: isPageBookmarked
-                ? Icons.star_rounded
-                : HugeIcons.strokeRoundedStar,
-            color: isPageBookmarked
-                ? colorScheme.secondary
-                : colorScheme.onPrimary,
-            size: isLandscape ? 20.0 : 24.r,
+
+          // ── Bookmark ───────────────────────
+          _BookmarkButton(
             isLandscape: isLandscape,
-            onPressed: () {
-              if (!context.mounted) return;
-
-              final pageToBookmark = ref.read(currentPageProvider) + 1;
-              final identifier = 'page-$pageToBookmark';
-
-              if (isPageBookmarked) {
-                bookmarkNotifier.remove(identifier);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'পৃষ্ঠা বুকমার্ক থেকে সরানো হয়েছে',
-                      style: TextStyle(fontSize: 14.sp),
-                    ),
-                  ),
-                );
-              } else {
-                final quranInfoService = ref.read(quranInfoServiceProvider);
-
-                final sura = quranInfoService.getSuraByPage(pageToBookmark);
-                final para = quranInfoService.getParaByPage(pageToBookmark);
-
-                if (sura != null && para != null) {
-                  final bookmark = Bookmark(
-                    type: 'page',
-                    identifier: identifier,
-                    sura: sura,
-                    para: para,
-                    page: pageToBookmark,
-                  );
-
-                  bookmarkNotifier.add(bookmark);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'পৃষ্ঠা বুকমার্ক করা হয়েছে',
-                        style: TextStyle(fontSize: 14.sp),
-                      ),
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'এই পৃষ্ঠার জন্য সূরা/পারা নির্ধারণ করা যায়নি',
-                        style: TextStyle(fontSize: 14.sp),
-                      ),
-                    ),
-                  );
-                }
-              }
-            },
+            iconSize: _iconSize,
+            colors: colors,
           ),
-          _iconBtn(
-            context: context,
+
+          // ── Drawer Toggle ──────────────────
+          _NavIconButton(
             icon: HugeIcons.strokeRoundedNavigation05,
-            size: isLandscape ? 20.0 : 24.r,
+            iconSize: _iconSize,
+            color: drawerOpen ? colors.secondary : colors.appBarText,
             isLandscape: isLandscape,
-            onPressed: () {
-              if (drawerOpen) {
-                rootKey.currentState?.closeDrawer();
-              } else {
-                rootKey.currentState?.openDrawer();
-              }
-            },
+            onPressed: () => drawerOpen
+                ? rootKey.currentState?.closeDrawer()
+                : rootKey.currentState?.openDrawer(),
           ),
         ],
       ),
     );
   }
 
-  Widget _iconBtn({
-    required BuildContext context,
-    required IconData icon,
-    required VoidCallback onPressed,
-    double? size,
-    Color? color,
-    bool isLandscape = false,
-  }) {
-    final iconColor = color ?? Theme.of(context).colorScheme.onPrimary;
+  void _openAudioSheet(BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: colors.drawerScrim.withValues(alpha: 0),
+      builder: (_) => AudioBottomSheet(
+        currentSura: ref.read(currentSuraProvider),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────
+//  RECITER DROPDOWN
+// ─────────────────────────────────────────
+
+class _ReciterDropdown extends StatelessWidget {
+  final bool isLandscape;
+  final double height;
+  final AppThemeColors colors;
+  final WidgetRef ref;
+
+  const _ReciterDropdown({
+    required this.isLandscape,
+    required this.height,
+    required this.colors,
+    required this.ref,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final fieldBg =
+        isLight ? colors.appBarBg.withOpacity(0.22) : colors.dropdownBg;
+    final menuBg = isLight ? colors.appBarBg : colors.dropdownBg;
+    final textColor = isLight ? colors.appBarText : colors.primaryText;
+
+    final selectedReciter = ref.watch(selectedReciterProvider);
+    final displayReciterName =
+        reciters.entries.firstWhere((e) => e.value == selectedReciter).key;
+
+    return Container(
+      height: height,
+      margin: EdgeInsets.symmetric(
+        vertical: isLandscape ? 8.0 : 12.0.h,
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 12.w),
+      decoration: BoxDecoration(
+        color: fieldBg,
+        border: Border.all(color: colors.secondary.withOpacity(0.4)),
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          isExpanded: true,
+          dropdownColor: menuBg,
+          iconEnabledColor: colors.secondary,
+          style: TextStyle(
+            color: textColor,
+            fontSize: isLandscape ? 13.0 : 13.0.sp,
+            fontFamily: 'Poppins',
+          ),
+          value: displayReciterName,
+          items: reciters.keys.map((name) {
+            return DropdownMenuItem(
+              value: name,
+              child: Text(
+                name,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: isLandscape ? 13.0 : 13.0.sp,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+            );
+          }).toList(),
+          onChanged: (val) {
+            if (val != null) {
+              ref.read(selectedReciterProvider.notifier).state = reciters[val]!;
+            }
+          },
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────
+//  BOOKMARK BUTTON
+// ─────────────────────────────────────────
+
+class _BookmarkButton extends ConsumerWidget {
+  final bool isLandscape;
+  final double iconSize;
+  final AppThemeColors colors;
+
+  const _BookmarkButton({
+    required this.isLandscape,
+    required this.iconSize,
+    required this.colors,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentPage = ref.watch(currentPageProvider) + 1;
+    final bookmarkNotifier = ref.read(bookmarkProvider.notifier);
+    ref.watch(bookmarkProvider); // rebuild on bookmark changes
+    final isBookmarked = bookmarkNotifier.isPageBookmarked(currentPage);
+
+    return _NavIconButton(
+      icon: isBookmarked ? Icons.star_rounded : HugeIcons.strokeRoundedStar,
+      iconSize: iconSize,
+      color: isBookmarked ? colors.secondary : colors.appBarText,
+      isLandscape: isLandscape,
+      onPressed: () => _handleBookmark(
+          context, ref, isBookmarked, currentPage, bookmarkNotifier),
+    );
+  }
+
+  void _handleBookmark(
+    BuildContext context,
+    WidgetRef ref,
+    bool isBookmarked,
+    int currentPage,
+    dynamic bookmarkNotifier,
+  ) {
+    if (!context.mounted) return;
+    final identifier = 'page-$currentPage';
+
+    if (isBookmarked) {
+      bookmarkNotifier.remove(identifier);
+      _showSnack(context, 'পৃষ্ঠা বুকমার্ক থেকে সরানো হয়েছে');
+      return;
+    }
+
+    final quranInfoService = ref.read(quranInfoServiceProvider);
+    final sura = quranInfoService.getSuraByPage(currentPage);
+    final para = quranInfoService.getParaByPage(currentPage);
+
+    if (sura != null && para != null) {
+      bookmarkNotifier.add(Bookmark(
+        type: 'page',
+        identifier: identifier,
+        sura: sura,
+        para: para,
+        page: currentPage,
+      ));
+      _showSnack(context, 'পৃষ্ঠা বুকমার্ক করা হয়েছে');
+    } else {
+      _showSnack(context, 'এই পৃষ্ঠার জন্য সূরা/পারা নির্ধারণ করা যায়নি');
+    }
+  }
+
+  void _showSnack(BuildContext context, String message) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: colors.cardBg,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.r),
+          side: BorderSide(color: colors.secondary.withOpacity(0.4)),
+        ),
+        content: Text(
+          message,
+          style: TextStyle(
+            color: colors.primaryText,
+            fontSize: 13.sp,
+            fontFamily: 'Poppins',
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────
+//  REUSABLE NAV ICON BUTTON
+// ─────────────────────────────────────────
+
+class _NavIconButton extends StatelessWidget {
+  final IconData icon;
+  final double iconSize;
+  final Color color;
+  final bool isLandscape;
+  final VoidCallback onPressed;
+
+  const _NavIconButton({
+    required this.icon,
+    required this.iconSize,
+    required this.color,
+    required this.isLandscape,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     return IconButton(
-      iconSize: size ?? (isLandscape ? 20.0 : 24.r),
+      iconSize: iconSize,
       constraints: BoxConstraints(
-        minHeight: isLandscape ? 50.0 : 64.h,
-        minWidth: isLandscape ? 40.0 : 48.w,
+        minHeight: isLandscape ? 50.0 : 64.0.h,
+        minWidth: isLandscape ? 40.0 : 48.0.w,
       ),
       padding: EdgeInsets.zero,
-      icon: Center(child: Icon(icon, color: iconColor)),
+      splashColor: colors.selectionOverlay,
+      highlightColor: colors.selectionOverlay.withOpacity(0.1),
+      icon: Center(child: Icon(icon, color: color)),
       onPressed: onPressed,
     );
   }

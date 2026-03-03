@@ -149,7 +149,7 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
 
     return AlertDialog(
       title: const Text('ফন্ট পরিবর্তন',
-          style: TextStyle(fontFamily: 'bangla/solaimanlipi')),
+          style: TextStyle()),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -188,7 +188,6 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
             const SizedBox(height: 16),
             Text('সাইজ',
                 style: const TextStyle(
-                    fontFamily: 'bangla/solaimanlipi',
                     wordSpacing: 3,
                     fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
@@ -244,12 +243,12 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('বাতিল',
-              style: TextStyle(fontFamily: 'bangla/solaimanlipi')),
+              style: TextStyle()),
         ),
         FilledButton(
           onPressed: _onConfirm,
           child: const Text('নিশ্চিত করুন',
-              style: TextStyle(fontFamily: 'bangla/solaimanlipi')),
+              style: TextStyle()),
         ),
       ],
     );

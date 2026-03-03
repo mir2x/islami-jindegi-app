@@ -27,8 +27,7 @@ class BookmarkList extends ConsumerWidget {
             Text(
               'কোনো বুকমার্ক নেই',
               style: TextStyle(
-                fontFamily: 'bangla/solaimanlipi',
-                wordSpacing: 3,
+                      wordSpacing: 3,
                 fontSize: 18,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
@@ -37,8 +36,7 @@ class BookmarkList extends ConsumerWidget {
             Text(
               'আয়াতে ট্যাপ করে বুকমার্ক যোগ করুন',
               style: TextStyle(
-                fontFamily: 'bangla/solaimanlipi',
-                wordSpacing: 3,
+                      wordSpacing: 3,
                 fontSize: 14,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
@@ -86,7 +84,7 @@ class _BookmarkListItem extends ConsumerWidget {
           const SnackBar(
             content: Text(
               'বুকমার্ক সরানো হয়েছে',
-              style: TextStyle(fontFamily: 'bangla/solaimanlipi'),
+              style: TextStyle(wordSpacing: 3),
             ),
           ),
         );
@@ -133,8 +131,7 @@ class _BookmarkListItem extends ConsumerWidget {
           Text(
             bookmark.ayahNumber.toBengaliDigit(),
             style: TextStyle(
-              fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+                  wordSpacing: 3,
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.primary,
@@ -143,8 +140,7 @@ class _BookmarkListItem extends ConsumerWidget {
           Text(
             'আয়াত',
             style: TextStyle(
-              fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
+                  wordSpacing: 3,
               fontSize: 12,
               color: Theme.of(context).colorScheme.primary,
             ),
@@ -161,8 +157,7 @@ class _BookmarkListItem extends ConsumerWidget {
         Text(
           bookmark.suraName,
           style: const TextStyle(
-            fontFamily: 'bangla/solaimanlipi',
-            wordSpacing: 3,
+              wordSpacing: 3,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
@@ -197,7 +192,7 @@ class _BookmarkListItem extends ConsumerWidget {
           const SnackBar(
             content: Text(
               'বুকমার্ক সরানো হয়েছে',
-              style: TextStyle(fontFamily: 'bangla/solaimanlipi'),
+              style: TextStyle(wordSpacing: 3),
             ),
           ),
         );
