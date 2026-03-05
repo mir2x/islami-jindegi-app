@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/hijri_date_settings.dart';
@@ -184,7 +184,7 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   InkWell(
-                    onTap: () => QR.to('qiblah'),
+                    onTap: () => context.push('/qiblah'),
                     child: Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: isSmallMobile ? 5 : 10,
@@ -211,7 +211,7 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
                       await ref
                           .read(geolocationProvider.notifier)
                           .updateCoordinates();
-                      QR.to('mosques');
+                      context.push('/mosques');
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
@@ -230,7 +230,7 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
                   ),
                   SizedBox(width: isSmallMobile ? 6 : 10),
                   InkWell(
-                    onTap: () => QR.to('namaz-times/settings'),
+                    onTap: () => context.push('/namaz-times/settings'),
                     child: Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: isSmallMobile ? 5 : 10,
@@ -248,7 +248,7 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
                   ),
                   SizedBox(width: isSmallMobile ? 6 : 10),
                   InkWell(
-                    onTap: () => QR.to('namaz-times/alarms'),
+                    onTap: () => context.push('/namaz-times/alarms'),
                     child: Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: isSmallMobile ? 5 : 10,

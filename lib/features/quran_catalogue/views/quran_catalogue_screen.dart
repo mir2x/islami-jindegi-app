@@ -7,7 +7,7 @@ import '../../../core/services/static_asset_api.dart';
 import '../../downloader/views/show_download_dialog.dart';
 import '../../downloader/views/show_download_permission_dialog.dart';
 import '../../downloader/providers/download_providers.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import '../models/quran_edition.dart';
 import '../providers/quran_catalogue_providers.dart';
 
@@ -41,10 +41,10 @@ class QuranCatalogueScreen extends ConsumerWidget {
                 if (!context.mounted) return;
 
                 if (lastSura != null && lastAyahIndex != null) {
-                  await QR.to('/qurans/sura-list');
-                  QR.to('/qurans/sura/$lastSura?scroll=$lastAyahIndex');
+                  await context.push('/qurans/sura-list');
+                  context.push('/qurans/sura/$lastSura?scroll=$lastAyahIndex');
                 } else {
-                  QR.to('/qurans/sura-list');
+                  context.push('/qurans/sura-list');
                 }
               },
               child: Container(
@@ -169,7 +169,7 @@ class _QuranEditionGridItem extends ConsumerWidget {
               final dirPath = await getLocalPath(edition.id);
               final editionDirectory = Directory(dirPath);
               if (await editionDirectory.exists() && context.mounted) {
-                QR.to(
+                context.push(
                   '/qurans/quran?path=${Uri.encodeComponent(dirPath)}&width=${edition.imageWidth}&height=${edition.imageHeight}&ext=${edition.imageExt}',
                 );
               } else if (context.mounted) {

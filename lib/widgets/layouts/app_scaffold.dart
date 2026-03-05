@@ -2,7 +2,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_svg/svg.dart';
@@ -88,11 +88,13 @@ class AppScaffold extends ConsumerWidget {
                               icon: const Icon(Icons.arrow_back),
                               onPressed: () async {
                                 try {
-                                  onBackPressed != null
-                                      ? await onBackPressed!()
-                                      : await QR.back();
+                                  if (onBackPressed != null) {
+                                    await onBackPressed!();
+                                  } else if (context.canPop()) {
+                                    context.pop();
+                                  }
                                 } catch (error) {
-                                  await QR.navigator.replaceAll('/');
+                                  context.go('/');
                                 }
                               },
                             ),
@@ -179,10 +181,10 @@ class AppScaffold extends ConsumerWidget {
 
                                   switch (item) {
                                     case 0:
-                                      QR.to('settings');
+                                      context.push('/settings');
                                       break;
                                     case 1:
-                                      QR.to('contact-us');
+                                      context.push('/contact-us');
                                       break;
                                     case 2:
                                       Share.share(appLink);
@@ -209,7 +211,7 @@ class AppScaffold extends ConsumerWidget {
                                       launchUrl(url);
                                       break;
                                     case 6:
-                                      QR.to('important-matters');
+                                      context.push('/important-matters');
                                       break;
                                   }
                                 },
@@ -228,7 +230,7 @@ class AppScaffold extends ConsumerWidget {
                   InkWell(
                     onTap: () {
                       Navigator.of(context).pop();
-                      QR.navigator.replaceAll('/');
+                      context.go('/');
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 15),
@@ -348,8 +350,8 @@ class DrawerLink extends StatelessWidget {
       onTap: () {
         Scaffold.of(context).closeEndDrawer();
 
-        if (QR.currentPath.substring(1) != route) {
-          QR.to(route);
+        if (GoRouterState.of(context).uri.path.substring(1) != route) {
+          context.push(route.startsWith('/') ? route : '/$route');
         }
       },
       child: Container(

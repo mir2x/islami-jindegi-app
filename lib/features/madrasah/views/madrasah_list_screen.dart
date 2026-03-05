@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/utils/offline_db_prompt.dart';
@@ -70,7 +70,7 @@ class MadrasahListScreen extends ConsumerWidget {
                   },
                   itemBuilder: (_, item, __) {
                     return InkWell(
-                      onTap: () => QR.to('madrasahs/${item.id}'),
+                      onTap: () => context.push('/madrasahs/${item.id}'),
                       child: ListItem(
                         item: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/providers/downloaded_bayans.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
@@ -22,7 +22,7 @@ class DownloadedBayanScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    int id = int.parse(QR.params['id'].toString());
+    int id = int.parse(GoRouterState.of(context).pathParameters['id'].toString());
     var modelQuery = ref.watch(getDownloadedBayanProvider(id));
 
     return modelQuery.when(
@@ -52,7 +52,7 @@ class DownloadedBayanScreen extends ConsumerWidget {
                               .watch(downloadedBayansProvider.notifier)
                               .deleteItem(resource.bayanId);
 
-                          await QR.to('bayans/downloads');
+                          await context.push('/bayans/downloads');
                         },
                       )
                     : null,

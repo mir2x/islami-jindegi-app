@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import '../../models/bookmark.dart';
 import '../../providers/bookmark_providers.dart';
 
@@ -99,7 +99,7 @@ class _BookmarkListItem extends ConsumerWidget {
         onTap: () {
           // Navigate to the ayah in SurahPage
           // The initialScrollIndex is ayahNumber - 1 (0-indexed)
-          QR.to(
+          context.push(
               '/qurans/sura/${bookmark.suraNumber}?scroll=${bookmark.ayahNumber - 1}');
         },
         child: Padding(

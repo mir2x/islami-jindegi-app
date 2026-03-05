@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import '../providers/book_download_providers.dart';
@@ -31,7 +31,7 @@ class DownloadsScreen extends ConsumerWidget {
                     title: Text(item.title ?? ''),
                     subtitle:
                         Text(item.authors ?? '', style: textTheme.labelSmall),
-                    onTap: () => QR.to('books/downloads/${item.bookId}'),
+                    onTap: () => context.push('/books/downloads/${item.bookId}'),
                   ),
                 );
               },

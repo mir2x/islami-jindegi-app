@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/features/news/providers/news_providers.dart';
@@ -102,7 +102,7 @@ class News extends ConsumerWidget {
                           itemCount: resources.length,
                           itemBuilder: (context, index, pageIndex) {
                             return InkWell(
-                              onTap: () => QR.to('news/${resources[index].id}'),
+                              onTap: () => context.push('/news/${resources[index].id}'),
                               child: Center(
                                 child: Text(
                                   resources[index].title,

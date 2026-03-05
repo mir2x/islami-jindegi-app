@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
@@ -22,7 +22,7 @@ class NamazTimeDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     String currentLang = Localizations.localeOf(context).languageCode;
-    var slug = QR.params['slug'].toString();
+    var slug = GoRouterState.of(context).pathParameters['slug'].toString();
     var namazQuery = ref.watch(namazTimeBySlugProvider(slug));
 
     return namazQuery.when(
@@ -58,9 +58,9 @@ class NamazTimeDetailScreen extends ConsumerWidget {
           );
 
           if (previousResources.isNotEmpty) {
-            await QR.to('namaz-times/${previousResources.first.slug}');
+            await context.push('/namaz-times/${previousResources.first.slug}');
           } else {
-            await QR.to('namaz-times');
+            await context.push('/namaz-times');
           }
         }
 
@@ -72,7 +72,7 @@ class NamazTimeDetailScreen extends ConsumerWidget {
           );
 
           if (nextResources.isNotEmpty) {
-            await QR.to('namaz-times/${nextResources.first.slug}');
+            await context.push('/namaz-times/${nextResources.first.slug}');
           }
         }
 
@@ -80,7 +80,7 @@ class NamazTimeDetailScreen extends ConsumerWidget {
           storeKey: 'namazTimeFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async => await QR.to('namaz-times'),
+              onBackPressed: () async => await context.push('/namaz-times'),
               showPattern: false,
               title: Text(itemTitle),
               body: NextPageSwipe(

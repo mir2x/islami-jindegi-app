@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
@@ -24,8 +24,8 @@ class ChapterScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    var chapterId = QR.params['chapter_id'].toString();
-    var bookId = QR.params['id'].toString();
+    var chapterId = GoRouterState.of(context).pathParameters['chapter_id'].toString();
+    var bookId = GoRouterState.of(context).pathParameters['id'].toString();
 
     var modelQuery = ref.watch(chapterDetailProvider(chapterId));
 
@@ -47,17 +47,17 @@ class ChapterScreen extends ConsumerWidget {
           );
 
           if (previousResources.isEmpty) {
-            await QR.to('books/$bookId');
+            await context.push('/books/$bookId');
           } else {
             var subchapters = previousResources.first.subchapters;
 
             if (subchapters.isNotEmpty) {
               var lastSubchapter = subchapters.last;
-              await QR.to(
+              await context.push(
                 'books/$bookId/subchapters/${lastSubchapter.id}',
               );
             } else {
-              await QR.to(
+              await context.push(
                 'books/$bookId/chapters/${previousResources.first.id}',
               );
             }
@@ -77,11 +77,11 @@ class ChapterScreen extends ConsumerWidget {
             var subchapters = nextResources.first.subchapters;
 
             if (subchapters.isNotEmpty) {
-              await QR.to(
+              await context.push(
                 'books/$bookId/subchapters/${subchapters.first.id}',
               );
             } else {
-              await QR.to(
+              await context.push(
                 'books/$bookId/chapters/${nextResources.first.id}',
               );
             }
@@ -100,7 +100,7 @@ class ChapterScreen extends ConsumerWidget {
           storeKey: 'bookFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async => await QR.to('books/$bookId'),
+              onBackPressed: () async => await context.push('/books/$bookId'),
               showPattern: false,
               title: Text(locales.book),
               body: NextPageSwipe(

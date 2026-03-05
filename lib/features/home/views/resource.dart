@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class Resource extends StatelessWidget {
@@ -29,8 +29,9 @@ class Resource extends StatelessWidget {
       iconSize = 80;
     }
 
+    final targetRoute = route.startsWith('/') ? route : '/$route';
     return InkWell(
-      onTap: () => QR.to(route),
+      onTap: () => context.push(targetRoute),
       child: Column(
         children: [
           SvgPicture.asset(

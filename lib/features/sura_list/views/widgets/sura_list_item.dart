@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import '../../models/sura_list_item.dart';
 
 class SuraListItem extends ConsumerStatefulWidget {
@@ -95,7 +95,7 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
           widget.onTap?.call();
           Future.delayed(Duration.zero, () {
             if (!context.mounted) return;
-            QR.to('/qurans/sura/${widget.sura.number}');
+            context.push('/qurans/sura/${widget.sura.number}');
           });
         },
         child: Padding(

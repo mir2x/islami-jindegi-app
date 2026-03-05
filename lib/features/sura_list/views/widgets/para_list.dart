@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
 import 'package:native_app/shared/quran_data.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 
 /// Bengali names for all 30 paras (Juz)
 const List<String> paraNamesBengali = [
@@ -94,7 +94,7 @@ class _ParaListItem extends StatelessWidget {
       onTap: () {
         // Navigate to the ayah in SurahPage
         // The initialScrollIndex is ayahNumber - 1 (0-indexed)
-        QR.to('/qurans/sura/$suraNumber?scroll=${ayahNumber - 1}');
+        context.push('/qurans/sura/$suraNumber?scroll=${ayahNumber - 1}');
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),

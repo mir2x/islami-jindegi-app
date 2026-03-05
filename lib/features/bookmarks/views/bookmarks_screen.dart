@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/bookmarks.dart';
 
@@ -29,7 +29,10 @@ class Bookmarks extends ConsumerWidget {
                 child: ListTile(
                   title: Text(item.title!),
                   subtitle: Text(item.type!, style: textTheme.labelSmall),
-                  onTap: () => QR.to(item.link!),
+                  onTap: () {
+                    final link = item.link!;
+                    context.push(link.startsWith('/') ? link : '/$link');
+                  },
                   trailing: IconButton(
                     icon: const Icon(Icons.delete),
                     color: Theme.of(context).colorScheme.error,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
@@ -33,7 +33,7 @@ class DuaDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    var duaId = QR.params['id'].toString();
+    var duaId = GoRouterState.of(context).pathParameters['id'].toString();
     var duaQuery = ref.watch(singleDuaProvider(duaId));
 
     return duaQuery.when(
@@ -44,7 +44,7 @@ class DuaDetailScreen extends ConsumerWidget {
 
         Future? previousPage() async {
           if (resource.position == null) {
-            await QR.to('duas');
+            await context.push('/duas');
             return;
           }
           var previousResources = await api.fetchDuasByPosition(
@@ -53,9 +53,9 @@ class DuaDetailScreen extends ConsumerWidget {
           );
 
           if (previousResources.isEmpty) {
-            await QR.to('duas');
+            await context.push('/duas');
           } else {
-            await QR.to('duas/${previousResources.first.id}');
+            await context.push('/duas/${previousResources.first.id}');
           }
         }
 
@@ -67,7 +67,7 @@ class DuaDetailScreen extends ConsumerWidget {
           );
 
           if (nextResources.isNotEmpty) {
-            await QR.to('duas/${nextResources.first.id}');
+            await context.push('/duas/${nextResources.first.id}');
           }
         }
 
@@ -81,7 +81,7 @@ class DuaDetailScreen extends ConsumerWidget {
           storeKey: 'duaFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async => await QR.to('duas'),
+              onBackPressed: () async => await context.push('/duas'),
               showPattern: false,
               title: Text(locales.duaDurud),
               body: NextPageSwipe(

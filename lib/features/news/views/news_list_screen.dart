@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
@@ -54,7 +54,7 @@ class NewsListScreen extends ConsumerWidget {
                       },
                       itemBuilder: (_, item, __) {
                         return InkWell(
-                          onTap: () => QR.to('news/${item.id}'),
+                          onTap: () => context.push('/news/${item.id}'),
                           child: ListItem(
                             item: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,

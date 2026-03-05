@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
@@ -220,13 +220,13 @@ class _TilawatSelectionDrawerState
     if (suraNumber == widget.currentSuraNumber) {
       // Same sura — just pop and re-navigate to refresh with the new ayah
       Navigator.pop(context);
-      QR.to('/qurans/tilawat?sura=$suraNumber&ayah=$ayahNumber');
+      context.push('/qurans/tilawat?sura=$suraNumber&ayah=$ayahNumber');
     } else {
       // Different sura — navigate
       Future.delayed(const Duration(milliseconds: 200), () async {
-        await QR.back();
+        if (context.canPop()) context.pop();
         await Future.delayed(const Duration(milliseconds: 50));
-        QR.to('/qurans/tilawat?sura=$suraNumber&ayah=$ayahNumber');
+        context.push('/qurans/tilawat?sura=$suraNumber&ayah=$ayahNumber');
       });
     }
   }

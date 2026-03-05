@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
@@ -29,7 +29,7 @@ class ArticleDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    var articleId = QR.params['id'].toString();
+    var articleId = GoRouterState.of(context).pathParameters['id'].toString();
     var articleQuery = ref.watch(singleArticleProvider(articleId));
 
     return articleQuery.when(
@@ -40,7 +40,7 @@ class ArticleDetailScreen extends ConsumerWidget {
 
         Future? previousPage() async {
           if (resource.position == null) {
-            await QR.to('articles');
+            await context.push('/articles');
             return;
           }
           var previousResources = await api.fetchArticlesByPosition(
@@ -49,9 +49,9 @@ class ArticleDetailScreen extends ConsumerWidget {
           );
 
           if (previousResources.isEmpty) {
-            await QR.to('articles');
+            await context.push('/articles');
           } else {
-            await QR.to('articles/${previousResources.first.id}');
+            await context.push('/articles/${previousResources.first.id}');
           }
         }
 
@@ -63,7 +63,7 @@ class ArticleDetailScreen extends ConsumerWidget {
           );
 
           if (nextResources.isNotEmpty) {
-            await QR.to('articles/${nextResources.first.id}');
+            await context.push('/articles/${nextResources.first.id}');
           }
         }
 
@@ -75,7 +75,7 @@ class ArticleDetailScreen extends ConsumerWidget {
           storeKey: 'articleFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async => await QR.to('articles'),
+              onBackPressed: () async => await context.push('/articles'),
               showPattern: false,
               title: Text(locales.article),
               body: NextPageSwipe(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
@@ -202,7 +202,7 @@ class BayanListScreen extends ConsumerWidget {
                   },
                   itemBuilder: (_, item, __) {
                     return InkWell(
-                      onTap: () => QR.to('bayans/${item.id}'),
+                      onTap: () => context.push('/bayans/${item.id}'),
                       child: ListItem(
                         highlightProvider: getDownloadedBayanByIdProvider(
                           item.id,
@@ -265,7 +265,7 @@ class BayanListScreen extends ConsumerWidget {
         width: 200,
         height: 40,
         child: FloatingDownloadedButton(
-          onPressed: () => QR.to('bayans/downloads'),
+          onPressed: () => context.push('/bayans/downloads'),
           label: '${locales.downloaded} ${locales.bayans}',
         ),
       ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart'
     show paraStarts;
 import 'package:native_app/features/sura/providers/sura_providers.dart';
@@ -209,9 +209,9 @@ class _SuraParaNavigationViewState extends ConsumerState<SuraParaNavigationView>
     }
 
     Future.delayed(const Duration(milliseconds: 200), () async {
-      await QR.back();
+      if (context.canPop()) context.pop();
       await Future.delayed(const Duration(milliseconds: 50));
-      QR.to('/qurans/sura/$suraNumber?scroll=${ayahNumber - 1}');
+      context.push('/qurans/sura/$suraNumber?scroll=${ayahNumber - 1}');
     });
   }
 }

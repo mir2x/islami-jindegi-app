@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
@@ -41,7 +41,7 @@ class BookDetailScreen extends ConsumerStatefulWidget {
 class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
   @override
   Widget build(BuildContext context) {
-    final bookId = QR.params['id'].toString();
+    final bookId = GoRouterState.of(context).pathParameters['id'].toString();
     debugPrint('[BookDetailScreen] Building for bookId: $bookId');
     final bookQuery = ref.watch(bookDetailProvider(bookId));
 
@@ -72,7 +72,7 @@ class _BookContent extends ConsumerWidget {
 
   const _BookContent({required this.book});
 
-  Future<void> _previousPage(WidgetRef ref) async {
+  Future<void> _previousPage(BuildContext context, WidgetRef ref) async {
     final api = ref.read(bookApiServiceProvider);
     final offline = ref.read(bookOfflineServiceProvider);
 
@@ -88,16 +88,16 @@ class _BookContent extends ConsumerWidget {
       );
 
       if (previousResources.isEmpty) {
-        await QR.to('books');
+        await context.push('/books');
       } else {
-        await QR.to('books/${previousResources.first.id}');
+        await context.push('/books/${previousResources.first.id}');
       }
     } catch (_) {
-      await QR.to('books');
+      await context.push('/books');
     }
   }
 
-  Future<void> _nextPage(WidgetRef ref) async {
+  Future<void> _nextPage(BuildContext context, WidgetRef ref) async {
     final offline = ref.read(bookOfflineServiceProvider);
 
     try {
@@ -107,7 +107,7 @@ class _BookContent extends ConsumerWidget {
       );
 
       if (nextResources.isNotEmpty) {
-        await QR.to('books/${nextResources.first.id}');
+        await context.push('/books/${nextResources.first.id}');
       }
     } catch (_) {}
   }
@@ -142,12 +142,12 @@ class _BookContent extends ConsumerWidget {
       data: (chapters) {
         if (chapters.isNotEmpty) {
           return AppScaffold(
-            onBackPressed: () async => await QR.to('books'),
+            onBackPressed: () async => await context.push('/books'),
             showPattern: false,
             title: Text(locales.book),
             body: NextPageSwipe(
-              onPrevious: () => _previousPage(ref),
-              onNext: () => _nextPage(ref),
+              onPrevious: () => _previousPage(context, ref),
+              onNext: () => _nextPage(context, ref),
               child: Column(
                 children: [
                   Container(
@@ -223,7 +223,7 @@ class _BookContent extends ConsumerWidget {
                                     );
                                   } else {
                                     return InkWell(
-                                      onTap: () => QR.to(
+                                      onTap: () => context.push(
                                         'books/${book.id}/chapters/${chapter.id}',
                                       ),
                                       child: Container(
@@ -282,7 +282,7 @@ class _BookContent extends ConsumerWidget {
             bottomBar: BottomBar(
               alignment: MainAxisAlignment.spaceBetween,
               children: [
-                Previous(onPrevious: () => _previousPage(ref)),
+                Previous(onPrevious: () => _previousPage(context, ref)),
                 Row(
                   children: [
                     SocialShare(
@@ -299,7 +299,7 @@ class _BookContent extends ConsumerWidget {
                     ),
                   ],
                 ),
-                Next(onNext: () => _nextPage(ref)),
+                Next(onNext: () => _nextPage(context, ref)),
               ],
             ),
           );
@@ -335,14 +335,14 @@ class _BookContent extends ConsumerWidget {
             book: book,
             filePath: filePath,
             fileLink: fileLink,
-            previousPage: () => _previousPage(ref),
-            nextPage: () => _nextPage(ref),
+            previousPage: () => _previousPage(context, ref),
+            nextPage: () => _nextPage(context, ref),
           );
         } else {
           double screenWidth = MediaQuery.of(context).size.width;
 
           return AppScaffold(
-            onBackPressed: () async => await QR.to('books'),
+            onBackPressed: () async => await context.push('/books'),
             showPattern: false,
             title: Text(locales.book),
             body: SingleChildScrollView(
@@ -482,8 +482,8 @@ class _BookContent extends ConsumerWidget {
             bottomBar: BottomBar(
               alignment: MainAxisAlignment.spaceBetween,
               children: [
-                Previous(onPrevious: () => _previousPage(ref)),
-                Next(onNext: () => _nextPage(ref)),
+                Previous(onPrevious: () => _previousPage(context, ref)),
+                Next(onNext: () => _nextPage(context, ref)),
               ],
             ),
           );
@@ -630,7 +630,7 @@ class _SubchaptersState extends ConsumerState<_Subchapters> {
                     children: [
                       ...widget.chapter.subchapters.map((subchapter) {
                         return InkWell(
-                          onTap: () => QR.to(
+                          onTap: () => context.push(
                             'books/${widget.book.id}/subchapters/${subchapter.id}',
                           ),
                           child: Container(

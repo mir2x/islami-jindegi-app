@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:adhan/adhan.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/objects/prayer_time.dart';
@@ -84,7 +84,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                 label: prayerTimes['tahajjud']['title'],
                 value: prayerTimes['tahajjud']['endTime'],
                 isActive: currentPrayer == 'tahajjud',
-                onSelected: () => QR.to('namaz-times/tahajjud'),
+                onSelected: () => context.push('/namaz-times/tahajjud'),
               ),
             ),
             Container(
@@ -96,7 +96,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     : prayerTimes['fajr']['endTime'],
                 prayerKey: 'fajr',
                 isActive: currentPrayer == 'fajr',
-                onSelected: () => QR.to('namaz-times/fajr'),
+                onSelected: () => context.push('/namaz-times/fajr'),
               ),
             ),
             Container(
@@ -107,7 +107,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     ? prayerTimes['sunrise']['startTime']
                     : prayerTimes['sunrise']['endTime'],
                 isActive: false,
-                onSelected: () => QR.to('namaz-times/sunrise'),
+                onSelected: () => context.push('/namaz-times/sunrise'),
               ),
             ),
             Container(
@@ -118,7 +118,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     ? prayerTimes['ishraq']['startTime']
                     : prayerTimes['ishraq']['endTime'],
                 isActive: currentPrayer == 'ishraq',
-                onSelected: () => QR.to('namaz-times/ishraq'),
+                onSelected: () => context.push('/namaz-times/ishraq'),
               ),
             ),
             Container(
@@ -129,7 +129,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     ? prayerTimes['midday']['startTime']
                     : prayerTimes['midday']['endTime'],
                 isActive: false,
-                onSelected: () => QR.to('namaz-times/midday'),
+                onSelected: () => context.push('/namaz-times/midday'),
               ),
             ),
             Container(
@@ -141,7 +141,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     : prayerTimes['dhuhr']['endTime'],
                 prayerKey: 'dhuhr',
                 isActive: currentPrayer == 'dhuhr',
-                onSelected: () => QR.to('namaz-times/zuhr'),
+                onSelected: () => context.push('/namaz-times/zuhr'),
               ),
             ),
             Container(
@@ -153,7 +153,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     : prayerTimes['asr']['endTime'],
                 prayerKey: 'asr',
                 isActive: currentPrayer == 'asr',
-                onSelected: () => QR.to('namaz-times/asr'),
+                onSelected: () => context.push('/namaz-times/asr'),
               ),
             ),
             Container(
@@ -164,7 +164,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     ? prayerTimes['sunset']['startTime']
                     : prayerTimes['sunset']['endTime'],
                 isActive: false,
-                onSelected: () => QR.to('namaz-times/sunset'),
+                onSelected: () => context.push('/namaz-times/sunset'),
               ),
             ),
             Container(
@@ -176,7 +176,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     : prayerTimes['maghrib']['endTime'],
                 prayerKey: 'maghrib',
                 isActive: currentPrayer == 'maghrib',
-                onSelected: () => QR.to('namaz-times/maghrib'),
+                onSelected: () => context.push('/namaz-times/maghrib'),
               ),
             ),
             Container(
@@ -188,7 +188,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     : prayerTimes['isha']['endTime'],
                 prayerKey: 'isha',
                 isActive: currentPrayer == 'isha',
-                onSelected: () => QR.to('namaz-times/isha'),
+                onSelected: () => context.push('/namaz-times/isha'),
               ),
             ),
           ],

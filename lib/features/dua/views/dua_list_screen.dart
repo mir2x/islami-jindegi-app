@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/offline_db_prompt.dart';
@@ -161,7 +161,7 @@ class _OfflineDuaListState extends ConsumerState<_OfflineDuaList> {
                         var item = resources[index];
 
                         return InkWell(
-                          onTap: () => QR.to('duas/${item.id}'),
+                          onTap: () => context.push('/duas/${item.id}'),
                           child: ListItem(
                             item: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,

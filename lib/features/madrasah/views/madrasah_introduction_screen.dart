@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
@@ -26,7 +26,7 @@ class MadrasahIntroductionScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    var madrasahId = QR.params['id'].toString();
+    var madrasahId = GoRouterState.of(context).pathParameters['id'].toString();
 
     // Fetch madrasah without infos (just need intro + document)
     var madrasahQuery = ref.watch(singleMadrasahProvider(madrasahId));
@@ -38,7 +38,7 @@ class MadrasahIntroductionScreen extends ConsumerWidget {
         final api = ref.read(madrasahApiServiceProvider);
 
         Future? previousPage() async {
-          await QR.to('madrasahs/${resource.id}');
+          await context.push('/madrasahs/${resource.id}');
         }
 
         Future? nextPage() async {
@@ -49,11 +49,11 @@ class MadrasahIntroductionScreen extends ConsumerWidget {
           );
 
           if (nextResources.isNotEmpty) {
-            await QR.to(
+            await context.push(
               'madrasahs/${resource.id}/infos/${nextResources.first.id}',
             );
           } else {
-            await QR.to('madrasahs/${resource.id}/gallery');
+            await context.push('/madrasahs/${resource.id}/gallery');
           }
         }
 
@@ -62,7 +62,7 @@ class MadrasahIntroductionScreen extends ConsumerWidget {
           builder: (context, fontSizeRatio) {
             return AppScaffold(
               onBackPressed: () async =>
-                  await QR.to('madrasahs/${resource.id}'),
+                  await context.push('/madrasahs/${resource.id}'),
               showPattern: false,
               title: Text(resource.title),
               body: NextPageSwipe(

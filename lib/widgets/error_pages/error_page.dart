@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 
 class ErrorPage extends StatelessWidget {
@@ -41,7 +41,9 @@ class ErrorPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 InkWell(
-                  onTap: QR.back,
+                  onTap: () {
+                    if (context.canPop()) context.pop();
+                  },
                   child: Container(
                     padding: const EdgeInsets.all(15),
                     margin: const EdgeInsets.only(right: 15),
@@ -52,7 +54,7 @@ class ErrorPage extends StatelessWidget {
                   ),
                 ),
                 InkWell(
-                  onTap: () async => await QR.navigator.replaceAll('/'),
+                  onTap: () => context.go('/'),
                   child: Container(
                     padding: const EdgeInsets.all(15),
                     child: Text(

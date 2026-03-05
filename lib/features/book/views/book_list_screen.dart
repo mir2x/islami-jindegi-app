@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/utils/offline_db_prompt.dart';
@@ -174,7 +174,7 @@ class BookListScreen extends ConsumerWidget {
                       onTap: () {
                         debugPrint(
                             '[BookListScreen] Tapped book: ${item.id} — ${item.title}');
-                        QR.to('books/${item.id}');
+                        context.push('/books/${item.id}');
                       },
                       child: Column(
                         children: [
@@ -221,7 +221,7 @@ class BookListScreen extends ConsumerWidget {
         width: 200,
         height: 40,
         child: FloatingDownloadedButton(
-          onPressed: () => QR.to('books/downloads'),
+          onPressed: () => context.push('/books/downloads'),
           label: '${locales.downloaded} ${locales.books}',
         ),
       ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
@@ -24,8 +24,8 @@ class SubchapterScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    var subchapterId = QR.params['subchapter_id'].toString();
-    var bookId = QR.params['id'].toString();
+    var subchapterId = GoRouterState.of(context).pathParameters['subchapter_id'].toString();
+    var bookId = GoRouterState.of(context).pathParameters['id'].toString();
 
     var modelQuery = ref.watch(subchapterDetailProvider(subchapterId));
 
@@ -49,7 +49,7 @@ class SubchapterScreen extends ConsumerWidget {
           );
 
           if (previousResources.isNotEmpty) {
-            await QR.to(
+            await context.push(
               'books/$bookId/subchapters/${previousResources.first.id}',
             );
           } else {
@@ -65,17 +65,17 @@ class SubchapterScreen extends ConsumerWidget {
               );
 
               if (previousChapters.isEmpty) {
-                await QR.to('books/$bookId');
+                await context.push('/books/$bookId');
               } else {
                 var subchapters = previousChapters.first.subchapters;
 
                 if (subchapters.isNotEmpty) {
                   var lastSubchapter = subchapters.last;
-                  await QR.to(
+                  await context.push(
                     'books/$bookId/subchapters/${lastSubchapter.id}',
                   );
                 } else {
-                  await QR.to(
+                  await context.push(
                     'books/$bookId/chapters/${previousChapters.first.id}',
                   );
                 }
@@ -94,7 +94,7 @@ class SubchapterScreen extends ConsumerWidget {
           );
 
           if (nextResources.isNotEmpty) {
-            await QR.to(
+            await context.push(
               'books/$bookId/subchapters/${nextResources.first.id}',
             );
           } else {
@@ -113,11 +113,11 @@ class SubchapterScreen extends ConsumerWidget {
                 var subchapters = nextChapters.first.subchapters;
 
                 if (subchapters.isNotEmpty) {
-                  await QR.to(
+                  await context.push(
                     'books/$bookId/subchapters/${subchapters.first.id}',
                   );
                 } else {
-                  await QR.to(
+                  await context.push(
                     'books/$bookId/chapters/${nextChapters.first.id}',
                   );
                 }
@@ -138,7 +138,7 @@ class SubchapterScreen extends ConsumerWidget {
           storeKey: 'bookFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async => await QR.to('books/$bookId'),
+              onBackPressed: () async => await context.push('/books/$bookId'),
               showPattern: false,
               title: Text(locales.book),
               body: NextPageSwipe(

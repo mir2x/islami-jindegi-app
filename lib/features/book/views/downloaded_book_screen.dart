@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
@@ -15,7 +15,7 @@ class DownloadedBookScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    String bookId = QR.params['id'].toString();
+    String bookId = GoRouterState.of(context).pathParameters['id'].toString();
     var modelQuery = ref.watch(downloadedBookByBookIdProvider(bookId));
 
     return modelQuery.when(

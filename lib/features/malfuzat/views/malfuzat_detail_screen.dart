@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/providers/downloaded_malfuzat.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
@@ -29,7 +29,7 @@ class MalfuzatDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    var malfuzatId = QR.params['id'].toString();
+    var malfuzatId = GoRouterState.of(context).pathParameters['id'].toString();
     var malfuzatQuery = ref.watch(singleMalfuzatProvider(malfuzatId));
 
     return malfuzatQuery.when(
@@ -40,7 +40,7 @@ class MalfuzatDetailScreen extends ConsumerWidget {
 
         Future? previousPage() async {
           if (resource.position == null) {
-            await QR.to('malfuzat');
+            await context.push('/malfuzat');
             return;
           }
           var previousResources = await api.fetchMalfuzatByPosition(
@@ -49,9 +49,9 @@ class MalfuzatDetailScreen extends ConsumerWidget {
           );
 
           if (previousResources.isEmpty) {
-            await QR.to('malfuzat');
+            await context.push('/malfuzat');
           } else {
-            await QR.to('malfuzat/${previousResources.first.id}');
+            await context.push('/malfuzat/${previousResources.first.id}');
           }
         }
 
@@ -63,7 +63,7 @@ class MalfuzatDetailScreen extends ConsumerWidget {
           );
 
           if (nextResources.isNotEmpty) {
-            await QR.to('malfuzat/${nextResources.first.id}');
+            await context.push('/malfuzat/${nextResources.first.id}');
           }
         }
 
@@ -77,7 +77,7 @@ class MalfuzatDetailScreen extends ConsumerWidget {
           storeKey: 'malfuzatFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async => await QR.to('malfuzat'),
+              onBackPressed: () async => await context.push('/malfuzat'),
               showPattern: false,
               title: Text(locales.malfuzat),
               body: NextPageSwipe(

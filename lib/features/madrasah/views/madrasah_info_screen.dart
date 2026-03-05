@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
@@ -21,7 +21,7 @@ class MadrasahInfoScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var infoId = QR.params['info_id'].toString();
+    var infoId = GoRouterState.of(context).pathParameters['info_id'].toString();
     var infoQuery = ref.watch(singleMadrasahInfoProvider(infoId));
 
     return infoQuery.when(
@@ -29,7 +29,7 @@ class MadrasahInfoScreen extends ConsumerWidget {
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
         final api = ref.read(madrasahApiServiceProvider);
-        final madrasahId = resource.madrasahId ?? QR.params['id'].toString();
+        final madrasahId = resource.madrasahId ?? GoRouterState.of(context).pathParameters['id'].toString();
 
         Future? previousPage() async {
           if (resource.position != null && resource.position! > 1) {
@@ -40,12 +40,12 @@ class MadrasahInfoScreen extends ConsumerWidget {
             );
 
             if (previousResources.isNotEmpty) {
-              await QR.to(
+              await context.push(
                 'madrasahs/$madrasahId/infos/${previousResources.first.id}',
               );
             }
           } else {
-            await QR.to('madrasahs/$madrasahId/introduction');
+            await context.push('/madrasahs/$madrasahId/introduction');
           }
         }
 
@@ -58,11 +58,11 @@ class MadrasahInfoScreen extends ConsumerWidget {
           );
 
           if (nextResources.isNotEmpty) {
-            await QR.to(
+            await context.push(
               'madrasahs/$madrasahId/infos/${nextResources.first.id}',
             );
           } else {
-            await QR.to('madrasahs/$madrasahId/gallery');
+            await context.push('/madrasahs/$madrasahId/gallery');
           }
         }
 
@@ -70,7 +70,7 @@ class MadrasahInfoScreen extends ConsumerWidget {
           storeKey: 'madrasahFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async => await QR.to('madrasahs/$madrasahId'),
+              onBackPressed: () async => await context.push('/madrasahs/$madrasahId'),
               showPattern: false,
               title: Text(resource.madrasahTitle ?? ''),
               body: NextPageSwipe(

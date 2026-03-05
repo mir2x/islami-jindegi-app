@@ -6,7 +6,7 @@ import 'package:native_app/features/quran/providers/ayah_highlight_providers.dar
 import 'package:native_app/features/sura/providers/sura_providers.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final selectedDrawerSurahProvider = StateProvider<int>((ref) => 1);
@@ -249,11 +249,11 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
       // This ensures only one sura is in the stack at any time
       Future.delayed(const Duration(milliseconds: 200), () async {
         // Go back to sura-list first
-        await QR.back();
+        if (context.canPop()) context.pop();
         // Small delay to ensure navigation completes
         await Future.delayed(const Duration(milliseconds: 50));
         // Navigate to the new sura
-        QR.to('/qurans/sura/$suraNumber?scroll=${ayahNumber - 1}');
+        context.push('/qurans/sura/$suraNumber?scroll=${ayahNumber - 1}');
       });
     }
   }

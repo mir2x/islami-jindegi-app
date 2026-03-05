@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
@@ -20,7 +20,7 @@ class MadrasahGalleryScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    var madrasahId = QR.params['id'].toString();
+    var madrasahId = GoRouterState.of(context).pathParameters['id'].toString();
     var madrasahQuery = ref.watch(singleMadrasahWithPhotosProvider(madrasahId));
 
     return madrasahQuery.when(
@@ -43,18 +43,18 @@ class MadrasahGalleryScreen extends ConsumerWidget {
           );
 
           if (previousResources.isNotEmpty) {
-            await QR.to(
+            await context.push(
               'madrasahs/${resource.id}/infos/${previousResources.first.id}',
             );
           } else {
-            await QR.to('madrasahs/${resource.id}/introduction');
+            await context.push('/madrasahs/${resource.id}/introduction');
           }
         }
 
         Future? nextPage() async {}
 
         return AppScaffold(
-          onBackPressed: () async => await QR.to('madrasahs/${resource.id}'),
+          onBackPressed: () async => await context.push('/madrasahs/${resource.id}'),
           showPattern: false,
           title: Text(resource.title),
           body: NextPageSwipe(

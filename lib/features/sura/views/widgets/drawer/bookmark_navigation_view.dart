@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/features/sura/providers/sura_providers.dart';
 import 'package:native_app/features/sura_list/providers/bookmark_providers.dart'
     as sura_bookmarks;
@@ -104,9 +104,9 @@ class SuraBookmarkNavigationView extends ConsumerWidget {
               );
             } else {
               Future.delayed(const Duration(milliseconds: 200), () async {
-                await QR.back();
+                if (context.canPop()) context.pop();
                 await Future.delayed(const Duration(milliseconds: 50));
-                QR.to(
+                context.push(
                   '/qurans/sura/${bookmark.suraNumber}?scroll=${bookmark.ayahNumber - 1}',
                 );
               });

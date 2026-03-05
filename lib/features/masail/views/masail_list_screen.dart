@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/utils/offline_db_prompt.dart';
@@ -265,7 +265,7 @@ class MasailListScreen extends ConsumerWidget {
                   },
                   itemBuilder: (_, item, __) {
                     return InkWell(
-                      onTap: () => QR.to('masail/${item.id}'),
+                      onTap: () => context.push('/masail/${item.id}'),
                       child: ListItem(
                         highlightProvider: getDownloadedMasailByIdProvider(
                           item.id,
@@ -328,7 +328,7 @@ class MasailListScreen extends ConsumerWidget {
 
                         return FloatingActionButton.extended(
                           heroTag: 'ask-question',
-                          onPressed: () => QR.to('masail/ask-question'),
+                          onPressed: () => context.push('/masail/ask-question'),
                           icon: Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
@@ -358,7 +358,7 @@ class MasailListScreen extends ConsumerWidget {
             width: 205,
             height: 40,
             child: FloatingDownloadedButton(
-              onPressed: () => QR.to('masail/downloads'),
+              onPressed: () => context.push('/masail/downloads'),
               label: '${locales.downloaded} ${locales.masail}',
             ),
           ),

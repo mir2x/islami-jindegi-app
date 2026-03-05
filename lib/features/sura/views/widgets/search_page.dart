@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import '../../../../shared/quran_data.dart';
 import '../../providers/search_providers.dart';
@@ -97,7 +97,7 @@ class SearchPage extends ConsumerWidget {
                     final targetSura = ayah.sura;
                     final targetIndex = ayah.ayah - 1;
 
-                    QR.to('/qurans/sura/$targetSura?scroll=$targetIndex');
+                    context.push('/qurans/sura/$targetSura?scroll=$targetIndex');
                   });
                 },
               );

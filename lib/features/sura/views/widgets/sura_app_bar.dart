@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/shared/quran_data.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
@@ -74,11 +74,11 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
             IconButton(
               icon: const Icon(Icons.menu_book),
               onPressed: () =>
-                  QR.to('/qurans/tilawat?sura=$suraNumber&ayah=1'),
+                  context.push('/qurans/tilawat?sura=$suraNumber&ayah=1'),
             ),
             IconButton(
               icon: const Icon(Icons.search),
-              onPressed: () => QR.to('/qurans/search'),
+              onPressed: () => context.push('/qurans/search'),
             ),
           ],
     );

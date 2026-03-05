@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/providers/downloaded_masail.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
@@ -29,7 +29,7 @@ class MasailDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    var masailId = QR.params['id'].toString();
+    var masailId = GoRouterState.of(context).pathParameters['id'].toString();
     var masailQuery = ref.watch(singleMasailProvider(masailId));
 
     return masailQuery.when(
@@ -40,7 +40,7 @@ class MasailDetailScreen extends ConsumerWidget {
 
         Future? previousPage() async {
           if (resource.position == null) {
-            await QR.to('masail');
+            await context.push('/masail');
             return;
           }
           var previousResources = await api.fetchMasailByPosition(
@@ -49,9 +49,9 @@ class MasailDetailScreen extends ConsumerWidget {
           );
 
           if (previousResources.isEmpty) {
-            await QR.to('masail');
+            await context.push('/masail');
           } else {
-            await QR.to('masail/${previousResources.first.id}');
+            await context.push('/masail/${previousResources.first.id}');
           }
         }
 
@@ -63,7 +63,7 @@ class MasailDetailScreen extends ConsumerWidget {
           );
 
           if (nextResources.isNotEmpty) {
-            await QR.to('masail/${nextResources.first.id}');
+            await context.push('/masail/${nextResources.first.id}');
           }
         }
 
@@ -75,7 +75,7 @@ class MasailDetailScreen extends ConsumerWidget {
           storeKey: 'masailFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async => await QR.to('masail'),
+              onBackPressed: () async => await context.push('/masail'),
               showPattern: false,
               title: Text(locales.masail),
               body: NextPageSwipe(

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../theme/app_theme_color.dart';
 import '../../providers/ayah_highlight_providers.dart';
 
@@ -84,7 +84,7 @@ class QuranAppBar extends ConsumerWidget implements PreferredSizeWidget {
           color: appBarFg,
           onPressed: () {
             final int suraNumber = ref.read(currentSuraProvider);
-            QR.to('/qurans/sura/$suraNumber');
+            context.push('/qurans/sura/$suraNumber');
           },
         ),
 
@@ -93,7 +93,7 @@ class QuranAppBar extends ConsumerWidget implements PreferredSizeWidget {
           icon: Icons.search_rounded,
           iconSize: iconSize,
           color: appBarFg,
-          onPressed: () => QR.to('/qurans/search'),
+          onPressed: () => context.push('/qurans/search'),
         ),
 
         SizedBox(width: 4.w),

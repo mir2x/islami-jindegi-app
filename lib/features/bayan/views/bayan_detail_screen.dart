@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/providers/downloaded_bayans.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
@@ -27,7 +27,7 @@ class BayanDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    var bayanId = QR.params['id'].toString();
+    var bayanId = GoRouterState.of(context).pathParameters['id'].toString();
     var bayanQuery = ref.watch(singleBayanProvider(bayanId));
 
     return bayanQuery.when(
@@ -38,7 +38,7 @@ class BayanDetailScreen extends ConsumerWidget {
 
         Future? previousPage() async {
           if (resource.position == null) {
-            await QR.to('bayans');
+            await context.push('/bayans');
             return;
           }
           var previousResources = await api.fetchBayansByPosition(
@@ -47,9 +47,9 @@ class BayanDetailScreen extends ConsumerWidget {
           );
 
           if (previousResources.isEmpty) {
-            await QR.to('bayans');
+            await context.push('/bayans');
           } else {
-            await QR.to('bayans/${previousResources.first.id}');
+            await context.push('/bayans/${previousResources.first.id}');
           }
         }
 
@@ -61,7 +61,7 @@ class BayanDetailScreen extends ConsumerWidget {
           );
 
           if (nextResources.isNotEmpty) {
-            await QR.to('bayans/${nextResources.first.id}');
+            await context.push('/bayans/${nextResources.first.id}');
           }
         }
 
@@ -70,7 +70,7 @@ class BayanDetailScreen extends ConsumerWidget {
         });
 
         return AppScaffold(
-          onBackPressed: () async => await QR.to('bayans'),
+          onBackPressed: () async => await context.push('/bayans'),
           showPattern: false,
           title: Text(locales.bayan),
           body: NextPageSwipe(

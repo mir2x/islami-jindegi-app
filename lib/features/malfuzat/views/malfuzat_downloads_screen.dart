@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/downloaded_malfuzat.dart';
@@ -30,7 +30,7 @@ class MalfuzatDownloadsScreen extends ConsumerWidget {
                   var item = resources[index];
 
                   return InkWell(
-                    onTap: () => QR.to('malfuzat/downloads/${item.id}'),
+                    onTap: () => context.push('/malfuzat/downloads/${item.id}'),
                     child: ListItem(
                       item: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:qlevar_router/qlevar_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
@@ -23,7 +23,7 @@ class MadrasahDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    var madrasahId = QR.params['id'].toString();
+    var madrasahId = GoRouterState.of(context).pathParameters['id'].toString();
     var madrasahQuery = ref.watch(singleMadrasahProvider(madrasahId));
 
     return madrasahQuery.when(
@@ -34,7 +34,7 @@ class MadrasahDetailScreen extends ConsumerWidget {
 
         Future? previousPage() async {
           if (resource.position == null) {
-            await QR.to('madrasahs');
+            await context.push('/madrasahs');
             return;
           }
           var previousResources = await api.fetchMadrasahsByPosition(
@@ -43,9 +43,9 @@ class MadrasahDetailScreen extends ConsumerWidget {
           );
 
           if (previousResources.isEmpty) {
-            await QR.to('madrasahs');
+            await context.push('/madrasahs');
           } else {
-            await QR.to('madrasahs/${previousResources.first.id}');
+            await context.push('/madrasahs/${previousResources.first.id}');
           }
         }
 
@@ -57,7 +57,7 @@ class MadrasahDetailScreen extends ConsumerWidget {
           );
 
           if (nextResources.isNotEmpty) {
-            await QR.to('madrasahs/${nextResources.first.id}');
+            await context.push('/madrasahs/${nextResources.first.id}');
           }
         }
 
@@ -68,7 +68,7 @@ class MadrasahDetailScreen extends ConsumerWidget {
         });
 
         return AppScaffold(
-          onBackPressed: () async => await QR.to('madrasahs'),
+          onBackPressed: () async => await context.push('/madrasahs'),
           title: Text(locales.madrasah),
           body: NextPageSwipe(
             onPrevious: previousPage,
@@ -80,7 +80,7 @@ class MadrasahDetailScreen extends ConsumerWidget {
                   child: Text(resource.title, style: textTheme.labelLarge),
                 ),
                 InkWell(
-                  onTap: () => QR.to('madrasahs/${resource.id}/introduction'),
+                  onTap: () => context.push('/madrasahs/${resource.id}/introduction'),
                   child: ListItem(
                     item: Text(
                       locales.introduction,
@@ -91,7 +91,7 @@ class MadrasahDetailScreen extends ConsumerWidget {
                 ...resource.madrasahInfos.map((info) {
                   return InkWell(
                     onTap: () =>
-                        QR.to('madrasahs/${resource.id}/infos/${info.id}'),
+                        context.push('/madrasahs/${resource.id}/infos/${info.id}'),
                     child: ListItem(
                       item: Text(
                         info.label,
@@ -101,7 +101,7 @@ class MadrasahDetailScreen extends ConsumerWidget {
                   );
                 }),
                 InkWell(
-                  onTap: () => QR.to('madrasahs/${resource.id}/gallery'),
+                  onTap: () => context.push('/madrasahs/${resource.id}/gallery'),
                   child: ListItem(
                     item: Text(
                       locales.gallery,

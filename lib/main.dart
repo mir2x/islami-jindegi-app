@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:native_app/widgets/error_pages/page_404.dart';
-import 'package:qlevar_router/qlevar_router.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -54,11 +52,7 @@ Future main() async {
     // };
   }
 
-  QR.settings.pagesType = const QSlidePage(maintainState: true);
-  QR.settings.notFoundPage = QRoute(
-    path: '/error-pages/404',
-    builder: () => const Page404(),
-  );
+  AppRoutes.initialize();
 
   final container = ProviderContainer();
 
@@ -150,8 +144,7 @@ class MyApp extends ConsumerWidget {
             // Return your MaterialApp.router here
             return MaterialApp.router(
               debugShowCheckedModeBanner: false,
-              routeInformationParser: const QRouteInformationParser(),
-              routerDelegate: QRouterDelegate(AppRoutes().routes),
+              routerConfig: AppRoutes.router,
               theme: selectedTheme,
               darkTheme: selectedDarkTheme,
               themeMode: selectedThemeMode,
