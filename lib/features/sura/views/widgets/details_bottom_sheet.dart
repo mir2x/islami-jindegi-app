@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:native_app/features/sura/views/widgets/reciter_selection_dialog.dart';
 import 'package:native_app/features/sura/views/widgets/search_page.dart';
+import 'package:native_app/features/sura/views/widgets/theme_change_dialog.dart';
 import 'package:native_app/features/sura/views/widgets/tilawat_page.dart';
 import 'package:native_app/features/sura/views/widgets/translation_selection_dialog.dart';
 import 'package:native_app/theme/app_theme_color.dart';
@@ -63,6 +64,15 @@ class DetailsBottomSheet extends StatelessWidget {
                       showDialog(
                         context: context,
                         builder: (context) => const FontChangeDialog(),
+                      );
+                    }),
+                GridItemData(
+                    icon: Icons.palette_outlined,
+                    label: 'থিম পরিবর্তন',
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => const ThemeChangeDialog(),
                       );
                     }),
                 GridItemData(

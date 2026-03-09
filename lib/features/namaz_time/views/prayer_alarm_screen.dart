@@ -275,7 +275,11 @@ class _PrayerAlarmCard extends ConsumerWidget {
           if (isEnabled)
             Padding(
               padding: const EdgeInsets.only(
-                  left: 16, right: 16, bottom: 14, top: 2),
+                left: 16,
+                right: 16,
+                bottom: 14,
+                top: 2,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -345,6 +349,7 @@ class _RepeatDaysRow extends StatelessWidget {
   final String lang;
   final AppLocalizations locales;
 
+  @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
     var colorScheme = Theme.of(context).colorScheme;
@@ -393,7 +398,8 @@ class _RepeatDaysRow extends StatelessWidget {
                           // Switching from "every day" to a specific day
                           ref
                               .read(
-                                  prayerRepeatDaysProvider(prayerKey).notifier)
+                                prayerRepeatDaysProvider(prayerKey).notifier,
+                              )
                               .setDays({d});
                         } else {
                           if (current.contains(d) && current.length > 1) {
@@ -407,7 +413,8 @@ class _RepeatDaysRow extends StatelessWidget {
                               : current;
                           ref
                               .read(
-                                  prayerRepeatDaysProvider(prayerKey).notifier)
+                                prayerRepeatDaysProvider(prayerKey).notifier,
+                              )
                               .setDays(next);
                         }
                       },

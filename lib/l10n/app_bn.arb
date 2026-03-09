@@ -245,6 +245,31 @@
   "tryAgain": "আবার চেষ্টা করুন",
 
   "prayerAlarm": "নামাযের এলার্ম",
+  "upcomingPrayer": "পরবর্তী নামায",
+  "nextPrayerLabel": "পরবর্তী নামায",
+  "setReminder": "রিমাইন্ডার দিন",
+  "sahurEnds": "সাহরী শেষ",
+  "iftar": "ইফতার",
+  "dailyPrayers": "দৈনিক নামায",
+  "autoAdhanOn": "অটো-আযান চালু",
+  "autoAdhanOff": "অটো-আযান বন্ধ",
+  "forbiddenTimes": "নিষিদ্ধ সময়",
+  "knowledge": "জ্ঞান",
+  "knowledgeQuote": "\"তোমাদের মধ্যে সেই উত্তম, যে মানুষের বেশি উপকার করে।\"",
+  "endsAt": "শেষ",
+  "inHoursMinutes": "{hours}ঘ {minutes}মি বাকি",
+  "@inHoursMinutes": {
+    "placeholders": {
+      "hours": {},
+      "minutes": {}
+    }
+  },
+  "inMinutes": "{minutes}মি বাকি",
+  "@inMinutes": {
+    "placeholders": {
+      "minutes": {}
+    }
+  },
   "alarmEnabled": "এলার্ম সক্রিয়",
   "alarmDisabled": "এলার্ম নিষ্ক্রিয়",
   "alarmSettings": "এলার্ম সেটিংস",

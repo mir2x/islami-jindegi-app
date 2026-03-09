@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' show Platform, HttpOverrides;
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
@@ -14,7 +15,6 @@ import 'package:lehttp_overrides/lehttp_overrides.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/theme/themes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:native_app/core/services/prayer_alarm_service.dart';
 
 import 'routes/index.dart';
@@ -23,7 +23,7 @@ import 'app_widget/task.dart';
 import 'app_widget/background.dart';
 import 'package:quran_flutter/quran_flutter.dart';
 
-Future main() async {
+Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
@@ -70,21 +70,7 @@ Future main() async {
 
     await setAppWidgetBackground();
   }
-  // Initialize prayer alarm service
-  await PrayerAlarmService.initialize();
 
-  // Request exact alarm permission on Android
-  if (Platform.isAndroid) {
-    final status = await Permission.scheduleExactAlarm.status;
-    if (status.isDenied) {
-      await Permission.scheduleExactAlarm.request();
-    }
-  }
-
-  // Schedule any enabled prayer alarms
-  await PrayerAlarmService.scheduleAllAlarms();
-
-  await Quran.initialize();
   runApp(
     UncontrolledProviderScope(
       container: container,
@@ -92,7 +78,30 @@ Future main() async {
     ),
   );
 
-  FlutterNativeSplash.remove();
+  // Failsafe: ensure splash is removed even if first-frame callback is delayed.
+  Future.delayed(const Duration(seconds: 2), () {
+    FlutterNativeSplash.remove();
+  });
+
+  widgetsBinding.addPostFrameCallback((_) {
+    FlutterNativeSplash.remove();
+  });
+
+  unawaited(_initializeNonBlockingServices());
+}
+
+Future<void> _initializeNonBlockingServices() async {
+  try {
+    await PrayerAlarmService.initialize();
+  } catch (error, stackTrace) {
+    debugPrint('Prayer alarm initialization failed: $error\n$stackTrace');
+  }
+
+  try {
+    await Quran.initialize();
+  } catch (error, stackTrace) {
+    debugPrint('Quran initialization failed: $error\n$stackTrace');
+  }
 }
 
 class MyApp extends ConsumerWidget {
@@ -100,59 +109,47 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var prefs = ref.watch(preferencesProvider);
+    final prefs = ref.watch(preferencesProvider).value;
 
-    return prefs.when(
-      loading: () => const Center(
-        child: CircularProgressIndicator(),
-      ),
-      error: (error, _) => Text(error.toString()),
-      data: (preferences) {
-        String theme = preferences.getString('theme') ?? 'classic';
-        String banglaFont =
-            preferences.getString('banglaFont') ?? 'bangla/solaimanlipi';
-        String arabicFont =
-            preferences.getString('arabicFont') ?? 'arabic/noorehuda';
+    final theme = prefs?.getString('theme') ?? 'classic';
+    final banglaFont = prefs?.getString('banglaFont') ?? 'bangla/solaimanlipi';
+    final arabicFont = prefs?.getString('arabicFont') ?? 'arabic/noorehuda';
+    final locale = prefs?.getString('locale') ?? 'bn';
 
-        Map fonts = {
-          'fontFamily': banglaFont,
-          'fontFamilyFallback': ['Roboto', arabicFont],
+    final fonts = {
+      'fontFamily': banglaFont,
+      'fontFamilyFallback': ['Roboto', arabicFont],
+    };
+
+    return ScreenUtilInit(
+      designSize: const Size(360, 690),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        final selectedTheme = switch (theme) {
+          'light' => lightTheme(fonts),
+          'lightNew' => lightThemeNew(fonts),
+          'darkNew' => darkThemeNew(fonts),
+          _ => classicTheme(fonts),
+        };
+        final selectedDarkTheme = switch (theme) {
+          'darkNew' => darkThemeNew(fonts),
+          _ => darkTheme(fonts),
+        };
+        final selectedThemeMode = switch (theme) {
+          'dark' || 'darkNew' => ThemeMode.dark,
+          _ => ThemeMode.light,
         };
 
-        // --- 2. WRAPPED MATERIALAPP WITH SCREENUTILINIT ---
-        return ScreenUtilInit(
-          // Set this to your design's width and height
-          designSize: const Size(360, 690),
-          minTextAdapt: true,
-          splitScreenMode: true,
-          builder: (context, child) {
-            final selectedTheme = switch (theme) {
-              'light' => lightTheme(fonts),
-              'lightNew' => lightThemeNew(fonts),
-              'darkNew' => darkThemeNew(fonts),
-              _ => classicTheme(fonts),
-            };
-            final selectedDarkTheme = switch (theme) {
-              'darkNew' => darkThemeNew(fonts),
-              _ => darkTheme(fonts),
-            };
-            final selectedThemeMode = switch (theme) {
-              'dark' || 'darkNew' => ThemeMode.dark,
-              _ => ThemeMode.light,
-            };
-
-            // Return your MaterialApp.router here
-            return MaterialApp.router(
-              debugShowCheckedModeBanner: false,
-              routerConfig: AppRoutes.router,
-              theme: selectedTheme,
-              darkTheme: selectedDarkTheme,
-              themeMode: selectedThemeMode,
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
-              supportedLocales: AppLocalizations.supportedLocales,
-              locale: Locale(preferences.getString('locale') ?? 'bn'),
-            );
-          },
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          routerConfig: AppRoutes.router,
+          theme: selectedTheme,
+          darkTheme: selectedDarkTheme,
+          themeMode: selectedThemeMode,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: Locale(locale),
         );
       },
     );

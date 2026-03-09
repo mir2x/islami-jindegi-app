@@ -238,6 +238,31 @@
   "tryAgain": "Please try again",
 
   "prayerAlarm": "Prayer Alarm",
+  "upcomingPrayer": "Upcoming Prayer",
+  "nextPrayerLabel": "Next Prayer",
+  "setReminder": "Set Reminder",
+  "sahurEnds": "Sahur Ends",
+  "iftar": "Iftar",
+  "dailyPrayers": "Daily Prayers",
+  "autoAdhanOn": "Auto-Adhan On",
+  "autoAdhanOff": "Auto-Adhan Off",
+  "forbiddenTimes": "Forbidden Times",
+  "knowledge": "Knowledge",
+  "knowledgeQuote": "\"The best of people are those who are most beneficial to others.\"",
+  "endsAt": "Ends at",
+  "inHoursMinutes": "in {hours}h {minutes}m",
+  "@inHoursMinutes": {
+    "placeholders": {
+      "hours": {},
+      "minutes": {}
+    }
+  },
+  "inMinutes": "in {minutes}m",
+  "@inMinutes": {
+    "placeholders": {
+      "minutes": {}
+    }
+  },
   "alarmEnabled": "Alarm enabled",
   "alarmDisabled": "Alarm disabled",
   "alarmSettings": "Alarm Settings",

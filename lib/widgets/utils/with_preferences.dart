@@ -14,13 +14,28 @@ class WithPreferences extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var prefs = ref.watch(preferencesProvider);
+    final prefs = ref.watch(preferencesProvider);
+    final loadedPrefs = prefs.value;
+    if (loadedPrefs != null) {
+      return builder(context, loadedPrefs);
+    }
 
-    return prefs.when(
-      loading: () => const SizedBox.shrink(),
-      error: (error, _) => Text(error.toString()),
-      data: (preferences) {
-        return builder(context, preferences);
+    // Fallback to direct shared_preferences load so UI can recover
+    // even if provider initialization is delayed.
+    return FutureBuilder<SharedPreferences>(
+      future: SharedPreferences.getInstance(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return builder(context, snapshot.data!);
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(snapshot.error.toString()),
+          );
+        }
+
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }

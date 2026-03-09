@@ -22,6 +22,7 @@ class SuraBottomNavBar extends ConsumerWidget {
   });
 
   void _onNavBarTapped(int index, BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     switch (index) {
       case 0:
         showDialog(
@@ -36,8 +37,9 @@ class SuraBottomNavBar extends ConsumerWidget {
       case 2:
         if (totalAyahs > 0) {
           onStopAutoScroll();
-          showDialog(
+          showModalBottomSheet(
             context: context,
+            backgroundColor: colors.drawerScrim.withValues(alpha: 0),
             builder: (context) => AudioRangeSelectionDialog(
               totalAyahs: totalAyahs,
               suraNumber: suraNumber,

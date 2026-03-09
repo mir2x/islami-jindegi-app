@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/features/sura_list/views/widgets/bookmark_list.dart';
 import 'package:native_app/features/sura_list/views/widgets/para_list.dart';
 import 'package:native_app/features/sura_list/views/widgets/sura_list_item.dart';
@@ -70,6 +71,10 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.go('/qurans'),
+        ),
         title: const Text('সকল সূরা'),
         centerTitle: true,
         bottom: TabBar(

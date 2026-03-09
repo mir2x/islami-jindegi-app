@@ -14,6 +14,33 @@ import 'package:native_app/providers/background_app_widget_link.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/notification_status.dart';
 
+const Set<String> _availableBackgroundAssets = {
+  'assets/images/background/mosque-classic.png',
+  'assets/images/background/mosque-dark.png',
+  'assets/images/background/mosque-light.png',
+  'assets/images/background/pattern-classic.png',
+  'assets/images/background/pattern-dark.png',
+  'assets/images/background/pattern-darkNew.png',
+  'assets/images/background/pattern-light.png',
+  'assets/images/background/pattern-lightNew.png',
+};
+
+String _resolveBackgroundAsset(String background, String theme) {
+  final direct = 'assets/images/background/$background-$theme.png';
+  if (_availableBackgroundAssets.contains(direct)) return direct;
+
+  final fallbackTheme = switch (theme) {
+    'darkNew' => 'dark',
+    'lightNew' => 'light',
+    _ => 'classic',
+  };
+
+  final fallback = 'assets/images/background/$background-$fallbackTheme.png';
+  if (_availableBackgroundAssets.contains(fallback)) return fallback;
+
+  return 'assets/images/background/mosque-classic.png';
+}
+
 class AppScaffold extends ConsumerWidget {
   const AppScaffold({
     super.key,
@@ -270,7 +297,7 @@ class AppScaffold extends ConsumerWidget {
                 image: (showPattern && background != 'no-background')
                     ? DecorationImage(
                         image: AssetImage(
-                          'assets/images/background/$background-$theme.png',
+                          _resolveBackgroundAsset(background, theme),
                         ),
                         repeat: background == 'pattern'
                             ? ImageRepeat.repeat

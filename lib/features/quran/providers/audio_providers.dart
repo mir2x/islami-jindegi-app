@@ -95,12 +95,14 @@ final quranAudioProvider =
 final selectedAudioSuraProvider = StateProvider<int>((_) => 1);
 final selectedStartAyahProvider = StateProvider<int>((_) => 1);
 final selectedEndAyahProvider = StateProvider<int>((_) => 1);
+final selectedAyahRepeatCountProvider = StateProvider<int>((_) => 0);
 
 class QuranAudioPlayer {
   final AudioPlayer _player;
   final Ref _ref;
 
   int? _endAyahLimit;
+  List<int> _playlistAyahOrder = [];
   StreamSubscription<PlayerState>? _playerStateSub;
   StreamSubscription<int?>? _indexSub;
 
@@ -121,7 +123,11 @@ class QuranAudioPlayer {
   }
 
   Future<bool> playAyahs(
-      int startAyah, int endAyah, BuildContext context) async {
+    int startAyah,
+    int endAyah,
+    BuildContext context, {
+    int repeatCount = 0,
+  }) async {
     await stop();
 
     _endAyahLimit = endAyah;
@@ -176,11 +182,16 @@ class QuranAudioPlayer {
     }
 
     final List<AudioSource> audioSources = [];
+    final List<int> ayahOrder = [];
+    final int perAyahPlays = repeatCount + 1;
     for (int i = startAyah; i <= endAyah; i++) {
       final localPath =
           await audioFileManager.getLocalPathForAyah(reciterId, sura, i);
       if (await File(localPath).exists()) {
-        audioSources.add(AudioSource.uri(Uri.file(localPath)));
+        for (int repeat = 0; repeat < perAyahPlays; repeat++) {
+          audioSources.add(AudioSource.uri(Uri.file(localPath)));
+          ayahOrder.add(i);
+        }
       } else {
         debugPrint(
             "WARNING: Ayah $i was expected but not found locally after download check.");
@@ -193,6 +204,7 @@ class QuranAudioPlayer {
       return false;
     }
 
+    _playlistAyahOrder = ayahOrder;
     _setupStateListeners();
     _ref.read(quranAudioProvider.notifier).start(sura, startAyah);
     _highlightAndNavigate(sura, startAyah);
@@ -213,8 +225,8 @@ class QuranAudioPlayer {
       debugPrint("📢 [Listener] currentIndexStream FIRED with index: $index");
       final quranAudioState = _ref.read(quranAudioProvider);
       if (index != null && quranAudioState != null) {
-        final actualStartAyah = _ref.read(selectedStartAyahProvider);
-        final currentAyah = actualStartAyah + index;
+        if (index < 0 || index >= _playlistAyahOrder.length) return;
+        final currentAyah = _playlistAyahOrder[index];
 
         if (_endAyahLimit != null && currentAyah > _endAyahLimit!) {
           debugPrint(
@@ -290,18 +302,22 @@ class QuranAudioPlayer {
     _ref.read(quranAudioProvider.notifier).stop();
     _ref.read(selectedAyahProvider.notifier).clear();
     _endAyahLimit = null;
+    _playlistAyahOrder = [];
   }
 
   void playNext() {
     final currentAyahInPlaylistIndex = _player.currentIndex;
-    final startAyah = _ref.read(selectedStartAyahProvider);
 
     if (currentAyahInPlaylistIndex == null) {
       debugPrint("  [playNext] No current ayah in playlist. Cannot seek next.");
       return;
     }
 
-    final currentActualAyah = startAyah + currentAyahInPlaylistIndex;
+    if (currentAyahInPlaylistIndex >= _playlistAyahOrder.length) {
+      stop();
+      return;
+    }
+    final currentActualAyah = _playlistAyahOrder[currentAyahInPlaylistIndex];
     if (_endAyahLimit != null && currentActualAyah >= _endAyahLimit!) {
       debugPrint("  [playNext] At end ayah limit ($_endAyahLimit). Stopping.");
       stop();

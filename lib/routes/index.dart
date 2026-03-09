@@ -203,16 +203,16 @@ class AppRoutes {
       ),
       GoRoute(path: '/namaz-times', builder: (_, __) => const NamazTimes()),
       GoRoute(
-        path: '/namaz-times/:slug',
-        builder: (_, __) => const NamazTimeDetailScreen(),
-      ),
-      GoRoute(
         path: '/namaz-times/settings',
         builder: (_, __) => const NamazSettings(),
       ),
       GoRoute(
         path: '/namaz-times/alarms',
         builder: (_, __) => const PrayerAlarmScreen(),
+      ),
+      GoRoute(
+        path: '/namaz-times/:slug',
+        builder: (_, __) => const NamazTimeDetailScreen(),
       ),
       GoRoute(path: '/location', builder: (_, __) => const LocationScreen()),
       GoRoute(path: '/settings', builder: (_, __) => const Settings()),
@@ -235,11 +235,24 @@ class AppRoutes {
     return RegExp(r'^/bayans/[^/]+$').hasMatch(path);
   }
 
-  static String _lastPath = router.state.uri.path;
+  // Avoid reading router.state during class initialization, because the
+  // match list may not be ready yet at app startup.
+  static String _lastPath = '/';
 
   static void initialize() {
+    try {
+      _lastPath = router.state.uri.path;
+    } catch (_) {
+      _lastPath = '/';
+    }
+
     router.routerDelegate.addListener(() async {
-      final currentPath = router.state.uri.path;
+      String currentPath;
+      try {
+        currentPath = router.state.uri.path;
+      } catch (_) {
+        currentPath = '/';
+      }
       if (currentPath == _lastPath) return;
 
       if (_isWakelockRoute(_lastPath) != _isWakelockRoute(currentPath)) {

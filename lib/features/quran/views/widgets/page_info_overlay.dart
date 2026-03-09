@@ -15,6 +15,14 @@ class PageInfoOverlay extends ConsumerWidget {
     final pageInfo = ref.watch(pageInfoProvider(pageIndex + 1));
     final suraNamesList = ref.watch(suraNamesProvider);
     final isVisible = ref.watch(pageInfoVisibilityProvider);
+    final hasAyahInfo = pageInfo.suraAyahRanges.isNotEmpty;
+
+    // Hide overlay on non-content pages (e.g. opening/cover pages)
+    // where no ayah ranges exist.
+    if (!hasAyahInfo) {
+      return const SizedBox.shrink();
+    }
+
     final colorScheme = Theme.of(context).colorScheme;
     final colors = Theme.of(context).extension<AppThemeColors>()!;
     final isLight = colorScheme.brightness == Brightness.light;

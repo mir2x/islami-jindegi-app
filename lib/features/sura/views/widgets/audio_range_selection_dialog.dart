@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:native_app/theme/app_theme_color.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hugeicons/hugeicons.dart';
+import 'package:native_app/core/utils/bengali_digit_extension.dart';
+import 'package:native_app/features/quran/providers/reciter_providers.dart';
+import 'package:native_app/shared/quran_data.dart';
 import '../../providers/sura_reciter_providers.dart';
-
-String toBengaliDigit(int number) {
-  const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-  return number.toString().split('').map((digit) {
-    return bengaliDigits[int.parse(digit)];
-  }).join('');
-}
 
 class AudioRangeSelectionDialog extends ConsumerStatefulWidget {
   final int totalAyahs;
@@ -27,290 +24,289 @@ class AudioRangeSelectionDialog extends ConsumerStatefulWidget {
 
 class _AudioRangeSelectionDialogState
     extends ConsumerState<AudioRangeSelectionDialog> {
-  late int _selectedStartAyah;
-  late int _selectedEndAyah;
-  late FixedExtentScrollController _startController;
-  late FixedExtentScrollController _endController;
-
   bool _isFullSura = false;
-  int _repeatCount = 0;
 
   @override
   void initState() {
     super.initState();
-    _selectedStartAyah = 1;
-    _selectedEndAyah = widget.totalAyahs > 1 ? 2 : 1;
-
-    _startController =
-        FixedExtentScrollController(initialItem: _selectedStartAyah - 1);
-    _endController =
-        FixedExtentScrollController(initialItem: _selectedEndAyah - 1);
-  }
-
-  @override
-  void dispose() {
-    _startController.dispose();
-    _endController.dispose();
-    super.dispose();
-  }
-
-  void _onFullSuraChanged(bool? value) {
-    setState(() {
-      _isFullSura = value ?? false;
-      if (_isFullSura) {
-        _selectedStartAyah = 1;
-        _selectedEndAyah = widget.totalAyahs;
-        _startController.animateToItem(
-          _selectedStartAyah - 1,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-        _endController.animateToItem(
-          _selectedEndAyah - 1,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      }
+    Future.microtask(() {
+      ref.read(selectedAudioSuraProvider.notifier).state = widget.suraNumber;
+      ref.read(selectedStartAyahProvider.notifier).state = 1;
+      ref.read(selectedEndAyahProvider.notifier).state = 1;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final accent =
-        isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary;
-    final accentContainer = isLight
-        ? colors.surfaceBg.withOpacity(0.9)
-        : Theme.of(context).colorScheme.primaryContainer;
+    final colorScheme = Theme.of(context).colorScheme;
+    final selectedReciter = ref.watch(selectedReciterProvider);
+    final startAyah = ref.watch(selectedStartAyahProvider);
+    final endAyah = ref.watch(selectedEndAyahProvider);
+    final repeatCount = ref.watch(selectedAyahRepeatCountProvider);
 
-    return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      titlePadding: EdgeInsets.zero,
-      contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
-      content: SingleChildScrollView(
+    final lastAyah = widget.totalAyahs;
+    final ayahOptions = List.generate(lastAyah, (i) => i + 1);
+
+    return Container(
+      color: colorScheme.surface,
+      padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 24.h),
+      child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildPickerUI(),
-            const SizedBox(height: 16),
-            _buildFullSuraCheckbox(),
-            _buildRepeatStepper(),
-            const SizedBox(height: 16),
-            _buildListenButton(accentContainer, accent),
+            _labeledValue(
+              label: 'সূরা',
+              icon: HugeIcons.strokeRoundedQuran01,
+              value: suraNames[widget.suraNumber - 1],
+            ),
+            SizedBox(height: 12.h),
+            _labeledDropdown<String>(
+              label: 'ক্বারী',
+              icon: HugeIcons.strokeRoundedMuslim,
+              value: reciters.entries
+                  .firstWhere((e) => e.value == selectedReciter)
+                  .key,
+              items: reciters.keys.toList(),
+              onChanged: (val) {
+                if (val != null) {
+                  ref
+                      .read(selectedReciterProvider.notifier)
+                      .setReciter(reciters[val]!);
+                }
+              },
+            ),
+            SizedBox(height: 12.h),
+            _labeledDropdown<int>(
+              label: 'শুরু আয়াত',
+              icon: HugeIcons.strokeRoundedArrowLeft01,
+              value: startAyah.clamp(1, lastAyah),
+              items: ayahOptions,
+              onChanged: (val) {
+                if (val != null) {
+                  setState(() => _isFullSura = false);
+                  ref.read(selectedStartAyahProvider.notifier).state = val;
+                  final currentEndAyah = ref.read(selectedEndAyahProvider);
+                  if (val > currentEndAyah) {
+                    ref.read(selectedEndAyahProvider.notifier).state = val;
+                  }
+                }
+              },
+            ),
+            SizedBox(height: 12.h),
+            _labeledDropdown<int>(
+              label: 'শেষ আয়াত',
+              icon: HugeIcons.strokeRoundedArrowRight01,
+              value: endAyah.clamp(startAyah, lastAyah),
+              items: ayahOptions.where((a) => a >= startAyah).toList(),
+              onChanged: (val) {
+                if (val != null) {
+                  setState(() => _isFullSura = false);
+                  ref.read(selectedEndAyahProvider.notifier).state = val;
+                }
+              },
+            ),
+            SizedBox(height: 12.h),
+            _buildFullSuraCheckbox(
+              onChanged: (isChecked) {
+                setState(() => _isFullSura = isChecked);
+                if (isChecked) {
+                  ref.read(selectedStartAyahProvider.notifier).state = 1;
+                  ref.read(selectedEndAyahProvider.notifier).state = lastAyah;
+                }
+              },
+            ),
+            SizedBox(height: 8.h),
+            _buildRepeatStepper(
+              repeatCount: repeatCount,
+              onMinus: () {
+                if (repeatCount > 0) {
+                  ref.read(selectedAyahRepeatCountProvider.notifier).state =
+                      repeatCount - 1;
+                }
+              },
+              onPlus: () {
+                ref.read(selectedAyahRepeatCountProvider.notifier).state =
+                    repeatCount + 1;
+              },
+            ),
+            SizedBox(height: 20.h),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                icon: HugeIcon(
+                  icon: HugeIcons.strokeRoundedPlay,
+                  size: 24.r,
+                  color: colorScheme.onPrimary,
+                ),
+                label: Text(
+                  'অডিও শুনুন',
+                  style:
+                      TextStyle(fontSize: 16.sp, color: colorScheme.onPrimary),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colorScheme.primary,
+                ),
+                onPressed: () async {
+                  final service = ref.read(suraAudioPlayerProvider);
+                  final from = ref.read(selectedStartAyahProvider);
+                  final to = ref.read(selectedEndAyahProvider);
+                  final selectedRepeatCount =
+                      ref.read(selectedAyahRepeatCountProvider);
+                  final bool playbackStarted = await service.playAyahs(
+                    from,
+                    to,
+                    context,
+                    repeatCount: selectedRepeatCount,
+                  );
+                  if (!context.mounted) return;
+                  if (playbackStarted) {
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
+            ),
+            SizedBox(height: 44.h),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildListenButton(Color background, Color foreground) {
-    return ElevatedButton(
-      onPressed: () async {
-        final audioPlayer = ref.read(suraAudioPlayerProvider);
-        ref.read(selectedAudioSuraProvider.notifier).state = widget.suraNumber;
-        ref.read(selectedStartAyahProvider.notifier).state = _selectedStartAyah;
-        ref.read(selectedEndAyahProvider.notifier).state = _selectedEndAyah;
-        if (!context.mounted) return;
-        final bool playbackStarted = await audioPlayer.playAyahs(
-          _selectedStartAyah,
-          _selectedEndAyah,
-          context,
-        );
-        if (playbackStarted) {
-          Navigator.of(context).pop();
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: background,
-        foregroundColor: foreground,
-        elevation: 1,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        padding: const EdgeInsets.symmetric(vertical: 12),
-      ),
-      child: const Text(
-        'অডিও শুনুন',
-        style: TextStyle(
-
-            wordSpacing: 3,
-            fontSize: 18,
-            fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-
-  Widget _buildPickerUI() {
-    final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    return Container(
-      height: 180,
-      decoration: BoxDecoration(
-        color: isLight
-            ? colors.surfaceBg.withOpacity(0.9)
-            : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Text(
-                  'শুরু',
-                  style: TextStyle(
-        
-                    wordSpacing: 3,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).textTheme.titleMedium?.color,
-                  ),
-                ),
-                Text(
-                  'শেষ',
-                  style: TextStyle(
-        
-                    wordSpacing: 3,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).textTheme.titleMedium?.color,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1),
-          Expanded(
-            child: Row(
-              children: [
-                _buildPickerColumn(
-                  controller: _startController,
-                  onSelectedItemChanged: (index) {
-                    setState(() {
-                      _selectedStartAyah = index + 1;
-                      if (_isFullSura) _isFullSura = false;
-                      if (_selectedStartAyah > _selectedEndAyah) {
-                        _selectedEndAyah = _selectedStartAyah;
-                        _endController.animateToItem(_selectedEndAyah - 1,
-                            duration: const Duration(milliseconds: 200),
-                            curve: Curves.easeOut);
-                      }
-                    });
-                  },
-                ),
-                const VerticalDivider(width: 1),
-                _buildPickerColumn(
-                  controller: _endController,
-                  onSelectedItemChanged: (index) {
-                    setState(() {
-                      _selectedEndAyah = index + 1;
-                      if (_isFullSura) _isFullSura = false;
-                      if (_selectedEndAyah < _selectedStartAyah) {
-                        _selectedStartAyah = _selectedEndAyah;
-                        _startController.animateToItem(_selectedStartAyah - 1,
-                            duration: const Duration(milliseconds: 200),
-                            curve: Curves.easeOut);
-                      }
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPickerColumn({
-    required FixedExtentScrollController controller,
-    required ValueChanged<int> onSelectedItemChanged,
+  Widget _labeledValue({
+    required String label,
+    required IconData icon,
+    required String value,
   }) {
-    final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final stripBg = isLight
-        ? colors.divider.withOpacity(0.5)
-        : Theme.of(context).colorScheme.primary;
-    final selectedTextColor =
-        isLight ? colors.secondaryText : Theme.of(context).colorScheme.onPrimary;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
-    return Expanded(
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            height: 40,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        HugeIcon(icon: icon, color: colorScheme.primary, size: 20.r),
+        SizedBox(width: 8.w),
+        Text(
+          '$label:',
+          style: TextStyle(
+            color: textTheme.bodyLarge?.color,
+            fontWeight: FontWeight.w600,
+            fontSize: 16.sp,
+          ),
+        ),
+        SizedBox(width: 12.w),
+        Expanded(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
             decoration: BoxDecoration(
-              color: stripBg,
-              borderRadius: BorderRadius.circular(8),
+              color: colorScheme.surfaceVariant.withOpacity(0.5),
+              border: Border.all(color: colorScheme.outline.withOpacity(0.2)),
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Text(
+              value,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: textTheme.bodyLarge?.color,
+                fontSize: 16.sp,
+              ),
             ),
           ),
-          ListWheelScrollView.useDelegate(
-            controller: controller,
-            itemExtent: 40,
-            physics: const FixedExtentScrollPhysics(),
-            onSelectedItemChanged: onSelectedItemChanged,
-            childDelegate: ListWheelChildBuilderDelegate(
-              builder: (context, index) {
-                final ayahNumber = index + 1;
-                final isSelected = (_selectedStartAyah == ayahNumber &&
-                        controller == _startController) ||
-                    (_selectedEndAyah == ayahNumber &&
-                        controller == _endController);
-                return Center(
-                  child: Text(
-                    toBengaliDigit(ayahNumber),
-                    style: TextStyle(
-                      fontSize: 22,
-          
-                      wordSpacing: 3,
-                      color: isSelected
-                          ? selectedTextColor
-                          : Theme.of(context).textTheme.bodyLarge?.color,
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
-                    ),
-                  ),
-                );
-              },
-              childCount: widget.totalAyahs,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildFullSuraCheckbox() {
-    final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final accent =
-        isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary;
+  Widget _labeledDropdown<T>({
+    required String label,
+    required IconData icon,
+    required T value,
+    required List<T> items,
+    required void Function(T?) onChanged,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        HugeIcon(icon: icon, color: colorScheme.primary, size: 20.r),
+        SizedBox(width: 8.w),
+        Text(
+          '$label:',
+          style: TextStyle(
+            color: textTheme.bodyLarge?.color,
+            fontWeight: FontWeight.w600,
+            fontSize: 16.sp,
+          ),
+        ),
+        SizedBox(width: 12.w),
+        Expanded(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceVariant.withOpacity(0.5),
+              border: Border.all(color: colorScheme.outline.withOpacity(0.2)),
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<T>(
+                isExpanded: true,
+                value: value,
+                dropdownColor: colorScheme.surface,
+                iconEnabledColor: colorScheme.primary,
+                style: TextStyle(
+                  color: textTheme.bodyLarge?.color,
+                  fontSize: 16.sp,
+                ),
+                items: items.map((e) {
+                  return DropdownMenuItem<T>(
+                    value: e,
+                    child: Text(
+                      _localizedValueLabel(e),
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: textTheme.bodyLarge?.color,
+                        fontSize: 16.sp,
+                      ),
+                    ),
+                  );
+                }).toList(),
+                onChanged: onChanged,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFullSuraCheckbox({
+    required ValueChanged<bool> onChanged,
+  }) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: 24,
-          height: 24,
+          width: 24.w,
+          height: 24.w,
           child: Checkbox(
             value: _isFullSura,
-            onChanged: _onFullSuraChanged,
-            activeColor: accent,
+            onChanged: (value) => onChanged(value ?? false),
+            activeColor: colorScheme.primary,
           ),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8.w),
         GestureDetector(
-          onTap: () => _onFullSuraChanged(!_isFullSura),
+          onTap: () => onChanged(!_isFullSura),
           child: Text(
             'সম্পূর্ণ সূরা',
             style: TextStyle(
-  
-              wordSpacing: 3,
-              fontSize: 16,
-              color: Theme.of(context).textTheme.bodyLarge?.color,
+              fontSize: 15.sp,
+              fontWeight: FontWeight.w500,
+              color: textTheme.bodyLarge?.color,
             ),
           ),
         ),
@@ -318,48 +314,52 @@ class _AudioRangeSelectionDialogState
     );
   }
 
-  Widget _buildRepeatStepper() {
-    final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final accent =
-        isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary;
+  Widget _buildRepeatStepper({
+    required int repeatCount,
+    required VoidCallback onMinus,
+    required VoidCallback onPlus,
+  }) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text(
+        Text(
           'আয়াতের পুনরাবৃত্তি',
           style: TextStyle(
-
-            wordSpacing: 3,
-            fontSize: 16,
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w500,
+            color: textTheme.bodyLarge?.color,
           ),
         ),
-        const SizedBox(width: 16),
+        SizedBox(width: 12.w),
         IconButton(
           icon: const Icon(Icons.remove_circle_outline),
-          onPressed: () {
-            if (_repeatCount > 0) {
-              setState(() => _repeatCount--);
-            }
-          },
-          color: Theme.of(context).dividerColor,
+          onPressed: onMinus,
+          color: colorScheme.primary,
         ),
         Text(
-          toBengaliDigit(_repeatCount),
+          repeatCount.toBengaliDigit(),
           style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: accent,
-              fontFamily: 'bangla/solaimanlipi'),
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w700,
+            color: colorScheme.primary,
+          ),
         ),
         IconButton(
           icon: const Icon(Icons.add_circle_outline),
-          onPressed: () {
-            setState(() => _repeatCount++);
-          },
-          color: Theme.of(context).dividerColor,
+          onPressed: onPlus,
+          color: colorScheme.primary,
         ),
       ],
     );
+  }
+
+  String _localizedValueLabel<T>(T value) {
+    if (value is int) {
+      return value.toBengaliDigit();
+    }
+    return value.toString();
   }
 }
