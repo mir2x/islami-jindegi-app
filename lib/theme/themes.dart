@@ -399,7 +399,7 @@ ThemeData lightThemeNew(Map fonts) {
   return ThemeData(
     useMaterial3: false,
     brightness: Brightness.light,
-    extensions: const [AppThemeColors.light],
+    extensions: [AppThemeColors.lightNew],
     fontFamily: fonts['fontFamily'],
     fontFamilyFallback: fonts['fontFamilyFallback'],
     scaffoldBackgroundColor: AppColors.scaffoldBgLight,

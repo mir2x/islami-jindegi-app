@@ -94,6 +94,10 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
     drawerScrim: AppColors.drawerScrimLight,
   );
 
+  static final AppThemeColors lightNew = AppThemeColors.light.copyWith(
+    appBarBg: AppColors.surfaceBgLight,
+  );
+
   // ── Dark Theme ───────────────────────
   static const AppThemeColors dark = AppThemeColors(
     primary: AppColors.primaryDark,

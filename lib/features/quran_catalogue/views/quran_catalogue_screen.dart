@@ -19,11 +19,20 @@ class QuranCatalogueScreen extends ConsumerWidget {
     final quranEditions = ref.watch(quranEditionProvider);
 
     final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/');
+            }
+          },
+        ),
         title: const Text('কুরআন'),
         centerTitle: true,
       ),
@@ -41,7 +50,6 @@ class QuranCatalogueScreen extends ConsumerWidget {
                 if (!context.mounted) return;
 
                 if (lastSura != null && lastAyahIndex != null) {
-                  await context.push('/qurans/sura-list');
                   context.push('/qurans/sura/$lastSura?scroll=$lastAyahIndex');
                 } else {
                   context.push('/qurans/sura-list');
@@ -61,7 +69,7 @@ class QuranCatalogueScreen extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
-                      color: colorScheme.secondary.withOpacity(0.3),
+                      color: colorScheme.secondary.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -136,7 +144,7 @@ class _QuranEditionGridItem extends ConsumerWidget {
                 context,
                 assetName: edition.title,
                 sizeInfo:
-                    "(${(edition.sizeBytes / 1048576).toStringAsFixed(1)} MB)",
+                    '(${(edition.sizeBytes / 1048576).toStringAsFixed(1)} MB)',
               );
               if (!confirmed || !context.mounted) return;
 
@@ -161,6 +169,7 @@ class _QuranEditionGridItem extends ConsumerWidget {
                 zipUrl: assetResponse.url,
               );
 
+              if (!context.mounted) return;
               showDownloadDialog(context);
               ref
                   .read(downloadManagerProvider)

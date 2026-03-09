@@ -40,7 +40,6 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
   ScrollController? _landscapeController;
 
   Orientation? _lastOrientation;
-  int _initialPage = 0;
   bool _isInitialized = false;
 
   double get _aspectRatio => widget.imageWidth / widget.imageHeight;
@@ -82,7 +81,6 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
     final savedPage = prefs.getInt(_mushafKey) ?? 0;
     if (mounted) {
       setState(() {
-        _initialPage = savedPage;
         _isInitialized = true;
       });
       // Update the current page provider
@@ -144,7 +142,8 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
               final ayahBoxes = boxes
                   .where((b) =>
                       b.suraNumber == selectedAyah.suraNumber &&
-                      b.ayahNumber == selectedAyah.ayahNumber)
+                      b.ayahNumber == selectedAyah.ayahNumber,
+                  )
                   .toList();
 
               if (ayahBoxes.isNotEmpty) {
@@ -191,7 +190,7 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, s) => Scaffold(
-        appBar: QuranAppBar(),
+        appBar: const QuranAppBar(),
         body: Center(
           child: Text(
             'Error loading Quran data: ${e.toString()}\n$s',
@@ -205,7 +204,7 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
           loading: () =>
               const Scaffold(body: Center(child: CircularProgressIndicator())),
           error: (e, s) => Scaffold(
-            appBar: QuranAppBar(),
+            appBar: const QuranAppBar(),
             body: Center(
               child: Text(
                 'Error loading page count: ${e.toString()}\n$s',
@@ -310,11 +309,7 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
 
                 final appThemeColors =
                     Theme.of(context).extension<AppThemeColors>();
-                final isLight =
-                    Theme.of(context).colorScheme.brightness == Brightness.light;
-                final appBarBg = (isLight
-                        ? appThemeColors?.surfaceBg
-                        : appThemeColors?.appBarBg) ??
+                final appBarBg = appThemeColors?.appBarBg ??
                     Theme.of(context).appBarTheme.backgroundColor ??
                     Theme.of(context).colorScheme.surface;
                 final isDarkBg =

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:go_router/go_router.dart';
+import 'package:native_app/features/sura_list/providers/sura_list_providers.dart';
 import 'package:native_app/shared/quran_data.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
-class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
+class SuraAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final String title;
   final int suraNumber;
   final GlobalKey<ScaffoldState>? scaffoldKey;
@@ -21,7 +23,7 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final surahInfo = surahInfoList[suraNumber - 1];
     final subtitle =
         '${surahInfo.typeLabel} | আয়াত সংখ্যা: ${surahInfo.ayatCount.toBengaliDigit()}';
@@ -40,14 +42,17 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
       foregroundColor: fg,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
-        onPressed: () => Navigator.of(context).maybePop(),
+        onPressed: () {
+          ref.read(lastViewedSuraProvider.notifier).state = suraNumber;
+          context.go('/qurans/sura-list');
+        },
       ),
       title: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               wordSpacing: 3,
@@ -56,7 +61,7 @@ class SuraAppBar extends StatelessWidget implements PreferredSizeWidget {
           Text(
             subtitle,
             style: TextStyle(
-              color: fg.withOpacity(0.7),
+              color: fg.withValues(alpha: 0.7),
               fontSize: 12,
               wordSpacing: 3,
             ),

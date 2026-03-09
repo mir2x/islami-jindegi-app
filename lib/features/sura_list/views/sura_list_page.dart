@@ -91,7 +91,9 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
           indicatorColor: Theme.of(context).appBarTheme.foregroundColor,
           labelColor: Theme.of(context).appBarTheme.foregroundColor,
           unselectedLabelColor:
-              Theme.of(context).appBarTheme.foregroundColor?.withOpacity(0.6),
+              Theme.of(
+                context,
+              ).appBarTheme.foregroundColor?.withValues(alpha: 0.6),
           tabs: const [
             Tab(text: 'সূরা'),
             Tab(text: 'পারা'),
