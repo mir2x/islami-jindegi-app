@@ -175,7 +175,7 @@ class PrayerAlarmService {
 
   // ───────────────────── Scheduling ─────────────────────
 
-  /// Schedule all enabled alarms for today's prayer times.
+  /// Schedule all enabled alarms for the next valid occurrence.
   /// Called from app startup and background workmanager task.
   static Future<void> scheduleAllAlarms() async {
     for (var key in prayerKeys) {
@@ -205,20 +205,14 @@ class PrayerAlarmService {
     }
   }
 
-  /// Schedule both before and after alarms for a specific prayer,
-  /// only if today's weekday is in the prayer's repeat days.
+  /// Schedule both before and after alarms for a specific prayer.
+  /// Each alarm is scheduled against the next valid occurrence based on the
+  /// selected repeat days and the current time.
   static Future<void> _scheduleAlarmsForPrayer(String prayerKey) async {
     // First cancel existing alarms for this prayer
     await cancelAlarm(prayerKey);
 
-    // Check if today is a selected repeat day
     final repeatDays = await getRepeatDays(prayerKey);
-    final todayWeekday = DateTime.now().weekday; // 1=Mon … 7=Sun
-    if (!repeatDays.contains(todayWeekday)) return;
-
-    // Get prayer time
-    DateTime? prayerTime = await _getPrayerTime(prayerKey);
-    if (prayerTime == null) return;
 
     int beforeOffset = await getBeforeOffset(prayerKey);
     int afterOffset = await getAfterOffset(prayerKey);
@@ -229,12 +223,15 @@ class PrayerAlarmService {
     String locale = prefs.getString('locale') ?? 'bn';
     String prayerLabel = _getPrayerLabel(prayerKey, locale);
 
-    // Schedule before-waqt alarm
+    // Schedule before-waqt alarm at the next future matching occurrence.
     if (beforeOffset > 0) {
-      DateTime beforeTime =
-          prayerTime.subtract(Duration(minutes: beforeOffset));
+      final beforeTime = await _getNextScheduledDateTime(
+        prayerKey: prayerKey,
+        repeatDays: repeatDays,
+        offsetMinutes: -beforeOffset,
+      );
 
-      if (beforeTime.isAfter(DateTime.now())) {
+      if (beforeTime != null) {
         await _setAlarm(
           id: _beforeAlarmIds[prayerKey]!,
           dateTime: beforeTime,
@@ -247,10 +244,14 @@ class PrayerAlarmService {
       }
     }
 
-    // Schedule after-waqt alarm (at exact time + offset)
-    DateTime afterTime = prayerTime.add(Duration(minutes: afterOffset));
+    // Schedule after-waqt alarm at the next future matching occurrence.
+    final afterTime = await _getNextScheduledDateTime(
+      prayerKey: prayerKey,
+      repeatDays: repeatDays,
+      offsetMinutes: afterOffset,
+    );
 
-    if (afterTime.isAfter(DateTime.now())) {
+    if (afterTime != null) {
       await _setAlarm(
         id: _afterAlarmIds[prayerKey]!,
         dateTime: afterTime,
@@ -294,10 +295,44 @@ class PrayerAlarmService {
     await Alarm.set(alarmSettings: alarmSettings);
   }
 
+  static Future<DateTime?> _getNextScheduledDateTime({
+    required String prayerKey,
+    required Set<int> repeatDays,
+    required int offsetMinutes,
+  }) async {
+    final now = DateTime.now();
+
+    for (int dayOffset = 0; dayOffset <= 7; dayOffset++) {
+      final candidateDate = now.add(Duration(days: dayOffset));
+      if (!repeatDays.contains(candidateDate.weekday)) {
+        continue;
+      }
+
+      final prayerTime = await _getPrayerTime(
+        prayerKey,
+        date: candidateDate,
+      );
+      if (prayerTime == null) {
+        continue;
+      }
+
+      final scheduledTime =
+          prayerTime.add(Duration(minutes: offsetMinutes));
+      if (scheduledTime.isAfter(now)) {
+        return scheduledTime;
+      }
+    }
+
+    return null;
+  }
+
   // ───────────────────── Prayer Time Calculation ─────────────────────
 
   /// Get the prayer time for a given key using the adhan package
-  static Future<DateTime?> _getPrayerTime(String prayerKey) async {
+  static Future<DateTime?> _getPrayerTime(
+    String prayerKey, {
+    DateTime? date,
+  }) async {
     final prefs = await SharedPreferences.getInstance();
 
     double? lat = double.tryParse(prefs.getString('latitude') ?? '');
@@ -316,12 +351,12 @@ class PrayerAlarmService {
         : getTimezoneUTCOffset(timezone, daylight: daylight);
 
     final coordinates = Coordinates(lat, lng);
-    final today = DateTime.now();
+    final targetDate = date ?? DateTime.now();
     final params = _getCalculationParams(prefs);
 
     final prayerTimes = PrayerTimes(
       coordinates,
-      DateComponents(today.year, today.month, today.day),
+      DateComponents(targetDate.year, targetDate.month, targetDate.day),
       params,
       utcOffset: utcOffset,
     );

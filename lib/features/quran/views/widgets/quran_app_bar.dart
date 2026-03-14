@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../theme/app_theme_color.dart';
+import '../../models/ayah_box.dart';
 import '../../providers/ayah_highlight_providers.dart';
 
 class QuranAppBar extends ConsumerWidget implements PreferredSizeWidget {
@@ -83,8 +84,10 @@ class QuranAppBar extends ConsumerWidget implements PreferredSizeWidget {
           iconSize: iconSize,
           color: appBarFg,
           onPressed: () {
-            final int suraNumber = ref.read(currentSuraProvider);
-            context.push('/qurans/sura/$suraNumber');
+            final target = _resolveSuraNavigationTarget(ref);
+            context.push(
+              '/qurans/sura/${target.suraNumber}?scroll=${target.ayahNumber - 1}',
+            );
           },
         ),
 
@@ -100,6 +103,62 @@ class QuranAppBar extends ConsumerWidget implements PreferredSizeWidget {
       ],
     );
   }
+
+  _SuraNavigationTarget _resolveSuraNavigationTarget(WidgetRef ref) {
+    final selectedAyah = ref.read(selectedAyahProvider);
+    if (selectedAyah != null) {
+      return _SuraNavigationTarget(
+        suraNumber: selectedAyah.suraNumber,
+        ayahNumber: selectedAyah.ayahNumber,
+      );
+    }
+
+    final currentPage = ref.read(currentPageProvider) + 1;
+    final pageBoxes = ref.read(boxesForPageProvider(currentPage));
+    if (pageBoxes.isNotEmpty) {
+      final firstAyahBox = _findFirstAyahOnPage(pageBoxes);
+      return _SuraNavigationTarget(
+        suraNumber: firstAyahBox.suraNumber,
+        ayahNumber: firstAyahBox.ayahNumber,
+      );
+    }
+
+    return _SuraNavigationTarget(
+      suraNumber: ref.read(currentSuraProvider),
+      ayahNumber: 1,
+    );
+  }
+
+  AyahBox _findFirstAyahOnPage(List<AyahBox> pageBoxes) {
+    final sortedBoxes = [...pageBoxes]
+      ..sort((a, b) {
+        final topCompare = a.minY.compareTo(b.minY);
+        if (topCompare != 0) return topCompare;
+
+        final rightToLeftCompare = b.maxX.compareTo(a.maxX);
+        if (rightToLeftCompare != 0) return rightToLeftCompare;
+
+        final suraCompare = a.suraNumber.compareTo(b.suraNumber);
+        if (suraCompare != 0) return suraCompare;
+
+        final ayahCompare = a.ayahNumber.compareTo(b.ayahNumber);
+        if (ayahCompare != 0) return ayahCompare;
+
+        return a.boxId.compareTo(b.boxId);
+      });
+
+    return sortedBoxes.first;
+  }
+}
+
+class _SuraNavigationTarget {
+  final int suraNumber;
+  final int ayahNumber;
+
+  const _SuraNavigationTarget({
+    required this.suraNumber,
+    required this.ayahNumber,
+  });
 }
 
 // ─────────────────────────────────────────

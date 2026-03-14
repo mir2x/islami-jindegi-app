@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
+import 'colors.dart';
 
 class AppThemeColors extends ThemeExtension<AppThemeColors> {
   const AppThemeColors({
@@ -63,14 +64,107 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
   final Color shadow;
   final Color drawerScrim;
 
-  static const AppThemeColors light = AppThemeColors(
+  static const AppThemeColors legacyLight = AppThemeColors(
+    primary: ThemeColors.color8,
+    secondary: ThemeColors.color10,
+    accent: ThemeColors.color4,
+    active: ThemeColors.color8,
+    selectedItem: ThemeColors.color4,
+    scaffoldBg: ThemeColors.color9,
+    appBarBg: ThemeColors.color3,
+    drawerBg: ThemeColors.color3,
+    drawerHeaderBg: ThemeColors.color3,
+    navBarBg: ThemeColors.color9,
+    cardBg: ThemeColors.color3,
+    surfaceBg: ThemeColors.color3,
+    primaryText: ThemeColors.color2,
+    secondaryText: ThemeColors.color8,
+    arabicText: ThemeColors.color2,
+    translationText: ThemeColors.color2,
+    appBarText: ThemeColors.color8,
+    activeTabText: ThemeColors.color4,
+    inactiveTabText: ThemeColors.color2,
+    highlight: ThemeColors.color10,
+    highlightBorder: ThemeColors.color9,
+    selectionOverlay: ThemeColors.color4,
+    contextMenuBg: ThemeColors.color3,
+    contextMenuText: ThemeColors.color8,
+    dropdownBg: ThemeColors.color3,
+    divider: ThemeColors.color9,
+    shadow: Colors.black26,
+    drawerScrim: Colors.black54,
+  );
+
+  static const AppThemeColors legacyDark = AppThemeColors(
+    primary: ThemeColors.color4,
+    secondary: ThemeColors.color8,
+    accent: ThemeColors.color8,
+    active: ThemeColors.color4,
+    selectedItem: ThemeColors.color8,
+    scaffoldBg: ThemeColors.color2,
+    appBarBg: ThemeColors.color5,
+    drawerBg: ThemeColors.color5,
+    drawerHeaderBg: ThemeColors.color5,
+    navBarBg: ThemeColors.color5,
+    cardBg: ThemeColors.color7,
+    surfaceBg: ThemeColors.color2,
+    primaryText: ThemeColors.color3,
+    secondaryText: ThemeColors.color4,
+    arabicText: ThemeColors.color3,
+    translationText: ThemeColors.color3,
+    appBarText: ThemeColors.color3,
+    activeTabText: ThemeColors.color4,
+    inactiveTabText: ThemeColors.color3,
+    highlight: ThemeColors.color7,
+    highlightBorder: ThemeColors.color3,
+    selectionOverlay: ThemeColors.color8,
+    contextMenuBg: ThemeColors.color5,
+    contextMenuText: ThemeColors.color3,
+    dropdownBg: ThemeColors.color5,
+    divider: ThemeColors.color3,
+    shadow: Colors.black54,
+    drawerScrim: Colors.black87,
+  );
+
+  static const AppThemeColors classic = AppThemeColors(
+    primary: ThemeColors.color3,
+    secondary: ThemeColors.color8,
+    accent: ThemeColors.color4,
+    active: ThemeColors.color3,
+    selectedItem: ThemeColors.color4,
+    scaffoldBg: ThemeColors.color11,
+    appBarBg: ThemeColors.color12,
+    drawerBg: ThemeColors.color12,
+    drawerHeaderBg: ThemeColors.color12,
+    navBarBg: ThemeColors.color11,
+    cardBg: ThemeColors.color14,
+    surfaceBg: ThemeColors.color11,
+    primaryText: ThemeColors.color13,
+    secondaryText: ThemeColors.color2,
+    arabicText: ThemeColors.color13,
+    translationText: ThemeColors.color13,
+    appBarText: ThemeColors.color3,
+    activeTabText: ThemeColors.color4,
+    inactiveTabText: ThemeColors.color13,
+    highlight: ThemeColors.color14,
+    highlightBorder: ThemeColors.color9,
+    selectionOverlay: ThemeColors.color4,
+    contextMenuBg: ThemeColors.color14,
+    contextMenuText: ThemeColors.color13,
+    dropdownBg: ThemeColors.color14,
+    divider: ThemeColors.color9,
+    shadow: Colors.black26,
+    drawerScrim: Colors.black54,
+  );
+
+  static const AppThemeColors lightNew = AppThemeColors(
     primary: AppColors.primaryLight,
     secondary: AppColors.secondaryLight,
     accent: AppColors.accentLight,
     active: AppColors.activeLight,
     selectedItem: AppColors.selectedItemLight,
     scaffoldBg: AppColors.scaffoldBgLight,
-    appBarBg: AppColors.appBarBgLight,
+    appBarBg: AppColors.surfaceBgLight,
     drawerBg: AppColors.drawerBgLight,
     drawerHeaderBg: AppColors.drawerHeaderBgLight,
     navBarBg: AppColors.navBarBgLight,
@@ -94,12 +188,7 @@ class AppThemeColors extends ThemeExtension<AppThemeColors> {
     drawerScrim: AppColors.drawerScrimLight,
   );
 
-  static final AppThemeColors lightNew = AppThemeColors.light.copyWith(
-    appBarBg: AppColors.surfaceBgLight,
-  );
-
-  // ── Dark Theme ───────────────────────
-  static const AppThemeColors dark = AppThemeColors(
+  static const AppThemeColors darkNew = AppThemeColors(
     primary: AppColors.primaryDark,
     secondary: AppColors.secondaryDark,
     accent: AppColors.accentDark,

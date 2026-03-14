@@ -33,13 +33,12 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
 
   @override
   Widget build(BuildContext context) {
-    final allBoxesAsync = ref.watch(allBoxesProvider);
-    final totalPageCountAsync = ref.watch(totalPageCountProvider);
+    final mappingsAsync = ref.watch(quranMappingsProvider);
 
-    if (allBoxesAsync.isLoading || totalPageCountAsync.isLoading) {
+    if (mappingsAsync.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    if (allBoxesAsync.hasError || totalPageCountAsync.hasError) {
+    if (mappingsAsync.hasError) {
       return Center(
           child: Text('Error loading Para data',
               style: TextStyle(fontSize: 14.sp)));

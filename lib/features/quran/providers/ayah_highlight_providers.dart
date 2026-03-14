@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:native_app/shared/extensions.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../core/constants.dart';
 import '../../../shared/quran_data.dart';
 import '../models/ayah_box.dart';
@@ -333,33 +333,150 @@ const List<(int sura, int ayah)> paraStarts = [
   (78, 1),
 ];
 
-final suraPageMappingProvider = Provider<Map<int, int>>((ref) {
-  return ref.watch(allBoxesProvider).maybeWhen(
-        data: (boxes) {
-          final Map<int, int> suraMapping = {};
-          for (final box in boxes) {
-            if (!suraMapping.containsKey(box.suraNumber)) {
-              suraMapping[box.suraNumber] = box.pageNumber;
-            }
-          }
-          return suraMapping;
+class MushafMappings {
+  final Map<int, int> suraPageMapping;
+  final Map<(int, int), int> ayahPageMapping;
+  final Map<int, int> paraPageMapping;
+  final Map<int, List<int>> paraPageRanges;
+
+  const MushafMappings({
+    required this.suraPageMapping,
+    required this.ayahPageMapping,
+    required this.paraPageMapping,
+    required this.paraPageRanges,
+  });
+
+  factory MushafMappings.fromJson(Map<String, dynamic> json) {
+    return MushafMappings(
+      suraPageMapping: (json['suraPageMapping'] as Map<String, dynamic>).map(
+        (key, value) => MapEntry(int.parse(key), value as int),
+      ),
+      ayahPageMapping: (json['ayahPageMapping'] as Map<String, dynamic>).map(
+        (key, value) {
+          final parts = key.split(':');
+          return MapEntry((int.parse(parts[0]), int.parse(parts[1])), value as int);
         },
+      ),
+      paraPageMapping: (json['paraPageMapping'] as Map<String, dynamic>).map(
+        (key, value) => MapEntry(int.parse(key), value as int),
+      ),
+      paraPageRanges: (json['paraPageRanges'] as Map<String, dynamic>).map(
+        (key, value) => MapEntry(
+          int.parse(key),
+          (value as List<dynamic>).cast<int>(),
+        ),
+      ),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'suraPageMapping': suraPageMapping.map(
+        (key, value) => MapEntry(key.toString(), value),
+      ),
+      'ayahPageMapping': ayahPageMapping.map(
+        (key, value) => MapEntry('${key.$1}:${key.$2}', value),
+      ),
+      'paraPageMapping': paraPageMapping.map(
+        (key, value) => MapEntry(key.toString(), value),
+      ),
+      'paraPageRanges': paraPageRanges.map(
+        (key, value) => MapEntry(key.toString(), value),
+      ),
+    };
+  }
+}
+
+Future<File> _mushafMappingsCacheFile(EditionConfig config) async {
+  final docsDir = await getApplicationDocumentsDirectory();
+  final cacheDir = Directory('${docsDir.path}/quran_mappings_cache');
+  if (!await cacheDir.exists()) {
+    await cacheDir.create(recursive: true);
+  }
+
+  final cacheKey = base64Url.encode(utf8.encode(config.dir.path));
+  return File('${cacheDir.path}/$cacheKey.json');
+}
+
+MushafMappings _buildMushafMappings({
+  required List<AyahBox> boxes,
+  required int totalPages,
+}) {
+  final Map<int, int> suraMapping = {};
+  final Map<(int, int), int> ayahMapping = {};
+
+  for (final box in boxes) {
+    suraMapping.putIfAbsent(box.suraNumber, () => box.pageNumber);
+    ayahMapping.putIfAbsent(
+      (box.suraNumber, box.ayahNumber),
+      () => box.pageNumber,
+    );
+  }
+
+  final Map<int, int> paraMapping = {};
+  for (int i = 0; i < paraStarts.length; i++) {
+    final paraNum = i + 1;
+    final (startSura, startAyah) = paraStarts[i];
+    final page = ayahMapping[(startSura, startAyah)];
+    if (page != null) {
+      paraMapping[paraNum] = page;
+    }
+  }
+
+  final Map<int, List<int>> paraRanges = {};
+  for (int i = 1; i <= 30; i++) {
+    final startPage = paraMapping[i];
+    final endPage = i < 30 ? (paraMapping[i + 1] != null ? paraMapping[i + 1]! - 1 : null) : totalPages;
+    if (startPage != null && endPage != null && startPage <= endPage) {
+      paraRanges[i] = List<int>.generate(
+        endPage - startPage + 1,
+        (index) => startPage + index,
+      );
+    }
+  }
+
+  return MushafMappings(
+    suraPageMapping: suraMapping,
+    ayahPageMapping: ayahMapping,
+    paraPageMapping: paraMapping,
+    paraPageRanges: paraRanges,
+  );
+}
+
+final quranMappingsProvider = FutureProvider<MushafMappings>((ref) async {
+  final config = ref.watch(editionConfigProvider);
+  if (config == null) {
+    throw Exception('edition config not set');
+  }
+
+  final cacheFile = await _mushafMappingsCacheFile(config);
+  if (await cacheFile.exists()) {
+    try {
+      final cachedJson =
+          jsonDecode(await cacheFile.readAsString()) as Map<String, dynamic>;
+      return MushafMappings.fromJson(cachedJson);
+    } catch (_) {
+      await cacheFile.delete();
+    }
+  }
+
+  final boxes = await ref.watch(allBoxesProvider.future);
+  final totalPages = await ref.watch(totalPageCountProvider.future);
+  final mappings = _buildMushafMappings(boxes: boxes, totalPages: totalPages);
+  await cacheFile.writeAsString(jsonEncode(mappings.toJson()));
+  return mappings;
+});
+
+final suraPageMappingProvider = Provider<Map<int, int>>((ref) {
+  return ref.watch(quranMappingsProvider).maybeWhen(
+        data: (mappings) => mappings.suraPageMapping,
         orElse: () => const {},
       );
 });
 
 final ayahPageMappingProvider = Provider<Map<(int, int), int>>((ref) {
-  return ref.watch(allBoxesProvider).maybeWhen(
-        data: (boxes) {
-          final Map<(int, int), int> mapping = {};
-          for (final box in boxes) {
-            final key = (box.suraNumber, box.ayahNumber);
-            if (!mapping.containsKey(key)) {
-              mapping[key] = box.pageNumber;
-            }
-          }
-          return mapping;
-        },
+  return ref.watch(quranMappingsProvider).maybeWhen(
+        data: (mappings) => mappings.ayahPageMapping,
         orElse: () => const {},
       );
 });
@@ -367,68 +484,17 @@ final ayahPageMappingProvider = Provider<Map<(int, int), int>>((ref) {
 final suraNamesProvider = Provider<List<String>>((_) => suraNames);
 final selectedNavigationSurahProvider = StateProvider<int?>((_) => null);
 final paraPageMappingProvider = Provider<Map<int, int>>((ref) {
-  final allBoxesAsync = ref.watch(allBoxesProvider);
-
-  return allBoxesAsync.maybeWhen(
-    data: (boxes) {
-      final Map<int, int> paraMapping = {};
-      for (int i = 0; i < paraStarts.length; i++) {
-        final paraNum = i + 1;
-        final (startSura, startAyah) = paraStarts[i];
-        final startBox = boxes.firstWhereOrNull(
-          (box) => box.suraNumber == startSura && box.ayahNumber == startAyah,
-        );
-
-        if (startBox != null) {
-          paraMapping[paraNum] = startBox.pageNumber;
-        } else {
-          print(
-            'Warning: Start box for Para $paraNum ($startSura:$startAyah) not found in ayah_boxes.json',
-          );
-        }
-      }
-      return paraMapping;
-    },
+  return ref.watch(quranMappingsProvider).maybeWhen(
+    data: (mappings) => mappings.paraPageMapping,
     orElse: () => const {},
   );
 });
 
 final paraPageRangesProvider = Provider<Map<int, List<int>>>((ref) {
-  final paraMapping = ref.watch(paraPageMappingProvider);
-  final totalPageCountAsync = ref.watch(totalPageCountProvider);
-
-  if (paraMapping.isEmpty || !totalPageCountAsync.hasValue) {
-    return const {};
-  }
-
-  final totalPages = totalPageCountAsync.value!;
-
-  final Map<int, List<int>> pageRanges = {};
-
-  for (int i = 1; i <= 30; i++) {
-    final startPage = paraMapping[i];
-
-    final endPage = (i < 30)
-        ? paraMapping[i + 1] != null
-            ? paraMapping[i + 1]! - 1
-            : null
-        : totalPages;
-
-    if (startPage != null && endPage != null && startPage <= endPage) {
-      pageRanges[i] = List<int>.generate(
-        endPage - startPage + 1,
-        (j) => startPage + j,
-      );
-    } else if (startPage != null && endPage == null) {
-      print(
-        'Warning: Could not determine end page for Para $i (start $startPage). Missing data?',
-      );
-    } else if (startPage == null) {
-      print('Warning: Start page not found for Para $i.');
-    }
-  }
-
-  return pageRanges;
+  return ref.watch(quranMappingsProvider).maybeWhen(
+    data: (mappings) => mappings.paraPageRanges,
+    orElse: () => const {},
+  );
 });
 final selectedNavigationParaProvider = StateProvider<int?>((_) => null);
 

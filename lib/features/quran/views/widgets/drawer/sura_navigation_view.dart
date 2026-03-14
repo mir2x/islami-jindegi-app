@@ -36,11 +36,11 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
 
   @override
   Widget build(BuildContext context) {
-    final allBoxesAsync = ref.watch(allBoxesProvider);
-    if (allBoxesAsync.isLoading) {
+    final mappingsAsync = ref.watch(quranMappingsProvider);
+    if (mappingsAsync.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    if (allBoxesAsync.hasError) {
+    if (mappingsAsync.hasError) {
       return Center(
           child: Text('Error loading Surah/Ayah data',
               style: TextStyle(fontSize: 14.sp)));

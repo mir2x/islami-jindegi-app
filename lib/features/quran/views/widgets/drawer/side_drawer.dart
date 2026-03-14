@@ -56,19 +56,14 @@ class _SideDrawerState extends ConsumerState<SideDrawer>
           final double bottomInset =
               media.padding.bottom + (isLandscape ? 50.0 : 64.0.h);
 
-          final allBoxesAsync = ref.watch(allBoxesProvider);
-          final totalPageCountAsync = ref.watch(totalPageCountProvider);
+          final mappingsAsync = ref.watch(quranMappingsProvider);
           final suraMapping = ref.watch(suraPageMappingProvider);
           final paraPageRanges = ref.watch(paraPageRangesProvider);
 
-          final bool isLoading =
-              allBoxesAsync.isLoading || totalPageCountAsync.isLoading;
-          final bool hasError =
-              allBoxesAsync.hasError || totalPageCountAsync.hasError;
-          final bool isDataReady = !isLoading &&
-              !hasError &&
-              suraMapping.isNotEmpty &&
-              paraPageRanges.isNotEmpty;
+          final bool isLoading = mappingsAsync.isLoading;
+          final bool hasError = mappingsAsync.hasError;
+          final bool isDataReady =
+              !isLoading && !hasError && suraMapping.isNotEmpty && paraPageRanges.isNotEmpty;
 
           Widget tabContent;
           if (isLoading) {
