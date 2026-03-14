@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/hijri_date_settings.dart';
 import 'package:native_app/providers/geolocation.dart';
@@ -17,6 +18,7 @@ class NamazTimes extends ConsumerWidget {
     var settingsProvider = ref.watch(hijriDateSettingsProvider);
 
     return AppScaffold(
+      onBackPressed: () async => context.go('/'),
       title: Text(locales.namazTime),
       body: settingsProvider.when(
         loading: () {

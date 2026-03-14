@@ -31,6 +31,7 @@ class MasailListScreen extends ConsumerWidget {
     var settingsQuery = ref.watch(masailSettingsProvider);
 
     return AppScaffold(
+      onBackPressed: () async => context.go('/'),
       title: Text(locales.masail),
       body: OfflineDbPrompt(
         feature: 'masails',

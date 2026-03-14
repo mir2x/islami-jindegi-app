@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
@@ -34,6 +35,7 @@ class DonationScreen extends ConsumerWidget {
           storeKey: 'donationFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
+              onBackPressed: () async => context.go('/'),
               showPattern: false,
               title: Text(locales.donation),
               body: ItemContent(

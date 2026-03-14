@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/features/sura/models/sura_audio_state.dart';
 import 'package:native_app/features/sura/views/widgets/audio_control_bar.dart';
 import 'package:native_app/features/sura/views/widgets/ayah_card.dart';
@@ -19,8 +21,11 @@ import 'package:native_app/features/sura_list/providers/sura_list_providers.dart
 class SurahPage extends ConsumerStatefulWidget {
   final int suraNumber;
   final int? initialScrollIndex;
-  const SurahPage(
-      {super.key, required this.suraNumber, this.initialScrollIndex});
+  const SurahPage({
+    super.key,
+    required this.suraNumber,
+    this.initialScrollIndex,
+  });
 
   @override
   ConsumerState<SurahPage> createState() => _SurahPageState();
@@ -38,11 +43,15 @@ class _SurahPageState extends ConsumerState<SurahPage> {
   int _topVisibleIndex = 0;
   bool _showScrollToTopButton = false;
   int? _resolvedScrollIndex;
+  int _bottomVisibleIndex = 0;
+  bool _nextSuraPromptShown = false;
+  bool _isDraggingScrollThumb = false;
+  double? _dragThumbProgress;
 
   late final StateController<Set<int>> _activePagesNotifier;
 
   void _log(String msg) {
-    print('[SurahPage] $msg');
+    debugPrint('[SurahPage] $msg');
   }
 
   @override
@@ -60,7 +69,9 @@ class _SurahPageState extends ConsumerState<SurahPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _activePagesNotifier.update((state) => {...state, widget.suraNumber});
         _saveLastReadPosition(
-            widget.suraNumber, widget.initialScrollIndex ?? 0);
+          widget.suraNumber,
+          widget.initialScrollIndex ?? 0,
+        );
       });
     } else {
       _loadSavedScrollIndex();
@@ -121,6 +132,17 @@ class _SurahPageState extends ConsumerState<SurahPage> {
           _showScrollToTopButton = shouldShow;
         });
       }
+    }
+
+    final maxIndex = positions
+        .where((ItemPosition position) => position.itemLeadingEdge < 1)
+        .reduce((max, position) => position.index > max.index ? position : max)
+        .index;
+
+    _bottomVisibleIndex = maxIndex;
+
+    if (_bottomVisibleIndex < _totalItems - 1) {
+      _nextSuraPromptShown = false;
     }
   }
 
@@ -220,10 +242,160 @@ class _SurahPageState extends ConsumerState<SurahPage> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  bool get _isAtSuraEnd =>
+      _totalItems > 0 && _bottomVisibleIndex >= _totalItems - 1;
+
+  Future<void> _showNextSuraPrompt() async {
+    if (_nextSuraPromptShown || widget.suraNumber >= suraNames.length) return;
+
+    _nextSuraPromptShown = true;
+    final nextSuraNumber = widget.suraNumber + 1;
+    final nextSuraName = suraNames[nextSuraNumber - 1];
+    final textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Theme.of(sheetContext).colorScheme.surface,
+                borderRadius: BorderRadius.circular(28),
+                boxShadow: [
+                  BoxShadow(
+                    color: colors.shadow.withValues(alpha: 0.18),
+                    blurRadius: 24,
+                    offset: const Offset(0, 12),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 54,
+                    height: 6,
+                    margin: const EdgeInsets.only(bottom: 18),
+                    decoration: BoxDecoration(
+                      color: colors.divider.withValues(alpha: 0.7),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                  ),
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          colors.primary.withValues(alpha: 0.94),
+                          colors.secondary.withValues(alpha: 0.82),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: const Icon(
+                      Icons.auto_stories_rounded,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'সূরা শেষ হয়েছে',
+                    style: textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'পরের সূরা $nextSuraName এ যেতে চান?',
+                    style: textTheme.bodyLarge?.copyWith(
+                      color: colors.secondaryText,
+                      height: 1.45,
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.of(sheetContext).pop(),
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(50),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: const Text('এখন না'),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: () {
+                            Navigator.of(sheetContext).pop();
+                            if (!mounted || !context.mounted) return;
+                            context.pushReplacement(
+                              '/qurans/sura/$nextSuraNumber',
+                            );
+                          },
+                          style: FilledButton.styleFrom(
+                            minimumSize: const Size.fromHeight(50),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: Text(
+                            'পরের সূরা ${nextSuraNumber.toBengaliDigit()}',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (!mounted) return;
+      _nextSuraPromptShown = false;
+    });
+  }
+
+  bool _handleScrollNotification(ScrollNotification notification) {
+    if (notification is OverscrollNotification &&
+        notification.overscroll > 12 &&
+        _isAtSuraEnd &&
+        !_isDraggingScrollThumb) {
+      _showNextSuraPrompt();
+    }
+    return false;
+  }
+
+  void _jumpToProgress(double progress) {
+    if (_totalItems == 0 || !_itemScrollController.isAttached) return;
+    final clamped = progress.clamp(0.0, 1.0);
+    final targetIndex =
+        ((clamped * (_totalItems - 1)).round()).clamp(0, _totalItems - 1);
+    _itemScrollController.jumpTo(index: targetIndex, alignment: 0.08);
+    _saveLastReadPosition(widget.suraNumber, targetIndex);
+  }
+
   @override
   Widget build(BuildContext context) {
     final suraDataAsync = ref.watch(suraDataProvider(widget.suraNumber));
-    final suraName = "সূরা ${suraNames[widget.suraNumber - 1]}";
+    final suraName = 'সূরা ${suraNames[widget.suraNumber - 1]}';
     final quranAudioState = ref.watch(suraAudioProvider);
     final isTimedScrolling = ref.watch(isAutoScrollingProvider);
     final showBottomNav = !isTimedScrolling && quranAudioState == null;
@@ -254,8 +426,12 @@ class _SurahPageState extends ConsumerState<SurahPage> {
               ref.read(suraDataProvider(widget.suraNumber)).valueOrNull;
           if (ayahs != null && next.ayahNumber <= ayahs.length) {
             final ayah = ayahs[next.ayahNumber - 1];
+            if (!context.mounted) return;
             showTafsirBottomSheet(
-                context, suraNames[widget.suraNumber - 1], ayah);
+              context,
+              suraNames[widget.suraNumber - 1],
+              ayah,
+            );
           }
         });
       }
@@ -323,43 +499,66 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                     itemBuilder: (_, __) => const AyahPlaceholder(),
                   ),
                   error: (error, stack) => Center(
-                      child: Text('Failed to load Sura details:\n$error')),
+                    child: Text('Failed to load Sura details:\n$error'),
+                  ),
                   data: (ayahs) {
                     _totalItems = ayahs.length;
 
-                    return Stack(
-                      children: [
-                        ScrollablePositionedList.builder(
-                          itemScrollController: _itemScrollController,
-                          scrollOffsetController: _scrollOffsetController,
-                          itemPositionsListener: _itemPositionsListener,
-                          itemCount: _totalItems,
-                          initialScrollIndex: _resolvedScrollIndex ?? 0,
-                          padding: const EdgeInsets.only(bottom: 80.0),
-                          itemBuilder: (context, index) {
-                            final entry = ayahs[index];
-                            final isHighlighted = quranAudioState != null &&
-                                quranAudioState.surah == widget.suraNumber &&
-                                quranAudioState.ayah == entry.ayah;
+                    return LayoutBuilder(
+                      builder: (context, constraints) {
+                        return Stack(
+                          children: [
+                            NotificationListener<ScrollNotification>(
+                              onNotification: _handleScrollNotification,
+                              child: ScrollConfiguration(
+                                behavior:
+                                    const MaterialScrollBehavior().copyWith(
+                                  scrollbars: false,
+                                ),
+                                child: ScrollablePositionedList.builder(
+                                  itemScrollController: _itemScrollController,
+                                  scrollOffsetController:
+                                      _scrollOffsetController,
+                                  itemPositionsListener: _itemPositionsListener,
+                                  itemCount: _totalItems,
+                                  initialScrollIndex: _resolvedScrollIndex ?? 0,
+                                  padding: const EdgeInsets.only(
+                                    left: 4,
+                                    right: 44,
+                                    bottom: 80,
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    final entry = ayahs[index];
+                                    final isHighlighted =
+                                        quranAudioState != null &&
+                                            quranAudioState.surah ==
+                                                widget.suraNumber &&
+                                            quranAudioState.ayah == entry.ayah;
 
-                            return AyahCard(
-                              suraNumber: widget.suraNumber,
-                              ayah: entry,
-                              suraName: suraName,
-                              isHighlighted: isHighlighted,
-                            );
-                          },
-                        ),
-                        if (ref.watch(isAutoScrollingProvider))
-                          _buildAutoScrollController(context),
-                      ],
+                                    return AyahCard(
+                                      suraNumber: widget.suraNumber,
+                                      ayah: entry,
+                                      suraName: suraName,
+                                      isHighlighted: isHighlighted,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            _buildScrollThumb(context, constraints.maxHeight),
+                            if (ref.watch(isAutoScrollingProvider))
+                              _buildAutoScrollController(context),
+                          ],
+                        );
+                      },
                     );
                   },
                 ),
               ),
               if (quranAudioState != null)
                 AudioControllerBar(
-                  color: Theme.of(context).colorScheme.brightness == Brightness.light
+                  color: Theme.of(context).colorScheme.brightness ==
+                          Brightness.light
                       ? Theme.of(context).extension<AppThemeColors>()!.surfaceBg
                       : Theme.of(context).extension<AppThemeColors>()!.primary,
                 ),
@@ -378,17 +577,19 @@ class _SurahPageState extends ConsumerState<SurahPage> {
             ? FloatingActionButton(
                 onPressed: _scrollToTop,
                 mini: true,
-                backgroundColor:
-                    Theme.of(context).colorScheme.brightness == Brightness.light
-                        ? Theme.of(context).extension<AppThemeColors>()!.surfaceBg
-                        : Theme.of(context).colorScheme.primaryContainer,
-                child: Icon(Icons.arrow_upward,
-                    color:
-                        Theme.of(context).colorScheme.brightness == Brightness.light
-                            ? Theme.of(context)
-                                .extension<AppThemeColors>()!
-                                .secondaryText
-                            : Theme.of(context).colorScheme.onPrimaryContainer),
+                backgroundColor: Theme.of(context).colorScheme.brightness ==
+                        Brightness.light
+                    ? Theme.of(context).extension<AppThemeColors>()!.surfaceBg
+                    : Theme.of(context).colorScheme.primaryContainer,
+                child: Icon(
+                  Icons.arrow_upward,
+                  color: Theme.of(context).colorScheme.brightness ==
+                          Brightness.light
+                      ? Theme.of(context)
+                          .extension<AppThemeColors>()!
+                          .secondaryText
+                      : Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
               )
             : null,
       ),
@@ -398,11 +599,11 @@ class _SurahPageState extends ConsumerState<SurahPage> {
   Widget _buildAutoScrollController(BuildContext context) {
     final scrollSpeedFactor = ref.watch(scrollSpeedFactorProvider);
     final isPaused = ref.watch(isAutoScrollPausedProvider);
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
+    final isLight =
+        Theme.of(context).colorScheme.brightness == Brightness.light;
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final accent = isLight
-        ? colors.secondaryText
-        : Theme.of(context).colorScheme.primary;
+    final accent =
+        isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary;
 
     return Positioned(
       left: 0,
@@ -414,37 +615,167 @@ class _SurahPageState extends ConsumerState<SurahPage> {
           color: Theme.of(context).colorScheme.surface,
           boxShadow: [
             BoxShadow(
-                color:
-                    Theme.of(context).colorScheme.shadow.withValues(alpha: 0.1),
-                spreadRadius: 1,
-                blurRadius: 5,
-                offset: const Offset(0, -2))
+              color:
+                  Theme.of(context).colorScheme.shadow.withValues(alpha: 0.1),
+              spreadRadius: 1,
+              blurRadius: 5,
+              offset: const Offset(0, -2),
+            ),
           ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             IconButton(
-              icon: Icon(isPaused ? Icons.play_arrow : Icons.pause, color: accent),
+              icon: Icon(
+                isPaused ? Icons.play_arrow : Icons.pause,
+                color: accent,
+              ),
               onPressed: _togglePlayPauseAutoScroll,
             ),
             IconButton(
-                icon: Icon(Icons.remove, color: accent),
-                onPressed: () => _changeScrollSpeed(-0.5)),
-            Text('${scrollSpeedFactor.toStringAsFixed(1)}x',
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: accent)),
+              icon: Icon(Icons.remove, color: accent),
+              onPressed: () => _changeScrollSpeed(-0.5),
+            ),
+            Text(
+              '${scrollSpeedFactor.toStringAsFixed(1)}x',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: accent,
+              ),
+            ),
             IconButton(
-                icon: Icon(Icons.add, color: accent),
-                onPressed: () => _changeScrollSpeed(0.5)),
+              icon: Icon(Icons.add, color: accent),
+              onPressed: () => _changeScrollSpeed(0.5),
+            ),
             IconButton(
-                icon: Icon(Icons.close, color: accent),
-                onPressed: () => _stopAutoScroll(resetSpeed: true)),
+              icon: Icon(Icons.close, color: accent),
+              onPressed: () => _stopAutoScroll(resetSpeed: true),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildScrollThumb(BuildContext context, double height) {
+    if (_totalItems <= 1) {
+      return const SizedBox.shrink();
+    }
+
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    const trackTop = 18.0;
+    const trackBottom = 104.0;
+    final trackHeight =
+        (height - trackTop - trackBottom).clamp(120.0, double.infinity);
+    const thumbHeight = 88.0;
+    final progress = _dragThumbProgress ??
+        (_topVisibleIndex / (_totalItems - 1)).clamp(0.0, 1.0);
+    final top = trackTop + (trackHeight - thumbHeight) * progress;
+    final visibleAyah = (_topVisibleIndex + 1).clamp(1, _totalItems);
+
+    return Stack(
+      children: [
+        Positioned(
+          right: 20,
+          top: trackTop,
+          child: Container(
+            width: 6,
+            height: trackHeight,
+            decoration: BoxDecoration(
+              color: colors.divider.withValues(alpha: 0.4),
+              borderRadius: BorderRadius.circular(999),
+            ),
+          ),
+        ),
+        Positioned(
+          right: 8,
+          top: top,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onVerticalDragStart: (_) {
+              setState(() {
+                _isDraggingScrollThumb = true;
+                _dragThumbProgress = progress;
+              });
+            },
+            onVerticalDragUpdate: (details) {
+              final local = (top + details.delta.dy - trackTop)
+                  .clamp(0.0, trackHeight - thumbHeight);
+              final newProgress =
+                  (local / (trackHeight - thumbHeight)).clamp(0.0, 1.0);
+              setState(() {
+                _dragThumbProgress = newProgress;
+              });
+              _jumpToProgress(newProgress);
+            },
+            onVerticalDragEnd: (_) {
+              setState(() {
+                _isDraggingScrollThumb = false;
+                _dragThumbProgress = null;
+              });
+            },
+            onVerticalDragCancel: () {
+              setState(() {
+                _isDraggingScrollThumb = false;
+                _dragThumbProgress = null;
+              });
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 120),
+              width: _isDraggingScrollThumb ? 42 : 36,
+              height: thumbHeight,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    colors.primary.withValues(alpha: 0.96),
+                    colors.secondary.withValues(alpha: 0.84),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                borderRadius: BorderRadius.circular(22),
+                boxShadow: [
+                  BoxShadow(
+                    color: colors.shadow.withValues(alpha: 0.18),
+                    blurRadius: 18,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.drag_indicator_rounded,
+                    color: Colors.white70,
+                    size: 18,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    visibleAyah.toBengaliDigit(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 15,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  const Text(
+                    'আয়াত',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

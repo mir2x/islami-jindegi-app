@@ -316,7 +316,7 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
                     ThemeData.estimateBrightnessForColor(appBarBg) ==
                         Brightness.dark;
 
-                return AnnotatedRegion<SystemUiOverlayStyle>(``
+                return AnnotatedRegion<SystemUiOverlayStyle>(
                   value: SystemUiOverlayStyle(
                     statusBarColor: appBarBg,
                     statusBarIconBrightness:

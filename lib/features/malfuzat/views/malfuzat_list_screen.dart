@@ -29,6 +29,7 @@ class MalfuzatListScreen extends ConsumerWidget {
     var qParams = ref.watch(malfuzatQueryParamsProvider);
 
     return AppScaffold(
+      onBackPressed: () async => context.go('/'),
       title: Text(locales.malfuzat),
       body: OfflineDbPrompt(
         feature: 'malfuzats',

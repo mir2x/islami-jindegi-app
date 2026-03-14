@@ -29,6 +29,7 @@ class BayanListScreen extends ConsumerWidget {
     var qParams = ref.watch(bayanQueryParamsProvider);
 
     return AppScaffold(
+      onBackPressed: () async => context.go('/'),
       title: Text(locales.bayans),
       body: OfflineDbPrompt(
         feature: 'bayans',

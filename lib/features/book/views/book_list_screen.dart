@@ -28,6 +28,7 @@ class BookListScreen extends ConsumerWidget {
     bool isMobile = screenWidth < 768;
 
     return AppScaffold(
+      onBackPressed: () async => context.go('/'),
       title: Text(locales.books),
       body: OfflineDbPrompt(
         feature: 'books',

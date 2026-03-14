@@ -79,6 +79,7 @@ class _OfflineDuaListState extends ConsumerState<_OfflineDuaList> {
     var modelQuery = ref.watch(allDuasProvider(qParams));
 
     return AppScaffold(
+      onBackPressed: () async => context.go('/'),
       title: Text(locales.duaDurud),
       body: OfflineDbPrompt(
         feature: 'duas',
