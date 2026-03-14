@@ -1,9 +1,12 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/core/services/prayer_alarm_service.dart';
+import 'package:native_app/providers/notification_status.dart';
 import '../providers/prayer_alarm_providers.dart';
 
 // Weekday order: Mon=1 … Sun=7
@@ -36,6 +39,10 @@ class PrayerAlarmScreen extends ConsumerWidget {
 
           return ItemContent(
             children: [
+              const _AlarmPermissionStatusCard(),
+
+              const SizedBox(height: 12),
+
               // ───── Master Toggle ─────
               Container(
                 margin: const EdgeInsets.only(top: 10, bottom: 8),
@@ -87,6 +94,185 @@ class PrayerAlarmScreen extends ConsumerWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class _AlarmPermissionStatusCard extends ConsumerWidget {
+  const _AlarmPermissionStatusCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final notificationStatus = ref.watch(notificationStatusProvider);
+    final exactAlarmStatus = ref.watch(exactAlarmPermissionProvider);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        color: colorScheme.surface,
+        border: Border.all(color: colorScheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.info_outline,
+                size: 18,
+                color: colorScheme.primary,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'অ্যালার্ম পারমিশন',
+                style: textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          notificationStatus.when(
+            loading: () => const SizedBox.shrink(),
+            error: (error, _) => Text(
+              error.toString(),
+              style: textTheme.bodySmall,
+            ),
+            data: (status) => _PermissionRow(
+              icon: Icons.notifications_active_outlined,
+              title: 'নোটিফিকেশন',
+              subtitle: _permissionLabel(status, grantedLabel: 'অনুমোদিত'),
+              isGranted: status.isGranted || status.isProvisional,
+              onPressed: () => _requestNotificationPermission(ref),
+            ),
+          ),
+          if (Platform.isAndroid) const SizedBox(height: 10),
+          if (Platform.isAndroid)
+            exactAlarmStatus.when(
+              loading: () => const SizedBox.shrink(),
+              error: (error, _) => Text(
+                error.toString(),
+                style: textTheme.bodySmall,
+              ),
+              data: (status) => _PermissionRow(
+                icon: Icons.alarm_outlined,
+                title: 'এক্স্যাক্ট অ্যালার্ম',
+                subtitle: _permissionLabel(
+                  status,
+                  grantedLabel: 'অনুমোদিত',
+                ),
+                isGranted: status.isGranted,
+                onPressed: () => _requestExactAlarmPermission(ref),
+              ),
+            ),
+          const SizedBox(height: 10),
+          Text(
+            'এগুলোর কোনোটি বন্ধ থাকলে কিছু Android ডিভাইসে আযানের অ্যালার্ম কাজ নাও করতে পারে।',
+            style: textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static String _permissionLabel(
+    PermissionStatus status, {
+    required String grantedLabel,
+  }) {
+    if (status.isGranted || status.isProvisional) {
+      return grantedLabel;
+    }
+    if (status.isPermanentlyDenied) {
+      return 'সেটিংস থেকে চালু করতে হবে';
+    }
+    if (status.isRestricted) {
+      return 'ডিভাইস দ্বারা সীমাবদ্ধ';
+    }
+    return 'অনুমতি প্রয়োজন';
+  }
+
+  static Future<void> _requestNotificationPermission(WidgetRef ref) async {
+    final status = await Permission.notification.request();
+    await ref.read(notificationStatusProvider.notifier).updateStatus();
+    if (status.isPermanentlyDenied) {
+      await openAppSettings();
+    }
+  }
+
+  static Future<void> _requestExactAlarmPermission(WidgetRef ref) async {
+    final status = await Permission.scheduleExactAlarm.request();
+    await ref.read(exactAlarmPermissionProvider.notifier).updateStatus();
+    if (!status.isGranted) {
+      await openAppSettings();
+    }
+  }
+}
+
+class _PermissionRow extends StatelessWidget {
+  const _PermissionRow({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.isGranted,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final bool isGranted;
+  final Future<void> Function() onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 20,
+          color: isGranted ? colorScheme.primary : colorScheme.error,
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                subtitle,
+                style: textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (!isGranted)
+          TextButton(
+            onPressed: onPressed,
+            child: const Text('চালু করুন'),
+          )
+        else
+          Icon(
+            Icons.check_circle,
+            size: 18,
+            color: colorScheme.primary,
+          ),
+      ],
     );
   }
 }

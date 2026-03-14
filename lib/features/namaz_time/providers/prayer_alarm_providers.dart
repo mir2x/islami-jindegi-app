@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/core/services/prayer_alarm_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 // ───────────────────── Alarm Enabled States ─────────────────────
 
@@ -105,4 +106,22 @@ class AlarmSoundNotifier extends AsyncNotifier<String> {
 final alarmSoundProvider =
     AsyncNotifierProvider<AlarmSoundNotifier, String>(() {
   return AlarmSoundNotifier();
+});
+
+// ───────────────────── Exact Alarm Permission ─────────────────────
+
+class ExactAlarmPermissionNotifier extends AsyncNotifier<PermissionStatus> {
+  @override
+  Future<PermissionStatus> build() async {
+    return await Permission.scheduleExactAlarm.status;
+  }
+
+  Future<void> updateStatus() async {
+    state = AsyncValue.data(await Permission.scheduleExactAlarm.status);
+  }
+}
+
+final exactAlarmPermissionProvider =
+    AsyncNotifierProvider<ExactAlarmPermissionNotifier, PermissionStatus>(() {
+  return ExactAlarmPermissionNotifier();
 });
