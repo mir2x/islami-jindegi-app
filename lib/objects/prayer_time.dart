@@ -1,9 +1,10 @@
 import 'dart:core';
+
 import 'package:adhan/adhan.dart';
-import 'package:timezone_utc_offset/timezone_utc_offset.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone_utc_offset/timezone_utc_offset.dart';
 
 class PrayerTime {
   PrayerTime({
@@ -12,15 +13,10 @@ class PrayerTime {
     required this.preferences,
     this.currentDate,
   }) {
-    DateTime today = currentDate ?? DateTime.now();
-    bool daylight = preferences.getBool('daylight') ?? false;
-    Duration? utcOffset = getTimezoneUTCOffset(timezone, daylight: daylight);
-
-    prayerTimes = PrayerTimes(
-      coordinates,
-      DateComponents(today.year, today.month, today.day),
-      _adjustedParams(),
-      utcOffset: utcOffset,
+    referenceDate = currentDate ?? _nowInPrayerTimezone();
+    prayerTimes = _createPrayerTimes(referenceDate);
+    nextDayPrayerTimes = _createPrayerTimes(
+      referenceDate.add(const Duration(days: 1)),
     );
   }
 
@@ -28,134 +24,82 @@ class PrayerTime {
   final String timezone;
   final SharedPreferences preferences;
   final DateTime? currentDate;
+
+  late final DateTime referenceDate;
   late final PrayerTimes prayerTimes;
+  late final PrayerTimes nextDayPrayerTimes;
+
   final Duration oneMin = const Duration(minutes: 1);
   final Duration threeMins = const Duration(minutes: 3);
   final Duration fourMins = const Duration(minutes: 4);
   final Duration fiveMins = const Duration(minutes: 5);
-  final Duration tenMins = const Duration(minutes: 10);
   final Duration fourteenMins = const Duration(minutes: 14);
   final Duration fifteenMins = const Duration(minutes: 15);
 
-  Map getTimes(AppLocalizations locales, String currentLang) {
+  Map<String, Map<String, dynamic>> getTimes(
+    AppLocalizations locales,
+    String currentLang,
+  ) {
+    final schedule = _buildDisplaySchedule(locales, currentLang, referenceDate);
+    return schedule.map((key, value) {
+      return MapEntry(key, value.toMap(currentLang, _formatTime));
+    });
+  }
+
+  Map<String, Map<String, String>> getSunriseSunset(
+    AppLocalizations locales,
+    String currentLang,
+  ) {
+    final schedule = _buildDisplaySchedule(locales, currentLang, referenceDate);
     return {
-      'tahajjud': {
-        'title': locales.tahajjudSehri,
-        'endTime': _formatTime(prayerTimes.fajr.subtract(tenMins), currentLang),
-      },
-      'fajr': {
-        'title': locales.fajr,
-        'startTime': _formatTime(prayerTimes.fajr, currentLang),
-        'endTime': _formatTime(
-          prayerTimes.sunrise.subtract(oneMin),
-          currentLang,
-        ),
-        'startDateTime': prayerTimes.fajr,
-      },
       'sunrise': {
-        'title': locales.sunrise,
-        'startTime': _formatTime(prayerTimes.sunrise, currentLang),
-        'endTime': _formatTime(
-          prayerTimes.sunrise.add(fourteenMins),
-          currentLang,
-        ),
-        'startDateTime': prayerTimes.sunrise,
-      },
-      'ishraq': {
-        'title': locales.ishraqChasht,
-        'startTime': _formatTime(
-          prayerTimes.sunrise.add(fifteenMins),
-          currentLang,
-        ),
-        'endTime': _formatTime(prayerTimes.dhuhr.subtract(oneMin), currentLang),
-        'startDateTime': prayerTimes.sunrise.add(fifteenMins),
-      },
-      'midday': {
-        'title': locales.midday,
-        'startTime': _formatTime(prayerTimes.dhuhr, currentLang),
-        'endTime': _formatTime(prayerTimes.dhuhr.add(fourMins), currentLang),
-        'startDateTime': prayerTimes.dhuhr,
-      },
-      'dhuhr': {
-        'title': locales.zuhrZawal,
-        'startTime': _formatTime(prayerTimes.dhuhr.add(fiveMins), currentLang),
-        'endTime': _formatTime(prayerTimes.asr.subtract(oneMin), currentLang),
-        'startDateTime': prayerTimes.dhuhr.add(fiveMins),
-      },
-      'asr': {
-        'title': locales.asr,
-        'startTime': _formatTime(prayerTimes.asr, currentLang),
-        'endTime': _formatTime(
-          prayerTimes.maghrib.subtract(fourMins),
-          currentLang,
-        ),
-        'startDateTime': prayerTimes.asr,
+        'title': schedule['sunrise']!.title,
+        'time': _formatTime(schedule['sunrise']!.startDateTime, currentLang),
       },
       'sunset': {
-        'title': locales.sunset,
-        'startTime': _formatTime(
-          prayerTimes.maghrib.subtract(threeMins),
-          currentLang,
-        ),
-        'endTime': _formatTime(
-          prayerTimes.maghrib.subtract(oneMin),
-          currentLang,
-        ),
-        'startDateTime': prayerTimes.maghrib.subtract(threeMins),
-      },
-      'maghrib': {
-        'title': locales.maghribIftar,
-        'startTime': _formatTime(
-          prayerTimes.maghrib,
-          currentLang,
-        ),
-        'endTime': _formatTime(prayerTimes.isha.subtract(oneMin), currentLang),
-        'startDateTime': prayerTimes.maghrib,
-      },
-      'isha': {
-        'title': locales.isha,
-        'startTime': _formatTime(prayerTimes.isha, currentLang),
-        'endTime': _formatTime(prayerTimes.fajr.subtract(tenMins), currentLang),
-        'startDateTime': prayerTimes.isha,
+        'title': schedule['sunset']!.title,
+        'time': _formatTime(schedule['sunset']!.startDateTime, currentLang),
       },
     };
   }
 
-  Map getSunriseSunset(AppLocalizations locales, String currentLang) {
-    return {
-      'sunrise': {
-        'title': locales.sunrise,
-        'time': _formatTime(prayerTimes.sunrise, currentLang),
-      },
-      'sunset': {
-        'title': locales.sunset,
-        'time': _formatTime(
-          prayerTimes.maghrib.subtract(threeMins),
-          currentLang,
-        ),
-      },
-    };
-  }
-
-  Map getCurrentAndNextPrayers(AppLocalizations locales, String currentLang) {
-    Map times = getTimes(locales, currentLang);
-    Map prayers = currentAndNextPrayerNames();
-    var currentPrayer = prayers['currentPrayer'];
-    var nextPrayer = prayers['nextPrayer'];
+  Map<String, dynamic> getCurrentAndNextPrayers(
+    AppLocalizations locales,
+    String currentLang,
+  ) {
+    final now = _nowInPrayerTimezone();
+    final currentWindow = _currentPrayerWindow(now);
+    final nextWindow = _nextPrayerWindow(now);
+    final todaySchedule =
+        _buildDisplaySchedule(locales, currentLang, referenceDate);
 
     return {
-      if (currentPrayer != 'none') ...{
+      if (currentWindow != null) ...{
         'current': {
-          'title': times[currentPrayer]['title'],
+          'title': _localizedPrayerTitle(currentWindow.key, locales),
           'time':
-              '${times[currentPrayer]['startTime']} - ${times[currentPrayer]['endTime']}',
+              '${_formatTime(currentWindow.startDateTime, currentLang)} - ${_formatTime(currentWindow.endDateTime, currentLang)}',
         },
-      } else
-        ...{},
-      'next': {
-        'title': times[nextPrayer]['title'],
-        'time': times[nextPrayer]['startTime'],
       },
+      'next': {
+        'title': nextWindow != null
+            ? _localizedPrayerTitle(nextWindow.key, locales)
+            : todaySchedule['fajr']!.title,
+        'time': nextWindow != null
+            ? _formatTime(nextWindow.startDateTime, currentLang)
+            : _formatTime(todaySchedule['fajr']!.startDateTime, currentLang),
+      },
+    };
+  }
+
+  Map<String, String> currentAndNextPrayerNames() {
+    final now = _nowInPrayerTimezone();
+    final currentWindow = _currentPrayerWindow(now);
+    final nextWindow = _nextPrayerWindow(now);
+
+    return {
+      'currentPrayer': currentWindow?.key ?? 'none',
+      'nextPrayer': nextWindow?.key ?? 'fajr',
     };
   }
 
@@ -163,14 +107,240 @@ class PrayerTime {
     return prayerTimes.maghrib;
   }
 
+  DateTime? getPrayerStartDateTime(
+    String prayerKey, {
+    DateTime? date,
+  }) {
+    final windows = _buildPrayerWindowsForDate(date ?? referenceDate);
+    return windows[prayerKey]?.startDateTime;
+  }
+
+  DateTime _nowInPrayerTimezone() {
+    final now = DateTime.now();
+    final daylight = preferences.getBool('daylight') ?? false;
+    final utcOffset = timezone.isEmpty
+        ? null
+        : getTimezoneUTCOffset(timezone, daylight: daylight);
+
+    if (utcOffset == null) {
+      return now;
+    }
+
+    return now.toUtc().add(utcOffset);
+  }
+
+  PrayerTimes _createPrayerTimes(DateTime date) {
+    final daylight = preferences.getBool('daylight') ?? false;
+    final utcOffset = timezone.isEmpty
+        ? null
+        : getTimezoneUTCOffset(timezone, daylight: daylight);
+
+    return PrayerTimes(
+      coordinates,
+      DateComponents(date.year, date.month, date.day),
+      _adjustedParams(),
+      utcOffset: utcOffset,
+    );
+  }
+
+  Map<String, _PrayerScheduleEntry> _buildDisplaySchedule(
+    AppLocalizations locales,
+    String currentLang,
+    DateTime date,
+  ) {
+    final basePrayerTimes = _createPrayerTimes(date);
+    final nextPrayerTimes =
+        _createPrayerTimes(date.add(const Duration(days: 1)));
+
+    return {
+      'tahajjud': _PrayerScheduleEntry(
+        key: 'tahajjud',
+        title: locales.tahajjudSehri,
+        startDateTime: basePrayerTimes.isha,
+        endDateTime: basePrayerTimes.fajr,
+      ),
+      'fajr': _PrayerScheduleEntry(
+        key: 'fajr',
+        title: locales.fajr,
+        startDateTime: basePrayerTimes.fajr,
+        endDateTime: basePrayerTimes.sunrise.subtract(oneMin),
+      ),
+      'sunrise': _PrayerScheduleEntry(
+        key: 'sunrise',
+        title: locales.sunrise,
+        startDateTime: basePrayerTimes.sunrise,
+        endDateTime: basePrayerTimes.sunrise.add(fourteenMins),
+      ),
+      'ishraq': _PrayerScheduleEntry(
+        key: 'ishraq',
+        title: locales.ishraqChasht,
+        startDateTime: basePrayerTimes.sunrise.add(fifteenMins),
+        endDateTime: basePrayerTimes.dhuhr.subtract(oneMin),
+      ),
+      'midday': _PrayerScheduleEntry(
+        key: 'midday',
+        title: locales.midday,
+        startDateTime: basePrayerTimes.dhuhr,
+        endDateTime: basePrayerTimes.dhuhr.add(fourMins),
+      ),
+      'dhuhr': _PrayerScheduleEntry(
+        key: 'dhuhr',
+        title: locales.zuhrZawal,
+        startDateTime: basePrayerTimes.dhuhr.add(fiveMins),
+        endDateTime: basePrayerTimes.asr.subtract(oneMin),
+      ),
+      'asr': _PrayerScheduleEntry(
+        key: 'asr',
+        title: locales.asr,
+        startDateTime: basePrayerTimes.asr,
+        endDateTime: basePrayerTimes.maghrib.subtract(fourMins),
+      ),
+      'sunset': _PrayerScheduleEntry(
+        key: 'sunset',
+        title: locales.sunset,
+        startDateTime: basePrayerTimes.maghrib.subtract(threeMins),
+        endDateTime: basePrayerTimes.maghrib.subtract(oneMin),
+      ),
+      'maghrib': _PrayerScheduleEntry(
+        key: 'maghrib',
+        title: locales.maghribIftar,
+        startDateTime: basePrayerTimes.maghrib,
+        endDateTime: basePrayerTimes.isha.subtract(oneMin),
+      ),
+      'isha': _PrayerScheduleEntry(
+        key: 'isha',
+        title: locales.isha,
+        startDateTime: basePrayerTimes.isha,
+        endDateTime: nextPrayerTimes.fajr.subtract(oneMin),
+      ),
+    };
+  }
+
+  Map<String, _PrayerScheduleEntry> _buildPrayerWindowsForDate(DateTime date) {
+    final basePrayerTimes = _createPrayerTimes(date);
+    final nextPrayerTimes =
+        _createPrayerTimes(date.add(const Duration(days: 1)));
+
+    return {
+      'fajr': _PrayerScheduleEntry(
+        key: 'fajr',
+        title: 'fajr',
+        startDateTime: basePrayerTimes.fajr,
+        endDateTime: basePrayerTimes.sunrise.subtract(oneMin),
+      ),
+      'ishraq': _PrayerScheduleEntry(
+        key: 'ishraq',
+        title: 'ishraq',
+        startDateTime: basePrayerTimes.sunrise.add(fifteenMins),
+        endDateTime: basePrayerTimes.dhuhr.subtract(oneMin),
+      ),
+      'dhuhr': _PrayerScheduleEntry(
+        key: 'dhuhr',
+        title: 'dhuhr',
+        startDateTime: basePrayerTimes.dhuhr.add(fiveMins),
+        endDateTime: basePrayerTimes.asr.subtract(oneMin),
+      ),
+      'asr': _PrayerScheduleEntry(
+        key: 'asr',
+        title: 'asr',
+        startDateTime: basePrayerTimes.asr,
+        endDateTime: basePrayerTimes.maghrib.subtract(fourMins),
+      ),
+      'maghrib': _PrayerScheduleEntry(
+        key: 'maghrib',
+        title: 'maghrib',
+        startDateTime: basePrayerTimes.maghrib,
+        endDateTime: basePrayerTimes.isha.subtract(oneMin),
+      ),
+      'isha': _PrayerScheduleEntry(
+        key: 'isha',
+        title: 'isha',
+        startDateTime: basePrayerTimes.isha,
+        endDateTime: nextPrayerTimes.fajr.subtract(oneMin),
+      ),
+    };
+  }
+
+  _PrayerScheduleEntry? _currentPrayerWindow(DateTime now) {
+    final previousDayWindows = _buildPrayerWindowsForDate(
+      DateTime(now.year, now.month, now.day).subtract(const Duration(days: 1)),
+    );
+    final currentDayWindows = _buildPrayerWindowsForDate(now);
+
+    final windows = [
+      previousDayWindows['isha']!,
+      currentDayWindows['fajr']!,
+      currentDayWindows['ishraq']!,
+      currentDayWindows['dhuhr']!,
+      currentDayWindows['asr']!,
+      currentDayWindows['maghrib']!,
+      currentDayWindows['isha']!,
+    ];
+
+    for (final window in windows) {
+      final startsNow = now.isAtSameMomentAs(window.startDateTime);
+      final afterStart = now.isAfter(window.startDateTime);
+      final beforeEnd = now.isBefore(window.endDateTime);
+      if ((startsNow || afterStart) && beforeEnd) {
+        return window;
+      }
+    }
+
+    return null;
+  }
+
+  _PrayerScheduleEntry? _nextPrayerWindow(DateTime now) {
+    final currentDayWindows = _buildPrayerWindowsForDate(now);
+    final nextDayWindows = _buildPrayerWindowsForDate(
+      DateTime(now.year, now.month, now.day).add(const Duration(days: 1)),
+    );
+
+    final windows = [
+      currentDayWindows['fajr']!,
+      currentDayWindows['ishraq']!,
+      currentDayWindows['dhuhr']!,
+      currentDayWindows['asr']!,
+      currentDayWindows['maghrib']!,
+      currentDayWindows['isha']!,
+      nextDayWindows['fajr']!,
+    ];
+
+    for (final window in windows) {
+      if (window.startDateTime.isAfter(now)) {
+        return window;
+      }
+    }
+
+    return nextDayWindows['fajr'];
+  }
+
+  String _localizedPrayerTitle(String prayerKey, AppLocalizations locales) {
+    switch (prayerKey) {
+      case 'fajr':
+        return locales.fajr;
+      case 'ishraq':
+        return locales.ishraqChasht;
+      case 'dhuhr':
+        return locales.zuhrZawal;
+      case 'asr':
+        return locales.asr;
+      case 'maghrib':
+        return locales.maghribIftar;
+      case 'isha':
+        return locales.isha;
+      default:
+        return prayerKey;
+    }
+  }
+
   String _formatTime(DateTime time, String locale) {
     return DateFormat.jm(locale).format(time);
   }
 
   CalculationParameters _adjustedParams() {
-    String method = preferences.getString('method') ?? 'Karachi';
-    String madhab = preferences.getString('madhab') ?? 'hanafi';
-    CalculationParameters params = _calculationMethod(method);
+    final method = preferences.getString('method') ?? 'Karachi';
+    final madhab = preferences.getString('madhab') ?? 'hanafi';
+    final params = _calculationMethod(method);
     params.madhab = _getMadhab(madhab);
     params.adjustments.fajr = preferences.getInt('fajr') ?? 5;
     params.adjustments.sunrise = preferences.getInt('sunrise') ?? 0;
@@ -178,73 +348,7 @@ class PrayerTime {
     params.adjustments.asr = preferences.getInt('asr') ?? 0;
     params.adjustments.maghrib = preferences.getInt('maghrib') ?? 3;
     params.adjustments.isha = preferences.getInt('isha') ?? 0;
-
     return params;
-  }
-
-  Map<String, String> currentAndNextPrayerNames() {
-    DateTime currentTime = DateTime.now();
-    DateTime localTime = timezone.isEmpty
-        ? currentTime
-        : currentTime.toUtc().add(currentTime.timeZoneOffset);
-
-    String currentPrayer = prayerTimes
-        .currentPrayerByDateTime(localTime)
-        .toString()
-        .split('.')
-        .last;
-
-    String nextPrayer =
-        prayerTimes.nextPrayerByDateTime(localTime).toString().split('.').last;
-
-    DateTime ishraqStartTime = prayerTimes.sunrise.add(fifteenMins);
-    DateTime ishraqEndTime = prayerTimes.dhuhr.subtract(oneMin);
-    DateTime dhuhrStartTime = prayerTimes.dhuhr.add(fiveMins);
-    DateTime asrEndTime = prayerTimes.maghrib.subtract(fourMins);
-    DateTime ishaEndTime = prayerTimes.fajr.subtract(tenMins);
-
-    if (currentPrayer == 'none') {
-      currentPrayer = 'isha';
-    }
-
-    if (currentPrayer == 'sunrise') {
-      if ((localTime.isAtSameMomentAs(ishraqStartTime) ||
-              localTime.isAfter(ishraqStartTime)) &&
-          localTime.isBefore(ishraqEndTime)) {
-        currentPrayer = 'ishraq';
-      } else {
-        currentPrayer = 'none';
-      }
-    }
-
-    if (currentPrayer == 'dhuhr' && localTime.isBefore(dhuhrStartTime)) {
-      currentPrayer = 'none';
-      nextPrayer = 'dhuhr';
-    }
-
-    if (currentPrayer == 'asr' && localTime.isAfter(asrEndTime)) {
-      currentPrayer = 'none';
-    }
-
-    if (currentPrayer == 'isha' &&
-        localTime.isAfter(ishaEndTime) &&
-        localTime.isBefore(prayerTimes.fajr)) {
-      currentPrayer = 'none';
-    }
-
-    if (nextPrayer == 'none') {
-      nextPrayer = 'fajr';
-    }
-
-    if (['dhuhr', 'sunrise'].contains(nextPrayer) &&
-        localTime.isBefore(ishraqStartTime)) {
-      nextPrayer = 'ishraq';
-    }
-
-    return {
-      'currentPrayer': currentPrayer,
-      'nextPrayer': nextPrayer,
-    };
   }
 
   CalculationParameters _calculationMethod(String method) {
@@ -283,5 +387,32 @@ class PrayerTime {
       default:
         return Madhab.hanafi;
     }
+  }
+}
+
+class _PrayerScheduleEntry {
+  const _PrayerScheduleEntry({
+    required this.key,
+    required this.title,
+    required this.startDateTime,
+    required this.endDateTime,
+  });
+
+  final String key;
+  final String title;
+  final DateTime startDateTime;
+  final DateTime endDateTime;
+
+  Map<String, dynamic> toMap(
+    String locale,
+    String Function(DateTime time, String locale) formatter,
+  ) {
+    return {
+      'title': title,
+      'startTime': formatter(startDateTime, locale),
+      'endTime': formatter(endDateTime, locale),
+      'startDateTime': startDateTime,
+      'endDateTime': endDateTime,
+    };
   }
 }

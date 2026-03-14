@@ -78,6 +78,15 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
         );
 
         final prayerTimes = prayerTime.getTimes(locales, currentLang);
+        final fajr = prayerTimes['fajr']!;
+        final dhuhr = prayerTimes['dhuhr']!;
+        final asr = prayerTimes['asr']!;
+        final maghrib = prayerTimes['maghrib']!;
+        final isha = prayerTimes['isha']!;
+        final tahajjud = prayerTimes['tahajjud']!;
+        final sunrise = prayerTimes['sunrise']!;
+        final midday = prayerTimes['midday']!;
+        final sunset = prayerTimes['sunset']!;
         final prayerNames = prayerTime.currentAndNextPrayerNames();
         final String currentPrayerKey = prayerNames['currentPrayer']!;
         final String nextPrayerKey = prayerNames['nextPrayer']!;
@@ -96,7 +105,9 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
         final String gregorianText =
             DateFormat('EEEE, dd MMM yyyy', currentLang).format(DateTime.now());
 
-        final DateTime? nextPrayerAt = _prayerDateTime(prayerTime, nextPrayerKey);
+        final DateTime? nextPrayerAt = prayerTime.getPrayerStartDateTime(
+          nextPrayerKey,
+        );
         final String upcomingIn = _timeUntil(nextPrayerAt, locales);
 
         final alarmStates = alarmStatesProvider.when(
@@ -109,41 +120,41 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
         final List<_PrayerRowData> dailyPrayers = [
           _PrayerRowData(
             keyName: 'fajr',
-            title: prayerTimes['fajr']['title'],
-            startTime: prayerTimes['fajr']['startTime'],
-            endTime: prayerTimes['fajr']['endTime'],
+            title: fajr['title'],
+            startTime: fajr['startTime'],
+            endTime: fajr['endTime'],
             icon: Icons.wb_twilight_outlined,
             route: '/namaz-times/fajr',
           ),
           _PrayerRowData(
             keyName: 'dhuhr',
-            title: prayerTimes['dhuhr']['title'],
-            startTime: prayerTimes['dhuhr']['startTime'],
-            endTime: prayerTimes['dhuhr']['endTime'],
+            title: dhuhr['title'],
+            startTime: dhuhr['startTime'],
+            endTime: dhuhr['endTime'],
             icon: Icons.wb_sunny_outlined,
             route: '/namaz-times/zuhr',
           ),
           _PrayerRowData(
             keyName: 'asr',
-            title: prayerTimes['asr']['title'],
-            startTime: prayerTimes['asr']['startTime'],
-            endTime: prayerTimes['asr']['endTime'],
+            title: asr['title'],
+            startTime: asr['startTime'],
+            endTime: asr['endTime'],
             icon: Icons.sunny_snowing,
             route: '/namaz-times/asr',
           ),
           _PrayerRowData(
             keyName: 'maghrib',
-            title: prayerTimes['maghrib']['title'],
-            startTime: prayerTimes['maghrib']['startTime'],
-            endTime: prayerTimes['maghrib']['endTime'],
+            title: maghrib['title'],
+            startTime: maghrib['startTime'],
+            endTime: maghrib['endTime'],
             icon: Icons.nights_stay_outlined,
             route: '/namaz-times/maghrib',
           ),
           _PrayerRowData(
             keyName: 'isha',
-            title: prayerTimes['isha']['title'],
-            startTime: prayerTimes['isha']['startTime'],
-            endTime: prayerTimes['isha']['endTime'],
+            title: isha['title'],
+            startTime: isha['startTime'],
+            endTime: isha['endTime'],
             icon: Icons.bedtime_outlined,
             route: '/namaz-times/isha',
           ),
@@ -195,7 +206,8 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: colorScheme.outlineVariant),
-                color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+                color:
+                    colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
               ),
               child: Column(
                 children: [
@@ -250,7 +262,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '${prayerTimes[nextPrayerKey]['title']} $upcomingIn',
+                    '${prayerTimes[nextPrayerKey]!['title']} $upcomingIn',
                     style: textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: colorScheme.onSurface,
@@ -271,7 +283,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              prayerTimes[nextPrayerKey]['startTime'],
+                              prayerTimes[nextPrayerKey]!['startTime'],
                               style: textTheme.headlineSmall?.copyWith(
                                 fontWeight: FontWeight.w700,
                                 color: colorScheme.onSurface,
@@ -307,7 +319,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                   child: _MetricCard(
                     icon: Icons.nightlight_round,
                     title: locales.sahurEnds,
-                    value: prayerTimes['fajr']['startTime'],
+                    value: tahajjud['endTime'],
                     accent: colorScheme.tertiary,
                   ),
                 ),
@@ -316,7 +328,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                   child: _MetricCard(
                     icon: Icons.fastfood_outlined,
                     title: locales.iftar,
-                    value: prayerTimes['maghrib']['startTime'],
+                    value: maghrib['startTime'],
                     accent: colorScheme.primary,
                   ),
                 ),
@@ -371,9 +383,8 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                 Expanded(
                   child: _MetricCard(
                     icon: Icons.wb_twilight,
-                    title: prayerTimes['sunrise']['title'],
-                    value:
-                        '${prayerTimes['sunrise']['startTime']} - ${prayerTimes['sunrise']['endTime']}',
+                    title: sunrise['title'],
+                    value: '${sunrise['startTime']} - ${sunrise['endTime']}',
                     accent: colorScheme.secondary,
                     isCompact: true,
                   ),
@@ -382,9 +393,8 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                 Expanded(
                   child: _MetricCard(
                     icon: Icons.wb_sunny,
-                    title: prayerTimes['midday']['title'],
-                    value:
-                        '${prayerTimes['midday']['startTime']} - ${prayerTimes['midday']['endTime']}',
+                    title: midday['title'],
+                    value: '${midday['startTime']} - ${midday['endTime']}',
                     accent: colorScheme.secondary,
                     isCompact: true,
                   ),
@@ -393,9 +403,8 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                 Expanded(
                   child: _MetricCard(
                     icon: Icons.wb_twilight_outlined,
-                    title: prayerTimes['sunset']['title'],
-                    value:
-                        '${prayerTimes['sunset']['startTime']} - ${prayerTimes['sunset']['endTime']}',
+                    title: sunset['title'],
+                    value: '${sunset['startTime']} - ${sunset['endTime']}',
                     accent: colorScheme.secondary,
                     isCompact: true,
                   ),
@@ -458,7 +467,9 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                   icon: Icons.mosque_outlined,
                   title: locales.mosques,
                   onTap: () async {
-                    await ref.read(geolocationProvider.notifier).updateCoordinates();
+                    await ref
+                        .read(geolocationProvider.notifier)
+                        .updateCoordinates();
                     if (!context.mounted) return;
                     context.push('/mosques');
                   },
@@ -479,25 +490,6 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
         );
       },
     );
-  }
-
-  DateTime? _prayerDateTime(PrayerTime prayerTime, String key) {
-    switch (key) {
-      case 'fajr':
-        return prayerTime.prayerTimes.fajr;
-      case 'sunrise':
-        return prayerTime.prayerTimes.sunrise;
-      case 'dhuhr':
-        return prayerTime.prayerTimes.dhuhr;
-      case 'asr':
-        return prayerTime.prayerTimes.asr;
-      case 'maghrib':
-        return prayerTime.prayerTimes.maghrib;
-      case 'isha':
-        return prayerTime.prayerTimes.isha;
-      default:
-        return null;
-    }
   }
 
   String _timeUntil(DateTime? nextPrayerAt, AppLocalizations locales) {
@@ -692,7 +684,9 @@ class _PrayerRow extends StatelessWidget {
               ),
               child: Icon(
                 icon,
-                color: isActive ? colorScheme.primary : colorScheme.onSurfaceVariant,
+                color: isActive
+                    ? colorScheme.primary
+                    : colorScheme.onSurfaceVariant,
                 size: 20,
               ),
             ),
@@ -713,7 +707,8 @@ class _PrayerRow extends StatelessWidget {
                   time,
                   style: textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: isActive ? colorScheme.primary : colorScheme.onSurface,
+                    color:
+                        isActive ? colorScheme.primary : colorScheme.onSurface,
                   ),
                 ),
                 Text(
@@ -730,7 +725,9 @@ class _PrayerRow extends StatelessWidget {
               IconButton(
                 onPressed: onAlarmTap,
                 icon: Icon(
-                  isAlarmEnabled ? Icons.notifications_active : Icons.notifications_off,
+                  isAlarmEnabled
+                      ? Icons.notifications_active
+                      : Icons.notifications_off,
                   color: isAlarmEnabled
                       ? colorScheme.primary
                       : colorScheme.onSurfaceVariant,

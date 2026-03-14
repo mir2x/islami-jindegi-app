@@ -3,7 +3,7 @@ import 'package:alarm/alarm.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:adhan/adhan.dart';
-import 'package:timezone_utc_offset/timezone_utc_offset.dart';
+import 'package:native_app/objects/prayer_time.dart';
 
 /// Core service for managing prayer alarms using the `alarm` package.
 /// Handles scheduling, cancellation, persistence, and background rescheduling.
@@ -40,10 +40,30 @@ class PrayerAlarmService {
 
   /// Available azan sound asset paths
   static const List<Map<String, String>> azanSounds = [
-    {'key': 'default', 'path': 'assets/sounds/azan_default.mp3', 'labelEn': 'Default Azan', 'labelBn': 'ডিফল্ট আযান'},
-    {'key': 'fajr', 'path': 'assets/sounds/azan_fajr.mp3', 'labelEn': 'Fajr Azan', 'labelBn': 'ফজরের আযান'},
-    {'key': 'full', 'path': 'assets/sounds/azan_full.mp3', 'labelEn': 'Full Azan', 'labelBn': 'পূর্ণ আযান'},
-    {'key': 'short', 'path': 'assets/sounds/azan_short.mp3', 'labelEn': 'Short Azan', 'labelBn': 'সংক্ষিপ্ত আযান'},
+    {
+      'key': 'default',
+      'path': 'assets/sounds/azan_default.mp3',
+      'labelEn': 'Default Azan',
+      'labelBn': 'ডিফল্ট আযান',
+    },
+    {
+      'key': 'fajr',
+      'path': 'assets/sounds/azan_fajr.mp3',
+      'labelEn': 'Fajr Azan',
+      'labelBn': 'ফজরের আযান',
+    },
+    {
+      'key': 'full',
+      'path': 'assets/sounds/azan_full.mp3',
+      'labelEn': 'Full Azan',
+      'labelBn': 'পূর্ণ আযান',
+    },
+    {
+      'key': 'short',
+      'path': 'assets/sounds/azan_short.mp3',
+      'labelEn': 'Short Azan',
+      'labelBn': 'সংক্ষিপ্ত আযান',
+    },
   ];
 
   static const String defaultSoundKey = 'default';
@@ -69,7 +89,8 @@ class PrayerAlarmService {
   static String _afterKey(String prayerKey) => 'alarm_${prayerKey}_after';
   static String _modeKey(String prayerKey) => 'alarm_${prayerKey}_mode';
   static String _soundKey(String prayerKey) => 'alarm_${prayerKey}_sound_key';
-  static String _repeatDaysKey(String prayerKey) => 'alarm_${prayerKey}_repeat_days';
+  static String _repeatDaysKey(String prayerKey) =>
+      'alarm_${prayerKey}_repeat_days';
   static const String _legacySoundKey = 'alarm_sound_key';
 
   // ───────────────────── State Getters ─────────────────────
@@ -224,7 +245,10 @@ class PrayerAlarmService {
       await prefs.setInt(_afterKey(prayerKey), 0);
     } else if (mode == reminderModeBefore) {
       final currentBefore = prefs.getInt(_beforeKey(prayerKey)) ?? 10;
-      await prefs.setInt(_beforeKey(prayerKey), currentBefore == 0 ? 10 : currentBefore);
+      await prefs.setInt(
+        _beforeKey(prayerKey),
+        currentBefore == 0 ? 10 : currentBefore,
+      );
       await prefs.setInt(_afterKey(prayerKey), 0);
     } else if (mode == reminderModeAfter) {
       final currentAfter = prefs.getInt(_afterKey(prayerKey)) ?? 0;
@@ -411,8 +435,7 @@ class PrayerAlarmService {
         continue;
       }
 
-      final scheduledTime =
-          prayerTime.add(Duration(minutes: offsetMinutes));
+      final scheduledTime = prayerTime.add(Duration(minutes: offsetMinutes));
       if (scheduledTime.isAfter(now)) {
         return scheduledTime;
       }
@@ -556,89 +579,17 @@ class PrayerAlarmService {
       lng = 90.4125;
     }
 
-    String timezone = prefs.getString('timezone') ?? '';
-    bool daylight = prefs.getBool('daylight') ?? false;
-    Duration? utcOffset = timezone.isEmpty
-        ? null
-        : getTimezoneUTCOffset(timezone, daylight: daylight);
-
     final coordinates = Coordinates(lat, lng);
-    final targetDate = date ?? DateTime.now();
-    final params = _getCalculationParams(prefs);
-
-    final prayerTimes = PrayerTimes(
-      coordinates,
-      DateComponents(targetDate.year, targetDate.month, targetDate.day),
-      params,
-      utcOffset: utcOffset,
+    final prayerTime = PrayerTime(
+      coordinates: coordinates,
+      timezone: prefs.getString('timezone') ?? '',
+      preferences: prefs,
+      currentDate: date ?? DateTime.now(),
     );
-
-    switch (prayerKey) {
-      case 'fajr':
-        return prayerTimes.fajr;
-      case 'dhuhr':
-        // Dhuhr starts 5 minutes after zawal
-        return prayerTimes.dhuhr.add(const Duration(minutes: 5));
-      case 'asr':
-        return prayerTimes.asr;
-      case 'maghrib':
-        return prayerTimes.maghrib;
-      case 'isha':
-        return prayerTimes.isha;
-      default:
-        return null;
-    }
-  }
-
-  static CalculationParameters _getCalculationParams(SharedPreferences prefs) {
-    String method = prefs.getString('method') ?? 'Karachi';
-    String madhab = prefs.getString('madhab') ?? 'hanafi';
-
-    CalculationParameters params;
-    switch (method) {
-      case 'Karachi':
-        params = CalculationMethod.karachi.getParameters();
-        break;
-      case 'MuslimWorldLeague':
-        params = CalculationMethod.muslim_world_league.getParameters();
-        break;
-      case 'UmmAlQura':
-        params = CalculationMethod.umm_al_qura.getParameters();
-        break;
-      case 'MoonsightingCommittee':
-        params = CalculationMethod.moon_sighting_committee.getParameters();
-        break;
-      case 'Egyptian':
-        params = CalculationMethod.egyptian.getParameters();
-        break;
-      case 'Dubai':
-        params = CalculationMethod.dubai.getParameters();
-        break;
-      case 'Qatar':
-        params = CalculationMethod.qatar.getParameters();
-        break;
-      case 'Kuwait':
-        params = CalculationMethod.kuwait.getParameters();
-        break;
-      case 'Singapore':
-        params = CalculationMethod.singapore.getParameters();
-        break;
-      case 'Turkey':
-        params = CalculationMethod.turkey.getParameters();
-        break;
-      default:
-        params = CalculationMethod.karachi.getParameters();
-    }
-
-    params.madhab = madhab == 'shafi' ? Madhab.shafi : Madhab.hanafi;
-    params.adjustments.fajr = prefs.getInt('fajr') ?? 5;
-    params.adjustments.sunrise = prefs.getInt('sunrise') ?? 0;
-    params.adjustments.dhuhr = prefs.getInt('dhuhr') ?? 0;
-    params.adjustments.asr = prefs.getInt('asr') ?? 0;
-    params.adjustments.maghrib = prefs.getInt('maghrib') ?? 3;
-    params.adjustments.isha = prefs.getInt('isha') ?? 0;
-
-    return params;
+    return prayerTime.getPrayerStartDateTime(
+      prayerKey,
+      date: date ?? DateTime.now(),
+    );
   }
 
   // ───────────────────── Prayer Labels ─────────────────────
