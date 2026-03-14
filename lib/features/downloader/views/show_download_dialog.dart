@@ -94,6 +94,21 @@ class DownloadDialog extends ConsumerWidget {
           ],
         );
         break;
+      case DownloadStatus.importing:
+        content = Row(
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Text(
+                state.taskName.isNotEmpty
+                    ? state.taskName
+                    : "তাফসীর ইম্পোর্ট করা হচ্ছে...",
+              ),
+            ),
+          ],
+        );
+        break;
       case DownloadStatus.preparing:
         content = const Row(
           children: [

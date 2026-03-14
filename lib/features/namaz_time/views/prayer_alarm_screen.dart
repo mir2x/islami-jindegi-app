@@ -2,6 +2,8 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
@@ -17,6 +19,36 @@ String _dayLabel(int weekday, String lang) {
   const bn = ['সোম', 'মঙ্গল', 'বুধ', 'বৃহস্', 'শুক্র', 'শনি', 'রবি'];
   final labels = lang == 'bn' ? bn : en;
   return labels[weekday - 1];
+}
+
+Future<bool> _ensureAlarmPermissions(WidgetRef ref) async {
+  var notificationStatus = await Permission.notification.status;
+  if (!notificationStatus.isGranted && !notificationStatus.isProvisional) {
+    notificationStatus = await Permission.notification.request();
+    await ref.read(notificationStatusProvider.notifier).updateStatus();
+  }
+
+  if (!notificationStatus.isGranted && !notificationStatus.isProvisional) {
+    if (notificationStatus.isPermanentlyDenied) {
+      await openAppSettings();
+    }
+    return false;
+  }
+
+  if (Platform.isAndroid) {
+    var exactAlarmStatus = await Permission.scheduleExactAlarm.status;
+    if (!exactAlarmStatus.isGranted) {
+      exactAlarmStatus = await Permission.scheduleExactAlarm.request();
+      await ref.read(exactAlarmPermissionProvider.notifier).updateStatus();
+    }
+
+    if (!exactAlarmStatus.isGranted) {
+      await openAppSettings();
+      return false;
+    }
+  }
+
+  return true;
 }
 
 class PrayerAlarmScreen extends ConsumerWidget {
@@ -43,6 +75,10 @@ class PrayerAlarmScreen extends ConsumerWidget {
 
               const SizedBox(height: 12),
 
+              const _NextAlarmSummaryCard(),
+
+              const SizedBox(height: 12),
+
               // ───── Master Toggle ─────
               Container(
                 margin: const EdgeInsets.only(top: 10, bottom: 8),
@@ -64,7 +100,10 @@ class PrayerAlarmScreen extends ConsumerWidget {
                     ),
                     Switch(
                       value: allEnabled,
-                      onChanged: (value) {
+                      onChanged: (value) async {
+                        if (value && !await _ensureAlarmPermissions(ref)) {
+                          return;
+                        }
                         ref
                             .read(prayerAlarmProvider.notifier)
                             .toggleAllAlarms(value);
@@ -74,9 +113,6 @@ class PrayerAlarmScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-
-              // ───── Global Sound Picker ─────
-              _SoundPicker(),
 
               const SizedBox(height: 12),
 
@@ -277,100 +313,110 @@ class _PermissionRow extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────
-// Sound picker (global — one sound for all prayers)
-// ─────────────────────────────────────────────────────────────
+class _NextAlarmSummaryCard extends ConsumerWidget {
+  const _NextAlarmSummaryCard();
 
-class _SoundPicker extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var locales = AppLocalizations.of(context)!;
-    var textTheme = Theme.of(context).textTheme;
-    var colorScheme = Theme.of(context).colorScheme;
-    String lang = Localizations.localeOf(context).languageCode;
-    var soundAsync = ref.watch(alarmSoundProvider);
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final currentLang = Localizations.localeOf(context).languageCode;
+    final alarmStates = ref.watch(prayerAlarmProvider);
+    final nextAlarmAsync = ref.watch(nextEnabledPrayerAlarmProvider);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: colorScheme.surface,
-        border: Border.all(color: colorScheme.outlineVariant),
+        color: colorScheme.primaryContainer,
+        border: Border.all(color: colorScheme.primary),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.music_note, size: 18, color: colorScheme.primary),
-              const SizedBox(width: 8),
-              Text(
-                locales.azanSound,
-                style: textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurface,
-                ),
+      child: alarmStates.when(
+        loading: () => const SizedBox.shrink(),
+        error: (_, __) => const SizedBox.shrink(),
+        data: (states) {
+          final anyEnabled = states.values.any((enabled) => enabled);
+          if (!anyEnabled) {
+            return Text(
+              currentLang == 'bn'
+                  ? 'কোনো নামাজের অ্যালার্ম চালু নেই।'
+                  : 'No prayer alarms are enabled.',
+              style: textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onPrimaryContainer,
               ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          soundAsync.when(
-            loading: () => const SizedBox(
-              height: 24,
-              child: CircularProgressIndicator(strokeWidth: 2),
+            );
+          }
+
+          return nextAlarmAsync.when(
+            loading: () => Row(
+              children: [
+                Icon(Icons.schedule, color: colorScheme.primary),
+                const SizedBox(width: 8),
+                Text(
+                  currentLang == 'bn'
+                      ? 'পরবর্তী অ্যালার্ম প্রস্তুত করা হচ্ছে...'
+                      : 'Preparing next alarm...',
+                  style: textTheme.bodyMedium,
+                ),
+              ],
             ),
-            error: (_, __) => const SizedBox.shrink(),
-            data: (selectedKey) => Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: PrayerAlarmService.azanSounds.map((sound) {
-                final key = sound['key']!;
-                final label =
-                    lang == 'bn' ? sound['labelBn']! : sound['labelEn']!;
-                final isSelected = selectedKey == key;
-                return GestureDetector(
-                  onTap: () {
-                    ref.read(alarmSoundProvider.notifier).setSound(key);
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 150),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: isSelected
-                          ? colorScheme.primary
-                          : colorScheme.surfaceContainerHighest,
-                      border: Border.all(
-                        color: isSelected
-                            ? colorScheme.primary
-                            : colorScheme.outlineVariant,
-                      ),
-                    ),
-                    child: Text(
-                      label,
-                      style: textTheme.bodySmall?.copyWith(
-                        color: isSelected
-                            ? colorScheme.onPrimary
-                            : colorScheme.onSurfaceVariant,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.normal,
-                      ),
+            error: (_, __) => Text(
+              currentLang == 'bn'
+                  ? 'পরবর্তী অ্যালার্ম দেখানো যাচ্ছে না।'
+                  : 'Unable to show the next alarm.',
+              style: textTheme.bodyMedium,
+            ),
+            data: (info) {
+              if (info == null) {
+                return Text(
+                  currentLang == 'bn'
+                      ? 'চালু অ্যালার্ম আছে, কিন্তু পরবর্তী সময় নির্ধারণ করা যায়নি।'
+                      : 'Alarms are enabled, but the next schedule could not be determined.',
+                  style: textTheme.bodyMedium,
+                );
+              }
+
+              final prayerLabel = PrayerAlarmService.getPrayerDisplayLabel(
+                info.prayerKey,
+                currentLang,
+              );
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    currentLang == 'bn' ? 'পরবর্তী অ্যালার্ম' : 'Next alarm',
+                    style: textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: colorScheme.onPrimaryContainer,
                     ),
                   ),
-                );
-              }).toList(),
-            ),
-          ),
-        ],
+                  const SizedBox(height: 6),
+                  Text(
+                    '$prayerLabel • ${PrayerAlarmService.formatScheduleSummary(info, currentLang)}',
+                    style: textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onPrimaryContainer,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    currentLang == 'bn'
+                        ? 'ওয়াক্ত: ${DateFormat.jm(currentLang).format(info.nextPrayerTime)}'
+                        : 'Waqt: ${DateFormat.jm(currentLang).format(info.nextPrayerTime)}',
+                    style: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onPrimaryContainer,
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        },
       ),
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────
-// Per-prayer card
-// ─────────────────────────────────────────────────────────────
 
 class _PrayerAlarmCard extends ConsumerWidget {
   const _PrayerAlarmCard({
@@ -390,9 +436,11 @@ class _PrayerAlarmCard extends ConsumerWidget {
     String prayerLabel =
         PrayerAlarmService.getPrayerDisplayLabel(prayerKey, currentLang);
 
-    var beforeOffset = ref.watch(prayerBeforeOffsetProvider(prayerKey));
-    var afterOffset = ref.watch(prayerAfterOffsetProvider(prayerKey));
+    var reminderMode = ref.watch(prayerReminderModeProvider(prayerKey));
+    var reminderOffset = ref.watch(prayerReminderOffsetProvider(prayerKey));
     var repeatDays = ref.watch(prayerRepeatDaysProvider(prayerKey));
+    var soundKey = ref.watch(prayerAlarmSoundProvider(prayerKey));
+    var scheduleInfo = ref.watch(prayerAlarmScheduleProvider(prayerKey));
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -435,10 +483,14 @@ class _PrayerAlarmCard extends ConsumerWidget {
                 ),
                 Switch(
                   value: isEnabled,
-                  onChanged: (value) {
+                  onChanged: (value) async {
+                    if (value && !await _ensureAlarmPermissions(ref)) {
+                      return;
+                    }
                     ref
                         .read(prayerAlarmProvider.notifier)
                         .toggleAlarm(prayerKey, value);
+                    if (!context.mounted) return;
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -472,6 +524,24 @@ class _PrayerAlarmCard extends ConsumerWidget {
                   const Divider(height: 1),
                   const SizedBox(height: 10),
 
+                  _SchedulePreviewCard(
+                    prayerKey: prayerKey,
+                    prayerLabel: prayerLabel,
+                    scheduleInfo: scheduleInfo,
+                    currentLang: currentLang,
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  _ReminderModeSection(
+                    prayerKey: prayerKey,
+                    currentLang: currentLang,
+                    reminderMode: reminderMode,
+                    reminderOffset: reminderOffset,
+                  ),
+
+                  const SizedBox(height: 14),
+
                   // ── Repeat days ──
                   _RepeatDaysRow(
                     prayerKey: prayerKey,
@@ -480,39 +550,100 @@ class _PrayerAlarmCard extends ConsumerWidget {
                     locales: locales,
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
 
-                  // ── Before waqt slider ──
-                  _OffsetSlider(
-                    label: locales.beforeWaqt,
-                    isBefore: true,
-                    offset: beforeOffset,
-                    lang: currentLang,
-                    onChanged: (value) {
-                      ref
-                          .read(prayerBeforeOffsetProvider(prayerKey).notifier)
-                          .setOffset(value);
-                    },
+                  _PrayerSoundSection(
+                    prayerKey: prayerKey,
+                    currentLang: currentLang,
+                    soundKey: soundKey,
                   ),
 
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
 
-                  // ── After waqt slider ──
-                  _OffsetSlider(
-                    label: locales.afterWaqt,
-                    isBefore: false,
-                    offset: afterOffset,
-                    lang: currentLang,
-                    onChanged: (value) {
-                      ref
-                          .read(prayerAfterOffsetProvider(prayerKey).notifier)
-                          .setOffset(value);
-                    },
+                  _PrayerActionRow(
+                    prayerKey: prayerKey,
+                    currentLang: currentLang,
+                    soundKey: soundKey,
                   ),
                 ],
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _SchedulePreviewCard extends StatelessWidget {
+  const _SchedulePreviewCard({
+    required this.prayerKey,
+    required this.prayerLabel,
+    required this.scheduleInfo,
+    required this.currentLang,
+  });
+
+  final String prayerKey;
+  final String prayerLabel;
+  final AsyncValue<PrayerAlarmScheduleInfo?> scheduleInfo;
+  final String currentLang;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: colorScheme.surfaceContainerHighest,
+      ),
+      child: scheduleInfo.when(
+        loading: () => Text(
+          currentLang == 'bn' ? 'পরবর্তী অ্যালার্ম হিসাব করা হচ্ছে...' : 'Calculating next alarm...',
+          style: textTheme.bodySmall,
+        ),
+        error: (_, __) => Text(
+          currentLang == 'bn' ? 'পরবর্তী অ্যালার্ম দেখানো যাচ্ছে না।' : 'Unable to show next alarm.',
+          style: textTheme.bodySmall,
+        ),
+        data: (info) {
+          if (info == null) {
+            return Text(
+              currentLang == 'bn'
+                  ? '$prayerLabel অ্যালার্ম চালু আছে, তবে পরবর্তী সময় পাওয়া যায়নি।'
+                  : '$prayerLabel alarm is enabled, but the next time is unavailable.',
+              style: textTheme.bodySmall,
+            );
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                currentLang == 'bn' ? 'পরবর্তী রিমাইন্ডার' : 'Next reminder',
+                style: textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                PrayerAlarmService.formatScheduleSummary(info, currentLang),
+                style: textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                currentLang == 'bn'
+                    ? 'নামাজের ওয়াক্ত: ${DateFormat.jm(currentLang).format(info.nextPrayerTime)}'
+                    : 'Prayer time: ${DateFormat.jm(currentLang).format(info.nextPrayerTime)}',
+                style: textTheme.bodySmall,
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -560,8 +691,8 @@ class _RepeatDaysRow extends StatelessWidget {
               bool isEveryDay = days.length == 7;
               return Wrap(
                 spacing: 6,
+                runSpacing: 6,
                 children: [
-                  // "Every day" chip
                   _DayChip(
                     label: locales.everyday,
                     selected: isEveryDay,
@@ -571,6 +702,26 @@ class _RepeatDaysRow extends StatelessWidget {
                             .read(prayerRepeatDaysProvider(prayerKey).notifier)
                             .setDays({1, 2, 3, 4, 5, 6, 7});
                       }
+                    },
+                  ),
+                  _DayChip(
+                    label: lang == 'bn' ? 'কর্মদিবস' : 'Weekdays',
+                    selected: !isEveryDay &&
+                        days.length == 5 &&
+                        const {1, 2, 3, 4, 5}.containsAll(days),
+                    onTap: () {
+                      ref
+                          .read(prayerRepeatDaysProvider(prayerKey).notifier)
+                          .setDays({1, 2, 3, 4, 5});
+                    },
+                  ),
+                  _DayChip(
+                    label: lang == 'bn' ? 'শুক্রবার' : 'Friday',
+                    selected: days.length == 1 && days.contains(5),
+                    onTap: () {
+                      ref
+                          .read(prayerRepeatDaysProvider(prayerKey).notifier)
+                          .setDays({5});
                     },
                   ),
                   ..._weekdays.map((d) {
@@ -658,102 +809,291 @@ class _DayChip extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────
-// Offset slider (replaces the old dropdown)
-// ─────────────────────────────────────────────────────────────
-
-class _OffsetSlider extends StatelessWidget {
-  const _OffsetSlider({
-    required this.label,
-    required this.isBefore,
-    required this.offset,
-    required this.lang,
-    required this.onChanged,
+class _ReminderModeSection extends ConsumerWidget {
+  const _ReminderModeSection({
+    required this.prayerKey,
+    required this.currentLang,
+    required this.reminderMode,
+    required this.reminderOffset,
   });
 
-  final String label;
-  final bool isBefore;
-  final AsyncValue<int> offset;
-  final String lang;
-  final void Function(int) onChanged;
-
-  String _formatValue(int value) {
-    if (value == 0) {
-      return lang == 'bn' ? 'ওয়াক্তের সময়ে' : 'At waqt time';
-    }
-    if (lang == 'bn') {
-      return isBefore ? '$value মিনিট আগে' : '$value মিনিট পরে';
-    }
-    return isBefore ? '$value min before' : '$value min after';
-  }
+  final String prayerKey;
+  final String currentLang;
+  final AsyncValue<String> reminderMode;
+  final AsyncValue<int> reminderOffset;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
     var colorScheme = Theme.of(context).colorScheme;
 
-    return offset.when(
+    return reminderMode.when(
       loading: () => const SizedBox(
         height: 28,
         child: CircularProgressIndicator(strokeWidth: 2),
       ),
       error: (_, __) => const SizedBox.shrink(),
-      data: (value) => Column(
+      data: (mode) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Text(
+            currentLang == 'bn' ? 'রিমাইন্ডারের ধরন' : 'Reminder type',
+            style: textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
-              Text(
-                label,
-                style: textTheme.bodySmall
-                    ?.copyWith(color: colorScheme.onSurfaceVariant),
+              _ModeChip(
+                label: currentLang == 'bn' ? 'ওয়াক্তের সময়' : 'At waqt',
+                selected: mode == PrayerAlarmService.reminderModeAt,
+                onTap: () {
+                  ref
+                      .read(prayerReminderModeProvider(prayerKey).notifier)
+                      .setMode(PrayerAlarmService.reminderModeAt);
+                },
               ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: value > 0
-                      ? colorScheme.primaryContainer
-                      : colorScheme.surfaceContainerHighest,
-                  border: Border.all(
-                    color: value > 0
-                        ? colorScheme.primary
-                        : colorScheme.outlineVariant,
-                  ),
-                ),
-                child: Text(
-                  _formatValue(value),
-                  style: textTheme.bodySmall?.copyWith(
-                    color: value > 0
-                        ? colorScheme.primary
-                        : colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+              _ModeChip(
+                label: currentLang == 'bn' ? 'আগে' : 'Before',
+                selected: mode == PrayerAlarmService.reminderModeBefore,
+                onTap: () {
+                  ref
+                      .read(prayerReminderModeProvider(prayerKey).notifier)
+                      .setMode(PrayerAlarmService.reminderModeBefore);
+                },
+              ),
+              _ModeChip(
+                label: currentLang == 'bn' ? 'পরে' : 'After',
+                selected: mode == PrayerAlarmService.reminderModeAfter,
+                onTap: () {
+                  ref
+                      .read(prayerReminderModeProvider(prayerKey).notifier)
+                      .setMode(PrayerAlarmService.reminderModeAfter);
+                },
               ),
             ],
           ),
-          SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              trackHeight: 3,
-              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
-              overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
-              activeTrackColor: colorScheme.primary,
-              inactiveTrackColor: colorScheme.outlineVariant,
-              thumbColor: colorScheme.primary,
-              overlayColor: colorScheme.primary.withAlpha(38),
+          if (mode != PrayerAlarmService.reminderModeAt) ...[
+            const SizedBox(height: 10),
+            reminderOffset.when(
+              loading: () => const SizedBox.shrink(),
+              error: (_, __) => const SizedBox.shrink(),
+              data: (selectedOffset) => Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: PrayerAlarmService.reminderOffsetChoices
+                    .map(
+                      (choice) => _OffsetChoiceChip(
+                        label: currentLang == 'bn'
+                            ? '$choice মিনিট'
+                            : '$choice min',
+                        selected: selectedOffset == choice,
+                        onTap: () {
+                          ref
+                              .read(
+                                prayerReminderOffsetProvider(prayerKey)
+                                    .notifier,
+                              )
+                              .setOffset(choice);
+                        },
+                      ),
+                    )
+                    .toList(),
+              ),
             ),
-            child: Slider(
-              value: value.toDouble(),
-              min: 0,
-              max: PrayerAlarmService.maxOffsetMinutes.toDouble(),
-              divisions: PrayerAlarmService.maxOffsetMinutes,
-              onChanged: (v) => onChanged(v.round()),
-            ),
-          ),
+          ],
         ],
+      ),
+    );
+  }
+}
+
+class _PrayerSoundSection extends ConsumerWidget {
+  const _PrayerSoundSection({
+    required this.prayerKey,
+    required this.currentLang,
+    required this.soundKey,
+  });
+
+  final String prayerKey;
+  final String currentLang;
+  final AsyncValue<String> soundKey;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          currentLang == 'bn' ? 'এই নামাজের সাউন্ড' : 'Sound for this prayer',
+          style: textTheme.bodySmall?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 8),
+        soundKey.when(
+          loading: () => const SizedBox.shrink(),
+          error: (_, __) => const SizedBox.shrink(),
+          data: (selectedKey) => Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: PrayerAlarmService.azanSounds.map((sound) {
+              final key = sound['key']!;
+              final label =
+                  currentLang == 'bn' ? sound['labelBn']! : sound['labelEn']!;
+              return _OffsetChoiceChip(
+                label: label,
+                selected: selectedKey == key,
+                onTap: () {
+                  ref
+                      .read(prayerAlarmSoundProvider(prayerKey).notifier)
+                      .setSound(key);
+                },
+              );
+            }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PrayerActionRow extends ConsumerWidget {
+  const _PrayerActionRow({
+    required this.prayerKey,
+    required this.currentLang,
+    required this.soundKey,
+  });
+
+  final String prayerKey;
+  final String currentLang;
+  final AsyncValue<String> soundKey;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedSoundKey = soundKey.valueOrNull ?? PrayerAlarmService.defaultSoundKey;
+
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: () => _previewSound(selectedSoundKey),
+            icon: const Icon(Icons.volume_up_outlined),
+            label: Text(currentLang == 'bn' ? 'শুনে দেখুন' : 'Preview'),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: FilledButton.icon(
+            onPressed: () async {
+              if (!await _ensureAlarmPermissions(ref)) {
+                return;
+              }
+              await PrayerAlarmService.scheduleTestAlarm(
+                prayerKey,
+                locale: currentLang,
+              );
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    currentLang == 'bn'
+                        ? '৮ সেকেন্ড পরে পরীক্ষামূলক অ্যালার্ম বাজবে'
+                        : 'A test alarm will ring in 8 seconds',
+                  ),
+                ),
+              );
+            },
+            icon: const Icon(Icons.alarm),
+            label: Text(currentLang == 'bn' ? 'টেস্ট অ্যালার্ম' : 'Test alarm'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  static Future<void> _previewSound(String soundKey) async {
+    final player = AudioPlayer();
+    try {
+      await player.setAsset(PrayerAlarmService.getSoundPath(soundKey));
+      player.play();
+      player.playerStateStream.listen((state) {
+        if (state.processingState == ProcessingState.completed) {
+          player.dispose();
+        }
+      });
+    } catch (_) {
+      await player.dispose();
+    }
+  }
+}
+
+class _ModeChip extends StatelessWidget {
+  const _ModeChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return _OffsetChoiceChip(
+      label: label,
+      selected: selected,
+      onTap: onTap,
+    );
+  }
+}
+
+class _OffsetChoiceChip extends StatelessWidget {
+  const _OffsetChoiceChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: selected
+              ? colorScheme.primary
+              : colorScheme.surfaceContainerHighest,
+          border: Border.all(
+            color: selected ? colorScheme.primary : colorScheme.outlineVariant,
+          ),
+        ),
+        child: Text(
+          label,
+          style: textTheme.bodySmall?.copyWith(
+            color:
+                selected ? colorScheme.onPrimary : colorScheme.onSurfaceVariant,
+            fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+          ),
+        ),
       ),
     );
   }

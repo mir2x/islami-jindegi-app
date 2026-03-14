@@ -125,12 +125,16 @@ class SingleFileDownloadTask extends DownloadTask {
   final String displayName;
   final String fileUrl;
   final String localPath;
+  final String? processingLabel;
+  final Future<void> Function(Ref ref)? afterDownload;
 
   SingleFileDownloadTask({
     required this.id,
     required this.displayName,
     required this.fileUrl,
     required this.localPath,
+    this.processingLabel,
+    this.afterDownload,
   });
 
   @override
@@ -141,6 +145,16 @@ class SingleFileDownloadTask extends DownloadTask {
     await file.parent.create(recursive: true);
     await dio.download(fileUrl, localPath,
         onReceiveProgress: onProgress, cancelToken: cancelToken);
+    if (cancelToken.isCancelled) {
+      return;
+    }
+
+    if (afterDownload != null) {
+      final notifier = ref.read(downloadStateProvider.notifier);
+      notifier.setImporting(processingLabel ?? 'প্রসেস করা হচ্ছে...');
+      await afterDownload!(ref);
+    }
+
     if (!cancelToken.isCancelled) {
       await markAsDownloaded(id);
     }
@@ -171,6 +185,10 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
 
   void setExtracting() =>
       state = state.copyWith(status: DownloadStatus.extracting);
+  void setImporting([String? taskName]) => state = state.copyWith(
+        status: DownloadStatus.importing,
+        taskName: taskName ?? state.taskName,
+      );
   void setError(String message) => state =
       state.copyWith(status: DownloadStatus.error, errorMessage: message);
   void setCancelled() =>

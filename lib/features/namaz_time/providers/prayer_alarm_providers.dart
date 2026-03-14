@@ -13,11 +13,17 @@ class PrayerAlarmNotifier extends AsyncNotifier<Map<String, bool>> {
   Future<void> toggleAlarm(String prayerKey, bool enabled) async {
     await PrayerAlarmService.toggleAlarm(prayerKey, enabled);
     state = AsyncValue.data(await PrayerAlarmService.getAllAlarmStates());
+    ref.invalidate(prayerAlarmScheduleProvider(prayerKey));
+    ref.invalidate(nextEnabledPrayerAlarmProvider);
   }
 
   Future<void> toggleAllAlarms(bool enabled) async {
     await PrayerAlarmService.toggleAllAlarms(enabled);
     state = AsyncValue.data(await PrayerAlarmService.getAllAlarmStates());
+    for (final prayerKey in PrayerAlarmService.prayerKeys) {
+      ref.invalidate(prayerAlarmScheduleProvider(prayerKey));
+    }
+    ref.invalidate(nextEnabledPrayerAlarmProvider);
   }
 
   Future<void> refresh() async {
@@ -30,42 +36,46 @@ final prayerAlarmProvider =
   return PrayerAlarmNotifier();
 });
 
-// ───────────────────── Before Offset ─────────────────────
+// ───────────────────── Reminder Mode ─────────────────────
 
-class PrayerBeforeOffsetNotifier extends FamilyAsyncNotifier<int, String> {
+class PrayerReminderModeNotifier extends FamilyAsyncNotifier<String, String> {
   @override
-  Future<int> build(String arg) async {
-    return await PrayerAlarmService.getBeforeOffset(arg);
+  Future<String> build(String arg) async {
+    return await PrayerAlarmService.getReminderMode(arg);
   }
 
-  Future<void> setOffset(int minutes) async {
-    await PrayerAlarmService.setBeforeOffset(arg, minutes);
-    state = AsyncValue.data(minutes);
+  Future<void> setMode(String mode) async {
+    await PrayerAlarmService.setReminderMode(arg, mode);
+    state = AsyncValue.data(mode);
+    ref.invalidate(prayerAlarmScheduleProvider(arg));
+    ref.invalidate(nextEnabledPrayerAlarmProvider);
   }
 }
 
-final prayerBeforeOffsetProvider =
-    AsyncNotifierProvider.family<PrayerBeforeOffsetNotifier, int, String>(() {
-  return PrayerBeforeOffsetNotifier();
+final prayerReminderModeProvider = AsyncNotifierProvider.family<
+    PrayerReminderModeNotifier, String, String>(() {
+  return PrayerReminderModeNotifier();
 });
 
-// ───────────────────── After Offset ─────────────────────
+// ───────────────────── Reminder Offset ─────────────────────
 
-class PrayerAfterOffsetNotifier extends FamilyAsyncNotifier<int, String> {
+class PrayerReminderOffsetNotifier extends FamilyAsyncNotifier<int, String> {
   @override
   Future<int> build(String arg) async {
-    return await PrayerAlarmService.getAfterOffset(arg);
+    return await PrayerAlarmService.getReminderOffset(arg);
   }
 
   Future<void> setOffset(int minutes) async {
-    await PrayerAlarmService.setAfterOffset(arg, minutes);
+    await PrayerAlarmService.setReminderOffset(arg, minutes);
     state = AsyncValue.data(minutes);
+    ref.invalidate(prayerAlarmScheduleProvider(arg));
+    ref.invalidate(nextEnabledPrayerAlarmProvider);
   }
 }
 
-final prayerAfterOffsetProvider =
-    AsyncNotifierProvider.family<PrayerAfterOffsetNotifier, int, String>(() {
-  return PrayerAfterOffsetNotifier();
+final prayerReminderOffsetProvider = AsyncNotifierProvider.family<
+    PrayerReminderOffsetNotifier, int, String>(() {
+  return PrayerReminderOffsetNotifier();
 });
 
 // ───────────────────── Repeat Days ─────────────────────
@@ -80,6 +90,8 @@ class PrayerRepeatDaysNotifier
   Future<void> setDays(Set<int> days) async {
     await PrayerAlarmService.setRepeatDays(arg, days);
     state = AsyncValue.data(days.isEmpty ? {1, 2, 3, 4, 5, 6, 7} : days);
+    ref.invalidate(prayerAlarmScheduleProvider(arg));
+    ref.invalidate(nextEnabledPrayerAlarmProvider);
   }
 }
 
@@ -89,23 +101,39 @@ final prayerRepeatDaysProvider =
   return PrayerRepeatDaysNotifier();
 });
 
-// ───────────────────── Azan Sound ─────────────────────
+// ───────────────────── Per Prayer Sound ─────────────────────
 
-class AlarmSoundNotifier extends AsyncNotifier<String> {
+class PrayerAlarmSoundNotifier extends FamilyAsyncNotifier<String, String> {
   @override
-  Future<String> build() async {
-    return await PrayerAlarmService.getSoundKey();
+  Future<String> build(String arg) async {
+    return await PrayerAlarmService.getSoundKey(arg);
   }
 
   Future<void> setSound(String soundKey) async {
-    await PrayerAlarmService.setSoundKey(soundKey);
+    await PrayerAlarmService.setSoundKey(arg, soundKey);
     state = AsyncValue.data(soundKey);
+    ref.invalidate(prayerAlarmScheduleProvider(arg));
   }
 }
 
-final alarmSoundProvider =
-    AsyncNotifierProvider<AlarmSoundNotifier, String>(() {
-  return AlarmSoundNotifier();
+final prayerAlarmSoundProvider = AsyncNotifierProvider.family<
+    PrayerAlarmSoundNotifier, String, String>(() {
+  return PrayerAlarmSoundNotifier();
+});
+
+// ───────────────────── Schedule Preview ─────────────────────
+
+final prayerAlarmScheduleProvider =
+    FutureProvider.family<PrayerAlarmScheduleInfo?, String>((ref, prayerKey) async {
+  return PrayerAlarmService.getNextScheduledAlarmInfo(
+    prayerKey,
+    locale: 'bn',
+  );
+});
+
+final nextEnabledPrayerAlarmProvider =
+    FutureProvider<PrayerAlarmScheduleInfo?>((ref) async {
+  return PrayerAlarmService.getNextEnabledAlarmInfo(locale: 'bn');
 });
 
 // ───────────────────── Exact Alarm Permission ─────────────────────

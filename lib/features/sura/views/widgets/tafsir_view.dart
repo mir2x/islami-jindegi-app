@@ -140,6 +140,15 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
               displayName: tafsir.title,
               fileUrl: assetResponse.url,
               localPath: localPath,
+              processingLabel: 'তাফসীর ইম্পোর্ট করা হচ্ছে...',
+              afterDownload: (ref) async {
+                final imported = await ref
+                    .read(tafsirRepositoryProvider)
+                    .ensureTafsirReady(tafsir.id);
+                if (!imported) {
+                  throw Exception('Failed to import tafsir into database');
+                }
+              },
             );
 
             if (!mounted) return;

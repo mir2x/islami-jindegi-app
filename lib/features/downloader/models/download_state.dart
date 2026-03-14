@@ -3,6 +3,7 @@ enum DownloadStatus {
   preparing,
   downloading,
   extracting,
+  importing,
   completed,
   error,
   cancelled,

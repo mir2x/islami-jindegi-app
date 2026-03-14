@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 import 'package:alarm/alarm.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:adhan/adhan.dart';
 import 'package:timezone_utc_offset/timezone_utc_offset.dart';
@@ -46,6 +47,10 @@ class PrayerAlarmService {
   ];
 
   static const String defaultSoundKey = 'default';
+  static const String reminderModeAt = 'at';
+  static const String reminderModeBefore = 'before';
+  static const String reminderModeAfter = 'after';
+  static const List<int> reminderOffsetChoices = [5, 10, 15, 20, 30, 45, 60];
 
   /// Maximum offset in minutes for the slider
   static const int maxOffsetMinutes = 60;
@@ -62,8 +67,10 @@ class PrayerAlarmService {
   static String _enabledKey(String prayerKey) => 'alarm_${prayerKey}_enabled';
   static String _beforeKey(String prayerKey) => 'alarm_${prayerKey}_before';
   static String _afterKey(String prayerKey) => 'alarm_${prayerKey}_after';
+  static String _modeKey(String prayerKey) => 'alarm_${prayerKey}_mode';
+  static String _soundKey(String prayerKey) => 'alarm_${prayerKey}_sound_key';
   static String _repeatDaysKey(String prayerKey) => 'alarm_${prayerKey}_repeat_days';
-  static const String _soundKey = 'alarm_sound_key';
+  static const String _legacySoundKey = 'alarm_sound_key';
 
   // ───────────────────── State Getters ─────────────────────
 
@@ -82,6 +89,32 @@ class PrayerAlarmService {
     return prefs.getInt(_afterKey(prayerKey)) ?? 0;
   }
 
+  static Future<String> getReminderMode(String prayerKey) async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedMode = prefs.getString(_modeKey(prayerKey));
+    if (storedMode != null) {
+      return storedMode;
+    }
+
+    final before = prefs.getInt(_beforeKey(prayerKey)) ?? 0;
+    final after = prefs.getInt(_afterKey(prayerKey)) ?? 0;
+    if (before > 0) return reminderModeBefore;
+    if (after > 0) return reminderModeAfter;
+    return reminderModeAt;
+  }
+
+  static Future<int> getReminderOffset(String prayerKey) async {
+    final mode = await getReminderMode(prayerKey);
+    switch (mode) {
+      case reminderModeBefore:
+        return getBeforeOffset(prayerKey);
+      case reminderModeAfter:
+        return getAfterOffset(prayerKey);
+      default:
+        return 0;
+    }
+  }
+
   /// Returns selected repeat days as a Set of weekday ints (1=Mon … 7=Sun).
   /// Default is all 7 days.
   static Future<Set<int>> getRepeatDays(String prayerKey) async {
@@ -92,9 +125,11 @@ class PrayerAlarmService {
   }
 
   /// Returns the selected sound key (defaults to 'default')
-  static Future<String> getSoundKey() async {
+  static Future<String> getSoundKey(String prayerKey) async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_soundKey) ?? defaultSoundKey;
+    return prefs.getString(_soundKey(prayerKey)) ??
+        prefs.getString(_legacySoundKey) ??
+        defaultSoundKey;
   }
 
   static String getSoundPath(String soundKey) {
@@ -136,6 +171,13 @@ class PrayerAlarmService {
   static Future<void> setBeforeOffset(String prayerKey, int minutes) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_beforeKey(prayerKey), minutes);
+    await prefs.setString(
+      _modeKey(prayerKey),
+      minutes > 0 ? reminderModeBefore : reminderModeAt,
+    );
+    if (minutes > 0) {
+      await prefs.setInt(_afterKey(prayerKey), 0);
+    }
 
     if (await isAlarmEnabled(prayerKey)) {
       await _scheduleAlarmsForPrayer(prayerKey);
@@ -145,6 +187,13 @@ class PrayerAlarmService {
   static Future<void> setAfterOffset(String prayerKey, int minutes) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_afterKey(prayerKey), minutes);
+    await prefs.setString(
+      _modeKey(prayerKey),
+      minutes > 0 ? reminderModeAfter : reminderModeAt,
+    );
+    if (minutes > 0) {
+      await prefs.setInt(_beforeKey(prayerKey), 0);
+    }
 
     if (await isAlarmEnabled(prayerKey)) {
       await _scheduleAlarmsForPrayer(prayerKey);
@@ -166,11 +215,53 @@ class PrayerAlarmService {
     }
   }
 
-  static Future<void> setSoundKey(String soundKey) async {
+  static Future<void> setReminderMode(String prayerKey, String mode) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_soundKey, soundKey);
-    // Reschedule all enabled alarms with the new sound
-    await scheduleAllAlarms();
+    await prefs.setString(_modeKey(prayerKey), mode);
+
+    if (mode == reminderModeAt) {
+      await prefs.setInt(_beforeKey(prayerKey), 0);
+      await prefs.setInt(_afterKey(prayerKey), 0);
+    } else if (mode == reminderModeBefore) {
+      final currentBefore = prefs.getInt(_beforeKey(prayerKey)) ?? 10;
+      await prefs.setInt(_beforeKey(prayerKey), currentBefore == 0 ? 10 : currentBefore);
+      await prefs.setInt(_afterKey(prayerKey), 0);
+    } else if (mode == reminderModeAfter) {
+      final currentAfter = prefs.getInt(_afterKey(prayerKey)) ?? 0;
+      await prefs.setInt(_afterKey(prayerKey), currentAfter);
+      await prefs.setInt(_beforeKey(prayerKey), 0);
+    }
+
+    if (await isAlarmEnabled(prayerKey)) {
+      await _scheduleAlarmsForPrayer(prayerKey);
+    }
+  }
+
+  static Future<void> setReminderOffset(String prayerKey, int minutes) async {
+    final mode = await getReminderMode(prayerKey);
+    if (mode == reminderModeBefore) {
+      await setBeforeOffset(prayerKey, minutes);
+      return;
+    }
+    if (mode == reminderModeAfter) {
+      await setAfterOffset(prayerKey, minutes);
+      return;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_beforeKey(prayerKey), 0);
+    await prefs.setInt(_afterKey(prayerKey), 0);
+    if (await isAlarmEnabled(prayerKey)) {
+      await _scheduleAlarmsForPrayer(prayerKey);
+    }
+  }
+
+  static Future<void> setSoundKey(String prayerKey, String soundKey) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_soundKey(prayerKey), soundKey);
+    if (await isAlarmEnabled(prayerKey)) {
+      await _scheduleAlarmsForPrayer(prayerKey);
+    }
   }
 
   // ───────────────────── Scheduling ─────────────────────
@@ -214,21 +305,20 @@ class PrayerAlarmService {
 
     final repeatDays = await getRepeatDays(prayerKey);
 
-    int beforeOffset = await getBeforeOffset(prayerKey);
-    int afterOffset = await getAfterOffset(prayerKey);
-    String soundKey = await getSoundKey();
+    final mode = await getReminderMode(prayerKey);
+    final offset = await getReminderOffset(prayerKey);
+    String soundKey = await getSoundKey(prayerKey);
     String soundPath = getSoundPath(soundKey);
 
     final prefs = await SharedPreferences.getInstance();
     String locale = prefs.getString('locale') ?? 'bn';
     String prayerLabel = _getPrayerLabel(prayerKey, locale);
 
-    // Schedule before-waqt alarm at the next future matching occurrence.
-    if (beforeOffset > 0) {
+    if (mode == reminderModeBefore && offset > 0) {
       final beforeTime = await _getNextScheduledDateTime(
         prayerKey: prayerKey,
         repeatDays: repeatDays,
-        offsetMinutes: -beforeOffset,
+        offsetMinutes: -offset,
       );
 
       if (beforeTime != null) {
@@ -237,30 +327,35 @@ class PrayerAlarmService {
           dateTime: beforeTime,
           title: prayerLabel,
           body: locale == 'bn'
-              ? '$prayerLabel শুরু হতে $beforeOffset মিনিট বাকি'
-              : '$prayerLabel starts in $beforeOffset minutes',
+              ? '$prayerLabel শুরু হতে $offset মিনিট বাকি'
+              : '$prayerLabel starts in $offset minutes',
           soundPath: soundPath,
         );
       }
     }
 
-    // Schedule after-waqt alarm at the next future matching occurrence.
-    final afterTime = await _getNextScheduledDateTime(
-      prayerKey: prayerKey,
-      repeatDays: repeatDays,
-      offsetMinutes: afterOffset,
-    );
-
-    if (afterTime != null) {
-      await _setAlarm(
-        id: _afterAlarmIds[prayerKey]!,
-        dateTime: afterTime,
-        title: prayerLabel,
-        body: locale == 'bn'
-            ? '$prayerLabel এর সময় হয়েছে'
-            : 'Time for $prayerLabel',
-        soundPath: soundPath,
+    if (mode == reminderModeAt || mode == reminderModeAfter) {
+      final afterTime = await _getNextScheduledDateTime(
+        prayerKey: prayerKey,
+        repeatDays: repeatDays,
+        offsetMinutes: mode == reminderModeAfter ? offset : 0,
       );
+
+      if (afterTime != null) {
+        await _setAlarm(
+          id: _afterAlarmIds[prayerKey]!,
+          dateTime: afterTime,
+          title: prayerLabel,
+          body: locale == 'bn'
+              ? mode == reminderModeAfter
+                  ? '$prayerLabel এর $offset মিনিট পরে'
+                  : '$prayerLabel এর সময় হয়েছে'
+              : mode == reminderModeAfter
+                  ? '$offset minutes after $prayerLabel'
+                  : 'Time for $prayerLabel',
+          soundPath: soundPath,
+        );
+      }
     }
   }
 
@@ -324,6 +419,123 @@ class PrayerAlarmService {
     }
 
     return null;
+  }
+
+  static Future<PrayerAlarmScheduleInfo?> getNextScheduledAlarmInfo(
+    String prayerKey, {
+    String locale = 'bn',
+  }) async {
+    if (!await isAlarmEnabled(prayerKey)) {
+      return null;
+    }
+
+    final repeatDays = await getRepeatDays(prayerKey);
+    final mode = await getReminderMode(prayerKey);
+    final offset = await getReminderOffset(prayerKey);
+    final soundKey = await getSoundKey(prayerKey);
+
+    final prayerTime = await _getNextPrayerOccurrence(
+      prayerKey: prayerKey,
+      repeatDays: repeatDays,
+    );
+    if (prayerTime == null) {
+      return null;
+    }
+
+    final scheduledTime = await _getNextScheduledDateTime(
+      prayerKey: prayerKey,
+      repeatDays: repeatDays,
+      offsetMinutes: switch (mode) {
+        reminderModeBefore => -offset,
+        reminderModeAfter => offset,
+        _ => 0,
+      },
+    );
+    if (scheduledTime == null) {
+      return null;
+    }
+
+    return PrayerAlarmScheduleInfo(
+      prayerKey: prayerKey,
+      prayerLabel: _getPrayerLabel(prayerKey, locale),
+      mode: mode,
+      offsetMinutes: offset,
+      soundKey: soundKey,
+      nextPrayerTime: prayerTime,
+      nextTriggerAt: scheduledTime,
+    );
+  }
+
+  static Future<PrayerAlarmScheduleInfo?> getNextEnabledAlarmInfo({
+    String locale = 'bn',
+  }) async {
+    PrayerAlarmScheduleInfo? earliest;
+    for (final prayerKey in prayerKeys) {
+      final info = await getNextScheduledAlarmInfo(prayerKey, locale: locale);
+      if (info == null) continue;
+      if (earliest == null ||
+          info.nextTriggerAt.isBefore(earliest.nextTriggerAt)) {
+        earliest = info;
+      }
+    }
+    return earliest;
+  }
+
+  static Future<DateTime?> _getNextPrayerOccurrence({
+    required String prayerKey,
+    required Set<int> repeatDays,
+  }) async {
+    final now = DateTime.now();
+
+    for (int dayOffset = 0; dayOffset <= 7; dayOffset++) {
+      final candidateDate = now.add(Duration(days: dayOffset));
+      if (!repeatDays.contains(candidateDate.weekday)) {
+        continue;
+      }
+
+      final prayerTime = await _getPrayerTime(prayerKey, date: candidateDate);
+      if (prayerTime != null && prayerTime.isAfter(now)) {
+        return prayerTime;
+      }
+    }
+
+    return null;
+  }
+
+  static Future<void> scheduleTestAlarm(
+    String prayerKey, {
+    String locale = 'bn',
+  }) async {
+    final alarmId = 900 + prayerKeys.indexOf(prayerKey);
+    await Alarm.stop(alarmId);
+
+    final prayerLabel = _getPrayerLabel(prayerKey, locale);
+    final soundPath = getSoundPath(await getSoundKey(prayerKey));
+    await _setAlarm(
+      id: alarmId,
+      dateTime: DateTime.now().add(const Duration(seconds: 8)),
+      title: prayerLabel,
+      body: locale == 'bn'
+          ? 'এটি $prayerLabel অ্যালার্মের পরীক্ষামূলক নোটিফিকেশন'
+          : 'This is a test alarm for $prayerLabel',
+      soundPath: soundPath,
+    );
+  }
+
+  static String formatScheduleSummary(
+    PrayerAlarmScheduleInfo info,
+    String locale,
+  ) {
+    final time = DateFormat.jm(locale).format(info.nextTriggerAt);
+    return switch (info.mode) {
+      reminderModeBefore => locale == 'bn'
+          ? '$time, ${info.offsetMinutes} মিনিট আগে'
+          : '$time, ${info.offsetMinutes} min before',
+      reminderModeAfter => locale == 'bn'
+          ? '$time, ${info.offsetMinutes} মিনিট পরে'
+          : '$time, ${info.offsetMinutes} min after',
+      _ => locale == 'bn' ? '$time, ওয়াক্তের সময়' : '$time, at waqt',
+    };
   }
 
   // ───────────────────── Prayer Time Calculation ─────────────────────
@@ -469,4 +681,24 @@ class PrayerAlarmService {
   static String getPrayerDisplayLabel(String prayerKey, String locale) {
     return _getPrayerLabel(prayerKey, locale);
   }
+}
+
+class PrayerAlarmScheduleInfo {
+  final String prayerKey;
+  final String prayerLabel;
+  final String mode;
+  final int offsetMinutes;
+  final String soundKey;
+  final DateTime nextPrayerTime;
+  final DateTime nextTriggerAt;
+
+  const PrayerAlarmScheduleInfo({
+    required this.prayerKey,
+    required this.prayerLabel,
+    required this.mode,
+    required this.offsetMinutes,
+    required this.soundKey,
+    required this.nextPrayerTime,
+    required this.nextTriggerAt,
+  });
 }
