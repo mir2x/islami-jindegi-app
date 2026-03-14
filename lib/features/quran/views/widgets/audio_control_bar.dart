@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../providers/audio_providers.dart';
 import 'package:native_app/features/sura/views/widgets/reciter_selection_dialog.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class AudioControllerBar extends ConsumerWidget {
   final Color color;
@@ -12,6 +13,7 @@ class AudioControllerBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final quranState = ref.watch(quranAudioProvider);
     if (quranState == null) return const SizedBox.shrink();
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     final service = ref.read(quranAudioPlayerProvider);
     final surah = quranState.surah;
@@ -20,18 +22,23 @@ class AudioControllerBar extends ConsumerWidget {
 
     return Material(
       elevation: 6,
-      color: color,
+      color: colors.cardBg,
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       child: Container(
         height: 60.h,
         padding: EdgeInsets.symmetric(horizontal: 12.w),
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: colors.divider)),
+        ),
         child: Row(
           children: [
             Expanded(
               child: Text(
                 '$surah : $ayah',
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
+                  color: colors.primaryText,
                   fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -40,7 +47,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     Icons.skip_previous,
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: colors.active,
                     size: 24.r,
                   ),
                   tooltip: 'Previous Ayah',
@@ -49,7 +56,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     isPlaying ? Icons.pause : Icons.play_arrow,
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: colors.active,
                     size: 24.r,
                   ),
                   tooltip: isPlaying ? 'Pause' : 'Play',
@@ -58,7 +65,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     Icons.stop,
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: colors.active,
                     size: 24.r,
                   ),
                   tooltip: 'Stop',
@@ -67,7 +74,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     Icons.skip_next,
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: colors.active,
                     size: 24.r,
                   ),
                   tooltip: 'Next Ayah',
@@ -76,7 +83,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     Icons.person_outline,
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: colors.active,
                     size: 24.r,
                   ),
                   tooltip: 'Change Qari',

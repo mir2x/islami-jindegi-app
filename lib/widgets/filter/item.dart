@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/providers/query_params.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class FilterItem extends ConsumerWidget {
   const FilterItem({
@@ -19,6 +20,7 @@ class FilterItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     var paramsProvider = queryProvider ?? queryParamsProvider;
     var qParams = ref.watch(paramsProvider);
 
@@ -31,7 +33,7 @@ class FilterItem extends ConsumerWidget {
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: Theme.of(context).colorScheme.outlineVariant,
+              color: colors.divider,
             ),
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/providers/preferences.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class DateButton extends ConsumerWidget {
   const DateButton({
@@ -19,23 +20,21 @@ class DateButton extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isSmallMobile = screenWidth < 340;
-    var colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return Expanded(
       child: TextButton(
         style: TextButton.styleFrom(
-          backgroundColor: selectedValue == value
-              ? colorScheme.primary
-              : colorScheme.surfaceContainerHighest,
+          backgroundColor:
+              selectedValue == value ? colors.active : colors.highlight,
           padding: EdgeInsets.all(isSmallMobile ? 9 : 12),
           shape: const CircleBorder(),
         ),
         child: Text(
           label,
           style: textTheme.labelLarge?.copyWith(
-            color: selectedValue == value
-                ? colorScheme.onPrimary
-                : colorScheme.onSurfaceVariant,
+            color:
+                selectedValue == value ? colors.appBarText : colors.primaryText,
           ),
         ),
         onPressed: () {

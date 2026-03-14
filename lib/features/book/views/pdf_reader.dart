@@ -13,6 +13,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:open_filex/open_filex.dart';
 import 'package:native_app/helpers/file_fallback_path.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class PDFReader extends ConsumerStatefulWidget {
   const PDFReader({
@@ -188,13 +189,13 @@ class _PDFReaderState extends ConsumerState<PDFReader>
   // --- Combined TOC & Bookmarks bottom sheet ---
   void _showTocAndBookmarks() {
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
-    final iconClr = colorScheme.onSurfaceVariant;
-    final barBg = colorScheme.surfaceContainer;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final iconClr = colors.secondaryText;
+    final barBg = colors.cardBg;
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: colorScheme.surface,
+      backgroundColor: colors.cardBg,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -221,9 +222,9 @@ class _PDFReaderState extends ConsumerState<PDFReader>
                   // Tab bar
                   TabBar(
                     labelColor: iconClr,
-                    unselectedLabelColor: (textTheme.bodyMedium?.color ??
-                            colorScheme.onSurfaceVariant)
-                        .withValues(alpha: 0.5),
+                    unselectedLabelColor:
+                        (textTheme.bodyMedium?.color ?? colors.secondaryText)
+                            .withValues(alpha: 0.5),
                     indicatorColor: iconClr,
                     indicatorSize: TabBarIndicatorSize.label,
                     tabs: const [
@@ -244,8 +245,8 @@ class _PDFReaderState extends ConsumerState<PDFReader>
                         // ── Tab 1: Table of Contents ──
                         _buildTocTab(sheetContext, textTheme, iconClr, barBg),
                         // ── Tab 2: User Bookmarks ──
-                        _buildBookmarksTab(sheetContext, textTheme, iconClr,
-                            barBg, colorScheme),
+                        _buildBookmarksTab(
+                            sheetContext, textTheme, iconClr, barBg, colors),
                       ],
                     ),
                   ),
@@ -319,7 +320,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
   }
 
   Widget _buildBookmarksTab(BuildContext sheetContext, TextTheme textTheme,
-      Color iconClr, Color barBg, ColorScheme colorScheme) {
+      Color iconClr, Color barBg, AppThemeColors colors) {
     if (_bookmarkedPages.isEmpty) {
       return Center(
         child: Padding(
@@ -364,7 +365,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
               fontWeight: isCurrentPage ? FontWeight.bold : FontWeight.normal,
             ),
           ),
-          tileColor: isCurrentPage ? colorScheme.secondaryContainer : null,
+          tileColor: isCurrentPage ? colors.highlight : null,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -399,16 +400,16 @@ class _PDFReaderState extends ConsumerState<PDFReader>
 
   Widget _buildWithTheme(BuildContext context, AsyncValue pdfFile) {
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     final mediaQuery = MediaQuery.of(context);
     final topPadding = mediaQuery.padding.top;
     final bottomPadding = mediaQuery.padding.bottom;
 
-    final barBg = colorScheme.surfaceContainer;
-    final iconClr = colorScheme.onSurfaceVariant;
-    final sliderFg = colorScheme.primary;
-    final sliderBg = colorScheme.surfaceContainerHighest;
-    final pdfBg = colorScheme.surface;
+    final barBg = colors.cardBg;
+    final iconClr = colors.secondaryText;
+    final sliderFg = colors.active;
+    final sliderBg = colors.highlight;
+    final pdfBg = colors.surfaceBg;
 
     return Scaffold(
       backgroundColor: pdfBg,
@@ -466,9 +467,9 @@ class _PDFReaderState extends ConsumerState<PDFReader>
                       ? PdfPageLayoutMode.continuous
                       : PdfPageLayoutMode.single,
                   currentSearchTextHighlightColor:
-                      Colors.amber.withValues(alpha: 0.6),
+                      colors.active.withValues(alpha: 0.32),
                   otherSearchTextHighlightColor:
-                      Colors.amber.withValues(alpha: 0.3),
+                      colors.highlightBorder.withValues(alpha: 0.42),
                   onDocumentLoaded: (PdfDocumentLoadedDetails details) {
                     _extractToc(details.document);
                     setState(() {
@@ -513,10 +514,8 @@ class _PDFReaderState extends ConsumerState<PDFReader>
             left: 0,
             right: 0,
             child: _showSearchBar
-                ? _buildSearchBar(
-                    topPadding, barBg, iconClr, textTheme, colorScheme)
-                : _buildTopBar(
-                    topPadding, barBg, iconClr, textTheme, colorScheme),
+                ? _buildSearchBar(topPadding, barBg, iconClr, textTheme, colors)
+                : _buildTopBar(topPadding, barBg, iconClr, textTheme, colors),
           ),
 
           // ─── Bottom Bar ─────────────────────────────
@@ -533,7 +532,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
               sliderFg,
               sliderBg,
               textTheme,
-              colorScheme,
+              colors,
             ),
           ),
         ],
@@ -545,13 +544,13 @@ class _PDFReaderState extends ConsumerState<PDFReader>
   //  TOP BAR
   // ═══════════════════════════════════════════════════
   Widget _buildTopBar(double topPadding, Color barBg, Color iconClr,
-      TextTheme textTheme, ColorScheme colorScheme) {
+      TextTheme textTheme, AppThemeColors colors) {
     return Container(
       decoration: BoxDecoration(
         color: barBg,
         boxShadow: [
           BoxShadow(
-            color: colorScheme.shadow.withValues(alpha: 0.15),
+            color: colors.shadow.withValues(alpha: 0.15),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -577,7 +576,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: textTheme.titleMedium?.copyWith(
-                    color: colorScheme.onSurface,
+                    color: colors.primaryText,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -597,7 +596,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
               // More menu
               PopupMenuButton<String>(
                 icon: Icon(Icons.more_vert_rounded, color: iconClr),
-                color: colorScheme.surfaceContainerHigh,
+                color: colors.dropdownBg,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -608,7 +607,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
                     'Share',
                     textTheme,
                     iconClr,
-                    colorScheme,
+                    colors,
                   ),
                   _buildMenuItem(
                     'open',
@@ -616,7 +615,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
                     'Open in App',
                     textTheme,
                     iconClr,
-                    colorScheme,
+                    colors,
                   ),
                 ],
                 onSelected: (value) {
@@ -631,13 +630,8 @@ class _PDFReaderState extends ConsumerState<PDFReader>
     );
   }
 
-  PopupMenuItem<String> _buildMenuItem(
-      String value,
-      IconData icon,
-      String label,
-      TextTheme textTheme,
-      Color iconClr,
-      ColorScheme colorScheme) {
+  PopupMenuItem<String> _buildMenuItem(String value, IconData icon,
+      String label, TextTheme textTheme, Color iconClr, AppThemeColors colors) {
     return PopupMenuItem(
       value: value,
       child: Row(
@@ -647,7 +641,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
           Text(
             label,
             style: textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurface,
+              color: colors.primaryText,
             ),
           ),
         ],
@@ -659,13 +653,13 @@ class _PDFReaderState extends ConsumerState<PDFReader>
   //  SEARCH BAR
   // ═══════════════════════════════════════════════════
   Widget _buildSearchBar(double topPadding, Color barBg, Color iconClr,
-      TextTheme textTheme, ColorScheme colorScheme) {
+      TextTheme textTheme, AppThemeColors colors) {
     return Container(
       decoration: BoxDecoration(
         color: barBg,
         boxShadow: [
           BoxShadow(
-            color: colorScheme.shadow.withValues(alpha: 0.15),
+            color: colors.shadow.withValues(alpha: 0.15),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -682,8 +676,9 @@ class _PDFReaderState extends ConsumerState<PDFReader>
                 child: Container(
                   height: 40,
                   decoration: BoxDecoration(
-                    color: colorScheme.surface,
+                    color: colors.surfaceBg,
                     borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: colors.divider),
                   ),
                   child: TextField(
                     controller: _searchController,
@@ -693,9 +688,9 @@ class _PDFReaderState extends ConsumerState<PDFReader>
                     decoration: InputDecoration(
                       hintText: 'ডকুমেন্টে সার্চ করুন...',
                       hintStyle: textTheme.bodySmall?.copyWith(
-                        color: (textTheme.bodySmall?.color ??
-                                colorScheme.onSurfaceVariant)
-                            .withValues(alpha: 0.5),
+                        color:
+                            (textTheme.bodySmall?.color ?? colors.secondaryText)
+                                .withValues(alpha: 0.5),
                       ),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(
@@ -720,7 +715,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
                   child: Text(
                     '${_searchResult.currentInstanceIndex}/${_searchResult.totalInstanceCount}',
                     style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurface,
+                      color: colors.primaryText,
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
                     ),
@@ -768,7 +763,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
     Color sliderFg,
     Color sliderBg,
     TextTheme textTheme,
-    ColorScheme colorScheme,
+    AppThemeColors colors,
   ) {
     final isBookmarked = _bookmarkedPages.contains(_currentPage);
 
@@ -777,7 +772,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
         color: barBg,
         boxShadow: [
           BoxShadow(
-            color: colorScheme.shadow.withValues(alpha: 0.15),
+            color: colors.shadow.withValues(alpha: 0.15),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -806,7 +801,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
                       child: Text(
                         '$_currentPage / $_totalPages',
                         style: textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurface,
+                          color: colors.primaryText,
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
                         ),
@@ -854,7 +849,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
                     icon: Icons.skip_previous_rounded,
                     label: 'Prev',
                     color: iconClr,
-                    labelColor: colorScheme.onSurface,
+                    labelColor: colors.primaryText,
                     onTap: widget.onPreviousPdf,
                   ),
                   // Layout toggle
@@ -864,7 +859,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
                         : Icons.view_day_rounded,
                     label: _isContinuousScroll ? 'Single' : 'Scroll',
                     color: iconClr,
-                    labelColor: colorScheme.onSurface,
+                    labelColor: colors.primaryText,
                     onTap: () {
                       setState(() {
                         _isContinuousScroll = !_isContinuousScroll;
@@ -878,7 +873,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
                         : Icons.bookmark_border_rounded,
                     label: isBookmarked ? 'Saved' : 'Bookmark',
                     color: iconClr,
-                    labelColor: colorScheme.onSurface,
+                    labelColor: colors.primaryText,
                     onTap: _toggleBookmark,
                   ),
                   // Next PDF
@@ -886,7 +881,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
                     icon: Icons.skip_next_rounded,
                     label: 'Next',
                     color: iconClr,
-                    labelColor: colorScheme.onSurface,
+                    labelColor: colors.primaryText,
                     onTap: widget.onNextPdf,
                   ),
                 ],

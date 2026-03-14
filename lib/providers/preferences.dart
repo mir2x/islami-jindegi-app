@@ -46,8 +46,8 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
 
   Future<dynamic> updateTheme(value) async {
     var prefs = await SharedPreferences.getInstance();
-    await prefs.setString('theme', value);
-    updateAppWidget({'theme': value});
+    await prefs.setString('theme', 'classic');
+    updateAppWidget({'theme': 'classic'});
     state = AsyncValue.data(prefs);
   }
 

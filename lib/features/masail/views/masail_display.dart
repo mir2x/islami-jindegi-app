@@ -9,6 +9,7 @@ import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/widgets/audio/player.dart';
 import 'package:native_app/helpers/file_size.dart';
 import 'package:native_app/helpers/play_duration.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class MasailDisplay extends ConsumerWidget {
   const MasailDisplay({
@@ -34,6 +35,7 @@ class MasailDisplay extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,6 +54,12 @@ class MasailDisplay extends ConsumerWidget {
         ),
         Container(
           margin: const EdgeInsets.only(top: 10, bottom: 30),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: appTheme.highlight,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: appTheme.divider),
+          ),
           child: PageHtmlBody(
             text: question,
             fontSizeRatio: fontSizeRatio,
@@ -65,6 +73,12 @@ class MasailDisplay extends ConsumerWidget {
         if (answer != null) ...[
           Container(
             margin: const EdgeInsets.only(top: 10, bottom: 30),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: appTheme.cardBg,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: appTheme.divider),
+            ),
             child: PageHtmlBody(
               text: answer!,
               fontSizeRatio: fontSizeRatio,
@@ -106,21 +120,31 @@ class MasailDisplay extends ConsumerWidget {
                 ),
               ],
               if (author != null) ...[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    PageSubtitle(
-                      text: locales.author,
-                      fontSizeRatio: fontSizeRatio,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 10),
-                      child: PageSubtitle(
-                        text: author!,
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: appTheme.highlight,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: appTheme.divider),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      PageSubtitle(
+                        text: locales.author,
                         fontSizeRatio: fontSizeRatio,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-                  ],
+                      Container(
+                        margin: const EdgeInsets.only(top: 10),
+                        child: PageSubtitle(
+                          text: author!,
+                          fontSizeRatio: fontSizeRatio,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ],

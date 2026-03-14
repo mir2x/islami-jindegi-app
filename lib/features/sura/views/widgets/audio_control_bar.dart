@@ -18,17 +18,19 @@ class AudioControllerBar extends ConsumerWidget {
     final ayah = quranState.ayah;
     final isPlaying = quranState.isPlaying;
 
-    final colorScheme = Theme.of(context).colorScheme;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = colorScheme.brightness == Brightness.light;
-    final foreground = isLight ? appColors.secondaryText : colorScheme.onPrimary;
+    final foreground = appColors.primaryText;
 
     return Material(
       elevation: 6,
-      color: color,
+      color: appColors.cardBg,
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       child: Container(
         height: 60.h,
         padding: EdgeInsets.symmetric(horizontal: 12.w),
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: appColors.divider)),
+        ),
         child: Row(
           children: [
             Expanded(
@@ -43,7 +45,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     Icons.skip_previous,
-                    color: foreground,
+                    color: appColors.active,
                     size: 24.r,
                   ),
                   tooltip: 'Previous Ayah',
@@ -52,7 +54,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     isPlaying ? Icons.pause : Icons.play_arrow,
-                    color: foreground,
+                    color: appColors.active,
                     size: 24.r,
                   ),
                   tooltip: isPlaying ? 'Pause' : 'Play',
@@ -61,7 +63,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     Icons.stop,
-                    color: foreground,
+                    color: appColors.active,
                     size: 24.r,
                   ),
                   tooltip: 'Stop',
@@ -70,7 +72,7 @@ class AudioControllerBar extends ConsumerWidget {
                 IconButton(
                   icon: Icon(
                     Icons.skip_next,
-                    color: foreground,
+                    color: appColors.active,
                     size: 24.r,
                   ),
                   tooltip: 'Next Ayah',

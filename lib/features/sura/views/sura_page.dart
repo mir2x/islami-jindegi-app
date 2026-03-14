@@ -264,8 +264,9 @@ class _SurahPageState extends ConsumerState<SurahPage> {
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Theme.of(sheetContext).colorScheme.surface,
+                color: colors.cardBg,
                 borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: colors.divider),
                 boxShadow: [
                   BoxShadow(
                     color: colors.shadow.withValues(alpha: 0.18),
@@ -301,9 +302,9 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                       ),
                       borderRadius: BorderRadius.circular(18),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.auto_stories_rounded,
-                      color: Colors.white,
+                      color: colors.appBarText,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -557,10 +558,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
               ),
               if (quranAudioState != null)
                 AudioControllerBar(
-                  color: Theme.of(context).colorScheme.brightness ==
-                          Brightness.light
-                      ? Theme.of(context).extension<AppThemeColors>()!.surfaceBg
-                      : Theme.of(context).extension<AppThemeColors>()!.primary,
+                  color: Theme.of(context).extension<AppThemeColors>()!.cardBg,
                 ),
             ],
           ),
@@ -577,18 +575,11 @@ class _SurahPageState extends ConsumerState<SurahPage> {
             ? FloatingActionButton(
                 onPressed: _scrollToTop,
                 mini: true,
-                backgroundColor: Theme.of(context).colorScheme.brightness ==
-                        Brightness.light
-                    ? Theme.of(context).extension<AppThemeColors>()!.surfaceBg
-                    : Theme.of(context).colorScheme.primaryContainer,
+                backgroundColor:
+                    Theme.of(context).extension<AppThemeColors>()!.cardBg,
                 child: Icon(
                   Icons.arrow_upward,
-                  color: Theme.of(context).colorScheme.brightness ==
-                          Brightness.light
-                      ? Theme.of(context)
-                          .extension<AppThemeColors>()!
-                          .secondaryText
-                      : Theme.of(context).colorScheme.onPrimaryContainer,
+                  color: Theme.of(context).extension<AppThemeColors>()!.active,
                 ),
               )
             : null,
@@ -599,11 +590,8 @@ class _SurahPageState extends ConsumerState<SurahPage> {
   Widget _buildAutoScrollController(BuildContext context) {
     final scrollSpeedFactor = ref.watch(scrollSpeedFactorProvider);
     final isPaused = ref.watch(isAutoScrollPausedProvider);
-    final isLight =
-        Theme.of(context).colorScheme.brightness == Brightness.light;
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final accent =
-        isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary;
+    final accent = colors.active;
 
     return Positioned(
       left: 0,
@@ -612,11 +600,11 @@ class _SurahPageState extends ConsumerState<SurahPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
+          color: colors.cardBg,
+          border: Border(top: BorderSide(color: colors.divider)),
           boxShadow: [
             BoxShadow(
-              color:
-                  Theme.of(context).colorScheme.shadow.withValues(alpha: 0.1),
+              color: colors.shadow.withValues(alpha: 0.1),
               spreadRadius: 1,
               blurRadius: 5,
               offset: const Offset(0, -2),
@@ -747,25 +735,25 @@ class _SurahPageState extends ConsumerState<SurahPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.drag_indicator_rounded,
-                    color: Colors.white70,
+                    color: colors.appBarText,
                     size: 18,
                   ),
                   const SizedBox(height: 6),
                   Text(
                     visibleAyah.toBengaliDigit(),
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: colors.appBarText,
                       fontWeight: FontWeight.w800,
                       fontSize: 15,
                     ),
                   ),
                   const SizedBox(height: 2),
-                  const Text(
+                  Text(
                     'আয়াত',
                     style: TextStyle(
-                      color: Colors.white70,
+                      color: colors.appBarText,
                       fontWeight: FontWeight.w600,
                       fontSize: 10,
                     ),

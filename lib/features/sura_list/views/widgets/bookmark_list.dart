@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:go_router/go_router.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../../models/bookmark.dart';
 import '../../providers/bookmark_providers.dart';
 
@@ -12,6 +13,7 @@ class BookmarkList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bookmarks = ref.watch(bookmarkProvider);
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     if (bookmarks.isEmpty) {
       return Center(
@@ -21,24 +23,24 @@ class BookmarkList extends ConsumerWidget {
             Icon(
               Icons.bookmark_border,
               size: 64,
-              color: Theme.of(context).colorScheme.outlineVariant,
+              color: colors.secondaryText,
             ),
             const SizedBox(height: 16),
             Text(
               'কোনো বুকমার্ক নেই',
               style: TextStyle(
-                      wordSpacing: 3,
+                wordSpacing: 3,
                 fontSize: 18,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                color: colors.secondaryText,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               'আয়াতে ট্যাপ করে বুকমার্ক যোগ করুন',
               style: TextStyle(
-                      wordSpacing: 3,
+                wordSpacing: 3,
                 fontSize: 14,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                color: colors.secondaryText,
               ),
             ),
           ],
@@ -54,11 +56,12 @@ class BookmarkList extends ConsumerWidget {
         return _BookmarkListItem(bookmark: bookmark);
       },
       separatorBuilder: (context, index) {
-        return const Divider(
+        return Divider(
           height: 1,
           thickness: 0.5,
           indent: 16,
           endIndent: 16,
+          color: colors.divider,
         );
       },
     );
@@ -72,6 +75,7 @@ class _BookmarkListItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     return Dismissible(
       key: Key(bookmark.id),
       direction: DismissDirection.endToStart,
@@ -90,17 +94,18 @@ class _BookmarkListItem extends ConsumerWidget {
         );
       },
       background: Container(
-        color: Theme.of(context).colorScheme.error,
+        color: colors.primary.withValues(alpha: 0.9),
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 16),
-        child: Icon(Icons.delete, color: Theme.of(context).colorScheme.onError),
+        child: Icon(Icons.delete, color: colors.appBarText),
       ),
       child: InkWell(
         onTap: () {
           // Navigate to the ayah in SurahPage
           // The initialScrollIndex is ayahNumber - 1 (0-indexed)
           context.push(
-              '/qurans/sura/${bookmark.suraNumber}?scroll=${bookmark.ayahNumber - 1}');
+            '/qurans/sura/${bookmark.suraNumber}?scroll=${bookmark.ayahNumber - 1}',
+          );
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
@@ -118,11 +123,12 @@ class _BookmarkListItem extends ConsumerWidget {
   }
 
   Widget _buildSuraInfo(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     return Container(
       width: 60,
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer,
+        color: colors.highlight,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -131,18 +137,18 @@ class _BookmarkListItem extends ConsumerWidget {
           Text(
             bookmark.ayahNumber.toBengaliDigit(),
             style: TextStyle(
-                  wordSpacing: 3,
+              wordSpacing: 3,
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary,
+              color: colors.active,
             ),
           ),
           Text(
             'আয়াত',
             style: TextStyle(
-                  wordSpacing: 3,
+              wordSpacing: 3,
               fontSize: 12,
-              color: Theme.of(context).colorScheme.primary,
+              color: colors.active,
             ),
           ),
         ],
@@ -151,13 +157,14 @@ class _BookmarkListItem extends ConsumerWidget {
   }
 
   Widget _buildArabicPreview(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           bookmark.suraName,
           style: const TextStyle(
-              wordSpacing: 3,
+            wordSpacing: 3,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
@@ -170,7 +177,7 @@ class _BookmarkListItem extends ConsumerWidget {
           style: GoogleFonts.amiri(
             fontSize: 16,
             height: 1.5,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: colors.secondaryText,
           ),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
@@ -181,8 +188,9 @@ class _BookmarkListItem extends ConsumerWidget {
   }
 
   Widget _buildDeleteButton(BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     return IconButton(
-      icon: Icon(Icons.bookmark, color: Theme.of(context).colorScheme.primary),
+      icon: Icon(Icons.bookmark, color: colors.active),
       onPressed: () {
         ref.read(bookmarkProvider.notifier).removeBookmark(
               bookmark.suraNumber,

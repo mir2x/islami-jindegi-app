@@ -7,6 +7,7 @@ import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/objects/progress_percentage.dart';
 import 'package:native_app/objects/download_params.dart';
 import 'package:native_app/helpers/file_size.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class DownloadButton extends ConsumerWidget {
   const DownloadButton({
@@ -88,10 +89,11 @@ class DownloadIcon extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return IconButton(
       iconSize: 35,
-      icon: const Icon(Icons.download),
+      icon: Icon(Icons.download, color: colors.active),
       onPressed: () async {
         var params = DownloadParams(
           url: fileUrl,
@@ -144,7 +146,7 @@ class DownloadProgress extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
-    var colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return ValueListenableBuilder<Map>(
       valueListenable: progressNotifier,
@@ -166,7 +168,8 @@ class DownloadProgress extends ConsumerWidget {
                   SizedBox(
                     width: 110,
                     child: LinearProgressIndicator(
-                      backgroundColor: colorScheme.outlineVariant,
+                      backgroundColor: colors.divider,
+                      valueColor: AlwaysStoppedAnimation<Color>(colors.active),
                       value: received / total,
                     ),
                   ),

@@ -10,29 +10,37 @@ class ReciterSelectionDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedReciterId = ref.watch(selectedReciterProvider);
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final accent =
-        isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary;
     final selectedReciterName = reciters.entries
         .firstWhere((entry) => entry.value == selectedReciterId,
             orElse: () => reciters.entries.first)
         .key;
 
     return AlertDialog(
+      backgroundColor: colors.cardBg,
+      surfaceTintColor: colors.cardBg,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+        side: BorderSide(color: colors.divider),
+      ),
       title: const Text(
         'ক্বারী নির্বাচন করুন',
         style: TextStyle(
-            wordSpacing: 3,
-            fontWeight: FontWeight.bold),
+          wordSpacing: 3,
+          fontWeight: FontWeight.bold,
+        ),
       ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: reciters.keys.map((reciterName) {
             return RadioListTile<String>(
+              contentPadding: EdgeInsets.zero,
               title: Text(
                 reciterName,
-                style: const TextStyle(wordSpacing: 3),
+                style: TextStyle(
+                  wordSpacing: 3,
+                  color: colors.primaryText,
+                ),
               ),
               value: reciterName,
               groupValue: selectedReciterName,
@@ -45,7 +53,7 @@ class ReciterSelectionDialog extends ConsumerWidget {
                   Navigator.of(context).pop();
                 }
               },
-              activeColor: accent,
+              activeColor: colors.active,
             );
           }).toList(),
         ),
@@ -55,17 +63,15 @@ class ReciterSelectionDialog extends ConsumerWidget {
           child: Text(
             'বন্ধ করুন',
             style: TextStyle(
-                wordSpacing: 3,
-                color: accent),
+              wordSpacing: 3,
+              color: colors.active,
+            ),
           ),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
       ],
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
       contentPadding: const EdgeInsets.only(top: 20.0, right: 8.0, left: 8.0),
     );
   }

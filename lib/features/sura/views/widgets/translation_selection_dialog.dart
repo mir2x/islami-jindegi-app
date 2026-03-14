@@ -17,24 +17,33 @@ class TranslatorSelectionDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selected = ref.watch(selectedTranslatorsProvider);
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final accent =
-        isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary;
     return AlertDialog(
+      backgroundColor: colors.cardBg,
+      surfaceTintColor: colors.cardBg,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+        side: BorderSide(color: colors.divider),
+      ),
       title: const Text(
         'অনুবাদক নির্বাচন করুন',
         style: TextStyle(
-            wordSpacing: 3,
-            fontWeight: FontWeight.bold),
+          wordSpacing: 3,
+          fontWeight: FontWeight.bold,
+        ),
       ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: availableTranslators.map((translatorName) {
             return CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              controlAffinity: ListTileControlAffinity.leading,
               title: Text(
                 translatorName,
-                style: const TextStyle(wordSpacing: 3),
+                style: TextStyle(
+                  wordSpacing: 3,
+                  color: colors.primaryText,
+                ),
               ),
               value: selected.contains(translatorName),
               onChanged: (bool? isSelected) {
@@ -42,7 +51,8 @@ class TranslatorSelectionDialog extends ConsumerWidget {
                     .read(selectedTranslatorsProvider.notifier)
                     .toggleTranslator(translatorName);
               },
-              activeColor: accent,
+              activeColor: colors.active,
+              checkColor: colors.appBarText,
             );
           }).toList(),
         ),
@@ -52,17 +62,15 @@ class TranslatorSelectionDialog extends ConsumerWidget {
           child: Text(
             'বন্ধ করুন',
             style: TextStyle(
-                wordSpacing: 3,
-                color: accent),
+              wordSpacing: 3,
+              color: colors.active,
+            ),
           ),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
       ],
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
       contentPadding: const EdgeInsets.only(top: 20.0, right: 8.0, left: 8.0),
     );
   }

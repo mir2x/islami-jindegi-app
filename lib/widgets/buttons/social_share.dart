@@ -3,6 +3,7 @@ import 'package:html/parser.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class SocialShare extends StatelessWidget {
   const SocialShare({
@@ -23,14 +24,14 @@ class SocialShare extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
-    var colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     const appLink =
         'https://play.google.com/store/apps/details?id=com.islami_jindegi';
 
     return IconButton(
       icon: const Icon(Icons.ios_share_rounded),
-      color: colorScheme.primary,
+      color: colors.active,
       onPressed: () async {
         String text = '';
 

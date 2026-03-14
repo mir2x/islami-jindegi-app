@@ -65,11 +65,7 @@ class Settings extends ConsumerWidget {
   ];
 
   static const List<Map<String, String>> themes = [
-    {'label': 'Dark', 'value': 'dark'},
-    {'label': 'Light', 'value': 'light'},
     {'label': 'Classic', 'value': 'classic'},
-    {'label': 'Dark New', 'value': 'darkNew'},
-    {'label': 'Light New', 'value': 'lightNew'},
   ];
 
   static const List<Map<String, String>> backgrounds = [
@@ -296,6 +292,8 @@ class _SettingsHero extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
     final textTheme = Theme.of(context).textTheme;
+    final heroTextColor = colors.surfaceBg;
+    final heroChipColor = colors.surfaceBg.withValues(alpha: 0.16);
 
     return Container(
       width: double.infinity,
@@ -324,18 +322,18 @@ class _SettingsHero extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.16),
+              color: heroChipColor,
               borderRadius: BorderRadius.circular(999),
             ),
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.tune_rounded, color: Colors.white, size: 18),
-                SizedBox(width: 8),
+                Icon(Icons.tune_rounded, color: heroTextColor, size: 18),
+                const SizedBox(width: 8),
                 Text(
                   'Personalize your app',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: heroTextColor,
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -347,7 +345,7 @@ class _SettingsHero extends StatelessWidget {
           Text(
             'Make reading, prayer time, and browsing feel more yours.',
             style: textTheme.headlineSmall?.copyWith(
-              color: Colors.white,
+              color: heroTextColor,
               height: 1.25,
               fontWeight: FontWeight.w700,
             ),
@@ -379,21 +377,22 @@ class _HeroChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.14),
+        color: colors.surfaceBg.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: Colors.white, size: 16),
+          Icon(icon, color: colors.surfaceBg, size: 16),
           const SizedBox(width: 8),
           Text(
             label,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: colors.surfaceBg,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -600,7 +599,7 @@ class _SegmentedSelector<T> extends StatelessWidget {
               selected: isSelected,
               showCheckmark: false,
               labelStyle: textTheme.labelLarge?.copyWith(
-                color: isSelected ? Colors.white : colors.primaryText,
+                color: isSelected ? colors.appBarText : colors.primaryText,
                 fontWeight: FontWeight.w600,
               ),
               backgroundColor: colors.surfaceBg.withValues(alpha: 0.7),

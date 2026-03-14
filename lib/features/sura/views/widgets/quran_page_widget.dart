@@ -90,14 +90,17 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
     required int ayahNumber,
     required String suraNameBengali,
   }) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: colors.divider),
           ),
-          backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
+          backgroundColor: colors.contextMenuBg,
+          surfaceTintColor: colors.contextMenuBg,
           title: Text(
             '$suraNameBengali ${suraNumber.toBengaliDigit()}ঃ${ayahNumber.toBengaliDigit()}',
             textAlign: TextAlign.center,
@@ -106,7 +109,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
               wordSpacing: 3,
               fontSize: 18,
               fontWeight: FontWeight.normal,
-              color: Theme.of(context).textTheme.titleLarge?.color,
+              color: colors.contextMenuText,
             ),
           ),
           content: Column(
@@ -143,11 +146,9 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
     required String label,
     required VoidCallback onTap,
   }) {
-    final colorScheme = Theme.of(context).colorScheme;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = colorScheme.brightness == Brightness.light;
-    final optionBg = isLight ? appColors.surfaceBg.withOpacity(0.9) : colorScheme.secondary;
-    final optionFg = isLight ? appColors.secondaryText : colorScheme.onSecondary;
+    final optionBg = appColors.highlight;
+    final optionFg = appColors.primaryText;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -222,11 +223,11 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
   @override
   Widget build(BuildContext context) {
     final headerWidgets = _buildHeaderWidgets();
-    final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
+      color: colors.scaffoldBg,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -235,10 +236,10 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
             padding:
                 const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
             decoration: BoxDecoration(
-              color: colorScheme.surface,
+              color: colors.cardBg,
               border: Border(
                 bottom: BorderSide(
-                  color: Theme.of(context).dividerColor.withOpacity(0.5),
+                  color: colors.divider.withValues(alpha: 0.5),
                   width: 1,
                 ),
               ),
@@ -253,7 +254,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
                     wordSpacing: 3,
                     fontSize: 16,
                     fontWeight: FontWeight.normal,
-                    color: textTheme.bodyLarge?.color,
+                    color: colors.primaryText,
                   ),
                 ),
                 Text(
@@ -263,7 +264,7 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
                     wordSpacing: 3,
                     fontSize: 16,
                     fontWeight: FontWeight.normal,
-                    color: textTheme.bodyLarge?.color,
+                    color: colors.primaryText,
                   ),
                 ),
               ],
@@ -280,8 +281,8 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
                 style: DefaultTextStyle.of(context).style,
                 children: _buildAyahOnlySpans(),
               ),
-              lineColor: textTheme.bodyLarge?.color?.withOpacity(0.5) ??
-                  colorScheme.onSurface.withOpacity(0.5),
+              lineColor: textTheme.bodyLarge?.color?.withValues(alpha: 0.5) ??
+                  colors.primaryText.withValues(alpha: 0.5),
               lineThickness: 1.5,
               lineOffset: 20.0, // pixels below baseline
             ),

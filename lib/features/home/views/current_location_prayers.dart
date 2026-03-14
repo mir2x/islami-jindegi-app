@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:adhan/adhan.dart';
 import 'package:native_app/providers/geolocation.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import 'package:native_app/widgets/location/index.dart';
 import 'package:native_app/objects/prayer_time.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
@@ -145,8 +146,9 @@ class Prayers extends StatelessWidget {
 
     return WithPreferences(
       builder: (context, preferences) {
-        Color titleColor = Theme.of(context).colorScheme.onInverseSurface;
-        Color labelColor = Theme.of(context).colorScheme.onInverseSurface;
+        final appColors = Theme.of(context).extension<AppThemeColors>()!;
+        Color titleColor = appColors.appBarText;
+        Color labelColor = appColors.appBarText.withValues(alpha: 0.88);
 
         bool hasCurrentPrayer = prayerTimes.containsKey('current') &&
             (prayerTimes['current'] != null);

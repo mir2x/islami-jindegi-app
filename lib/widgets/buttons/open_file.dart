@@ -4,6 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:open_filex/open_filex.dart';
 import 'package:native_app/helpers/file_fallback_path.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class OpenFile extends StatelessWidget {
   const OpenFile({
@@ -15,11 +16,11 @@ class OpenFile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return IconButton(
       icon: const Icon(Icons.file_open),
-      color: colorScheme.primary,
+      color: colors.active,
       onPressed: () async {
         var path = await fileFallbackPath(filePath);
 

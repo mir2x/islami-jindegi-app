@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html_table/flutter_html_table.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -17,6 +18,7 @@ class HtmlText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
+    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
 
     Style hx = Style.fromTextStyle(
       textTheme.headlineLarge!,
@@ -25,8 +27,6 @@ class HtmlText extends StatelessWidget {
       margin: Margins.zero,
       fontSize: FontSize(24 * fontSizeRatio),
     );
-
-    var colorScheme = Theme.of(context).colorScheme;
 
     return SelectionArea(
       child: Html(
@@ -102,23 +102,25 @@ class HtmlText extends StatelessWidget {
             lineHeight: const LineHeight(1.45),
             margin: Margins.only(bottom: 16),
             fontSize: FontSize(17 * fontSizeRatio),
+            color: appTheme.primaryText,
           ),
           'a': Style(
-            color: colorScheme.primary,
+            color: appTheme.active,
             textDecoration: TextDecoration.none,
           ),
           'th': Style(
             textAlign: TextAlign.start,
             padding: HtmlPaddings.all(10),
+            backgroundColor: appTheme.highlight,
             border: Border.all(
-              color: colorScheme.outlineVariant,
+              color: appTheme.divider,
               width: 0.5,
             ),
           ),
           'td': Style(
             padding: HtmlPaddings.all(10),
             border: Border.all(
-              color: colorScheme.outlineVariant,
+              color: appTheme.divider,
               width: 0.5,
             ),
           ),

@@ -46,15 +46,11 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
               int index = entry.key;
               var item = entry.value;
 
-              final colorScheme = Theme.of(context).colorScheme;
               final colors = Theme.of(context).extension<AppThemeColors>()!;
-              final isLight = colorScheme.brightness == Brightness.light;
 
               return ExpansionPanel(
                 canTapOnHeader: true,
-                backgroundColor: isLight
-                    ? colors.surfaceBg.withOpacity(0.9)
-                    : colorScheme.surfaceVariant.withOpacity(0.5),
+                backgroundColor: colors.cardBg,
                 isExpanded: _expandedPanelIndex == index,
                 headerBuilder: (context, isExpanded) {
                   return ListTile(
@@ -65,7 +61,7 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
                         wordSpacing: 3,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: isLight ? colors.secondaryText : colorScheme.primary,
+                        color: colors.primaryText,
                       ),
                       textAlign: TextAlign.left,
                     ),
@@ -112,9 +108,15 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 16),
-        ElevatedButton.icon(
+        FilledButton.icon(
           icon: const Icon(Icons.download),
           label: Text("ডাউনলোড করুন ($sizeInMB MB)"),
+          style: FilledButton.styleFrom(
+            backgroundColor:
+                Theme.of(context).extension<AppThemeColors>()!.active,
+            foregroundColor:
+                Theme.of(context).extension<AppThemeColors>()!.appBarText,
+          ),
           onPressed: () async {
             final assetResponse =
                 await StaticAssetApi().getTafsirUrl(tafsir.id);
@@ -170,12 +172,11 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
 }
 
 void showTafsirBottomSheet(BuildContext context, String suraName, Ayah ayah) {
+  final colors = Theme.of(context).extension<AppThemeColors>()!;
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Theme.of(context).colorScheme.brightness == Brightness.light
-        ? Theme.of(context).extension<AppThemeColors>()!.surfaceBg
-        : Theme.of(context).colorScheme.surface,
+    backgroundColor: colors.cardBg,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
     ),
@@ -188,7 +189,7 @@ void showTafsirBottomSheet(BuildContext context, String suraName, Ayah ayah) {
         builder: (_, scrollController) {
           return Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
+              color: colors.cardBg,
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(16.0)),
             ),
@@ -203,15 +204,16 @@ void showTafsirBottomSheet(BuildContext context, String suraName, Ayah ayah) {
                       wordSpacing: 3,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).textTheme.titleLarge?.color,
+                      color: colors.primaryText,
                     ),
                     textAlign: TextAlign.left,
                   ),
                 ),
                 Divider(
-                    height: 1,
-                    thickness: 1,
-                    color: Theme.of(context).dividerColor),
+                  height: 1,
+                  thickness: 1,
+                  color: colors.divider,
+                ),
                 Expanded(
                   child: SingleChildScrollView(
                     controller: scrollController,

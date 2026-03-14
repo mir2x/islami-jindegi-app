@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/helpers/get_location_name.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 
 class CurrentLocation extends ConsumerStatefulWidget {
@@ -53,7 +54,7 @@ class CurrentLocationState extends ConsumerState<CurrentLocation> {
     var textTheme = Theme.of(context).textTheme;
     var geoData = ref.watch(geolocationProvider);
 
-    var colorScheme = Theme.of(context).colorScheme;
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
 
     return WithPreferences(
       builder: (context, preferences) {
@@ -69,9 +70,7 @@ class CurrentLocationState extends ConsumerState<CurrentLocation> {
                 Text(
                   locationText,
                   style: textTheme.labelSmall?.copyWith(
-                    color: widget.oppositeColor
-                        ? colorScheme.onInverseSurface
-                        : null,
+                    color: widget.oppositeColor ? appColors.appBarText : null,
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -99,9 +98,7 @@ class CurrentLocationState extends ConsumerState<CurrentLocation> {
                 Text(
                   location,
                   style: textTheme.labelSmall?.copyWith(
-                    color: widget.oppositeColor
-                        ? colorScheme.onInverseSurface
-                        : null,
+                    color: widget.oppositeColor ? appColors.appBarText : null,
                   ),
                 ),
                 Container(
@@ -121,7 +118,7 @@ class CurrentLocationState extends ConsumerState<CurrentLocation> {
                           locales.location,
                           style: textTheme.labelSmall?.copyWith(
                             color: widget.oppositeColor
-                                ? colorScheme.onInverseSurface
+                                ? appColors.appBarText
                                 : null,
                           ),
                         ),

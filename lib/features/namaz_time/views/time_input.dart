@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:idkit_inputformatters/idkit_inputformatters.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import 'package:native_app/widgets/inputs/input_field.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 
@@ -34,7 +35,7 @@ class _TimeInputState extends ConsumerState<TimeInput> {
     var textTheme = Theme.of(context).textTheme;
     return WithPreferences(
       builder: (context, preferences) {
-        var colorScheme = Theme.of(context).colorScheme;
+        var appTheme = Theme.of(context).extension<AppThemeColors>()!;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,6 +45,11 @@ class _TimeInputState extends ConsumerState<TimeInput> {
                 Container(
                   width: 130,
                   margin: const EdgeInsets.only(right: 15),
+                  decoration: BoxDecoration(
+                    color: appTheme.cardBg,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: appTheme.divider),
+                  ),
                   child: InputField(
                     initialValue: widget.initialValue,
                     keyboardType: TextInputType.number,
@@ -57,9 +63,16 @@ class _TimeInputState extends ConsumerState<TimeInput> {
                     decoration: InputDecoration(
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 15),
-                      enabledBorder: UnderlineInputBorder(
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
                         borderSide: BorderSide(
-                          color: colorScheme.outlineVariant,
+                          color: appTheme.divider,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(
+                          color: appTheme.highlightBorder,
                         ),
                       ),
                       constraints: const BoxConstraints(maxHeight: 45),
@@ -74,7 +87,7 @@ class _TimeInputState extends ConsumerState<TimeInput> {
                                 padding: const EdgeInsets.only(bottom: 5),
                                 child: Icon(
                                   Icons.done,
-                                  color: colorScheme.onSurfaceVariant,
+                                  color: appTheme.secondaryText,
                                   size: 15,
                                 ),
                               ),

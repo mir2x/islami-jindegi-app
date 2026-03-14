@@ -67,9 +67,8 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final appBarBg = isLight ? appColors.surfaceBg : appColors.appBarBg;
-    final appBarFg = isLight ? appColors.secondaryText : appColors.appBarText;
+    final appBarBg = appColors.drawerHeaderBg;
+    final appBarFg = appColors.appBarText;
 
     return Container(
       color: appBarBg,
@@ -109,16 +108,8 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
     final selectedSurah = ref.watch(selectedSuraNavSurahProvider);
     final suraNames = ref.watch(suraNamesProvider);
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final rowSelectedBg = Color.alphaBlend(
-      appColors.appBarBg.withOpacity(0.10),
-      appColors.surfaceBg,
-    );
-    final selectedBg = isLight
-        ? rowSelectedBg
-        : Theme.of(context).colorScheme.primary.withOpacity(0.1);
-    final selectedFg =
-        isLight ? appColors.appBarBg : Theme.of(context).colorScheme.primary;
+    final selectedBg = appColors.highlight;
+    final selectedFg = appColors.primaryText;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
@@ -128,7 +119,7 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
       padding: EdgeInsets.zero,
       itemCount: 114,
       separatorBuilder: (context, _) =>
-          Divider(height: 1.h, color: Theme.of(context).dividerColor),
+          Divider(height: 1.h, color: appColors.divider),
       itemBuilder: (context, index) {
         final suraNumber = index + 1;
         final isSelected = suraNumber == selectedSurah;
@@ -140,7 +131,9 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
             style: TextStyle(
               fontSize: fontSize,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected ? selectedFg : Theme.of(context).textTheme.bodyLarge?.color,
+              color: isSelected
+                  ? selectedFg
+                  : Theme.of(context).textTheme.bodyLarge?.color,
             ),
           ),
           contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -158,16 +151,8 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
     final selectedAyah = ref.watch(selectedSuraNavAyahProvider);
     final ayahCounts = ref.watch(ayahCountsProvider);
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final rowSelectedBg = Color.alphaBlend(
-      appColors.appBarBg.withOpacity(0.10),
-      appColors.surfaceBg,
-    );
-    final selectedBg = isLight
-        ? rowSelectedBg
-        : Theme.of(context).colorScheme.primary.withOpacity(0.1);
-    final selectedFg =
-        isLight ? appColors.appBarBg : Theme.of(context).colorScheme.primary;
+    final selectedBg = appColors.highlight;
+    final selectedFg = appColors.primaryText;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 12.0 : 14.sp;
@@ -186,7 +171,7 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
       itemScrollController: _ayahScrollController,
       padding: EdgeInsets.zero,
       separatorBuilder: (context, _) =>
-          Divider(height: 1.h, color: Theme.of(context).dividerColor),
+          Divider(height: 1.h, color: appColors.divider),
       itemCount: totalAyahs,
       itemBuilder: (context, index) {
         final ayahNumber = index + 1;
@@ -199,7 +184,9 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
               _toBengaliNumber(ayahNumber),
               style: TextStyle(
                 fontSize: fontSize,
-                color: isSelected ? selectedFg : Theme.of(context).textTheme.bodyLarge?.color,
+                color: isSelected
+                    ? selectedFg
+                    : Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -227,8 +214,10 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
     }
 
     Future.delayed(const Duration(milliseconds: 200), () async {
+      if (!context.mounted) return;
       if (context.canPop()) context.pop();
       await Future.delayed(const Duration(milliseconds: 50));
+      if (!context.mounted) return;
       context.push('/qurans/sura/$suraNumber?scroll=${ayahNumber - 1}');
     });
   }

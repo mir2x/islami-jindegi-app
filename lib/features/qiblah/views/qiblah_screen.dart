@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/widgets/location/index.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class Qiblah extends ConsumerWidget {
   const Qiblah({super.key});
@@ -19,6 +20,7 @@ class Qiblah extends ConsumerWidget {
     bool isSmallMobile = screenWidth < 340;
     double compassSize = isSmallMobile ? 230 : 320;
     var geoData = ref.watch(geolocationProvider);
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return AppScaffold(
       title: Text(locales.qiblah),
@@ -45,54 +47,78 @@ class Qiblah extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const CurrentLocation(alignment: MainAxisAlignment.center),
-                StreamBuilder<CompassEvent>(
-                  stream: FlutterCompass.events,
-                  builder: (context, snapshot) {
-                    double heading = snapshot.data?.heading ?? 0;
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: colors.cardBg,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: colors.divider),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colors.shadow.withValues(alpha: 0.12),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: StreamBuilder<CompassEvent>(
+                    stream: FlutterCompass.events,
+                    builder: (context, snapshot) {
+                      double heading = snapshot.data?.heading ?? 0;
 
-                    return SizedBox(
-                      height: compassSize,
-                      width: compassSize,
-                      child: AnimatedRotation(
-                        duration: const Duration(milliseconds: 800),
-                        turns: -heading / 360,
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              top: 0,
-                              left: 0,
-                              right: 0,
-                              bottom: 0,
-                              child: SvgPicture.asset(
-                                'assets/images/icons/compass.svg',
-                                fit: BoxFit.scaleDown,
-                              ),
-                            ),
-                            Positioned(
-                              top: 0,
-                              left: 0,
-                              right: 0,
-                              bottom: 0,
-                              child: AnimatedRotation(
-                                duration: const Duration(milliseconds: 500),
-                                turns: qibla.direction / 360,
+                      return SizedBox(
+                        height: compassSize,
+                        width: compassSize,
+                        child: AnimatedRotation(
+                          duration: const Duration(milliseconds: 800),
+                          turns: -heading / 360,
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
                                 child: SvgPicture.asset(
-                                  'assets/images/icons/kaaba-compass.svg',
+                                  'assets/images/icons/compass.svg',
                                   fit: BoxFit.scaleDown,
-                                  width: compassSize,
-                                  height: compassSize,
                                 ),
                               ),
-                            ),
-                          ],
+                              Positioned(
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                child: AnimatedRotation(
+                                  duration: const Duration(milliseconds: 500),
+                                  turns: qibla.direction / 360,
+                                  child: SvgPicture.asset(
+                                    'assets/images/icons/kaaba-compass.svg',
+                                    fit: BoxFit.scaleDown,
+                                    width: compassSize,
+                                    height: compassSize,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
                 Container(
                   width: 250,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
                   margin: EdgeInsets.only(bottom: isSmallMobile ? 20 : 40),
+                  decoration: BoxDecoration(
+                    color: colors.cardBg,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: colors.divider),
+                  ),
                   child: Text(
                     locales.qiblahInstruction,
                     style: textTheme.labelMedium,

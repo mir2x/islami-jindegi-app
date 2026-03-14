@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/providers/check_asset_file.dart';
 import 'package:native_app/widgets/responsive/image.dart';
 import 'package:native_app/settings/image.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class BookImage extends ConsumerWidget {
   const BookImage({
@@ -18,6 +19,7 @@ class BookImage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     var assetChecker = ref.watch(
       checkAssetFileProvider('images/books/$bookId.jpg'),
     );
@@ -37,8 +39,7 @@ class BookImage extends ConsumerWidget {
           error: (error, _) => null,
           data: (highlight) {
             if (highlight != null) {
-              return Border.all(
-                  color: Theme.of(context).colorScheme.error, width: 4);
+              return Border.all(color: colors.active, width: 4);
             } else {
               return null;
             }

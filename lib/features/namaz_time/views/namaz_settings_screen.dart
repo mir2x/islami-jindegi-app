@@ -8,6 +8,7 @@ import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/section_title.dart';
 import 'package:native_app/widgets/buttons/dropdown.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import 'time_input.dart';
 
 class NamazSettings extends ConsumerWidget {
@@ -38,6 +39,7 @@ class NamazSettings extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var prefs = ref.watch(preferencesProvider);
+    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
 
     return AppScaffold(
       title: Text(locales.namazSettings),
@@ -64,142 +66,100 @@ class NamazSettings extends ConsumerWidget {
           int selectedMaghrib = preferences.getInt('maghrib') ?? 3;
           int selectedIsha = preferences.getInt('isha') ?? 0;
 
+          Widget settingsSection(String title, Widget child) {
+            return Container(
+              margin: const EdgeInsets.only(bottom: 24),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: appTheme.cardBg,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: appTheme.divider),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SectionTitle(title: title),
+                  const SizedBox(height: 12),
+                  child,
+                ],
+              ),
+            );
+          }
+
           return ItemContent(
             children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 40, top: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SectionTitle(title: locales.mazhab),
-                    Dropdown(
-                      items: madhabs,
-                      selectedValue: selectedMadhab,
-                      updateItem: (value) {
-                        ref
-                            .read(preferencesProvider.notifier)
-                            .updateMadhab(value);
-                      },
-                    ),
-                  ],
+              settingsSection(
+                locales.mazhab,
+                Dropdown(
+                  items: madhabs,
+                  selectedValue: selectedMadhab,
+                  updateItem: (value) {
+                    ref.read(preferencesProvider.notifier).updateMadhab(value);
+                  },
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 40),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SectionTitle(title: locales.calcuationMethod),
-                    Dropdown(
-                      items: methods,
-                      selectedValue: selectedMethod,
-                      updateItem: (value) {
-                        ref
-                            .read(preferencesProvider.notifier)
-                            .updateMethod(value);
-                      },
-                    ),
-                  ],
+              settingsSection(
+                locales.calcuationMethod,
+                Dropdown(
+                  items: methods,
+                  selectedValue: selectedMethod,
+                  updateItem: (value) {
+                    ref.read(preferencesProvider.notifier).updateMethod(value);
+                  },
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 40),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SectionTitle(title: locales.fajr),
-                    TimeInput(
-                      initialValue: selectedFajr.toString(),
-                      onChanged: (value) {
-                        ref
-                            .read(preferencesProvider.notifier)
-                            .updateFajr(value);
-                      },
-                    ),
-                  ],
+              settingsSection(
+                locales.fajr,
+                TimeInput(
+                  initialValue: selectedFajr.toString(),
+                  onChanged: (value) {
+                    ref.read(preferencesProvider.notifier).updateFajr(value);
+                  },
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 40),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SectionTitle(title: locales.sunrise),
-                    TimeInput(
-                      initialValue: selectedSunrise.toString(),
-                      onChanged: (value) {
-                        ref
-                            .read(preferencesProvider.notifier)
-                            .updateSunrise(value);
-                      },
-                    ),
-                  ],
+              settingsSection(
+                locales.sunrise,
+                TimeInput(
+                  initialValue: selectedSunrise.toString(),
+                  onChanged: (value) {
+                    ref.read(preferencesProvider.notifier).updateSunrise(value);
+                  },
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 40),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SectionTitle(title: locales.zuhr),
-                    TimeInput(
-                      initialValue: selectedDhuhr.toString(),
-                      onChanged: (value) {
-                        ref
-                            .read(preferencesProvider.notifier)
-                            .updateDhuhr(value);
-                      },
-                    ),
-                  ],
+              settingsSection(
+                locales.zuhr,
+                TimeInput(
+                  initialValue: selectedDhuhr.toString(),
+                  onChanged: (value) {
+                    ref.read(preferencesProvider.notifier).updateDhuhr(value);
+                  },
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 40),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SectionTitle(title: locales.asr),
-                    TimeInput(
-                      initialValue: selectedAsr.toString(),
-                      onChanged: (value) {
-                        ref.read(preferencesProvider.notifier).updateAsr(value);
-                      },
-                    ),
-                  ],
+              settingsSection(
+                locales.asr,
+                TimeInput(
+                  initialValue: selectedAsr.toString(),
+                  onChanged: (value) {
+                    ref.read(preferencesProvider.notifier).updateAsr(value);
+                  },
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 40),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SectionTitle(title: locales.maghrib),
-                    TimeInput(
-                      initialValue: selectedMaghrib.toString(),
-                      onChanged: (value) {
-                        ref
-                            .read(preferencesProvider.notifier)
-                            .updateMaghrib(value);
-                      },
-                    ),
-                  ],
+              settingsSection(
+                locales.maghrib,
+                TimeInput(
+                  initialValue: selectedMaghrib.toString(),
+                  onChanged: (value) {
+                    ref.read(preferencesProvider.notifier).updateMaghrib(value);
+                  },
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 40),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SectionTitle(title: locales.isha),
-                    TimeInput(
-                      initialValue: selectedIsha.toString(),
-                      onChanged: (value) {
-                        ref
-                            .read(preferencesProvider.notifier)
-                            .updateIsha(value);
-                      },
-                    ),
-                  ],
+              settingsSection(
+                locales.isha,
+                TimeInput(
+                  initialValue: selectedIsha.toString(),
+                  onChanged: (value) {
+                    ref.read(preferencesProvider.notifier).updateIsha(value);
+                  },
                 ),
               ),
             ],

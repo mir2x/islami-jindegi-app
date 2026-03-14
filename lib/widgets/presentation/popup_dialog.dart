@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class PopupDialog extends StatelessWidget {
   const PopupDialog({
@@ -14,6 +15,7 @@ class PopupDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     dynamic dialogMargin = direction == 'ltr'
         ? const EdgeInsets.only(top: 12.0, right: 7.0)
@@ -31,17 +33,15 @@ class PopupDialog extends StatelessWidget {
               Container(
                 margin: dialogMargin,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
+                  color: colors.cardBg,
                   shape: BoxShape.rectangle,
                   borderRadius: BorderRadius.circular(16.0),
+                  border: Border.all(color: colors.divider),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .shadow
-                          .withValues(alpha: 0.26),
+                      color: colors.shadow.withValues(alpha: 0.26),
                       blurRadius: 0.0,
-                      offset: Offset(0.0, 0.0),
+                      offset: const Offset(0.0, 0.0),
                     ),
                   ],
                 ),
@@ -73,6 +73,7 @@ class CustomCloseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pop();
@@ -81,10 +82,10 @@ class CustomCloseButton extends StatelessWidget {
         alignment: Alignment.topRight,
         child: CircleAvatar(
           radius: 16.0,
-          backgroundColor: Theme.of(context).colorScheme.surface,
+          backgroundColor: colors.cardBg,
           child: Icon(
             Icons.close,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: colors.secondaryText,
           ),
         ),
       ),

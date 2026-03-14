@@ -19,7 +19,8 @@ class SuraParaNavigationView extends ConsumerStatefulWidget {
       _SuraParaNavigationViewState();
 }
 
-class _SuraParaNavigationViewState extends ConsumerState<SuraParaNavigationView> {
+class _SuraParaNavigationViewState
+    extends ConsumerState<SuraParaNavigationView> {
   bool _isInitialStateSet = false;
 
   String _toBengaliNumber(int number) {
@@ -73,9 +74,8 @@ class _SuraParaNavigationViewState extends ConsumerState<SuraParaNavigationView>
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final appBarBg = isLight ? appColors.surfaceBg : appColors.appBarBg;
-    final appBarFg = isLight ? appColors.secondaryText : appColors.appBarText;
+    final appBarBg = appColors.drawerHeaderBg;
+    final appBarFg = appColors.appBarText;
 
     return Container(
       color: appBarBg,
@@ -112,16 +112,8 @@ class _SuraParaNavigationViewState extends ConsumerState<SuraParaNavigationView>
   Widget _buildParaList(WidgetRef ref) {
     final selectedPara = ref.watch(selectedDrawerParaProvider);
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final rowSelectedBg = Color.alphaBlend(
-      appColors.appBarBg.withOpacity(0.10),
-      appColors.surfaceBg,
-    );
-    final selectedBg = isLight
-        ? rowSelectedBg
-        : Theme.of(context).colorScheme.primary.withOpacity(0.1);
-    final selectedFg =
-        isLight ? appColors.appBarBg : Theme.of(context).colorScheme.primary;
+    final selectedBg = appColors.highlight;
+    final selectedFg = appColors.primaryText;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
@@ -130,7 +122,7 @@ class _SuraParaNavigationViewState extends ConsumerState<SuraParaNavigationView>
       padding: EdgeInsets.zero,
       itemCount: 30,
       separatorBuilder: (context, _) =>
-          Divider(height: 1.h, color: Theme.of(context).dividerColor),
+          Divider(height: 1.h, color: appColors.divider),
       itemBuilder: (context, index) {
         final paraNumber = index + 1;
         final isSelected = paraNumber == selectedPara;
@@ -142,7 +134,9 @@ class _SuraParaNavigationViewState extends ConsumerState<SuraParaNavigationView>
               _toBengaliNumber(paraNumber),
               style: TextStyle(
                 fontSize: fontSize,
-                color: isSelected ? selectedFg : Theme.of(context).textTheme.bodyLarge?.color,
+                color: isSelected
+                    ? selectedFg
+                    : Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -158,16 +152,8 @@ class _SuraParaNavigationViewState extends ConsumerState<SuraParaNavigationView>
   Widget _buildStartList(WidgetRef ref) {
     final selectedPara = ref.watch(selectedDrawerParaProvider);
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final rowSelectedBg = Color.alphaBlend(
-      appColors.appBarBg.withOpacity(0.10),
-      appColors.surfaceBg,
-    );
-    final selectedBg = isLight
-        ? rowSelectedBg
-        : Theme.of(context).colorScheme.primary.withOpacity(0.1);
-    final selectedFg =
-        isLight ? appColors.appBarBg : Theme.of(context).colorScheme.primary;
+    final selectedBg = appColors.highlight;
+    final selectedFg = appColors.primaryText;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 12.0 : 14.sp;
@@ -177,7 +163,7 @@ class _SuraParaNavigationViewState extends ConsumerState<SuraParaNavigationView>
       padding: EdgeInsets.zero,
       itemCount: 1,
       separatorBuilder: (context, _) =>
-          Divider(height: 1.h, color: Theme.of(context).dividerColor),
+          Divider(height: 1.h, color: appColors.divider),
       itemBuilder: (context, _) {
         return ListTile(
           tileColor: selectedBg,
@@ -209,8 +195,10 @@ class _SuraParaNavigationViewState extends ConsumerState<SuraParaNavigationView>
     }
 
     Future.delayed(const Duration(milliseconds: 200), () async {
+      if (!context.mounted) return;
       if (context.canPop()) context.pop();
       await Future.delayed(const Duration(milliseconds: 50));
+      if (!context.mounted) return;
       context.push('/qurans/sura/$suraNumber?scroll=${ayahNumber - 1}');
     });
   }

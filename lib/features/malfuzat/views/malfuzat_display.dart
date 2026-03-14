@@ -9,6 +9,7 @@ import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/widgets/audio/player.dart';
 import 'package:native_app/helpers/file_size.dart';
 import 'package:native_app/helpers/play_duration.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class MalfuzatDisplay extends ConsumerWidget {
   const MalfuzatDisplay({
@@ -34,6 +35,7 @@ class MalfuzatDisplay extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,6 +50,12 @@ class MalfuzatDisplay extends ConsumerWidget {
         if (author != null) ...[
           Container(
             margin: const EdgeInsets.only(bottom: 15),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: appTheme.highlight,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: appTheme.divider),
+            ),
             child: PageSubtitle(
               text: author!,
               fontSizeRatio: fontSizeRatio,
@@ -57,6 +65,12 @@ class MalfuzatDisplay extends ConsumerWidget {
         if (body != null) ...[
           Container(
             margin: const EdgeInsets.only(bottom: 30),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: appTheme.cardBg,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: appTheme.divider),
+            ),
             child: PageHtmlBody(
               text: body!,
               fontSizeRatio: fontSizeRatio,

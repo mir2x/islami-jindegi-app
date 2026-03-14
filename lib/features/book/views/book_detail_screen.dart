@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -13,6 +12,7 @@ import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/utils/with_last_visited.dart';
 import 'package:native_app/widgets/utils/comma_separated_list.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
+import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
@@ -27,6 +27,7 @@ import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/features/book/views/pdf_reader.dart';
 import 'package:native_app/features/book/views/image.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../providers/book_providers.dart';
 import '../providers/book_download_providers.dart';
 import '../models/book.dart';
@@ -116,6 +117,7 @@ class _BookContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final locales = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
+    final appTheme = Theme.of(context).extension<AppThemeColors>()!;
 
     // Check if book has chapters by fetching the last chapter
     final chaptersQuery = ref.watch(chapterListProvider(
@@ -148,15 +150,12 @@ class _BookContent extends ConsumerWidget {
             body: NextPageSwipe(
               onPrevious: () => _previousPage(context, ref),
               onNext: () => _nextPage(context, ref),
-              child: Column(
+              child: ItemContent(
                 children: [
-                  Container(
-                    margin: const EdgeInsets.only(top: 15, left: 15, right: 15),
-                    child: Text(
-                      book.title,
-                      textAlign: TextAlign.center,
-                      style: textTheme.headlineLarge?.copyWith(height: 1.2),
-                    ),
+                  Text(
+                    book.title,
+                    textAlign: TextAlign.center,
+                    style: textTheme.headlineLarge?.copyWith(height: 1.2),
                   ),
                   Container(
                     margin: const EdgeInsets.only(top: 3, bottom: 15),
@@ -173,106 +172,124 @@ class _BookContent extends ConsumerWidget {
                     ),
                   ),
                   Container(
-                    padding:
-                        const EdgeInsets.only(bottom: 10, left: 15, right: 15),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: appTheme.highlight,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: appTheme.divider),
+                    ),
                     child: Text(
                       locales.contents,
-                      style: textTheme.labelLarge,
+                      style: textTheme.labelLarge?.copyWith(
+                        color: appTheme.primaryText,
+                      ),
                     ),
                   ),
                   Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: WithLastVisited(
-                        builder: (context, settings) {
-                          String? lastChapterId;
-                          Map books = json.decode(
-                            settings.getString('lastChapters') ?? '{}',
-                          );
-                          if (books.containsKey(book.id.toString())) {
-                            lastChapterId = books[book.id.toString()];
-                          }
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: appTheme.cardBg,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: appTheme.divider),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: WithLastVisited(
+                          builder: (context, settings) {
+                            String? lastChapterId;
+                            Map books = json.decode(
+                              settings.getString('lastChapters') ?? '{}',
+                            );
+                            if (books.containsKey(book.id.toString())) {
+                              lastChapterId = books[book.id.toString()];
+                            }
 
-                          var allChaptersQuery = ref.watch(chapterListProvider(
-                            ChapterListParams(
-                              bookId: book.id,
-                              includeSubchapters: true,
-                            ),
-                          ));
+                            var allChaptersQuery =
+                                ref.watch(chapterListProvider(
+                              ChapterListParams(
+                                bookId: book.id,
+                                includeSubchapters: true,
+                              ),
+                            ));
 
-                          return allChaptersQuery.when(
-                            loading: () => const Center(
-                                child: CircularProgressIndicator()),
-                            error: (error, _) => Text(error.toString()),
-                            data: (resources) {
-                              return ListView.builder(
-                                key: PageStorageKey<String>(book.id),
-                                itemCount: resources.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  var chapter = resources[index];
+                            return allChaptersQuery.when(
+                              loading: () => const Center(
+                                  child: CircularProgressIndicator()),
+                              error: (error, _) => Text(error.toString()),
+                              data: (resources) {
+                                return ListView.builder(
+                                  key: PageStorageKey<String>(book.id),
+                                  itemCount: resources.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    var chapter = resources[index];
 
-                                  if (chapter.subchapters.isNotEmpty) {
-                                    return _Subchapters(
-                                      key: PageStorageKey<String>(chapter.id),
-                                      book: book,
-                                      chapter: chapter,
-                                      lastSubchapterId: lastChapterId,
-                                      isOpen: chapter.subchapters
-                                          .map((s) => s.id.toString())
-                                          .any((id) => id == lastChapterId),
-                                    );
-                                  } else {
-                                    return InkWell(
-                                      onTap: () => context.push(
-                                        'books/${book.id}/chapters/${chapter.id}',
-                                      ),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .outlineVariant,
+                                    if (chapter.subchapters.isNotEmpty) {
+                                      return _Subchapters(
+                                        key: PageStorageKey<String>(chapter.id),
+                                        book: book,
+                                        chapter: chapter,
+                                        lastSubchapterId: lastChapterId,
+                                        isOpen: chapter.subchapters
+                                            .map((s) => s.id.toString())
+                                            .any((id) => id == lastChapterId),
+                                      );
+                                    } else {
+                                      return InkWell(
+                                        onTap: () => context.push(
+                                          'books/${book.id}/chapters/${chapter.id}',
+                                        ),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              bottom: BorderSide(
+                                                color: appTheme.divider,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 15),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Flexible(
-                                              child: Text(
-                                                chapter.title,
-                                                style: textTheme.titleLarge,
-                                              ),
-                                            ),
-                                            if (lastChapterId ==
-                                                chapter.id.toString()) ...[
-                                              Container(
-                                                margin: const EdgeInsets.only(
-                                                    left: 10),
-                                                child: SvgPicture.asset(
-                                                  'assets/images/icons/open-book.svg',
-                                                  fit: BoxFit.scaleDown,
-                                                  width: 25,
-                                                  height: 20,
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 15,
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Flexible(
+                                                child: Text(
+                                                  chapter.title,
+                                                  style: textTheme.titleLarge,
                                                 ),
                                               ),
-                                            ] else ...[
-                                              const SizedBox.shrink(),
+                                              if (lastChapterId ==
+                                                  chapter.id.toString()) ...[
+                                                Container(
+                                                  margin: const EdgeInsets.only(
+                                                    left: 10,
+                                                  ),
+                                                  child: SvgPicture.asset(
+                                                    'assets/images/icons/open-book.svg',
+                                                    fit: BoxFit.scaleDown,
+                                                    width: 25,
+                                                    height: 20,
+                                                  ),
+                                                ),
+                                              ] else ...[
+                                                const SizedBox.shrink(),
+                                              ],
                                             ],
-                                          ],
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  }
-                                },
-                              );
-                            },
-                          );
-                        },
+                                      );
+                                    }
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -578,8 +595,9 @@ class _SubchaptersState extends ConsumerState<_Subchapters> {
     return Container(
       decoration: BoxDecoration(
         border: Border(
-          bottom:
-              BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+          bottom: BorderSide(
+            color: Theme.of(context).extension<AppThemeColors>()!.divider,
+          ),
         ),
       ),
       child: Column(

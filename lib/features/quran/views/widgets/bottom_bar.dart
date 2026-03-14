@@ -29,9 +29,8 @@ class BottomBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final barBg = isLight ? colors.surfaceBg : colors.appBarBg;
-    final barFg = isLight ? colors.secondaryText : colors.appBarText;
+    final barBg = colors.appBarBg;
+    final barFg = colors.appBarText;
 
     return Container(
       height: _height,
@@ -152,11 +151,9 @@ class _ReciterDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final fieldBg =
-        isLight ? colors.surfaceBg.withOpacity(0.9) : colors.dropdownBg;
-    final menuBg = isLight ? colors.surfaceBg : colors.dropdownBg;
-    final textColor = isLight ? colors.secondaryText : colors.primaryText;
+    final fieldBg = colors.dropdownBg;
+    final menuBg = colors.dropdownBg;
+    final textColor = colors.primaryText;
 
     final selectedReciter = ref.watch(selectedReciterProvider);
     final displayReciterName =
@@ -170,7 +167,7 @@ class _ReciterDropdown extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 12.w),
       decoration: BoxDecoration(
         color: fieldBg,
-        border: Border.all(color: colors.secondary.withOpacity(0.4)),
+        border: Border.all(color: colors.divider),
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: DropdownButtonHideUnderline(
@@ -234,7 +231,7 @@ class _BookmarkButton extends ConsumerWidget {
     return _NavIconButton(
       icon: isBookmarked ? Icons.star_rounded : HugeIcons.strokeRoundedStar,
       iconSize: iconSize,
-      color: isBookmarked ? colors.secondary : colors.secondaryText,
+      color: isBookmarked ? colors.secondary : colors.appBarText,
       isLandscape: isLandscape,
       onPressed: () => _handleBookmark(
           context, ref, isBookmarked, currentPage, bookmarkNotifier),
@@ -283,7 +280,7 @@ class _BookmarkButton extends ConsumerWidget {
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.r),
-          side: BorderSide(color: colors.secondary.withOpacity(0.4)),
+          side: BorderSide(color: colors.divider),
         ),
         content: Text(
           message,
@@ -320,17 +317,24 @@ class _NavIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    return IconButton(
-      iconSize: iconSize,
-      constraints: BoxConstraints(
-        minHeight: isLandscape ? 50.0 : 64.0.h,
-        minWidth: isLandscape ? 40.0 : 48.0.w,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: isLandscape ? 1.5.w : 2.w),
+      child: Material(
+        color: colors.highlight.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(12.r),
+        child: IconButton(
+          iconSize: iconSize,
+          constraints: BoxConstraints(
+            minHeight: isLandscape ? 40.0 : 46.0.h,
+            minWidth: isLandscape ? 34.0 : 40.0.w,
+          ),
+          padding: EdgeInsets.zero,
+          splashColor: colors.selectionOverlay,
+          highlightColor: colors.selectionOverlay.withValues(alpha: 0.1),
+          icon: Center(child: Icon(icon, color: color)),
+          onPressed: onPressed,
+        ),
       ),
-      padding: EdgeInsets.zero,
-      splashColor: colors.selectionOverlay,
-      highlightColor: colors.selectionOverlay.withOpacity(0.1),
-      icon: Center(child: Icon(icon, color: color)),
-      onPressed: onPressed,
     );
   }
 }

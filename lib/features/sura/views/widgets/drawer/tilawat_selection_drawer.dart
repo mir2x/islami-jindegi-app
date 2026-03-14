@@ -60,7 +60,7 @@ class _TilawatSelectionDrawerState
           width: 280.w,
           child: Material(
             elevation: 16,
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).extension<AppThemeColors>()!.drawerBg,
             borderRadius: const BorderRadius.only(
               topRight: Radius.circular(16),
               bottomRight: Radius.circular(16),
@@ -76,7 +76,9 @@ class _TilawatSelectionDrawerState
                       VerticalDivider(
                         width: 1,
                         thickness: 1,
-                        color: Theme.of(context).dividerColor,
+                        color: Theme.of(context)
+                            .extension<AppThemeColors>()!
+                            .divider,
                       ),
                       Expanded(flex: 2, child: _buildAyahList(ref)),
                     ],
@@ -91,11 +93,9 @@ class _TilawatSelectionDrawerState
   }
 
   Widget _buildHeader(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = colorScheme.brightness == Brightness.light;
-    final headerBg = isLight ? appColors.appBarBg : colorScheme.secondary;
-    final headerFg = isLight ? appColors.appBarText : colorScheme.onSecondary;
+    final headerBg = appColors.drawerHeaderBg;
+    final headerFg = appColors.appBarText;
     return Container(
       color: headerBg,
       padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -137,28 +137,22 @@ class _TilawatSelectionDrawerState
   Widget _buildSurahList(WidgetRef ref) {
     final selectedSurah = ref.watch(_selectedTilawatSurahProvider);
     final suraNames = ref.watch(suraNamesProvider);
-    final colorScheme = Theme.of(context).colorScheme;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = colorScheme.brightness == Brightness.light;
-    final selectedBg = isLight
-        ? appColors.appBarBg.withOpacity(0.15)
-        : colorScheme.primary.withOpacity(0.1);
-    final selectedFg = isLight ? appColors.appBarBg : colorScheme.primary;
+    final selectedBg = appColors.highlight;
+    final selectedFg = appColors.primaryText;
 
     return ScrollablePositionedList.separated(
       itemScrollController: _surahScrollController,
       padding: EdgeInsets.zero,
       itemCount: 114,
       separatorBuilder: (context, index) =>
-          Divider(height: 1.h, color: Theme.of(context).dividerColor),
+          Divider(height: 1.h, color: appColors.divider),
       itemBuilder: (context, index) {
         final suraNumber = index + 1;
         final isSelected = suraNumber == selectedSurah;
 
         return ListTile(
-          tileColor: isSelected
-              ? selectedBg
-              : null,
+          tileColor: isSelected ? selectedBg : null,
           title: Text(
             '${_toBengaliNumber(suraNumber)}. ${suraNames[index]}',
             style: TextStyle(
@@ -181,6 +175,7 @@ class _TilawatSelectionDrawerState
   Widget _buildAyahList(WidgetRef ref) {
     final selectedSurah = ref.watch(_selectedTilawatSurahProvider);
     final ayahCounts = ref.watch(ayahCountsProvider);
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
 
     if (selectedSurah < 1 || selectedSurah > 114) return const SizedBox();
 
@@ -190,7 +185,7 @@ class _TilawatSelectionDrawerState
       itemScrollController: _ayahScrollController,
       padding: EdgeInsets.zero,
       separatorBuilder: (context, index) =>
-          Divider(height: 1.h, color: Theme.of(context).dividerColor),
+          Divider(height: 1.h, color: appColors.divider),
       itemCount: totalAyahs,
       itemBuilder: (context, index) {
         final ayahNumber = index + 1;
@@ -201,7 +196,7 @@ class _TilawatSelectionDrawerState
               _toBengaliNumber(ayahNumber),
               style: TextStyle(
                 fontSize: 14.sp,
-                color: Theme.of(context).textTheme.bodyLarge?.color,
+                color: appColors.primaryText,
               ),
             ),
           ),
@@ -224,8 +219,10 @@ class _TilawatSelectionDrawerState
     } else {
       // Different sura — navigate
       Future.delayed(const Duration(milliseconds: 200), () async {
+        if (!context.mounted) return;
         if (context.canPop()) context.pop();
         await Future.delayed(const Duration(milliseconds: 50));
+        if (!context.mounted) return;
         context.push('/qurans/tilawat?sura=$suraNumber&ayah=$ayahNumber');
       });
     }

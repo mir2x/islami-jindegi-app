@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/features/quran/views/widgets/page_info_overlay.dart';
 import '../../../../core/constants.dart';
+import '../../../../theme/app_theme_color.dart';
 import '../../models/ayah_box.dart';
 import '../../models/selected_ayah_state.dart';
 import '../../providers/ayah_highlight_providers.dart';
@@ -32,18 +33,6 @@ class QuranPage extends ConsumerWidget {
     final touchModeOn = ref.watch(touchModeProvider);
 
     final logicalPage = pageIndex + 1;
-
-    final pageInfo = ref.watch(pageInfoProvider(logicalPage));
-
-    final int currentPageNumber = pageInfo.pageNumber;
-    final int? currentParaNumber = pageInfo.paraNumber;
-    final List<int> surasOnThisPage = pageInfo.surasOnPage;
-
-    print('Page: $currentPageNumber, Para: $currentParaNumber');
-    for (final sura in surasOnThisPage) {
-      final (startAyah, endAyah) = pageInfo.suraAyahRanges[sura]!;
-      print('Sura $sura is on this page from ayah $startAyah to $endAyah.');
-    }
 
     final pageNumber = logicalPage < kFirstPageNumber ? -1 : logicalPage;
     final boxes = pageNumber == -1
@@ -136,7 +125,7 @@ class QuranPage extends ConsumerWidget {
                 );
               } catch (e) {
                 debugPrint(
-                    "Error finding first box for selected ayah on page $pageNumber: $e");
+                    'Error finding first box for selected ayah on page $pageNumber: $e');
                 menuAnchorRectOnThisPage = null;
               }
             }
@@ -152,8 +141,8 @@ class QuranPage extends ConsumerWidget {
                 painter: AyahHighlighter(
                   highlightRectsOnThisPage,
                   Theme.of(context)
-                      .colorScheme
-                      .secondaryContainer
+                      .extension<AppThemeColors>()!
+                      .selectionOverlay
                       .withValues(alpha: 0.6),
                 ),
               ),

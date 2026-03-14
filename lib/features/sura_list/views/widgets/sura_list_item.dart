@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:go_router/go_router.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../../models/sura_list_item.dart';
 
 class SuraListItem extends ConsumerStatefulWidget {
@@ -60,7 +61,8 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
 
   @override
   Widget build(BuildContext context) {
-    final highlightColor = Theme.of(context).colorScheme.primary;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final highlightColor = colors.active;
 
     return AnimatedBuilder(
       animation: _animation,
@@ -69,13 +71,16 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
         return Container(
           decoration: BoxDecoration(
             color: isActive
-                ? highlightColor.withOpacity(0.08 + _animation.value * 0.12)
-                : Colors.transparent,
+                ? highlightColor.withValues(
+                    alpha: 0.08 + _animation.value * 0.12,
+                  )
+                : null,
             border: isActive
                 ? Border(
                     left: BorderSide(
-                      color: highlightColor
-                          .withOpacity(0.6 + _animation.value * 0.4),
+                      color: highlightColor.withValues(
+                        alpha: 0.6 + _animation.value * 0.4,
+                      ),
                       width: 4.0,
                     ),
                   )
@@ -120,7 +125,10 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
       height: 45,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
+        color: Theme.of(context)
+            .extension<AppThemeColors>()!
+            .highlight
+            .withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
@@ -129,7 +137,7 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
           wordSpacing: 3,
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).extension<AppThemeColors>()!.active,
         ),
       ),
     );
@@ -142,7 +150,7 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
         Text(
           widget.sura.nameBangla,
           style: const TextStyle(
-              wordSpacing: 3,
+            wordSpacing: 3,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -151,9 +159,9 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
         Text(
           widget.sura.meaningBangla,
           style: TextStyle(
-              wordSpacing: 3,
+            wordSpacing: 3,
             fontSize: 14,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: Theme.of(context).extension<AppThemeColors>()!.secondaryText,
           ),
         ),
       ],
@@ -169,15 +177,16 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         HugeIcon(
-            icon: iconData,
-            color: Theme.of(context).colorScheme.outlineVariant,
-            size: 28),
+          icon: iconData,
+          color: Theme.of(context).extension<AppThemeColors>()!.secondaryText,
+          size: 28,
+        ),
         const SizedBox(width: 8.0),
         Text(
           widget.sura.nameArabic,
           style: GoogleFonts.amiri(
             fontSize: 18,
-            color: Theme.of(context).colorScheme.onSurface,
+            color: Theme.of(context).extension<AppThemeColors>()!.arabicText,
             fontWeight: FontWeight.bold,
           ),
         ),

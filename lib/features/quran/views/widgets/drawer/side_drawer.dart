@@ -62,8 +62,10 @@ class _SideDrawerState extends ConsumerState<SideDrawer>
 
           final bool isLoading = mappingsAsync.isLoading;
           final bool hasError = mappingsAsync.hasError;
-          final bool isDataReady =
-              !isLoading && !hasError && suraMapping.isNotEmpty && paraPageRanges.isNotEmpty;
+          final bool isDataReady = !isLoading &&
+              !hasError &&
+              suraMapping.isNotEmpty &&
+              paraPageRanges.isNotEmpty;
 
           Widget tabContent;
           if (isLoading) {
@@ -89,8 +91,14 @@ class _SideDrawerState extends ConsumerState<SideDrawer>
               width: 250.w,
               child: Material(
                 elevation: 0,
-                color: Theme.of(context).colorScheme.surface,
+                color: Theme.of(context).extension<AppThemeColors>()!.drawerBg,
                 clipBehavior: Clip.antiAlias,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(22.r),
+                    bottomRight: Radius.circular(22.r),
+                  ),
+                ),
                 child: Column(
                   children: [
                     Expanded(
@@ -99,20 +107,17 @@ class _SideDrawerState extends ConsumerState<SideDrawer>
                     Builder(builder: (context) {
                       final appColors =
                           Theme.of(context).extension<AppThemeColors>()!;
-                      final colorScheme = Theme.of(context).colorScheme;
-                      final isLight = colorScheme.brightness == Brightness.light;
-                      final appBarBg = isLight ? appColors.surfaceBg : appColors.appBarBg;
-                      final appBarFg = isLight ? appColors.secondaryText : appColors.appBarText;
-                      final indicatorColor = isLight
-                          ? appColors.divider.withOpacity(0.7)
-                          : colorScheme.primary.withOpacity(0.3);
+                      final appBarBg = appColors.drawerHeaderBg;
+                      final appBarFg = appColors.appBarText;
+                      final indicatorColor = appColors.highlight;
                       return Container(
                         color: appBarBg,
                         child: TabBar(
                           controller: _tabController,
                           labelColor: appBarFg,
                           dividerColor: appBarBg.withValues(alpha: 0),
-                          unselectedLabelColor: appBarFg.withOpacity(0.7),
+                          unselectedLabelColor:
+                              appBarFg.withValues(alpha: 0.72),
                           indicator: BoxDecoration(
                             color: indicatorColor,
                             borderRadius: BorderRadius.zero,

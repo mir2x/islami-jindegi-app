@@ -5,6 +5,7 @@ import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/services/static_asset_api.dart';
 import '../../core/utils/offline_database_helper.dart';
+import '../../theme/app_theme_color.dart';
 
 /// A widget that checks if the offline DB for a feature is downloaded.
 /// If not, shows a prompt to the user with options:
@@ -207,6 +208,8 @@ class _OfflineDbPromptState extends State<OfflineDbPrompt> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+
     return Stack(
       children: [
         widget.child,
@@ -217,7 +220,7 @@ class _OfflineDbPromptState extends State<OfflineDbPrompt> {
             bottom: 0,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              color: Theme.of(context).colorScheme.primaryContainer,
+              color: colors.highlight,
               child: Row(
                 children: [
                   SizedBox(
@@ -236,7 +239,7 @@ class _OfflineDbPromptState extends State<OfflineDbPrompt> {
                         fontFamily: 'bangla/solaimanlipi',
                         wordSpacing: 3,
                         fontSize: 13,
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        color: colors.primaryText,
                       ),
                     ),
                   ),

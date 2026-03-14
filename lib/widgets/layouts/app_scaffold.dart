@@ -13,30 +13,16 @@ import 'package:native_app/providers/launch_app_widget_link.dart';
 import 'package:native_app/providers/background_app_widget_link.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/notification_status.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 const Set<String> _availableBackgroundAssets = {
   'assets/images/background/mosque-classic.png',
-  'assets/images/background/mosque-dark.png',
-  'assets/images/background/mosque-light.png',
   'assets/images/background/pattern-classic.png',
-  'assets/images/background/pattern-dark.png',
-  'assets/images/background/pattern-darkNew.png',
-  'assets/images/background/pattern-light.png',
-  'assets/images/background/pattern-lightNew.png',
 };
 
 String _resolveBackgroundAsset(String background, String theme) {
   final direct = 'assets/images/background/$background-$theme.png';
   if (_availableBackgroundAssets.contains(direct)) return direct;
-
-  final fallbackTheme = switch (theme) {
-    'darkNew' => 'dark',
-    'lightNew' => 'light',
-    _ => 'classic',
-  };
-
-  final fallback = 'assets/images/background/$background-$fallbackTheme.png';
-  if (_availableBackgroundAssets.contains(fallback)) return fallback;
 
   return 'assets/images/background/mosque-classic.png';
 }
@@ -80,8 +66,13 @@ class AppScaffold extends ConsumerWidget {
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'classic';
+        const theme = 'classic';
+        final appColors = Theme.of(context).extension<AppThemeColors>()!;
         String background = preferences.getString('background') ?? 'mosque';
+        final appBarBg =
+            Theme.of(context).appBarTheme.backgroundColor ?? appColors.appBarBg;
+        final useDarkHomeLogo =
+            ThemeData.estimateBrightnessForColor(appBarBg) == Brightness.light;
 
         return BackButtonListener(
           onBackButtonPressed: () async {
@@ -93,12 +84,16 @@ class AppScaffold extends ConsumerWidget {
             }
           },
           child: Scaffold(
+            backgroundColor: appColors.scaffoldBg,
             appBar: showAppBar
                 ? AppBar(
+                    backgroundColor: appBarBg,
+                    foregroundColor: appColors.appBarText,
+                    surfaceTintColor: Colors.transparent,
                     leading: Padding(
                       padding: const EdgeInsets.only(left: 15),
                       child: isHome
-                          ? theme == 'light'
+                          ? useDarkHomeLogo
                               ? SvgPicture.asset(
                                   'assets/images/logos/logo-dark.svg',
                                   fit: BoxFit.scaleDown,
@@ -117,10 +112,12 @@ class AppScaffold extends ConsumerWidget {
                                 try {
                                   if (onBackPressed != null) {
                                     await onBackPressed!();
+                                    if (!context.mounted) return;
                                   } else if (context.canPop()) {
                                     context.pop();
                                   }
                                 } catch (error) {
+                                  if (!context.mounted) return;
                                   context.go('/');
                                 }
                               },
@@ -128,6 +125,13 @@ class AppScaffold extends ConsumerWidget {
                     ),
                     title: title,
                     centerTitle: true,
+                    bottom: PreferredSize(
+                      preferredSize: const Size.fromHeight(1),
+                      child: Container(
+                        height: 1,
+                        color: appColors.divider.withValues(alpha: 0.6),
+                      ),
+                    ),
                     actions: <Widget>[
                       const NotificationButton(),
                       Padding(
@@ -250,45 +254,75 @@ class AppScaffold extends ConsumerWidget {
                 : null,
             drawer: drawer,
             endDrawer: Drawer(
+              backgroundColor: appColors.drawerBg,
+              surfaceTintColor: Colors.transparent,
               child: ListView(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 50, horizontal: 30),
+                padding: EdgeInsets.zero,
                 children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      context.go('/');
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      child: Text(
-                        locales.home,
-                        style: textTheme.titleLarge?.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 24,
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(28, 56, 28, 24),
+                    decoration: BoxDecoration(
+                      color: appColors.drawerHeaderBg,
+                      border: Border(
+                        bottom: BorderSide(
+                          color: appColors.divider.withValues(alpha: 0.35),
                         ),
-                        textAlign: TextAlign.right,
                       ),
                     ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'ইসলামী জিন্দেগী',
+                          style: textTheme.headlineSmall?.copyWith(
+                            color: appColors.appBarText,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          locales.home,
+                          style: textTheme.labelLarge?.copyWith(
+                            color: appColors.appBarText.withValues(alpha: 0.8),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  DrawerLink(title: locales.quran, route: 'qurans'),
-                  DrawerLink(title: locales.books, route: 'books'),
-                  DrawerLink(title: locales.bayans, route: 'bayans'),
-                  DrawerLink(title: locales.malfuzat, route: 'malfuzat'),
-                  DrawerLink(title: locales.masail, route: 'masail'),
-                  DrawerLink(title: locales.duaDurud, route: 'duas'),
-                  DrawerLink(title: locales.articles, route: 'articles'),
-                  DrawerLink(title: locales.news, route: 'news'),
-                  DrawerLink(title: locales.madrasah, route: 'madrasahs'),
-                  DrawerLink(title: locales.namazTime, route: 'namaz-times'),
-                  DrawerLink(title: locales.qiblah, route: 'qiblah'),
-                  DrawerLink(title: locales.mosques, route: 'mosques'),
-                  DrawerLink(title: locales.donation, route: 'donation'),
-                  DrawerLink(title: locales.location, route: 'location'),
-                  DrawerLink(title: locales.settings, route: 'settings'),
-                  DrawerLink(title: locales.bookmarks, route: 'bookmarks'),
-                  DrawerLink(title: locales.aboutUs, route: 'about'),
-                  DrawerLink(title: locales.contactUs, route: 'contact-us'),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(18, 18, 18, 26),
+                    child: Column(
+                      children: [
+                        DrawerLink(title: locales.home, route: '/'),
+                        DrawerLink(title: locales.quran, route: 'qurans'),
+                        DrawerLink(title: locales.books, route: 'books'),
+                        DrawerLink(title: locales.bayans, route: 'bayans'),
+                        DrawerLink(title: locales.malfuzat, route: 'malfuzat'),
+                        DrawerLink(title: locales.masail, route: 'masail'),
+                        DrawerLink(title: locales.duaDurud, route: 'duas'),
+                        DrawerLink(title: locales.articles, route: 'articles'),
+                        DrawerLink(title: locales.news, route: 'news'),
+                        DrawerLink(title: locales.madrasah, route: 'madrasahs'),
+                        DrawerLink(
+                          title: locales.namazTime,
+                          route: 'namaz-times',
+                        ),
+                        DrawerLink(title: locales.qiblah, route: 'qiblah'),
+                        DrawerLink(title: locales.mosques, route: 'mosques'),
+                        DrawerLink(title: locales.donation, route: 'donation'),
+                        DrawerLink(title: locales.location, route: 'location'),
+                        DrawerLink(title: locales.settings, route: 'settings'),
+                        DrawerLink(
+                            title: locales.bookmarks, route: 'bookmarks'),
+                        DrawerLink(title: locales.aboutUs, route: 'about'),
+                        DrawerLink(
+                          title: locales.contactUs,
+                          route: 'contact-us',
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -304,7 +338,7 @@ class AppScaffold extends ConsumerWidget {
                             : ImageRepeat.noRepeat,
                       )
                     : null,
-                color: Theme.of(context).colorScheme.surface,
+                color: Theme.of(context).extension<AppThemeColors>()!.surfaceBg,
               ),
               constraints: const BoxConstraints.expand(),
               child: LayoutBuilder(
@@ -343,10 +377,16 @@ class MenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
     return InkWell(
       onTap: () => Scaffold.of(context).openEndDrawer(),
+      borderRadius: BorderRadius.circular(14),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: appColors.surfaceBg.withValues(alpha: 0.22),
+          borderRadius: BorderRadius.circular(14),
+        ),
         child: SvgPicture.asset(
           'assets/images/icons/menu.svg',
           fit: BoxFit.scaleDown,
@@ -371,22 +411,39 @@ class DrawerLink extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
-    var colorScheme = Theme.of(context).colorScheme;
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isActive = GoRouterState.of(context).uri.path == '/' &&
+        (route == '/' || route.isEmpty);
 
     return InkWell(
       onTap: () {
         Scaffold.of(context).closeEndDrawer();
 
-        if (GoRouterState.of(context).uri.path.substring(1) != route) {
-          context.push(route.startsWith('/') ? route : '/$route');
+        final target = route.startsWith('/') ? route : '/$route';
+        if (GoRouterState.of(context).uri.path != target) {
+          context.go(target);
         }
       },
+      borderRadius: BorderRadius.circular(18),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        decoration: BoxDecoration(
+          color: isActive
+              ? appColors.primary.withValues(alpha: 0.12)
+              : appColors.cardBg.withValues(alpha: 0.72),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: isActive
+                ? appColors.primary.withValues(alpha: 0.5)
+                : appColors.divider.withValues(alpha: 0.4),
+          ),
+        ),
         child: Text(
           title,
-          style: textTheme.titleLarge?.copyWith(
-            color: colorScheme.primary,
+          style: textTheme.titleMedium?.copyWith(
+            color: isActive ? appColors.primary : appColors.primaryText,
+            fontWeight: FontWeight.w600,
           ),
           textAlign: TextAlign.right,
         ),
@@ -401,6 +458,7 @@ class NotificationButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var statusProvider = ref.watch(notificationStatusProvider);
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
 
     return statusProvider.when(
       loading: () => const SizedBox.shrink(),
@@ -410,7 +468,10 @@ class NotificationButton extends ConsumerWidget {
           return const SizedBox.shrink();
         } else {
           return IconButton(
-            icon: const Icon(Icons.notification_add),
+            icon: Icon(
+              Icons.notification_add,
+              color: appColors.appBarText,
+            ),
             onPressed: () async {
               final messaging = FirebaseMessaging.instance;
 

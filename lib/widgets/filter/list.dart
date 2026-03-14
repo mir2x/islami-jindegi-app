@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:native_app/providers/query_params.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 
@@ -44,6 +45,8 @@ class _FilterListState extends ConsumerState<FilterList> {
   Widget build(BuildContext context) {
     var paramsProvider = widget.queryProvider ?? queryParamsProvider;
     var qParams = ref.watch(paramsProvider);
+    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
+    var textTheme = Theme.of(context).textTheme;
 
     return Column(
       children: [
@@ -57,7 +60,12 @@ class _FilterListState extends ConsumerState<FilterList> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(widget.title),
+                    Text(
+                      widget.title,
+                      style: textTheme.titleMedium?.copyWith(
+                        color: appTheme.primaryText,
+                      ),
+                    ),
                     if (qParams.keys
                         .any((k) => widget.paramKeys.contains(k))) ...[
                       IconButton(
@@ -68,6 +76,7 @@ class _FilterListState extends ConsumerState<FilterList> {
                         icon: const Icon(
                           Icons.close,
                         ),
+                        color: appTheme.secondaryText,
                         onPressed: () {
                           var qParamsNotifier =
                               ref.read(paramsProvider.notifier);
@@ -95,22 +104,29 @@ class _FilterListState extends ConsumerState<FilterList> {
           ),
         ),
         Expanded(
-          child: InfiniteList(
-            key: widget.searchEnabled
-                ? ValueKey('filter_search_$searchText')
-                : null,
-            pageSize: widget.pageSize,
-            padding: 2,
-            resourceFetcher: (Map<String, dynamic> params) async {
-              if (widget.searchEnabled &&
-                  searchText != null &&
-                  searchText!.isNotEmpty) {
-                params = {...params, 'search': searchText};
-              }
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: appTheme.cardBg,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: appTheme.divider),
+            ),
+            child: InfiniteList(
+              key: widget.searchEnabled
+                  ? ValueKey('filter_search_$searchText')
+                  : null,
+              pageSize: widget.pageSize,
+              padding: 10,
+              resourceFetcher: (Map<String, dynamic> params) async {
+                if (widget.searchEnabled &&
+                    searchText != null &&
+                    searchText!.isNotEmpty) {
+                  params = {...params, 'search': searchText};
+                }
 
-              return await widget.resourceFetcher(params);
-            },
-            itemBuilder: widget.itemBuilder,
+                return await widget.resourceFetcher(params);
+              },
+              itemBuilder: widget.itemBuilder,
+            ),
           ),
         ),
       ],

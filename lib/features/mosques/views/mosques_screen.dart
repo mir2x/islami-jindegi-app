@@ -6,6 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/geolocation.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MosquePlace {
@@ -143,7 +144,9 @@ class _MosquesState extends ConsumerState<Mosques> {
 
     showModalBottomSheet(
       context: context,
+      backgroundColor: Theme.of(context).extension<AppThemeColors>()!.cardBg,
       builder: (context) {
+        final colors = Theme.of(context).extension<AppThemeColors>()!;
         return Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
           child: Column(
@@ -157,7 +160,10 @@ class _MosquesState extends ConsumerState<Mosques> {
               const SizedBox(height: 8),
               Text(
                 'Distance: ${_formatDistance(distanceMeters)}',
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(color: colors.secondaryText),
               ),
               const SizedBox(height: 14),
               SizedBox(
@@ -182,6 +188,7 @@ class _MosquesState extends ConsumerState<Mosques> {
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var geoData = ref.watch(geolocationProvider);
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return AppScaffold(
       title: Text(locales.mosques),
@@ -218,15 +225,17 @@ class _MosquesState extends ConsumerState<Mosques> {
             ),
             data: (mosques) {
               final userPoint = LatLng(latitude, longitude);
+              final userMarkerColor = colors.active;
+              final mosqueMarkerColor = colors.primary;
 
               final markers = <Marker>[
                 Marker(
                   point: userPoint,
                   width: 44,
                   height: 44,
-                  child: const Icon(
+                  child: Icon(
                     Icons.my_location,
-                    color: Colors.blue,
+                    color: userMarkerColor,
                     size: 30,
                   ),
                 ),
@@ -240,9 +249,9 @@ class _MosquesState extends ConsumerState<Mosques> {
                           _showMosqueBottomSheet(context, mosque, userPoint),
                       child: Tooltip(
                         message: mosque.name,
-                        child: const Icon(
+                        child: Icon(
                           Icons.mosque,
-                          color: Colors.red,
+                          color: mosqueMarkerColor,
                           size: 28,
                         ),
                       ),
@@ -280,7 +289,13 @@ class _MosquesState extends ConsumerState<Mosques> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Search Radius'),
+                            Text(
+                              'Search Radius',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(color: colors.primaryText),
+                            ),
                             const SizedBox(height: 8),
                             Wrap(
                               spacing: 8,
@@ -301,7 +316,10 @@ class _MosquesState extends ConsumerState<Mosques> {
                             const SizedBox(height: 6),
                             Text(
                               '${mosques.length} mosques found',
-                              style: Theme.of(context).textTheme.bodySmall,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(color: colors.secondaryText),
                             ),
                           ],
                         ),

@@ -6,6 +6,7 @@ import 'package:native_app/widgets/audio/player.dart';
 import 'package:native_app/helpers/format_date.dart';
 import 'package:native_app/helpers/file_size.dart';
 import 'package:native_app/helpers/play_duration.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class BayanDisplay extends ConsumerWidget {
   const BayanDisplay({
@@ -32,26 +33,40 @@ class BayanDisplay extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
+    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          margin: const EdgeInsets.only(bottom: 15),
-          child: Text(
-            title,
-            style: textTheme.headlineMedium,
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: appTheme.highlight,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: appTheme.divider),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: textTheme.headlineMedium,
+              ),
+              if (speaker != null) ...[
+                Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  child: Text(
+                    speaker!,
+                    style: textTheme.labelMedium?.copyWith(
+                      color: appTheme.secondaryText,
+                    ),
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
-        if (speaker != null) ...[
-          Container(
-            margin: const EdgeInsets.only(bottom: 15),
-            child: Text(
-              speaker!,
-              style: textTheme.labelMedium,
-            ),
-          ),
-        ],
         if (audio != null) ...[
           Container(
             margin: const EdgeInsets.only(top: 30),

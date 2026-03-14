@@ -140,9 +140,10 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
               final boxes =
                   ref.read(boxesForPageProvider(newPageNum)); // 1-based page
               final ayahBoxes = boxes
-                  .where((b) =>
-                      b.suraNumber == selectedAyah.suraNumber &&
-                      b.ayahNumber == selectedAyah.ayahNumber,
+                  .where(
+                    (b) =>
+                        b.suraNumber == selectedAyah.suraNumber &&
+                        b.ayahNumber == selectedAyah.ayahNumber,
                   )
                   .toList();
 
@@ -311,7 +312,8 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
                     Theme.of(context).extension<AppThemeColors>();
                 final appBarBg = appThemeColors?.appBarBg ??
                     Theme.of(context).appBarTheme.backgroundColor ??
-                    Theme.of(context).colorScheme.surface;
+                    appThemeColors?.surfaceBg ??
+                    Theme.of(context).scaffoldBackgroundColor;
                 final isDarkBg =
                     ThemeData.estimateBrightnessForColor(appBarBg) ==
                         Brightness.dark;
@@ -343,7 +345,7 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
                     },
                     child: Scaffold(
                       key: _rootKey,
-                      backgroundColor: appBarBg,
+                      backgroundColor: appThemeColors?.scaffoldBg ?? appBarBg,
                       drawer: const SideDrawer(),
                       onDrawerChanged: (isOpen) {
                         Future(() {

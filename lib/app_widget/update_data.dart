@@ -18,7 +18,7 @@ Future updateData() async {
   final preferences = await SharedPreferences.getInstance();
   var currentLang = preferences.getString('locale') ?? 'bn';
   var locales = await AppLocalizations.delegate.load(Locale(currentLang));
-  String theme = preferences.getString('theme') ?? 'classic';
+  const theme = 'classic';
 
   initializeDateFormatting(currentLang);
 

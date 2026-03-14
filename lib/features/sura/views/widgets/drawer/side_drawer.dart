@@ -32,7 +32,8 @@ class _SuraSideDrawerState extends ConsumerState<SuraSideDrawer>
 
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
-        ref.read(suraDrawerTabIndexProvider.notifier).state = _tabController.index;
+        ref.read(suraDrawerTabIndexProvider.notifier).state =
+            _tabController.index;
       }
     });
   }
@@ -49,14 +50,10 @@ class _SuraSideDrawerState extends ConsumerState<SuraSideDrawer>
     final topInset = media.padding.top + kToolbarHeight;
     final bottomInset = kBottomNavigationBarHeight + media.padding.bottom;
 
-    final colorScheme = Theme.of(context).colorScheme;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = colorScheme.brightness == Brightness.light;
-    final appBarBg = isLight ? appColors.surfaceBg : appColors.appBarBg;
-    final appBarFg = isLight ? appColors.secondaryText : appColors.appBarText;
-    final indicatorColor = isLight
-        ? appColors.secondaryText.withOpacity(0.14)
-        : colorScheme.primary.withOpacity(0.3);
+    final appBarBg = appColors.drawerHeaderBg;
+    final appBarFg = appColors.appBarText;
+    final indicatorColor = appColors.highlight;
 
     return Align(
       alignment: Alignment.topLeft,
@@ -66,8 +63,14 @@ class _SuraSideDrawerState extends ConsumerState<SuraSideDrawer>
           width: 250.w,
           child: Material(
             elevation: 0,
-            color: colorScheme.surface,
+            color: appColors.drawerBg,
             clipBehavior: Clip.antiAlias,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(22.r),
+                bottomRight: Radius.circular(22.r),
+              ),
+            ),
             child: Column(
               children: [
                 Expanded(
@@ -92,7 +95,7 @@ class _SuraSideDrawerState extends ConsumerState<SuraSideDrawer>
                     controller: _tabController,
                     labelColor: appBarFg,
                     dividerColor: appBarBg.withValues(alpha: 0),
-                    unselectedLabelColor: appBarFg.withOpacity(0.7),
+                    unselectedLabelColor: appBarFg.withValues(alpha: 0.72),
                     indicator: BoxDecoration(
                       color: indicatorColor,
                       borderRadius: BorderRadius.zero,

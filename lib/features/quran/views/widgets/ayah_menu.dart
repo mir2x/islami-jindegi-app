@@ -10,6 +10,7 @@ import '../../providers/audio_providers.dart';
 import '../../providers/ayah_highlight_providers.dart';
 import '../../providers/bookmark_providers.dart';
 import '../../../sura/providers/sura_providers.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 import 'audio_bottom_sheet.dart';
 
@@ -49,7 +50,7 @@ class AyahMenu extends ConsumerWidget {
     final isBookmarked =
         bookmarkNotifier.isAyahBookmarked(selectedSura, selectedAyah);
 
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return Positioned(
       left: menuLeft,
@@ -57,7 +58,7 @@ class AyahMenu extends ConsumerWidget {
       child: Material(
         elevation: 3,
         borderRadius: BorderRadius.circular(8.r),
-        color: colorScheme.secondaryContainer,
+        color: colors.cardBg,
         child: SizedBox(
           height: menuHeight,
           width: menuWidth,
@@ -70,9 +71,7 @@ class AyahMenu extends ConsumerWidget {
                     icon: isBookmarked
                         ? Icons.star_rounded
                         : HugeIcons.strokeRoundedStar,
-                    color: isBookmarked
-                        ? colorScheme.tertiary
-                        : colorScheme.onSecondaryContainer,
+                    color: isBookmarked ? colors.secondary : colors.primaryText,
                     size: 24.r,
                   ),
                   onPressed: () {
@@ -112,7 +111,7 @@ class AyahMenu extends ConsumerWidget {
                 child: IconButton(
                   icon: HugeIcon(
                       icon: HugeIcons.strokeRoundedPlay,
-                      color: colorScheme.onSecondaryContainer,
+                      color: colors.primaryText,
                       size: 24.r),
                   onPressed: () {
                     final selectedState = ref.read(selectedAyahProvider);
@@ -142,7 +141,7 @@ class AyahMenu extends ConsumerWidget {
                 child: IconButton(
                   icon: HugeIcon(
                     icon: HugeIcons.strokeRoundedCopy01,
-                    color: colorScheme.onSecondaryContainer,
+                    color: colors.primaryText,
                     size: 24.r,
                   ),
                   onPressed: () async {
@@ -183,7 +182,7 @@ class AyahMenu extends ConsumerWidget {
                 child: IconButton(
                   icon: HugeIcon(
                       icon: HugeIcons.strokeRoundedShare01,
-                      color: colorScheme.onSecondaryContainer,
+                      color: colors.primaryText,
                       size: 24.r),
                   onPressed: () async {
                     try {
@@ -211,7 +210,7 @@ class AyahMenu extends ConsumerWidget {
               Expanded(
                 child: IconButton(
                   icon: Icon(Icons.fullscreen,
-                      color: colorScheme.onSecondaryContainer, size: 24.r),
+                      color: colors.primaryText, size: 24.r),
                   onPressed: () {
                     ref.read(barsVisibilityProvider.notifier).hide();
                     ref.read(selectedAyahProvider.notifier).clear();

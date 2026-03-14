@@ -8,6 +8,8 @@ import '../../downloader/views/show_download_dialog.dart';
 import '../../downloader/views/show_download_permission_dialog.dart';
 import '../../downloader/providers/download_providers.dart';
 import 'package:go_router/go_router.dart';
+import 'package:native_app/theme/app_theme_color.dart';
+import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import '../models/quran_edition.dart';
 import '../providers/quran_catalogue_providers.dart';
 
@@ -17,21 +19,11 @@ class QuranCatalogueScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final quranEditions = ref.watch(quranEditionProvider);
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            context.go('/');
-          },
-        ),
-        title: const Text('কুরআন'),
-        centerTitle: true,
-      ),
+    return AppScaffold(
+      onBackPressed: () async => context.go('/'),
+      title: const Text('কুরআন'),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 24.h),
         child: Column(
@@ -58,14 +50,14 @@ class QuranCatalogueScreen extends ConsumerWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      colorScheme.primary,
-                      colorScheme.secondary,
+                      colors.primary,
+                      colors.secondary,
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
-                      color: colorScheme.secondary.withValues(alpha: 0.3),
+                      color: colors.shadow.withValues(alpha: 0.18),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -76,18 +68,17 @@ class QuranCatalogueScreen extends ConsumerWidget {
                   children: [
                     Icon(
                       Icons.menu_book_rounded,
-                      color: colorScheme.onPrimary,
+                      color: colors.appBarText,
                       size: 28.r,
                     ),
                     SizedBox(width: 12.w),
                     Text(
                       'তাফসীর',
                       style: TextStyle(
-  
                         wordSpacing: 3,
                         fontWeight: FontWeight.bold,
                         fontSize: 20.sp,
-                        color: colorScheme.onPrimary,
+                        color: colors.appBarText,
                       ),
                     ),
                   ],
@@ -126,7 +117,7 @@ class _QuranEditionGridItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     final textTheme = Theme.of(context).textTheme;
 
     return Column(
@@ -210,13 +201,13 @@ class _QuranEditionGridItem extends ConsumerWidget {
                     child: Container(
                       padding: EdgeInsets.all(4.r),
                       decoration: BoxDecoration(
-                        color: colorScheme.primary,
+                        color: colors.active,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         Icons.check,
                         size: 16.r,
-                        color: colorScheme.onPrimary,
+                        color: colors.appBarText,
                       ),
                     ),
                   ),

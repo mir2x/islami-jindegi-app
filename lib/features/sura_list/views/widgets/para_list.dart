@@ -4,6 +4,7 @@ import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
 import 'package:native_app/shared/quran_data.dart';
 import 'package:go_router/go_router.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 /// Bengali names for all 30 paras (Juz)
 const List<String> paraNamesBengali = [
@@ -62,11 +63,12 @@ class ParaList extends ConsumerWidget {
         );
       },
       separatorBuilder: (context, index) {
-        return const Divider(
+        return Divider(
           height: 1,
           thickness: 0.5,
           indent: 16,
           endIndent: 16,
+          color: Theme.of(context).extension<AppThemeColors>()!.divider,
         );
       },
     );
@@ -111,12 +113,13 @@ class _ParaListItem extends StatelessWidget {
   }
 
   Widget _buildParaNumber(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     return Container(
       width: 50,
       height: 50,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer,
+        color: colors.highlight,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
@@ -125,20 +128,21 @@ class _ParaListItem extends StatelessWidget {
           wordSpacing: 3,
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.primary,
+          color: colors.active,
         ),
       ),
     );
   }
 
   Widget _buildParaInfo(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           paraName,
           style: const TextStyle(
-              wordSpacing: 3,
+            wordSpacing: 3,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -149,16 +153,16 @@ class _ParaListItem extends StatelessWidget {
             Icon(
               Icons.play_arrow,
               size: 16,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: colors.secondaryText,
             ),
             const SizedBox(width: 4),
             Expanded(
               child: Text(
                 'সূরা $suraName, আয়াত ${ayahNumber.toBengaliDigit()}',
                 style: TextStyle(
-                          wordSpacing: 3,
+                  wordSpacing: 3,
                   fontSize: 14,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: colors.secondaryText,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -170,9 +174,10 @@ class _ParaListItem extends StatelessWidget {
   }
 
   Widget _buildArrow(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     return Icon(
       Icons.chevron_right,
-      color: Theme.of(context).colorScheme.outlineVariant,
+      color: colors.secondaryText,
     );
   }
 }

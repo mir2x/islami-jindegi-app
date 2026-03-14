@@ -18,6 +18,7 @@ import 'package:native_app/providers/downloaded_masail.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/widgets/buttons/floating_downloaded.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../providers/masail_providers.dart';
 
 class MasailListScreen extends ConsumerWidget {
@@ -27,6 +28,7 @@ class MasailListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     var qParams = ref.watch(masailQueryParamsProvider);
     var settingsQuery = ref.watch(masailSettingsProvider);
 
@@ -44,8 +46,14 @@ class MasailListScreen extends ConsumerWidget {
                     children: [
                       Container(
                         width: double.infinity,
-                        padding:
+                        margin:
                             const EdgeInsets.only(top: 20, left: 15, right: 15),
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: appTheme.cardBg,
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(color: appTheme.divider),
+                        ),
                         child: Row(
                           children: [
                             Expanded(
@@ -325,7 +333,8 @@ class MasailListScreen extends ConsumerWidget {
                     height: 40,
                     child: WithPreferences(
                       builder: (context, preferences) {
-                        var colorScheme = Theme.of(context).colorScheme;
+                        final colors =
+                            Theme.of(context).extension<AppThemeColors>()!;
 
                         return FloatingActionButton.extended(
                           heroTag: 'ask-question',
@@ -333,18 +342,23 @@ class MasailListScreen extends ConsumerWidget {
                           icon: Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border:
-                                  Border.all(color: colorScheme.outlineVariant),
+                              border: Border.all(color: colors.divider),
                             ),
                             padding: const EdgeInsets.all(2),
-                            child: const Icon(Icons.question_mark, size: 18),
+                            child: Icon(
+                              Icons.question_mark,
+                              size: 18,
+                              color: colors.active,
+                            ),
                           ),
                           label: Text(
                             locales.askQuestion,
                             style: textTheme.labelMedium?.copyWith(
-                              color: colorScheme.onSurface,
+                              color: colors.appBarText,
                             ),
                           ),
+                          backgroundColor: colors.appBarBg,
+                          foregroundColor: colors.appBarText,
                         );
                       },
                     ),

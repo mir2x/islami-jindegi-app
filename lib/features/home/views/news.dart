@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/features/news/providers/news_providers.dart';
 
@@ -17,15 +18,15 @@ class News extends ConsumerWidget {
     bool isMobile = screenWidth < 768;
     bool isSmallMobile = screenWidth < 340;
 
-    var colorScheme = Theme.of(context).colorScheme;
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
 
     final fontStyle = isSmallMobile
         ? textTheme.labelSmall?.copyWith(
-            color: colorScheme.onSurface,
+            color: appColors.primaryText,
             height: 1.2,
           )
         : textTheme.labelMedium?.copyWith(
-            color: colorScheme.onSurface,
+            color: appColors.primaryText,
             height: 1.2,
           );
 
@@ -33,20 +34,37 @@ class News extends ConsumerWidget {
 
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        color: colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(28),
+        color: appColors.cardBg.withValues(alpha: 0.9),
+        border: Border.all(
+          color: appColors.divider.withValues(alpha: 0.45),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: appColors.shadow.withValues(alpha: 0.08),
+            blurRadius: 22,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
       child: Row(
         children: [
           Container(
             width: isMobile ? 100 : 150,
+            margin: const EdgeInsets.all(8),
             padding: EdgeInsets.symmetric(
               vertical: isMobile ? 10 : 20,
               horizontal: isMobile ? 10 : 30,
             ),
+            decoration: BoxDecoration(
+              color: appColors.highlight.withValues(alpha: 0.8),
+              borderRadius: BorderRadius.circular(22),
+            ),
             child: Text(
               locales.newsAndUpdates,
-              style: fontStyle,
+              style: fontStyle?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
               textAlign: TextAlign.center,
             ),
           ),
@@ -63,22 +81,25 @@ class News extends ConsumerWidget {
 
                 return Container(
                   height: height,
+                  margin: const EdgeInsets.fromLTRB(0, 8, 8, 8),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(22),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.outlineVariant,
+                      color: appColors.divider,
                       width: 1,
                     ),
-                    color: colorScheme.surfaceContainerHighest,
+                    color: appColors.cardBg,
                   ),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 16,
+                  ),
                   child: modelQuery.when(
                     loading: () {
                       return Center(
                         child: CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            colorScheme.primary,
+                            appColors.active,
                           ),
                         ),
                       );
@@ -102,11 +123,12 @@ class News extends ConsumerWidget {
                           itemCount: resources.length,
                           itemBuilder: (context, index, pageIndex) {
                             return InkWell(
-                              onTap: () => context.push('/news/${resources[index].id}'),
+                              onTap: () =>
+                                  context.push('/news/${resources[index].id}'),
                               child: Center(
                                 child: Text(
                                   resources[index].title,
-                                  style: fontStyle,
+                                  style: fontStyle?.copyWith(height: 1.3),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),

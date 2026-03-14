@@ -12,6 +12,7 @@ import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/widgets/buttons/floating_downloaded.dart';
 import 'package:native_app/features/book/views/image.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../providers/book_providers.dart';
 import '../providers/book_download_providers.dart';
 
@@ -22,6 +23,7 @@ class BookListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     var qParams = ref.watch(bookQueryParamsProvider);
     double screenWidth =
         View.of(context).physicalSize.width / View.of(context).devicePixelRatio;
@@ -177,38 +179,54 @@ class BookListScreen extends ConsumerWidget {
                             '[BookListScreen] Tapped book: ${item.id} — ${item.title}');
                         context.push('/books/${item.id}');
                       },
-                      child: Column(
-                        children: [
-                          FractionallySizedBox(
-                            widthFactor: 0.7,
-                            child: BookImage(
-                              bookId: item.id,
-                              image: item.image,
-                              highlightProvider: downloadedBookByBookIdProvider(
-                                item.id,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: appTheme.cardBg,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: appTheme.divider),
+                          boxShadow: [
+                            BoxShadow(
+                              color: appTheme.shadow.withValues(alpha: 0.08),
+                              blurRadius: 16,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.fromLTRB(14, 16, 14, 14),
+                        child: Column(
+                          children: [
+                            FractionallySizedBox(
+                              widthFactor: 0.7,
+                              child: BookImage(
+                                bookId: item.id,
+                                image: item.image,
+                                highlightProvider:
+                                    downloadedBookByBookIdProvider(
+                                  item.id,
+                                ),
                               ),
                             ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(top: 10),
-                            child: Text(
-                              item.title,
-                              style: textTheme.titleMedium,
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          if (item.authors.isNotEmpty)
                             Container(
-                              margin: const EdgeInsets.only(top: 5),
+                              margin: const EdgeInsets.only(top: 10),
                               child: Text(
-                                item.authors.first.name,
+                                item.title,
+                                style: textTheme.titleMedium,
                                 textAlign: TextAlign.center,
-                                style: textTheme.labelSmall,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                        ],
+                            if (item.authors.isNotEmpty)
+                              Container(
+                                margin: const EdgeInsets.only(top: 5),
+                                child: Text(
+                                  item.authors.first.name,
+                                  textAlign: TextAlign.center,
+                                  style: textTheme.labelSmall,
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -257,6 +275,7 @@ class _V2FilterButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
+    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
 
     String displayLabel = label;
 
@@ -277,9 +296,19 @@ class _V2FilterButton extends ConsumerWidget {
             double screenHeight = MediaQuery.of(dialogContext).size.height;
 
             return Dialog(
+              backgroundColor: appTheme.dropdownBg,
+              surfaceTintColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+                side: BorderSide(color: appTheme.divider),
+              ),
               child: Container(
                 width: screenWidth,
                 height: screenHeight * 0.8,
+                decoration: BoxDecoration(
+                  color: appTheme.dropdownBg,
+                  borderRadius: BorderRadius.circular(24),
+                ),
                 padding: const EdgeInsets.only(
                   top: 15,
                   bottom: 25,
@@ -312,13 +341,14 @@ class _V2FilterButton extends ConsumerWidget {
         );
       },
       style: OutlinedButton.styleFrom(
-        backgroundColor:
-            active ? Theme.of(context).colorScheme.primaryContainer : null,
+        side: BorderSide(color: appTheme.divider),
+        backgroundColor: active ? appTheme.highlight : appTheme.cardBg,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(14),
         ),
         minimumSize: const Size.fromHeight(45),
+        elevation: 0,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -326,11 +356,13 @@ class _V2FilterButton extends ConsumerWidget {
           Flexible(
             child: Text(
               displayLabel,
-              style: textTheme.labelMedium,
+              style: textTheme.labelMedium?.copyWith(
+                color: appTheme.primaryText,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          const Icon(Icons.arrow_drop_down),
+          Icon(Icons.arrow_drop_down, color: appTheme.secondaryText),
         ],
       ),
     );
@@ -356,7 +388,7 @@ class _AuthorFilterDialogState extends ConsumerState<_AuthorFilterDialog> {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
-    var colorScheme = Theme.of(context).colorScheme;
+    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     var qParams = widget.parentRef.watch(bookQueryParamsProvider);
 
     return Column(
@@ -434,7 +466,7 @@ class _AuthorFilterDialogState extends ConsumerState<_AuthorFilterDialog> {
                 child: Container(
                   decoration: BoxDecoration(
                     border: Border(
-                      bottom: BorderSide(color: colorScheme.outlineVariant),
+                      bottom: BorderSide(color: appTheme.divider),
                     ),
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 10),
@@ -473,7 +505,7 @@ class _CategoryFilterDialogState extends ConsumerState<_CategoryFilterDialog> {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
-    var colorScheme = Theme.of(context).colorScheme;
+    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     var qParams = widget.parentRef.watch(bookQueryParamsProvider);
     final hasActiveFilter = qParams.keys
         .any((k) => ['bookCategoryId', 'bookSubcategoryId'].contains(k));
@@ -562,7 +594,7 @@ class _CategoryFilterDialogState extends ConsumerState<_CategoryFilterDialog> {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border(
-                        bottom: BorderSide(color: colorScheme.outlineVariant),
+                        bottom: BorderSide(color: appTheme.divider),
                       ),
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 10),
@@ -613,7 +645,7 @@ class _CategoryNestedItemState extends ConsumerState<_CategoryNestedItem> {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
-    var colorScheme = Theme.of(context).colorScheme;
+    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     var qParams = widget.parentRef.watch(bookQueryParamsProvider);
     var isSelected = qParams.containsKey('bookSubcategoryId') &&
         widget.category.subcategories
@@ -623,7 +655,7 @@ class _CategoryNestedItemState extends ConsumerState<_CategoryNestedItem> {
     return Container(
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: colorScheme.outlineVariant),
+          bottom: BorderSide(color: appTheme.divider),
         ),
       ),
       child: Column(

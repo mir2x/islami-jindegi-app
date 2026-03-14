@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:native_app/providers/preferences.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class DayLightSwitch extends ConsumerWidget {
   const DayLightSwitch({
@@ -16,7 +17,7 @@ class DayLightSwitch extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    var colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     bool selectedDayLight = preferences.getBool('daylight') ?? false;
 
@@ -29,9 +30,9 @@ class DayLightSwitch extends ConsumerWidget {
         borderColor: Colors.transparent,
         boxShadow: [
           BoxShadow(
-            color: colorScheme.shadow.withOpacity(0.26),
+            color: colors.shadow.withValues(alpha: 0.26),
             blurRadius: 4.0,
-            offset: Offset(0, 1.5),
+            offset: const Offset(0, 1.5),
           ),
         ],
       ),
@@ -41,8 +42,8 @@ class DayLightSwitch extends ConsumerWidget {
           ref.read(preferencesProvider.notifier).updateDaylight(b),
       indicatorSize: const Size.fromWidth(26),
       styleBuilder: (b) => ToggleStyle(
-        backgroundColor: colorScheme.surface,
-        indicatorColor: b ? colorScheme.onSurfaceVariant : colorScheme.error,
+        backgroundColor: colors.cardBg,
+        indicatorColor: b ? colors.active : colors.primary,
       ),
       textBuilder: (value) => value
           ? Center(

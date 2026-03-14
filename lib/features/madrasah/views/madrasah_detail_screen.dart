@@ -14,6 +14,7 @@ import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../providers/madrasah_providers.dart';
 
 class MadrasahDetailScreen extends ConsumerWidget {
@@ -23,6 +24,7 @@ class MadrasahDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     var madrasahId = GoRouterState.of(context).pathParameters['id'].toString();
     var madrasahQuery = ref.watch(singleMadrasahProvider(madrasahId));
 
@@ -77,35 +79,76 @@ class MadrasahDetailScreen extends ConsumerWidget {
               children: [
                 Container(
                   margin: const EdgeInsets.only(bottom: 25),
-                  child: Text(resource.title, style: textTheme.labelLarge),
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: appTheme.highlight,
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(color: appTheme.divider),
+                  ),
+                  child: Text(
+                    resource.title,
+                    style: textTheme.headlineSmall,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 InkWell(
-                  onTap: () => context.push('/madrasahs/${resource.id}/introduction'),
+                  onTap: () =>
+                      context.push('/madrasahs/${resource.id}/introduction'),
                   child: ListItem(
-                    item: Text(
-                      locales.introduction,
-                      style: textTheme.titleMedium,
+                    item: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          locales.introduction,
+                          style: textTheme.titleMedium,
+                        ),
+                        Icon(
+                          Icons.chevron_right_rounded,
+                          color: appTheme.secondaryText,
+                        ),
+                      ],
                     ),
                   ),
                 ),
                 ...resource.madrasahInfos.map((info) {
                   return InkWell(
-                    onTap: () =>
-                        context.push('/madrasahs/${resource.id}/infos/${info.id}'),
+                    onTap: () => context
+                        .push('/madrasahs/${resource.id}/infos/${info.id}'),
                     child: ListItem(
-                      item: Text(
-                        info.label,
-                        style: textTheme.titleMedium,
+                      item: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              info.label,
+                              style: textTheme.titleMedium,
+                            ),
+                          ),
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            color: appTheme.secondaryText,
+                          ),
+                        ],
                       ),
                     ),
                   );
                 }),
                 InkWell(
-                  onTap: () => context.push('/madrasahs/${resource.id}/gallery'),
+                  onTap: () =>
+                      context.push('/madrasahs/${resource.id}/gallery'),
                   child: ListItem(
-                    item: Text(
-                      locales.gallery,
-                      style: textTheme.titleMedium,
+                    item: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          locales.gallery,
+                          style: textTheme.titleMedium,
+                        ),
+                        Icon(
+                          Icons.chevron_right_rounded,
+                          color: appTheme.secondaryText,
+                        ),
+                      ],
                     ),
                   ),
                 ),

@@ -36,6 +36,7 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
 
   @override
   Widget build(BuildContext context) {
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
     final mappingsAsync = ref.watch(quranMappingsProvider);
     if (mappingsAsync.isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -88,7 +89,11 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
           child: Row(
             children: [
               Expanded(flex: 3, child: _buildSurahList(ref)),
-              const VerticalDivider(width: 1, thickness: 1),
+              VerticalDivider(
+                width: 1,
+                thickness: 1,
+                color: appColors.divider,
+              ),
               Expanded(flex: 2, child: _buildRightPane(ref)),
             ],
           ),
@@ -102,9 +107,8 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final appBarBg = isLight ? appColors.surfaceBg : appColors.appBarBg;
-    final appBarFg = isLight ? appColors.secondaryText : appColors.appBarText;
+    final appBarBg = appColors.drawerHeaderBg;
+    final appBarFg = appColors.appBarText;
 
     return Container(
       color: appBarBg,
@@ -116,20 +120,20 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
             child: Text('সুরা',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: appBarFg,
-                    fontWeight: FontWeight.bold,
-                    fontSize: fontSize,
-)),
+                  color: appBarFg,
+                  fontWeight: FontWeight.bold,
+                  fontSize: fontSize,
+                )),
           ),
           Expanded(
             flex: 2,
             child: Text('আয়াত',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: appBarFg,
-                    fontWeight: FontWeight.bold,
-                    fontSize: fontSize,
-)),
+                  color: appBarFg,
+                  fontWeight: FontWeight.bold,
+                  fontSize: fontSize,
+                )),
           ),
         ],
       ),
@@ -143,29 +147,26 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
 
     return ScrollablePositionedList.separated(
       itemScrollController: _surahScrollController,
       padding: EdgeInsets.zero,
       itemCount: 114,
       separatorBuilder: (context, index) =>
-          Divider(height: 1.h, color: Theme.of(context).dividerColor),
+          Divider(height: 1.h, color: appColors.divider),
       itemBuilder: (context, index) {
         final suraNumber = index + 1;
         final isSelected = suraNumber == selectedSurah;
 
         return ListTile(
-          tileColor: isSelected
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-              : null,
+          tileColor: isSelected ? appColors.highlight : null,
           title: Text(
             '${toBengaliNumber(suraNumber)}. ${suraNames[index]}',
             style: TextStyle(
               fontSize: fontSize,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).textTheme.bodyLarge?.color,
+              color: isSelected ? appColors.active : appColors.primaryText,
             ),
           ),
           contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -186,6 +187,7 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
     final selectedAyah = ref.watch(selectedNavigationAyahProvider);
     final ayahCounts = ref.watch(ayahCountsProvider);
     final ayahPageMapping = ref.watch(ayahPageMappingProvider);
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 12.0 : 14.sp;
@@ -205,7 +207,7 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
       itemScrollController: _ayahScrollController,
       padding: EdgeInsets.zero,
       separatorBuilder: (context, index) =>
-          Divider(height: 1.h, color: Theme.of(context).dividerColor),
+          Divider(height: 1.h, color: appColors.divider),
       itemCount: totalAyahs,
       itemBuilder: (context, index) {
         final ayahNumber = index + 1;
@@ -213,17 +215,13 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
             selectedSurah == selectedSurah && ayahNumber == selectedAyah;
 
         return ListTile(
-          tileColor: isSelected
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-              : null,
+          tileColor: isSelected ? appColors.highlight : null,
           title: Center(
             child: Text(
               toBengaliNumber(ayahNumber),
               style: TextStyle(
                 fontSize: fontSize,
-                color: isSelected
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).textTheme.bodyLarge?.color,
+                color: isSelected ? appColors.active : appColors.primaryText,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),

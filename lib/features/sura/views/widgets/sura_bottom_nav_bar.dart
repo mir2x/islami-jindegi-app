@@ -66,13 +66,11 @@ class SuraBottomNavBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
-      backgroundColor: isLight ? colors.surfaceBg : Theme.of(context).colorScheme.surface,
-      selectedItemColor: isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary,
-      unselectedItemColor:
-          isLight ? colors.secondaryText.withOpacity(0.85) : Theme.of(context).colorScheme.onSurfaceVariant,
+      backgroundColor: colors.appBarBg,
+      selectedItemColor: colors.appBarText,
+      unselectedItemColor: colors.appBarText.withValues(alpha: 0.78),
       onTap: (index) => _onNavBarTapped(index, context, ref),
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'অনুবাদ'),

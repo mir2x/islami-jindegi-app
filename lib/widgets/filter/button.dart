@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/helpers/trancate_with_ellipsis.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class FilterButton extends ConsumerWidget {
   const FilterButton({
@@ -25,11 +26,10 @@ class FilterButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     String filterLabel = label ?? locales.filter;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isSmallMobile = screenWidth < 340;
-
-    var colorScheme = Theme.of(context).colorScheme;
 
     return OutlinedButton(
       onPressed: () {
@@ -40,9 +40,19 @@ class FilterButton extends ConsumerWidget {
             double screenHeight = MediaQuery.of(context).size.height;
 
             return Dialog(
+              backgroundColor: appTheme.dropdownBg,
+              surfaceTintColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+                side: BorderSide(color: appTheme.divider),
+              ),
               child: Container(
                 width: screenWidth,
                 height: screenHeight * 0.8,
+                decoration: BoxDecoration(
+                  color: appTheme.dropdownBg,
+                  borderRadius: BorderRadius.circular(24),
+                ),
                 padding: const EdgeInsets.only(
                   top: 15,
                   bottom: 25,
@@ -58,17 +68,17 @@ class FilterButton extends ConsumerWidget {
         );
       },
       style: OutlinedButton.styleFrom(
-        side: BorderSide(color: colorScheme.outlineVariant),
-        backgroundColor:
-            active == true ? colorScheme.surfaceContainerHighest : null,
+        side: BorderSide(color: appTheme.divider),
+        backgroundColor: active == true ? appTheme.highlight : appTheme.cardBg,
         padding: EdgeInsets.only(
           left: isSmallMobile ? 10 : 12,
           right: isSmallMobile ? 6 : 8,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(14),
         ),
         minimumSize: const Size.fromHeight(45),
+        elevation: 0,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -92,21 +102,30 @@ class FilterButton extends ConsumerWidget {
                   int cutoff = isSmallMobile ? 13 : 15;
                   return Text(
                     truncateWithEllipsis(label, cutoff),
-                    style: textTheme.labelMedium,
+                    style: textTheme.labelMedium?.copyWith(
+                      color: appTheme.primaryText,
+                    ),
                   );
                 }
-                return Text(filterLabel, style: textTheme.labelMedium);
+                return Text(
+                  filterLabel,
+                  style: textTheme.labelMedium?.copyWith(
+                    color: appTheme.primaryText,
+                  ),
+                );
               },
             ),
           ] else ...[
             Text(
               filterLabel,
-              style: textTheme.labelMedium,
+              style: textTheme.labelMedium?.copyWith(
+                color: appTheme.primaryText,
+              ),
             ),
           ],
           Icon(
             Icons.arrow_drop_down,
-            color: colorScheme.onSurfaceVariant,
+            color: appTheme.secondaryText,
           ),
         ],
       ),

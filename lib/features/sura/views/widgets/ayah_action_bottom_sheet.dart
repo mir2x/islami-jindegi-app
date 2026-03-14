@@ -34,9 +34,7 @@ void showAyahActionBottomSheet(
 
   showModalBottomSheet(
     context: context,
-    backgroundColor: Theme.of(context).colorScheme.brightness == Brightness.light
-        ? Theme.of(context).extension<AppThemeColors>()!.surfaceBg
-        : Theme.of(context).colorScheme.surface,
+    backgroundColor: Theme.of(context).extension<AppThemeColors>()!.cardBg,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
     ),
@@ -44,11 +42,7 @@ void showAyahActionBottomSheet(
       return Consumer(
         builder: (context, ref, child) {
           final colors = Theme.of(context).extension<AppThemeColors>()!;
-          final isLight =
-              Theme.of(context).colorScheme.brightness == Brightness.light;
-          final actionIconColor = isLight
-              ? colors.secondaryText
-              : Theme.of(context).colorScheme.primary;
+          final actionIconColor = colors.active;
           final isBookmarked = ref.watch(
               isAyahBookmarkedProvider((sura: suraNumber, ayah: ayah.ayah)));
 
@@ -152,6 +146,11 @@ void showAyahActionBottomSheet(
 
           return Container(
             padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 32.0),
+            decoration: BoxDecoration(
+              color: colors.cardBg,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(16.0)),
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -162,7 +161,7 @@ void showAyahActionBottomSheet(
                     wordSpacing: 3,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).textTheme.titleLarge?.color,
+                    color: colors.primaryText,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -184,9 +183,7 @@ void showAyahActionBottomSheet(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(item.icon,
-                              size: 36,
-                              color: actionIconColor),
+                          Icon(item.icon, size: 36, color: actionIconColor),
                           const SizedBox(height: 8),
                           Text(
                             item.label,
@@ -195,8 +192,7 @@ void showAyahActionBottomSheet(
                               fontFamily: 'bangla/solaimanlipi',
                               wordSpacing: 3,
                               fontSize: 14,
-                              color:
-                                  Theme.of(context).textTheme.bodyMedium?.color,
+                              color: colors.primaryText,
                             ),
                           ),
                         ],

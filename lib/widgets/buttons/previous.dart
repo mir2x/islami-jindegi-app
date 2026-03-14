@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class Previous extends StatelessWidget {
   const Previous({
@@ -14,12 +15,12 @@ class Previous extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     Color? iconColor = previousDisabled
-        ? Theme.of(context).colorScheme.outlineVariant
+        ? colors.secondaryText
         : contrastColor
-            ? colorScheme.primary
+            ? colors.active
             : null;
 
     return IconButton(

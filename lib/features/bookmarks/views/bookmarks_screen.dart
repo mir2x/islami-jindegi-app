@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/bookmarks.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class Bookmarks extends ConsumerWidget {
   const Bookmarks({super.key});
@@ -13,6 +14,7 @@ class Bookmarks extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var bookmarks = ref.watch(bookmarksProvider);
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return AppScaffold(
       title: Text(locales.bookmarks),
@@ -35,7 +37,7 @@ class Bookmarks extends ConsumerWidget {
                   },
                   trailing: IconButton(
                     icon: const Icon(Icons.delete),
-                    color: Theme.of(context).colorScheme.error,
+                    color: colors.primary,
                     onPressed: () async {
                       ref.read(bookmarksProvider.notifier).deleteItem(item.id);
                     },

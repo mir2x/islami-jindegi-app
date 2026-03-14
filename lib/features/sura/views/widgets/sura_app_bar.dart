@@ -27,15 +27,9 @@ class SuraAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final surahInfo = surahInfoList[suraNumber - 1];
     final subtitle =
         '${surahInfo.typeLabel} | আয়াত সংখ্যা: ${surahInfo.ayatCount.toBengaliDigit()}';
-    final colorScheme = Theme.of(context).colorScheme;
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = colorScheme.brightness == Brightness.light;
-    final bg = isLight
-        ? colors.surfaceBg
-        : (Theme.of(context).appBarTheme.backgroundColor ?? colorScheme.surface);
-    final fg = isLight
-        ? colors.secondaryText
-        : (Theme.of(context).appBarTheme.foregroundColor ?? colorScheme.onSurface);
+    final bg = colors.appBarBg;
+    final fg = colors.appBarText;
 
     return AppBar(
       backgroundColor: bg,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:easy_debounce/easy_debounce.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import 'input_field.dart';
 
 class SearchField extends ConsumerWidget {
@@ -30,8 +31,7 @@ class SearchField extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-
-    var colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return Directionality(
       textDirection: reverse ? TextDirection.rtl : TextDirection.ltr,
@@ -41,16 +41,18 @@ class SearchField extends ConsumerWidget {
         decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: colorScheme.outlineVariant,
+              color: colors.divider,
             ),
             borderRadius: BorderRadius.circular(borderRadius),
           ),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: colorScheme.outlineVariant,
+              color: colors.active,
             ),
             borderRadius: BorderRadius.circular(borderRadius),
           ),
+          filled: true,
+          fillColor: colors.dropdownBg,
           labelText: labelText ?? locales.search,
           labelStyle: textTheme.labelMedium,
           constraints: BoxConstraints(maxHeight: maxHeight),

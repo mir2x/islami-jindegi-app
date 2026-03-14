@@ -7,6 +7,7 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../providers/masail_providers.dart';
 
 class AskQuestionScreen extends ConsumerWidget {
@@ -17,7 +18,7 @@ class AskQuestionScreen extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var pageQuery = ref.watch(askQuestionPageProvider);
-    var colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return pageQuery.when(
       loading: () {
@@ -52,7 +53,7 @@ class AskQuestionScreen extends ConsumerWidget {
                 style: TextButton.styleFrom(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  backgroundColor: colorScheme.primaryContainer,
+                  backgroundColor: colors.highlight,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                   ),
@@ -60,7 +61,7 @@ class AskQuestionScreen extends ConsumerWidget {
                 child: Text(
                   locales.askAQuestion,
                   style: textTheme.labelLarge?.copyWith(
-                    color: colorScheme.onPrimaryContainer,
+                    color: colors.primaryText,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

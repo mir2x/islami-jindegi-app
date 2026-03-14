@@ -23,12 +23,9 @@ class PageInfoOverlay extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    final colorScheme = Theme.of(context).colorScheme;
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = colorScheme.brightness == Brightness.light;
-    final overlayBg =
-        isLight ? colors.surfaceBg.withOpacity(0.95) : colorScheme.inverseSurface.withOpacity(0.9);
-    final overlayText = isLight ? colors.secondaryText : colorScheme.onInverseSurface;
+    final overlayBg = colors.cardBg.withValues(alpha: 0.96);
+    final overlayText = colors.primaryText;
 
     return AnimatedOpacity(
       opacity: isVisible ? 1.0 : 0.0,
@@ -42,6 +39,7 @@ class PageInfoOverlay extends ConsumerWidget {
             decoration: BoxDecoration(
               color: overlayBg,
               borderRadius: BorderRadius.circular(20.r),
+              border: Border.all(color: colors.divider),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -68,7 +66,7 @@ class PageInfoOverlay extends ConsumerWidget {
                       style: TextStyle(color: overlayText, fontSize: 16.sp),
                     ),
                   );
-                }).toList(),
+                }),
               ],
             ),
           ),

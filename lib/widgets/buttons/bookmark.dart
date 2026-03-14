@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/providers/bookmarks.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class BookmarkButton extends ConsumerWidget {
   const BookmarkButton({
@@ -20,7 +21,7 @@ class BookmarkButton extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var bookmarkProviderWithLink = bookmarkProvider(link);
     var bookmarkQuery = ref.watch(bookmarkProviderWithLink);
-    var colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return bookmarkQuery.when(
       loading: () => const CircularProgressIndicator(),
@@ -29,7 +30,7 @@ class BookmarkButton extends ConsumerWidget {
         if (bookmark != null) {
           return IconButton(
             icon: const Icon(Icons.bookmark_remove),
-            color: colorScheme.primary,
+            color: colors.active,
             onPressed: () {
               ref
                   .read(bookmarkProviderWithLink.notifier)
@@ -46,7 +47,7 @@ class BookmarkButton extends ConsumerWidget {
         } else {
           return IconButton(
             icon: const Icon(Icons.bookmark_add),
-            color: colorScheme.primary,
+            color: colors.active,
             onPressed: () {
               ref.read(bookmarkProviderWithLink.notifier).createItem({
                 'type': type,

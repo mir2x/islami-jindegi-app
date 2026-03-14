@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class Dropdown extends ConsumerStatefulWidget {
   const Dropdown({
@@ -38,86 +39,97 @@ class DropdownState extends ConsumerState<Dropdown> {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
-    var colorScheme = Theme.of(context).colorScheme;
-    Color iconColor = colorScheme.onSurfaceVariant;
+    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
+    Color iconColor = appTheme.secondaryText;
 
-    return DropdownButton2<dynamic>(
-      isExpanded: true,
-      hint: widget.hint,
-      value: widget.selectedValue,
-      items: widget.items.map<DropdownMenuItem<dynamic>>((Map item) {
-        return DropdownMenuItem<dynamic>(
-          value: item['value'],
-          child: Text(item['label']),
-        );
-      }).toList(),
-      iconStyleData: IconStyleData(
-        icon: widget.allowClear
-            ? widget.selectedValue == null
-                ? Icon(Icons.arrow_drop_down, color: iconColor)
-                : IconButton(
-                    icon: Icon(Icons.clear_outlined, color: iconColor),
-                    iconSize: 15,
-                    onPressed: () => widget.updateItem(''),
-                  )
-            : Icon(Icons.arrow_drop_down, color: iconColor),
-        iconEnabledColor: colorScheme.onSurfaceVariant,
+    return Container(
+      decoration: BoxDecoration(
+        color: appTheme.cardBg,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: appTheme.divider),
       ),
-      dropdownStyleData: DropdownStyleData(
-        offset: const Offset(0, 5),
-        decoration: BoxDecoration(
-          color: colorScheme.surface,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: DropdownButton2<dynamic>(
+        isExpanded: true,
+        hint: widget.hint,
+        value: widget.selectedValue,
+        items: widget.items.map<DropdownMenuItem<dynamic>>((Map item) {
+          return DropdownMenuItem<dynamic>(
+            value: item['value'],
+            child: Text(
+              item['label'],
+              style: textTheme.bodyMedium?.copyWith(
+                color: appTheme.primaryText,
+              ),
+            ),
+          );
+        }).toList(),
+        iconStyleData: IconStyleData(
+          icon: widget.allowClear
+              ? widget.selectedValue == null
+                  ? Icon(Icons.arrow_drop_down, color: iconColor)
+                  : IconButton(
+                      icon: Icon(Icons.clear_outlined, color: iconColor),
+                      iconSize: 15,
+                      onPressed: () => widget.updateItem(''),
+                    )
+              : Icon(Icons.arrow_drop_down, color: iconColor),
+          iconEnabledColor: appTheme.secondaryText,
         ),
-      ),
-      dropdownSearchData: widget.searchEnabled
-          ? DropdownSearchData(
-              searchController: textEditingController,
-              searchInnerWidgetHeight: 60,
-              searchInnerWidget: Container(
-                height: 60,
-                padding: const EdgeInsets.all(10),
-                child: TextFormField(
-                  expands: true,
-                  maxLines: null,
-                  controller: textEditingController,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    contentPadding: const EdgeInsets.all(8),
-                    hintText: widget.searchHint,
-                    hintStyle: textTheme.labelMedium,
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: colorScheme.outline,
+        buttonStyleData: const ButtonStyleData(
+          height: 50,
+          padding: EdgeInsets.zero,
+        ),
+        dropdownStyleData: DropdownStyleData(
+          offset: const Offset(0, 5),
+          decoration: BoxDecoration(
+            color: appTheme.dropdownBg,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: appTheme.divider),
+          ),
+        ),
+        dropdownSearchData: widget.searchEnabled
+            ? DropdownSearchData(
+                searchController: textEditingController,
+                searchInnerWidgetHeight: 60,
+                searchInnerWidget: Container(
+                  height: 60,
+                  padding: const EdgeInsets.all(10),
+                  child: TextFormField(
+                    expands: true,
+                    maxLines: null,
+                    controller: textEditingController,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      contentPadding: const EdgeInsets.all(8),
+                      hintText: widget.searchHint,
+                      hintStyle: textTheme.labelMedium,
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: appTheme.divider,
+                        ),
                       ),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: colorScheme.outline,
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: appTheme.divider,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              searchMatchFn: (item, searchValue) {
-                return item.value
-                    .toString()
-                    .toLowerCase()
-                    .contains(searchValue.toLowerCase());
-              },
-            )
-          : null,
-      underline: Container(
-        height: 1.0,
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: colorScheme.outline,
-              width: 0.0,
-            ),
-          ),
+                searchMatchFn: (item, searchValue) {
+                  return item.value
+                      .toString()
+                      .toLowerCase()
+                      .contains(searchValue.toLowerCase());
+                },
+              )
+            : null,
+        underline: Container(
+          height: 0,
         ),
+        onChanged: widget.updateItem,
       ),
-      onChanged: widget.updateItem,
     );
   }
 }

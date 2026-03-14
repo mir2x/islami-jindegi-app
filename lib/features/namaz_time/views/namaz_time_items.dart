@@ -14,6 +14,7 @@ import 'package:native_app/helpers/get_location_name.dart';
 import 'package:native_app/helpers/split_hijri_date.dart';
 import 'package:native_app/objects/prayer_time.dart';
 import 'package:native_app/providers/geolocation.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class NamazTimeItems extends ConsumerStatefulWidget {
   const NamazTimeItems({
@@ -51,9 +52,8 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
   Widget build(BuildContext context) {
     final locales = AppLocalizations.of(context)!;
     final currentLang = Localizations.localeOf(context).languageCode;
-    final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final appTheme = Theme.of(context).extension<AppThemeColors>()!;
     final dataProvider = ref.watch(preferencesAndGeolocationProvider);
     final alarmStatesProvider = ref.watch(prayerAlarmProvider);
 
@@ -168,7 +168,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                 Icon(
                   Icons.place_outlined,
                   size: 20,
-                  color: colorScheme.primary,
+                  color: appTheme.active,
                 ),
                 const SizedBox(width: 6),
                 Expanded(
@@ -176,7 +176,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     location,
                     style: textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: colorScheme.onSurface,
+                      color: appTheme.primaryText,
                     ),
                   ),
                 ),
@@ -187,13 +187,14 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: colorScheme.surfaceContainerHighest,
+                      color: appTheme.highlight,
                       borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: appTheme.divider),
                     ),
                     child: Icon(
                       Icons.calendar_month_outlined,
                       size: 18,
-                      color: colorScheme.onSurface,
+                      color: appTheme.primaryText,
                     ),
                   ),
                 ),
@@ -205,9 +206,8 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: colorScheme.outlineVariant),
-                color:
-                    colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+                border: Border.all(color: appTheme.divider),
+                color: appTheme.highlight,
               ),
               child: Column(
                 children: [
@@ -215,7 +215,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     hijriText,
                     style: textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: colorScheme.primary,
+                      color: appTheme.active,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -223,7 +223,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     gregorianText.toUpperCase(),
                     style: textTheme.labelSmall?.copyWith(
                       letterSpacing: 0.4,
-                      color: colorScheme.onSurfaceVariant,
+                      color: appTheme.secondaryText,
                     ),
                   ),
                 ],
@@ -235,20 +235,15 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isDark
-                      ? [
-                          colorScheme.surfaceContainerHighest,
-                          colorScheme.surface.withValues(alpha: 0.92),
-                        ]
-                      : [
-                          colorScheme.surfaceContainerHighest,
-                          colorScheme.surface,
-                        ],
-                ),
-                border: Border.all(color: colorScheme.outlineVariant),
+                color: appTheme.cardBg,
+                border: Border.all(color: appTheme.divider),
+                boxShadow: [
+                  BoxShadow(
+                    color: appTheme.shadow.withValues(alpha: 0.06),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,7 +251,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                   Text(
                     locales.upcomingPrayer,
                     style: textTheme.labelMedium?.copyWith(
-                      color: colorScheme.primary,
+                      color: appTheme.active,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -265,7 +260,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     '${prayerTimes[nextPrayerKey]!['title']} $upcomingIn',
                     style: textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: colorScheme.onSurface,
+                      color: appTheme.primaryText,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -278,7 +273,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                             Text(
                               locales.nextPrayerLabel,
                               style: textTheme.labelMedium?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
+                                color: appTheme.secondaryText,
                               ),
                             ),
                             const SizedBox(height: 2),
@@ -286,7 +281,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                               prayerTimes[nextPrayerKey]!['startTime'],
                               style: textTheme.headlineSmall?.copyWith(
                                 fontWeight: FontWeight.w700,
-                                color: colorScheme.onSurface,
+                                color: appTheme.primaryText,
                               ),
                             ),
                           ],
@@ -294,8 +289,8 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                       ),
                       FilledButton(
                         style: FilledButton.styleFrom(
-                          backgroundColor: colorScheme.primary,
-                          foregroundColor: colorScheme.onPrimary,
+                          backgroundColor: appTheme.active,
+                          foregroundColor: appTheme.appBarText,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -320,7 +315,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     icon: Icons.nightlight_round,
                     title: locales.sahurEnds,
                     value: tahajjud['endTime'],
-                    accent: colorScheme.tertiary,
+                    accent: appTheme.active,
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -329,7 +324,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     icon: Icons.fastfood_outlined,
                     title: locales.iftar,
                     value: maghrib['startTime'],
-                    accent: colorScheme.primary,
+                    accent: appTheme.active,
                   ),
                 ),
               ],
@@ -385,7 +380,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     icon: Icons.wb_twilight,
                     title: sunrise['title'],
                     value: '${sunrise['startTime']} - ${sunrise['endTime']}',
-                    accent: colorScheme.secondary,
+                    accent: appTheme.secondary,
                     isCompact: true,
                   ),
                 ),
@@ -395,7 +390,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     icon: Icons.wb_sunny,
                     title: midday['title'],
                     value: '${midday['startTime']} - ${midday['endTime']}',
-                    accent: colorScheme.secondary,
+                    accent: appTheme.secondary,
                     isCompact: true,
                   ),
                 ),
@@ -405,7 +400,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     icon: Icons.wb_twilight_outlined,
                     title: sunset['title'],
                     value: '${sunset['startTime']} - ${sunset['endTime']}',
-                    accent: colorScheme.secondary,
+                    accent: appTheme.secondary,
                     isCompact: true,
                   ),
                 ),
@@ -417,10 +412,8 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(14),
-                color: colorScheme.inverseSurface.withValues(alpha: 0.92),
-                border: Border.all(
-                  color: colorScheme.primary.withValues(alpha: 0.35),
-                ),
+                color: appTheme.highlight,
+                border: Border.all(color: appTheme.divider),
               ),
               child: Row(
                 children: [
@@ -428,7 +421,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     child: Text(
                       '${locales.knowledge}\n${locales.knowledgeQuote}',
                       style: textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onInverseSurface,
+                        color: appTheme.primaryText,
                         height: 1.4,
                       ),
                     ),
@@ -439,11 +432,11 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     height: 42,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: colorScheme.primary.withValues(alpha: 0.2),
+                      color: appTheme.cardBg,
                     ),
                     child: Icon(
                       Icons.menu_book_outlined,
-                      color: colorScheme.primary,
+                      color: appTheme.active,
                     ),
                   ),
                 ],
@@ -539,7 +532,7 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
+    final appTheme = Theme.of(context).extension<AppThemeColors>()!;
 
     return Row(
       children: [
@@ -547,7 +540,7 @@ class _SectionHeader extends StatelessWidget {
           title,
           style: textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w700,
-            color: colorScheme.onSurface,
+            color: appTheme.primaryText,
           ),
         ),
         const Spacer(),
@@ -555,7 +548,7 @@ class _SectionHeader extends StatelessWidget {
           Text(
             trailing!,
             style: textTheme.labelMedium?.copyWith(
-              color: colorScheme.primary,
+              color: appTheme.active,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -581,7 +574,7 @@ class _MetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final appTheme = Theme.of(context).extension<AppThemeColors>()!;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
@@ -591,8 +584,8 @@ class _MetricCard extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: colorScheme.outlineVariant),
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.45),
+        border: Border.all(color: appTheme.divider),
+        color: appTheme.cardBg,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -603,7 +596,7 @@ class _MetricCard extends StatelessWidget {
             title.toUpperCase(),
             textAlign: TextAlign.center,
             style: textTheme.labelSmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
+              color: appTheme.secondaryText,
               letterSpacing: 0.6,
               fontWeight: FontWeight.w700,
             ),
@@ -613,7 +606,7 @@ class _MetricCard extends StatelessWidget {
             value,
             textAlign: TextAlign.center,
             style: textTheme.titleMedium?.copyWith(
-              color: colorScheme.onSurface,
+              color: appTheme.primaryText,
               fontWeight: FontWeight.w700,
               fontSize: isCompact ? 15 : null,
             ),
@@ -649,15 +642,11 @@ class _PrayerRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final appTheme = Theme.of(context).extension<AppThemeColors>()!;
     final textTheme = Theme.of(context).textTheme;
 
-    final Color bgColor = isActive
-        ? colorScheme.primary.withValues(alpha: 0.2)
-        : colorScheme.surfaceContainerHighest.withValues(alpha: 0.35);
-    final Color iconBg = isActive
-        ? colorScheme.primary.withValues(alpha: 0.22)
-        : colorScheme.surface.withValues(alpha: 0.75);
+    final Color bgColor = isActive ? appTheme.highlight : appTheme.cardBg;
+    final Color iconBg = isActive ? appTheme.cardBg : appTheme.highlight;
 
     return InkWell(
       borderRadius: BorderRadius.circular(14),
@@ -668,9 +657,7 @@ class _PrayerRow extends StatelessWidget {
           borderRadius: BorderRadius.circular(14),
           color: bgColor,
           border: Border.all(
-            color: isActive
-                ? colorScheme.primary.withValues(alpha: 0.45)
-                : colorScheme.outlineVariant.withValues(alpha: 0.65),
+            color: isActive ? appTheme.highlightBorder : appTheme.divider,
           ),
         ),
         child: Row(
@@ -684,9 +671,7 @@ class _PrayerRow extends StatelessWidget {
               ),
               child: Icon(
                 icon,
-                color: isActive
-                    ? colorScheme.primary
-                    : colorScheme.onSurfaceVariant,
+                color: isActive ? appTheme.active : appTheme.secondaryText,
                 size: 20,
               ),
             ),
@@ -695,7 +680,7 @@ class _PrayerRow extends StatelessWidget {
               child: Text(
                 title,
                 style: textTheme.titleMedium?.copyWith(
-                  color: isActive ? colorScheme.primary : colorScheme.onSurface,
+                  color: isActive ? appTheme.active : appTheme.primaryText,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -707,14 +692,13 @@ class _PrayerRow extends StatelessWidget {
                   time,
                   style: textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color:
-                        isActive ? colorScheme.primary : colorScheme.onSurface,
+                    color: isActive ? appTheme.active : appTheme.primaryText,
                   ),
                 ),
                 Text(
                   '${AppLocalizations.of(context)!.endsAt} $endTime',
                   style: textTheme.labelSmall?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
+                    color: appTheme.secondaryText,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -728,9 +712,8 @@ class _PrayerRow extends StatelessWidget {
                   isAlarmEnabled
                       ? Icons.notifications_active
                       : Icons.notifications_off,
-                  color: isAlarmEnabled
-                      ? colorScheme.primary
-                      : colorScheme.onSurfaceVariant,
+                  color:
+                      isAlarmEnabled ? appTheme.active : appTheme.secondaryText,
                 ),
               ),
             ],
@@ -754,7 +737,7 @@ class _ActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final appTheme = Theme.of(context).extension<AppThemeColors>()!;
     final textTheme = Theme.of(context).textTheme;
 
     return InkWell(
@@ -763,9 +746,9 @@ class _ActionTile extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
+          color: appTheme.cardBg,
           border: Border.all(
-            color: colorScheme.outlineVariant.withValues(alpha: 0.6),
+            color: appTheme.divider,
           ),
         ),
         child: Column(
@@ -776,15 +759,15 @@ class _ActionTile extends StatelessWidget {
               height: 46,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: colorScheme.primary.withValues(alpha: 0.2),
+                color: appTheme.highlight,
               ),
-              child: Icon(icon, color: colorScheme.primary),
+              child: Icon(icon, color: appTheme.active),
             ),
             const SizedBox(height: 10),
             Text(
               title,
               style: textTheme.titleMedium?.copyWith(
-                color: colorScheme.onSurface,
+                color: appTheme.primaryText,
                 fontWeight: FontWeight.w700,
               ),
             ),

@@ -14,23 +14,13 @@ class SearchPage extends ConsumerWidget {
     final searchQuery = ref.watch(searchQueryProvider);
     final searchResults = ref.watch(searchResultsProvider);
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final appBarBg = isLight
-        ? colors.surfaceBg
-        : (Theme.of(context).appBarTheme.backgroundColor ??
-            Theme.of(context).colorScheme.surface);
-    final appBarFg = isLight
-        ? colors.secondaryText
-        : (Theme.of(context).appBarTheme.foregroundColor ??
-            Theme.of(context).colorScheme.onSurface);
-    final highlightBg = isLight
-        ? colors.divider.withOpacity(0.5)
-        : Theme.of(context).colorScheme.primaryContainer;
-    final highlightFg = isLight
-        ? colors.secondaryText
-        : Theme.of(context).colorScheme.onPrimaryContainer;
+    final appBarBg = colors.appBarBg;
+    final appBarFg = colors.appBarText;
+    final highlightBg = colors.highlight;
+    final highlightFg = colors.primaryText;
 
     return Scaffold(
+      backgroundColor: colors.scaffoldBg,
       appBar: AppBar(
         backgroundColor: appBarBg,
         foregroundColor: appBarFg,
@@ -39,9 +29,7 @@ class SearchPage extends ConsumerWidget {
           decoration: InputDecoration(
             hintText: 'আরবি বা বাংলায় খুঁজুন...',
             hintStyle: TextStyle(
-
-                wordSpacing: 3,
-                color: Theme.of(context).colorScheme.onSurfaceVariant),
+                wordSpacing: 3, color: appBarFg.withValues(alpha: 0.72)),
             border: InputBorder.none,
           ),
           style: TextStyle(
@@ -72,40 +60,56 @@ class SearchPage extends ConsumerWidget {
             itemCount: ayahs.length,
             itemBuilder: (context, index) {
               final ayah = ayahs[index];
-              return ListTile(
-                title: Text(
-                  'সূরা ${suraNames[ayah.sura - 1] ?? ayah.sura}: আয়াত ${ayah.ayah.toBengaliDigit()}',
-                  style: TextStyle(
-      
-                      wordSpacing: 3,
-                      fontWeight: FontWeight.bold),
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                decoration: BoxDecoration(
+                  color: colors.cardBg,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: colors.divider),
                 ),
-                subtitle: HighlightedText(
-                  text: ayah.arabicText,
-                  query: searchQuery,
-                  highlightBackground: highlightBg,
-                  highlightForeground: highlightFg,
-                  style: TextStyle(
+                child: ListTile(
+                  title: Text(
+                    'সূরা ${suraNames[ayah.sura - 1]}: আয়াত ${ayah.ayah.toBengaliDigit()}',
+                    style: TextStyle(
+                      wordSpacing: 3,
+                      fontWeight: FontWeight.bold,
+                      color: colors.primaryText,
+                    ),
+                  ),
+                  subtitle: HighlightedText(
+                    text: ayah.arabicText,
+                    query: searchQuery,
+                    highlightBackground: highlightBg,
+                    highlightForeground: highlightFg,
+                    style: TextStyle(
                       fontFamily: 'arabic/noorehuda',
                       fontSize: 20,
-                      color: Theme.of(context).colorScheme.onSurface),
+                      color: colors.arabicText,
+                    ),
+                  ),
+                  onTap: () {
+                    Future.delayed(Duration.zero, () {
+                      if (!context.mounted) return;
+
+                      final targetSura = ayah.sura;
+                      final targetIndex = ayah.ayah - 1;
+
+                      context
+                          .push('/qurans/sura/$targetSura?scroll=$targetIndex');
+                    });
+                  },
                 ),
-                onTap: () {
-                  Future.delayed(Duration.zero, () {
-                    if (!context.mounted) return;
-
-                    final targetSura = ayah.sura;
-                    final targetIndex = ayah.ayah - 1;
-
-                    context.push('/qurans/sura/$targetSura?scroll=$targetIndex');
-                  });
-                },
               );
             },
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Error: $err')),
+        error: (err, stack) => Center(
+          child: Text(
+            'Error: $err',
+            style: TextStyle(color: colors.primaryText),
+          ),
+        ),
       ),
     );
   }

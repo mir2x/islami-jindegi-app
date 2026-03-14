@@ -70,7 +70,7 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
           width: 280.w,
           child: Material(
             elevation: 16,
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).extension<AppThemeColors>()!.drawerBg,
             borderRadius: const BorderRadius.only(
               topRight: Radius.circular(16),
               bottomRight: Radius.circular(16),
@@ -84,9 +84,12 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
                     children: [
                       Expanded(flex: 3, child: _buildSurahList(ref)),
                       VerticalDivider(
-                          width: 1,
-                          thickness: 1,
-                          color: Theme.of(context).dividerColor),
+                        width: 1,
+                        thickness: 1,
+                        color: Theme.of(context)
+                            .extension<AppThemeColors>()!
+                            .divider,
+                      ),
                       Expanded(flex: 2, child: _buildAyahList(ref)),
                     ],
                   ),
@@ -100,11 +103,9 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = colorScheme.brightness == Brightness.light;
-    final headerBg = isLight ? appColors.appBarBg : colorScheme.secondary;
-    final headerFg = isLight ? appColors.appBarText : colorScheme.onSecondary;
+    final headerBg = appColors.drawerHeaderBg;
+    final headerFg = appColors.appBarText;
     return Container(
       color: headerBg,
       padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -146,28 +147,22 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
   Widget _buildSurahList(WidgetRef ref) {
     final selectedSurah = ref.watch(selectedDrawerSurahProvider);
     final suraNames = ref.watch(suraNamesProvider);
-    final colorScheme = Theme.of(context).colorScheme;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = colorScheme.brightness == Brightness.light;
-    final selectedBg = isLight
-        ? appColors.appBarBg.withOpacity(0.15)
-        : colorScheme.primary.withOpacity(0.1);
-    final selectedFg = isLight ? appColors.appBarBg : colorScheme.primary;
+    final selectedBg = appColors.highlight;
+    final selectedFg = appColors.primaryText;
 
     return ScrollablePositionedList.separated(
       itemScrollController: _surahScrollController,
       padding: EdgeInsets.zero,
       itemCount: 114,
       separatorBuilder: (context, index) =>
-          Divider(height: 1.h, color: Theme.of(context).dividerColor),
+          Divider(height: 1.h, color: appColors.divider),
       itemBuilder: (context, index) {
         final suraNumber = index + 1;
         final isSelected = suraNumber == selectedSurah;
 
         return ListTile(
-          tileColor: isSelected
-              ? selectedBg
-              : null,
+          tileColor: isSelected ? selectedBg : null,
           title: Text(
             '${toBengaliNumber(suraNumber)}. ${suraNames[index]}',
             style: TextStyle(
@@ -190,6 +185,7 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
   Widget _buildAyahList(WidgetRef ref) {
     final selectedSurah = ref.watch(selectedDrawerSurahProvider);
     final ayahCounts = ref.watch(ayahCountsProvider);
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
 
     if (selectedSurah < 1 || selectedSurah > 114) return const SizedBox();
 
@@ -203,7 +199,7 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
       itemScrollController: _ayahScrollController,
       padding: EdgeInsets.zero,
       separatorBuilder: (context, index) =>
-          Divider(height: 1.h, color: Theme.of(context).dividerColor),
+          Divider(height: 1.h, color: appColors.divider),
       itemCount: totalAyahs,
       itemBuilder: (context, index) {
         final ayahNumber = index + 1;
@@ -214,7 +210,7 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
               toBengaliNumber(ayahNumber),
               style: TextStyle(
                 fontSize: 14.sp,
-                color: Theme.of(context).textTheme.bodyLarge?.color,
+                color: appColors.primaryText,
               ),
             ),
           ),
@@ -248,10 +244,12 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
       // 2. Then navigate to the new sura
       // This ensures only one sura is in the stack at any time
       Future.delayed(const Duration(milliseconds: 200), () async {
+        if (!context.mounted) return;
         // Go back to sura-list first
         if (context.canPop()) context.pop();
         // Small delay to ensure navigation completes
         await Future.delayed(const Duration(milliseconds: 50));
+        if (!context.mounted) return;
         // Navigate to the new sura
         context.push('/qurans/sura/$suraNumber?scroll=${ayahNumber - 1}');
       });

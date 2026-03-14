@@ -24,9 +24,7 @@ class SuraBookmarkNavigationView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final bookmarks = ref.watch(sura_bookmarks.bookmarkProvider);
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final accent =
-        isLight ? appColors.secondaryText : Theme.of(context).colorScheme.primary;
+    final accent = appColors.active;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final itemTitleFontSize = isLandscape ? 12.0 : 14.sp;
@@ -38,7 +36,7 @@ class SuraBookmarkNavigationView extends ConsumerWidget {
           'কোনো বুকমার্ক নেই।',
           style: TextStyle(
             fontSize: 14.sp,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: appColors.secondaryText,
           ),
         ),
       );
@@ -48,7 +46,7 @@ class SuraBookmarkNavigationView extends ConsumerWidget {
       padding: EdgeInsets.zero,
       itemCount: bookmarks.length,
       separatorBuilder: (context, _) =>
-          Divider(height: 1.h, color: Theme.of(context).dividerColor),
+          Divider(height: 1.h, color: appColors.divider),
       itemBuilder: (context, i) {
         final bookmark = bookmarks[i];
 
@@ -75,7 +73,7 @@ class SuraBookmarkNavigationView extends ConsumerWidget {
                       style: TextStyle(
                         fontSize: itemSubtitleFontSize,
                         fontWeight: FontWeight.w500,
-                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                        color: appColors.primaryText,
                       ),
                     ),
                     SizedBox(height: 2.h),
@@ -83,11 +81,7 @@ class SuraBookmarkNavigationView extends ConsumerWidget {
                       'আয়াত ${_toBengaliNumber(bookmark.ayahNumber)}',
                       style: TextStyle(
                         fontSize: itemSubtitleFontSize,
-                        color: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.color
-                            ?.withOpacity(0.7),
+                        color: appColors.secondaryText,
                       ),
                     ),
                   ],
@@ -98,14 +92,17 @@ class SuraBookmarkNavigationView extends ConsumerWidget {
           onTap: () {
             Scaffold.of(context).closeDrawer();
             if (bookmark.suraNumber == currentSuraNumber) {
-              ref.read(suraScrollCommandProvider.notifier).state = ScrollCommand(
+              ref.read(suraScrollCommandProvider.notifier).state =
+                  ScrollCommand(
                 suraNumber: bookmark.suraNumber,
                 scrollIndex: bookmark.ayahNumber - 1,
               );
             } else {
               Future.delayed(const Duration(milliseconds: 200), () async {
+                if (!context.mounted) return;
                 if (context.canPop()) context.pop();
                 await Future.delayed(const Duration(milliseconds: 50));
+                if (!context.mounted) return;
                 context.push(
                   '/qurans/sura/${bookmark.suraNumber}?scroll=${bookmark.ayahNumber - 1}',
                 );
@@ -116,7 +113,7 @@ class SuraBookmarkNavigationView extends ConsumerWidget {
             icon: Icon(
               Icons.delete,
               size: 20.r,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: appColors.secondaryText,
             ),
             onPressed: () {
               ref.read(sura_bookmarks.bookmarkProvider.notifier).removeBookmark(

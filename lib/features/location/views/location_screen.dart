@@ -11,6 +11,7 @@ import 'package:native_app/helpers/get_location_name.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 import '../providers/location_providers.dart';
 
@@ -22,6 +23,7 @@ class LocationScreen extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var geoData = ref.watch(geolocationProvider);
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return AppScaffold(
       showPattern: false,
@@ -53,8 +55,6 @@ class LocationScreen extends ConsumerWidget {
                       ),
                       WithPreferences(
                         builder: (context, preferences) {
-                          var colorScheme = Theme.of(context).colorScheme;
-
                           return Container(
                             margin: const EdgeInsets.only(top: 20),
                             child: OutlinedButton(
@@ -68,6 +68,11 @@ class LocationScreen extends ConsumerWidget {
                                         MediaQuery.of(context).size.height;
 
                                     return Dialog(
+                                      backgroundColor: colors.cardBg,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                        side: BorderSide(color: colors.divider),
+                                      ),
                                       child: Container(
                                         width: screenWidth,
                                         height: screenHeight * 0.6,
@@ -85,14 +90,13 @@ class LocationScreen extends ConsumerWidget {
                               },
                               style: OutlinedButton.styleFrom(
                                 side: BorderSide(
-                                  color: colorScheme.outlineVariant,
+                                  color: colors.divider,
                                 ),
-                                backgroundColor:
-                                    colorScheme.surfaceContainerHighest,
+                                backgroundColor: colors.cardBg,
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 15),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
                                 minimumSize: const Size.fromHeight(45),
                               ),
@@ -107,7 +111,7 @@ class LocationScreen extends ConsumerWidget {
                                   Icon(
                                     Icons.arrow_drop_down,
                                     size: 35,
-                                    color: colorScheme.onSurfaceVariant,
+                                    color: colors.secondaryText,
                                   ),
                                 ],
                               ),
@@ -121,6 +125,12 @@ class LocationScreen extends ConsumerWidget {
                   Text(locales.withGeolocation, style: textTheme.labelMedium),
                   Container(
                     margin: const EdgeInsets.only(top: 15),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: colors.cardBg,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: colors.divider),
+                    ),
                     child: (!geolocation['isGeolocated'])
                         ? InkWell(
                             onTap: () => ref
@@ -190,16 +200,24 @@ class LocationScreen extends ConsumerWidget {
                           ),
                   ),
                   const SizedBox(height: 20),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(locales.benefits, style: textTheme.titleMedium),
-                      const SizedBox(height: 5),
-                      Text(
-                        locales.geolocationBenefits,
-                        style: textTheme.labelSmall,
-                      ),
-                    ],
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: colors.cardBg,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: colors.divider),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(locales.benefits, style: textTheme.titleMedium),
+                        const SizedBox(height: 5),
+                        Text(
+                          locales.geolocationBenefits,
+                          style: textTheme.labelSmall,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               );
@@ -247,6 +265,7 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
     String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
     var geoData = ref.watch(geolocationProvider);
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return geoData.when(
       loading: () => const CircularProgressIndicator(),
@@ -300,7 +319,15 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
                           updateCountrySearchText(null);
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 9),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 9,
+                            horizontal: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(color: colors.divider),
+                            ),
+                          ),
                           child: Text(
                             countryName,
                             style: textTheme.titleMedium,
@@ -391,7 +418,15 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
                               .updateGeolocation();
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 9),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 9,
+                            horizontal: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(color: colors.divider),
+                            ),
+                          ),
                           child: Text(
                             cityName,
                             style: textTheme.titleMedium,

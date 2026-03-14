@@ -12,6 +12,7 @@ import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../providers/dua_providers.dart';
 
 class DuaListScreen extends StatelessWidget {
@@ -74,6 +75,7 @@ class _OfflineDuaListState extends ConsumerState<_OfflineDuaList> {
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     var qParams = ref.watch(duaQueryParamsProvider);
 
     var modelQuery = ref.watch(allDuasProvider(qParams));
@@ -87,7 +89,13 @@ class _OfflineDuaListState extends ConsumerState<_OfflineDuaList> {
           children: [
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
+              margin: const EdgeInsets.only(top: 20, left: 15, right: 15),
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: appTheme.cardBg,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: appTheme.divider),
+              ),
               child: Row(
                 children: [
                   Expanded(

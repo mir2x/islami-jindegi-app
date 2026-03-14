@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import 'package:upgrader/upgrader.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
@@ -29,11 +30,14 @@ class Home extends StatelessWidget {
 
     return WithPreferences(
       builder: (context, preferences) {
-        String theme = preferences.getString('theme') ?? 'classic';
+        final appColors = Theme.of(context).extension<AppThemeColors>()!;
+        final useDarkHomeLogo =
+            ThemeData.estimateBrightnessForColor(appColors.appBarBg) ==
+            Brightness.light;
 
         return AppScaffold(
           isHome: true,
-          title: theme == 'light'
+          title: useDarkHomeLogo
               ? SvgPicture.asset(
                   'assets/images/logos/brand-name-dark.svg',
                   fit: BoxFit.scaleDown,
@@ -52,7 +56,12 @@ class Home extends StatelessWidget {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.inverseSurface,
+                      color: appColors.appBarBg,
+                      border: Border(
+                        bottom: BorderSide(
+                          color: appColors.divider.withValues(alpha: 0.35),
+                        ),
+                      ),
                     ),
                     padding: EdgeInsets.only(
                       left: sideMargin * 2,
@@ -63,79 +72,104 @@ class Home extends StatelessWidget {
                     ),
                     child: const DatesPrayers(),
                   ),
-                  GridView.count(
-                    crossAxisCount: 3,
-                    padding: EdgeInsets.symmetric(
-                      vertical: screenHeight * 0.045,
-                      horizontal: screenWidth * 0.02,
+                  Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.fromLTRB(
+                      sideMargin,
+                      screenHeight * 0.03,
+                      sideMargin,
+                      screenHeight * 0.02,
                     ),
-                    childAspectRatio: isMobile ? 1.6 : 1.75,
-                    crossAxisSpacing: 5,
-                    mainAxisSpacing: screenHeight * 0.025,
-                    shrinkWrap: true,
-                    physics: const ScrollPhysics(),
-                    children: [
-                      Resource(
-                        route: 'qurans',
-                        title: locales.quran,
-                        icon: 'quran',
+                    padding: EdgeInsets.fromLTRB(
+                      isMobile ? 14 : 22,
+                      isMobile ? 18 : 26,
+                      isMobile ? 14 : 22,
+                      isMobile ? 18 : 26,
+                    ),
+                    decoration: BoxDecoration(
+                      color: appColors.surfaceBg.withValues(alpha: 0.94),
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(
+                        color: appColors.divider.withValues(alpha: 0.45),
                       ),
-                      Resource(
-                        route: 'books',
-                        title: locales.books,
-                        icon: 'book',
-                      ),
-                      Resource(
-                        route: 'bayans',
-                        title: locales.bayans,
-                        icon: 'bayan',
-                      ),
-                      Resource(
-                        route: 'malfuzat',
-                        title: locales.malfuzat,
-                        icon: 'malfuzat',
-                      ),
-                      Resource(
-                        route: 'masail',
-                        title: locales.masail,
-                        icon: 'masail',
-                      ),
-                      Resource(
-                        route: 'duas',
-                        title: locales.duaDurud,
-                        icon: 'dua',
-                      ),
-                      Resource(
-                        route: 'articles',
-                        title: locales.articles,
-                        icon: 'article',
-                      ),
-                      Resource(
-                        route: 'news',
-                        title: locales.news,
-                        icon: 'news',
-                      ),
-                      Resource(
-                        route: 'madrasahs',
-                        title: locales.madrasah,
-                        icon: 'madrasah',
-                      ),
-                      Resource(
-                        route: 'namaz-times',
-                        title: locales.namazTime,
-                        icon: 'namaz-time',
-                      ),
-                      Resource(
-                        route: 'donation',
-                        title: locales.donation,
-                        icon: 'donate',
-                      ),
-                      Resource(
-                        route: 'settings',
-                        title: locales.settings,
-                        icon: 'settings',
-                      ),
-                    ],
+                      boxShadow: [
+                        BoxShadow(
+                          color: appColors.shadow.withValues(alpha: 0.08),
+                          blurRadius: 28,
+                          offset: const Offset(0, 14),
+                        ),
+                      ],
+                    ),
+                    child: GridView.count(
+                      crossAxisCount: 3,
+                      childAspectRatio: isMobile ? 0.96 : 1.05,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        Resource(
+                          route: 'qurans',
+                          title: locales.quran,
+                          icon: 'quran',
+                        ),
+                        Resource(
+                          route: 'books',
+                          title: locales.books,
+                          icon: 'book',
+                        ),
+                        Resource(
+                          route: 'bayans',
+                          title: locales.bayans,
+                          icon: 'bayan',
+                        ),
+                        Resource(
+                          route: 'malfuzat',
+                          title: locales.malfuzat,
+                          icon: 'malfuzat',
+                        ),
+                        Resource(
+                          route: 'masail',
+                          title: locales.masail,
+                          icon: 'masail',
+                        ),
+                        Resource(
+                          route: 'duas',
+                          title: locales.duaDurud,
+                          icon: 'dua',
+                        ),
+                        Resource(
+                          route: 'articles',
+                          title: locales.articles,
+                          icon: 'article',
+                        ),
+                        Resource(
+                          route: 'news',
+                          title: locales.news,
+                          icon: 'news',
+                        ),
+                        Resource(
+                          route: 'madrasahs',
+                          title: locales.madrasah,
+                          icon: 'madrasah',
+                        ),
+                        Resource(
+                          route: 'namaz-times',
+                          title: locales.namazTime,
+                          icon: 'namaz-time',
+                        ),
+                        Resource(
+                          route: 'donation',
+                          title: locales.donation,
+                          icon: 'donate',
+                        ),
+                        Resource(
+                          route: 'settings',
+                          title: locales.settings,
+                          icon: 'settings',
+                        ),
+                      ],
+                    ),
                   ),
                   const MalfuzatPopup(),
                   Container(

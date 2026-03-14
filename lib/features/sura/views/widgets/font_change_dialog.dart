@@ -135,10 +135,6 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final accent = isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary;
-    final actionBg =
-        isLight ? colors.surfaceBg.withOpacity(0.9) : Theme.of(context).colorScheme.primary;
     final bool isArabic = _selectedLanguage == 'Arabic';
     final List<String> currentFonts = isArabic ? _arabicFonts : _bengaliFonts;
     String currentFontSelection =
@@ -154,8 +150,16 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
     }
 
     return AlertDialog(
-      title: const Text('ফন্ট পরিবর্তন',
-          style: TextStyle()),
+      backgroundColor: colors.cardBg,
+      surfaceTintColor: colors.cardBg,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: colors.divider),
+      ),
+      title: Text(
+        'ফন্ট পরিবর্তন',
+        style: TextStyle(color: colors.primaryText),
+      ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -194,15 +198,14 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
             const SizedBox(height: 16),
             Text('সাইজ',
                 style: const TextStyle(
-                    wordSpacing: 3,
-                    fontWeight: FontWeight.bold)),
+                    wordSpacing: 3, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Row(
               children: [
                 IconButton(
                   onPressed: () => _decrementSize(isArabic),
                   icon: const Icon(Icons.remove_circle_outline),
-                  color: accent,
+                  color: colors.active,
                   visualDensity: VisualDensity.compact,
                 ),
                 Expanded(
@@ -230,7 +233,19 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
                     },
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: colors.divider),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: colors.divider),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: colors.active),
+                      ),
+                      fillColor: colors.dropdownBg,
+                      filled: true,
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 8),
                     ),
@@ -239,7 +254,7 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
                 IconButton(
                   onPressed: () => _incrementSize(isArabic),
                   icon: const Icon(Icons.add_circle_outline),
-                  color: accent,
+                  color: colors.active,
                   visualDensity: VisualDensity.compact,
                 ),
               ],
@@ -250,16 +265,14 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          style: TextButton.styleFrom(foregroundColor: accent),
+          style: TextButton.styleFrom(foregroundColor: colors.active),
           child: const Text('বাতিল', style: TextStyle()),
         ),
         FilledButton(
           onPressed: _onConfirm,
           style: FilledButton.styleFrom(
-            backgroundColor: actionBg,
-            foregroundColor: isLight
-                ? colors.secondaryText
-                : Theme.of(context).colorScheme.onPrimary,
+            backgroundColor: colors.active,
+            foregroundColor: colors.appBarText,
           ),
           child: const Text('নিশ্চিত করুন', style: TextStyle()),
         ),
@@ -284,6 +297,8 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
                 fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         DropdownButtonFormField<T>(
+          dropdownColor:
+              Theme.of(context).extension<AppThemeColors>()!.dropdownBg,
           value: value,
           items: items.map((item) {
             return DropdownMenuItem<T>(
@@ -295,7 +310,27 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
           }).toList(),
           onChanged: onChanged,
           decoration: InputDecoration(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: Theme.of(context).extension<AppThemeColors>()!.divider,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: Theme.of(context).extension<AppThemeColors>()!.divider,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: Theme.of(context).extension<AppThemeColors>()!.active,
+              ),
+            ),
+            fillColor:
+                Theme.of(context).extension<AppThemeColors>()!.dropdownBg,
+            filled: true,
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           ),

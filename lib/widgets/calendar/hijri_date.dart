@@ -5,6 +5,7 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:native_app/providers/hijri_date_settings.dart';
 import 'package:native_app/helpers/adjusted_hijri_date.dart';
 import 'package:native_app/helpers/split_hijri_date.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/helpers/update_app_widget.dart';
 
@@ -23,7 +24,7 @@ class HijriDate extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
-    var colorScheme = Theme.of(context).colorScheme;
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
     var settingsProvider = ref.watch(hijriDateSettingsProvider);
@@ -51,7 +52,7 @@ class HijriDate extends ConsumerWidget {
                 Text(
                   hijriText,
                   style: textTheme.labelMedium?.copyWith(
-                    color: oppositeColor ? colorScheme.onInverseSurface : null,
+                    color: oppositeColor ? appColors.appBarText : null,
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -85,7 +86,7 @@ class HijriDate extends ConsumerWidget {
             return Text(
               hijriText,
               style: textTheme.labelMedium?.copyWith(
-                color: oppositeColor ? colorScheme.onInverseSurface : null,
+                color: oppositeColor ? appColors.appBarText : null,
               ),
             );
           },

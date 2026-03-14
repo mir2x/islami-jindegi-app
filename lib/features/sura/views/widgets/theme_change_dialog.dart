@@ -14,11 +14,7 @@ class _ThemeChangeDialogState extends ConsumerState<ThemeChangeDialog> {
   String _selectedTheme = 'classic';
 
   static const List<Map<String, String>> _themes = [
-    {'label': 'ডার্ক', 'value': 'dark'},
-    {'label': 'লাইট', 'value': 'light'},
     {'label': 'ক্লাসিক', 'value': 'classic'},
-    {'label': 'ডার্ক নিউ', 'value': 'darkNew'},
-    {'label': 'লাইট নিউ', 'value': 'lightNew'},
   ];
 
   @override
@@ -40,23 +36,28 @@ class _ThemeChangeDialogState extends ConsumerState<ThemeChangeDialog> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight =
-        Theme.of(context).colorScheme.brightness == Brightness.light;
-    final accent =
-        isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary;
-    final actionBg = isLight
-        ? colors.surfaceBg.withOpacity(0.9)
-        : Theme.of(context).colorScheme.primary;
 
     return AlertDialog(
-      title: const Text('থিম পরিবর্তন'),
+      backgroundColor: colors.cardBg,
+      surfaceTintColor: colors.cardBg,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: colors.divider),
+      ),
+      title: Text(
+        'থিম পরিবর্তন',
+        style: TextStyle(color: colors.primaryText),
+      ),
       content: DropdownButtonFormField<String>(
+        dropdownColor: colors.dropdownBg,
         value: _selectedTheme,
         items: _themes
-            .map((theme) => DropdownMenuItem<String>(
-                  value: theme['value'],
-                  child: Text(theme['label']!),
-                ))
+            .map(
+              (theme) => DropdownMenuItem<String>(
+                value: theme['value'],
+                child: Text(theme['label']!),
+              ),
+            )
             .toList(),
         onChanged: (value) {
           if (value != null) {
@@ -64,21 +65,34 @@ class _ThemeChangeDialogState extends ConsumerState<ThemeChangeDialog> {
           }
         },
         decoration: InputDecoration(
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: colors.divider),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: colors.divider),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: colors.active),
+          ),
+          fillColor: colors.dropdownBg,
+          filled: true,
           contentPadding: const EdgeInsets.symmetric(horizontal: 12),
         ),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          style: TextButton.styleFrom(foregroundColor: accent),
+          style: TextButton.styleFrom(foregroundColor: colors.active),
           child: const Text('বাতিল'),
         ),
         FilledButton(
           onPressed: _onConfirm,
           style: FilledButton.styleFrom(
-            backgroundColor: actionBg,
-            foregroundColor: isLight ? colors.secondaryText : colors.surfaceBg,
+            backgroundColor: colors.active,
+            foregroundColor: colors.appBarText,
           ),
           child: const Text('সংরক্ষণ'),
         ),

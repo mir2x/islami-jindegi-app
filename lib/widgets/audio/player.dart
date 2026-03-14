@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:native_app/providers/audio_player.dart';
 import 'package:native_app/objects/audio_resource.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import 'package:native_app/widgets/presentation/connect_to_internet.dart';
 import 'package:native_app/helpers/play_time.dart';
 
@@ -158,8 +159,7 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
-
-    var colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return Column(
       children: [
@@ -204,8 +204,8 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
             overlayShape: SliderComponentShape.noThumb,
           ),
           child: Slider(
-            activeColor: colorScheme.onSurfaceVariant,
-            inactiveColor: colorScheme.outlineVariant,
+            activeColor: colors.active,
+            inactiveColor: colors.divider,
             value: position.inSeconds.toDouble(),
             min: 0,
             max: duration.inSeconds.toDouble() + 2,

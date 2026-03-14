@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:collection/collection.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/settings/image.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class ResponsiveImage extends ConsumerWidget {
   const ResponsiveImage({
@@ -93,7 +94,7 @@ class ResponsiveImage extends ConsumerWidget {
         aspectRatio: settings['width']! / settings['height']!,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            color: Theme.of(context).extension<AppThemeColors>()!.highlight,
           ),
         ),
       );

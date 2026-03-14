@@ -35,7 +35,7 @@ class AppColors {
   static const Color navBarBgLight = Color(0xFFFFFFFF);
   static const Color navBarBgDark = Color(0xFF0D1F16);
 
-  static const Color cardBgLight = Color(0xFFFFFFFF);
+  static const Color cardBgLight = Color(0xFFFFFBF4);
   static const Color cardBgDark = Color(0xFF1A2E22);
 
   static const Color surfaceBgLight = Color(0xFFEDE8DC);
@@ -64,8 +64,8 @@ class AppColors {
   static const Color inactiveTabTextDark = Color(0xFF5A6A60);
 
   //  STATE & INTERACTION
-  static const Color highlightLight = Color(0xFFFFF3CD);
-  static const Color highlightDark = Color(0xFF2A3D28);
+  static const Color highlightLight = Color(0xFFF1E7D1);
+  static const Color highlightDark = Color(0xFF223425);
 
   static const Color highlightBorderLight = Color(0xFFC9A84C);
   static const Color highlightBorderDark = Color(0xFFF0C040);

@@ -5,6 +5,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/features/quran/providers/reciter_providers.dart';
 import 'package:native_app/shared/quran_data.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../../providers/sura_reciter_providers.dart';
 
 class AudioRangeSelectionDialog extends ConsumerStatefulWidget {
@@ -38,7 +39,7 @@ class _AudioRangeSelectionDialogState
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     final selectedReciter = ref.watch(selectedReciterProvider);
     final startAyah = ref.watch(selectedStartAyahProvider);
     final endAyah = ref.watch(selectedEndAyahProvider);
@@ -48,7 +49,7 @@ class _AudioRangeSelectionDialogState
     final ayahOptions = List.generate(lastAyah, (i) => i + 1);
 
     return Container(
-      color: colorScheme.surface,
+      color: colors.cardBg,
       padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 24.h),
       child: SingleChildScrollView(
         child: Column(
@@ -136,15 +137,14 @@ class _AudioRangeSelectionDialogState
                 icon: HugeIcon(
                   icon: HugeIcons.strokeRoundedPlay,
                   size: 24.r,
-                  color: colorScheme.onPrimary,
+                  color: colors.appBarText,
                 ),
                 label: Text(
                   'অডিও শুনুন',
-                  style:
-                      TextStyle(fontSize: 16.sp, color: colorScheme.onPrimary),
+                  style: TextStyle(fontSize: 16.sp, color: colors.appBarText),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: colorScheme.primary,
+                  backgroundColor: colors.active,
                 ),
                 onPressed: () async {
                   final service = ref.read(suraAudioPlayerProvider);
@@ -177,13 +177,13 @@ class _AudioRangeSelectionDialogState
     required IconData icon,
     required String value,
   }) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     final textTheme = Theme.of(context).textTheme;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        HugeIcon(icon: icon, color: colorScheme.primary, size: 20.r),
+        HugeIcon(icon: icon, color: colors.active, size: 20.r),
         SizedBox(width: 8.w),
         Text(
           '$label:',
@@ -198,8 +198,8 @@ class _AudioRangeSelectionDialogState
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
             decoration: BoxDecoration(
-              color: colorScheme.surfaceVariant.withOpacity(0.5),
-              border: Border.all(color: colorScheme.outline.withOpacity(0.2)),
+              color: colors.dropdownBg,
+              border: Border.all(color: colors.divider),
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Text(
@@ -223,13 +223,13 @@ class _AudioRangeSelectionDialogState
     required List<T> items,
     required void Function(T?) onChanged,
   }) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     final textTheme = Theme.of(context).textTheme;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        HugeIcon(icon: icon, color: colorScheme.primary, size: 20.r),
+        HugeIcon(icon: icon, color: colors.active, size: 20.r),
         SizedBox(width: 8.w),
         Text(
           '$label:',
@@ -244,16 +244,16 @@ class _AudioRangeSelectionDialogState
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
             decoration: BoxDecoration(
-              color: colorScheme.surfaceVariant.withOpacity(0.5),
-              border: Border.all(color: colorScheme.outline.withOpacity(0.2)),
+              color: colors.dropdownBg,
+              border: Border.all(color: colors.divider),
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<T>(
                 isExpanded: true,
                 value: value,
-                dropdownColor: colorScheme.surface,
-                iconEnabledColor: colorScheme.primary,
+                dropdownColor: colors.dropdownBg,
+                iconEnabledColor: colors.active,
                 style: TextStyle(
                   color: textTheme.bodyLarge?.color,
                   fontSize: 16.sp,
@@ -284,7 +284,7 @@ class _AudioRangeSelectionDialogState
     required ValueChanged<bool> onChanged,
   }) {
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -295,7 +295,7 @@ class _AudioRangeSelectionDialogState
           child: Checkbox(
             value: _isFullSura,
             onChanged: (value) => onChanged(value ?? false),
-            activeColor: colorScheme.primary,
+            activeColor: colors.active,
           ),
         ),
         SizedBox(width: 8.w),
@@ -320,7 +320,7 @@ class _AudioRangeSelectionDialogState
     required VoidCallback onPlus,
   }) {
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -337,20 +337,20 @@ class _AudioRangeSelectionDialogState
         IconButton(
           icon: const Icon(Icons.remove_circle_outline),
           onPressed: onMinus,
-          color: colorScheme.primary,
+          color: colors.active,
         ),
         Text(
           repeatCount.toBengaliDigit(),
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w700,
-            color: colorScheme.primary,
+            color: colors.active,
           ),
         ),
         IconButton(
           icon: const Icon(Icons.add_circle_outline),
           onPressed: onPlus,
-          color: colorScheme.primary,
+          color: colors.active,
         ),
       ],
     );

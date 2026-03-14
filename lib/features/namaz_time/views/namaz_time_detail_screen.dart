@@ -14,6 +14,7 @@ import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
 import 'package:native_app/helpers/contextual_translation.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../providers/namaz_time_providers.dart';
 
 class NamazTimeDetailScreen extends ConsumerWidget {
@@ -79,6 +80,7 @@ class NamazTimeDetailScreen extends ConsumerWidget {
         return ResizableFont(
           storeKey: 'namazTimeFontRatio',
           builder: (context, fontSizeRatio) {
+            final appTheme = Theme.of(context).extension<AppThemeColors>()!;
             return AppScaffold(
               onBackPressed: () async => await context.push('/namaz-times'),
               showPattern: false,
@@ -90,6 +92,12 @@ class NamazTimeDetailScreen extends ConsumerWidget {
                   children: [
                     Container(
                       margin: const EdgeInsets.only(bottom: 30),
+                      padding: const EdgeInsets.all(18),
+                      decoration: BoxDecoration(
+                        color: appTheme.cardBg,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: appTheme.divider),
+                      ),
                       child: PageHtmlBody(
                         text: item.masail,
                         fontSizeRatio: fontSizeRatio,

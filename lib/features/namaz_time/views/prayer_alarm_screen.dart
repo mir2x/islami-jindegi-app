@@ -9,6 +9,7 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/core/services/prayer_alarm_service.dart';
 import 'package:native_app/providers/notification_status.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../providers/prayer_alarm_providers.dart';
 
 // Weekday order: Mon=1 … Sun=7
@@ -59,7 +60,7 @@ class PrayerAlarmScreen extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var alarmStates = ref.watch(prayerAlarmProvider);
-    var colorScheme = Theme.of(context).colorScheme;
+    var colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return AppScaffold(
       title: Text(locales.alarmSettings),
@@ -86,7 +87,8 @@ class PrayerAlarmScreen extends ConsumerWidget {
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
-                  color: colorScheme.surfaceContainerHighest,
+                  color: colors.cardBg,
+                  border: Border.all(color: colors.divider),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -94,7 +96,7 @@ class PrayerAlarmScreen extends ConsumerWidget {
                     Text(
                       locales.allAlarms,
                       style: textTheme.titleMedium?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
+                        color: colors.primaryText,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -108,7 +110,7 @@ class PrayerAlarmScreen extends ConsumerWidget {
                             .read(prayerAlarmProvider.notifier)
                             .toggleAllAlarms(value);
                       },
-                      activeColor: colorScheme.tertiary,
+                      activeColor: colors.active,
                     ),
                   ],
                 ),
@@ -139,7 +141,7 @@ class _AlarmPermissionStatusCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     final textTheme = Theme.of(context).textTheme;
     final notificationStatus = ref.watch(notificationStatusProvider);
     final exactAlarmStatus = ref.watch(exactAlarmPermissionProvider);
@@ -148,8 +150,8 @@ class _AlarmPermissionStatusCard extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: colorScheme.surface,
-        border: Border.all(color: colorScheme.outlineVariant),
+        color: colors.cardBg,
+        border: Border.all(color: colors.divider),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,14 +161,14 @@ class _AlarmPermissionStatusCard extends ConsumerWidget {
               Icon(
                 Icons.info_outline,
                 size: 18,
-                color: colorScheme.primary,
+                color: colors.active,
               ),
               const SizedBox(width: 8),
               Text(
                 'অ্যালার্ম পারমিশন',
                 style: textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurface,
+                  color: colors.primaryText,
                 ),
               ),
             ],
@@ -209,7 +211,7 @@ class _AlarmPermissionStatusCard extends ConsumerWidget {
           Text(
             'এগুলোর কোনোটি বন্ধ থাকলে কিছু Android ডিভাইসে আযানের অ্যালার্ম কাজ নাও করতে পারে।',
             style: textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
+              color: colors.secondaryText,
             ),
           ),
         ],
@@ -267,7 +269,7 @@ class _PermissionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     final textTheme = Theme.of(context).textTheme;
 
     return Row(
@@ -275,7 +277,7 @@ class _PermissionRow extends StatelessWidget {
         Icon(
           icon,
           size: 20,
-          color: isGranted ? colorScheme.primary : colorScheme.error,
+          color: isGranted ? colors.active : colors.primary,
         ),
         const SizedBox(width: 10),
         Expanded(
@@ -291,7 +293,7 @@ class _PermissionRow extends StatelessWidget {
               Text(
                 subtitle,
                 style: textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
+                  color: colors.secondaryText,
                 ),
               ),
             ],
@@ -306,7 +308,7 @@ class _PermissionRow extends StatelessWidget {
           Icon(
             Icons.check_circle,
             size: 18,
-            color: colorScheme.primary,
+            color: colors.active,
           ),
       ],
     );
@@ -318,7 +320,7 @@ class _NextAlarmSummaryCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     final textTheme = Theme.of(context).textTheme;
     final currentLang = Localizations.localeOf(context).languageCode;
     final alarmStates = ref.watch(prayerAlarmProvider);
@@ -328,8 +330,8 @@ class _NextAlarmSummaryCard extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: colorScheme.primaryContainer,
-        border: Border.all(color: colorScheme.primary),
+        color: colors.highlight,
+        border: Border.all(color: colors.active),
       ),
       child: alarmStates.when(
         loading: () => const SizedBox.shrink(),
@@ -342,7 +344,7 @@ class _NextAlarmSummaryCard extends ConsumerWidget {
                   ? 'কোনো নামাজের অ্যালার্ম চালু নেই।'
                   : 'No prayer alarms are enabled.',
               style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onPrimaryContainer,
+                color: colors.primaryText,
               ),
             );
           }
@@ -350,7 +352,7 @@ class _NextAlarmSummaryCard extends ConsumerWidget {
           return nextAlarmAsync.when(
             loading: () => Row(
               children: [
-                Icon(Icons.schedule, color: colorScheme.primary),
+                Icon(Icons.schedule, color: colors.active),
                 const SizedBox(width: 8),
                 Text(
                   currentLang == 'bn'
@@ -388,7 +390,7 @@ class _NextAlarmSummaryCard extends ConsumerWidget {
                     currentLang == 'bn' ? 'পরবর্তী অ্যালার্ম' : 'Next alarm',
                     style: textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: colorScheme.onPrimaryContainer,
+                      color: colors.primaryText,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -396,7 +398,7 @@ class _NextAlarmSummaryCard extends ConsumerWidget {
                     '$prayerLabel • ${PrayerAlarmService.formatScheduleSummary(info, currentLang)}',
                     style: textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: colorScheme.onPrimaryContainer,
+                      color: colors.primaryText,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -405,7 +407,7 @@ class _NextAlarmSummaryCard extends ConsumerWidget {
                         ? 'ওয়াক্ত: ${DateFormat.jm(currentLang).format(info.nextPrayerTime)}'
                         : 'Waqt: ${DateFormat.jm(currentLang).format(info.nextPrayerTime)}',
                     style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onPrimaryContainer,
+                      color: colors.secondaryText,
                     ),
                   ),
                 ],
@@ -431,7 +433,7 @@ class _PrayerAlarmCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    var colorScheme = Theme.of(context).colorScheme;
+    var colors = Theme.of(context).extension<AppThemeColors>()!;
     String currentLang = Localizations.localeOf(context).languageCode;
     String prayerLabel =
         PrayerAlarmService.getPrayerDisplayLabel(prayerKey, currentLang);
@@ -446,9 +448,9 @@ class _PrayerAlarmCard extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: isEnabled ? colorScheme.primaryContainer : colorScheme.surface,
+        color: isEnabled ? colors.highlight : colors.cardBg,
         border: Border.all(
-          color: isEnabled ? colorScheme.primary : colorScheme.outlineVariant,
+          color: isEnabled ? colors.active : colors.divider,
           width: isEnabled ? 1.5 : 1,
         ),
       ),
@@ -464,9 +466,7 @@ class _PrayerAlarmCard extends ConsumerWidget {
                   children: [
                     Icon(
                       isEnabled ? Icons.alarm_on : Icons.alarm_off,
-                      color: isEnabled
-                          ? colorScheme.primary
-                          : colorScheme.outlineVariant,
+                      color: isEnabled ? colors.active : colors.secondaryText,
                       size: 22,
                     ),
                     const SizedBox(width: 10),
@@ -475,8 +475,8 @@ class _PrayerAlarmCard extends ConsumerWidget {
                       style: textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isEnabled
-                            ? colorScheme.onSurface
-                            : colorScheme.onSurfaceVariant,
+                            ? colors.primaryText
+                            : colors.secondaryText,
                       ),
                     ),
                   ],
@@ -503,7 +503,7 @@ class _PrayerAlarmCard extends ConsumerWidget {
                       ),
                     );
                   },
-                  activeColor: colorScheme.tertiary,
+                  activeColor: colors.active,
                 ),
               ],
             ),
@@ -590,22 +590,27 @@ class _SchedulePreviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: colorScheme.surfaceContainerHighest,
+        color: colors.cardBg,
+        border: Border.all(color: colors.divider),
       ),
       child: scheduleInfo.when(
         loading: () => Text(
-          currentLang == 'bn' ? 'পরবর্তী অ্যালার্ম হিসাব করা হচ্ছে...' : 'Calculating next alarm...',
+          currentLang == 'bn'
+              ? 'পরবর্তী অ্যালার্ম হিসাব করা হচ্ছে...'
+              : 'Calculating next alarm...',
           style: textTheme.bodySmall,
         ),
         error: (_, __) => Text(
-          currentLang == 'bn' ? 'পরবর্তী অ্যালার্ম দেখানো যাচ্ছে না।' : 'Unable to show next alarm.',
+          currentLang == 'bn'
+              ? 'পরবর্তী অ্যালার্ম দেখানো যাচ্ছে না।'
+              : 'Unable to show next alarm.',
           style: textTheme.bodySmall,
         ),
         data: (info) {
@@ -624,7 +629,7 @@ class _SchedulePreviewCard extends StatelessWidget {
               Text(
                 currentLang == 'bn' ? 'পরবর্তী রিমাইন্ডার' : 'Next reminder',
                 style: textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
+                  color: colors.secondaryText,
                 ),
               ),
               const SizedBox(height: 4),
@@ -669,15 +674,14 @@ class _RepeatDaysRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
-    var colorScheme = Theme.of(context).colorScheme;
+    var colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           locales.repeatDays,
-          style: textTheme.bodySmall
-              ?.copyWith(color: colorScheme.onSurfaceVariant),
+          style: textTheme.bodySmall?.copyWith(color: colors.secondaryText),
         ),
         const SizedBox(height: 6),
         repeatDays.when(
@@ -735,8 +739,8 @@ class _RepeatDaysRow extends StatelessWidget {
                           // Switching from "every day" to a specific day
                           ref
                               .read(
-                                prayerRepeatDaysProvider(prayerKey).notifier,
-                              )
+                            prayerRepeatDaysProvider(prayerKey).notifier,
+                          )
                               .setDays({d});
                         } else {
                           if (current.contains(d) && current.length > 1) {
@@ -781,7 +785,7 @@ class _DayChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
-    var colorScheme = Theme.of(context).colorScheme;
+    var colors = Theme.of(context).extension<AppThemeColors>()!;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -789,18 +793,15 @@ class _DayChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: selected
-              ? colorScheme.primary
-              : colorScheme.surfaceContainerHighest,
+          color: selected ? colors.active : colors.cardBg,
           border: Border.all(
-            color: selected ? colorScheme.primary : colorScheme.outlineVariant,
+            color: selected ? colors.active : colors.divider,
           ),
         ),
         child: Text(
           label,
           style: textTheme.bodySmall?.copyWith(
-            color:
-                selected ? colorScheme.onPrimary : colorScheme.onSurfaceVariant,
+            color: selected ? colors.appBarText : colors.secondaryText,
             fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
           ),
         ),
@@ -825,7 +826,7 @@ class _ReminderModeSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
-    var colorScheme = Theme.of(context).colorScheme;
+    var colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return reminderMode.when(
       loading: () => const SizedBox(
@@ -839,7 +840,7 @@ class _ReminderModeSection extends ConsumerWidget {
           Text(
             currentLang == 'bn' ? 'রিমাইন্ডারের ধরন' : 'Reminder type',
             style: textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
+              color: colors.secondaryText,
             ),
           ),
           const SizedBox(height: 8),
@@ -925,7 +926,7 @@ class _PrayerSoundSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -933,7 +934,7 @@ class _PrayerSoundSection extends ConsumerWidget {
         Text(
           currentLang == 'bn' ? 'এই নামাজের সাউন্ড' : 'Sound for this prayer',
           style: textTheme.bodySmall?.copyWith(
-            color: colorScheme.onSurfaceVariant,
+            color: colors.secondaryText,
           ),
         ),
         const SizedBox(height: 8),
@@ -977,7 +978,8 @@ class _PrayerActionRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedSoundKey = soundKey.valueOrNull ?? PrayerAlarmService.defaultSoundKey;
+    final selectedSoundKey =
+        soundKey.valueOrNull ?? PrayerAlarmService.defaultSoundKey;
 
     return Row(
       children: [
@@ -1068,7 +1070,7 @@ class _OffsetChoiceChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     final textTheme = Theme.of(context).textTheme;
 
     return InkWell(
@@ -1079,18 +1081,15 @@ class _OffsetChoiceChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: selected
-              ? colorScheme.primary
-              : colorScheme.surfaceContainerHighest,
+          color: selected ? colors.active : colors.cardBg,
           border: Border.all(
-            color: selected ? colorScheme.primary : colorScheme.outlineVariant,
+            color: selected ? colors.active : colors.divider,
           ),
         ),
         child: Text(
           label,
           style: textTheme.bodySmall?.copyWith(
-            color:
-                selected ? colorScheme.onPrimary : colorScheme.onSurfaceVariant,
+            color: selected ? colors.appBarText : colors.secondaryText,
             fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
           ),
         ),

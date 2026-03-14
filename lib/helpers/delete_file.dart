@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/helpers/file_fallback_path.dart';
 import 'package:native_app/helpers/delete_file_diretory.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 Future deleteFile({
   required BuildContext context,
@@ -13,6 +14,7 @@ Future deleteFile({
 }) async {
   var locales = AppLocalizations.of(context)!;
   var textTheme = Theme.of(context).textTheme;
+  final colors = Theme.of(context).extension<AppThemeColors>()!;
 
   Widget cancelButton = TextButton(
     child: Text(locales.no, style: textTheme.labelLarge),
@@ -24,8 +26,7 @@ Future deleteFile({
   Widget continueButton = TextButton(
     child: Text(
       locales.yes,
-      style: textTheme.labelLarge
-          ?.copyWith(color: Theme.of(context).colorScheme.error),
+      style: textTheme.labelLarge?.copyWith(color: colors.primary),
     ),
     onPressed: () async {
       Navigator.of(context).pop();

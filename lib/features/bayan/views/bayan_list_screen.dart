@@ -16,6 +16,7 @@ import 'package:native_app/providers/downloaded_bayans.dart';
 import 'package:native_app/helpers/format_date.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
 import 'package:native_app/widgets/buttons/floating_downloaded.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../providers/bayan_providers.dart';
 
 class BayanListScreen extends ConsumerWidget {
@@ -26,6 +27,7 @@ class BayanListScreen extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
+    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     var qParams = ref.watch(bayanQueryParamsProvider);
 
     return AppScaffold(
@@ -42,8 +44,14 @@ class BayanListScreen extends ConsumerWidget {
                     children: [
                       Container(
                         width: double.infinity,
-                        padding:
+                        margin:
                             const EdgeInsets.only(top: 10, left: 15, right: 15),
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: appTheme.cardBg,
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(color: appTheme.divider),
+                        ),
                         child: Row(
                           children: [
                             Expanded(

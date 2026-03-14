@@ -33,6 +33,7 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
 
   @override
   Widget build(BuildContext context) {
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
     final mappingsAsync = ref.watch(quranMappingsProvider);
 
     if (mappingsAsync.isLoading) {
@@ -78,7 +79,11 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
           child: Row(
             children: [
               Expanded(flex: 1, child: _buildParaList(ref)),
-              const VerticalDivider(width: 1, thickness: 1),
+              VerticalDivider(
+                width: 1,
+                thickness: 1,
+                color: appColors.divider,
+              ),
               Expanded(
                   flex: 1,
                   child: _buildRightPane(ref, paraPageRanges, currentPage)),
@@ -94,9 +99,8 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final appBarBg = isLight ? appColors.surfaceBg : appColors.appBarBg;
-    final appBarFg = isLight ? appColors.secondaryText : appColors.appBarText;
+    final appBarBg = appColors.drawerHeaderBg;
+    final appBarFg = appColors.appBarText;
 
     return Container(
       color: appBarBg,
@@ -108,20 +112,20 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
             child: Text('পারা',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: appBarFg,
-                    fontWeight: FontWeight.bold,
-                    fontSize: fontSize,
-)),
+                  color: appBarFg,
+                  fontWeight: FontWeight.bold,
+                  fontSize: fontSize,
+                )),
           ),
           Expanded(
             flex: 1,
             child: Text('পাতা',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: appBarFg,
-                    fontWeight: FontWeight.bold,
-                    fontSize: fontSize,
-)),
+                  color: appBarFg,
+                  fontWeight: FontWeight.bold,
+                  fontSize: fontSize,
+                )),
           ),
         ],
       ),
@@ -134,30 +138,27 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
 
     return ScrollablePositionedList.separated(
       itemScrollController: _paraScrollController,
       padding: EdgeInsets.zero,
       itemCount: 30,
       separatorBuilder: (context, index) =>
-          Divider(height: 1.h, color: Theme.of(context).dividerColor),
+          Divider(height: 1.h, color: appColors.divider),
       itemBuilder: (context, index) {
         final paraNumber = index + 1;
         final isSelected = paraNumber == selectedPara;
 
         return ListTile(
-          tileColor: isSelected
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-              : null,
+          tileColor: isSelected ? appColors.highlight : null,
           title: Center(
             child: Text(
               toBengaliNumber(paraNumber),
               style: TextStyle(
                 fontSize: fontSize,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).textTheme.bodyLarge?.color,
+                color: isSelected ? appColors.active : appColors.primaryText,
               ),
             ),
           ),
@@ -181,6 +182,7 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 12.0 : 14.sp;
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
 
     if (pageNumbers == null || pageNumbers.isEmpty) {
       return Center(
@@ -201,7 +203,7 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
       itemScrollController: _pageScrollController,
       padding: EdgeInsets.zero,
       separatorBuilder: (context, index) =>
-          Divider(height: 1.h, color: Theme.of(context).dividerColor),
+          Divider(height: 1.h, color: appColors.divider),
       itemCount: pageNumbers.length,
       itemBuilder: (context, index) {
         final actualPageNumber = pageNumbers[index];
@@ -211,17 +213,13 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
         final isSelected = actualPageNumber == selectedPage;
 
         return ListTile(
-          tileColor: isSelected
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-              : null,
+          tileColor: isSelected ? appColors.highlight : null,
           title: Center(
             child: Text(
               toBengaliNumber(displayPageNumber),
               style: TextStyle(
                 fontSize: fontSize,
-                color: isSelected
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).textTheme.bodyLarge?.color,
+                color: isSelected ? appColors.active : appColors.primaryText,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),

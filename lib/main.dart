@@ -111,7 +111,6 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final prefs = ref.watch(preferencesProvider).value;
 
-    final theme = prefs?.getString('theme') ?? 'classic';
     final banglaFont = prefs?.getString('banglaFont') ?? 'bangla/solaimanlipi';
     final arabicFont = prefs?.getString('arabicFont') ?? 'arabic/noorehuda';
     final locale = prefs?.getString('locale') ?? 'bn';
@@ -126,20 +125,9 @@ class MyApp extends ConsumerWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        final selectedTheme = switch (theme) {
-          'light' => lightTheme(fonts),
-          'lightNew' => lightThemeNew(fonts),
-          'darkNew' => darkThemeNew(fonts),
-          _ => classicTheme(fonts),
-        };
-        final selectedDarkTheme = switch (theme) {
-          'darkNew' => darkThemeNew(fonts),
-          _ => darkTheme(fonts),
-        };
-        final selectedThemeMode = switch (theme) {
-          'dark' || 'darkNew' => ThemeMode.dark,
-          _ => ThemeMode.light,
-        };
+        final selectedTheme = classicTheme(fonts);
+        final selectedDarkTheme = classicTheme(fonts);
+        const selectedThemeMode = ThemeMode.light;
 
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,

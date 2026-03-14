@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class SwitchButton extends ConsumerWidget {
   const SwitchButton({
@@ -22,12 +23,11 @@ class SwitchButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
-
-    var colorScheme = Theme.of(context).colorScheme;
-    var activeColor = colorScheme.primary;
-    var inactiveColor = colorScheme.surfaceContainerHighest;
-    var activeTextColor = colorScheme.onPrimary;
-    var inactiveTextColor = colorScheme.onSurfaceVariant;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    var activeColor = colors.active;
+    var inactiveColor = colors.cardBg;
+    var activeTextColor = colors.appBarText;
+    var inactiveTextColor = colors.secondaryText;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,

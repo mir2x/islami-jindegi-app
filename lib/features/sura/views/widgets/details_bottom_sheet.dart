@@ -12,9 +12,7 @@ void showDetailsBottomSheet(BuildContext context, {required int suraNumber}) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Theme.of(context).colorScheme.brightness == Brightness.light
-        ? Theme.of(context).extension<AppThemeColors>()!.surfaceBg
-        : Theme.of(context).colorScheme.surface,
+    backgroundColor: Theme.of(context).extension<AppThemeColors>()!.cardBg,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
@@ -128,7 +126,7 @@ class DetailsBottomSheet extends StatelessWidget {
         width: 40,
         height: 4,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.outlineVariant,
+          color: Theme.of(context).extension<AppThemeColors>()!.divider,
           borderRadius: BorderRadius.circular(2),
         ),
       ),
@@ -145,13 +143,9 @@ class _DetailsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final sectionHeaderBg =
-        isLight ? colors.surfaceBg.withOpacity(0.9) : Theme.of(context).colorScheme.primaryContainer;
-    final sectionHeaderFg =
-        isLight ? colors.secondaryText : Theme.of(context).colorScheme.onSurface;
-    final iconColor =
-        isLight ? colors.secondaryText : Theme.of(context).colorScheme.primary;
+    final sectionHeaderBg = colors.highlight;
+    final sectionHeaderFg = colors.primaryText;
+    final iconColor = colors.active;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,23 +181,30 @@ class _DetailsSection extends StatelessWidget {
             return InkWell(
               borderRadius: BorderRadius.circular(6),
               onTap: item.onTap,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(item.icon, size: 28, color: iconColor),
-                  const SizedBox(height: 4),
-                  Text(
-                    item.label,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      wordSpacing: 3,
-                      fontSize: 12,
-                      color: Theme.of(context).colorScheme.onSurface,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: colors.cardBg,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: colors.divider),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(item.icon, size: 28, color: iconColor),
+                    const SizedBox(height: 4),
+                    Text(
+                      item.label,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        wordSpacing: 3,
+                        fontSize: 12,
+                        color: colors.primaryText,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import 'input_field.dart';
 
 class SearchButtonField extends ConsumerStatefulWidget {
@@ -38,57 +39,79 @@ class _SearchState extends ConsumerState<SearchButtonField> {
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
+    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isSmallMobile = screenWidth < 340;
     double sidePadding = isSmallMobile ? 13 : 16;
 
-    var colorScheme = Theme.of(context).colorScheme;
-
     return Directionality(
       textDirection: widget.reverse ? TextDirection.rtl : TextDirection.ltr,
-      child: InputField(
-        initialValue: widget.value,
-        autofocus: widget.autofocus,
-        decoration: InputDecoration(
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: colorScheme.outlineVariant,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: appTheme.cardBg,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: appTheme.divider),
+          boxShadow: [
+            BoxShadow(
+              color: appTheme.shadow.withValues(alpha: 0.05),
+              blurRadius: 14,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: InputField(
+          initialValue: widget.value,
+          autofocus: widget.autofocus,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.transparent,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(
+                color: appTheme.divider,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(
+                color: appTheme.highlightBorder,
+                width: 1.2,
+              ),
+            ),
+            labelText: widget.labelText ?? locales.search,
+            labelStyle: textTheme.labelMedium?.copyWith(
+              color: appTheme.secondaryText,
+            ),
+            constraints: BoxConstraints(maxHeight: widget.maxHeight),
+            contentPadding: EdgeInsets.only(
+              top: 0,
+              bottom: 0,
+              left: widget.reverse ? 0 : sidePadding,
+              right: widget.reverse ? sidePadding : 0,
+            ),
+            suffixIcon: IconButton(
+              onPressed: () {
+                if (searchText != null) {
+                  widget.onUpdate(searchText!);
+                }
+              },
+              icon: Icon(
+                Icons.search,
+                color: appTheme.secondaryText,
+              ),
             ),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: colorScheme.outlineVariant,
-            ),
-          ),
-          labelText: widget.labelText ?? locales.search,
-          labelStyle: textTheme.labelMedium,
-          constraints: BoxConstraints(maxHeight: widget.maxHeight),
-          contentPadding: EdgeInsets.only(
-            top: 0,
-            bottom: 0,
-            left: widget.reverse ? 0 : sidePadding,
-            right: widget.reverse ? sidePadding : 0,
-          ),
-          suffixIcon: IconButton(
-            onPressed: () {
-              if (searchText != null) {
-                widget.onUpdate(searchText!);
-              }
-            },
-            icon: Icon(
-              Icons.search,
-              color: colorScheme.onSurfaceVariant,
-            ),
+          onChanged: (value) {
+            updateSearchText(value);
+
+            if (value.isEmpty) {
+              widget.onUpdate(value);
+            }
+          },
+          style: textTheme.labelMedium?.copyWith(
+            color: appTheme.primaryText,
           ),
         ),
-        onChanged: (value) {
-          updateSearchText(value);
-
-          if (value.isEmpty) {
-            widget.onUpdate(value);
-          }
-        },
-        style: textTheme.labelMedium,
       ),
     );
   }

@@ -21,14 +21,10 @@ class BookmarkNavigationView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = colorScheme.brightness == Brightness.light;
-    final tabBg = isLight ? appColors.surfaceBg : appColors.appBarBg;
-    final tabFg = isLight ? appColors.secondaryText : appColors.appBarText;
-    final indicatorColor = isLight
-        ? appColors.divider.withOpacity(0.7)
-        : colorScheme.primary.withOpacity(0.3);
+    final tabBg = appColors.drawerHeaderBg;
+    final tabFg = appColors.appBarText;
+    final indicatorColor = appColors.highlight;
     final bookmarksAsync = ref.watch(bookmarkProvider);
     final suraNames = ref.watch(suraNamesProvider);
     final isLandscape =
@@ -71,17 +67,13 @@ class BookmarkNavigationView extends ConsumerWidget {
                     Tab(
                       child: Text(
                         'আয়াত',
-                        style: TextStyle(
-                            fontSize: tabFontSize,
-                            color: tabFg),
+                        style: TextStyle(fontSize: tabFontSize, color: tabFg),
                       ),
                     ),
                     Tab(
                       child: Text(
                         'পৃষ্ঠা',
-                        style: TextStyle(
-                            fontSize: tabFontSize,
-                            color: tabFg),
+                        style: TextStyle(fontSize: tabFontSize, color: tabFg),
                       ),
                     ),
                   ],
@@ -95,15 +87,18 @@ class BookmarkNavigationView extends ConsumerWidget {
                             child: Text(
                               'কোনো আয়াত বুকমার্ক করা নেই।',
                               style: TextStyle(
-                                  fontSize: 14.sp, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                fontSize: 14.sp,
+                                color: appColors.secondaryText,
+                              ),
                             ),
                           )
                         : ListView.separated(
                             padding: EdgeInsets.zero,
                             itemCount: ayahBookmarks.length,
                             separatorBuilder: (context, index) => Divider(
-                                height: 1.h,
-                                color: Theme.of(context).dividerColor),
+                              height: 1.h,
+                              color: appColors.divider,
+                            ),
                             itemBuilder: (_, i) {
                               final b = ayahBookmarks[i];
                               final suraName = (b.sura != null &&
@@ -125,8 +120,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                                       style: TextStyle(
                                         fontSize: listTileTitleFontSize,
                                         fontWeight: FontWeight.bold,
-                                        color:
-                                            Theme.of(context).colorScheme.primary,
+                                        color: appColors.active,
                                       ),
                                     ),
                                     SizedBox(width: 8.w),
@@ -143,10 +137,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                                               fontSize:
                                                   listTileSubtitleFontSize,
                                               fontWeight: FontWeight.w500,
-                                              color: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge
-                                                  ?.color,
+                                              color: appColors.primaryText,
                                             ),
                                           ),
                                           SizedBox(height: 2.h),
@@ -155,11 +146,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                                             style: TextStyle(
                                               fontSize:
                                                   listTileSubtitleFontSize,
-                                              color: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium
-                                                  ?.color
-                                                  ?.withOpacity(0.7),
+                                              color: appColors.secondaryText,
                                             ),
                                           ),
                                         ],
@@ -171,8 +158,9 @@ class BookmarkNavigationView extends ConsumerWidget {
                                 listTileContent = Text(
                                   'Bookmark ID: ${b.identifier} (Data incomplete)',
                                   style: TextStyle(
-                                      fontSize: listTileTitleFontSize,
-                                      color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                    fontSize: listTileTitleFontSize,
+                                    color: appColors.secondaryText,
+                                  ),
                                 );
                               }
 
@@ -221,7 +209,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                                 trailing: IconButton(
                                     icon: Icon(Icons.delete,
                                         size: 20.r,
-                                        color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                        color: appColors.secondaryText),
                                     onPressed: () {
                                       ref
                                           .read(bookmarkProvider.notifier)
@@ -248,7 +236,9 @@ class BookmarkNavigationView extends ConsumerWidget {
                             child: Text(
                               'কোনো পৃষ্ঠা বুকমার্ক করা নেই।',
                               style: TextStyle(
-                                  fontSize: 14.sp, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                fontSize: 14.sp,
+                                color: appColors.secondaryText,
+                              ),
                             ),
                           )
                         : ListView.separated(
@@ -256,7 +246,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                             itemCount: pageBookmarks.length,
                             separatorBuilder: (context, index) => Divider(
                               height: 1.h,
-                              color: Theme.of(context).dividerColor,
+                              color: appColors.divider,
                             ),
                             itemBuilder: (_, i) {
                               final b = pageBookmarks[i];
@@ -278,8 +268,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                                       style: TextStyle(
                                         fontSize: listTileTitleFontSize,
                                         fontWeight: FontWeight.bold,
-                                        color:
-                                            Theme.of(context).colorScheme.primary,
+                                        color: appColors.active,
                                       ),
                                     ),
                                     SizedBox(width: 8.w),
@@ -308,11 +297,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                                             style: TextStyle(
                                               fontSize:
                                                   listTileSubtitleFontSize,
-                                              color: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium
-                                                  ?.color
-                                                  ?.withOpacity(0.7),
+                                              color: appColors.secondaryText,
                                             ),
                                           ),
                                         ],
@@ -324,8 +309,9 @@ class BookmarkNavigationView extends ConsumerWidget {
                                 listTileContent = Text(
                                   'Bookmark ID: ${b.identifier} (Data incomplete)',
                                   style: TextStyle(
-                                      fontSize: listTileTitleFontSize,
-                                      color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                    fontSize: listTileTitleFontSize,
+                                    color: appColors.secondaryText,
+                                  ),
                                 );
                               }
 
@@ -370,8 +356,11 @@ class BookmarkNavigationView extends ConsumerWidget {
                                   }
                                 },
                                 trailing: IconButton(
-                                  icon: Icon(Icons.delete,
-                                      size: 24.r, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                  icon: Icon(
+                                    Icons.delete,
+                                    size: 24.r,
+                                    color: appColors.secondaryText,
+                                  ),
                                   onPressed: () {
                                     ref
                                         .read(bookmarkProvider.notifier)

@@ -21,12 +21,10 @@ class QuranAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final locales = AppLocalizations.of(context)!;
     final colors = Theme.of(context).extension<AppThemeColors>()!;
     final iconSize = isLandscape ? 20.0 : 24.0;
-    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
-    final appBarBg = isLight ? colors.surfaceBg : colors.appBarBg;
-    final appBarFg = isLight ? colors.secondaryText : colors.appBarText;
+    final appBarBg = colors.appBarBg;
+    final appBarFg = colors.appBarText;
     final isDarkBg =
-        ThemeData.estimateBrightnessForColor(appBarBg) ==
-            Brightness.dark;
+        ThemeData.estimateBrightnessForColor(appBarBg) == Brightness.dark;
 
     return AppBar(
       toolbarHeight: isLandscape ? 52.0 : 64.0,
@@ -34,8 +32,7 @@ class QuranAppBar extends ConsumerWidget implements PreferredSizeWidget {
       foregroundColor: appBarFg,
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: appBarBg,
-        statusBarIconBrightness:
-            isDarkBg ? Brightness.light : Brightness.dark,
+        statusBarIconBrightness: isDarkBg ? Brightness.light : Brightness.dark,
         statusBarBrightness: isDarkBg ? Brightness.dark : Brightness.light,
       ),
       elevation: 0,
@@ -130,8 +127,7 @@ class QuranAppBar extends ConsumerWidget implements PreferredSizeWidget {
   }
 
   AyahBox _findFirstAyahOnPage(List<AyahBox> pageBoxes) {
-    final sortedBoxes = [...pageBoxes]
-      ..sort((a, b) {
+    final sortedBoxes = [...pageBoxes]..sort((a, b) {
         final topCompare = a.minY.compareTo(b.minY);
         if (topCompare != 0) return topCompare;
 
@@ -181,13 +177,20 @@ class _AppBarIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    return IconButton(
-      icon: Icon(icon, color: color),
-      iconSize: iconSize,
-      splashRadius: iconSize,
-      splashColor: colors.selectionOverlay,
-      highlightColor: colors.selectionOverlay.withValues(alpha: 0.45),
-      onPressed: onPressed,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2),
+      child: Material(
+        color: colors.highlight.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(12),
+        child: IconButton(
+          icon: Icon(icon, color: color),
+          iconSize: iconSize,
+          splashRadius: iconSize,
+          splashColor: colors.selectionOverlay,
+          highlightColor: colors.selectionOverlay.withValues(alpha: 0.45),
+          onPressed: onPressed,
+        ),
+      ),
     );
   }
 }

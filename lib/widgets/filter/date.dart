@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:date_field/date_field.dart';
 import 'package:intl/intl.dart';
 import 'package:native_app/providers/query_params.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 
 class DateFilter extends ConsumerWidget {
   const DateFilter({super.key, this.queryProvider});
@@ -76,7 +77,7 @@ class DateFilter extends ConsumerWidget {
 
     String selectedLabel = selectedDate(qParams, options, currentLang, locales);
 
-    var colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return OutlinedButton(
       onPressed: () {
@@ -90,6 +91,12 @@ class DateFilter extends ConsumerWidget {
             bool isSmallMobile = screenHeight < 600;
 
             return Dialog(
+              backgroundColor: colors.dropdownBg,
+              surfaceTintColor: colors.dropdownBg,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+                side: BorderSide(color: colors.divider),
+              ),
               child: Container(
                 width: screenWidth,
                 height:
@@ -160,13 +167,12 @@ class DateFilter extends ConsumerWidget {
         );
       },
       style: OutlinedButton.styleFrom(
-        side: BorderSide(color: colorScheme.outlineVariant),
-        backgroundColor: selectedLabel != locales.date
-            ? colorScheme.surfaceContainerHighest
-            : null,
+        side: BorderSide(color: colors.divider),
+        backgroundColor:
+            selectedLabel != locales.date ? colors.highlight : null,
         padding: EdgeInsets.symmetric(horizontal: isSmallMobile ? 13 : 16),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(12),
         ),
         minimumSize: const Size.fromHeight(45),
       ),
@@ -183,7 +189,7 @@ class DateFilter extends ConsumerWidget {
           ),
           Icon(
             Icons.arrow_drop_down,
-            color: colorScheme.onSurfaceVariant,
+            color: colors.secondaryText,
           ),
         ],
       ),
@@ -209,23 +215,25 @@ class CustomDateField extends ConsumerWidget {
     // Note: CustomDateField still uses global queryParamsProvider.
     // For module-specific usage, pass the queryProvider via DateFilter.
 
-    var colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return DateTimeFormField(
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(
-            color: colorScheme.outlineVariant,
+            color: colors.divider,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
-            color: colorScheme.outlineVariant,
+            color: colors.active,
           ),
         ),
+        filled: true,
+        fillColor: colors.dropdownBg,
         labelStyle: textTheme.labelMedium,
         labelText: label,
-        suffixIconColor: colorScheme.onSurfaceVariant,
+        suffixIconColor: colors.secondaryText,
       ),
       mode: DateTimeFieldPickerMode.date,
       initialValue: qParams.containsKey(field)

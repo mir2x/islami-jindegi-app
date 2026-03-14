@@ -29,19 +29,12 @@ class AyahCard extends ConsumerWidget {
     final showTranslations = ref.watch(showTranslationsProvider);
     final showWords = ref.watch(showWordByWordProvider);
 
-    final colorScheme = Theme.of(context).colorScheme;
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = colorScheme.brightness == Brightness.light;
-    final accent = isLight ? colors.secondaryText : colorScheme.primary;
-    final accentBg =
-        isLight ? colors.divider.withOpacity(0.25) : colorScheme.primary.withOpacity(0.1);
-    final cardColor = isHighlighted
-        ? accentBg
-        : Theme.of(context).cardTheme.color;
-    final borderColor = isHighlighted
-        ? accent
-        : colorScheme.primary.withValues(alpha: 0);
-    final cardElevation = isHighlighted ? 4.0 : 0.5;
+    final accent = colors.active;
+    final accentBg = colors.highlight;
+    final cardColor = isHighlighted ? accentBg : colors.cardBg;
+    final borderColor = isHighlighted ? accent : colors.divider;
+    final cardElevation = isHighlighted ? 4.0 : 0.0;
 
     return RepaintBoundary(
       child: GestureDetector(
@@ -79,10 +72,8 @@ class AyahCard extends ConsumerWidget {
   }
 
   Widget _buildCardHeader(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = colorScheme.brightness == Brightness.light;
-    final accent = isLight ? colors.secondaryText : colorScheme.primary;
+    final accent = colors.active;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -111,9 +102,9 @@ class AyahCard extends ConsumerWidget {
         ),
         Row(
           children: [
-            _ColorDot(color: colorScheme.error),
-            _ColorDot(color: colorScheme.secondary),
-            _ColorDot(color: colorScheme.tertiary),
+            _ColorDot(color: colors.active),
+            _ColorDot(color: colors.secondary),
+            _ColorDot(color: colors.divider),
           ],
         ),
       ],
@@ -126,11 +117,8 @@ class AyahCard extends ConsumerWidget {
     final arabicFontSize = ref.watch(arabicFontSizeProvider);
     final bengaliFont = ref.watch(bengaliFontProvider);
     final bengaliFontSize = ref.watch(bengaliFontSizeProvider);
-    final colorScheme = Theme.of(context).colorScheme;
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isLight = colorScheme.brightness == Brightness.light;
-    final accent = isLight ? colors.secondaryText : colorScheme.primary;
-    final textTheme = Theme.of(context).textTheme;
+    final accent = colors.active;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -153,7 +141,7 @@ class AyahCard extends ConsumerWidget {
                     style: TextStyle(
                       fontFamily: arabicFont,
                       fontSize: arabicFontSize,
-                      color: textTheme.bodyLarge?.color,
+                      color: colors.primaryText,
                       letterSpacing: 0,
                     ),
                     textAlign: TextAlign.center,
@@ -194,7 +182,7 @@ class AyahCard extends ConsumerWidget {
         fontFamily: arabicFont,
         fontSize: arabicFontSize,
         height: 1.8,
-        color: Theme.of(context).textTheme.bodyLarge?.color,
+        color: Theme.of(context).extension<AppThemeColors>()!.primaryText,
         letterSpacing: 0,
       ),
       textAlign: TextAlign.right,
@@ -206,7 +194,6 @@ class AyahCard extends ConsumerWidget {
       List<String> selectedTranslators, WidgetRef ref, BuildContext context) {
     final bengaliFont = ref.watch(bengaliFontProvider);
     final bengaliFontSize = ref.watch(bengaliFontSizeProvider);
-    final textTheme = Theme.of(context).textTheme;
 
     final translationsToShow = ayah.translations
         .where((t) => selectedTranslators.contains(t.translatorName))
@@ -216,7 +203,9 @@ class AyahCard extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Divider(
-            height: 30, thickness: 0.5, color: Theme.of(context).dividerColor),
+            height: 30,
+            thickness: 0.5,
+            color: Theme.of(context).extension<AppThemeColors>()!.divider),
         ...translationsToShow.map((translation) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 12.0),
@@ -228,7 +217,9 @@ class AyahCard extends ConsumerWidget {
                   style: TextStyle(
                     fontFamily: 'bangla/solaimanlipi',
                     wordSpacing: 3,
-                    color: textTheme.bodySmall?.color?.withOpacity(0.7),
+                    color: Theme.of(context)
+                        .extension<AppThemeColors>()!
+                        .secondaryText,
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),
@@ -240,13 +231,15 @@ class AyahCard extends ConsumerWidget {
                     fontFamily: bengaliFont,
                     fontSize: bengaliFontSize,
                     height: 1.5,
-                    color: textTheme.bodyMedium?.color,
+                    color: Theme.of(context)
+                        .extension<AppThemeColors>()!
+                        .primaryText,
                   ),
                 )
               ],
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

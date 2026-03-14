@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import 'package:native_app/features/sura_list/views/widgets/bookmark_list.dart';
 import 'package:native_app/features/sura_list/views/widgets/para_list.dart';
 import 'package:native_app/features/sura_list/views/widgets/sura_list_item.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import '../models/sources/sura_information.dart';
 import '../providers/sura_list_providers.dart';
 
@@ -69,70 +71,74 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
       });
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/qurans'),
-        ),
-        title: const Text('সকল সূরা'),
-        centerTitle: true,
-        bottom: TabBar(
-          controller: _tabController,
-          labelStyle: const TextStyle(
-            wordSpacing: 3,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-          unselectedLabelStyle: const TextStyle(
-            wordSpacing: 3,
-            fontSize: 16,
-          ),
-          indicatorColor: Theme.of(context).appBarTheme.foregroundColor,
-          labelColor: Theme.of(context).appBarTheme.foregroundColor,
-          unselectedLabelColor:
-              Theme.of(
-                context,
-              ).appBarTheme.foregroundColor?.withValues(alpha: 0.6),
-          tabs: const [
-            Tab(text: 'সূরা'),
-            Tab(text: 'পারা'),
-            Tab(text: 'বুকমার্ক'),
-          ],
-        ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+
+    return AppScaffold(
+      onBackPressed: () async => context.go('/qurans'),
+      title: const Text('সকল সূরা'),
+      body: Column(
         children: [
-          // Sura List Tab
-          ScrollablePositionedList.separated(
-            itemScrollController: _itemScrollController,
-            itemCount: allSuras.length,
-            itemBuilder: (context, index) {
-              final sura = allSuras[index];
-              return SuraListItem(
-                sura: sura,
-                isHighlighted: _highlightedSuraNumber == sura.number,
-                onTap: () {
-                  setState(() {
-                    _highlightedSuraNumber = null;
-                  });
-                },
-              );
-            },
-            separatorBuilder: (context, index) {
-              return const Divider(
-                height: 1,
-                thickness: 0.5,
-                indent: 16,
-                endIndent: 16,
-              );
-            },
+          Container(
+            color: colors.appBarBg,
+            child: TabBar(
+              controller: _tabController,
+              labelStyle: const TextStyle(
+                wordSpacing: 3,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+              unselectedLabelStyle: const TextStyle(
+                wordSpacing: 3,
+                fontSize: 16,
+              ),
+              indicator: BoxDecoration(
+                color: colors.highlight,
+              ),
+              dividerColor: colors.appBarBg.withValues(alpha: 0),
+              indicatorSize: TabBarIndicatorSize.tab,
+              labelColor: colors.appBarText,
+              unselectedLabelColor: colors.appBarText.withValues(alpha: 0.64),
+              tabs: const [
+                Tab(text: 'সূরা'),
+                Tab(text: 'পারা'),
+                Tab(text: 'বুকমার্ক'),
+              ],
+            ),
           ),
-          // Para Tab
-          const ParaList(),
-          // Bookmark Tab
-          const BookmarkList(),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                ScrollablePositionedList.separated(
+                  itemScrollController: _itemScrollController,
+                  itemCount: allSuras.length,
+                  itemBuilder: (context, index) {
+                    final sura = allSuras[index];
+                    return SuraListItem(
+                      sura: sura,
+                      isHighlighted: _highlightedSuraNumber == sura.number,
+                      onTap: () {
+                        setState(() {
+                          _highlightedSuraNumber = null;
+                        });
+                      },
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return Divider(
+                      height: 1,
+                      thickness: 0.5,
+                      indent: 16,
+                      endIndent: 16,
+                      color: colors.divider,
+                    );
+                  },
+                ),
+                const ParaList(),
+                const BookmarkList(),
+              ],
+            ),
+          ),
         ],
       ),
     );
