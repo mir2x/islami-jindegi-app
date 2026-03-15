@@ -13,6 +13,7 @@ class SocialShare extends StatelessWidget {
     this.body,
     this.link,
     this.fileLink,
+    this.iconColor,
   });
 
   final String? title;
@@ -20,6 +21,7 @@ class SocialShare extends StatelessWidget {
   final dynamic body;
   final String? link;
   final String? fileLink;
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,7 @@ class SocialShare extends StatelessWidget {
 
     return IconButton(
       icon: const Icon(Icons.ios_share_rounded),
-      color: colors.active,
+      color: iconColor ?? colors.secondary,
       onPressed: () async {
         String text = '';
 

@@ -66,70 +66,167 @@ class _OfflineDbPromptState extends State<OfflineDbPrompt> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: const Text(
-          'অফলাইন ডাটা ডাউনলোড',
-          style: TextStyle(
-            fontFamily: 'bangla/solaimanlipi',
-            fontWeight: FontWeight.bold,
-            wordSpacing: 3,
-          ),
-        ),
-        content: const Text(
-          'অফলাইন ডাটা ডাউনলোড করলে ইন্টারনেট ছাড়াও এই বিভাগের তথ্য দেখতে পারবেন।',
-          style: TextStyle(
-            fontFamily: 'bangla/solaimanlipi',
-            wordSpacing: 3,
-            fontSize: 15,
-            height: 1.6,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
+      builder: (ctx) {
+        final colors = Theme.of(ctx).extension<AppThemeColors>()!;
+        final buttonBg = colors.accent;
+        final buttonFg =
+            ThemeData.estimateBrightnessForColor(buttonBg) == Brightness.dark
+                ? Colors.white
+                : colors.primaryText;
+        var neverShowAgain = false;
+
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            Future<void> persistPreferenceIfNeeded() async {
+              if (!neverShowAgain) return;
               final prefs = await SharedPreferences.getInstance();
               await prefs.setBool(
-                  'offline_db_never_show_${widget.feature}', true);
-              if (ctx.mounted) Navigator.of(ctx).pop();
-            },
-            child: const Text(
-              'আর দেখাবেন না',
-              style: TextStyle(
-                fontFamily: 'bangla/solaimanlipi',
-                wordSpacing: 3,
+                'offline_db_never_show_${widget.feature}',
+                true,
+              );
+            }
+
+            return Dialog(
+              backgroundColor: colors.cardBg,
+              insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(26),
+                side: BorderSide(
+                  color: colors.divider.withValues(alpha: 0.85),
+                ),
               ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-            child: const Text(
-              'পরে',
-              style: TextStyle(
-                fontFamily: 'bangla/solaimanlipi',
-                wordSpacing: 3,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(28, 28, 28, 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'অফলাইন ডাটা ডাউনলোড',
+                      style: TextStyle(
+                        fontFamily: 'bangla/solaimanlipi',
+                        fontWeight: FontWeight.bold,
+                        wordSpacing: 3,
+                        fontSize: 23,
+                        color: colors.primaryText,
+                        height: 1.18,
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    Text(
+                      'অফলাইন ডাটা ডাউনলোড করলে ইন্টারনেট ছাড়াও এই বিভাগের তথ্য দেখতে পারবেন।',
+                      style: TextStyle(
+                        fontFamily: 'bangla/solaimanlipi',
+                        wordSpacing: 3,
+                        fontSize: 15.5,
+                        height: 1.55,
+                        color: colors.secondaryText,
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(14),
+                      onTap: () {
+                        setDialogState(() {
+                          neverShowAgain = !neverShowAgain;
+                        });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: Checkbox(
+                                value: neverShowAgain,
+                                onChanged: (value) {
+                                  setDialogState(() {
+                                    neverShowAgain = value ?? false;
+                                  });
+                                },
+                                activeColor: colors.secondary,
+                                side: BorderSide(color: colors.divider),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              'আর দেখাবেন না',
+                              style: TextStyle(
+                                fontFamily: 'bangla/solaimanlipi',
+                                fontWeight: FontWeight.w600,
+                                wordSpacing: 3,
+                                fontSize: 15,
+                                color: colors.secondaryText,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 22),
+                    Row(
+                      children: [
+                        TextButton(
+                          onPressed: () async {
+                            await persistPreferenceIfNeeded();
+                            if (ctx.mounted) Navigator.of(ctx).pop();
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: colors.secondaryText,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 12,
+                            ),
+                            textStyle: const TextStyle(
+                              fontFamily: 'bangla/solaimanlipi',
+                              fontWeight: FontWeight.w600,
+                              wordSpacing: 3,
+                              fontSize: 15,
+                            ),
+                          ),
+                          child: const Text('পরে'),
+                        ),
+                        const Spacer(),
+                        FilledButton(
+                          onPressed: () async {
+                            await persistPreferenceIfNeeded();
+                            if (ctx.mounted) Navigator.of(ctx).pop();
+                            _startBackgroundDownload();
+                          },
+                          style: FilledButton.styleFrom(
+                            backgroundColor: buttonBg,
+                            foregroundColor: buttonFg,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 14,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            textStyle: const TextStyle(
+                              fontFamily: 'bangla/solaimanlipi',
+                              fontWeight: FontWeight.bold,
+                              wordSpacing: 3,
+                              fontSize: 16,
+                            ),
+                          ),
+                          child: const Text('ডাউনলোড'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              _startBackgroundDownload();
-            },
-            child: const Text(
-              'ডাউনলোড',
-              style: TextStyle(
-                fontFamily: 'bangla/solaimanlipi',
-                wordSpacing: 3,
-              ),
-            ),
-          ),
-        ],
-      ),
+            );
+          },
+        );
+      },
     );
   }
 

@@ -56,11 +56,13 @@ class DownloadButton extends ConsumerWidget {
             progressNotifier: progressNotifier,
             callback: callback,
           ),
-          Transform.translate(
-            offset: const Offset(0, -2),
-            child: DownloadProgress(
-              cancelToken: cancelToken,
-              progressNotifier: progressNotifier,
+          Expanded(
+            child: Transform.translate(
+              offset: const Offset(0, -2),
+              child: DownloadProgress(
+                cancelToken: cancelToken,
+                progressNotifier: progressNotifier,
+              ),
             ),
           ),
         ],
@@ -156,27 +158,35 @@ class DownloadProgress extends ConsumerWidget {
           int total = progress['total'];
 
           return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Column(
-                children: [
-                  Text(
-                    '${fileSize(received)}/${fileSize(total)}',
-                    style: textTheme.labelSmall,
-                  ),
-                  const SizedBox(height: 4),
-                  SizedBox(
-                    width: 110,
-                    child: LinearProgressIndicator(
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${fileSize(received)}/${fileSize(total)}',
+                      style: textTheme.labelSmall,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    LinearProgressIndicator(
                       backgroundColor: colors.divider,
                       valueColor: AlwaysStoppedAnimation<Color>(colors.active),
                       value: received / total,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               IconButton(
-                icon: const Icon(Icons.close),
+                constraints: const BoxConstraints(
+                  minWidth: 36,
+                  minHeight: 36,
+                ),
+                padding: const EdgeInsets.all(6),
+                splashRadius: 18,
+                visualDensity: VisualDensity.compact,
+                icon: const Icon(Icons.close, size: 20),
                 onPressed: () => cancelToken.cancel(),
               ),
             ],

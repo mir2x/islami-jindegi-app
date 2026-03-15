@@ -12,9 +12,8 @@ import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/nested_item.dart';
 import 'package:native_app/widgets/filter/subitem.dart';
-import 'package:native_app/widgets/presentation/list_item.dart';
+import 'package:native_app/widgets/presentation/content_list_card.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
-import 'package:native_app/theme/app_theme_color.dart';
 import '../providers/article_providers.dart';
 
 class ArticleListScreen extends ConsumerWidget {
@@ -24,7 +23,6 @@ class ArticleListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     var qParams = ref.watch(articleQueryParamsProvider);
 
     return AppScaffold(
@@ -41,20 +39,19 @@ class ArticleListScreen extends ConsumerWidget {
                     children: [
                       Container(
                         width: double.infinity,
-                        margin:
+                        padding:
                             const EdgeInsets.only(top: 20, left: 15, right: 15),
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: appTheme.cardBg,
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(color: appTheme.divider),
-                        ),
                         child: Row(
                           children: [
                             Expanded(
                               child: FilterButton(
                                 label: locales.authors,
                                 active: qParams.containsKey('articleAuthorId'),
+                                onClear: () {
+                                  ref
+                                      .read(articleQueryParamsProvider.notifier)
+                                      .updateParams('articleAuthorId', '');
+                                },
                                 selectedItemProvider:
                                     qParams.containsKey('articleAuthorId')
                                         ? singleArticleAuthorProvider(
@@ -123,6 +120,24 @@ class ArticleListScreen extends ConsumerWidget {
                                         'articleSubcategoryId',
                                       ].contains(k),
                                     ),
+                                    onClear: () {
+                                      ref
+                                          .read(
+                                            articleQueryParamsProvider.notifier,
+                                          )
+                                          .updateParams(
+                                            'articleCategoryId',
+                                            '',
+                                          );
+                                      ref
+                                          .read(
+                                            articleQueryParamsProvider.notifier,
+                                          )
+                                          .updateParams(
+                                            'articleSubcategoryId',
+                                            '',
+                                          );
+                                    },
                                     selectedItemProvider: selectedProvider,
                                     selectedItemLabel: (dynamic item) {
                                       return item.title;
@@ -135,12 +150,15 @@ class ArticleListScreen extends ConsumerWidget {
                                             'articleCategoryId',
                                             'articleSubcategoryId',
                                           ],
+                                          searchEnabled: true,
                                           queryProvider:
                                               articleQueryParamsProvider,
-                                          resourceFetcher: (Map<String, dynamic>
-                                              params) async {
+                                          resourceFetcher: (
+                                            Map<String, dynamic> params,
+                                          ) async {
                                             final api = ref.read(
-                                                articleApiServiceProvider);
+                                              articleApiServiceProvider,
+                                            );
                                             return await api.fetchCategories(
                                               page: params['page'] ?? 1,
                                               perPage: params['per_page'] ?? 16,
@@ -241,8 +259,8 @@ class ArticleListScreen extends ConsumerWidget {
                   itemBuilder: (_, item, __) {
                     return InkWell(
                       onTap: () => context.push('/articles/${item.id}'),
-                      child: ListItem(
-                        item: Row(
+                      child: ContentListCard(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Flexible(
@@ -251,14 +269,18 @@ class ArticleListScreen extends ConsumerWidget {
                                 children: [
                                   Text(
                                     item.title,
-                                    style: textTheme.titleMedium,
+                                    style: textTheme.titleMedium?.copyWith(
+                                      height: 1.25,
+                                    ),
                                   ),
                                   if (item.authorName != null) ...[
-                                    Container(
-                                      margin: const EdgeInsets.only(top: 5),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 6),
                                       child: Text(
                                         item.authorName!,
-                                        style: textTheme.labelSmall,
+                                        style: textTheme.labelSmall?.copyWith(
+                                          height: 1.2,
+                                        ),
                                       ),
                                     ),
                                   ],

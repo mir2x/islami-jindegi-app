@@ -33,7 +33,10 @@ class TripleSwitchButton extends ConsumerWidget {
 
     var activeColor = appTheme.active;
     var inactiveColor = appTheme.cardBg;
-    var activeTextColor = appTheme.appBarText;
+    var activeTextColor =
+        ThemeData.estimateBrightnessForColor(activeColor) == Brightness.dark
+            ? Colors.white
+            : appTheme.primaryText;
     var inactiveTextColor = appTheme.secondaryText;
 
     return Container(

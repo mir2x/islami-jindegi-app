@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:go_router/go_router.dart';
+import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import '../../models/sura_list_item.dart';
 
@@ -100,7 +101,9 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
           widget.onTap?.call();
           Future.delayed(Duration.zero, () {
             if (!context.mounted) return;
-            context.push('/qurans/sura/${widget.sura.number}');
+            context.push(
+              buildSuraRoute(suraNumber: widget.sura.number),
+            );
           });
         },
         child: Padding(

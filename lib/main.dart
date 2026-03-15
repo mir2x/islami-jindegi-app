@@ -125,9 +125,12 @@ class MyApp extends ConsumerWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        final selectedTheme = classicTheme(fonts);
-        final selectedDarkTheme = classicTheme(fonts);
-        const selectedThemeMode = ThemeMode.light;
+        final currentTheme = prefs?.getString('theme') ?? 'classic';
+        final selectedTheme =
+            currentTheme == 'light' ? lightTheme(fonts) : classicTheme(fonts);
+        final selectedDarkTheme = darkTheme(fonts);
+        final selectedThemeMode =
+            currentTheme == 'dark' ? ThemeMode.dark : ThemeMode.light;
 
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,

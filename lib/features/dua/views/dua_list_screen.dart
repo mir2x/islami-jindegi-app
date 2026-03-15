@@ -9,10 +9,9 @@ import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
-import 'package:native_app/widgets/presentation/list_item.dart';
+import 'package:native_app/widgets/presentation/content_list_card.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
-import 'package:native_app/theme/app_theme_color.dart';
 import '../providers/dua_providers.dart';
 
 class DuaListScreen extends StatelessWidget {
@@ -75,7 +74,6 @@ class _OfflineDuaListState extends ConsumerState<_OfflineDuaList> {
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     var qParams = ref.watch(duaQueryParamsProvider);
 
     var modelQuery = ref.watch(allDuasProvider(qParams));
@@ -89,66 +87,60 @@ class _OfflineDuaListState extends ConsumerState<_OfflineDuaList> {
           children: [
             Container(
               width: double.infinity,
-              margin: const EdgeInsets.only(top: 20, left: 15, right: 15),
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: appTheme.cardBg,
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: appTheme.divider),
-              ),
-              child: Row(
+              padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
+              child: FilterButton(
+                label: locales.categories,
+                active: qParams.containsKey('duaCategoryId'),
+                onClear: () {
+                  ref
+                      .read(duaQueryParamsProvider.notifier)
+                      .updateParams('duaCategoryId', '');
+                },
+                selectedItemProvider: qParams.containsKey('duaCategoryId')
+                    ? singleDuaCategoryProvider(
+                        qParams['duaCategoryId'],
+                      )
+                    : null,
+                selectedItemLabel: (dynamic item) {
+                  return item.title;
+                },
                 children: [
                   Expanded(
-                    child: FilterButton(
-                      label: locales.categories,
-                      active: qParams.containsKey('duaCategoryId'),
-                      selectedItemProvider: qParams.containsKey('duaCategoryId')
-                          ? singleDuaCategoryProvider(
-                              qParams['duaCategoryId'],
-                            )
-                          : null,
-                      selectedItemLabel: (dynamic item) {
-                        return item.title;
+                    child: FilterList(
+                      title: locales.categories,
+                      paramKeys: const ['duaCategoryId'],
+                      searchEnabled: true,
+                      queryProvider: duaQueryParamsProvider,
+                      resourceFetcher: (Map<String, dynamic> params) async {
+                        final api = ref.read(duaApiServiceProvider);
+                        return await api.fetchCategories(
+                          page: params['page'] ?? 1,
+                          perPage: params['per_page'] ?? 16,
+                          search: params['search'],
+                        );
                       },
-                      children: [
-                        Expanded(
-                          child: FilterList(
-                            title: locales.categories,
-                            paramKeys: const ['duaCategoryId'],
-                            queryProvider: duaQueryParamsProvider,
-                            resourceFetcher:
-                                (Map<String, dynamic> params) async {
-                              final api = ref.read(duaApiServiceProvider);
-                              return await api.fetchCategories(
-                                page: params['page'] ?? 1,
-                                perPage: params['per_page'] ?? 16,
-                              );
-                            },
-                            itemBuilder: (_, item, __) {
-                              return FilterItem(
-                                itemId: item.id,
-                                itemTitle: item.title,
-                                paramKey: 'duaCategoryId',
-                                queryProvider: duaQueryParamsProvider,
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: SearchButtonField(
-                      value: qParams['search'],
-                      onUpdate: (value) {
-                        ref
-                            .read(duaQueryParamsProvider.notifier)
-                            .updateParams('search', value);
+                      itemBuilder: (_, item, __) {
+                        return FilterItem(
+                          itemId: item.id,
+                          itemTitle: item.title,
+                          paramKey: 'duaCategoryId',
+                          queryProvider: duaQueryParamsProvider,
+                        );
                       },
                     ),
                   ),
                 ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.only(top: 10, left: 15, right: 15),
+              child: SearchButtonField(
+                value: qParams['search'],
+                onUpdate: (value) {
+                  ref
+                      .read(duaQueryParamsProvider.notifier)
+                      .updateParams('search', value);
+                },
               ),
             ),
             Expanded(
@@ -171,14 +163,16 @@ class _OfflineDuaListState extends ConsumerState<_OfflineDuaList> {
 
                         return InkWell(
                           onTap: () => context.push('/duas/${item.id}'),
-                          child: ListItem(
-                            item: Row(
+                          child: ContentListCard(
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Flexible(
                                   child: Text(
                                     item.title,
-                                    style: textTheme.titleMedium,
+                                    style: textTheme.titleMedium?.copyWith(
+                                      height: 1.25,
+                                    ),
                                   ),
                                 ),
                                 LastVisited(

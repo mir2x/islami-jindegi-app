@@ -4,15 +4,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:native_app/features/quran/providers/bookmark_providers.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
-import 'package:native_app/features/sura/providers/sura_providers.dart';
 import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
-class SuraBookmarkNavigationView extends ConsumerWidget {
+class TilawatBookmarkNavigationView extends ConsumerWidget {
   final int currentSuraNumber;
   final String returnTo;
 
-  const SuraBookmarkNavigationView({
+  const TilawatBookmarkNavigationView({
     super.key,
     required this.currentSuraNumber,
     required this.returnTo,
@@ -75,6 +74,12 @@ class SuraBookmarkNavigationView extends ConsumerWidget {
                     suraNumber <= suraNames.length)
                 ? suraNames[suraNumber - 1]
                 : 'Unknown Sura';
+            final meta = <String>[
+              if (bookmark.para != null)
+                'পারা ${_toBengaliNumber(bookmark.para!)}',
+              if (bookmark.page != null)
+                'পৃষ্ঠা ${_toBengaliNumber(bookmark.page!)}',
+            ].join(', ');
 
             return ListTile(
               title: Row(
@@ -95,23 +100,25 @@ class SuraBookmarkNavigationView extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          suraName,
+                          ayahNumber == null
+                              ? suraName
+                              : '$suraName, আয়াত ${_toBengaliNumber(ayahNumber)}',
                           style: TextStyle(
                             fontSize: itemSubtitleFontSize,
                             fontWeight: FontWeight.w500,
                             color: appColors.primaryText,
                           ),
                         ),
-                        SizedBox(height: 2.h),
-                        Text(
-                          ayahNumber == null
-                              ? 'আয়াত তথ্য নেই'
-                              : 'আয়াত ${_toBengaliNumber(ayahNumber)}',
-                          style: TextStyle(
-                            fontSize: itemSubtitleFontSize,
-                            color: appColors.secondaryText,
+                        if (meta.isNotEmpty) ...[
+                          SizedBox(height: 2.h),
+                          Text(
+                            meta,
+                            style: TextStyle(
+                              fontSize: itemSubtitleFontSize,
+                              color: appColors.secondaryText,
+                            ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                   ),
@@ -121,30 +128,20 @@ class SuraBookmarkNavigationView extends ConsumerWidget {
                   ? null
                   : () {
                       Scaffold.of(context).closeDrawer();
-                      if (suraNumber == currentSuraNumber) {
-                        ref.read(suraScrollCommandProvider.notifier).state =
-                            ScrollCommand(
-                          suraNumber: suraNumber,
-                          scrollIndex: ayahNumber - 1,
+                      Future.delayed(const Duration(milliseconds: 200),
+                          () async {
+                        if (!context.mounted) return;
+                        if (context.canPop()) context.pop();
+                        await Future.delayed(const Duration(milliseconds: 50));
+                        if (!context.mounted) return;
+                        context.push(
+                          buildTilawatRoute(
+                            suraNumber: suraNumber,
+                            ayahNumber: ayahNumber,
+                            returnTo: returnTo,
+                          ),
                         );
-                      } else {
-                        Future.delayed(const Duration(milliseconds: 200),
-                            () async {
-                          if (!context.mounted) return;
-                          if (context.canPop()) context.pop();
-                          await Future.delayed(
-                            const Duration(milliseconds: 50),
-                          );
-                          if (!context.mounted) return;
-                          context.push(
-                            buildSuraRoute(
-                              suraNumber: suraNumber,
-                              scrollIndex: ayahNumber - 1,
-                              returnTo: returnTo,
-                            ),
-                          );
-                        });
-                      }
+                      });
                     },
               trailing: IconButton(
                 icon: Icon(

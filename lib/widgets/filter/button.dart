@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:native_app/helpers/trancate_with_ellipsis.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
 class FilterButton extends ConsumerWidget {
@@ -12,12 +11,14 @@ class FilterButton extends ConsumerWidget {
     this.active = false,
     required this.selectedItemLabel,
     this.selectedItemProvider,
+    this.onClear,
   });
 
   final List<Widget> children;
   final String? label;
   final bool active;
   final Function(dynamic) selectedItemLabel;
+  final VoidCallback? onClear;
 
   /// Riverpod provider that returns an AsyncValue of the selected item.
   final dynamic selectedItemProvider;
@@ -28,16 +29,14 @@ class FilterButton extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
     var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     String filterLabel = label ?? locales.filter;
-    double screenWidth = MediaQuery.of(context).size.width;
-    bool isSmallMobile = screenWidth < 340;
 
     return OutlinedButton(
       onPressed: () {
         showDialog(
           context: context,
-          builder: (BuildContext context) {
-            double screenWidth = MediaQuery.of(context).size.width;
-            double screenHeight = MediaQuery.of(context).size.height;
+          builder: (BuildContext dialogContext) {
+            double screenWidth = MediaQuery.of(dialogContext).size.width;
+            double screenHeight = MediaQuery.of(dialogContext).size.height;
 
             return Dialog(
               backgroundColor: appTheme.dropdownBg,
@@ -60,7 +59,28 @@ class FilterButton extends ConsumerWidget {
                   right: 15,
                 ),
                 child: Column(
-                  children: children,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(filterLabel, style: textTheme.titleMedium),
+                        if (active && onClear != null)
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              onClear!();
+                              Navigator.of(dialogContext).pop();
+                            },
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child: Column(
+                        children: children,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );
@@ -69,11 +89,8 @@ class FilterButton extends ConsumerWidget {
       },
       style: OutlinedButton.styleFrom(
         side: BorderSide(color: appTheme.divider),
-        backgroundColor: active == true ? appTheme.highlight : appTheme.cardBg,
-        padding: EdgeInsets.only(
-          left: isSmallMobile ? 10 : 12,
-          right: isSmallMobile ? 6 : 8,
-        ),
+        backgroundColor: active ? appTheme.highlight : appTheme.cardBg,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
         ),
@@ -83,46 +100,58 @@ class FilterButton extends ConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (selectedItemProvider != null) ...[
-            Builder(
-              builder: (context) {
-                var asyncValue = ref.watch(selectedItemProvider);
+          Expanded(
+            child: selectedItemProvider != null
+                ? Builder(
+                    builder: (context) {
+                      var asyncValue = ref.watch(selectedItemProvider);
 
-                if (asyncValue is AsyncLoading) {
-                  return const SizedBox(
-                    width: 12,
-                    height: 12,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  );
-                } else if (asyncValue is AsyncError) {
-                  return Text(filterLabel, style: textTheme.labelMedium);
-                } else if (asyncValue is AsyncData &&
-                    asyncValue.value != null) {
-                  String label = selectedItemLabel(asyncValue.value);
-                  int cutoff = isSmallMobile ? 13 : 15;
-                  return Text(
-                    truncateWithEllipsis(label, cutoff),
+                      if (asyncValue is AsyncLoading) {
+                        return const Align(
+                          alignment: Alignment.centerLeft,
+                          child: SizedBox(
+                            width: 12,
+                            height: 12,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        );
+                      } else if (asyncValue is AsyncError) {
+                        return Text(
+                          filterLabel,
+                          style: textTheme.labelMedium,
+                          overflow: TextOverflow.ellipsis,
+                        );
+                      } else if (asyncValue is AsyncData &&
+                          asyncValue.value != null) {
+                        return Text(
+                          selectedItemLabel(asyncValue.value),
+                          style: textTheme.labelMedium?.copyWith(
+                            color: appTheme.primaryText,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        );
+                      }
+                      return Text(
+                        filterLabel,
+                        style: textTheme.labelMedium?.copyWith(
+                          color: appTheme.primaryText,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      );
+                    },
+                  )
+                : Text(
+                    filterLabel,
                     style: textTheme.labelMedium?.copyWith(
                       color: appTheme.primaryText,
                     ),
-                  );
-                }
-                return Text(
-                  filterLabel,
-                  style: textTheme.labelMedium?.copyWith(
-                    color: appTheme.primaryText,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
-                );
-              },
-            ),
-          ] else ...[
-            Text(
-              filterLabel,
-              style: textTheme.labelMedium?.copyWith(
-                color: appTheme.primaryText,
-              ),
-            ),
-          ],
+          ),
+          const SizedBox(width: 6),
           Icon(
             Icons.arrow_drop_down,
             color: appTheme.secondaryText,

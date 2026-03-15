@@ -8,10 +8,12 @@ class DuaApiService {
   late final Dio _dio;
 
   DuaApiService() {
-    _dio = Dio(BaseOptions(
-      baseUrl: '${dotenv.env['API_HOST_NAME']}/api',
-      headers: {'Accept': 'application/vnd.api+json'},
-    ));
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: '${dotenv.env['API_HOST_NAME']}/api',
+        headers: {'Accept': 'application/vnd.api+json'},
+      ),
+    );
   }
 
   // ───────────────────── Duas ─────────────────────
@@ -56,11 +58,13 @@ class DuaApiService {
   Future<List<DuaCategory>> fetchCategories({
     int page = 1,
     int perPage = 16,
+    String? search,
     bool offline = true,
   }) async {
     final params = <String, dynamic>{
       'page': page,
       'per_page': perPage,
+      if (search != null && search.isNotEmpty) 'search': search,
       'offline': offline,
     };
     final response = await _dio.get('/dua_categories', queryParameters: params);

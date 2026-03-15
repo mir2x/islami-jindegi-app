@@ -9,6 +9,7 @@ import 'package:native_app/features/sura/views/widgets/ayah_card.dart';
 import 'package:native_app/features/sura/views/widgets/ayah_placeholder.dart';
 import 'package:native_app/features/sura/views/widgets/sura_app_bar.dart';
 import 'package:native_app/features/sura/views/widgets/sura_bottom_nav_bar.dart';
+import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/sura_reciter_providers.dart';
@@ -21,10 +22,12 @@ import 'package:native_app/features/sura_list/providers/sura_list_providers.dart
 class SurahPage extends ConsumerStatefulWidget {
   final int suraNumber;
   final int? initialScrollIndex;
+  final String returnTo;
   const SurahPage({
     super.key,
     required this.suraNumber,
     this.initialScrollIndex,
+    this.returnTo = suraListRoute,
   });
 
   @override
@@ -44,6 +47,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
   bool _showScrollToTopButton = false;
   int? _resolvedScrollIndex;
   int _bottomVisibleIndex = 0;
+  bool _hasVisiblePositionUpdate = false;
   bool _nextSuraPromptShown = false;
   bool _isDraggingScrollThumb = false;
   double? _dragThumbProgress;
@@ -118,28 +122,44 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     final positions = _itemPositionsListener.itemPositions.value;
     if (positions.isEmpty) return;
 
-    final minIndex = positions
-        .where((ItemPosition position) => position.itemTrailingEdge > 0)
+    final fullyEnteredTopItems = positions
+        .where(
+          (ItemPosition position) =>
+              position.itemLeadingEdge >= 0 && position.itemLeadingEdge < 1,
+        )
+        .toList();
+
+    final minIndex = (fullyEnteredTopItems.isNotEmpty
+            ? fullyEnteredTopItems
+            : positions
+                .where((ItemPosition position) => position.itemTrailingEdge > 0)
+                .toList())
         .reduce((min, position) => position.index < min.index ? position : min)
         .index;
-
-    if (minIndex != _topVisibleIndex) {
-      _topVisibleIndex = minIndex;
-      _saveLastReadPosition(widget.suraNumber, minIndex);
-      final shouldShow = minIndex > 5;
-      if (shouldShow != _showScrollToTopButton) {
-        setState(() {
-          _showScrollToTopButton = shouldShow;
-        });
-      }
-    }
 
     final maxIndex = positions
         .where((ItemPosition position) => position.itemLeadingEdge < 1)
         .reduce((max, position) => position.index > max.index ? position : max)
         .index;
 
-    _bottomVisibleIndex = maxIndex;
+    final shouldShow = minIndex > 5;
+    final topChanged = minIndex != _topVisibleIndex;
+    final bottomChanged = maxIndex != _bottomVisibleIndex;
+    final buttonChanged = shouldShow != _showScrollToTopButton;
+
+    if (topChanged) {
+      _saveLastReadPosition(widget.suraNumber, minIndex);
+    }
+
+    if (topChanged || bottomChanged || buttonChanged) {
+      if (!mounted) return;
+      setState(() {
+        _hasVisiblePositionUpdate = true;
+        _topVisibleIndex = minIndex;
+        _bottomVisibleIndex = maxIndex;
+        _showScrollToTopButton = shouldShow;
+      });
+    }
 
     if (_bottomVisibleIndex < _totalItems - 1) {
       _nextSuraPromptShown = false;
@@ -245,6 +265,13 @@ class _SurahPageState extends ConsumerState<SurahPage> {
   bool get _isAtSuraEnd =>
       _totalItems > 0 && _bottomVisibleIndex >= _totalItems - 1;
 
+  int get _currentAyahNumber {
+    if (_hasVisiblePositionUpdate) {
+      return _topVisibleIndex + 1;
+    }
+    return (_resolvedScrollIndex ?? 0) + 1;
+  }
+
   Future<void> _showNextSuraPrompt() async {
     if (_nextSuraPromptShown || widget.suraNumber >= suraNames.length) return;
 
@@ -344,7 +371,10 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                             Navigator.of(sheetContext).pop();
                             if (!mounted || !context.mounted) return;
                             context.pushReplacement(
-                              '/qurans/sura/$nextSuraNumber',
+                              buildSuraRoute(
+                                suraNumber: nextSuraNumber,
+                                returnTo: widget.returnTo,
+                              ),
                             );
                           },
                           style: FilledButton.styleFrom(
@@ -391,6 +421,24 @@ class _SurahPageState extends ConsumerState<SurahPage> {
         ((clamped * (_totalItems - 1)).round()).clamp(0, _totalItems - 1);
     _itemScrollController.jumpTo(index: targetIndex, alignment: 0.08);
     _saveLastReadPosition(widget.suraNumber, targetIndex);
+  }
+
+  void _updateThumbFromTrackPosition(
+    double localDy,
+    double trackHeight,
+    double thumbHeight,
+  ) {
+    final local = (localDy - (thumbHeight / 2)).clamp(
+      0.0,
+      trackHeight - thumbHeight,
+    );
+    final newProgress = (local / (trackHeight - thumbHeight)).clamp(0.0, 1.0);
+
+    setState(() {
+      _dragThumbProgress = newProgress;
+    });
+
+    _jumpToProgress(newProgress);
   }
 
   @override
@@ -488,8 +536,14 @@ class _SurahPageState extends ConsumerState<SurahPage> {
           title: suraName,
           suraNumber: widget.suraNumber,
           scaffoldKey: _scaffoldKey,
+          currentAyahNumber: _currentAyahNumber,
+          returnTo: widget.returnTo,
         ),
-        drawer: SuraSideDrawer(currentSuraNumber: widget.suraNumber),
+        drawer: SuraSideDrawer(
+          currentSuraNumber: widget.suraNumber,
+          currentAyahNumber: _currentAyahNumber,
+          returnTo: widget.returnTo,
+        ),
         body: SafeArea(
           child: Column(
             children: [
@@ -540,6 +594,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                                       suraNumber: widget.suraNumber,
                                       ayah: entry,
                                       suraName: suraName,
+                                      returnTo: widget.returnTo,
                                       isHighlighted: isHighlighted,
                                     );
                                   },
@@ -567,19 +622,25 @@ class _SurahPageState extends ConsumerState<SurahPage> {
             ? SuraBottomNavBar(
                 totalAyahs: _totalItems,
                 suraNumber: widget.suraNumber,
+                currentAyahNumber: _currentAyahNumber,
+                returnTo: widget.returnTo,
                 onStartAutoScroll: _startAutoScroll,
                 onStopAutoScroll: () => _stopAutoScroll(resetSpeed: true),
               )
             : null,
-        floatingActionButton: _showScrollToTopButton
-            ? FloatingActionButton(
-                onPressed: _scrollToTop,
-                mini: true,
-                backgroundColor:
-                    Theme.of(context).extension<AppThemeColors>()!.cardBg,
-                child: Icon(
-                  Icons.arrow_upward,
-                  color: Theme.of(context).extension<AppThemeColors>()!.active,
+        floatingActionButton: _showScrollToTopButton && !isTimedScrolling
+            ? Transform.translate(
+                offset: const Offset(14, 0),
+                child: FloatingActionButton(
+                  onPressed: _scrollToTop,
+                  mini: true,
+                  backgroundColor:
+                      Theme.of(context).extension<AppThemeColors>()!.cardBg,
+                  child: Icon(
+                    Icons.arrow_upward,
+                    color:
+                        Theme.of(context).extension<AppThemeColors>()!.active,
+                  ),
                 ),
               )
             : null,
@@ -678,25 +739,29 @@ class _SurahPageState extends ConsumerState<SurahPage> {
           ),
         ),
         Positioned(
-          right: 8,
-          top: top,
+          right: 0,
+          top: trackTop,
+          width: 56,
+          height: trackHeight,
           child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onVerticalDragStart: (_) {
+            behavior: HitTestBehavior.translucent,
+            onVerticalDragStart: (details) {
               setState(() {
                 _isDraggingScrollThumb = true;
                 _dragThumbProgress = progress;
               });
+              _updateThumbFromTrackPosition(
+                details.localPosition.dy,
+                trackHeight,
+                thumbHeight,
+              );
             },
             onVerticalDragUpdate: (details) {
-              final local = (top + details.delta.dy - trackTop)
-                  .clamp(0.0, trackHeight - thumbHeight);
-              final newProgress =
-                  (local / (trackHeight - thumbHeight)).clamp(0.0, 1.0);
-              setState(() {
-                _dragThumbProgress = newProgress;
-              });
-              _jumpToProgress(newProgress);
+              _updateThumbFromTrackPosition(
+                details.localPosition.dy,
+                trackHeight,
+                thumbHeight,
+              );
             },
             onVerticalDragEnd: (_) {
               setState(() {
@@ -710,56 +775,64 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                 _dragThumbProgress = null;
               });
             },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 120),
-              width: _isDraggingScrollThumb ? 42 : 36,
-              height: thumbHeight,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    colors.primary.withValues(alpha: 0.96),
-                    colors.secondary.withValues(alpha: 0.84),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
+            child: Stack(
+              children: [
+                Positioned(
+                  right: 8,
+                  top: top - trackTop,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 120),
+                    width: _isDraggingScrollThumb ? 42 : 36,
+                    height: thumbHeight,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          colors.primary.withValues(alpha: 0.96),
+                          colors.secondary.withValues(alpha: 0.84),
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                      borderRadius: BorderRadius.circular(22),
+                      boxShadow: [
+                        BoxShadow(
+                          color: colors.shadow.withValues(alpha: 0.18),
+                          blurRadius: 18,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.drag_indicator_rounded,
+                          color: colors.appBarText,
+                          size: 18,
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          visibleAyah.toBengaliDigit(),
+                          style: TextStyle(
+                            color: colors.appBarText,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 15,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'আয়াত',
+                          style: TextStyle(
+                            color: colors.appBarText,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 10,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                borderRadius: BorderRadius.circular(22),
-                boxShadow: [
-                  BoxShadow(
-                    color: colors.shadow.withValues(alpha: 0.18),
-                    blurRadius: 18,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.drag_indicator_rounded,
-                    color: colors.appBarText,
-                    size: 18,
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    visibleAyah.toBengaliDigit(),
-                    style: TextStyle(
-                      color: colors.appBarText,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 15,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'আয়াত',
-                    style: TextStyle(
-                      color: colors.appBarText,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 10,
-                    ),
-                  ),
-                ],
-              ),
+              ],
             ),
           ),
         ),

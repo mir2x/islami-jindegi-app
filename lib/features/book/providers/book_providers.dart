@@ -93,6 +93,52 @@ final bookListProvider = FutureProvider.autoDispose
   }
 });
 
+/// Cached ordered book IDs for previous/next navigation.
+/// Invalidate with `ref.invalidate(bookNavigationIdsProvider)` if the
+/// catalogue is refreshed during the current app session.
+final bookNavigationIdsProvider = FutureProvider<List<String>>((ref) async {
+  final isConnected = await ref.watch(_connectivityProvider.future);
+  final api = ref.read(bookApiServiceProvider);
+  final offline = ref.read(bookOfflineServiceProvider);
+  const perPage = 12;
+  final ids = <String>[];
+
+  if (isConnected) {
+    try {
+      int page = 1;
+      while (true) {
+        final books = await api.fetchBooks(
+          page: page,
+          perPage: perPage,
+          includeAuthors: false,
+        );
+        if (books.isEmpty) break;
+        ids.addAll(books.map((book) => book.id));
+        if (books.length < perPage) break;
+        page++;
+      }
+
+      return ids;
+    } catch (e) {
+      debugPrint('[bookNavigationIdsProvider] API error: $e');
+    }
+  }
+
+  int page = 1;
+  while (true) {
+    final books = await offline.queryBooks(
+      page: page,
+      perPage: perPage,
+    );
+    if (books.isEmpty) break;
+    ids.addAll(books.map((book) => book.id));
+    if (books.length < perPage) break;
+    page++;
+  }
+
+  return ids;
+});
+
 // ═══════════════════════════════════════════════════
 //  Single book detail
 // ═══════════════════════════════════════════════════

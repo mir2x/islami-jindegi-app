@@ -63,20 +63,22 @@ class Resource extends StatelessWidget {
               width: iconSize,
               height: iconSize,
             ),
-            Container(
-              margin: EdgeInsets.only(top: isMobile ? 10 : 15),
+            SizedBox(height: isMobile ? 8 : 12),
+            Flexible(
               child: Text(
                 title,
                 style: isSmallMobile
                     ? textTheme.labelSmall?.copyWith(
-                        height: 1.15,
+                        height: 1.1,
                         color: appColors.primaryText,
                       )
                     : textTheme.labelMedium?.copyWith(
-                        height: 1.15,
+                        height: 1.1,
                         color: appColors.primaryText,
                       ),
                 textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

@@ -73,48 +73,65 @@ class _BookContent extends ConsumerWidget {
 
   const _BookContent({required this.book});
 
-  Future<void> _previousPage(BuildContext context, WidgetRef ref) async {
-    final api = ref.read(bookApiServiceProvider);
-    final offline = ref.read(bookOfflineServiceProvider);
-
+  Future<Book?> _findAdjacentBook(WidgetRef ref, {required bool next}) async {
     try {
-      var previousResources = await api.fetchBooks(
-        page: 1,
-        perPage: 1,
-      );
-      // Try with position
-      previousResources = await offline.queryBooks(
-        position: (book.position ?? 0) - 1,
-        quantity: 1,
-      );
-
-      if (previousResources.isEmpty) {
-        await context.push('/books');
-      } else {
-        await context.push('/books/${previousResources.first.id}');
+      final orderedIds = await ref.read(bookNavigationIdsProvider.future);
+      final currentIndex = orderedIds.indexOf(book.id);
+      if (currentIndex != -1) {
+        final targetIndex = next ? currentIndex + 1 : currentIndex - 1;
+        if (targetIndex >= 0 && targetIndex < orderedIds.length) {
+          final targetId = orderedIds[targetIndex];
+          final api = ref.read(bookApiServiceProvider);
+          try {
+            return await api.fetchBook(targetId, includeAuthors: false);
+          } catch (_) {
+            final offline = ref.read(bookOfflineServiceProvider);
+            return await offline.findBookById(targetId, includeAuthors: false);
+          }
+        }
+        return null;
       }
     } catch (_) {
-      await context.push('/books');
+      // Fall back to offline position-based lookup below if API traversal fails.
+    }
+
+    final offline = ref.read(bookOfflineServiceProvider);
+    final offlineBook = await offline.findBookById(book.id);
+    final position = offlineBook?.position ?? book.position;
+    if (position == null) return null;
+
+    return next
+        ? offline.findNextBookByPosition(position)
+        : offline.findPreviousBookByPosition(position);
+  }
+
+  Future<void> _previousPage(BuildContext context, WidgetRef ref) async {
+    try {
+      final previousBook = await _findAdjacentBook(ref, next: false);
+      if (previousBook == null) {
+        context.go('/books');
+        return;
+      }
+
+      context.go('/books/${previousBook.id}');
+    } catch (_) {
+      context.go('/books');
     }
   }
 
   Future<void> _nextPage(BuildContext context, WidgetRef ref) async {
-    final offline = ref.read(bookOfflineServiceProvider);
-
     try {
-      final nextResources = await offline.queryBooks(
-        position: (book.position ?? 0) + 1,
-        quantity: 1,
-      );
-
-      if (nextResources.isNotEmpty) {
-        await context.push('/books/${nextResources.first.id}');
+      final nextBook = await _findAdjacentBook(ref, next: true);
+      if (nextBook != null) {
+        context.go('/books/${nextBook.id}');
       }
     } catch (_) {}
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(bookNavigationIdsProvider);
+
     final locales = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     final appTheme = Theme.of(context).extension<AppThemeColors>()!;
@@ -144,7 +161,7 @@ class _BookContent extends ConsumerWidget {
       data: (chapters) {
         if (chapters.isNotEmpty) {
           return AppScaffold(
-            onBackPressed: () async => await context.push('/books'),
+            onBackPressed: () async => context.go('/books'),
             showPattern: false,
             title: Text(locales.book),
             body: NextPageSwipe(
@@ -171,125 +188,167 @@ class _BookContent extends ConsumerWidget {
                       },
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: appTheme.highlight,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: appTheme.divider),
-                    ),
-                    child: Text(
-                      locales.contents,
-                      style: textTheme.labelLarge?.copyWith(
-                        color: appTheme.primaryText,
+                  const SizedBox(height: 4),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: appTheme.highlight,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: appTheme.divider),
+                        boxShadow: [
+                          BoxShadow(
+                            color: appTheme.shadow.withValues(alpha: 0.06),
+                            blurRadius: 18,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        locales.contents,
+                        textAlign: TextAlign.center,
+                        style: textTheme.titleMedium?.copyWith(
+                          color: appTheme.primaryText,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: appTheme.cardBg,
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(color: appTheme.divider),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: WithLastVisited(
-                          builder: (context, settings) {
-                            String? lastChapterId;
-                            Map books = json.decode(
-                              settings.getString('lastChapters') ?? '{}',
-                            );
-                            if (books.containsKey(book.id.toString())) {
-                              lastChapterId = books[book.id.toString()];
-                            }
+                  const SizedBox(height: 16),
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: appTheme.cardBg,
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: appTheme.divider),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: WithLastVisited(
+                        builder: (context, settings) {
+                          String? lastChapterId;
+                          Map books = json.decode(
+                            settings.getString('lastChapters') ?? '{}',
+                          );
+                          if (books.containsKey(book.id.toString())) {
+                            lastChapterId = books[book.id.toString()];
+                          }
 
-                            var allChaptersQuery =
-                                ref.watch(chapterListProvider(
+                          var allChaptersQuery = ref.watch(
+                            chapterListProvider(
                               ChapterListParams(
                                 bookId: book.id,
                                 includeSubchapters: true,
                               ),
-                            ));
+                            ),
+                          );
 
-                            return allChaptersQuery.when(
-                              loading: () => const Center(
-                                  child: CircularProgressIndicator()),
-                              error: (error, _) => Text(error.toString()),
-                              data: (resources) {
-                                return ListView.builder(
-                                  key: PageStorageKey<String>(book.id),
-                                  itemCount: resources.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    var chapter = resources[index];
+                          return allChaptersQuery.when(
+                            loading: () => const Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 24),
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
+                            error: (error, _) => Text(error.toString()),
+                            data: (resources) {
+                              final shouldScroll = resources.length > 6;
+                              Widget buildChapterItem(
+                                BuildContext context,
+                                int index,
+                              ) {
+                                var chapter = resources[index];
+                                final isLastItem =
+                                    index == resources.length - 1;
 
-                                    if (chapter.subchapters.isNotEmpty) {
-                                      return _Subchapters(
-                                        key: PageStorageKey<String>(chapter.id),
-                                        book: book,
-                                        chapter: chapter,
-                                        lastSubchapterId: lastChapterId,
-                                        isOpen: chapter.subchapters
-                                            .map((s) => s.id.toString())
-                                            .any((id) => id == lastChapterId),
-                                      );
-                                    } else {
-                                      return InkWell(
-                                        onTap: () => context.push(
-                                          'books/${book.id}/chapters/${chapter.id}',
-                                        ),
-                                        child: Container(
-                                          decoration: BoxDecoration(
+                                if (chapter.subchapters.isNotEmpty) {
+                                  return _Subchapters(
+                                    key: PageStorageKey<String>(chapter.id),
+                                    book: book,
+                                    chapter: chapter,
+                                    lastSubchapterId: lastChapterId,
+                                    isOpen: chapter.subchapters
+                                        .map((s) => s.id.toString())
+                                        .any((id) => id == lastChapterId),
+                                    isLast: isLastItem,
+                                  );
+                                }
+
+                                return InkWell(
+                                  onTap: () => context.push(
+                                    '/books/${book.id}/chapters/${chapter.id}',
+                                  ),
+                                  child: Container(
+                                    decoration: isLastItem
+                                        ? null
+                                        : BoxDecoration(
                                             border: Border(
                                               bottom: BorderSide(
                                                 color: appTheme.divider,
                                               ),
                                             ),
                                           ),
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 15,
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Flexible(
-                                                child: Text(
-                                                  chapter.title,
-                                                  style: textTheme.titleLarge,
-                                                ),
-                                              ),
-                                              if (lastChapterId ==
-                                                  chapter.id.toString()) ...[
-                                                Container(
-                                                  margin: const EdgeInsets.only(
-                                                    left: 10,
-                                                  ),
-                                                  child: SvgPicture.asset(
-                                                    'assets/images/icons/open-book.svg',
-                                                    fit: BoxFit.scaleDown,
-                                                    width: 25,
-                                                    height: 20,
-                                                  ),
-                                                ),
-                                              ] else ...[
-                                                const SizedBox.shrink(),
-                                              ],
-                                            ],
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 15,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            chapter.title,
+                                            style: textTheme.titleLarge,
                                           ),
                                         ),
-                                      );
-                                    }
-                                  },
+                                        if (lastChapterId ==
+                                            chapter.id.toString()) ...[
+                                          Container(
+                                            margin: const EdgeInsets.only(
+                                              left: 10,
+                                            ),
+                                            child: SvgPicture.asset(
+                                              'assets/images/icons/open-book.svg',
+                                              fit: BoxFit.scaleDown,
+                                              width: 25,
+                                              height: 20,
+                                            ),
+                                          ),
+                                        ] else ...[
+                                          const SizedBox.shrink(),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
                                 );
-                              },
-                            );
-                          },
-                        ),
+                              }
+
+                              if (!shouldScroll) {
+                                return Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: List<Widget>.generate(
+                                    resources.length,
+                                    (index) => buildChapterItem(context, index),
+                                  ),
+                                );
+                              }
+
+                              return SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.58,
+                                child: ListView.builder(
+                                  key: PageStorageKey<String>(book.id),
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: resources.length,
+                                  itemBuilder: buildChapterItem,
+                                ),
+                              );
+                            },
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -359,7 +418,7 @@ class _BookContent extends ConsumerWidget {
           double screenWidth = MediaQuery.of(context).size.width;
 
           return AppScaffold(
-            onBackPressed: () async => await context.push('/books'),
+            onBackPressed: () async => context.go('/books'),
             showPattern: false,
             title: Text(locales.book),
             body: SingleChildScrollView(
@@ -500,6 +559,22 @@ class _BookContent extends ConsumerWidget {
               alignment: MainAxisAlignment.spaceBetween,
               children: [
                 Previous(onPrevious: () => _previousPage(context, ref)),
+                Row(
+                  children: [
+                    SocialShare(
+                      title: book.title,
+                      subtitle:
+                          book.authors.map((e) => e.name).toList().join(', '),
+                      link: 'books/${book.id}',
+                      fileLink: fileLink,
+                    ),
+                    BookmarkButton(
+                      type: 'Book',
+                      title: book.title,
+                      link: 'books/${book.id}',
+                    ),
+                  ],
+                ),
                 Next(onNext: () => _nextPage(context, ref)),
               ],
             ),
@@ -551,12 +626,14 @@ class _Subchapters extends ConsumerStatefulWidget {
     required this.chapter,
     required this.lastSubchapterId,
     required this.isOpen,
+    required this.isLast,
   });
 
   final Book book;
   final dynamic chapter;
   final String? lastSubchapterId;
   final bool isOpen;
+  final bool isLast;
 
   @override
   _SubchaptersState createState() => _SubchaptersState();
@@ -565,6 +642,7 @@ class _Subchapters extends ConsumerStatefulWidget {
 class _SubchaptersState extends ConsumerState<_Subchapters> {
   bool isOpen = false;
   final ScrollController sectionController = ScrollController();
+  final GlobalKey _headerKey = GlobalKey();
 
   @override
   void initState() {
@@ -578,8 +656,11 @@ class _SubchaptersState extends ConsumerState<_Subchapters> {
 
       if (isOpen) {
         WidgetsBinding.instance.addPostFrameCallback((_) async {
-          Scrollable.ensureVisible(
-            GlobalObjectKey(widget.chapter.id).currentContext!,
+          if (!mounted) return;
+          final headerContext = _headerKey.currentContext;
+          if (headerContext == null || !headerContext.mounted) return;
+          await Scrollable.ensureVisible(
+            headerContext,
             duration: const Duration(milliseconds: 500),
           );
         });
@@ -593,18 +674,20 @@ class _SubchaptersState extends ConsumerState<_Subchapters> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Container(
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: Theme.of(context).extension<AppThemeColors>()!.divider,
-          ),
-        ),
-      ),
+      decoration: widget.isLast
+          ? null
+          : BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Theme.of(context).extension<AppThemeColors>()!.divider,
+                ),
+              ),
+            ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InkWell(
-            key: GlobalObjectKey(widget.chapter.id),
+            key: _headerKey,
             onTap: toggleOpen,
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 15),
@@ -649,7 +732,7 @@ class _SubchaptersState extends ConsumerState<_Subchapters> {
                       ...widget.chapter.subchapters.map((subchapter) {
                         return InkWell(
                           onTap: () => context.push(
-                            'books/${widget.book.id}/subchapters/${subchapter.id}',
+                            '/books/${widget.book.id}/subchapters/${subchapter.id}',
                           ),
                           child: Container(
                             padding:

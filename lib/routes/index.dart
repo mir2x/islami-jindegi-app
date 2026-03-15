@@ -6,6 +6,7 @@ import 'package:native_app/features/quran/providers/ayah_highlight_providers.dar
 import 'package:native_app/features/quran/views/quran_viewer_screen.dart';
 import 'package:native_app/features/quran_catalogue/views/quran_catalogue_screen.dart';
 import 'package:native_app/features/sura/views/sura_page.dart';
+import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import 'package:native_app/features/sura/views/widgets/search_page.dart';
 import 'package:native_app/features/sura/views/widgets/tilawat_page.dart';
 import 'package:native_app/features/sura_list/views/sura_list_page.dart';
@@ -70,7 +71,10 @@ class AppRoutes {
     initialLocation: '/',
     routes: [
       GoRoute(path: '/', builder: (_, __) => const Home()),
-      GoRoute(path: '/qurans', builder: (_, __) => const QuranCatalogueScreen()),
+      GoRoute(
+        path: '/qurans',
+        builder: (_, __) => const QuranCatalogueScreen(),
+      ),
       GoRoute(
         path: '/qurans/quran',
         builder: (_, state) {
@@ -92,7 +96,10 @@ class AppRoutes {
           );
         },
       ),
-      GoRoute(path: '/qurans/sura-list', builder: (_, __) => const SuraListPage()),
+      GoRoute(
+        path: '/qurans/sura-list',
+        builder: (_, __) => const SuraListPage(),
+      ),
       GoRoute(
         path: '/qurans/sura/:id',
         builder: (_, state) {
@@ -100,9 +107,12 @@ class AppRoutes {
           if (id == null) return const Page404();
           final initialScrollIndex =
               int.tryParse(state.uri.queryParameters['scroll'] ?? '');
+          final returnTo =
+              state.uri.queryParameters['returnTo'] ?? suraListRoute;
           return SurahPage(
             suraNumber: id,
             initialScrollIndex: initialScrollIndex,
+            returnTo: returnTo,
           );
         },
       ),
@@ -112,8 +122,14 @@ class AppRoutes {
         builder: (_, state) {
           final sura = int.tryParse(state.uri.queryParameters['sura'] ?? '');
           final ayah = int.tryParse(state.uri.queryParameters['ayah'] ?? '');
+          final returnTo =
+              state.uri.queryParameters['returnTo'] ?? suraListRoute;
           if (sura == null || ayah == null) return const Page404();
-          return TilawatPage(initialSuraNumber: sura, initialAyahNumber: ayah);
+          return TilawatPage(
+            initialSuraNumber: sura,
+            initialAyahNumber: ayah,
+            returnTo: returnTo,
+          );
         },
       ),
       GoRoute(path: '/books', builder: (_, __) => const BookListScreen()),
@@ -138,7 +154,10 @@ class AppRoutes {
         path: '/books/downloads/:id',
         builder: (_, __) => const book_feat.DownloadedBookScreen(),
       ),
-      GoRoute(path: '/bayans', builder: (_, __) => const bayan_feat.BayanListScreen()),
+      GoRoute(
+        path: '/bayans',
+        builder: (_, __) => const bayan_feat.BayanListScreen(),
+      ),
       GoRoute(
         path: '/bayans/:id',
         builder: (_, __) => const bayan_feat.BayanDetailScreen(),
@@ -151,7 +170,10 @@ class AppRoutes {
         path: '/bayans/downloads/:id',
         builder: (_, __) => const bayan_feat.DownloadedBayanScreen(),
       ),
-      GoRoute(path: '/malfuzat', builder: (_, __) => const MalfuzatListScreen()),
+      GoRoute(
+        path: '/malfuzat',
+        builder: (_, __) => const MalfuzatListScreen(),
+      ),
       GoRoute(
         path: '/malfuzat/:id',
         builder: (_, __) => const MalfuzatDetailScreen(),
@@ -165,7 +187,10 @@ class AppRoutes {
         builder: (_, __) => const DownloadedMalfuzatScreen(),
       ),
       GoRoute(path: '/masail', builder: (_, __) => const MasailListScreen()),
-      GoRoute(path: '/masail/:id', builder: (_, __) => const MasailDetailScreen()),
+      GoRoute(
+        path: '/masail/:id',
+        builder: (_, __) => const MasailDetailScreen(),
+      ),
       GoRoute(
         path: '/masail/ask-question',
         builder: (_, __) => const AskQuestionScreen(),
@@ -180,11 +205,20 @@ class AppRoutes {
       ),
       GoRoute(path: '/duas', builder: (_, __) => const DuaListScreen()),
       GoRoute(path: '/duas/:id', builder: (_, __) => const DuaDetailScreen()),
-      GoRoute(path: '/articles', builder: (_, __) => const ArticleListScreen()),
-      GoRoute(path: '/articles/:id', builder: (_, __) => const ArticleDetailScreen()),
+      GoRoute(
+        path: '/articles',
+        builder: (_, __) => const ArticleListScreen(),
+      ),
+      GoRoute(
+        path: '/articles/:id',
+        builder: (_, __) => const ArticleDetailScreen(),
+      ),
       GoRoute(path: '/news', builder: (_, __) => const NewsListScreen()),
       GoRoute(path: '/news/:id', builder: (_, __) => const NewsDetailScreen()),
-      GoRoute(path: '/madrasahs', builder: (_, __) => const MadrasahListScreen()),
+      GoRoute(
+        path: '/madrasahs',
+        builder: (_, __) => const MadrasahListScreen(),
+      ),
       GoRoute(
         path: '/madrasahs/:id',
         builder: (_, __) => const MadrasahDetailScreen(),

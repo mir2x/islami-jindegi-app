@@ -45,8 +45,7 @@ class _FilterListState extends ConsumerState<FilterList> {
   Widget build(BuildContext context) {
     var paramsProvider = widget.queryProvider ?? queryParamsProvider;
     var qParams = ref.watch(paramsProvider);
-    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
-    var textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return Column(
       children: [
@@ -62,9 +61,6 @@ class _FilterListState extends ConsumerState<FilterList> {
                   children: [
                     Text(
                       widget.title,
-                      style: textTheme.titleMedium?.copyWith(
-                        color: appTheme.primaryText,
-                      ),
                     ),
                     if (qParams.keys
                         .any((k) => widget.paramKeys.contains(k))) ...[
@@ -76,7 +72,7 @@ class _FilterListState extends ConsumerState<FilterList> {
                         icon: const Icon(
                           Icons.close,
                         ),
-                        color: appTheme.secondaryText,
+                        color: colors.secondaryText,
                         onPressed: () {
                           var qParamsNotifier =
                               ref.read(paramsProvider.notifier);
@@ -104,29 +100,22 @@ class _FilterListState extends ConsumerState<FilterList> {
           ),
         ),
         Expanded(
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: appTheme.cardBg,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: appTheme.divider),
-            ),
-            child: InfiniteList(
-              key: widget.searchEnabled
-                  ? ValueKey('filter_search_$searchText')
-                  : null,
-              pageSize: widget.pageSize,
-              padding: 10,
-              resourceFetcher: (Map<String, dynamic> params) async {
-                if (widget.searchEnabled &&
-                    searchText != null &&
-                    searchText!.isNotEmpty) {
-                  params = {...params, 'search': searchText};
-                }
+          child: InfiniteList(
+            key: widget.searchEnabled
+                ? ValueKey('filter_search_$searchText')
+                : null,
+            pageSize: widget.pageSize,
+            padding: 2,
+            resourceFetcher: (Map<String, dynamic> params) async {
+              if (widget.searchEnabled &&
+                  searchText != null &&
+                  searchText!.isNotEmpty) {
+                params = {...params, 'search': searchText};
+              }
 
-                return await widget.resourceFetcher(params);
-              },
-              itemBuilder: widget.itemBuilder,
-            ),
+              return await widget.resourceFetcher(params);
+            },
+            itemBuilder: widget.itemBuilder,
           ),
         ),
       ],

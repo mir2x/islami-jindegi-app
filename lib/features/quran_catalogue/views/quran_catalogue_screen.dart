@@ -8,6 +8,7 @@ import '../../downloader/views/show_download_dialog.dart';
 import '../../downloader/views/show_download_permission_dialog.dart';
 import '../../downloader/providers/download_providers.dart';
 import 'package:go_router/go_router.dart';
+import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import '../models/quran_edition.dart';
@@ -38,7 +39,12 @@ class QuranCatalogueScreen extends ConsumerWidget {
                 if (!context.mounted) return;
 
                 if (lastSura != null && lastAyahIndex != null) {
-                  context.push('/qurans/sura/$lastSura?scroll=$lastAyahIndex');
+                  context.push(
+                    buildSuraRoute(
+                      suraNumber: lastSura,
+                      scrollIndex: lastAyahIndex,
+                    ),
+                  );
                 } else {
                   context.push('/qurans/sura-list');
                 }

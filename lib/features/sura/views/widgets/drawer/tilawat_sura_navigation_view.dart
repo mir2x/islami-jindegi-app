@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
-import 'package:native_app/features/sura/providers/sura_providers.dart';
 import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import 'package:native_app/theme/app_theme_color.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-final selectedSuraNavSurahProvider = StateProvider<int>((_) => 1);
-final selectedSuraNavAyahProvider = StateProvider<int?>((_) => null);
+final _selectedTilawatSurahProvider = StateProvider<int>((ref) => 1);
 
-class SuraNavigationTabView extends ConsumerStatefulWidget {
+class TilawatSuraNavigationView extends ConsumerStatefulWidget {
   final int currentSuraNumber;
+  final int currentAyahNumber;
   final String returnTo;
 
-  const SuraNavigationTabView({
+  const TilawatSuraNavigationView({
     super.key,
     required this.currentSuraNumber,
+    required this.currentAyahNumber,
     required this.returnTo,
   });
 
   @override
-  ConsumerState<SuraNavigationTabView> createState() =>
-      _SuraNavigationTabViewState();
+  ConsumerState<TilawatSuraNavigationView> createState() =>
+      _TilawatSuraNavigationViewState();
 }
 
-class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
+class _TilawatSuraNavigationViewState
+    extends ConsumerState<TilawatSuraNavigationView> {
   final ItemScrollController _surahScrollController = ItemScrollController();
   final ItemScrollController _ayahScrollController = ItemScrollController();
   bool _isInitialStateSet = false;
@@ -38,14 +38,19 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(_selectedTilawatSurahProvider.notifier).state =
+          widget.currentSuraNumber;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (!_isInitialStateSet) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        ref.read(selectedSuraNavSurahProvider.notifier).state =
-            widget.currentSuraNumber;
-        ref.read(selectedSuraNavAyahProvider.notifier).state = null;
-        if (_surahScrollController.isAttached) {
+        if (mounted && _surahScrollController.isAttached) {
           _surahScrollController.jumpTo(index: widget.currentSuraNumber - 1);
         }
       });
@@ -59,7 +64,11 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
           child: Row(
             children: [
               Expanded(flex: 3, child: _buildSurahList(ref)),
-              const VerticalDivider(width: 1, thickness: 1),
+              VerticalDivider(
+                width: 1,
+                thickness: 1,
+                color: Theme.of(context).extension<AppThemeColors>()!.divider,
+              ),
               Expanded(flex: 2, child: _buildAyahList(ref)),
             ],
           ),
@@ -69,15 +78,11 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
-    final fontSize = isLandscape ? 14.0 : 16.sp;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final appBarBg = appColors.drawerHeaderBg;
-    final appBarFg = appColors.appBarText;
-
+    final headerBg = appColors.drawerHeaderBg;
+    final headerFg = appColors.appBarText;
     return Container(
-      color: appBarBg,
+      color: headerBg,
       padding: EdgeInsets.symmetric(vertical: 12.h),
       child: Row(
         children: [
@@ -87,21 +92,25 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
               'সুরা',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: appBarFg,
+                color: headerFg,
                 fontWeight: FontWeight.bold,
-                fontSize: fontSize,
+                fontSize: 16.sp,
+                fontFamily: 'bangla/solaimanlipi',
+                wordSpacing: 3,
               ),
             ),
           ),
           Expanded(
             flex: 2,
             child: Text(
-              'আয়াত',
+              'আয়াত',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: appBarFg,
+                color: headerFg,
                 fontWeight: FontWeight.bold,
-                fontSize: fontSize,
+                fontSize: 16.sp,
+                fontFamily: 'bangla/solaimanlipi',
+                wordSpacing: 3,
               ),
             ),
           ),
@@ -111,20 +120,17 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
   }
 
   Widget _buildSurahList(WidgetRef ref) {
-    final selectedSurah = ref.watch(selectedSuraNavSurahProvider);
+    final selectedSurah = ref.watch(_selectedTilawatSurahProvider);
     final suraNames = ref.watch(suraNamesProvider);
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
     final selectedBg = appColors.highlight;
     final selectedFg = appColors.primaryText;
-    final isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
-    final fontSize = isLandscape ? 14.0 : 16.sp;
 
     return ScrollablePositionedList.separated(
       itemScrollController: _surahScrollController,
       padding: EdgeInsets.zero,
       itemCount: 114,
-      separatorBuilder: (context, _) =>
+      separatorBuilder: (context, index) =>
           Divider(height: 1.h, color: appColors.divider),
       itemBuilder: (context, index) {
         final suraNumber = index + 1;
@@ -135,17 +141,16 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
           title: Text(
             '${_toBengaliNumber(suraNumber)}. ${suraNames[index]}',
             style: TextStyle(
-              fontSize: fontSize,
+              fontSize: 15.sp,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               color: isSelected
                   ? selectedFg
                   : Theme.of(context).textTheme.bodyLarge?.color,
             ),
           ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
+          contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
           onTap: () {
-            ref.read(selectedSuraNavSurahProvider.notifier).state = suraNumber;
-            ref.read(selectedSuraNavAyahProvider.notifier).state = null;
+            ref.read(_selectedTilawatSurahProvider.notifier).state = suraNumber;
           },
         );
       },
@@ -153,69 +158,58 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
   }
 
   Widget _buildAyahList(WidgetRef ref) {
-    final selectedSurah = ref.watch(selectedSuraNavSurahProvider);
-    final selectedAyah = ref.watch(selectedSuraNavAyahProvider);
+    final selectedSurah = ref.watch(_selectedTilawatSurahProvider);
     final ayahCounts = ref.watch(ayahCountsProvider);
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final selectedBg = appColors.highlight;
-    final selectedFg = appColors.primaryText;
-    final isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
-    final fontSize = isLandscape ? 12.0 : 14.sp;
 
     if (selectedSurah < 1 || selectedSurah > 114) return const SizedBox();
-    final totalAyahs = ayahCounts[selectedSurah - 1];
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_ayahScrollController.isAttached) return;
-      if (selectedAyah != null) {
-        _ayahScrollController.jumpTo(index: selectedAyah - 1);
-      }
-    });
+    final totalAyahs = ayahCounts[selectedSurah - 1];
 
     return ScrollablePositionedList.separated(
       itemScrollController: _ayahScrollController,
       padding: EdgeInsets.zero,
-      separatorBuilder: (context, _) =>
+      separatorBuilder: (context, index) =>
           Divider(height: 1.h, color: appColors.divider),
       itemCount: totalAyahs,
       itemBuilder: (context, index) {
         final ayahNumber = index + 1;
-        final isSelected = ayahNumber == selectedAyah;
 
         return ListTile(
-          tileColor: isSelected ? selectedBg : null,
+          tileColor: ayahNumber == widget.currentAyahNumber &&
+                  selectedSurah == widget.currentSuraNumber
+              ? appColors.highlight
+              : null,
           title: Center(
             child: Text(
               _toBengaliNumber(ayahNumber),
               style: TextStyle(
-                fontSize: fontSize,
-                color: isSelected
-                    ? selectedFg
-                    : Theme.of(context).textTheme.bodyLarge?.color,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                fontSize: 14.sp,
+                color: appColors.primaryText,
+                fontWeight: ayahNumber == widget.currentAyahNumber &&
+                        selectedSurah == widget.currentSuraNumber
+                    ? FontWeight.bold
+                    : FontWeight.normal,
               ),
             ),
           ),
-          onTap: () => _onAyahSelected(context, selectedSurah, ayahNumber),
+          onTap: () {
+            _navigateToTilawat(context, selectedSurah, ayahNumber);
+          },
         );
       },
     );
   }
 
-  void _onAyahSelected(BuildContext context, int suraNumber, int ayahNumber) {
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setInt('last_read_sura', suraNumber);
-      prefs.setInt('last_read_ayah_index', ayahNumber - 1);
-    });
-
+  void _navigateToTilawat(
+    BuildContext context,
+    int suraNumber,
+    int ayahNumber,
+  ) {
     Scaffold.of(context).closeDrawer();
 
-    if (suraNumber == widget.currentSuraNumber) {
-      ref.read(suraScrollCommandProvider.notifier).state = ScrollCommand(
-        suraNumber: suraNumber,
-        scrollIndex: ayahNumber - 1,
-      );
+    if (suraNumber == widget.currentSuraNumber &&
+        ayahNumber == widget.currentAyahNumber) {
       return;
     }
 
@@ -225,9 +219,9 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
       await Future.delayed(const Duration(milliseconds: 50));
       if (!context.mounted) return;
       context.push(
-        buildSuraRoute(
+        buildTilawatRoute(
           suraNumber: suraNumber,
-          scrollIndex: ayahNumber - 1,
+          ayahNumber: ayahNumber,
           returnTo: widget.returnTo,
         ),
       );

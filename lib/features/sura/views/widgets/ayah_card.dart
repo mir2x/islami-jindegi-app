@@ -13,6 +13,7 @@ class AyahCard extends ConsumerWidget {
   final int suraNumber;
   final Ayah ayah;
   final String suraName;
+  final String returnTo;
   final bool isHighlighted;
 
   const AyahCard({
@@ -20,6 +21,7 @@ class AyahCard extends ConsumerWidget {
     required this.suraNumber,
     required this.ayah,
     required this.suraName,
+    required this.returnTo,
     this.isHighlighted = false,
   });
 
@@ -38,8 +40,14 @@ class AyahCard extends ConsumerWidget {
 
     return RepaintBoundary(
       child: GestureDetector(
-        onTap: () =>
-            showAyahActionBottomSheet(context, suraNumber, ayah, suraName, ref),
+        onTap: () => showAyahActionBottomSheet(
+          context,
+          suraNumber,
+          ayah,
+          suraName,
+          returnTo,
+          ref,
+        ),
         child: Card(
           margin: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
           elevation: cardElevation,
@@ -112,7 +120,10 @@ class AyahCard extends ConsumerWidget {
   }
 
   Widget _buildWordByWordView(
-      List<WordByWord> words, WidgetRef ref, BuildContext context) {
+    List<WordByWord> words,
+    WidgetRef ref,
+    BuildContext context,
+  ) {
     final arabicFont = ref.watch(arabicFontProvider);
     final arabicFontSize = ref.watch(arabicFontSizeProvider);
     final bengaliFont = ref.watch(bengaliFontProvider);
@@ -191,7 +202,10 @@ class AyahCard extends ConsumerWidget {
   }
 
   Widget _buildTranslations(
-      List<String> selectedTranslators, WidgetRef ref, BuildContext context) {
+    List<String> selectedTranslators,
+    WidgetRef ref,
+    BuildContext context,
+  ) {
     final bengaliFont = ref.watch(bengaliFontProvider);
     final bengaliFontSize = ref.watch(bengaliFontSizeProvider);
 
@@ -203,9 +217,10 @@ class AyahCard extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Divider(
-            height: 30,
-            thickness: 0.5,
-            color: Theme.of(context).extension<AppThemeColors>()!.divider),
+          height: 30,
+          thickness: 0.5,
+          color: Theme.of(context).extension<AppThemeColors>()!.divider,
+        ),
         ...translationsToShow.map((translation) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 12.0),
@@ -235,7 +250,7 @@ class AyahCard extends ConsumerWidget {
                         .extension<AppThemeColors>()!
                         .primaryText,
                   ),
-                )
+                ),
               ],
             ),
           );

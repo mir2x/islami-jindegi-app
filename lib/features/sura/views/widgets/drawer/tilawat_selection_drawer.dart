@@ -1,56 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:go_router/go_router.dart';
-import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
+import 'package:native_app/features/sura/views/widgets/drawer/tilawat_bookmark_navigation_view.dart';
+import 'package:native_app/features/sura/views/widgets/drawer/tilawat_para_navigation_view.dart';
+import 'package:native_app/features/sura/views/widgets/drawer/tilawat_sura_navigation_view.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
-final _selectedTilawatSurahProvider = StateProvider<int>((ref) => 1);
+final tilawatDrawerTabIndexProvider = StateProvider<int>((_) => 0);
 
 class TilawatSelectionDrawer extends ConsumerStatefulWidget {
   final int currentSuraNumber;
-  const TilawatSelectionDrawer({super.key, required this.currentSuraNumber});
+  final int currentAyahNumber;
+  final String returnTo;
+
+  const TilawatSelectionDrawer({
+    super.key,
+    required this.currentSuraNumber,
+    required this.currentAyahNumber,
+    required this.returnTo,
+  });
 
   @override
   ConsumerState<TilawatSelectionDrawer> createState() =>
       _TilawatSelectionDrawerState();
 }
 
-class _TilawatSelectionDrawerState
-    extends ConsumerState<TilawatSelectionDrawer> {
-  final ItemScrollController _surahScrollController = ItemScrollController();
-  final ItemScrollController _ayahScrollController = ItemScrollController();
-  bool _isInitialStateSet = false;
-
-  String _toBengaliNumber(int number) {
-    const bn = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-    return number.toString().split('').map((d) => bn[int.parse(d)]).join();
-  }
+class _TilawatSelectionDrawerState extends ConsumerState<TilawatSelectionDrawer>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(_selectedTilawatSurahProvider.notifier).state =
-          widget.currentSuraNumber;
+    _tabController = TabController(
+      length: 3,
+      vsync: this,
+      initialIndex: ref.read(tilawatDrawerTabIndexProvider),
+    );
+
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        ref.read(tilawatDrawerTabIndexProvider.notifier).state =
+            _tabController.index;
+      }
     });
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (!_isInitialStateSet) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && _surahScrollController.isAttached) {
-          _surahScrollController.jumpTo(index: widget.currentSuraNumber - 1);
-        }
-      });
-      _isInitialStateSet = true;
-    }
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     final media = MediaQuery.of(context);
-    final double topInset = kToolbarHeight + media.padding.top;
-    final double bottomInset = media.padding.bottom;
+    final topInset = media.padding.top + kToolbarHeight;
+    final bottomInset = media.padding.bottom;
+
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final headerBg = appColors.drawerHeaderBg;
+    final headerFg = appColors.appBarText;
+    final indicatorColor = appColors.highlight;
 
     return Align(
       alignment: Alignment.topLeft,
@@ -60,7 +71,7 @@ class _TilawatSelectionDrawerState
           width: 280.w,
           child: Material(
             elevation: 16,
-            color: Theme.of(context).extension<AppThemeColors>()!.drawerBg,
+            color: appColors.drawerBg,
             borderRadius: const BorderRadius.only(
               topRight: Radius.circular(16),
               bottomRight: Radius.circular(16),
@@ -68,19 +79,44 @@ class _TilawatSelectionDrawerState
             clipBehavior: Clip.antiAlias,
             child: Column(
               children: [
-                _buildHeader(context),
                 Expanded(
-                  child: Row(
+                  child: TabBarView(
+                    controller: _tabController,
                     children: [
-                      Expanded(flex: 3, child: _buildSurahList(ref)),
-                      VerticalDivider(
-                        width: 1,
-                        thickness: 1,
-                        color: Theme.of(context)
-                            .extension<AppThemeColors>()!
-                            .divider,
+                      TilawatSuraNavigationView(
+                        currentSuraNumber: widget.currentSuraNumber,
+                        currentAyahNumber: widget.currentAyahNumber,
+                        returnTo: widget.returnTo,
                       ),
-                      Expanded(flex: 2, child: _buildAyahList(ref)),
+                      TilawatParaNavigationView(
+                        currentSuraNumber: widget.currentSuraNumber,
+                        currentAyahNumber: widget.currentAyahNumber,
+                        returnTo: widget.returnTo,
+                      ),
+                      TilawatBookmarkNavigationView(
+                        currentSuraNumber: widget.currentSuraNumber,
+                        returnTo: widget.returnTo,
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  color: headerBg,
+                  child: TabBar(
+                    controller: _tabController,
+                    labelColor: headerFg,
+                    dividerColor: headerBg.withValues(alpha: 0),
+                    unselectedLabelColor: headerFg.withValues(alpha: 0.72),
+                    indicator: BoxDecoration(
+                      color: indicatorColor,
+                      borderRadius: BorderRadius.zero,
+                    ),
+                    indicatorWeight: 0,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    tabs: const [
+                      Tab(text: 'সূরা'),
+                      Tab(text: 'পারা'),
+                      Tab(text: 'বুকমার্ক'),
                     ],
                   ),
                 ),
@@ -90,141 +126,5 @@ class _TilawatSelectionDrawerState
         ),
       ),
     );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final headerBg = appColors.drawerHeaderBg;
-    final headerFg = appColors.appBarText;
-    return Container(
-      color: headerBg,
-      padding: EdgeInsets.symmetric(vertical: 12.h),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 3,
-            child: Text(
-              'সুরা',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: headerFg,
-                fontWeight: FontWeight.bold,
-                fontSize: 16.sp,
-                fontFamily: 'bangla/solaimanlipi',
-                wordSpacing: 3,
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text(
-              'আয়াত',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: headerFg,
-                fontWeight: FontWeight.bold,
-                fontSize: 16.sp,
-                fontFamily: 'bangla/solaimanlipi',
-                wordSpacing: 3,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSurahList(WidgetRef ref) {
-    final selectedSurah = ref.watch(_selectedTilawatSurahProvider);
-    final suraNames = ref.watch(suraNamesProvider);
-    final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final selectedBg = appColors.highlight;
-    final selectedFg = appColors.primaryText;
-
-    return ScrollablePositionedList.separated(
-      itemScrollController: _surahScrollController,
-      padding: EdgeInsets.zero,
-      itemCount: 114,
-      separatorBuilder: (context, index) =>
-          Divider(height: 1.h, color: appColors.divider),
-      itemBuilder: (context, index) {
-        final suraNumber = index + 1;
-        final isSelected = suraNumber == selectedSurah;
-
-        return ListTile(
-          tileColor: isSelected ? selectedBg : null,
-          title: Text(
-            '${_toBengaliNumber(suraNumber)}. ${suraNames[index]}',
-            style: TextStyle(
-              fontSize: 15.sp,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected
-                  ? selectedFg
-                  : Theme.of(context).textTheme.bodyLarge?.color,
-            ),
-          ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
-          onTap: () {
-            ref.read(_selectedTilawatSurahProvider.notifier).state = suraNumber;
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildAyahList(WidgetRef ref) {
-    final selectedSurah = ref.watch(_selectedTilawatSurahProvider);
-    final ayahCounts = ref.watch(ayahCountsProvider);
-    final appColors = Theme.of(context).extension<AppThemeColors>()!;
-
-    if (selectedSurah < 1 || selectedSurah > 114) return const SizedBox();
-
-    final totalAyahs = ayahCounts[selectedSurah - 1];
-
-    return ScrollablePositionedList.separated(
-      itemScrollController: _ayahScrollController,
-      padding: EdgeInsets.zero,
-      separatorBuilder: (context, index) =>
-          Divider(height: 1.h, color: appColors.divider),
-      itemCount: totalAyahs,
-      itemBuilder: (context, index) {
-        final ayahNumber = index + 1;
-
-        return ListTile(
-          title: Center(
-            child: Text(
-              _toBengaliNumber(ayahNumber),
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: appColors.primaryText,
-              ),
-            ),
-          ),
-          onTap: () {
-            _onAyahSelected(context, selectedSurah, ayahNumber);
-          },
-        );
-      },
-    );
-  }
-
-  void _onAyahSelected(BuildContext context, int suraNumber, int ayahNumber) {
-    // Close the drawer first
-    Scaffold.of(context).closeDrawer();
-
-    if (suraNumber == widget.currentSuraNumber) {
-      // Same sura — just pop and re-navigate to refresh with the new ayah
-      Navigator.pop(context);
-      context.push('/qurans/tilawat?sura=$suraNumber&ayah=$ayahNumber');
-    } else {
-      // Different sura — navigate
-      Future.delayed(const Duration(milliseconds: 200), () async {
-        if (!context.mounted) return;
-        if (context.canPop()) context.pop();
-        await Future.delayed(const Duration(milliseconds: 50));
-        if (!context.mounted) return;
-        context.push('/qurans/tilawat?sura=$suraNumber&ayah=$ayahNumber');
-      });
-    }
   }
 }

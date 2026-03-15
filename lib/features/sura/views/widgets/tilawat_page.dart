@@ -8,15 +8,18 @@ import '../../providers/tilawat_providers.dart';
 import 'font_change_dialog.dart';
 import 'drawer/tilawat_selection_drawer.dart';
 import 'sura_app_bar.dart';
+import 'package:native_app/features/sura/utils/navigation_routes.dart';
 
 class TilawatPage extends ConsumerStatefulWidget {
   final int initialSuraNumber;
   final int initialAyahNumber;
+  final String returnTo;
 
   const TilawatPage({
     super.key,
     required this.initialSuraNumber,
     required this.initialAyahNumber,
+    this.returnTo = suraListRoute,
   });
 
   @override
@@ -50,6 +53,8 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
       appBar: SuraAppBar(
         title: suraName,
         suraNumber: widget.initialSuraNumber,
+        currentAyahNumber: widget.initialAyahNumber,
+        returnTo: widget.returnTo,
         actions: [
           IconButton(
             icon: const Icon(Icons.menu),
@@ -69,6 +74,8 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
       ),
       drawer: TilawatSelectionDrawer(
         currentSuraNumber: widget.initialSuraNumber,
+        currentAyahNumber: widget.initialAyahNumber,
+        returnTo: widget.returnTo,
       ),
       body: pagesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),

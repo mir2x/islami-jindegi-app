@@ -48,6 +48,7 @@ class BookmarkNavigationView extends ConsumerWidget {
               bookmarks.where((b) => b.type == 'ayah').toList();
           final pageBookmarks =
               bookmarks.where((b) => b.type == 'page').toList();
+          final quranInfoService = ref.read(quranInfoServiceProvider);
 
           return Column(
             children: [
@@ -56,7 +57,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                 child: TabBar(
                   dividerColor: tabBg.withValues(alpha: 0),
                   labelColor: tabFg,
-                  unselectedLabelColor: tabFg.withOpacity(0.7),
+                  unselectedLabelColor: tabFg.withValues(alpha: 0.7),
                   indicator: BoxDecoration(
                     color: indicatorColor,
                     borderRadius: BorderRadius.zero,
@@ -101,6 +102,20 @@ class BookmarkNavigationView extends ConsumerWidget {
                             ),
                             itemBuilder: (_, i) {
                               final b = ayahBookmarks[i];
+                              final resolvedPara = b.para ??
+                                  (b.sura != null && b.ayah != null
+                                      ? quranInfoService.getParaBySuraAyah(
+                                          b.sura!,
+                                          b.ayah!,
+                                        )
+                                      : null);
+                              final resolvedPage = b.page ??
+                                  (b.sura != null && b.ayah != null
+                                      ? quranInfoService.getPageBySuraAyah(
+                                          b.sura!,
+                                          b.ayah!,
+                                        )
+                                      : null);
                               final suraName = (b.sura != null &&
                                       b.sura! > 0 &&
                                       b.sura! <= suraNames.length)
@@ -110,8 +125,8 @@ class BookmarkNavigationView extends ConsumerWidget {
                               Widget listTileContent;
                               if (b.sura != null &&
                                   b.ayah != null &&
-                                  b.para != null &&
-                                  b.page != null) {
+                                  resolvedPara != null &&
+                                  resolvedPage != null) {
                                 listTileContent = Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
@@ -142,7 +157,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                                           ),
                                           SizedBox(height: 2.h),
                                           Text(
-                                            'পারা ${toBengaliNumber(b.para!)}, পৃষ্ঠা ${toBengaliNumber(b.page!)}',
+                                            'পারা ${toBengaliNumber(resolvedPara)}, পৃষ্ঠা ${toBengaliNumber(resolvedPage)}',
                                             style: TextStyle(
                                               fontSize:
                                                   listTileSubtitleFontSize,
@@ -169,24 +184,27 @@ class BookmarkNavigationView extends ConsumerWidget {
                                 onTap: () {
                                   if (b.sura != null &&
                                       b.ayah != null &&
-                                      b.page != null) {
+                                      resolvedPage != null) {
                                     try {
                                       final sura = b.sura!;
                                       final ayah = b.ayah!;
-                                      final targetPage = b.page!;
+                                      final targetPage = resolvedPage;
                                       // Select Ayah FIRST
                                       ref
                                           .read(selectedAyahProvider.notifier)
                                           .selectByNavigation(sura, ayah);
                                       // THEN Navigate
                                       ref
-                                          .read(navigateToPageCommandProvider
-                                              .notifier)
+                                          .read(
+                                            navigateToPageCommandProvider
+                                                .notifier,
+                                          )
                                           .state = targetPage;
                                       Scaffold.of(context).closeDrawer();
                                     } catch (e) {
                                       debugPrint(
-                                          'Error during ayah bookmark navigation: $e');
+                                        'Error during ayah bookmark navigation: $e',
+                                      );
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         SnackBar(
@@ -199,33 +217,39 @@ class BookmarkNavigationView extends ConsumerWidget {
                                     }
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            content: Text(
-                                                'Bookmark data incomplete. Cannot navigate.',
-                                                style: TextStyle(
-                                                    fontSize: 14.sp))));
+                                      SnackBar(
+                                        content: Text(
+                                          'Bookmark data incomplete. Cannot navigate.',
+                                          style: TextStyle(fontSize: 14.sp),
+                                        ),
+                                      ),
+                                    );
                                   }
                                 },
                                 trailing: IconButton(
-                                    icon: Icon(Icons.delete,
-                                        size: 20.r,
-                                        color: appColors.secondaryText),
-                                    onPressed: () {
-                                      ref
-                                          .read(bookmarkProvider.notifier)
-                                          .remove(b.identifier);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            'Bookmark removed',
-                                            style: TextStyle(fontSize: 14.sp),
-                                          ),
+                                  icon: Icon(
+                                    Icons.delete,
+                                    size: 20.r,
+                                    color: appColors.secondaryText,
+                                  ),
+                                  onPressed: () {
+                                    ref
+                                        .read(bookmarkProvider.notifier)
+                                        .remove(b.identifier);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Bookmark removed',
+                                          style: TextStyle(fontSize: 14.sp),
                                         ),
-                                      );
-                                    }),
+                                      ),
+                                    );
+                                  },
+                                ),
                                 contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 16.w, vertical: 8.h),
+                                  horizontal: 16.w,
+                                  vertical: 8.h,
+                                ),
                                 minVerticalPadding: 0,
                                 visualDensity: VisualDensity.compact,
                               );
@@ -327,13 +351,16 @@ class BookmarkNavigationView extends ConsumerWidget {
                                           .clear();
                                       // THEN Navigate
                                       ref
-                                          .read(navigateToPageCommandProvider
-                                              .notifier)
+                                          .read(
+                                            navigateToPageCommandProvider
+                                                .notifier,
+                                          )
                                           .state = page;
                                       Scaffold.of(context).closeDrawer();
                                     } catch (e) {
                                       debugPrint(
-                                          'Error during page bookmark navigation: $e');
+                                        'Error during page bookmark navigation: $e',
+                                      );
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         SnackBar(

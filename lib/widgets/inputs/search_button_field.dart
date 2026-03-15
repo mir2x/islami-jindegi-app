@@ -39,79 +39,63 @@ class _SearchState extends ConsumerState<SearchButtonField> {
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isSmallMobile = screenWidth < 340;
     double sidePadding = isSmallMobile ? 13 : 16;
 
     return Directionality(
       textDirection: widget.reverse ? TextDirection.rtl : TextDirection.ltr,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: appTheme.cardBg,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: appTheme.divider),
-          boxShadow: [
-            BoxShadow(
-              color: appTheme.shadow.withValues(alpha: 0.05),
-              blurRadius: 14,
-              offset: const Offset(0, 4),
+      child: InputField(
+        initialValue: widget.value,
+        autofocus: widget.autofocus,
+        decoration: InputDecoration(
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: colors.divider,
             ),
-          ],
-        ),
-        child: InputField(
-          initialValue: widget.value,
-          autofocus: widget.autofocus,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.transparent,
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(
-                color: appTheme.divider,
-              ),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: colors.divider,
             ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(
-                color: appTheme.highlightBorder,
-                width: 1.2,
-              ),
-            ),
-            labelText: widget.labelText ?? locales.search,
-            labelStyle: textTheme.labelMedium?.copyWith(
-              color: appTheme.secondaryText,
-            ),
-            constraints: BoxConstraints(maxHeight: widget.maxHeight),
-            contentPadding: EdgeInsets.only(
-              top: 0,
-              bottom: 0,
-              left: widget.reverse ? 0 : sidePadding,
-              right: widget.reverse ? sidePadding : 0,
-            ),
-            suffixIcon: IconButton(
-              onPressed: () {
-                if (searchText != null) {
-                  widget.onUpdate(searchText!);
-                }
-              },
-              icon: Icon(
-                Icons.search,
-                color: appTheme.secondaryText,
-              ),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          filled: true,
+          fillColor: colors.dropdownBg,
+          labelText: widget.labelText ?? locales.search,
+          labelStyle: textTheme.labelMedium,
+          floatingLabelStyle: textTheme.labelMedium?.copyWith(
+            fontSize: (textTheme.labelMedium?.fontSize ?? 17) + 1,
+          ),
+          constraints: BoxConstraints(maxHeight: widget.maxHeight),
+          contentPadding: EdgeInsets.only(
+            top: 0,
+            bottom: 0,
+            left: widget.reverse ? 0 : sidePadding,
+            right: widget.reverse ? sidePadding : 0,
+          ),
+          suffixIcon: IconButton(
+            onPressed: () {
+              if (searchText != null) {
+                widget.onUpdate(searchText!);
+              }
+            },
+            icon: Icon(
+              Icons.search,
+              color: colors.secondaryText,
             ),
           ),
-          onChanged: (value) {
-            updateSearchText(value);
+        ),
+        onChanged: (value) {
+          updateSearchText(value);
 
-            if (value.isEmpty) {
-              widget.onUpdate(value);
-            }
-          },
-          style: textTheme.labelMedium?.copyWith(
-            color: appTheme.primaryText,
-          ),
-        ),
+          if (value.isEmpty) {
+            widget.onUpdate(value);
+          }
+        },
+        style: textTheme.labelMedium,
       ),
     );
   }

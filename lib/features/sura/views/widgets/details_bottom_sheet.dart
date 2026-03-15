@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/features/sura/views/widgets/reciter_selection_dialog.dart';
 import 'package:native_app/features/sura/views/widgets/search_page.dart';
 import 'package:native_app/features/sura/views/widgets/theme_change_dialog.dart';
-import 'package:native_app/features/sura/views/widgets/tilawat_page.dart';
+import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import 'package:native_app/features/sura/views/widgets/translation_selection_dialog.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import '../../models/grid_item_data.dart';
 import 'font_change_dialog.dart';
 
-void showDetailsBottomSheet(BuildContext context, {required int suraNumber}) {
+void showDetailsBottomSheet(
+  BuildContext context, {
+  required int suraNumber,
+  required int currentAyahNumber,
+  required String returnTo,
+}) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -16,14 +22,25 @@ void showDetailsBottomSheet(BuildContext context, {required int suraNumber}) {
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
-    builder: (BuildContext context) =>
-        DetailsBottomSheet(suraNumber: suraNumber),
+    builder: (BuildContext context) => DetailsBottomSheet(
+      suraNumber: suraNumber,
+      currentAyahNumber: currentAyahNumber,
+      returnTo: returnTo,
+    ),
   );
 }
 
 class DetailsBottomSheet extends StatelessWidget {
   final int suraNumber;
-  const DetailsBottomSheet({super.key, required this.suraNumber});
+  final int currentAyahNumber;
+  final String returnTo;
+
+  const DetailsBottomSheet({
+    super.key,
+    required this.suraNumber,
+    required this.currentAyahNumber,
+    required this.returnTo,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,77 +56,82 @@ class DetailsBottomSheet extends StatelessWidget {
               title: 'ফিচার',
               items: [
                 GridItemData(
-                    icon: Icons.search,
-                    label: 'অনুসন্ধান',
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SearchPage(),
-                        ),
-                      );
-                    }),
+                  icon: Icons.search,
+                  label: 'অনুসন্ধান',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SearchPage(),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
             _DetailsSection(
               title: 'ভিউ',
               items: [
                 GridItemData(
-                    icon: Icons.font_download_outlined,
-                    label: 'ফন্ট পরিবর্তন',
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => const FontChangeDialog(),
-                      );
-                    }),
+                  icon: Icons.font_download_outlined,
+                  label: 'ফন্ট পরিবর্তন',
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const FontChangeDialog(),
+                    );
+                  },
+                ),
                 GridItemData(
-                    icon: Icons.palette_outlined,
-                    label: 'থিম পরিবর্তন',
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => const ThemeChangeDialog(),
-                      );
-                    }),
+                  icon: Icons.palette_outlined,
+                  label: 'থিম পরিবর্তন',
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const ThemeChangeDialog(),
+                    );
+                  },
+                ),
                 GridItemData(
-                    icon: Icons.chrome_reader_mode,
-                    label: 'তিলাওয়াত মোড',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => TilawatPage(
-                            initialSuraNumber: suraNumber,
-                            initialAyahNumber: 1,
-                          ),
-                        ),
-                      );
-                    }),
+                  icon: Icons.chrome_reader_mode,
+                  label: 'তিলাওয়াত মোড',
+                  onTap: () {
+                    Navigator.pop(context);
+                    GoRouter.of(context).push(
+                      buildTilawatRoute(
+                        suraNumber: suraNumber,
+                        ayahNumber: currentAyahNumber,
+                        returnTo: returnTo,
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
             _DetailsSection(
               title: 'সেটিংস',
               items: [
                 GridItemData(
-                    icon: Icons.translate_outlined,
-                    label: 'অনুবাদক পরিবর্তন',
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => const TranslatorSelectionDialog(),
-                      );
-                    }),
+                  icon: Icons.translate_outlined,
+                  label: 'অনুবাদক পরিবর্তন',
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const TranslatorSelectionDialog(),
+                    );
+                  },
+                ),
                 GridItemData(
-                    icon: Icons.person_outline,
-                    label: 'কারী পরিবর্তন',
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => const ReciterSelectionDialog(),
-                      );
-                    }),
+                  icon: Icons.person_outline,
+                  label: 'কারী পরিবর্তন',
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const ReciterSelectionDialog(),
+                    );
+                  },
+                ),
               ],
             ),
           ],

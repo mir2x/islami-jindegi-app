@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import '../../../../theme/app_theme_color.dart';
 import '../../models/ayah_box.dart';
 import '../../providers/ayah_highlight_providers.dart';
@@ -19,6 +20,7 @@ class QuranAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locales = AppLocalizations.of(context)!;
+    final currentUri = GoRouterState.of(context).uri.toString();
     final colors = Theme.of(context).extension<AppThemeColors>()!;
     final iconSize = isLandscape ? 20.0 : 24.0;
     final appBarBg = colors.appBarBg;
@@ -83,7 +85,11 @@ class QuranAppBar extends ConsumerWidget implements PreferredSizeWidget {
           onPressed: () {
             final target = _resolveSuraNavigationTarget(ref);
             context.push(
-              '/qurans/sura/${target.suraNumber}?scroll=${target.ayahNumber - 1}',
+              buildSuraRoute(
+                suraNumber: target.suraNumber,
+                scrollIndex: target.ayahNumber - 1,
+                returnTo: currentUri,
+              ),
             );
           },
         ),
@@ -93,7 +99,9 @@ class QuranAppBar extends ConsumerWidget implements PreferredSizeWidget {
           icon: Icons.search_rounded,
           iconSize: iconSize,
           color: appBarFg,
-          onPressed: () => context.push('/qurans/search'),
+          onPressed: () => context.push(
+            buildSearchRoute(returnTo: currentUri),
+          ),
         ),
 
         SizedBox(width: 4.w),

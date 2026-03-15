@@ -15,6 +15,8 @@ class _ThemeChangeDialogState extends ConsumerState<ThemeChangeDialog> {
 
   static const List<Map<String, String>> _themes = [
     {'label': 'ক্লাসিক', 'value': 'classic'},
+    {'label': 'লাইট', 'value': 'light'},
+    {'label': 'ডার্ক', 'value': 'dark'},
   ];
 
   @override

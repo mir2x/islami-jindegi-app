@@ -10,11 +10,13 @@ class BookmarkButton extends ConsumerWidget {
     required this.type,
     required this.title,
     required this.link,
+    this.iconColor,
   });
 
   final String type;
   final String title;
   final String link;
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,7 +32,7 @@ class BookmarkButton extends ConsumerWidget {
         if (bookmark != null) {
           return IconButton(
             icon: const Icon(Icons.bookmark_remove),
-            color: colors.active,
+            color: iconColor ?? colors.secondary,
             onPressed: () {
               ref
                   .read(bookmarkProviderWithLink.notifier)
@@ -47,7 +49,7 @@ class BookmarkButton extends ConsumerWidget {
         } else {
           return IconButton(
             icon: const Icon(Icons.bookmark_add),
-            color: colors.active,
+            color: iconColor ?? colors.secondary,
             onPressed: () {
               ref.read(bookmarkProviderWithLink.notifier).createItem({
                 'type': type,

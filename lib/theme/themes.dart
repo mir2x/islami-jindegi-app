@@ -1,14 +1,102 @@
 import 'package:flutter/material.dart';
 
+import 'app_colors.dart';
 import 'app_theme_color.dart';
-import 'colors.dart';
 
 ThemeData darkTheme(Map fonts) {
-  return classicTheme(fonts);
+  return _buildTheme(
+    fonts: fonts,
+    brightness: Brightness.dark,
+    colors: AppThemeColors.dark,
+    colorScheme: const ColorScheme(
+      brightness: Brightness.dark,
+      primary: AppColors.primaryDark,
+      onPrimary: AppColors.primaryTextDark,
+      primaryContainer: AppColors.highlightDark,
+      secondary: AppColors.secondaryDark,
+      onSecondary: AppColors.primaryTextDark,
+      secondaryContainer: AppColors.cardBgDark,
+      tertiary: AppColors.accentDark,
+      error: AppColors.danger,
+      onError: AppColors.primaryTextDark,
+      surface: AppColors.surfaceBgDark,
+      onSurface: AppColors.primaryTextDark,
+      surfaceContainerHighest: AppColors.cardBgDark,
+      onSurfaceVariant: AppColors.secondaryTextDark,
+      inverseSurface: AppColors.surfaceBgLight,
+      onInverseSurface: AppColors.primaryTextLight,
+      inversePrimary: AppColors.primaryLight,
+      outline: AppColors.dividerDark,
+      outlineVariant: AppColors.highlightBorderDark,
+    ),
+    textTheme: _buildLegacyTextTheme(
+      headlineColor: AppColors.primaryTextDark,
+      titleColor: AppColors.primaryTextDark,
+      bodyColor: AppColors.primaryTextDark,
+      labelColor: AppColors.primaryTextDark,
+    ),
+    appBarBackgroundColor: AppColors.appBarBgDark,
+    appBarForegroundColor: AppColors.appBarTextDark,
+    drawerBackgroundColor: AppColors.drawerBgDark,
+    scaffoldBackgroundColor: AppColors.scaffoldBgDark,
+    listTileColor: AppColors.cardBgDark,
+    iconColor: AppColors.primaryTextDark,
+    fabBackgroundColor: AppColors.appBarBgDark,
+    fabForegroundColor: AppColors.appBarTextDark,
+    progressColor: AppColors.activeDark,
+    popupMenuColor: AppColors.cardBgDark,
+    dialogBackgroundColor: AppColors.cardBgDark,
+    snackBarBackgroundColor: AppColors.cardBgDark,
+    dividerColor: AppColors.dividerDark,
+  );
 }
 
 ThemeData lightTheme(Map fonts) {
-  return classicTheme(fonts);
+  return _buildTheme(
+    fonts: fonts,
+    brightness: Brightness.light,
+    colors: AppThemeColors.light,
+    colorScheme: const ColorScheme(
+      brightness: Brightness.light,
+      primary: AppColors.primaryLight,
+      onPrimary: AppColors.appBarTextLight,
+      primaryContainer: AppColors.highlightLight,
+      secondary: AppColors.secondaryLight,
+      onSecondary: AppColors.primaryTextLight,
+      secondaryContainer: AppColors.cardBgLight,
+      tertiary: AppColors.accentLight,
+      error: AppColors.danger,
+      onError: AppColors.appBarTextLight,
+      surface: AppColors.surfaceBgLight,
+      onSurface: AppColors.primaryTextLight,
+      surfaceContainerHighest: AppColors.cardBgLight,
+      onSurfaceVariant: AppColors.secondaryTextLight,
+      inverseSurface: AppColors.surfaceBgDark,
+      onInverseSurface: AppColors.primaryTextDark,
+      inversePrimary: AppColors.primaryDark,
+      outline: AppColors.dividerLight,
+      outlineVariant: AppColors.highlightBorderLight,
+    ),
+    textTheme: _buildLegacyTextTheme(
+      headlineColor: AppColors.primaryTextLight,
+      titleColor: AppColors.primaryTextLight,
+      bodyColor: AppColors.primaryTextLight,
+      labelColor: AppColors.primaryTextLight,
+    ),
+    appBarBackgroundColor: AppColors.appBarBgLight,
+    appBarForegroundColor: AppColors.appBarTextLight,
+    drawerBackgroundColor: AppColors.drawerBgLight,
+    scaffoldBackgroundColor: AppColors.scaffoldBgLight,
+    listTileColor: AppColors.cardBgLight,
+    iconColor: AppColors.primaryLight,
+    fabBackgroundColor: AppColors.appBarBgLight,
+    fabForegroundColor: AppColors.appBarTextLight,
+    progressColor: AppColors.activeLight,
+    popupMenuColor: AppColors.cardBgLight,
+    dialogBackgroundColor: AppColors.cardBgLight,
+    snackBarBackgroundColor: AppColors.cardBgLight,
+    dividerColor: AppColors.dividerLight,
+  );
 }
 
 ThemeData classicTheme(Map fonts) {
@@ -18,51 +106,45 @@ ThemeData classicTheme(Map fonts) {
     colors: AppThemeColors.classic,
     colorScheme: const ColorScheme(
       brightness: Brightness.light,
-      primary: ThemeColors.color3,
-      onPrimary: ThemeColors.color13,
-      primaryContainer: ThemeColors.color1,
-      secondary: ThemeColors.color8,
-      onSecondary: ThemeColors.color4,
-      secondaryContainer: ThemeColors.color14,
-      tertiary: ThemeColors.color4,
-      error: ThemeColors.danger,
-      onError: ThemeColors.color3,
-      surface: ThemeColors.color11,
-      onSurface: ThemeColors.color13,
-      surfaceContainerHighest: ThemeColors.color14,
-      onSurfaceVariant: ThemeColors.color8,
-      inverseSurface: ThemeColors.color13,
-      onInverseSurface: ThemeColors.color3,
-      inversePrimary: ThemeColors.color4,
-      outline: ThemeColors.color2,
-      outlineVariant: ThemeColors.color9,
+      primary: AppColors.primaryClassic,
+      onPrimary: AppColors.appBarTextClassic,
+      primaryContainer: AppColors.highlightClassic,
+      secondary: AppColors.secondaryClassic,
+      onSecondary: AppColors.accentClassic,
+      secondaryContainer: AppColors.cardBgClassic,
+      tertiary: AppColors.accentClassic,
+      error: AppColors.danger,
+      onError: AppColors.appBarTextClassic,
+      surface: AppColors.surfaceBgClassic,
+      onSurface: AppColors.primaryTextClassic,
+      surfaceContainerHighest: AppColors.cardBgClassic,
+      onSurfaceVariant: AppColors.secondaryTextClassic,
+      inverseSurface: AppColors.primaryTextClassic,
+      onInverseSurface: AppColors.appBarTextClassic,
+      inversePrimary: AppColors.accentClassic,
+      outline: AppColors.secondaryTextClassic,
+      outlineVariant: AppColors.dividerClassic,
     ),
     textTheme: _buildLegacyTextTheme(
-      headlineColor: ThemeColors.color13,
-      titleColor: ThemeColors.color2,
-      bodyColor: ThemeColors.color13,
-      labelColor: ThemeColors.color13,
+      headlineColor: AppColors.primaryTextClassic,
+      titleColor: AppColors.secondaryTextClassic,
+      bodyColor: AppColors.primaryTextClassic,
+      labelColor: AppColors.primaryTextClassic,
     ),
-    appBarBackgroundColor: ThemeColors.color12,
-    appBarForegroundColor: ThemeColors.color3,
-    drawerBackgroundColor: ThemeColors.color12,
-    listTileColor: ThemeColors.color14,
-    iconColor: ThemeColors.color8,
-    fabBackgroundColor: ThemeColors.color12,
-    fabForegroundColor: ThemeColors.color4,
-    progressColor: ThemeColors.color8,
-    popupMenuColor: ThemeColors.color14,
-    dialogBackgroundColor: ThemeColors.color14,
-    snackBarBackgroundColor: ThemeColors.color13,
+    appBarBackgroundColor: AppColors.appBarBgClassic,
+    appBarForegroundColor: AppColors.appBarTextClassic,
+    drawerBackgroundColor: AppColors.drawerBgClassic,
+    scaffoldBackgroundColor: AppColors.scaffoldBgClassic,
+    listTileColor: AppColors.cardBgClassic,
+    iconColor: AppColors.secondaryClassic,
+    fabBackgroundColor: AppColors.appBarBgClassic,
+    fabForegroundColor: AppColors.accentClassic,
+    progressColor: AppColors.secondaryClassic,
+    popupMenuColor: AppColors.cardBgClassic,
+    dialogBackgroundColor: AppColors.cardBgClassic,
+    snackBarBackgroundColor: AppColors.primaryTextClassic,
+    dividerColor: AppColors.dividerClassic,
   );
-}
-
-ThemeData lightThemeNew(Map fonts) {
-  return classicTheme(fonts);
-}
-
-ThemeData darkThemeNew(Map fonts) {
-  return classicTheme(fonts);
 }
 
 ThemeData _buildTheme({

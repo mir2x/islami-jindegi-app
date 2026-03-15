@@ -33,7 +33,7 @@ class Home extends StatelessWidget {
         final appColors = Theme.of(context).extension<AppThemeColors>()!;
         final useDarkHomeLogo =
             ThemeData.estimateBrightnessForColor(appColors.appBarBg) ==
-            Brightness.light;
+                Brightness.light;
 
         return AppScaffold(
           isHome: true,

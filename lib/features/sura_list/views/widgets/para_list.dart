@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
+import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import 'package:native_app/shared/quran_data.dart';
 import 'package:go_router/go_router.dart';
 import 'package:native_app/theme/app_theme_color.dart';
@@ -94,9 +95,12 @@ class _ParaListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // Navigate to the ayah in SurahPage
-        // The initialScrollIndex is ayahNumber - 1 (0-indexed)
-        context.push('/qurans/sura/$suraNumber?scroll=${ayahNumber - 1}');
+        context.push(
+          buildSuraRoute(
+            suraNumber: suraNumber,
+            scrollIndex: ayahNumber - 1,
+          ),
+        );
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),

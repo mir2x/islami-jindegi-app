@@ -10,8 +10,15 @@ final suraDrawerTabIndexProvider = StateProvider<int>((_) => 0);
 
 class SuraSideDrawer extends ConsumerStatefulWidget {
   final int currentSuraNumber;
+  final int currentAyahNumber;
+  final String returnTo;
 
-  const SuraSideDrawer({super.key, required this.currentSuraNumber});
+  const SuraSideDrawer({
+    super.key,
+    required this.currentSuraNumber,
+    required this.currentAyahNumber,
+    required this.returnTo,
+  });
 
   @override
   ConsumerState<SuraSideDrawer> createState() => _SuraSideDrawerState();
@@ -79,12 +86,16 @@ class _SuraSideDrawerState extends ConsumerState<SuraSideDrawer>
                     children: [
                       SuraNavigationTabView(
                         currentSuraNumber: widget.currentSuraNumber,
+                        returnTo: widget.returnTo,
                       ),
                       SuraParaNavigationView(
                         currentSuraNumber: widget.currentSuraNumber,
+                        currentAyahNumber: widget.currentAyahNumber,
+                        returnTo: widget.returnTo,
                       ),
                       SuraBookmarkNavigationView(
                         currentSuraNumber: widget.currentSuraNumber,
+                        returnTo: widget.returnTo,
                       ),
                     ],
                   ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:go_router/go_router.dart';
+import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import 'package:native_app/features/sura_list/providers/sura_list_providers.dart';
 import 'package:native_app/shared/quran_data.dart';
 import 'package:native_app/theme/app_theme_color.dart';
@@ -10,6 +11,8 @@ class SuraAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final String title;
   final int suraNumber;
   final GlobalKey<ScaffoldState>? scaffoldKey;
+  final int currentAyahNumber;
+  final String? returnTo;
 
   /// When provided, replaces the default actions entirely.
   final List<Widget>? actions;
@@ -19,6 +22,8 @@ class SuraAppBar extends ConsumerWidget implements PreferredSizeWidget {
     required this.title,
     required this.suraNumber,
     this.scaffoldKey,
+    this.currentAyahNumber = 1,
+    this.returnTo,
     this.actions,
   });
 
@@ -38,7 +43,7 @@ class SuraAppBar extends ConsumerWidget implements PreferredSizeWidget {
         icon: const Icon(Icons.arrow_back),
         onPressed: () {
           ref.read(lastViewedSuraProvider.notifier).state = suraNumber;
-          context.go('/qurans/sura-list');
+          context.go(returnTo ?? suraListRoute);
         },
       ),
       title: Column(
@@ -72,12 +77,18 @@ class SuraAppBar extends ConsumerWidget implements PreferredSizeWidget {
               ),
             IconButton(
               icon: const Icon(Icons.menu_book),
-              onPressed: () =>
-                  context.push('/qurans/tilawat?sura=$suraNumber&ayah=1'),
+              onPressed: () => context.push(
+                buildTilawatRoute(
+                  suraNumber: suraNumber,
+                  ayahNumber: currentAyahNumber,
+                ),
+              ),
             ),
             IconButton(
               icon: const Icon(Icons.search),
-              onPressed: () => context.push('/qurans/search'),
+              onPressed: () => context.push(
+                buildSearchRoute(returnTo: returnTo ?? suraListRoute),
+              ),
             ),
           ],
     );

@@ -16,6 +16,8 @@ import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
+import '../models/book_chapter.dart';
+import '../models/book_subchapter.dart';
 import '../providers/book_providers.dart';
 
 class SubchapterScreen extends ConsumerWidget {
@@ -24,7 +26,8 @@ class SubchapterScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    var subchapterId = GoRouterState.of(context).pathParameters['subchapter_id'].toString();
+    var subchapterId =
+        GoRouterState.of(context).pathParameters['subchapter_id'].toString();
     var bookId = GoRouterState.of(context).pathParameters['id'].toString();
 
     var modelQuery = ref.watch(subchapterDetailProvider(subchapterId));
@@ -37,92 +40,61 @@ class SubchapterScreen extends ConsumerWidget {
           return const ModelExeptionHandler(error: 'Subchapter not found');
         }
 
-        var chapterId = resource.chapter?.id ?? resource.chapterId ?? '';
-
-        Future? previousPage() async {
-          final offline = ref.read(bookOfflineServiceProvider);
-
-          var previousResources = await offline.querySubchapters(
-            chapterId: chapterId,
-            position: (resource.position ?? 0) - 1,
-            quantity: 1,
+        Future<List<dynamic>> orderedEntries() async {
+          final chapters = await ref.read(
+            chapterListProvider(
+              ChapterListParams(
+                bookId: bookId,
+                includeSubchapters: true,
+              ),
+            ).future,
           );
 
-          if (previousResources.isNotEmpty) {
-            await context.push(
-              'books/$bookId/subchapters/${previousResources.first.id}',
-            );
-          } else {
-            // Go to the previous chapter
-            var currentChapter = await offline.findChapterById(chapterId);
-
-            if (currentChapter != null) {
-              var previousChapters = await offline.queryChapters(
-                bookId: bookId,
-                position: (currentChapter.position ?? 0) - 1,
-                quantity: 1,
-                includeSubchapters: true,
-              );
-
-              if (previousChapters.isEmpty) {
-                await context.push('/books/$bookId');
-              } else {
-                var subchapters = previousChapters.first.subchapters;
-
-                if (subchapters.isNotEmpty) {
-                  var lastSubchapter = subchapters.last;
-                  await context.push(
-                    'books/$bookId/subchapters/${lastSubchapter.id}',
-                  );
-                } else {
-                  await context.push(
-                    'books/$bookId/chapters/${previousChapters.first.id}',
-                  );
-                }
-              }
+          final entries = <dynamic>[];
+          for (final chapter in chapters) {
+            if (chapter.subchapters.isEmpty) {
+              entries.add(chapter);
+            } else {
+              entries.addAll(chapter.subchapters);
             }
+          }
+          return entries;
+        }
+
+        Future? previousPage() async {
+          final entries = await orderedEntries();
+          final currentIndex = entries.indexWhere(
+            (entry) => entry is BookSubchapter && entry.id == resource.id,
+          );
+
+          if (currentIndex <= 0) {
+            context.go('/books/$bookId');
+            return;
+          }
+
+          final previousEntry = entries[currentIndex - 1];
+          if (previousEntry is BookSubchapter) {
+            context.go('/books/$bookId/subchapters/${previousEntry.id}');
+          } else if (previousEntry is BookChapter) {
+            context.go('/books/$bookId/chapters/${previousEntry.id}');
+          } else {
+            context.go('/books/$bookId');
           }
         }
 
         Future? nextPage() async {
-          final offline = ref.read(bookOfflineServiceProvider);
-
-          var nextResources = await offline.querySubchapters(
-            chapterId: chapterId,
-            position: (resource.position ?? 0) + 1,
-            quantity: 1,
+          final entries = await orderedEntries();
+          final currentIndex = entries.indexWhere(
+            (entry) => entry is BookSubchapter && entry.id == resource.id,
           );
 
-          if (nextResources.isNotEmpty) {
-            await context.push(
-              'books/$bookId/subchapters/${nextResources.first.id}',
-            );
-          } else {
-            // Go to the next chapter
-            var currentChapter = await offline.findChapterById(chapterId);
+          if (currentIndex == -1 || currentIndex + 1 >= entries.length) return;
 
-            if (currentChapter != null) {
-              var nextChapters = await offline.queryChapters(
-                bookId: bookId,
-                position: (currentChapter.position ?? 0) + 1,
-                quantity: 1,
-                includeSubchapters: true,
-              );
-
-              if (nextChapters.isNotEmpty) {
-                var subchapters = nextChapters.first.subchapters;
-
-                if (subchapters.isNotEmpty) {
-                  await context.push(
-                    'books/$bookId/subchapters/${subchapters.first.id}',
-                  );
-                } else {
-                  await context.push(
-                    'books/$bookId/chapters/${nextChapters.first.id}',
-                  );
-                }
-              }
-            }
+          final nextEntry = entries[currentIndex + 1];
+          if (nextEntry is BookSubchapter) {
+            context.go('/books/$bookId/subchapters/${nextEntry.id}');
+          } else if (nextEntry is BookChapter) {
+            context.go('/books/$bookId/chapters/${nextEntry.id}');
           }
         }
 
@@ -138,7 +110,7 @@ class SubchapterScreen extends ConsumerWidget {
           storeKey: 'bookFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async => await context.push('/books/$bookId'),
+              onBackPressed: () async => context.go('/books/$bookId'),
               showPattern: false,
               title: Text(locales.book),
               body: NextPageSwipe(

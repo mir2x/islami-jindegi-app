@@ -11,12 +11,10 @@ import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/date.dart';
-import 'package:native_app/widgets/presentation/list_item.dart';
+import 'package:native_app/widgets/presentation/content_list_card.dart';
 import 'package:native_app/providers/downloaded_bayans.dart';
 import 'package:native_app/helpers/format_date.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
-import 'package:native_app/widgets/buttons/floating_downloaded.dart';
-import 'package:native_app/theme/app_theme_color.dart';
 import '../providers/bayan_providers.dart';
 
 class BayanListScreen extends ConsumerWidget {
@@ -27,7 +25,6 @@ class BayanListScreen extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
-    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     var qParams = ref.watch(bayanQueryParamsProvider);
 
     return AppScaffold(
@@ -44,20 +41,19 @@ class BayanListScreen extends ConsumerWidget {
                     children: [
                       Container(
                         width: double.infinity,
-                        margin:
-                            const EdgeInsets.only(top: 10, left: 15, right: 15),
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: appTheme.cardBg,
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(color: appTheme.divider),
-                        ),
+                        padding:
+                            const EdgeInsets.only(top: 20, left: 15, right: 15),
                         child: Row(
                           children: [
                             Expanded(
                               child: FilterButton(
                                 label: locales.speakers,
                                 active: qParams.containsKey('speakerId'),
+                                onClear: () {
+                                  ref
+                                      .read(bayanQueryParamsProvider.notifier)
+                                      .updateParams('speakerId', '');
+                                },
                                 selectedItemProvider:
                                     qParams.containsKey('speakerId')
                                         ? singleSpeakerProvider(
@@ -104,6 +100,11 @@ class BayanListScreen extends ConsumerWidget {
                               child: FilterButton(
                                 label: locales.categories,
                                 active: qParams.containsKey('bayanCategoryId'),
+                                onClear: () {
+                                  ref
+                                      .read(bayanQueryParamsProvider.notifier)
+                                      .updateParams('bayanCategoryId', '');
+                                },
                                 selectedItemProvider:
                                     qParams.containsKey('bayanCategoryId')
                                         ? singleBayanCategoryProvider(
@@ -119,6 +120,7 @@ class BayanListScreen extends ConsumerWidget {
                                       title: locales.categories,
                                       paramKeys: const ['bayanCategoryId'],
                                       pageSize: 16,
+                                      searchEnabled: true,
                                       queryProvider: bayanQueryParamsProvider,
                                       resourceFetcher:
                                           (Map<String, dynamic> params) async {
@@ -212,11 +214,11 @@ class BayanListScreen extends ConsumerWidget {
                   itemBuilder: (_, item, __) {
                     return InkWell(
                       onTap: () => context.push('/bayans/${item.id}'),
-                      child: ListItem(
+                      child: ContentListCard(
                         highlightProvider: getDownloadedBayanByIdProvider(
                           item.id,
                         ),
-                        item: Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Flexible(
@@ -225,31 +227,39 @@ class BayanListScreen extends ConsumerWidget {
                                 children: [
                                   Text(
                                     item.title,
-                                    style: textTheme.titleMedium,
+                                    style: textTheme.titleMedium?.copyWith(
+                                      height: 1.25,
+                                    ),
                                   ),
                                   if (item.speakerName != null) ...[
-                                    Container(
-                                      margin: const EdgeInsets.only(top: 3),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 6),
                                       child: Text(
                                         item.speakerName!,
-                                        style: textTheme.labelMedium,
+                                        style: textTheme.labelMedium?.copyWith(
+                                          height: 1.2,
+                                        ),
                                       ),
                                     ),
                                   ],
                                   if (item.location != null) ...[
-                                    Container(
-                                      margin: const EdgeInsets.only(top: 2),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4),
                                       child: Text(
                                         item.location!,
-                                        style: textTheme.labelSmall,
+                                        style: textTheme.labelSmall?.copyWith(
+                                          height: 1.25,
+                                        ),
                                       ),
                                     ),
                                   ],
-                                  Container(
-                                    margin: const EdgeInsets.only(top: 2),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 6),
                                     child: Text(
                                       formatDate(item.publishedAt, currentLang),
-                                      style: textTheme.labelSmall,
+                                      style: textTheme.labelSmall?.copyWith(
+                                        height: 1.2,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -268,14 +278,6 @@ class BayanListScreen extends ConsumerWidget {
               ),
             ),
           ],
-        ),
-      ),
-      floatingActionButton: SizedBox(
-        width: 200,
-        height: 40,
-        child: FloatingDownloadedButton(
-          onPressed: () => context.push('/bayans/downloads'),
-          label: '${locales.downloaded} ${locales.bayans}',
         ),
       ),
     );

@@ -86,6 +86,34 @@ class BookOfflineService {
     return Book.fromDb(rows.first, authors: authors);
   }
 
+  Future<Book?> findPreviousBookByPosition(int position) async {
+    final db = await _db;
+    final rows = await db.query(
+      'books',
+      where: 'position < ?',
+      whereArgs: [position],
+      orderBy: 'position DESC',
+      limit: 1,
+    );
+
+    if (rows.isEmpty) return null;
+    return findBookById(rows.first['id'].toString());
+  }
+
+  Future<Book?> findNextBookByPosition(int position) async {
+    final db = await _db;
+    final rows = await db.query(
+      'books',
+      where: 'position > ?',
+      whereArgs: [position],
+      orderBy: 'position ASC',
+      limit: 1,
+    );
+
+    if (rows.isEmpty) return null;
+    return findBookById(rows.first['id'].toString());
+  }
+
   // ───────────────────── Chapters ─────────────────────
 
   Future<List<BookChapter>> queryChapters({
@@ -153,6 +181,64 @@ class BookOfflineService {
     return BookChapter.fromDb(rows.first);
   }
 
+  Future<BookChapter?> findPreviousChapter({
+    required String bookId,
+    required int position,
+    bool includeSubchapters = false,
+  }) async {
+    final db = await _db;
+    final rows = await db.query(
+      'chapters',
+      where: 'book_id = ? AND position < ?',
+      whereArgs: [bookId, position],
+      orderBy: 'position DESC',
+      limit: 1,
+    );
+
+    if (rows.isEmpty) return null;
+
+    if (!includeSubchapters) {
+      return BookChapter.fromDb(rows.first);
+    }
+
+    final chapters = await queryChapters(
+      bookId: bookId,
+      position: rows.first['position'] as int,
+      quantity: 1,
+      includeSubchapters: true,
+    );
+    return chapters.isEmpty ? null : chapters.first;
+  }
+
+  Future<BookChapter?> findNextChapter({
+    required String bookId,
+    required int position,
+    bool includeSubchapters = false,
+  }) async {
+    final db = await _db;
+    final rows = await db.query(
+      'chapters',
+      where: 'book_id = ? AND position > ?',
+      whereArgs: [bookId, position],
+      orderBy: 'position ASC',
+      limit: 1,
+    );
+
+    if (rows.isEmpty) return null;
+
+    if (!includeSubchapters) {
+      return BookChapter.fromDb(rows.first);
+    }
+
+    final chapters = await queryChapters(
+      bookId: bookId,
+      position: rows.first['position'] as int,
+      quantity: 1,
+      includeSubchapters: true,
+    );
+    return chapters.isEmpty ? null : chapters.first;
+  }
+
   // ───────────────────── Subchapters ─────────────────────
 
   Future<List<BookSubchapter>> querySubchapters({
@@ -207,6 +293,40 @@ class BookOfflineService {
     }
 
     return sub;
+  }
+
+  Future<BookSubchapter?> findPreviousSubchapter({
+    required String chapterId,
+    required int position,
+  }) async {
+    final db = await _db;
+    final rows = await db.query(
+      'subchapters',
+      where: 'chapter_id = ? AND position < ?',
+      whereArgs: [chapterId, position],
+      orderBy: 'position DESC',
+      limit: 1,
+    );
+
+    if (rows.isEmpty) return null;
+    return BookSubchapter.fromDb(rows.first);
+  }
+
+  Future<BookSubchapter?> findNextSubchapter({
+    required String chapterId,
+    required int position,
+  }) async {
+    final db = await _db;
+    final rows = await db.query(
+      'subchapters',
+      where: 'chapter_id = ? AND position > ?',
+      whereArgs: [chapterId, position],
+      orderBy: 'position ASC',
+      limit: 1,
+    );
+
+    if (rows.isEmpty) return null;
+    return BookSubchapter.fromDb(rows.first);
   }
 
   // ───────────────────── Authors (for filter) ─────────────────────

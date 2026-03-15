@@ -16,29 +16,33 @@ class BottomBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appTheme = Theme.of(context).extension<AppThemeColors>()!;
 
-    return BottomAppBar(
-      color: appTheme.cardBg,
-      surfaceTintColor: Colors.transparent,
-      elevation: 0,
-      padding: EdgeInsets.zero,
-      height: 60,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: appTheme.divider),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: appTheme.shadow.withValues(alpha: 0.06),
-              blurRadius: 12,
-              offset: const Offset(0, -3),
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 8, 14, 10),
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            decoration: BoxDecoration(
+              color: appTheme.cardBg.withValues(alpha: 0.97),
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(
+                color: appTheme.divider.withValues(alpha: 0.78),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: appTheme.shadow.withValues(alpha: 0.12),
+                  blurRadius: 22,
+                  offset: const Offset(0, 10),
+                ),
+              ],
             ),
-          ],
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: Row(
-          mainAxisAlignment: alignment,
-          children: children,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Row(
+              mainAxisAlignment: alignment,
+              children: children,
+            ),
+          ),
         ),
       ),
     );

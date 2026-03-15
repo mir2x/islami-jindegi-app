@@ -13,11 +13,9 @@ import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/nested_item.dart';
 import 'package:native_app/widgets/filter/subitem.dart';
 import 'package:native_app/widgets/filter/triple_switch_button.dart';
-import 'package:native_app/widgets/presentation/list_item.dart';
+import 'package:native_app/widgets/presentation/content_list_card.dart';
 import 'package:native_app/providers/downloaded_malfuzat.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
-import 'package:native_app/widgets/buttons/floating_downloaded.dart';
-import 'package:native_app/theme/app_theme_color.dart';
 import '../providers/malfuzat_providers.dart';
 
 class MalfuzatListScreen extends ConsumerWidget {
@@ -27,7 +25,6 @@ class MalfuzatListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     var qParams = ref.watch(malfuzatQueryParamsProvider);
 
     return AppScaffold(
@@ -44,20 +41,21 @@ class MalfuzatListScreen extends ConsumerWidget {
                     children: [
                       Container(
                         width: double.infinity,
-                        margin:
+                        padding:
                             const EdgeInsets.only(top: 20, left: 15, right: 15),
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: appTheme.cardBg,
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(color: appTheme.divider),
-                        ),
                         child: Row(
                           children: [
                             Expanded(
                               child: FilterButton(
                                 label: locales.authorsOrSpeakers,
                                 active: qParams.containsKey('malfuzatAuthorId'),
+                                onClear: () {
+                                  ref
+                                      .read(
+                                        malfuzatQueryParamsProvider.notifier,
+                                      )
+                                      .updateParams('malfuzatAuthorId', '');
+                                },
                                 selectedItemProvider:
                                     qParams.containsKey('malfuzatAuthorId')
                                         ? singleMalfuzatAuthorProvider(
@@ -127,6 +125,26 @@ class MalfuzatListScreen extends ConsumerWidget {
                                         'malfuzatSubcategoryId',
                                       ].contains(k),
                                     ),
+                                    onClear: () {
+                                      ref
+                                          .read(
+                                            malfuzatQueryParamsProvider
+                                                .notifier,
+                                          )
+                                          .updateParams(
+                                            'malfuzatCategoryId',
+                                            '',
+                                          );
+                                      ref
+                                          .read(
+                                            malfuzatQueryParamsProvider
+                                                .notifier,
+                                          )
+                                          .updateParams(
+                                            'malfuzatSubcategoryId',
+                                            '',
+                                          );
+                                    },
                                     selectedItemProvider: selectedProvider,
                                     selectedItemLabel: (dynamic item) {
                                       return item.title;
@@ -139,12 +157,15 @@ class MalfuzatListScreen extends ConsumerWidget {
                                             'malfuzatCategoryId',
                                             'malfuzatSubcategoryId',
                                           ],
+                                          searchEnabled: true,
                                           queryProvider:
                                               malfuzatQueryParamsProvider,
-                                          resourceFetcher: (Map<String, dynamic>
-                                              params) async {
+                                          resourceFetcher: (
+                                            Map<String, dynamic> params,
+                                          ) async {
                                             final api = ref.read(
-                                                malfuzatApiServiceProvider);
+                                              malfuzatApiServiceProvider,
+                                            );
                                             return await api.fetchCategories(
                                               page: params['page'] ?? 1,
                                               perPage: params['per_page'] ?? 16,
@@ -277,11 +298,11 @@ class MalfuzatListScreen extends ConsumerWidget {
                   itemBuilder: (_, item, __) {
                     return InkWell(
                       onTap: () => context.push('/malfuzat/${item.id}'),
-                      child: ListItem(
+                      child: ContentListCard(
                         highlightProvider: getDownloadedMalfuzatByIdProvider(
                           item.id,
                         ),
-                        item: Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Flexible(
@@ -290,14 +311,18 @@ class MalfuzatListScreen extends ConsumerWidget {
                                 children: [
                                   Text(
                                     item.title,
-                                    style: textTheme.titleMedium,
+                                    style: textTheme.titleMedium?.copyWith(
+                                      height: 1.25,
+                                    ),
                                   ),
                                   if (item.authorName != null) ...[
-                                    Container(
-                                      margin: const EdgeInsets.only(top: 5),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 6),
                                       child: Text(
                                         item.authorName!,
-                                        style: textTheme.labelSmall,
+                                        style: textTheme.labelSmall?.copyWith(
+                                          height: 1.2,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -317,14 +342,6 @@ class MalfuzatListScreen extends ConsumerWidget {
               ),
             ),
           ],
-        ),
-      ),
-      floatingActionButton: SizedBox(
-        width: 220,
-        height: 40,
-        child: FloatingDownloadedButton(
-          onPressed: () => context.push('/malfuzat/downloads'),
-          label: '${locales.downloaded} ${locales.malfuzat}',
         ),
       ),
     );

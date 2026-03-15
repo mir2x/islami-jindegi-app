@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:go_router/go_router.dart';
+import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import '../../../../shared/quran_data.dart';
 import '../../providers/search_providers.dart';
@@ -11,6 +12,9 @@ class SearchPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final returnTo =
+        GoRouterState.of(context).uri.queryParameters['returnTo'] ??
+            suraListRoute;
     final searchQuery = ref.watch(searchQueryProvider);
     final searchResults = ref.watch(searchResultsProvider);
     final colors = Theme.of(context).extension<AppThemeColors>()!;
@@ -29,14 +33,17 @@ class SearchPage extends ConsumerWidget {
           decoration: InputDecoration(
             hintText: 'আরবি বা বাংলায় খুঁজুন...',
             hintStyle: TextStyle(
-                wordSpacing: 3, color: appBarFg.withValues(alpha: 0.72)),
+              wordSpacing: 3,
+              color: appBarFg.withValues(alpha: 0.72),
+            ),
             border: InputBorder.none,
           ),
           style: TextStyle(
-              fontFamily: 'bangla/solaimanlipi',
-              wordSpacing: 3,
-              color: appBarFg,
-              fontSize: 18),
+            fontFamily: 'bangla/solaimanlipi',
+            wordSpacing: 3,
+            color: appBarFg,
+            fontSize: 18,
+          ),
           onChanged: (value) {
             ref.read(searchQueryProvider.notifier).state = value;
           },
@@ -46,14 +53,18 @@ class SearchPage extends ConsumerWidget {
         data: (ayahs) {
           if (searchQuery.isEmpty) {
             return const Center(
-              child: Text('আয়াত বা অনুবাদ খুঁজতে টাইপ করুন।',
-                  style: TextStyle(fontFamily: 'bangla/solaimanlipi')),
+              child: Text(
+                'আয়াত বা অনুবাদ খুঁজতে টাইপ করুন।',
+                style: TextStyle(fontFamily: 'bangla/solaimanlipi'),
+              ),
             );
           }
           if (ayahs.isEmpty) {
             return const Center(
-              child: Text('কোন ফলাফল পাওয়া যায়নি।',
-                  style: TextStyle(fontFamily: 'bangla/solaimanlipi')),
+              child: Text(
+                'কোন ফলাফল পাওয়া যায়নি।',
+                style: TextStyle(fontFamily: 'bangla/solaimanlipi'),
+              ),
             );
           }
           return ListView.builder(
@@ -94,8 +105,13 @@ class SearchPage extends ConsumerWidget {
                       final targetSura = ayah.sura;
                       final targetIndex = ayah.ayah - 1;
 
-                      context
-                          .push('/qurans/sura/$targetSura?scroll=$targetIndex');
+                      context.push(
+                        buildSuraRoute(
+                          suraNumber: targetSura,
+                          scrollIndex: targetIndex,
+                          returnTo: returnTo,
+                        ),
+                      );
                     });
                   },
                 ),
@@ -155,11 +171,15 @@ class HighlightedText extends StatelessWidget {
       }
 
       final endIndex = startIndex + query.length;
-      spans.add(TextSpan(
-        text: text.substring(startIndex, endIndex),
-        style: style.copyWith(
-            backgroundColor: highlightBackground, color: highlightForeground),
-      ));
+      spans.add(
+        TextSpan(
+          text: text.substring(startIndex, endIndex),
+          style: style.copyWith(
+            backgroundColor: highlightBackground,
+            color: highlightForeground,
+          ),
+        ),
+      );
 
       start = endIndex;
     }

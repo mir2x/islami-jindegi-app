@@ -7,11 +7,13 @@ class Previous extends StatelessWidget {
     required this.onPrevious,
     this.previousDisabled = false,
     this.contrastColor = true,
+    this.iconColor,
   });
 
   final Future? Function() onPrevious;
   final bool previousDisabled;
   final bool contrastColor;
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +22,9 @@ class Previous extends StatelessWidget {
     Color? iconColor = previousDisabled
         ? colors.secondaryText
         : contrastColor
-            ? colors.active
+            ? colors.secondary
             : null;
+    iconColor = this.iconColor ?? iconColor;
 
     return IconButton(
       icon: const Icon(Icons.skip_previous_rounded),

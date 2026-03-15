@@ -9,7 +9,6 @@ import 'package:native_app/widgets/utils/offline_db_prompt.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
-import 'package:native_app/widgets/buttons/floating_downloaded.dart';
 import 'package:native_app/features/book/views/image.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:native_app/theme/app_theme_color.dart';
@@ -21,6 +20,8 @@ class BookListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(bookNavigationIdsProvider);
+
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var appTheme = Theme.of(context).extension<AppThemeColors>()!;
@@ -169,8 +170,9 @@ class BookListScreen extends ConsumerWidget {
                   },
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: isMobile ? 2 : 3,
-                    crossAxisSpacing: isMobile ? 15 : 20,
-                    mainAxisExtent: isMobile ? 300 : 360,
+                    crossAxisSpacing: isMobile ? 16 : 22,
+                    mainAxisSpacing: isMobile ? 16 : 22,
+                    mainAxisExtent: isMobile ? 250 : 320,
                   ),
                   itemBuilder: (_, item, __) {
                     return InkWell(
@@ -192,11 +194,13 @@ class BookListScreen extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        padding: const EdgeInsets.fromLTRB(14, 16, 14, 14),
+                        padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             FractionallySizedBox(
-                              widthFactor: 0.7,
+                              widthFactor: 0.62,
                               child: BookImage(
                                 bookId: item.id,
                                 image: item.image,
@@ -206,25 +210,38 @@ class BookListScreen extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                            Container(
-                              margin: const EdgeInsets.only(top: 10),
-                              child: Text(
-                                item.title,
-                                style: textTheme.titleMedium,
+                            const SizedBox(height: 10),
+                            Text(
+                              item.title,
+                              style: textTheme.titleMedium?.copyWith(
+                                height: 1.2,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            if (item.authors.isNotEmpty) ...[
+                              const SizedBox(height: 6),
+                              Text(
+                                item.authors.first.name,
                                 textAlign: TextAlign.center,
+                                style: textTheme.labelSmall?.copyWith(
+                                  height: 1.2,
+                                  color: appTheme.secondaryText,
+                                ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                            if (item.authors.isNotEmpty)
-                              Container(
-                                margin: const EdgeInsets.only(top: 5),
-                                child: Text(
-                                  item.authors.first.name,
-                                  textAlign: TextAlign.center,
-                                  style: textTheme.labelSmall,
-                                ),
+                            ],
+                            const Spacer(),
+                            SizedBox(
+                              width: 36,
+                              child: Divider(
+                                height: 10,
+                                thickness: 2,
+                                color: appTheme.divider.withValues(alpha: 0.7),
                               ),
+                            ),
                           ],
                         ),
                       ),
@@ -234,14 +251,6 @@ class BookListScreen extends ConsumerWidget {
               ),
             ),
           ],
-        ),
-      ),
-      floatingActionButton: SizedBox(
-        width: 200,
-        height: 40,
-        child: FloatingDownloadedButton(
-          onPressed: () => context.push('/books/downloads'),
-          label: '${locales.downloaded} ${locales.books}',
         ),
       ),
     );

@@ -10,6 +10,8 @@ import 'package:native_app/theme/app_theme_color.dart';
 class SuraBottomNavBar extends ConsumerWidget {
   final int totalAyahs;
   final int suraNumber;
+  final int currentAyahNumber;
+  final String returnTo;
   final VoidCallback onStartAutoScroll;
   final VoidCallback onStopAutoScroll;
 
@@ -17,6 +19,8 @@ class SuraBottomNavBar extends ConsumerWidget {
     super.key,
     required this.totalAyahs,
     required this.suraNumber,
+    required this.currentAyahNumber,
+    required this.returnTo,
     required this.onStartAutoScroll,
     required this.onStopAutoScroll,
   });
@@ -58,7 +62,12 @@ class SuraBottomNavBar extends ConsumerWidget {
         }
         break;
       case 4:
-        showDetailsBottomSheet(context, suraNumber: suraNumber);
+        showDetailsBottomSheet(
+          context,
+          suraNumber: suraNumber,
+          currentAyahNumber: currentAyahNumber,
+          returnTo: returnTo,
+        );
         break;
     }
   }
@@ -75,12 +84,21 @@ class SuraBottomNavBar extends ConsumerWidget {
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'অনুবাদ'),
         BottomNavigationBarItem(
-            icon: Icon(Icons.text_fields), label: 'শব্দে শব্দে'),
+          icon: Icon(Icons.text_fields),
+          label: 'শব্দে শব্দে',
+        ),
         BottomNavigationBarItem(
-            icon: Icon(Icons.play_circle_fill_outlined), label: 'অডিও শুনুন'),
+          icon: Icon(Icons.play_circle_fill_outlined),
+          label: 'অডিও শুনুন',
+        ),
         BottomNavigationBarItem(
-            icon: Icon(Icons.swipe_outlined), label: 'অটো স্ক্রল'),
-        BottomNavigationBarItem(icon: Icon(Icons.grid_on), label: 'বিস্তারিত'),
+          icon: Icon(Icons.swipe_outlined),
+          label: 'অটো স্ক্রল',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.grid_on),
+          label: 'বিস্তারিত',
+        ),
       ],
     );
   }

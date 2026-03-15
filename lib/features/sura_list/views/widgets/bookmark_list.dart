@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:go_router/go_router.dart';
+import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import '../../models/bookmark.dart';
 import '../../providers/bookmark_providers.dart';
@@ -101,10 +102,11 @@ class _BookmarkListItem extends ConsumerWidget {
       ),
       child: InkWell(
         onTap: () {
-          // Navigate to the ayah in SurahPage
-          // The initialScrollIndex is ayahNumber - 1 (0-indexed)
           context.push(
-            '/qurans/sura/${bookmark.suraNumber}?scroll=${bookmark.ayahNumber - 1}',
+            buildSuraRoute(
+              suraNumber: bookmark.suraNumber,
+              scrollIndex: bookmark.ayahNumber - 1,
+            ),
           );
         },
         child: Padding(

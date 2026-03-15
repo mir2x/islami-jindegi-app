@@ -13,11 +13,10 @@ import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/nested_item.dart';
 import 'package:native_app/widgets/filter/subitem.dart';
 import 'package:native_app/widgets/filter/triple_switch_button.dart';
-import 'package:native_app/widgets/presentation/list_item.dart';
+import 'package:native_app/widgets/presentation/content_list_card.dart';
 import 'package:native_app/providers/downloaded_masail.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
-import 'package:native_app/widgets/buttons/floating_downloaded.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import '../providers/masail_providers.dart';
 
@@ -28,7 +27,6 @@ class MasailListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
-    var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     var qParams = ref.watch(masailQueryParamsProvider);
     var settingsQuery = ref.watch(masailSettingsProvider);
 
@@ -46,20 +44,19 @@ class MasailListScreen extends ConsumerWidget {
                     children: [
                       Container(
                         width: double.infinity,
-                        margin:
+                        padding:
                             const EdgeInsets.only(top: 20, left: 15, right: 15),
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: appTheme.cardBg,
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(color: appTheme.divider),
-                        ),
                         child: Row(
                           children: [
                             Expanded(
                               child: FilterButton(
                                 label: locales.authorsOrSpeakers,
                                 active: qParams.containsKey('masailAuthorId'),
+                                onClear: () {
+                                  ref
+                                      .read(masailQueryParamsProvider.notifier)
+                                      .updateParams('masailAuthorId', '');
+                                },
                                 selectedItemProvider:
                                     qParams.containsKey('masailAuthorId')
                                         ? singleMasailAuthorProvider(
@@ -126,6 +123,21 @@ class MasailListScreen extends ConsumerWidget {
                                         'masailSubcategoryId',
                                       ].contains(k),
                                     ),
+                                    onClear: () {
+                                      ref
+                                          .read(
+                                            masailQueryParamsProvider.notifier,
+                                          )
+                                          .updateParams('masailCategoryId', '');
+                                      ref
+                                          .read(
+                                            masailQueryParamsProvider.notifier,
+                                          )
+                                          .updateParams(
+                                            'masailSubcategoryId',
+                                            '',
+                                          );
+                                    },
                                     selectedItemProvider: selectedProvider,
                                     selectedItemLabel: (dynamic item) {
                                       return item.title;
@@ -138,10 +150,12 @@ class MasailListScreen extends ConsumerWidget {
                                             'masailCategoryId',
                                             'masailSubcategoryId',
                                           ],
+                                          searchEnabled: true,
                                           queryProvider:
                                               masailQueryParamsProvider,
-                                          resourceFetcher: (Map<String, dynamic>
-                                              params) async {
+                                          resourceFetcher: (
+                                            Map<String, dynamic> params,
+                                          ) async {
                                             final api = ref
                                                 .read(masailApiServiceProvider);
                                             return await api.fetchCategories(
@@ -275,11 +289,11 @@ class MasailListScreen extends ConsumerWidget {
                   itemBuilder: (_, item, __) {
                     return InkWell(
                       onTap: () => context.push('/masail/${item.id}'),
-                      child: ListItem(
+                      child: ContentListCard(
                         highlightProvider: getDownloadedMasailByIdProvider(
                           item.id,
                         ),
-                        item: Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Flexible(
@@ -288,14 +302,18 @@ class MasailListScreen extends ConsumerWidget {
                                 children: [
                                   Text(
                                     item.title,
-                                    style: textTheme.titleMedium,
+                                    style: textTheme.titleMedium?.copyWith(
+                                      height: 1.25,
+                                    ),
                                   ),
                                   if (item.authorName != null) ...[
-                                    Container(
-                                      margin: const EdgeInsets.only(top: 5),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 6),
                                       child: Text(
                                         item.authorName!,
-                                        style: textTheme.labelSmall,
+                                        style: textTheme.labelSmall?.copyWith(
+                                          height: 1.2,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -368,14 +386,6 @@ class MasailListScreen extends ConsumerWidget {
                 return const SizedBox.shrink();
               }
             },
-          ),
-          SizedBox(
-            width: 205,
-            height: 40,
-            child: FloatingDownloadedButton(
-              onPressed: () => context.push('/masail/downloads'),
-              label: '${locales.downloaded} ${locales.masail}',
-            ),
           ),
         ],
       ),

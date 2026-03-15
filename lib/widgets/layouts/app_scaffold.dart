@@ -66,7 +66,10 @@ class AppScaffold extends ConsumerWidget {
 
     return WithPreferences(
       builder: (context, preferences) {
-        const theme = 'classic';
+        final theme = switch (preferences.getString('theme')) {
+          'classic' || 'light' || 'dark' => preferences.getString('theme')!,
+          _ => 'classic',
+        };
         final appColors = Theme.of(context).extension<AppThemeColors>()!;
         String background = preferences.getString('background') ?? 'mosque';
         final appBarBg =
@@ -107,7 +110,10 @@ class AppScaffold extends ConsumerWidget {
                                   height: 35,
                                 )
                           : IconButton(
-                              icon: const Icon(Icons.arrow_back),
+                              icon: Icon(
+                                Icons.arrow_back,
+                                color: appColors.accent,
+                              ),
                               onPressed: () async {
                                 try {
                                   if (onBackPressed != null) {
@@ -314,7 +320,9 @@ class AppScaffold extends ConsumerWidget {
                         DrawerLink(title: locales.location, route: 'location'),
                         DrawerLink(title: locales.settings, route: 'settings'),
                         DrawerLink(
-                            title: locales.bookmarks, route: 'bookmarks'),
+                          title: locales.bookmarks,
+                          route: 'bookmarks',
+                        ),
                         DrawerLink(title: locales.aboutUs, route: 'about'),
                         DrawerLink(
                           title: locales.contactUs,
@@ -328,7 +336,9 @@ class AppScaffold extends ConsumerWidget {
             ),
             body: Container(
               decoration: BoxDecoration(
-                image: (showPattern && background != 'no-background')
+                image: (theme == 'classic' &&
+                        showPattern &&
+                        background != 'no-background')
                     ? DecorationImage(
                         image: AssetImage(
                           _resolveBackgroundAsset(background, theme),
@@ -392,6 +402,10 @@ class MenuButton extends StatelessWidget {
           fit: BoxFit.scaleDown,
           width: 30,
           height: 30,
+          colorFilter: ColorFilter.mode(
+            appColors.accent,
+            BlendMode.srcIn,
+          ),
         ),
       ),
     );
@@ -470,7 +484,7 @@ class NotificationButton extends ConsumerWidget {
           return IconButton(
             icon: Icon(
               Icons.notification_add,
-              color: appColors.appBarText,
+              color: appColors.secondary,
             ),
             onPressed: () async {
               final messaging = FirebaseMessaging.instance;

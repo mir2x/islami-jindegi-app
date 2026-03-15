@@ -61,8 +61,10 @@ class DateFilter extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isSmallMobile = screenWidth < 340;
+    double sidePadding = isSmallMobile ? 10 : 12;
     var paramsProvider = queryProvider ?? queryParamsProvider;
     var qParams = ref.watch(paramsProvider);
 
@@ -76,8 +78,6 @@ class DateFilter extends ConsumerWidget {
     ];
 
     String selectedLabel = selectedDate(qParams, options, currentLang, locales);
-
-    final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return OutlinedButton(
       onPressed: () {
@@ -169,12 +169,16 @@ class DateFilter extends ConsumerWidget {
       style: OutlinedButton.styleFrom(
         side: BorderSide(color: colors.divider),
         backgroundColor:
-            selectedLabel != locales.date ? colors.highlight : null,
-        padding: EdgeInsets.symmetric(horizontal: isSmallMobile ? 13 : 16),
+            selectedLabel != locales.date ? colors.highlight : colors.cardBg,
+        padding: EdgeInsets.only(
+          left: sidePadding,
+          right: isSmallMobile ? 6 : 8,
+        ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
         ),
         minimumSize: const Size.fromHeight(45),
+        elevation: 0,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -182,9 +186,11 @@ class DateFilter extends ConsumerWidget {
           Flexible(
             child: Text(
               selectedLabel,
-              style: selectedLabel != locales.date
-                  ? textTheme.labelSmall?.copyWith(height: 1.1)
-                  : textTheme.labelMedium,
+              style: textTheme.labelMedium?.copyWith(
+                color: colors.primaryText,
+                height: 1.15,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
           Icon(

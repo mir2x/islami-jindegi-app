@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
+import 'package:native_app/features/quran/models/bookmark.dart';
+import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
+import 'package:native_app/features/quran/providers/bookmark_providers.dart';
+import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import 'package:native_app/features/sura/views/widgets/tafsir_view.dart';
-import 'package:native_app/features/sura/views/widgets/tilawat_page.dart';
-import 'package:native_app/features/sura_list/providers/bookmark_providers.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../models/ayah.dart';
@@ -27,6 +30,7 @@ void showAyahActionBottomSheet(
   int suraNumber,
   Ayah ayah,
   String suraName,
+  String returnTo,
   WidgetRef ref,
 ) {
   final int selectedStartAyah = ayah.ayah;
@@ -43,20 +47,38 @@ void showAyahActionBottomSheet(
         builder: (context, ref, child) {
           final colors = Theme.of(context).extension<AppThemeColors>()!;
           final actionIconColor = colors.active;
-          final isBookmarked = ref.watch(
-              isAyahBookmarkedProvider((sura: suraNumber, ayah: ayah.ayah)));
+          ref.watch(bookmarkProvider);
+          final bookmarkNotifier = ref.read(bookmarkProvider.notifier);
+          final isBookmarked =
+              bookmarkNotifier.isAyahBookmarked(suraNumber, ayah.ayah);
 
           final List<AyahActionItem> actions = [
             AyahActionItem(
               icon: isBookmarked ? Icons.bookmark : Icons.bookmark_border,
               label: isBookmarked ? 'বুকমার্ক সরান' : 'বুকমার্ক',
               onTap: () {
-                ref.read(bookmarkProvider.notifier).toggleBookmark(
-                      suraNumber: suraNumber,
-                      ayahNumber: ayah.ayah,
-                      suraName: suraName,
-                      arabicText: ayah.arabicText,
-                    );
+                final identifier = 'ayah-$suraNumber-${ayah.ayah}';
+                if (isBookmarked) {
+                  bookmarkNotifier.remove(identifier);
+                } else {
+                  final quranInfoService = ref.read(quranInfoServiceProvider);
+                  bookmarkNotifier.add(
+                    Bookmark(
+                      type: 'ayah',
+                      identifier: identifier,
+                      sura: suraNumber,
+                      ayah: ayah.ayah,
+                      para: quranInfoService.getParaBySuraAyah(
+                        suraNumber,
+                        ayah.ayah,
+                      ),
+                      page: quranInfoService.getPageBySuraAyah(
+                        suraNumber,
+                        ayah.ayah,
+                      ),
+                    ),
+                  );
+                }
                 Navigator.pop(bottomSheetContext);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -105,13 +127,11 @@ void showAyahActionBottomSheet(
               label: 'তিলাওয়াত মোড',
               onTap: () {
                 Navigator.pop(bottomSheetContext);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => TilawatPage(
-                      initialSuraNumber: suraNumber,
-                      initialAyahNumber: ayah.ayah,
-                    ),
+                GoRouter.of(context).push(
+                  buildTilawatRoute(
+                    suraNumber: suraNumber,
+                    ayahNumber: ayah.ayah,
+                    returnTo: returnTo,
                   ),
                 );
               },
@@ -120,10 +140,12 @@ void showAyahActionBottomSheet(
               icon: Icons.copy,
               label: 'কপি',
               onTap: () async {
+                final messenger = ScaffoldMessenger.of(context);
+                final navigator = Navigator.of(bottomSheetContext);
                 await Clipboard.setData(ClipboardData(text: ayah.arabicText));
-                Navigator.pop(bottomSheetContext);
+                navigator.pop();
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  messenger.showSnackBar(
                     const SnackBar(
                       content: Text(
                         'আয়াতটি কপি হয়েছে',

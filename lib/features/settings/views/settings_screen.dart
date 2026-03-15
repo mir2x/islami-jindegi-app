@@ -66,6 +66,8 @@ class Settings extends ConsumerWidget {
 
   static const List<Map<String, String>> themes = [
     {'label': 'Classic', 'value': 'classic'},
+    {'label': 'Light', 'value': 'light'},
+    {'label': 'Dark', 'value': 'dark'},
   ];
 
   static const List<Map<String, String>> backgrounds = [
@@ -142,18 +144,20 @@ class Settings extends ConsumerWidget {
                         );
                       }).toList(),
                     ),
-                    const SizedBox(height: 18),
-                    _SegmentedSelector(
-                      title: locales.background,
-                      icon: Icons.layers_rounded,
-                      items: backgrounds,
-                      selectedValue: selectedBackground,
-                      onSelected: (value) {
-                        ref
-                            .read(preferencesProvider.notifier)
-                            .updateBackground(value);
-                      },
-                    ),
+                    if (selectedTheme == 'classic') ...[
+                      const SizedBox(height: 18),
+                      _SegmentedSelector(
+                        title: locales.background,
+                        icon: Icons.layers_rounded,
+                        items: backgrounds,
+                        selectedValue: selectedBackground,
+                        onSelected: (value) {
+                          ref
+                              .read(preferencesProvider.notifier)
+                              .updateBackground(value);
+                        },
+                      ),
+                    ],
                   ],
                 ),
               ),

@@ -4,18 +4,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart'
     show paraStarts;
-import 'package:native_app/features/sura/providers/sura_providers.dart';
 import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
-final selectedDrawerParaProvider = StateProvider<int>((_) => 1);
+final selectedTilawatDrawerParaProvider = StateProvider<int>((_) => 1);
 
-class SuraParaNavigationView extends ConsumerStatefulWidget {
+class TilawatParaNavigationView extends ConsumerStatefulWidget {
   final int currentSuraNumber;
   final int currentAyahNumber;
   final String returnTo;
 
-  const SuraParaNavigationView({
+  const TilawatParaNavigationView({
     super.key,
     required this.currentSuraNumber,
     required this.currentAyahNumber,
@@ -23,12 +22,12 @@ class SuraParaNavigationView extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<SuraParaNavigationView> createState() =>
-      _SuraParaNavigationViewState();
+  ConsumerState<TilawatParaNavigationView> createState() =>
+      _TilawatParaNavigationViewState();
 }
 
-class _SuraParaNavigationViewState
-    extends ConsumerState<SuraParaNavigationView> {
+class _TilawatParaNavigationViewState
+    extends ConsumerState<TilawatParaNavigationView> {
   bool _isInitialStateSet = false;
 
   String _toBengaliNumber(int number) {
@@ -45,7 +44,8 @@ class _SuraParaNavigationViewState
       );
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          ref.read(selectedDrawerParaProvider.notifier).state = initialPara;
+          ref.read(selectedTilawatDrawerParaProvider.notifier).state =
+              initialPara;
         }
       });
       _isInitialStateSet = true;
@@ -58,7 +58,11 @@ class _SuraParaNavigationViewState
           child: Row(
             children: [
               Expanded(flex: 1, child: _buildParaList(ref)),
-              const VerticalDivider(width: 1, thickness: 1),
+              VerticalDivider(
+                width: 1,
+                thickness: 1,
+                color: Theme.of(context).extension<AppThemeColors>()!.divider,
+              ),
               Expanded(flex: 1, child: _buildStartList(ref)),
             ],
           ),
@@ -68,7 +72,7 @@ class _SuraParaNavigationViewState
   }
 
   @override
-  void didUpdateWidget(covariant SuraParaNavigationView oldWidget) {
+  void didUpdateWidget(covariant TilawatParaNavigationView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.currentSuraNumber != widget.currentSuraNumber ||
         oldWidget.currentAyahNumber != widget.currentAyahNumber) {
@@ -78,7 +82,7 @@ class _SuraParaNavigationViewState
       );
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          ref.read(selectedDrawerParaProvider.notifier).state = para;
+          ref.read(selectedTilawatDrawerParaProvider.notifier).state = para;
         }
       });
     }
@@ -102,11 +106,11 @@ class _SuraParaNavigationViewState
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final appBarBg = appColors.drawerHeaderBg;
-    final appBarFg = appColors.appBarText;
+    final headerBg = appColors.drawerHeaderBg;
+    final headerFg = appColors.appBarText;
 
     return Container(
-      color: appBarBg,
+      color: headerBg,
       padding: EdgeInsets.symmetric(vertical: 12.h),
       child: Row(
         children: [
@@ -115,7 +119,7 @@ class _SuraParaNavigationViewState
               'পারা',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: appBarFg,
+                color: headerFg,
                 fontWeight: FontWeight.bold,
                 fontSize: fontSize,
               ),
@@ -126,7 +130,7 @@ class _SuraParaNavigationViewState
               'শুরু',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: appBarFg,
+                color: headerFg,
                 fontWeight: FontWeight.bold,
                 fontSize: fontSize,
               ),
@@ -138,7 +142,7 @@ class _SuraParaNavigationViewState
   }
 
   Widget _buildParaList(WidgetRef ref) {
-    final selectedPara = ref.watch(selectedDrawerParaProvider);
+    final selectedPara = ref.watch(selectedTilawatDrawerParaProvider);
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
     final selectedBg = appColors.highlight;
     final selectedFg = appColors.primaryText;
@@ -170,7 +174,8 @@ class _SuraParaNavigationViewState
             ),
           ),
           onTap: () {
-            ref.read(selectedDrawerParaProvider.notifier).state = paraNumber;
+            ref.read(selectedTilawatDrawerParaProvider.notifier).state =
+                paraNumber;
           },
         );
       },
@@ -178,7 +183,7 @@ class _SuraParaNavigationViewState
   }
 
   Widget _buildStartList(WidgetRef ref) {
-    final selectedPara = ref.watch(selectedDrawerParaProvider);
+    final selectedPara = ref.watch(selectedTilawatDrawerParaProvider);
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
     final selectedBg = appColors.highlight;
     final selectedFg = appColors.primaryText;
@@ -214,11 +219,8 @@ class _SuraParaNavigationViewState
   void _navigateToAyah(BuildContext context, int suraNumber, int ayahNumber) {
     Scaffold.of(context).closeDrawer();
 
-    if (suraNumber == widget.currentSuraNumber) {
-      ref.read(suraScrollCommandProvider.notifier).state = ScrollCommand(
-        suraNumber: suraNumber,
-        scrollIndex: ayahNumber - 1,
-      );
+    if (suraNumber == widget.currentSuraNumber &&
+        ayahNumber == widget.currentAyahNumber) {
       return;
     }
 
@@ -228,9 +230,9 @@ class _SuraParaNavigationViewState
       await Future.delayed(const Duration(milliseconds: 50));
       if (!context.mounted) return;
       context.push(
-        buildSuraRoute(
+        buildTilawatRoute(
           suraNumber: suraNumber,
-          scrollIndex: ayahNumber - 1,
+          ayahNumber: ayahNumber,
           returnTo: widget.returnTo,
         ),
       );
