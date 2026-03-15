@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
 import '../models/tilawat_models.dart';
 
 final quranPagesProvider =
@@ -19,22 +20,24 @@ final quranPagesProvider =
   }
 
   final List<QuranPage> surahPages = [];
-  int localPageCounter = 0;
 
   final String suraNameBengali = targetSuraJson['name_bengali'];
   final String suraNameArabic = targetSuraJson['name_arabic'];
-  final int paraNumber = targetSuraJson['para_number'];
+  final quranInfoService = ref.read(quranInfoServiceProvider);
 
   for (var pageJson in targetSuraJson['pages']) {
-    localPageCounter++;
-
     final List<dynamic> ayahsJson = pageJson['ayahs'];
     final List<TilawatAyah> ayahs =
         ayahsJson.map((ayahJson) => TilawatAyah.fromJson(ayahJson)).toList();
+    final int pageNumberInSurah =
+        pageJson['page_number_in_sura'] as int? ?? (surahPages.length + 1);
+    final int firstAyahNumber = ayahs.isNotEmpty ? ayahs.first.ayahNumber : 1;
+    final int paraNumber =
+        quranInfoService.getParaBySuraAyah(suraNumber, firstAyahNumber);
 
     surahPages.add(
       QuranPage(
-        pageNumberInSurah: localPageCounter,
+        pageNumberInSurah: pageNumberInSurah,
         paraNumber: paraNumber,
         content: [
           PageContent(
@@ -42,7 +45,7 @@ final quranPagesProvider =
             suraNameBengali: suraNameBengali,
             suraNameArabic: suraNameArabic,
             ayahs: ayahs,
-          )
+          ),
         ],
       ),
     );

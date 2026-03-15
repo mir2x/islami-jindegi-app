@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart'
     show paraStarts;
 import 'package:native_app/features/sura/utils/navigation_routes.dart';
+import 'package:native_app/shared/quran_data.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
 final selectedTilawatDrawerParaProvider = StateProvider<int>((_) => 1);
@@ -54,19 +55,7 @@ class _TilawatParaNavigationViewState
     return Column(
       children: [
         _buildHeader(context),
-        Expanded(
-          child: Row(
-            children: [
-              Expanded(flex: 1, child: _buildParaList(ref)),
-              VerticalDivider(
-                width: 1,
-                thickness: 1,
-                color: Theme.of(context).extension<AppThemeColors>()!.divider,
-              ),
-              Expanded(flex: 1, child: _buildStartList(ref)),
-            ],
-          ),
-        ),
+        Expanded(child: _buildParaList(ref)),
       ],
     );
   }
@@ -111,32 +100,15 @@ class _TilawatParaNavigationViewState
 
     return Container(
       color: headerBg,
-      padding: EdgeInsets.symmetric(vertical: 12.h),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              'পারা',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: headerFg,
-                fontWeight: FontWeight.bold,
-                fontSize: fontSize,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              'শুরু',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: headerFg,
-                fontWeight: FontWeight.bold,
-                fontSize: fontSize,
-              ),
-            ),
-          ),
-        ],
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
+      child: Text(
+        'পারা',
+        style: TextStyle(
+          color: headerFg,
+          fontWeight: FontWeight.bold,
+          fontSize: fontSize,
+        ),
       ),
     );
   }
@@ -148,69 +120,52 @@ class _TilawatParaNavigationViewState
     final selectedFg = appColors.primaryText;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
-    final fontSize = isLandscape ? 14.0 : 16.sp;
+    final titleFontSize = isLandscape ? 14.0 : 16.sp;
+    final subtitleFontSize = isLandscape ? 11.0 : 12.sp;
 
     return ListView.separated(
       padding: EdgeInsets.zero,
-      itemCount: 30,
+      itemCount: paraStarts.length,
       separatorBuilder: (context, _) =>
           Divider(height: 1.h, color: appColors.divider),
       itemBuilder: (context, index) {
         final paraNumber = index + 1;
         final isSelected = paraNumber == selectedPara;
+        final (suraNumber, ayahNumber) = paraStarts[index];
+        final suraName = suraNames[suraNumber - 1];
 
         return ListTile(
           tileColor: isSelected ? selectedBg : null,
-          title: Center(
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 16.w,
+            vertical: 8.h,
+          ),
+          title: Text(
+            'পারা ${_toBengaliNumber(paraNumber)}',
+            style: TextStyle(
+              fontSize: titleFontSize,
+              color: isSelected ? selectedFg : appColors.primaryText,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          subtitle: Padding(
+            padding: EdgeInsets.only(top: 2.h),
             child: Text(
-              _toBengaliNumber(paraNumber),
+              'সূরা $suraName • আয়াত ${_toBengaliNumber(ayahNumber)}',
               style: TextStyle(
-                fontSize: fontSize,
+                fontSize: subtitleFontSize,
                 color: isSelected
-                    ? selectedFg
-                    : Theme.of(context).textTheme.bodyLarge?.color,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ? selectedFg.withValues(alpha: 0.82)
+                    : appColors.secondaryText,
               ),
             ),
           ),
           onTap: () {
             ref.read(selectedTilawatDrawerParaProvider.notifier).state =
                 paraNumber;
+            _navigateToAyah(context, suraNumber, ayahNumber);
           },
-        );
-      },
-    );
-  }
-
-  Widget _buildStartList(WidgetRef ref) {
-    final selectedPara = ref.watch(selectedTilawatDrawerParaProvider);
-    final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final selectedBg = appColors.highlight;
-    final selectedFg = appColors.primaryText;
-    final isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
-    final fontSize = isLandscape ? 12.0 : 14.sp;
-    final (suraNumber, ayahNumber) = paraStarts[selectedPara - 1];
-
-    return ListView.separated(
-      padding: EdgeInsets.zero,
-      itemCount: 1,
-      separatorBuilder: (context, _) =>
-          Divider(height: 1.h, color: appColors.divider),
-      itemBuilder: (context, _) {
-        return ListTile(
-          tileColor: selectedBg,
-          title: Center(
-            child: Text(
-              '${_toBengaliNumber(suraNumber)}:${_toBengaliNumber(ayahNumber)}',
-              style: TextStyle(
-                fontSize: fontSize,
-                color: selectedFg,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          onTap: () => _navigateToAyah(context, suraNumber, ayahNumber),
+          minVerticalPadding: 0,
         );
       },
     );
