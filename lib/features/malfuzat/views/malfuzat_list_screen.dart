@@ -15,17 +15,65 @@ import 'package:native_app/widgets/filter/subitem.dart';
 import 'package:native_app/widgets/filter/triple_switch_button.dart';
 import 'package:native_app/widgets/presentation/content_list_card.dart';
 import 'package:native_app/providers/downloaded_malfuzat.dart';
+import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
 import '../providers/malfuzat_providers.dart';
 
-class MalfuzatListScreen extends ConsumerWidget {
+class MalfuzatListScreen extends ConsumerStatefulWidget {
   const MalfuzatListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MalfuzatListScreen> createState() => _MalfuzatListScreenState();
+}
+
+class _MalfuzatListScreenState extends ConsumerState<MalfuzatListScreen> {
+  final ScrollController _scrollController = ScrollController();
+  final Map<String, GlobalKey> _itemKeys = {};
+  String? _lastScrolledToId;
+
+  GlobalKey _keyFor(String id) => _itemKeys.putIfAbsent(id, () => GlobalKey());
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToLastVisited(String? lastId) {
+    if (lastId == null || lastId == _lastScrolledToId) return;
+    final ctx = _keyFor(lastId).currentContext;
+    if (ctx != null) {
+      _lastScrolledToId = lastId;
+      Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+        alignment: 0.3,
+      );
+    } else {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (!mounted) return;
+        final retryCtx = _keyFor(lastId).currentContext;
+        if (retryCtx != null) {
+          _lastScrolledToId = lastId;
+          Scrollable.ensureVisible(
+            retryCtx,
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
+            alignment: 0.3,
+          );
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(malfuzatQueryParamsProvider);
+    final lastVisited = ref.watch(lastVisitedProvider);
+    final lastMalfuzatId = lastVisited.value?.getString('lastMalfuzat');
 
     return AppScaffold(
       onBackPressed: () async => context.go('/'),
@@ -268,6 +316,8 @@ class MalfuzatListScreen extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: InfiniteList(
                   qParams: qParams,
+                  scrollController: _scrollController,
+                  onFirstPageLoaded: () => _scrollToLastVisited(lastMalfuzatId),
                   resourceFetcher: (Map<String, dynamic> params) async {
                     final api = ref.read(malfuzatApiServiceProvider);
                     final offline = ref.read(malfuzatOfflineServiceProvider);
@@ -296,14 +346,23 @@ class MalfuzatListScreen extends ConsumerWidget {
                     }
                   },
                   itemBuilder: (_, item, __) {
+                    final isRecent = item.id == lastMalfuzatId;
+                    if (isRecent && _lastScrolledToId != item.id) {
+                      WidgetsBinding.instance.addPostFrameCallback(
+                        (_) => _scrollToLastVisited(item.id),
+                      );
+                    }
                     return InkWell(
+                      key: _keyFor(item.id),
                       onTap: () => context.push('/malfuzat/${item.id}'),
                       child: ContentListCard(
+                        recentlyVisited: isRecent,
                         highlightProvider: getDownloadedMalfuzatByIdProvider(
                           item.id,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Flexible(
                               child: Column(
@@ -332,6 +391,7 @@ class MalfuzatListScreen extends ConsumerWidget {
                             LastVisited(
                               resourceKey: 'lastMalfuzat',
                               resourceId: item.id,
+                              isAudio: item.audio != null,
                             ),
                           ],
                         ),

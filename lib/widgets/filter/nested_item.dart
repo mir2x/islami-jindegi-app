@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
@@ -38,10 +37,13 @@ class FilterNestedItemState extends ConsumerState<FilterNestedItem> {
 
       if (isOpen) {
         WidgetsBinding.instance.addPostFrameCallback((_) async {
-          Scrollable.ensureVisible(
-            GlobalObjectKey(widget.itemId).currentContext!,
-            duration: const Duration(milliseconds: 500),
-          );
+          final ctx = GlobalObjectKey(widget.itemId).currentContext;
+          if (ctx != null) {
+            Scrollable.ensureVisible(
+              ctx,
+              duration: const Duration(milliseconds: 500),
+            );
+          }
         });
       }
     });
@@ -57,76 +59,47 @@ class FilterNestedItemState extends ConsumerState<FilterNestedItem> {
         widget.subitems
             .map((s) => s.id)
             .any((id) => id == qParams[widget.paramKey]);
+    final expanded = isSelected || isOpen;
 
     return Container(
+      key: GlobalObjectKey(widget.itemId),
       decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: colors.divider,
-          ),
-        ),
+        border: Border(bottom: BorderSide(color: colors.divider)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (isSelected) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 10),
+          InkWell(
+            onTap: isSelected ? null : toggleOpen,
+            child: Container(
+              color: isSelected ? colors.highlight : null,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               child: Row(
                 children: [
                   Expanded(
                     child: Text(
                       widget.itemTitle,
-                      style: textTheme.titleMedium,
+                      style: isSelected
+                          ? textTheme.labelMedium
+                          : textTheme.titleMedium,
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  SvgPicture.asset(
-                    'assets/images/icons/angle-up.svg',
-                    fit: BoxFit.scaleDown,
-                    width: 20,
+                  const SizedBox(width: 8),
+                  Icon(
+                    expanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    size: 20,
+                    color: colors.primary,
                   ),
                 ],
               ),
             ),
-          ] else ...[
-            InkWell(
-              key: GlobalObjectKey(widget.itemId),
-              onTap: toggleOpen,
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        widget.itemTitle,
-                        style: textTheme.titleMedium,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    isOpen
-                        ? SvgPicture.asset(
-                            'assets/images/icons/angle-up.svg',
-                            fit: BoxFit.scaleDown,
-                            width: 20,
-                          )
-                        : SvgPicture.asset(
-                            'assets/images/icons/angle-down.svg',
-                            fit: BoxFit.scaleDown,
-                            width: 20,
-                          ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-          if (isSelected || isOpen) ...[
-            Container(
-              padding: const EdgeInsets.only(
-                left: 25,
-                bottom: 5,
-              ),
-              constraints: const BoxConstraints(maxHeight: 150),
+          ),
+          if (expanded) ...[
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 160),
               child: Scrollbar(
                 thumbVisibility: true,
                 controller: sectionController,

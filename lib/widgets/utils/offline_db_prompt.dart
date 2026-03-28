@@ -278,11 +278,16 @@ class _OfflineDbPromptState extends State<OfflineDbPrompt> {
 
       if (mounted) {
         setState(() => _downloading = false);
+        final colors = Theme.of(context).extension<AppThemeColors>()!;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
+            backgroundColor: colors.highlight,
             content: Text(
               'অফলাইন ডাটা সফলভাবে ডাউনলোড হয়েছে ✓',
-              style: TextStyle(fontFamily: 'bangla/solaimanlipi'),
+              style: TextStyle(
+                fontFamily: 'bangla/solaimanlipi',
+                color: colors.primaryText,
+              ),
             ),
           ),
         );

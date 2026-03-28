@@ -7,12 +7,17 @@ class ContentListCard extends ConsumerWidget {
     super.key,
     required this.child,
     this.highlightProvider,
+    this.recentlyVisited = false,
     this.margin = const EdgeInsets.only(bottom: 16),
     this.padding = const EdgeInsets.all(18),
   });
 
   final Widget child;
   final dynamic highlightProvider;
+
+  /// When true the card background uses [AppThemeColors.highlight] to
+  /// visually distinguish the most-recently-opened item in the list.
+  final bool recentlyVisited;
   final EdgeInsetsGeometry margin;
   final EdgeInsetsGeometry padding;
 
@@ -39,7 +44,7 @@ class ContentListCard extends ConsumerWidget {
       margin: margin,
       padding: padding,
       decoration: BoxDecoration(
-        color: colors.cardBg,
+        color: recentlyVisited ? colors.highlight : colors.cardBg,
         borderRadius: BorderRadius.circular(20),
         border: border ?? Border.all(color: colors.divider, width: 1),
         boxShadow: [

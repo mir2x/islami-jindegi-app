@@ -23,8 +23,9 @@ class DonationScreen extends ConsumerWidget {
 
     return pageQuery.when(
       loading: () {
-        return const PlaceholderScaffold(
-          body: Center(child: CircularProgressIndicator()),
+        return PlaceholderScaffold(
+          onBackPressed: () async => context.go('/'),
+          body: const Center(child: CircularProgressIndicator()),
         );
       },
       error: (error, _) => ModelExeptionHandler(error: error),

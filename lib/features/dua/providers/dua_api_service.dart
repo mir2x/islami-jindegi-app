@@ -18,13 +18,16 @@ class DuaApiService {
 
   // ───────────────────── Duas ─────────────────────
 
-  /// Fetches all duas (offline mode – no pagination).
   Future<List<DuaItem>> fetchDuas({
+    int page = 1,
+    int perPage = 20,
     String? search,
     String? duaCategoryId,
     bool offline = true,
   }) async {
     final params = <String, dynamic>{
+      'page': page,
+      'per_page': perPage,
       'published': true,
       'offline': offline,
       if (search != null && search.isNotEmpty) 'search': search,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
@@ -22,8 +23,9 @@ class ContactUsScreen extends ConsumerWidget {
 
     return pageQuery.when(
       loading: () {
-        return const PlaceholderScaffold(
-          body: Center(child: CircularProgressIndicator()),
+        return PlaceholderScaffold(
+          onBackPressed: () async => context.go('/'),
+          body: const Center(child: CircularProgressIndicator()),
         );
       },
       error: (error, _) => ModelExeptionHandler(error: error),
@@ -34,6 +36,7 @@ class ContactUsScreen extends ConsumerWidget {
           storeKey: 'contactFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
+              onBackPressed: () async => context.go('/'),
               showPattern: false,
               title: Text(locales.contactUs),
               body: ItemContent(

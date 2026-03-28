@@ -13,6 +13,9 @@ class InfiniteList<ItemType> extends StatefulWidget {
     this.pageSize = 12,
     this.qParams = const {},
     this.padding = 25,
+    this.scrollController,
+    this.onFirstPageLoaded,
+    this.preloadToPage = 1,
   });
 
   final Function resourceFetcher;
@@ -21,6 +24,19 @@ class InfiniteList<ItemType> extends StatefulWidget {
   final int pageSize;
   final Map<String, dynamic> qParams;
   final double padding;
+
+  /// Optional external [ScrollController] for the list/grid.
+  final ScrollController? scrollController;
+
+  /// Called once, after the very first page has been appended successfully.
+  /// Use this to trigger scroll-to-item logic after initial items are rendered.
+  final VoidCallback? onFirstPageLoaded;
+
+  /// Eagerly load pages 1..preloadToPage on fresh load (silently, without
+  /// user scrolling). Useful when you need to scroll to an item that may be
+  /// on page 2 or 3 and the pager wouldn't otherwise load those pages until
+  /// the user scrolls down.
+  final int preloadToPage;
 
   @override
   State createState() => InfiniteListState();
@@ -32,13 +48,25 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
     invisibleItemsThreshold: 4,
   );
 
+  bool _firstPageEverLoaded = false;
+  bool _onLoadedFired = false;
+
   @override
   void initState() {
     super.initState();
-
     pController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant InfiniteList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.qParams != widget.qParams) {
+      _firstPageEverLoaded = false;
+      _onLoadedFired = false;
+      pController.refresh();
+    }
   }
 
   @override
@@ -67,6 +95,26 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
           final nextPageKey = pageKey + 1;
           pController.appendPage(newItems, nextPageKey);
         }
+
+        if (pageKey == 1 && !_firstPageEverLoaded) {
+          _firstPageEverLoaded = true;
+        }
+
+        // Eagerly load the next page if we haven't yet reached preloadToPage.
+        if (!isLastPage && pageKey < widget.preloadToPage) {
+          _fetchPage(pageKey + 1);
+        }
+
+        // Fire onFirstPageLoaded after all preload pages are done (or at the
+        // last available page). This ensures the callback sees all eagerly-
+        // loaded items, not just page 1.
+        if (!_onLoadedFired &&
+            (pageKey >= widget.preloadToPage || isLastPage)) {
+          _onLoadedFired = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            widget.onFirstPageLoaded?.call();
+          });
+        }
       }
     } catch (error) {
       pController.error = error;
@@ -75,11 +123,10 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
 
   @override
   Widget build(BuildContext context) {
-    pController.refresh();
-
     if (widget.gridDelegate != null) {
       return PagedGridView(
         pagingController: pController,
+        scrollController: widget.scrollController,
         builderDelegate: PagedChildBuilderDelegate<ItemType>(
           itemBuilder: widget.itemBuilder,
           firstPageErrorIndicatorBuilder: (_) => FirstPageErrorIndicator(
@@ -96,6 +143,7 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
     } else {
       return PagedListView<int, ItemType>(
         pagingController: pController,
+        scrollController: widget.scrollController,
         builderDelegate: PagedChildBuilderDelegate<ItemType>(
           itemBuilder: widget.itemBuilder,
           firstPageErrorIndicatorBuilder: (_) => FirstPageErrorIndicator(

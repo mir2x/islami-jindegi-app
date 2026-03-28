@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
@@ -26,6 +27,7 @@ class LocationScreen extends ConsumerWidget {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return AppScaffold(
+      onBackPressed: () async => context.go('/'),
       showPattern: false,
       title: Text(locales.location),
       body: ItemContent(

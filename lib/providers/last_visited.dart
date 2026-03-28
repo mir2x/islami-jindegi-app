@@ -28,6 +28,13 @@ class LastVisitedNotifier extends AsyncNotifier<SharedPreferences> {
     state = AsyncValue.data(prefs);
   }
 
+  Future<dynamic> updateLastBook(value, {int? index}) async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setString('lastBook', value);
+    if (index != null) await prefs.setInt('lastBookIndex', index);
+    state = AsyncValue.data(prefs);
+  }
+
   Future<dynamic> updateLastBayan(value) async {
     var prefs = await SharedPreferences.getInstance();
     await prefs.setString('lastBayan', value);

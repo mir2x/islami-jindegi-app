@@ -10,6 +10,8 @@ class DuaOfflineService {
   // ───────────────────── Duas ─────────────────────
 
   Future<List<DuaItem>> queryDuas({
+    int page = 1,
+    int perPage = 20,
     String? search,
     String? duaCategoryId,
   }) async {
@@ -32,6 +34,8 @@ class DuaOfflineService {
       where: where.join(' AND '),
       whereArgs: args,
       orderBy: 'position ASC',
+      limit: perPage,
+      offset: (page - 1) * perPage,
     );
     return rows.map((r) => DuaItem.fromDb(r)).toList();
   }

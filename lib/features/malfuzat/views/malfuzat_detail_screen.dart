@@ -40,7 +40,7 @@ class MalfuzatDetailScreen extends ConsumerWidget {
 
         Future? previousPage() async {
           if (resource.position == null) {
-            await context.push('/malfuzat');
+            context.go('/malfuzat');
             return;
           }
           var previousResources = await api.fetchMalfuzatByPosition(
@@ -49,9 +49,9 @@ class MalfuzatDetailScreen extends ConsumerWidget {
           );
 
           if (previousResources.isEmpty) {
-            await context.push('/malfuzat');
+            context.go('/malfuzat');
           } else {
-            await context.push('/malfuzat/${previousResources.first.id}');
+            context.go('/malfuzat/${previousResources.first.id}');
           }
         }
 
@@ -63,7 +63,7 @@ class MalfuzatDetailScreen extends ConsumerWidget {
           );
 
           if (nextResources.isNotEmpty) {
-            await context.push('/malfuzat/${nextResources.first.id}');
+            context.go('/malfuzat/${nextResources.first.id}');
           }
         }
 
@@ -77,7 +77,7 @@ class MalfuzatDetailScreen extends ConsumerWidget {
           storeKey: 'malfuzatFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async => await context.push('/malfuzat'),
+              onBackPressed: () async => context.canPop() ? context.pop() : context.go('/malfuzat'),
               showPattern: false,
               title: Text(locales.malfuzat),
               body: NextPageSwipe(

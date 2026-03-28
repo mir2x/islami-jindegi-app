@@ -22,7 +22,7 @@ class Previous extends StatelessWidget {
     Color? iconColor = previousDisabled
         ? colors.secondaryText
         : contrastColor
-            ? colors.secondary
+            ? colors.primary
             : null;
     iconColor = this.iconColor ?? iconColor;
 

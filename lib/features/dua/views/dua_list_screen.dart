@@ -2,72 +2,64 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
-import 'package:easy_debounce/easy_debounce.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/offline_db_prompt.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
+import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/widgets/presentation/content_list_card.dart';
+import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
-import 'package:native_app/widgets/utils/with_preferences.dart';
 import '../providers/dua_providers.dart';
 
-class DuaListScreen extends StatelessWidget {
+class DuaListScreen extends ConsumerStatefulWidget {
   const DuaListScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return WithPreferences(
-      builder: (context, preferences) {
-        return _OfflineDuaList(preferences: preferences);
-      },
-    );
-  }
+  ConsumerState<DuaListScreen> createState() => _DuaListScreenState();
 }
 
-class _OfflineDuaList extends ConsumerStatefulWidget {
-  const _OfflineDuaList({required this.preferences});
+class _DuaListScreenState extends ConsumerState<DuaListScreen> {
+  final ScrollController _scrollController = ScrollController();
+  final Map<String, GlobalKey> _itemKeys = {};
+  String? _lastScrolledToId;
 
-  final dynamic preferences;
-
-  @override
-  _OfflineDuaListState createState() => _OfflineDuaListState();
-}
-
-class _OfflineDuaListState extends ConsumerState<_OfflineDuaList> {
-  ScrollController? duaController;
-
-  void updateLastDuaPosition() {
-    EasyDebounce.debounce(
-      'dua-position',
-      const Duration(milliseconds: 250),
-      () {
-        if (duaController!.hasClients) {
-          widget.preferences.setDouble(
-            'lastDuaPosition',
-            duaController!.position.pixels,
-          );
-        }
-      },
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    double lastDuaPosition =
-        widget.preferences.getDouble('lastDuaPosition') ?? 0.0;
-
-    duaController = ScrollController(initialScrollOffset: lastDuaPosition);
-    duaController!.addListener(updateLastDuaPosition);
-  }
+  GlobalKey _keyFor(String id) => _itemKeys.putIfAbsent(id, () => GlobalKey());
 
   @override
   void dispose() {
-    duaController!.removeListener(updateLastDuaPosition);
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _scrollToLastVisited(String? lastId) {
+    if (lastId == null || lastId == _lastScrolledToId) return;
+    final ctx = _keyFor(lastId).currentContext;
+    if (ctx != null) {
+      _lastScrolledToId = lastId;
+      Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+        alignment: 0.3,
+      );
+    } else {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (!mounted) return;
+        final retryCtx = _keyFor(lastId).currentContext;
+        if (retryCtx != null) {
+          _lastScrolledToId = lastId;
+          Scrollable.ensureVisible(
+            retryCtx,
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
+            alignment: 0.3,
+          );
+        }
+      });
+    }
   }
 
   @override
@@ -75,8 +67,8 @@ class _OfflineDuaListState extends ConsumerState<_OfflineDuaList> {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(duaQueryParamsProvider);
-
-    var modelQuery = ref.watch(allDuasProvider(qParams));
+    final lastVisited = ref.watch(lastVisitedProvider);
+    final lastDuaId = lastVisited.value?.getString('lastDuaDurud');
 
     return AppScaffold(
       onBackPressed: () async => context.go('/'),
@@ -146,44 +138,60 @@ class _OfflineDuaListState extends ConsumerState<_OfflineDuaList> {
             Expanded(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: modelQuery.when(
-                  loading: () {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                child: InfiniteList(
+                  qParams: qParams,
+                  scrollController: _scrollController,
+                  onFirstPageLoaded: () => _scrollToLastVisited(lastDuaId),
+                  resourceFetcher: (Map<String, dynamic> params) async {
+                    final api = ref.read(duaApiServiceProvider);
+                    final offline = ref.read(duaOfflineServiceProvider);
+                    try {
+                      return await api.fetchDuas(
+                        page: params['page'] ?? 1,
+                        perPage: params['per_page'] ?? 20,
+                        search: params['search'],
+                        duaCategoryId: params['duaCategoryId'],
+                      );
+                    } catch (_) {
+                      return await offline.queryDuas(
+                        page: params['page'] ?? 1,
+                        perPage: params['per_page'] ?? 20,
+                        search: params['search'],
+                        duaCategoryId: params['duaCategoryId'],
+                      );
+                    }
                   },
-                  error: (error, _) => Text(error.toString()),
-                  data: (resources) {
-                    return ListView.builder(
-                      controller: duaController,
-                      padding: const EdgeInsets.symmetric(vertical: 25),
-                      itemCount: resources.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        var item = resources[index];
-
-                        return InkWell(
-                          onTap: () => context.push('/duas/${item.id}'),
-                          child: ContentListCard(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    item.title,
-                                    style: textTheme.titleMedium?.copyWith(
-                                      height: 1.25,
-                                    ),
-                                  ),
+                  itemBuilder: (_, item, __) {
+                    final isRecent = item.id == lastDuaId;
+                    if (isRecent && _lastScrolledToId != item.id) {
+                      WidgetsBinding.instance.addPostFrameCallback(
+                        (_) => _scrollToLastVisited(item.id),
+                      );
+                    }
+                    return InkWell(
+                      key: _keyFor(item.id),
+                      onTap: () => context.push('/duas/${item.id}'),
+                      child: ContentListCard(
+                        recentlyVisited: isRecent,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                item.title,
+                                style: textTheme.titleMedium?.copyWith(
+                                  height: 1.25,
                                 ),
-                                LastVisited(
-                                  resourceKey: 'lastDuaDurud',
-                                  resourceId: item.id,
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                            LastVisited(
+                              resourceKey: 'lastDuaDurud',
+                              resourceId: item.id,
+                            ),
+                          ],
+                        ),
+                      ),
                     );
                   },
                 ),

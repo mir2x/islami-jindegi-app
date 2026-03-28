@@ -32,7 +32,7 @@ class BookmarkButton extends ConsumerWidget {
         if (bookmark != null) {
           return IconButton(
             icon: const Icon(Icons.bookmark_remove),
-            color: iconColor ?? colors.secondary,
+            color: iconColor ?? colors.primary,
             onPressed: () {
               ref
                   .read(bookmarkProviderWithLink.notifier)
@@ -49,7 +49,7 @@ class BookmarkButton extends ConsumerWidget {
         } else {
           return IconButton(
             icon: const Icon(Icons.bookmark_add),
-            color: iconColor ?? colors.secondary,
+            color: iconColor ?? colors.primary,
             onPressed: () {
               ref.read(bookmarkProviderWithLink.notifier).createItem({
                 'type': type,

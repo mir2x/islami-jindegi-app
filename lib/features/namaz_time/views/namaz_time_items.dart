@@ -48,6 +48,32 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
     super.dispose();
   }
 
+  String _timeUntil(DateTime? target, AppLocalizations locales, String lang) {
+    if (target == null) return '';
+    final now = DateTime.now();
+    DateTime t = target;
+    if (t.isBefore(now)) t = t.add(const Duration(days: 1));
+    final diff = t.difference(now);
+    final hours = diff.inHours;
+    final minutes = diff.inMinutes.remainder(60);
+    if (hours > 0) {
+      return locales.inHoursMinutes(
+        _localizeNumber(hours, lang),
+        _localizeNumber(minutes, lang),
+      );
+    }
+    return locales.inMinutes(_localizeNumber(minutes, lang));
+  }
+
+  String _localizeNumber(int n, String lang) {
+    if (lang != 'bn') return n.toString();
+    const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    return n.toString().split('').map((c) {
+      final d = int.tryParse(c);
+      return d != null ? bnDigits[d] : c;
+    }).join();
+  }
+
   @override
   Widget build(BuildContext context) {
     final locales = AppLocalizations.of(context)!;
@@ -55,7 +81,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
     final textTheme = Theme.of(context).textTheme;
     final appTheme = Theme.of(context).extension<AppThemeColors>()!;
     final dataProvider = ref.watch(preferencesAndGeolocationProvider);
-    final alarmStatesProvider = ref.watch(prayerAlarmProvider);
+    final alarmStatesAsync = ref.watch(prayerAlarmProvider);
 
     return dataProvider.when(
       loading: () => Container(
@@ -83,13 +109,12 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
         final asr = prayerTimes['asr']!;
         final maghrib = prayerTimes['maghrib']!;
         final isha = prayerTimes['isha']!;
-        final tahajjud = prayerTimes['tahajjud']!;
         final sunrise = prayerTimes['sunrise']!;
         final midday = prayerTimes['midday']!;
         final sunset = prayerTimes['sunset']!;
+
         final prayerNames = prayerTime.currentAndNextPrayerNames();
         final String currentPrayerKey = prayerNames['currentPrayer']!;
-        final String nextPrayerKey = prayerNames['nextPrayer']!;
 
         final String location = getLocationName(geolocation['location']);
         final int adjustment = prefs.getInt('hijriLocalAdjustment') ?? 0;
@@ -105,56 +130,62 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
         final String gregorianText =
             DateFormat('EEEE, dd MMM yyyy', currentLang).format(DateTime.now());
 
-        final DateTime? nextPrayerAt = prayerTime.getPrayerStartDateTime(
-          nextPrayerKey,
-        );
-        final String upcomingIn = _timeUntil(nextPrayerAt, locales);
+        // Sehri ends = fajr start - 10 minutes
+        final DateTime fajrStart = fajr['startDateTime'] as DateTime;
+        final DateTime sehriEndsAt =
+            fajrStart.subtract(const Duration(minutes: 10));
+        final String sehriEndsTime =
+            DateFormat.jm(currentLang).format(sehriEndsAt);
 
-        final alarmStates = alarmStatesProvider.when(
+        final alarmStates = alarmStatesAsync.when(
           loading: () => <String, bool>{},
           error: (_, __) => <String, bool>{},
           data: (states) => states,
         );
-        final bool anyAlarmOn = alarmStates.values.any((enabled) => enabled);
 
-        final List<_PrayerRowData> dailyPrayers = [
-          _PrayerRowData(
+        final List<_PrayerData> prayers = [
+          _PrayerData(
             keyName: 'fajr',
             title: fajr['title'],
             startTime: fajr['startTime'],
             endTime: fajr['endTime'],
+            endDateTime: fajr['endDateTime'] as DateTime,
             icon: Icons.wb_twilight_outlined,
             route: '/namaz-times/fajr',
           ),
-          _PrayerRowData(
+          _PrayerData(
             keyName: 'dhuhr',
             title: dhuhr['title'],
             startTime: dhuhr['startTime'],
             endTime: dhuhr['endTime'],
+            endDateTime: dhuhr['endDateTime'] as DateTime,
             icon: Icons.wb_sunny_outlined,
             route: '/namaz-times/zuhr',
           ),
-          _PrayerRowData(
+          _PrayerData(
             keyName: 'asr',
             title: asr['title'],
             startTime: asr['startTime'],
             endTime: asr['endTime'],
+            endDateTime: asr['endDateTime'] as DateTime,
             icon: Icons.sunny_snowing,
             route: '/namaz-times/asr',
           ),
-          _PrayerRowData(
+          _PrayerData(
             keyName: 'maghrib',
             title: maghrib['title'],
             startTime: maghrib['startTime'],
             endTime: maghrib['endTime'],
+            endDateTime: maghrib['endDateTime'] as DateTime,
             icon: Icons.nights_stay_outlined,
             route: '/namaz-times/maghrib',
           ),
-          _PrayerRowData(
+          _PrayerData(
             keyName: 'isha',
             title: isha['title'],
             startTime: isha['startTime'],
             endTime: isha['endTime'],
+            endDateTime: isha['endDateTime'] as DateTime,
             icon: Icons.bedtime_outlined,
             route: '/namaz-times/isha',
           ),
@@ -163,18 +194,15 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ── Location ──────────────────────────────────────────────
             Row(
               children: [
-                Icon(
-                  Icons.place_outlined,
-                  size: 20,
-                  color: appTheme.active,
-                ),
+                Icon(Icons.place_outlined, size: 18, color: appTheme.active),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     location,
-                    style: textTheme.titleMedium?.copyWith(
+                    style: textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: appTheme.primaryText,
                     ),
@@ -184,8 +212,8 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                   borderRadius: BorderRadius.circular(18),
                   onTap: () => context.push('/location'),
                   child: Container(
-                    width: 36,
-                    height: 36,
+                    width: 34,
+                    height: 34,
                     decoration: BoxDecoration(
                       color: appTheme.highlight,
                       borderRadius: BorderRadius.circular(18),
@@ -193,175 +221,74 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                     ),
                     child: Icon(
                       Icons.calendar_month_outlined,
-                      size: 18,
+                      size: 17,
                       color: appTheme.primaryText,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
+
+            // ── Date card ─────────────────────────────────────────────
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: appTheme.divider),
                 color: appTheme.highlight,
               ),
-              child: Column(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     hijriText,
-                    style: textTheme.titleMedium?.copyWith(
+                    style: textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: appTheme.active,
                     ),
                   ),
-                  const SizedBox(height: 2),
                   Text(
-                    gregorianText.toUpperCase(),
+                    gregorianText,
                     style: textTheme.labelSmall?.copyWith(
-                      letterSpacing: 0.4,
                       color: appTheme.secondaryText,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 16),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: appTheme.cardBg,
-                border: Border.all(color: appTheme.divider),
-                boxShadow: [
-                  BoxShadow(
-                    color: appTheme.shadow.withValues(alpha: 0.06),
-                    blurRadius: 16,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    locales.upcomingPrayer,
-                    style: textTheme.labelMedium?.copyWith(
-                      color: appTheme.active,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${prayerTimes[nextPrayerKey]!['title']} $upcomingIn',
-                    style: textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: appTheme.primaryText,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              locales.nextPrayerLabel,
-                              style: textTheme.labelMedium?.copyWith(
-                                color: appTheme.secondaryText,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              prayerTimes[nextPrayerKey]!['startTime'],
-                              style: textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: appTheme.primaryText,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      FilledButton(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: appTheme.active,
-                          foregroundColor: appTheme.appBarText,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        onPressed: () => context.push('/namaz-times/alarms'),
-                        child: Text(locales.setReminder),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
             const SizedBox(height: 14),
-            Row(
-              children: [
-                Expanded(
-                  child: _MetricCard(
-                    icon: Icons.nightlight_round,
-                    title: locales.sahurEnds,
-                    value: tahajjud['endTime'],
-                    accent: appTheme.active,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: _MetricCard(
-                    icon: Icons.fastfood_outlined,
-                    title: locales.iftar,
-                    value: maghrib['startTime'],
-                    accent: appTheme.active,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            _SectionHeader(
-              title: locales.dailyPrayers,
-              trailing: anyAlarmOn ? locales.autoAdhanOn : locales.autoAdhanOff,
-            ),
-            const SizedBox(height: 10),
-            ...dailyPrayers.map((item) {
-              final bool isActive = currentPrayerKey == item.keyName;
+
+            // ── Prayer cards ──────────────────────────────────────────
+            ...prayers.map((p) {
+              final bool isActive = currentPrayerKey == p.keyName;
               final bool hasAlarm =
-                  PrayerAlarmService.prayerKeys.contains(item.keyName);
-              final bool isAlarmEnabled = alarmStates[item.keyName] ?? false;
+                  PrayerAlarmService.prayerKeys.contains(p.keyName);
+              final bool isAlarmEnabled = alarmStates[p.keyName] ?? false;
+              final String timeLeft =
+                  isActive ? _timeUntil(p.endDateTime, locales, currentLang) : '';
 
               return Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: _PrayerRow(
-                  title: item.title,
-                  time: item.startTime,
-                  endTime: item.endTime,
-                  icon: item.icon,
+                padding: const EdgeInsets.only(bottom: 8),
+                child: _PrayerCard(
+                  prayer: p,
                   isActive: isActive,
-                  isAlarmEnabled: isAlarmEnabled,
                   hasAlarm: hasAlarm,
-                  onTap: () => context.push(item.route),
+                  isAlarmEnabled: isAlarmEnabled,
+                  timeLeft: timeLeft,
+                  onTap: () => context.push(p.route),
                   onAlarmTap: () {
                     ref
                         .read(prayerAlarmProvider.notifier)
-                        .toggleAlarm(item.keyName, !isAlarmEnabled);
+                        .toggleAlarm(p.keyName, !isAlarmEnabled);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
                           !isAlarmEnabled
-                              ? '${locales.alarmEnabled} - ${item.title}'
-                              : '${locales.alarmDisabled} - ${item.title}',
+                              ? '${locales.alarmEnabled} — ${p.title}'
+                              : '${locales.alarmDisabled} — ${p.title}',
                         ),
                         duration: const Duration(seconds: 2),
                       ),
@@ -370,144 +297,137 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                 ),
               );
             }),
+            const SizedBox(height: 14),
+
+            // ── Forbidden times (3 cols) ───────────────────────────────
+            Text(
+              locales.forbiddenTimes,
+              style: textTheme.labelMedium?.copyWith(
+                color: appTheme.secondaryText,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.4,
+              ),
+            ),
             const SizedBox(height: 8),
-            _SectionHeader(title: locales.forbiddenTimes),
-            const SizedBox(height: 10),
             Row(
               children: [
                 Expanded(
-                  child: _MetricCard(
+                  child: _SimpleTimeCard(
                     icon: Icons.wb_twilight,
-                    title: sunrise['title'],
-                    value: '${sunrise['startTime']} - ${sunrise['endTime']}',
-                    accent: appTheme.secondary,
-                    isCompact: true,
+                    label: sunrise['title'],
+                    value:
+                        '${sunrise['startTime']} – ${sunrise['endTime']}',
+                    accent: appTheme.primary,
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 8),
                 Expanded(
-                  child: _MetricCard(
+                  child: _SimpleTimeCard(
                     icon: Icons.wb_sunny,
-                    title: midday['title'],
-                    value: '${midday['startTime']} - ${midday['endTime']}',
-                    accent: appTheme.secondary,
-                    isCompact: true,
+                    label: midday['title'],
+                    value: '${midday['startTime']} – ${midday['endTime']}',
+                    accent: appTheme.primary,
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 8),
                 Expanded(
-                  child: _MetricCard(
+                  child: _SimpleTimeCard(
                     icon: Icons.wb_twilight_outlined,
-                    title: sunset['title'],
-                    value: '${sunset['startTime']} - ${sunset['endTime']}',
-                    accent: appTheme.secondary,
-                    isCompact: true,
+                    label: sunset['title'],
+                    value:
+                        '${sunset['startTime']} – ${sunset['endTime']}',
+                    accent: appTheme.primary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // ── Sehri ends + Iftar (2 cols) ────────────────────────────
+            Row(
+              children: [
+                Expanded(
+                  child: _SimpleTimeCard(
+                    icon: Icons.nightlight_round,
+                    label: locales.sahurEnds,
+                    value: sehriEndsTime,
+                    accent: appTheme.active,
+                    large: true,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _SimpleTimeCard(
+                    icon: Icons.fastfood_outlined,
+                    label: locales.iftar,
+                    value: maghrib['startTime'],
+                    accent: appTheme.active,
+                    large: true,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(14),
-                color: appTheme.highlight,
-                border: Border.all(color: appTheme.divider),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      '${locales.knowledge}\n${locales.knowledgeQuote}',
-                      style: textTheme.bodySmall?.copyWith(
-                        color: appTheme.primaryText,
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: appTheme.cardBg,
-                    ),
-                    child: Icon(
-                      Icons.menu_book_outlined,
-                      color: appTheme.active,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 14),
-            GridView.count(
-              crossAxisCount: 2,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              childAspectRatio: 1.15,
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
+
+            // ── 4 action icons ─────────────────────────────────────────
+            Row(
               children: [
-                _ActionTile(
-                  icon: Icons.explore_outlined,
-                  title: locales.qiblah,
-                  onTap: () => context.push('/qiblah'),
+                Expanded(
+                  child: _ActionIcon(
+                    icon: Icons.explore_outlined,
+                    label: locales.qiblah,
+                    onTap: () => context.push('/qiblah'),
+                  ),
                 ),
-                _ActionTile(
-                  icon: Icons.mosque_outlined,
-                  title: locales.mosques,
-                  onTap: () async {
-                    await ref
-                        .read(geolocationProvider.notifier)
-                        .updateCoordinates();
-                    if (!context.mounted) return;
-                    context.push('/mosques');
-                  },
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _ActionIcon(
+                    icon: Icons.mosque_outlined,
+                    label: locales.mosques,
+                    onTap: () async {
+                      await ref
+                          .read(geolocationProvider.notifier)
+                          .updateCoordinates();
+                      if (!context.mounted) return;
+                      context.push('/mosques');
+                    },
+                  ),
                 ),
-                _ActionTile(
-                  icon: Icons.alarm_outlined,
-                  title: locales.prayerAlarm,
-                  onTap: () => context.push('/namaz-times/alarms'),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _ActionIcon(
+                    icon: Icons.alarm_outlined,
+                    label: locales.prayerAlarm,
+                    onTap: () => context.push('/namaz-times/alarms'),
+                  ),
                 ),
-                _ActionTile(
-                  icon: Icons.settings_outlined,
-                  title: locales.settings,
-                  onTap: () => context.push('/namaz-times/settings'),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _ActionIcon(
+                    icon: Icons.settings_outlined,
+                    label: locales.settings,
+                    onTap: () => context.push('/namaz-times/settings'),
+                  ),
                 ),
               ],
             ),
+            const SizedBox(height: 8),
           ],
         );
       },
     );
   }
-
-  String _timeUntil(DateTime? nextPrayerAt, AppLocalizations locales) {
-    if (nextPrayerAt == null) return '';
-    final now = DateTime.now();
-    DateTime target = nextPrayerAt;
-    if (target.isBefore(now)) {
-      target = target.add(const Duration(days: 1));
-    }
-    final diff = target.difference(now);
-    final hours = diff.inHours;
-    final minutes = diff.inMinutes.remainder(60);
-    if (hours > 0) {
-      return locales.inHoursMinutes(hours, minutes);
-    }
-    return locales.inMinutes(minutes);
-  }
 }
 
-class _PrayerRowData {
-  const _PrayerRowData({
+// ── Data holder ────────────────────────────────────────────────────────────────
+
+class _PrayerData {
+  const _PrayerData({
     required this.keyName,
     required this.title,
     required this.startTime,
     required this.endTime,
+    required this.endDateTime,
     required this.icon,
     required this.route,
   });
@@ -516,127 +436,29 @@ class _PrayerRowData {
   final String title;
   final String startTime;
   final String endTime;
+  final DateTime endDateTime;
   final IconData icon;
   final String route;
 }
 
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({
-    required this.title,
-    this.trailing,
-  });
+// ── Prayer card ────────────────────────────────────────────────────────────────
 
-  final String title;
-  final String? trailing;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final appTheme = Theme.of(context).extension<AppThemeColors>()!;
-
-    return Row(
-      children: [
-        Text(
-          title,
-          style: textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w700,
-            color: appTheme.primaryText,
-          ),
-        ),
-        const Spacer(),
-        if (trailing != null)
-          Text(
-            trailing!,
-            style: textTheme.labelMedium?.copyWith(
-              color: appTheme.active,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class _MetricCard extends StatelessWidget {
-  const _MetricCard({
-    required this.icon,
-    required this.title,
-    required this.value,
-    required this.accent,
-    this.isCompact = false,
-  });
-
-  final IconData icon;
-  final String title;
-  final String value;
-  final Color accent;
-  final bool isCompact;
-
-  @override
-  Widget build(BuildContext context) {
-    final appTheme = Theme.of(context).extension<AppThemeColors>()!;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isCompact ? 8 : 12,
-        vertical: isCompact ? 10 : 14,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: appTheme.divider),
-        color: appTheme.cardBg,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(icon, color: accent, size: isCompact ? 16 : 18),
-          SizedBox(height: isCompact ? 4 : 6),
-          Text(
-            title.toUpperCase(),
-            textAlign: TextAlign.center,
-            style: textTheme.labelSmall?.copyWith(
-              color: appTheme.secondaryText,
-              letterSpacing: 0.6,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            value,
-            textAlign: TextAlign.center,
-            style: textTheme.titleMedium?.copyWith(
-              color: appTheme.primaryText,
-              fontWeight: FontWeight.w700,
-              fontSize: isCompact ? 15 : null,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PrayerRow extends StatelessWidget {
-  const _PrayerRow({
-    required this.title,
-    required this.time,
-    required this.endTime,
-    required this.icon,
+class _PrayerCard extends StatelessWidget {
+  const _PrayerCard({
+    required this.prayer,
     required this.isActive,
-    required this.isAlarmEnabled,
     required this.hasAlarm,
+    required this.isAlarmEnabled,
+    required this.timeLeft,
     required this.onTap,
     required this.onAlarmTap,
   });
 
-  final String title;
-  final String time;
-  final String endTime;
-  final IconData icon;
+  final _PrayerData prayer;
   final bool isActive;
-  final bool isAlarmEnabled;
   final bool hasAlarm;
+  final bool isAlarmEnabled;
+  final String timeLeft;
   final VoidCallback onTap;
   final VoidCallback onAlarmTap;
 
@@ -645,78 +467,108 @@ class _PrayerRow extends StatelessWidget {
     final appTheme = Theme.of(context).extension<AppThemeColors>()!;
     final textTheme = Theme.of(context).textTheme;
 
-    final Color bgColor = isActive ? appTheme.highlight : appTheme.cardBg;
-    final Color iconBg = isActive ? appTheme.cardBg : appTheme.highlight;
-
     return InkWell(
       borderRadius: BorderRadius.circular(14),
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+        padding:
+            const EdgeInsets.only(left: 12, top: 10, bottom: 10, right: 4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
-          color: bgColor,
+          color: isActive ? appTheme.highlight : appTheme.cardBg,
           border: Border.all(
-            color: isActive ? appTheme.highlightBorder : appTheme.divider,
+            color:
+                isActive ? appTheme.highlightBorder : appTheme.divider,
+            width: isActive ? 1.5 : 1,
           ),
         ),
         child: Row(
           children: [
+            // Icon
             Container(
-              width: 38,
-              height: 38,
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
-                color: iconBg,
+                color: isActive ? appTheme.cardBg : appTheme.highlight,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
-                icon,
+                prayer.icon,
+                size: 18,
                 color: isActive ? appTheme.active : appTheme.secondaryText,
-                size: 20,
               ),
             ),
             const SizedBox(width: 12),
+
+            // Name + time-left badge
             Expanded(
-              child: Text(
-                title,
-                style: textTheme.titleMedium?.copyWith(
-                  color: isActive ? appTheme.active : appTheme.primaryText,
-                  fontWeight: FontWeight.w700,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    prayer.title,
+                    style: textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color:
+                          isActive ? appTheme.active : appTheme.primaryText,
+                    ),
+                  ),
+                  if (isActive && timeLeft.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      timeLeft,
+                      style: textTheme.labelSmall?.copyWith(
+                        color: appTheme.active,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
+
+            // Start + end times
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  time,
-                  style: textTheme.titleMedium?.copyWith(
+                  prayer.startTime,
+                  style: textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: isActive ? appTheme.active : appTheme.primaryText,
+                    color:
+                        isActive ? appTheme.active : appTheme.primaryText,
                   ),
                 ),
                 Text(
-                  '${AppLocalizations.of(context)!.endsAt} $endTime',
+                  '${AppLocalizations.of(context)!.endsAt} ${prayer.endTime}',
                   style: textTheme.labelSmall?.copyWith(
                     color: appTheme.secondaryText,
-                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
-            if (hasAlarm) ...[
-              const SizedBox(width: 8),
-              IconButton(
-                onPressed: onAlarmTap,
-                icon: Icon(
-                  isAlarmEnabled
-                      ? Icons.notifications_active
-                      : Icons.notifications_off,
-                  color:
-                      isAlarmEnabled ? appTheme.active : appTheme.secondaryText,
+
+            // Alarm icon
+            if (hasAlarm)
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: onAlarmTap,
+                  icon: Icon(
+                    isAlarmEnabled
+                        ? Icons.notifications_active
+                        : Icons.notifications_none_outlined,
+                    size: 20,
+                    color: isAlarmEnabled
+                        ? appTheme.active
+                        : appTheme.secondaryText,
+                  ),
                 ),
-              ),
-            ],
+              )
+            else
+              const SizedBox(width: 40),
           ],
         ),
       ),
@@ -724,15 +576,80 @@ class _PrayerRow extends StatelessWidget {
   }
 }
 
-class _ActionTile extends StatelessWidget {
-  const _ActionTile({
+// ── Simple time card (forbidden / sehri / iftar) ───────────────────────────────
+
+class _SimpleTimeCard extends StatelessWidget {
+  const _SimpleTimeCard({
     required this.icon,
-    required this.title,
+    required this.label,
+    required this.value,
+    required this.accent,
+    this.large = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color accent;
+  final bool large;
+
+  @override
+  Widget build(BuildContext context) {
+    final appTheme = Theme.of(context).extension<AppThemeColors>()!;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: large ? 12 : 8,
+        vertical: large ? 12 : 10,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: appTheme.divider),
+        color: appTheme.cardBg,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(icon, color: accent, size: large ? 20 : 16),
+          SizedBox(height: large ? 6 : 4),
+          Text(
+            label.toUpperCase(),
+            textAlign: TextAlign.center,
+            style: textTheme.labelSmall?.copyWith(
+              color: appTheme.secondaryText,
+              letterSpacing: 0.4,
+              fontWeight: FontWeight.w700,
+              fontSize: large ? null : 9,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            textAlign: TextAlign.center,
+            style: textTheme.titleSmall?.copyWith(
+              color: appTheme.primaryText,
+              fontWeight: FontWeight.w700,
+              fontSize: large ? 16 : 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Action icon (row of 4) ─────────────────────────────────────────────────────
+
+class _ActionIcon extends StatelessWidget {
+  const _ActionIcon({
+    required this.icon,
+    required this.label,
     required this.onTap,
   });
 
   final IconData icon;
-  final String title;
+  final String label;
   final VoidCallback onTap;
 
   @override
@@ -741,34 +658,35 @@ class _ActionTile extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return InkWell(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(14),
       onTap: onTap,
       child: Container(
+        padding:
+            const EdgeInsets.symmetric(horizontal: 6, vertical: 14),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           color: appTheme.cardBg,
-          border: Border.all(
-            color: appTheme.divider,
-          ),
+          border: Border.all(color: appTheme.divider),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 46,
-              height: 46,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: appTheme.highlight,
               ),
-              child: Icon(icon, color: appTheme.active),
+              child: Icon(icon, color: appTheme.active, size: 20),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Text(
-              title,
-              style: textTheme.titleMedium?.copyWith(
+              label,
+              textAlign: TextAlign.center,
+              style: textTheme.labelSmall?.copyWith(
                 color: appTheme.primaryText,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 
-class FilterList extends ConsumerStatefulWidget {
+class FilterList extends StatefulWidget {
   const FilterList({
     super.key,
     required this.title,
@@ -29,10 +27,10 @@ class FilterList extends ConsumerStatefulWidget {
   final Future<List> Function(Map<String, dynamic>) resourceFetcher;
 
   @override
-  ConsumerState<FilterList> createState() => _FilterListState();
+  State<FilterList> createState() => _FilterListState();
 }
 
-class _FilterListState extends ConsumerState<FilterList> {
+class _FilterListState extends State<FilterList> {
   String? searchText;
 
   updateSearchText(value) {
@@ -43,79 +41,45 @@ class _FilterListState extends ConsumerState<FilterList> {
 
   @override
   Widget build(BuildContext context) {
-    var paramsProvider = widget.queryProvider ?? queryParamsProvider;
-    var qParams = ref.watch(paramsProvider);
     final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return Column(
       children: [
-        Container(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      widget.title,
-                    ),
-                    if (qParams.keys
-                        .any((k) => widget.paramKeys.contains(k))) ...[
-                      IconButton(
-                        constraints: const BoxConstraints(
-                          maxHeight: 40,
-                        ),
-                        splashRadius: 24,
-                        icon: const Icon(
-                          Icons.close,
-                        ),
-                        color: colors.secondaryText,
-                        onPressed: () {
-                          var qParamsNotifier =
-                              ref.read(paramsProvider.notifier);
-                          for (var k in widget.paramKeys) {
-                            qParamsNotifier.updateParams(k, '');
-                          }
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              if (widget.searchEnabled) ...[
-                Expanded(
-                  child: SearchField(
-                    value: searchText,
-                    maxHeight: 35,
-                    horizontalPadding: 10,
-                    onUpdate: updateSearchText,
-                  ),
-                ),
-              ],
-            ],
+        if (widget.searchEnabled) ...[
+          Container(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: SearchField(
+              value: searchText,
+              maxHeight: 35,
+              horizontalPadding: 10,
+              onUpdate: updateSearchText,
+            ),
           ),
-        ),
+        ],
         Expanded(
-          child: InfiniteList(
-            key: widget.searchEnabled
-                ? ValueKey('filter_search_$searchText')
-                : null,
-            pageSize: widget.pageSize,
-            padding: 2,
-            resourceFetcher: (Map<String, dynamic> params) async {
-              if (widget.searchEnabled &&
-                  searchText != null &&
-                  searchText!.isNotEmpty) {
-                params = {...params, 'search': searchText};
-              }
+          child: Container(
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: colors.divider),
+            ),
+            child: InfiniteList(
+              key: widget.searchEnabled
+                  ? ValueKey('filter_search_$searchText')
+                  : null,
+              pageSize: widget.pageSize,
+              padding: 0,
+              resourceFetcher: (Map<String, dynamic> params) async {
+                if (widget.searchEnabled &&
+                    searchText != null &&
+                    searchText!.isNotEmpty) {
+                  params = {...params, 'search': searchText};
+                }
 
-              return await widget.resourceFetcher(params);
-            },
-            itemBuilder: widget.itemBuilder,
+                return await widget.resourceFetcher(params);
+              },
+              itemBuilder: widget.itemBuilder,
+            ),
           ),
         ),
       ],

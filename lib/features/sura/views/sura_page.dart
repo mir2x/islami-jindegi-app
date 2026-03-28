@@ -49,6 +49,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
   int _bottomVisibleIndex = 0;
   bool _hasVisiblePositionUpdate = false;
   bool _nextSuraPromptShown = false;
+  bool _prevSuraPromptShown = false;
   bool _isDraggingScrollThumb = false;
   double? _dragThumbProgress;
 
@@ -163,6 +164,9 @@ class _SurahPageState extends ConsumerState<SurahPage> {
 
     if (_bottomVisibleIndex < _totalItems - 1) {
       _nextSuraPromptShown = false;
+    }
+    if (_topVisibleIndex > 0) {
+      _prevSuraPromptShown = false;
     }
   }
 
@@ -404,12 +408,131 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     });
   }
 
+  Future<void> _showPrevSuraPrompt() async {
+    if (_prevSuraPromptShown || widget.suraNumber <= 1) return;
+
+    _prevSuraPromptShown = true;
+    final prevSuraNumber = widget.suraNumber - 1;
+    final prevSuraName = suraNames[prevSuraNumber - 1];
+    final textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: colors.cardBg,
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: colors.divider),
+                boxShadow: [
+                  BoxShadow(
+                    color: colors.shadow.withValues(alpha: 0.18),
+                    blurRadius: 24,
+                    offset: const Offset(0, 12),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 54,
+                    height: 6,
+                    margin: const EdgeInsets.only(bottom: 18),
+                    decoration: BoxDecoration(
+                      color: colors.divider.withValues(alpha: 0.7),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                  ),
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          colors.primary.withValues(alpha: 0.94),
+                          colors.secondary.withValues(alpha: 0.82),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: Icon(Icons.auto_stories_rounded, color: colors.appBarText),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'আগের সূরায় যাবেন?',
+                    style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'আগের সূরা $prevSuraName এ যেতে চান?',
+                    style: textTheme.bodyLarge?.copyWith(color: colors.secondaryText, height: 1.45),
+                  ),
+                  const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.of(sheetContext).pop(),
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(50),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          ),
+                          child: const Text('এখন না'),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: () {
+                            Navigator.of(sheetContext).pop();
+                            if (!mounted || !context.mounted) return;
+                            context.pushReplacement(
+                              buildSuraRoute(
+                                suraNumber: prevSuraNumber,
+                                returnTo: widget.returnTo,
+                              ),
+                            );
+                          },
+                          style: FilledButton.styleFrom(
+                            minimumSize: const Size.fromHeight(50),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          ),
+                          child: Text('আগের সূরা ${prevSuraNumber.toBengaliDigit()}'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (!mounted) return;
+      _prevSuraPromptShown = false;
+    });
+  }
+
   bool _handleScrollNotification(ScrollNotification notification) {
-    if (notification is OverscrollNotification &&
-        notification.overscroll > 12 &&
-        _isAtSuraEnd &&
-        !_isDraggingScrollThumb) {
-      _showNextSuraPrompt();
+    if (notification is OverscrollNotification && !_isDraggingScrollThumb) {
+      if (notification.overscroll > (_totalItems <= 1 ? 0 : 12) && _isAtSuraEnd) {
+        _showNextSuraPrompt();
+      } else if (notification.overscroll < (_totalItems <= 1 ? 0 : -12) && _topVisibleIndex == 0) {
+        _showPrevSuraPrompt();
+      }
     }
     return false;
   }
@@ -575,6 +698,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                                   scrollOffsetController:
                                       _scrollOffsetController,
                                   itemPositionsListener: _itemPositionsListener,
+                                  physics: const AlwaysScrollableScrollPhysics(),
                                   itemCount: _totalItems,
                                   initialScrollIndex: _resolvedScrollIndex ?? 0,
                                   padding: const EdgeInsets.only(
@@ -782,8 +906,8 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                   top: top - trackTop,
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 120),
-                    width: _isDraggingScrollThumb ? 42 : 36,
-                    height: thumbHeight,
+                    width: _isDraggingScrollThumb ? 42 : 26,
+                    height: _isDraggingScrollThumb ? thumbHeight : 44,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -810,24 +934,26 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                           color: colors.appBarText,
                           size: 18,
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          visibleAyah.toBengaliDigit(),
-                          style: TextStyle(
-                            color: colors.appBarText,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 15,
+                        if (_isDraggingScrollThumb) ...[
+                          const SizedBox(height: 6),
+                          Text(
+                            visibleAyah.toBengaliDigit(),
+                            style: TextStyle(
+                              color: colors.appBarText,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 15,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'আয়াত',
-                          style: TextStyle(
-                            color: colors.appBarText,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 10,
+                          const SizedBox(height: 2),
+                          Text(
+                            'আয়াত',
+                            style: TextStyle(
+                              color: colors.appBarText,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 10,
+                            ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                   ),

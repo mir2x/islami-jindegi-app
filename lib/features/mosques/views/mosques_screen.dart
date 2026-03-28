@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/theme/app_theme_color.dart';
@@ -191,6 +192,7 @@ class _MosquesState extends ConsumerState<Mosques> {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return AppScaffold(
+      onBackPressed: () async => context.go('/'),
       title: Text(locales.mosques),
       body: geoData.when(
         loading: () => const Center(

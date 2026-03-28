@@ -217,6 +217,25 @@ class AyahMenu extends ConsumerWidget {
                   },
                 ),
               ),
+              // ── Touch mode toggle ───────────────────────
+              Consumer(
+                builder: (_, ref, __) {
+                  final isOn = ref.watch(touchModeProvider);
+                  return Expanded(
+                    child: IconButton(
+                      icon: HugeIcon(
+                        icon: HugeIcons.strokeRoundedTouchLocked03,
+                        color: isOn ? colors.secondary : colors.primaryText,
+                        size: 24.r,
+                      ),
+                      onPressed: () {
+                        ref.read(touchModeProvider.notifier).toggle();
+                        ref.read(selectedAyahProvider.notifier).clear();
+                      },
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),

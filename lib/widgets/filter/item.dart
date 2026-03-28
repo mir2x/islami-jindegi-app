@@ -23,6 +23,8 @@ class FilterItem extends ConsumerWidget {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
     var paramsProvider = queryProvider ?? queryParamsProvider;
     var qParams = ref.watch(paramsProvider);
+    final isSelected =
+        qParams.containsKey(paramKey) && qParams[paramKey] == itemId;
 
     return InkWell(
       onTap: () {
@@ -31,18 +33,13 @@ class FilterItem extends ConsumerWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: colors.divider,
-            ),
-          ),
+          color: isSelected ? colors.highlight : null,
+          border: Border(bottom: BorderSide(color: colors.divider)),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         child: Text(
           itemTitle,
-          style: (qParams.containsKey(paramKey) && qParams[paramKey] == itemId)
-              ? textTheme.labelMedium
-              : textTheme.titleMedium,
+          style: isSelected ? textTheme.labelMedium : textTheme.titleMedium,
         ),
       ),
     );

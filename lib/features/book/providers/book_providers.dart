@@ -33,7 +33,8 @@ final _connectivityProvider = FutureProvider<bool>((ref) async {
 // ═══════════════════════════════════════════════════
 
 final bookQueryParamsProvider =
-    StateNotifierProvider<BookQueryParamsNotifier, Map<String, dynamic>>((ref) {
+    StateNotifierProvider.autoDispose<BookQueryParamsNotifier,
+        Map<String, dynamic>>((ref) {
   return BookQueryParamsNotifier();
 });
 

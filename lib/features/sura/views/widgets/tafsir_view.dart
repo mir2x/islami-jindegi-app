@@ -26,6 +26,26 @@ class TafsirView extends ConsumerStatefulWidget {
 
 class _TafsirViewState extends ConsumerState<TafsirView> {
   int? _expandedPanelIndex;
+  final Map<int, double> _fontSizes = {};
+
+  static const double _defaultFontSize = 18.0;
+  static const double _minFontSize = 11.0;
+  static const double _maxFontSize = 26.0;
+  static const double _fontStep = 1.0;
+
+  double _fontSize(int index) => _fontSizes[index] ?? _defaultFontSize;
+
+  void _zoomIn(int index) {
+    setState(() {
+      _fontSizes[index] = (_fontSize(index) + _fontStep).clamp(_minFontSize, _maxFontSize);
+    });
+  }
+
+  void _zoomOut(int index) {
+    setState(() {
+      _fontSizes[index] = (_fontSize(index) - _fontStep).clamp(_minFontSize, _maxFontSize);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,24 +87,61 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
                     ),
                   );
                 },
-                body: Container(
+                body: Padding(
                   padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
-                  alignment: Alignment.centerLeft,
-                  child: item.isDownloaded
-                      ? AdaptiveText(
-                          (item.content != null && item.content!.isNotEmpty)
-                              ? item.content!
-                              : "এই আয়াতের জন্য কোনো তাফসীর পাওয়া যায়নি।",
-                          style: TextStyle(
-                            fontFamily: 'bangla/solaimanlipi',
-                            wordSpacing: 3,
-                            fontSize: 15,
-                            height: 1.8,
-                            color:
-                                Theme.of(context).textTheme.bodyMedium?.color,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // ── Font size controls ──────────────────────────
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          _FontSizeButton(
+                            icon: Icons.remove,
+                            enabled: _fontSize(index) > _minFontSize,
+                            onTap: () => _zoomOut(index),
+                            colors: colors,
                           ),
-                        )
-                      : _buildDownloadButton(item, ayahIdentifier),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Text(
+                              _fontSize(index).toStringAsFixed(0),
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: colors.secondaryText,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                          ),
+                          _FontSizeButton(
+                            icon: Icons.add,
+                            enabled: _fontSize(index) < _maxFontSize,
+                            onTap: () => _zoomIn(index),
+                            colors: colors,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      // ── Content ─────────────────────────────────────
+                      item.isDownloaded
+                          ? AdaptiveText(
+                              (item.content != null && item.content!.isNotEmpty)
+                                  ? item.content!
+                                  : "এই আয়াতের জন্য কোনো তাফসীর পাওয়া যায়নি।",
+                              style: TextStyle(
+                                fontFamily: 'bangla/solaimanlipi',
+                                wordSpacing: 3,
+                                fontSize: _fontSize(index),
+                                height: 1.8,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.color,
+                              ),
+                            )
+                          : _buildDownloadButton(item, ayahIdentifier),
+                    ],
+                  ),
                 ),
               );
             }).toList(),
@@ -167,6 +224,47 @@ class _TafsirViewState extends ConsumerState<TafsirView> {
         ),
         const SizedBox(height: 8),
       ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  FONT SIZE BUTTON
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _FontSizeButton extends StatelessWidget {
+  final IconData icon;
+  final bool enabled;
+  final VoidCallback onTap;
+  final AppThemeColors colors;
+
+  const _FontSizeButton({
+    required this.icon,
+    required this.enabled,
+    required this.onTap,
+    required this.colors,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: colors.highlight.withValues(alpha: 0.55),
+      borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: enabled ? onTap : null,
+        child: SizedBox(
+          width: 32,
+          height: 32,
+          child: Icon(
+            icon,
+            size: 16,
+            color: enabled
+                ? colors.primaryText
+                : colors.primaryText.withValues(alpha: 0.3),
+          ),
+        ),
+      ),
     );
   }
 }

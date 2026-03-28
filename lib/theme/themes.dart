@@ -47,6 +47,7 @@ ThemeData darkTheme(Map fonts) {
     popupMenuColor: AppColors.cardBgDark,
     dialogBackgroundColor: AppColors.cardBgDark,
     snackBarBackgroundColor: AppColors.cardBgDark,
+    snackBarContentTextColor: AppColors.primaryTextDark,
     dividerColor: AppColors.dividerDark,
   );
 }
@@ -95,6 +96,7 @@ ThemeData lightTheme(Map fonts) {
     popupMenuColor: AppColors.cardBgLight,
     dialogBackgroundColor: AppColors.cardBgLight,
     snackBarBackgroundColor: AppColors.cardBgLight,
+    snackBarContentTextColor: AppColors.primaryTextLight,
     dividerColor: AppColors.dividerLight,
   );
 }
@@ -143,6 +145,7 @@ ThemeData classicTheme(Map fonts) {
     popupMenuColor: AppColors.cardBgClassic,
     dialogBackgroundColor: AppColors.cardBgClassic,
     snackBarBackgroundColor: AppColors.primaryTextClassic,
+    snackBarContentTextColor: AppColors.appBarTextClassic,
     dividerColor: AppColors.dividerClassic,
   );
 }
@@ -165,6 +168,7 @@ ThemeData _buildTheme({
   Color? popupMenuColor,
   Color? dialogBackgroundColor,
   Color? snackBarBackgroundColor,
+  Color? snackBarContentTextColor,
   Color? selectionColor,
   Color? selectionHandleColor,
   Color? dividerColor,
@@ -226,6 +230,9 @@ ThemeData _buildTheme({
         ? null
         : SnackBarThemeData(
             backgroundColor: snackBarBackgroundColor,
+            contentTextStyle: snackBarContentTextColor == null
+                ? null
+                : TextStyle(color: snackBarContentTextColor),
           ),
     textSelectionTheme: selectionColor == null || selectionHandleColor == null
         ? null

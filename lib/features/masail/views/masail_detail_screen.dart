@@ -40,7 +40,7 @@ class MasailDetailScreen extends ConsumerWidget {
 
         Future? previousPage() async {
           if (resource.position == null) {
-            await context.push('/masail');
+            context.go('/masail');
             return;
           }
           var previousResources = await api.fetchMasailByPosition(
@@ -49,9 +49,9 @@ class MasailDetailScreen extends ConsumerWidget {
           );
 
           if (previousResources.isEmpty) {
-            await context.push('/masail');
+            context.go('/masail');
           } else {
-            await context.push('/masail/${previousResources.first.id}');
+            context.go('/masail/${previousResources.first.id}');
           }
         }
 
@@ -63,7 +63,7 @@ class MasailDetailScreen extends ConsumerWidget {
           );
 
           if (nextResources.isNotEmpty) {
-            await context.push('/masail/${nextResources.first.id}');
+            context.go('/masail/${nextResources.first.id}');
           }
         }
 
@@ -75,7 +75,7 @@ class MasailDetailScreen extends ConsumerWidget {
           storeKey: 'masailFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async => await context.push('/masail'),
+              onBackPressed: () async => context.canPop() ? context.pop() : context.go('/masail'),
               showPattern: false,
               title: Text(locales.masail),
               body: NextPageSwipe(

@@ -32,8 +32,8 @@ class BayanQueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
 }
 
 final bayanQueryParamsProvider =
-    StateNotifierProvider<BayanQueryParamsNotifier, Map<String, dynamic>>(
-        (ref) {
+    StateNotifierProvider.autoDispose<BayanQueryParamsNotifier,
+        Map<String, dynamic>>((ref) {
   return BayanQueryParamsNotifier();
 });
 

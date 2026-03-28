@@ -8,12 +8,30 @@ import 'package:native_app/helpers/file_utils.dart';
 import 'player.dart';
 import 'local_file.dart';
 
+// Tracks which audio resource currently "owns" the shared player.
+// Used to prevent a disposing provider from stopping audio that the
+// next provider has already set up.
+final _currentAudioIdProvider = StateProvider<String?>((ref) => null);
+
 final audioPlayerProvider =
     FutureProvider.autoDispose.family((ref, AudioResource audioResource) async {
   final AudioPlayer player = ref.read(playerProvider);
 
+  ref.onDispose(() async {
+    // Only stop the player if we still own it (i.e. no newer audio has
+    // taken over). This prevents the old bayan's dispose from silencing
+    // audio that the next bayan already configured.
+    if (ref.read(_currentAudioIdProvider) == audioResource.id) {
+      await player.stop();
+    }
+  });
+
   String filePath = fileTitlePath(audioResource.title, audioResource.id);
-  var localFile = await ref.watch(localFileProvider(filePath).future);
+  var localFile = await ref.read(localFileProvider(filePath).future);
+
+  // Claim ownership after the first await (outside the build phase),
+  // still before stop()/setAudioSource() so the race condition is avoided.
+  ref.read(_currentAudioIdProvider.notifier).state = audioResource.id;
 
   if (localFile != null) {
     var audioSource = AudioSource.file(

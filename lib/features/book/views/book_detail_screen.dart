@@ -22,12 +22,14 @@ import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/presentation/connect_to_internet.dart';
 import 'package:native_app/widgets/presentation/description_item.dart';
+import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/features/book/views/pdf_reader.dart';
 import 'package:native_app/features/book/views/image.dart';
 import 'package:native_app/theme/app_theme_color.dart';
+import 'package:native_app/providers/last_visited.dart';
 import '../providers/book_providers.dart';
 import '../providers/book_download_providers.dart';
 import '../models/book.dart';
@@ -109,13 +111,13 @@ class _BookContent extends ConsumerWidget {
     try {
       final previousBook = await _findAdjacentBook(ref, next: false);
       if (previousBook == null) {
-        context.go('/books');
+        context.canPop() ? context.pop() : context.go('/books');
         return;
       }
 
       context.go('/books/${previousBook.id}');
     } catch (_) {
-      context.go('/books');
+      context.canPop() ? context.pop() : context.go('/books');
     }
   }
 
@@ -159,9 +161,12 @@ class _BookContent extends ConsumerWidget {
       },
       error: (error, _) => Text(error.toString()),
       data: (chapters) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref.read(lastVisitedProvider.notifier).updateLastBook(book.id);
+        });
         if (chapters.isNotEmpty) {
           return AppScaffold(
-            onBackPressed: () async => context.go('/books'),
+            onBackPressed: () async => context.canPop() ? context.pop() : context.go('/books'),
             showPattern: false,
             title: Text(locales.book),
             body: NextPageSwipe(
@@ -418,7 +423,7 @@ class _BookContent extends ConsumerWidget {
           double screenWidth = MediaQuery.of(context).size.width;
 
           return AppScaffold(
-            onBackPressed: () async => context.go('/books'),
+            onBackPressed: () async => context.canPop() ? context.pop() : context.go('/books'),
             showPattern: false,
             title: Text(locales.book),
             body: SingleChildScrollView(
@@ -482,43 +487,31 @@ class _BookContent extends ConsumerWidget {
                     child: Column(
                       children: [
                         if (book.document != null && filePath != null) ...[
-                          WithConnectivity(
-                            builder: (context, isConnected) {
-                              if (isConnected) {
-                                return DescriptionItem(
-                                  title: '${locales.download}:',
-                                  description: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: DownloadButton(
-                                      filePath: filePath!,
-                                      fileUrl: fileSrcUrl(book.document),
-                                      callback: () async {
-                                        await ref.watch(
-                                          createDownloadedBookProvider({
-                                            'bookId': book.id,
-                                            'title': book.title,
-                                            'excerpt': book.excerpt,
-                                            'publisher': book.publisher,
-                                            'price': book.price,
-                                            'image': json.encode(book.image),
-                                            'document':
-                                                json.encode(book.document),
-                                            'authors': book.authors
-                                                .map((e) => e.name)
-                                                .toList()
-                                                .join(', '),
-                                            'publishedAt': book.publishedAt,
-                                          }).future,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  alignment: CrossAxisAlignment.center,
-                                  textWidth: 120,
-                                );
-                              } else {
-                                return const SizedBox.shrink();
-                              }
+                          DownloadItem(
+                            filePath: filePath!,
+                            fileUrl: fileSrcUrl(book.document),
+                            downloadCallback: () async {
+                              await ref.read(
+                                createDownloadedBookProvider({
+                                  'bookId': book.id,
+                                  'title': book.title,
+                                  'excerpt': book.excerpt,
+                                  'publisher': book.publisher,
+                                  'price': book.price,
+                                  'image': json.encode(book.image),
+                                  'document': json.encode(book.document),
+                                  'authors': book.authors
+                                      .map((e) => e.name)
+                                      .toList()
+                                      .join(', '),
+                                  'publishedAt': book.publishedAt,
+                                }).future,
+                              );
+                            },
+                            deleteCallback: () async {
+                              await ref.read(
+                                deleteDownloadedBookProvider(book.id).future,
+                              );
                             },
                           ),
                         ],
@@ -705,11 +698,19 @@ class _SubchaptersState extends ConsumerState<_Subchapters> {
                           'assets/images/icons/angle-up.svg',
                           fit: BoxFit.scaleDown,
                           width: 20,
+                          colorFilter: ColorFilter.mode(
+                            Theme.of(context).extension<AppThemeColors>()!.primary,
+                            BlendMode.srcIn,
+                          ),
                         )
                       : SvgPicture.asset(
                           'assets/images/icons/angle-down.svg',
                           fit: BoxFit.scaleDown,
                           width: 20,
+                          colorFilter: ColorFilter.mode(
+                            Theme.of(context).extension<AppThemeColors>()!.primary,
+                            BlendMode.srcIn,
+                          ),
                         ),
                 ],
               ),

@@ -25,8 +25,8 @@ class FontResizer extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
     final colors = Theme.of(context).extension<AppThemeColors>()!;
 
-    Color? textColor = contrastColor ? colors.secondary : null;
-    Color? iconColor = contrastColor ? colors.secondary : null;
+    Color? textColor = contrastColor ? colors.primary : null;
+    Color? iconColor = contrastColor ? colors.primary : null;
 
     return WithPreferences(
       builder: (context, preferences) {

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/features/quran/views/widgets/page_info_overlay.dart';
@@ -11,7 +12,7 @@ import '../../providers/ayah_highlight_providers.dart';
 import 'ayah_highlighter.dart';
 import 'ayah_menu.dart';
 
-class QuranPage extends ConsumerWidget {
+class QuranPage extends ConsumerStatefulWidget {
   final int pageIndex;
   final Directory editionDir;
   final int imageWidth;
@@ -27,19 +28,77 @@ class QuranPage extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<QuranPage> createState() => _QuranPageState();
+}
+
+class _QuranPageState extends ConsumerState<QuranPage> {
+  late final TransformationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    final scale = ref.read(quranPageScaleProvider);
+    _controller = TransformationController(
+      Matrix4.diagonal3Values(scale, scale, 1.0),
+    );
+    _controller.addListener(_onTransformChanged);
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onTransformChanged);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onTransformChanged() {
+    final scale = _getScale();
+    // Update zoom state for PageView physics
+    final isZoomed = scale > 1.05;
+    if (ref.read(quranPageZoomedProvider) != isZoomed) {
+      ref.read(quranPageZoomedProvider.notifier).state = isZoomed;
+    }
+  }
+
+  double _getScale() {
+    final m = _controller.value;
+    return m.getMaxScaleOnAxis();
+  }
+
+  /// Apply the current transform to a rect (layout coords → visual coords).
+  Rect _transformRect(Rect rect) {
+    final m = _controller.value;
+    final tl = MatrixUtils.transformPoint(m, rect.topLeft);
+    final br = MatrixUtils.transformPoint(m, rect.bottomRight);
+    return Rect.fromPoints(tl, br);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Keep controller in sync when +/- buttons change the scale provider
+    final targetScale = ref.watch(quranPageScaleProvider);
+    final currentScale = _getScale();
+    if ((currentScale - targetScale).abs() > 0.01) {
+      // Rebuild the matrix centred on viewport origin, preserving no pan
+      // (buttons always reset pan so you see the full page at new scale)
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _controller.value = Matrix4.diagonal3Values(targetScale, targetScale, 1.0);
+      });
+    }
+
     final allBoxesAsync = ref.watch(allBoxesProvider);
     final selectedState = ref.watch(selectedAyahProvider);
     final touchModeOn = ref.watch(touchModeProvider);
 
-    final logicalPage = pageIndex + 1;
-
+    final logicalPage = widget.pageIndex + 1;
     final pageNumber = logicalPage < kFirstPageNumber ? -1 : logicalPage;
     final boxes = pageNumber == -1
         ? const <AyahBox>[]
         : ref.watch(boxesForPageProvider(pageNumber));
     final notifier = ref.read(selectedAyahProvider.notifier);
-    final imgFile = File('${editionDir.path}/qm${pageIndex + 1}.$imageExt');
+    final imgFile =
+        File('${widget.editionDir.path}/qm${widget.pageIndex + 1}.${widget.imageExt}');
 
     final bool isSelectedAyahOnThisPage = selectedState != null &&
         pageNumber != -1 &&
@@ -51,61 +110,28 @@ class QuranPage extends ConsumerWidget {
         selectedState.source == AyahSelectionSource.tap &&
         isSelectedAyahOnThisPage;
 
-    void onTapDown(
-      TapDownDetails d,
-      double scaleX,
-      double scaleY,
-      List<AyahBox> currentPageBoxes,
-    ) {
-      final logicX = d.localPosition.dx / scaleX;
-      final logicY = d.localPosition.dy / scaleY;
-      final tappedBoxes =
-          currentPageBoxes.where((b) => b.contains(logicX, logicY)).toList();
-
-      if (tappedBoxes.isNotEmpty) {
-        final tappedSura = tappedBoxes.first.suraNumber;
-        final tappedAyah = tappedBoxes.first.ayahNumber;
-
-        if (selectedState != null &&
-            selectedState.source == AyahSelectionSource.tap &&
-            selectedState.suraNumber == tappedSura &&
-            selectedState.ayahNumber == tappedAyah) {
-          notifier.clear();
-        } else {
-          notifier.selectByTap(tappedSura, tappedAyah);
-        }
-      } else {
-        notifier.clear();
-      }
-    }
-
     return allBoxesAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(
-        child: Text(
-          e.toString(),
-          style: TextStyle(fontSize: 14.sp),
-        ),
+        child: Text(e.toString(), style: TextStyle(fontSize: 14.sp)),
       ),
       data: (_) => LayoutBuilder(
         builder: (_, constraints) {
-          final scaleX = constraints.maxWidth / imageWidth;
-          final scaleY = constraints.maxHeight / imageHeight;
+          final scaleX = constraints.maxWidth / widget.imageWidth;
+          final scaleY = constraints.maxHeight / widget.imageHeight;
 
-          List<Rect> highlightRectsOnThisPage = [];
-          Rect? menuAnchorRectOnThisPage;
+          List<Rect> highlightRects = [];
+          Rect? menuAnchorRect;
 
           if (selectedState != null && isSelectedAyahOnThisPage) {
-            final boxesForSelectedAyah = boxes
-                .where(
-                  (box) =>
-                      box.suraNumber == selectedState.suraNumber &&
-                      box.ayahNumber == selectedState.ayahNumber,
-                )
+            final boxesForAyah = boxes
+                .where((box) =>
+                    box.suraNumber == selectedState.suraNumber &&
+                    box.ayahNumber == selectedState.ayahNumber)
                 .toList();
 
-            if (boxesForSelectedAyah.isNotEmpty) {
-              highlightRectsOnThisPage = boxesForSelectedAyah.map((box) {
+            if (boxesForAyah.isNotEmpty) {
+              highlightRects = boxesForAyah.map((box) {
                 return Rect.fromLTWH(
                   box.minX * scaleX,
                   box.minY * scaleY,
@@ -115,47 +141,95 @@ class QuranPage extends ConsumerWidget {
               }).toList();
 
               try {
-                final firstBoxOnPageForSelectedAyah = boxesForSelectedAyah
-                    .reduce((a, b) => a.boxId < b.boxId ? a : b);
-                menuAnchorRectOnThisPage = Rect.fromLTWH(
-                  firstBoxOnPageForSelectedAyah.minX * scaleX,
-                  firstBoxOnPageForSelectedAyah.minY * scaleY,
-                  firstBoxOnPageForSelectedAyah.width * scaleX,
-                  firstBoxOnPageForSelectedAyah.height * scaleY,
+                final firstBox =
+                    boxesForAyah.reduce((a, b) => a.boxId < b.boxId ? a : b);
+                menuAnchorRect = Rect.fromLTWH(
+                  firstBox.minX * scaleX,
+                  firstBox.minY * scaleY,
+                  firstBox.width * scaleX,
+                  firstBox.height * scaleY,
                 );
               } catch (e) {
-                debugPrint(
-                    'Error finding first box for selected ayah on page $pageNumber: $e');
-                menuAnchorRectOnThisPage = null;
+                debugPrint('Error finding anchor box: $e');
               }
             }
           }
+
           return Stack(
             fit: StackFit.expand,
             children: [
-              Image.file(
-                imgFile,
-                fit: BoxFit.fill,
-              ),
-              CustomPaint(
-                painter: AyahHighlighter(
-                  highlightRectsOnThisPage,
-                  Theme.of(context)
-                      .extension<AppThemeColors>()!
-                      .selectionOverlay
-                      .withValues(alpha: 0.6),
+              // ── Zoomable content ──────────────────────────────────────
+              InteractiveViewer(
+                transformationController: _controller,
+                boundaryMargin: EdgeInsets.all(double.infinity),
+                minScale: 1.0,
+                maxScale: 3.0,
+                panEnabled: _getScale() > 1.05,
+                onInteractionEnd: (_) {
+                  // Sync scale back to provider after pinch
+                  ref
+                      .read(quranPageScaleProvider.notifier)
+                      .setScale(_getScale());
+                },
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.file(imgFile, fit: BoxFit.fill),
+                    CustomPaint(
+                      painter: AyahHighlighter(
+                        highlightRects,
+                        Theme.of(context)
+                            .extension<AppThemeColors>()!
+                            .selectionOverlay
+                            .withValues(alpha: 0.6),
+                      ),
+                    ),
+                    // Tap detector lives INSIDE the viewer so Flutter's hit
+                    // testing handles the transform and localPosition is
+                    // already in the image's coordinate space.
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTapDown: touchModeOn
+                          ? (_) => ref
+                              .read(barsVisibilityProvider.notifier)
+                              .toggle()
+                          : (details) {
+                              final logicX =
+                                  details.localPosition.dx / scaleX;
+                              final logicY =
+                                  details.localPosition.dy / scaleY;
+                              final tapped = boxes
+                                  .where((b) => b.contains(logicX, logicY))
+                                  .toList();
+
+                              if (tapped.isNotEmpty) {
+                                final s = tapped.first.suraNumber;
+                                final a = tapped.first.ayahNumber;
+                                if (selectedState != null &&
+                                    selectedState.source ==
+                                        AyahSelectionSource.tap &&
+                                    selectedState.suraNumber == s &&
+                                    selectedState.ayahNumber == a) {
+                                  notifier.clear();
+                                } else {
+                                  notifier.selectByTap(s, a);
+                                }
+                              } else {
+                                notifier.clear();
+                              }
+                            },
+                      child: Container(),
+                    ),
+                  ],
                 ),
               ),
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTapDown: touchModeOn
-                    ? (_) => ref.read(barsVisibilityProvider.notifier).toggle()
-                    : (details) => onTapDown(details, scaleX, scaleY, boxes),
-                child: Container(),
-              ),
-              if (showMenuOnThisPage && menuAnchorRectOnThisPage != null)
-                AyahMenu(anchorRect: menuAnchorRectOnThisPage),
-              PageInfoOverlay(pageIndex: pageIndex),
+
+              // ── Ayah menu – positioned in visual (transformed) coords ─
+              if (showMenuOnThisPage && menuAnchorRect != null)
+                AyahMenu(anchorRect: _transformRect(menuAnchorRect)),
+
+              // ── Page info overlay stays at fixed position ─────────────
+              PageInfoOverlay(pageIndex: widget.pageIndex),
             ],
           );
         },

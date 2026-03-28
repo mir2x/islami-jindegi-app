@@ -33,7 +33,7 @@ class SocialShare extends StatelessWidget {
 
     return IconButton(
       icon: const Icon(Icons.ios_share_rounded),
-      color: iconColor ?? colors.secondary,
+      color: iconColor ?? colors.primary,
       onPressed: () async {
         String text = '';
 

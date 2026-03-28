@@ -77,14 +77,11 @@ class AppScaffold extends ConsumerWidget {
         final useDarkHomeLogo =
             ThemeData.estimateBrightnessForColor(appBarBg) == Brightness.light;
 
-        return BackButtonListener(
-          onBackButtonPressed: () async {
-            if (onBackPressed != null) {
-              await onBackPressed!();
-              return Future.value(true);
-            } else {
-              return Future.value(false);
-            }
+        return PopScope(
+          canPop: onBackPressed == null,
+          onPopInvokedWithResult: (bool didPop, Object? result) async {
+            if (didPop) return;
+            await onBackPressed!();
           },
           child: Scaffold(
             backgroundColor: appColors.scaffoldBg,
@@ -351,26 +348,29 @@ class AppScaffold extends ConsumerWidget {
                 color: Theme.of(context).extension<AppThemeColors>()!.surfaceBg,
               ),
               constraints: const BoxConstraints.expand(),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  if (constraints.maxWidth < 768) {
-                    return body;
-                  } else {
-                    if (tabletBodyPadding) {
-                      double screenWidth = MediaQuery.of(context).size.width;
-
-                      return Container(
-                        padding: EdgeInsets.only(
-                          left: screenWidth * 0.06,
-                          right: screenWidth * 0.06,
-                        ),
-                        child: body,
-                      );
-                    } else {
+              child: SafeArea(
+                top: false,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (constraints.maxWidth < 768) {
                       return body;
+                    } else {
+                      if (tabletBodyPadding) {
+                        double screenWidth = MediaQuery.of(context).size.width;
+
+                        return Container(
+                          padding: EdgeInsets.only(
+                            left: screenWidth * 0.06,
+                            right: screenWidth * 0.06,
+                          ),
+                          child: body,
+                        );
+                      } else {
+                        return body;
+                      }
                     }
-                  }
-                },
+                  },
+                ),
               ),
             ),
             floatingActionButton: floatingActionButton,

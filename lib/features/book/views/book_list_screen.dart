@@ -10,22 +10,66 @@ import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/features/book/views/image.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:native_app/theme/app_theme_color.dart';
+import 'package:native_app/providers/last_visited.dart';
+import 'package:native_app/widgets/utils/last_visited.dart';
+import 'package:native_app/widgets/buttons/floating_downloaded.dart';
 import '../providers/book_providers.dart';
 import '../providers/book_download_providers.dart';
 
-class BookListScreen extends ConsumerWidget {
+class BookListScreen extends ConsumerStatefulWidget {
   const BookListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<BookListScreen> createState() => _BookListScreenState();
+}
+
+class _BookListScreenState extends ConsumerState<BookListScreen> {
+  final ScrollController _scrollController = ScrollController();
+  final Map<String, GlobalKey> _itemKeys = {};
+  String? _lastScrolledToId;
+
+  GlobalKey _keyForBook(String id) =>
+      _itemKeys.putIfAbsent(id, () => GlobalKey());
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToLastVisited(String? lastId) {
+    if (lastId == null || lastId == _lastScrolledToId) return;
+    final ctx = _keyForBook(lastId).currentContext;
+    debugPrint('[BookScroll] attempt — lastId=$lastId ctx=${ctx != null ? 'FOUND' : 'null'} keys=${_itemKeys.keys.length}');
+    if (ctx != null) {
+      _lastScrolledToId = lastId;
+      debugPrint('[BookScroll] scrolling to item');
+      Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+        alignment: 0.3,
+      );
+    }
+    // No retry here — itemBuilder fires again when item is rendered on any page
+  }
+
+  @override
+  Widget build(BuildContext context) {
     ref.watch(bookNavigationIdsProvider);
 
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     var qParams = ref.watch(bookQueryParamsProvider);
+    final lastVisited = ref.watch(lastVisitedProvider);
+    final lastBookId = lastVisited.value?.getString('lastBook');
+    final lastBookIndex = lastVisited.value?.getInt('lastBookIndex') ?? 0;
+    // pageSize is 12; compute which page the last-opened book was on so we can
+    // preload up to that page when the screen loads fresh from home.
+    final preloadToPage = (lastBookIndex ~/ 12) + 1;
+    debugPrint('[BookScroll] build — lastBookId=$lastBookId index=$lastBookIndex preloadToPage=$preloadToPage _lastScrolledToId=$_lastScrolledToId');
     double screenWidth =
         View.of(context).physicalSize.width / View.of(context).devicePixelRatio;
     bool isMobile = screenWidth < 768;
@@ -33,6 +77,10 @@ class BookListScreen extends ConsumerWidget {
     return AppScaffold(
       onBackPressed: () async => context.go('/'),
       title: Text(locales.books),
+      floatingActionButton: FloatingDownloadedButton(
+        label: locales.downloadedBooks,
+        onPressed: () async => context.push('/books/downloads'),
+      ),
       body: OfflineDbPrompt(
         feature: 'books',
         child: Column(
@@ -131,6 +179,30 @@ class BookListScreen extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: InfiniteList(
                   qParams: qParams,
+                  scrollController: _scrollController,
+                  onFirstPageLoaded: () {
+                    if (lastBookId == null || _lastScrolledToId == lastBookId) return;
+                    if (preloadToPage > 1) {
+                      // Item is on page 2+: jump to its approximate position so
+                      // the viewport moves there and itemBuilder renders it,
+                      // then the itemBuilder trigger calls ensureVisible precisely.
+                      final crossAxisCount = isMobile ? 2 : 3;
+                      final extent = isMobile ? 280.0 : 360.0;
+                      final spacing = isMobile ? 16.0 : 22.0;
+                      const topPadding = 25.0;
+                      final row = lastBookIndex ~/ crossAxisCount;
+                      final targetOffset = topPadding + row * (extent + spacing);
+                      debugPrint('[BookScroll] jumping to offset=$targetOffset for index=$lastBookIndex row=$row');
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (!mounted || !_scrollController.hasClients) return;
+                        _scrollController.jumpTo(
+                          targetOffset.clamp(0.0, _scrollController.position.maxScrollExtent),
+                        );
+                      });
+                    } else {
+                      _scrollToLastVisited(lastBookId);
+                    }
+                  },
                   resourceFetcher: (Map<String, dynamic> params) async {
                     final api = ref.read(bookApiServiceProvider);
                     final offline = ref.read(bookOfflineServiceProvider);
@@ -168,24 +240,42 @@ class BookListScreen extends ConsumerWidget {
                       }
                     }
                   },
+                  preloadToPage: preloadToPage,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: isMobile ? 2 : 3,
                     crossAxisSpacing: isMobile ? 16 : 22,
                     mainAxisSpacing: isMobile ? 16 : 22,
-                    mainAxisExtent: isMobile ? 250 : 320,
+                    mainAxisExtent: isMobile ? 280 : 360,
                   ),
-                  itemBuilder: (_, item, __) {
+                  itemBuilder: (_, item, index) {
+                    final isRecent = item.id == lastBookId;
+                    if (isRecent) {
+                      debugPrint('[BookScroll] itemBuilder hit target — id=${item.id} idx=$index alreadyScrolled=${_lastScrolledToId == item.id}');
+                      if (_lastScrolledToId != item.id) {
+                        WidgetsBinding.instance.addPostFrameCallback(
+                          (_) => _scrollToLastVisited(item.id),
+                        );
+                      }
+                    }
                     return InkWell(
+                      key: _keyForBook(item.id),
                       onTap: () {
-                        debugPrint(
-                            '[BookListScreen] Tapped book: ${item.id} — ${item.title}');
+                        debugPrint('[BookListScreen] Tapped book: ${item.id} idx=$index — ${item.title}');
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          ref.read(lastVisitedProvider.notifier)
+                              .updateLastBook(item.id, index: index);
+                        });
                         context.push('/books/${item.id}');
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                          color: appTheme.cardBg,
+                          color: isRecent ? appTheme.highlight : appTheme.cardBg,
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: appTheme.divider),
+                          border: Border.all(
+                            color: isRecent
+                                ? appTheme.highlightBorder
+                                : appTheme.divider,
+                          ),
                           boxShadow: [
                             BoxShadow(
                               color: appTheme.shadow.withValues(alpha: 0.08),
@@ -211,29 +301,41 @@ class BookListScreen extends ConsumerWidget {
                               ),
                             ),
                             const SizedBox(height: 10),
-                            Text(
-                              item.title,
-                              style: textTheme.titleMedium?.copyWith(
-                                height: 1.2,
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    item.title,
+                                    style: textTheme.titleMedium?.copyWith(
+                                      height: 1.2,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  if (item.authors.isNotEmpty) ...[
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      item.authors.first.name,
+                                      textAlign: TextAlign.center,
+                                      style: textTheme.labelSmall?.copyWith(
+                                        height: 1.2,
+                                        color: appTheme.secondaryText,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ],
                               ),
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
                             ),
-                            if (item.authors.isNotEmpty) ...[
-                              const SizedBox(height: 6),
-                              Text(
-                                item.authors.first.name,
-                                textAlign: TextAlign.center,
-                                style: textTheme.labelSmall?.copyWith(
-                                  height: 1.2,
-                                  color: appTheme.secondaryText,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
+                            if (isRecent) ...[
+                              LastVisited(
+                                resourceKey: 'lastBook',
+                                resourceId: item.id,
                               ),
                             ],
-                            const Spacer(),
                             SizedBox(
                               width: 36,
                               child: Divider(
@@ -402,92 +504,71 @@ class _AuthorFilterDialogState extends ConsumerState<_AuthorFilterDialog> {
 
     return Column(
       children: [
-        // ── Header row: title + clear | search field ──
+        // ── Search field ──
         Container(
           padding: const EdgeInsets.only(bottom: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(AppLocalizations.of(context)!.authors),
-                    if (qParams.containsKey('authorId')) ...[
-                      IconButton(
-                        constraints: const BoxConstraints(maxHeight: 40),
-                        splashRadius: 24,
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          widget.parentRef
-                              .read(bookQueryParamsProvider.notifier)
-                              .removeParam('authorId');
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              Expanded(
-                child: SearchField(
-                  value: _searchText,
-                  maxHeight: 35,
-                  horizontalPadding: 10,
-                  onUpdate: (value) {
-                    setState(() {
-                      _searchText = value.isEmpty ? null : value;
-                    });
-                  },
-                ),
-              ),
-            ],
+          child: SearchField(
+            value: _searchText,
+            maxHeight: 35,
+            horizontalPadding: 10,
+            onUpdate: (value) {
+              setState(() {
+                _searchText = value.isEmpty ? null : value;
+              });
+            },
           ),
         ),
         // ── List ──
         Expanded(
-          child: InfiniteList(
-            key: ValueKey('author_search_$_searchText'),
-            pageSize: 8,
-            padding: 2,
-            resourceFetcher: (Map<String, dynamic> params) async {
-              final api = widget.parentRef.read(bookApiServiceProvider);
-              if (_searchText != null && _searchText!.isNotEmpty) {
-                params = {...params, 'search': _searchText};
-              }
-              return await api.fetchAuthors(
-                page: params['page'] ?? 1,
-                perPage: params['per_page'] ?? 8,
-                search: params['search'],
-              );
-            },
-            itemBuilder: (context, item, index) {
-              final isSelected = qParams.containsKey('authorId') &&
-                  qParams['authorId'] == item.id;
-              return InkWell(
-                onTap: () {
-                  widget.parentRef
-                      .read(bookQueryParamsProvider.notifier)
-                      .updateParam('authorId', item.id);
-                  Navigator.of(context).pop();
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(color: appTheme.divider),
+          child: Container(
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: appTheme.divider),
+            ),
+            child: InfiniteList(
+              key: ValueKey('author_search_$_searchText'),
+              pageSize: 8,
+              padding: 0,
+              resourceFetcher: (Map<String, dynamic> params) async {
+                final api = widget.parentRef.read(bookApiServiceProvider);
+                if (_searchText != null && _searchText!.isNotEmpty) {
+                  params = {...params, 'search': _searchText};
+                }
+                return await api.fetchAuthors(
+                  page: params['page'] ?? 1,
+                  perPage: params['per_page'] ?? 8,
+                  search: params['search'],
+                );
+              },
+              itemBuilder: (context, item, index) {
+                final isSelected = qParams.containsKey('authorId') &&
+                    qParams['authorId'] == item.id;
+                return InkWell(
+                  onTap: () {
+                    widget.parentRef
+                        .read(bookQueryParamsProvider.notifier)
+                        .updateParam('authorId', item.id);
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isSelected ? appTheme.highlight : null,
+                      border:
+                          Border(bottom: BorderSide(color: appTheme.divider)),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 12),
+                    child: Text(
+                      item.name,
+                      style: isSelected
+                          ? textTheme.labelMedium
+                          : textTheme.titleMedium,
                     ),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Text(
-                    item.name,
-                    style: isSelected
-                        ? textTheme.labelMedium
-                        : textTheme.titleMedium,
-                  ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ],
@@ -524,55 +605,29 @@ class _CategoryFilterDialogState extends ConsumerState<_CategoryFilterDialog> {
         // ── Header row: title + clear | search field ──
         Container(
           padding: const EdgeInsets.only(bottom: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(AppLocalizations.of(context)!.categories),
-                    if (hasActiveFilter) ...[
-                      IconButton(
-                        constraints: const BoxConstraints(maxHeight: 40),
-                        splashRadius: 24,
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          widget.parentRef
-                              .read(bookQueryParamsProvider.notifier)
-                              .removeParam('bookCategoryId');
-                          widget.parentRef
-                              .read(bookQueryParamsProvider.notifier)
-                              .removeParam('bookSubcategoryId');
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              Expanded(
-                child: SearchField(
-                  value: _searchText,
-                  maxHeight: 35,
-                  horizontalPadding: 10,
-                  onUpdate: (value) {
-                    setState(() {
-                      _searchText = value.isEmpty ? null : value;
-                    });
-                  },
-                ),
-              ),
-            ],
+          child: SearchField(
+            value: _searchText,
+            maxHeight: 35,
+            horizontalPadding: 10,
+            onUpdate: (value) {
+              setState(() {
+                _searchText = value.isEmpty ? null : value;
+              });
+            },
           ),
         ),
         // ── List ──
         Expanded(
-          child: InfiniteList(
+          child: Container(
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: appTheme.divider),
+            ),
+            child: InfiniteList(
             key: ValueKey('category_search_$_searchText'),
             pageSize: 8,
-            padding: 2,
+            padding: 0,
             resourceFetcher: (Map<String, dynamic> params) async {
               final api = widget.parentRef.read(bookApiServiceProvider);
               if (_searchText != null && _searchText!.isNotEmpty) {
@@ -602,11 +657,12 @@ class _CategoryFilterDialogState extends ConsumerState<_CategoryFilterDialog> {
                   },
                   child: Container(
                     decoration: BoxDecoration(
+                      color: isSelected ? appTheme.highlight : null,
                       border: Border(
-                        bottom: BorderSide(color: appTheme.divider),
-                      ),
+                          bottom: BorderSide(color: appTheme.divider)),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 12),
                     child: Text(
                       item.title,
                       style: isSelected
@@ -617,6 +673,7 @@ class _CategoryFilterDialogState extends ConsumerState<_CategoryFilterDialog> {
                 );
               }
             },
+          ),
           ),
         ),
       ],
@@ -661,82 +718,66 @@ class _CategoryNestedItemState extends ConsumerState<_CategoryNestedItem> {
             .map((s) => s.id)
             .any((id) => id == qParams['bookSubcategoryId']);
 
+    final expanded = isSelected || isOpen;
+
     return Container(
+      key: GlobalObjectKey(widget.category.id),
       decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: appTheme.divider),
-        ),
+        border: Border(bottom: BorderSide(color: appTheme.divider)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (isSelected) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 10),
+          InkWell(
+            onTap: isSelected
+                ? null
+                : () {
+                    setState(() {
+                      isOpen = !isOpen;
+                      if (isOpen) {
+                        WidgetsBinding.instance
+                            .addPostFrameCallback((_) async {
+                          final ctx = GlobalObjectKey(widget.category.id)
+                              .currentContext;
+                          if (ctx != null) {
+                            Scrollable.ensureVisible(
+                              ctx,
+                              duration: const Duration(milliseconds: 500),
+                            );
+                          }
+                        });
+                      }
+                    });
+                  },
+            child: Container(
+              color: isSelected ? appTheme.highlight : null,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               child: Row(
                 children: [
                   Expanded(
                     child: Text(
                       widget.category.title,
-                      style: textTheme.titleMedium,
+                      style: isSelected
+                          ? textTheme.labelMedium
+                          : textTheme.titleMedium,
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  SvgPicture.asset(
-                    'assets/images/icons/angle-up.svg',
-                    fit: BoxFit.scaleDown,
-                    width: 20,
+                  const SizedBox(width: 8),
+                  Icon(
+                    expanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    size: 20,
+                    color: appTheme.primary,
                   ),
                 ],
               ),
             ),
-          ] else ...[
-            InkWell(
-              key: GlobalObjectKey(widget.category.id),
-              onTap: () {
-                setState(() {
-                  isOpen = !isOpen;
-                  if (isOpen) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) async {
-                      final ctx =
-                          GlobalObjectKey(widget.category.id).currentContext;
-                      if (ctx != null) {
-                        Scrollable.ensureVisible(
-                          ctx,
-                          duration: const Duration(milliseconds: 500),
-                        );
-                      }
-                    });
-                  }
-                });
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        widget.category.title,
-                        style: textTheme.titleMedium,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    SvgPicture.asset(
-                      isOpen
-                          ? 'assets/images/icons/angle-up.svg'
-                          : 'assets/images/icons/angle-down.svg',
-                      fit: BoxFit.scaleDown,
-                      width: 20,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-          if (isSelected || isOpen) ...[
-            Container(
-              padding: const EdgeInsets.only(left: 25, bottom: 5),
-              constraints: const BoxConstraints(maxHeight: 150),
+          ),
+          if (expanded) ...[
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 160),
               child: Scrollbar(
                 thumbVisibility: true,
                 controller: sectionController,
@@ -757,7 +798,17 @@ class _CategoryNestedItemState extends ConsumerState<_CategoryNestedItem> {
                             Navigator.of(context).pop();
                           },
                           child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: isSubSelected
+                                  ? appTheme.highlight
+                                  : null,
+                              border: Border(
+                                bottom:
+                                    BorderSide(color: appTheme.divider),
+                              ),
+                            ),
                             child: Text(
                               sub.title,
                               style: isSubSelected

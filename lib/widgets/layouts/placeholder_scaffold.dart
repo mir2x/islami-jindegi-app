@@ -7,11 +7,13 @@ class PlaceholderScaffold extends ConsumerWidget {
     super.key,
     required this.body,
     this.bottomBar,
+    this.onBackPressed,
     this.showPattern = false,
   });
 
   final Widget body;
   final Widget? bottomBar;
+  final Function? onBackPressed;
   final bool showPattern;
 
   @override
@@ -20,6 +22,7 @@ class PlaceholderScaffold extends ConsumerWidget {
       title: const SizedBox.shrink(),
       body: body,
       bottomBar: bottomBar,
+      onBackPressed: onBackPressed,
       showPattern: showPattern,
     );
   }

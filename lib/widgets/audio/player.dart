@@ -42,10 +42,19 @@ class AudioPlayerWidget extends ConsumerWidget {
         ),
       ),
       error: (error, _) {
+        final isConnectivityError = error.toString().contains('no connection');
         return Center(
           child: Container(
             margin: const EdgeInsets.only(top: 49, bottom: 48),
-            child: const ConnectToInternet(),
+            child: isConnectivityError
+                ? const ConnectToInternet()
+                : IconButton(
+                    icon: const Icon(Icons.refresh),
+                    iconSize: 40,
+                    onPressed: () {
+                      ref.invalidate(audioPlayerProvider(audioSource));
+                    },
+                  ),
           ),
         );
       },
@@ -147,13 +156,12 @@ class _AudioPlayerState extends ConsumerState<StatefulAudioPlayer> {
   }
 
   @override
-  Future<void> dispose() async {
+  void dispose() {
+    _playerStateSubscription?.cancel();
+    _durationSubscription?.cancel();
+    _positionSubscription?.cancel();
+    _playbackEventSubscription?.cancel();
     super.dispose();
-    await _playerStateSubscription?.cancel();
-    await _durationSubscription?.cancel();
-    await _positionSubscription?.cancel();
-    await _playbackEventSubscription?.cancel();
-    await widget.player.stop();
   }
 
   @override

@@ -46,7 +46,7 @@ class PageInfoOverlay extends ConsumerWidget {
               children: [
                 if (pageInfo.paraNumber != null)
                   Text(
-                    'পারা ${pageInfo.paraNumber?.toBengaliDigit()}: ${pageInfo.pageNumber.toBengaliDigit()}',
+                    'পারা ${pageInfo.paraNumber?.toBengaliDigit()}: ${(pageInfo.pageNumber - 1).toBengaliDigit()}',
                     style: TextStyle(
                       color: overlayText,
                       fontSize: 22.sp,

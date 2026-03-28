@@ -32,8 +32,8 @@ class MalfuzatQueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
 }
 
 final malfuzatQueryParamsProvider =
-    StateNotifierProvider<MalfuzatQueryParamsNotifier, Map<String, dynamic>>(
-        (ref) {
+    StateNotifierProvider.autoDispose<MalfuzatQueryParamsNotifier,
+        Map<String, dynamic>>((ref) {
   return MalfuzatQueryParamsNotifier();
 });
 

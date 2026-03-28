@@ -106,8 +106,6 @@ class ArticleDetailScreen extends ConsumerWidget {
                           resource.document!['id'],
                         ),
                         fileUrl: fileSrcUrl(resource.document),
-                        textWidth: 110,
-                        downloadedTextWidth: 125,
                       ),
                     ],
                     Container(

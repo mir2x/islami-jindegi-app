@@ -32,8 +32,8 @@ class MasailQueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
 }
 
 final masailQueryParamsProvider =
-    StateNotifierProvider<MasailQueryParamsNotifier, Map<String, dynamic>>(
-        (ref) {
+    StateNotifierProvider.autoDispose<MasailQueryParamsNotifier,
+        Map<String, dynamic>>((ref) {
   return MasailQueryParamsNotifier();
 });
 

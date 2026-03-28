@@ -81,9 +81,8 @@ class BottomBar extends ConsumerWidget {
                 color: isOn ? colors.secondary : barFg,
                 isLandscape: isLandscape,
                 onPressed: () {
-                  final wasOn = ref.read(touchModeProvider);
                   ref.read(touchModeProvider.notifier).toggle();
-                  if (wasOn) ref.read(selectedAyahProvider.notifier).clear();
+                  ref.read(selectedAyahProvider.notifier).clear();
                 },
               );
             },

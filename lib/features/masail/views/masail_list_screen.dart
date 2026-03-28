@@ -15,20 +15,68 @@ import 'package:native_app/widgets/filter/subitem.dart';
 import 'package:native_app/widgets/filter/triple_switch_button.dart';
 import 'package:native_app/widgets/presentation/content_list_card.dart';
 import 'package:native_app/providers/downloaded_masail.dart';
+import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import '../providers/masail_providers.dart';
 
-class MasailListScreen extends ConsumerWidget {
+class MasailListScreen extends ConsumerStatefulWidget {
   const MasailListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MasailListScreen> createState() => _MasailListScreenState();
+}
+
+class _MasailListScreenState extends ConsumerState<MasailListScreen> {
+  final ScrollController _scrollController = ScrollController();
+  final Map<String, GlobalKey> _itemKeys = {};
+  String? _lastScrolledToId;
+
+  GlobalKey _keyFor(String id) => _itemKeys.putIfAbsent(id, () => GlobalKey());
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToLastVisited(String? lastId) {
+    if (lastId == null || lastId == _lastScrolledToId) return;
+    final ctx = _keyFor(lastId).currentContext;
+    if (ctx != null) {
+      _lastScrolledToId = lastId;
+      Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+        alignment: 0.3,
+      );
+    } else {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (!mounted) return;
+        final retryCtx = _keyFor(lastId).currentContext;
+        if (retryCtx != null) {
+          _lastScrolledToId = lastId;
+          Scrollable.ensureVisible(
+            retryCtx,
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
+            alignment: 0.3,
+          );
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(masailQueryParamsProvider);
     var settingsQuery = ref.watch(masailSettingsProvider);
+    final lastVisited = ref.watch(lastVisitedProvider);
+    final lastMasailId = lastVisited.value?.getString('lastMasail');
 
     return AppScaffold(
       onBackPressed: () async => context.go('/'),
@@ -259,6 +307,8 @@ class MasailListScreen extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: InfiniteList(
                   qParams: qParams,
+                  scrollController: _scrollController,
+                  onFirstPageLoaded: () => _scrollToLastVisited(lastMasailId),
                   resourceFetcher: (Map<String, dynamic> params) async {
                     final api = ref.read(masailApiServiceProvider);
                     final offline = ref.read(masailOfflineServiceProvider);
@@ -287,14 +337,23 @@ class MasailListScreen extends ConsumerWidget {
                     }
                   },
                   itemBuilder: (_, item, __) {
+                    final isRecent = item.id == lastMasailId;
+                    if (isRecent && _lastScrolledToId != item.id) {
+                      WidgetsBinding.instance.addPostFrameCallback(
+                        (_) => _scrollToLastVisited(item.id),
+                      );
+                    }
                     return InkWell(
+                      key: _keyFor(item.id),
                       onTap: () => context.push('/masail/${item.id}'),
                       child: ContentListCard(
+                        recentlyVisited: isRecent,
                         highlightProvider: getDownloadedMasailByIdProvider(
                           item.id,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Flexible(
                               child: Column(
@@ -323,6 +382,7 @@ class MasailListScreen extends ConsumerWidget {
                             LastVisited(
                               resourceKey: 'lastMasail',
                               resourceId: item.id,
+                              isAudio: item.audio != null,
                             ),
                           ],
                         ),

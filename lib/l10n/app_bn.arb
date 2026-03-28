@@ -196,6 +196,8 @@
   "seeMore": "আরো দেখুন",
   "download": "ডাউনলোড",
   "downloaded": "ডাউনলোডেড",
+  "downloadedBooks": "ডাউনলোডেড বই",
+  "downloadedBayans": "ডাউনলোডেড বয়ান",
   "save": "সেইভ করুন",
   "select": "সিলেক্ট করুন",
   "offline": "অফলাইন",
@@ -257,17 +259,17 @@
   "knowledge": "জ্ঞান",
   "knowledgeQuote": "\"তোমাদের মধ্যে সেই উত্তম, যে মানুষের বেশি উপকার করে।\"",
   "endsAt": "শেষ",
-  "inHoursMinutes": "{hours}ঘ {minutes}মি বাকি",
+  "inHoursMinutes": "{hours} ঘণ্টা {minutes} মিনিট বাকি",
   "@inHoursMinutes": {
     "placeholders": {
-      "hours": {},
-      "minutes": {}
+      "hours": { "type": "String" },
+      "minutes": { "type": "String" }
     }
   },
-  "inMinutes": "{minutes}মি বাকি",
+  "inMinutes": "{minutes} মিনিট বাকি",
   "@inMinutes": {
     "placeholders": {
-      "minutes": {}
+      "minutes": { "type": "String" }
     }
   },
   "alarmEnabled": "এলার্ম সক্রিয়",
@@ -283,5 +285,8 @@
   "noOffset": "ওয়াক্তের সময়ে",
   "azanSound": "আযানের সাউন্ড",
   "repeatDays": "পুনরাবৃত্তি",
-  "everyday": "প্রতিদিন"
+  "everyday": "প্রতিদিন",
+
+  "recentlyRead": "সম্প্রতি পড়া হয়েছে",
+  "recentlyListened": "সম্প্রতি শোনা হয়েছে"
 }

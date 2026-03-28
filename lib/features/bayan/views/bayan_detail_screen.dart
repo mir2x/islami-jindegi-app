@@ -38,7 +38,7 @@ class BayanDetailScreen extends ConsumerWidget {
 
         Future? previousPage() async {
           if (resource.position == null) {
-            await context.push('/bayans');
+            context.go('/bayans');
             return;
           }
           var previousResources = await api.fetchBayansByPosition(
@@ -47,9 +47,9 @@ class BayanDetailScreen extends ConsumerWidget {
           );
 
           if (previousResources.isEmpty) {
-            await context.push('/bayans');
+            context.go('/bayans');
           } else {
-            await context.push('/bayans/${previousResources.first.id}');
+            context.go('/bayans/${previousResources.first.id}');
           }
         }
 
@@ -61,7 +61,7 @@ class BayanDetailScreen extends ConsumerWidget {
           );
 
           if (nextResources.isNotEmpty) {
-            await context.push('/bayans/${nextResources.first.id}');
+            context.go('/bayans/${nextResources.first.id}');
           }
         }
 
@@ -70,7 +70,7 @@ class BayanDetailScreen extends ConsumerWidget {
         });
 
         return AppScaffold(
-          onBackPressed: () async => await context.push('/bayans'),
+          onBackPressed: () async => context.canPop() ? context.pop() : context.go('/bayans'),
           showPattern: false,
           title: Text(locales.bayan),
           body: NextPageSwipe(

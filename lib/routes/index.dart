@@ -134,6 +134,14 @@ class AppRoutes {
       ),
       GoRoute(path: '/books', builder: (_, __) => const BookListScreen()),
       GoRoute(
+        path: '/books/downloads',
+        builder: (_, __) => const book_feat.DownloadsScreen(),
+      ),
+      GoRoute(
+        path: '/books/downloads/:id',
+        builder: (_, __) => const book_feat.DownloadedBookScreen(),
+      ),
+      GoRoute(
         path: '/books/:id',
         builder: (_, __) =>
             PageStorage(bucket: _bucket, child: const BookDetailScreen()),
@@ -147,20 +155,8 @@ class AppRoutes {
         builder: (_, __) => const book_feat.SubchapterScreen(),
       ),
       GoRoute(
-        path: '/books/downloads',
-        builder: (_, __) => const book_feat.DownloadsScreen(),
-      ),
-      GoRoute(
-        path: '/books/downloads/:id',
-        builder: (_, __) => const book_feat.DownloadedBookScreen(),
-      ),
-      GoRoute(
         path: '/bayans',
         builder: (_, __) => const bayan_feat.BayanListScreen(),
-      ),
-      GoRoute(
-        path: '/bayans/:id',
-        builder: (_, __) => const bayan_feat.BayanDetailScreen(),
       ),
       GoRoute(
         path: '/bayans/downloads',
@@ -171,12 +167,12 @@ class AppRoutes {
         builder: (_, __) => const bayan_feat.DownloadedBayanScreen(),
       ),
       GoRoute(
-        path: '/malfuzat',
-        builder: (_, __) => const MalfuzatListScreen(),
+        path: '/bayans/:id',
+        builder: (_, __) => const bayan_feat.BayanDetailScreen(),
       ),
       GoRoute(
-        path: '/malfuzat/:id',
-        builder: (_, __) => const MalfuzatDetailScreen(),
+        path: '/malfuzat',
+        builder: (_, __) => const MalfuzatListScreen(),
       ),
       GoRoute(
         path: '/malfuzat/downloads',
@@ -186,11 +182,11 @@ class AppRoutes {
         path: '/malfuzat/downloads/:id',
         builder: (_, __) => const DownloadedMalfuzatScreen(),
       ),
-      GoRoute(path: '/masail', builder: (_, __) => const MasailListScreen()),
       GoRoute(
-        path: '/masail/:id',
-        builder: (_, __) => const MasailDetailScreen(),
+        path: '/malfuzat/:id',
+        builder: (_, __) => const MalfuzatDetailScreen(),
       ),
+      GoRoute(path: '/masail', builder: (_, __) => const MasailListScreen()),
       GoRoute(
         path: '/masail/ask-question',
         builder: (_, __) => const AskQuestionScreen(),
@@ -202,6 +198,10 @@ class AppRoutes {
       GoRoute(
         path: '/masail/downloads/:id',
         builder: (_, __) => const DownloadedMasailScreen(),
+      ),
+      GoRoute(
+        path: '/masail/:id',
+        builder: (_, __) => const MasailDetailScreen(),
       ),
       GoRoute(path: '/duas', builder: (_, __) => const DuaListScreen()),
       GoRoute(path: '/duas/:id', builder: (_, __) => const DuaDetailScreen()),

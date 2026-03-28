@@ -22,7 +22,7 @@ class Next extends StatelessWidget {
     Color? iconColor = nextDisabled
         ? colors.secondaryText
         : contrastColor
-            ? colors.secondary
+            ? colors.primary
             : null;
     iconColor = this.iconColor ?? iconColor;
 

@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:adhan/adhan.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/widgets/location/index.dart';
@@ -23,6 +24,7 @@ class Qiblah extends ConsumerWidget {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return AppScaffold(
+      onBackPressed: () async => context.go('/'),
       title: Text(locales.qiblah),
       body: Container(
         margin: EdgeInsets.only(

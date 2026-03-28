@@ -29,27 +29,9 @@ class DuaQueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
 }
 
 final duaQueryParamsProvider =
-    StateNotifierProvider<DuaQueryParamsNotifier, Map<String, dynamic>>((ref) {
+    StateNotifierProvider.autoDispose<DuaQueryParamsNotifier,
+        Map<String, dynamic>>((ref) {
   return DuaQueryParamsNotifier();
-});
-
-// ───────────────────── All Duas (offline-first) ─────────────────────
-
-final allDuasProvider = FutureProvider.autoDispose
-    .family<List<DuaItem>, Map<String, dynamic>>((ref, params) async {
-  final api = ref.read(duaApiServiceProvider);
-  final offline = ref.read(duaOfflineServiceProvider);
-  try {
-    return await api.fetchDuas(
-      search: params['search'],
-      duaCategoryId: params['duaCategoryId'],
-    );
-  } catch (_) {
-    return await offline.queryDuas(
-      search: params['search'],
-      duaCategoryId: params['duaCategoryId'],
-    );
-  }
 });
 
 // ───────────────────── Single Item Providers ─────────────────────

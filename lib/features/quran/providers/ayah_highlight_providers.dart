@@ -642,3 +642,29 @@ final barsVisibilityProvider =
     StateNotifierProvider<BarsVisibilityNotifier, bool>(
   (ref) => BarsVisibilityNotifier(),
 );
+
+// ── Zoom / Page Scale ─────────────────────────────────────────────────────────
+
+class QuranPageScaleNotifier extends StateNotifier<double> {
+  static const double _min = 1.0;
+  static const double _max = 3.0;
+  static const double _step = 0.25;
+
+  QuranPageScaleNotifier() : super(1.0);
+
+  void zoomIn() => state = (state + _step).clamp(_min, _max);
+  void zoomOut() => state = (state - _step).clamp(_min, _max);
+  void setScale(double s) => state = s.clamp(_min, _max);
+
+  bool get canZoomIn => state < _max;
+  bool get canZoomOut => state > _min;
+}
+
+final quranPageScaleProvider =
+    StateNotifierProvider<QuranPageScaleNotifier, double>(
+  (_) => QuranPageScaleNotifier(),
+);
+
+/// True when the viewer is zoomed in (either by button or pinch).
+/// Updated by QuranPage whenever its TransformationController changes.
+final quranPageZoomedProvider = StateProvider<bool>((_) => false);

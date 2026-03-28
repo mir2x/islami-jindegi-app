@@ -194,6 +194,8 @@
   "select": "Select",
   "download": "Download",
   "downloaded": "Downloaded",
+  "downloadedBooks": "Downloaded Books",
+  "downloadedBayans": "Downloaded Bayans",
   "offline": "Offline",
   "pdfFiles": "PDF Files",
   "developer": "Developer",
@@ -250,17 +252,17 @@
   "knowledge": "Knowledge",
   "knowledgeQuote": "\"The best of people are those who are most beneficial to others.\"",
   "endsAt": "Ends at",
-  "inHoursMinutes": "in {hours}h {minutes}m",
+  "inHoursMinutes": "in {hours} hr {minutes} min",
   "@inHoursMinutes": {
     "placeholders": {
-      "hours": {},
-      "minutes": {}
+      "hours": { "type": "String" },
+      "minutes": { "type": "String" }
     }
   },
-  "inMinutes": "in {minutes}m",
+  "inMinutes": "in {minutes} min",
   "@inMinutes": {
     "placeholders": {
-      "minutes": {}
+      "minutes": { "type": "String" }
     }
   },
   "alarmEnabled": "Alarm enabled",
@@ -276,5 +278,8 @@
   "noOffset": "At waqt time",
   "azanSound": "Azan Sound",
   "repeatDays": "Repeat",
-  "everyday": "Every day"
+  "everyday": "Every day",
+
+  "recentlyRead": "Recently Read",
+  "recentlyListened": "Recently Listened"
 }

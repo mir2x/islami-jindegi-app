@@ -13,23 +13,76 @@ import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/date.dart';
 import 'package:native_app/widgets/presentation/content_list_card.dart';
 import 'package:native_app/providers/downloaded_bayans.dart';
+import 'package:native_app/providers/last_visited.dart';
+import 'package:native_app/widgets/buttons/floating_downloaded.dart';
 import 'package:native_app/helpers/format_date.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
 import '../providers/bayan_providers.dart';
 
-class BayanListScreen extends ConsumerWidget {
+class BayanListScreen extends ConsumerStatefulWidget {
   const BayanListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<BayanListScreen> createState() => _BayanListScreenState();
+}
+
+class _BayanListScreenState extends ConsumerState<BayanListScreen> {
+  final ScrollController _scrollController = ScrollController();
+  final Map<String, GlobalKey> _itemKeys = {};
+  String? _lastScrolledToId;
+
+  GlobalKey _keyFor(String id) => _itemKeys.putIfAbsent(id, () => GlobalKey());
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToLastVisited(String? lastId) {
+    if (lastId == null || lastId == _lastScrolledToId) return;
+    final ctx = _keyFor(lastId).currentContext;
+    if (ctx != null) {
+      _lastScrolledToId = lastId;
+      Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+        alignment: 0.3,
+      );
+    } else {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (!mounted) return;
+        final retryCtx = _keyFor(lastId).currentContext;
+        if (retryCtx != null) {
+          _lastScrolledToId = lastId;
+          Scrollable.ensureVisible(
+            retryCtx,
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
+            alignment: 0.3,
+          );
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(bayanQueryParamsProvider);
+    final lastVisited = ref.watch(lastVisitedProvider);
+    final lastBayanId = lastVisited.value?.getString('lastBayan');
 
     return AppScaffold(
       onBackPressed: () async => context.go('/'),
       title: Text(locales.bayans),
+      floatingActionButton: FloatingDownloadedButton(
+        label: locales.downloadedBayans,
+        onPressed: () async => context.push('/bayans/downloads'),
+      ),
       body: OfflineDbPrompt(
         feature: 'bayans',
         child: Column(
@@ -187,6 +240,8 @@ class BayanListScreen extends ConsumerWidget {
                 child: InfiniteList(
                   pageSize: 9,
                   qParams: qParams,
+                  scrollController: _scrollController,
+                  onFirstPageLoaded: () => _scrollToLastVisited(lastBayanId),
                   resourceFetcher: (Map<String, dynamic> params) async {
                     final api = ref.read(bayanApiServiceProvider);
                     final offline = ref.read(bayanOfflineServiceProvider);
@@ -212,14 +267,23 @@ class BayanListScreen extends ConsumerWidget {
                     }
                   },
                   itemBuilder: (_, item, __) {
+                    final isRecent = item.id == lastBayanId;
+                    if (isRecent && _lastScrolledToId != item.id) {
+                      WidgetsBinding.instance.addPostFrameCallback(
+                        (_) => _scrollToLastVisited(item.id),
+                      );
+                    }
                     return InkWell(
+                      key: _keyFor(item.id),
                       onTap: () => context.push('/bayans/${item.id}'),
                       child: ContentListCard(
+                        recentlyVisited: isRecent,
                         highlightProvider: getDownloadedBayanByIdProvider(
                           item.id,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Flexible(
                               child: Column(
@@ -268,6 +332,7 @@ class BayanListScreen extends ConsumerWidget {
                             LastVisited(
                               resourceKey: 'lastBayan',
                               resourceId: item.id,
+                              isAudio: true,
                             ),
                           ],
                         ),
