@@ -54,7 +54,7 @@ class MadrasahGalleryScreen extends ConsumerWidget {
         Future? nextPage() async {}
 
         return AppScaffold(
-          onBackPressed: () async => await context.push('/madrasahs/${resource.id}'),
+          onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/madrasahs/${resource.id}'); },
           showPattern: false,
           title: Text(resource.title),
           body: NextPageSwipe(

@@ -26,7 +26,7 @@ class ArticleListScreen extends ConsumerWidget {
     var qParams = ref.watch(articleQueryParamsProvider);
 
     return AppScaffold(
-      onBackPressed: () async => context.go('/'),
+      onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
       title: Text(locales.articles),
       body: OfflineDbPrompt(
         feature: 'articles',

@@ -133,6 +133,7 @@ class _SuraParaNavigationViewState
         final isSelected = paraNumber == selectedPara;
         final (suraNumber, ayahNumber) = paraStarts[index];
         final suraName = suraNames[suraNumber - 1];
+        final paraName = paraNamesBengali[index];
 
         return ListTile(
           tileColor: isSelected ? selectedBg : null,
@@ -141,7 +142,7 @@ class _SuraParaNavigationViewState
             vertical: 8.h,
           ),
           title: Text(
-            'পারা ${_toBengaliNumber(paraNumber)}',
+            'পারা ${_toBengaliNumber(paraNumber)} : $paraName',
             style: TextStyle(
               fontSize: titleFontSize,
               color: isSelected ? selectedFg : appColors.primaryText,

@@ -75,7 +75,7 @@ class _BookListScreenState extends ConsumerState<BookListScreen> {
     bool isMobile = screenWidth < 768;
 
     return AppScaffold(
-      onBackPressed: () async => context.go('/'),
+      onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
       title: Text(locales.books),
       floatingActionButton: FloatingDownloadedButton(
         label: locales.downloadedBooks,

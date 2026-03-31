@@ -44,7 +44,7 @@ class DuaDetailScreen extends ConsumerWidget {
 
         Future? previousPage() async {
           if (resource.position == null) {
-            await context.push('/duas');
+            if (context.canPop()) context.pop();
             return;
           }
           var previousResources = await api.fetchDuasByPosition(
@@ -53,7 +53,7 @@ class DuaDetailScreen extends ConsumerWidget {
           );
 
           if (previousResources.isEmpty) {
-            await context.push('/duas');
+            if (context.canPop()) context.pop();
           } else {
             await context.push('/duas/${previousResources.first.id}');
           }
@@ -81,7 +81,7 @@ class DuaDetailScreen extends ConsumerWidget {
           storeKey: 'duaFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async => await context.push('/duas'),
+              onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/duas'); },
               showPattern: false,
               title: Text(locales.duaDurud),
               body: NextPageSwipe(

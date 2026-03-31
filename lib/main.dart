@@ -22,6 +22,7 @@ import 'firebase_options.dart';
 import 'app_widget/task.dart';
 import 'app_widget/background.dart';
 import 'package:quran_flutter/quran_flutter.dart';
+import 'package:timezone/data/latest.dart' as tz_data;
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,7 @@ Future<void> main() async {
   ]);
 
   await dotenv.load(fileName: '.env');
+  tz_data.initializeTimeZones();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -125,7 +127,7 @@ class MyApp extends ConsumerWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        final currentTheme = prefs?.getString('theme') ?? 'classic';
+        final currentTheme = prefs?.getString('theme') ?? 'light';
         final selectedTheme =
             currentTheme == 'light' ? lightTheme(fonts) : classicTheme(fonts);
         final selectedDarkTheme = darkTheme(fonts);

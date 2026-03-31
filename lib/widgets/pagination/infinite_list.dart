@@ -116,7 +116,8 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
           });
         }
       }
-    } catch (error) {
+    } catch (error, stack) {
+      debugPrint('[InfiniteList] page $pageKey error: $error\n$stack');
       pController.error = error;
     }
   }

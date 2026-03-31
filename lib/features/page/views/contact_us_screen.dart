@@ -24,7 +24,7 @@ class ContactUsScreen extends ConsumerWidget {
     return pageQuery.when(
       loading: () {
         return PlaceholderScaffold(
-          onBackPressed: () async => context.go('/'),
+          onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
           body: const Center(child: CircularProgressIndicator()),
         );
       },
@@ -36,7 +36,7 @@ class ContactUsScreen extends ConsumerWidget {
           storeKey: 'contactFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async => context.go('/'),
+              onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
               showPattern: false,
               title: Text(locales.contactUs),
               body: ItemContent(

@@ -173,7 +173,8 @@
   "pastYear": "Past Year",
   "pastFiveYears": "Past 5 Years",
   "pastTenYears": "Past 10 Years",
-  "customDate": "Custom Date",
+  "customDate": "Change Date",
+  "english": "English",
   "dateFrom": "Date From",
   "dateTo": "Date To",
 
@@ -239,7 +240,7 @@
   "connectToInternetMsg": "Please connect to the Internet",
   "tryAgain": "Please try again",
 
-  "prayerAlarm": "Prayer Alarm",
+  "prayerAlarm": "Alarm",
   "upcomingPrayer": "Upcoming Prayer",
   "nextPrayerLabel": "Next Prayer",
   "setReminder": "Set Reminder",

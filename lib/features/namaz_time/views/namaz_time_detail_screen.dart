@@ -82,7 +82,7 @@ class NamazTimeDetailScreen extends ConsumerWidget {
           builder: (context, fontSizeRatio) {
             final appTheme = Theme.of(context).extension<AppThemeColors>()!;
             return AppScaffold(
-              onBackPressed: () async => await context.push('/namaz-times'),
+              onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/namaz-times'); },
               showPattern: false,
               title: Text(itemTitle),
               body: NextPageSwipe(

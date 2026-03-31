@@ -15,6 +15,7 @@ class PageInfoOverlay extends ConsumerWidget {
     final pageInfo = ref.watch(pageInfoProvider(pageIndex + 1));
     final suraNamesList = ref.watch(suraNamesProvider);
     final isVisible = ref.watch(pageInfoVisibilityProvider);
+    final paraPageMapping = ref.watch(paraPageMappingProvider);
     final hasAyahInfo = pageInfo.suraAyahRanges.isNotEmpty;
 
     // Hide overlay on non-content pages (e.g. opening/cover pages)
@@ -46,7 +47,7 @@ class PageInfoOverlay extends ConsumerWidget {
               children: [
                 if (pageInfo.paraNumber != null)
                   Text(
-                    'পারা ${pageInfo.paraNumber?.toBengaliDigit()}: ${(pageInfo.pageNumber - 1).toBengaliDigit()}',
+                    'পারা ${pageInfo.paraNumber?.toBengaliDigit()}: ${(pageInfo.pageNumber - (paraPageMapping[pageInfo.paraNumber] ?? pageInfo.pageNumber) + 1).toBengaliDigit()}',
                     style: TextStyle(
                       color: overlayText,
                       fontSize: 22.sp,

@@ -40,7 +40,7 @@ class ArticleDetailScreen extends ConsumerWidget {
 
         Future? previousPage() async {
           if (resource.position == null) {
-            await context.push('/articles');
+            if (context.canPop()) context.pop();
             return;
           }
           var previousResources = await api.fetchArticlesByPosition(
@@ -49,7 +49,7 @@ class ArticleDetailScreen extends ConsumerWidget {
           );
 
           if (previousResources.isEmpty) {
-            await context.push('/articles');
+            if (context.canPop()) context.pop();
           } else {
             await context.push('/articles/${previousResources.first.id}');
           }
@@ -75,7 +75,7 @@ class ArticleDetailScreen extends ConsumerWidget {
           storeKey: 'articleFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async => await context.push('/articles'),
+              onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/articles'); },
               showPattern: false,
               title: Text(locales.article),
               body: NextPageSwipe(

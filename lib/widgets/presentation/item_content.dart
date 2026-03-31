@@ -5,9 +5,14 @@ class ItemContent extends StatelessWidget {
   const ItemContent({
     super.key,
     required this.children,
+    this.fullWidth = false,
   });
 
   final List<Widget> children;
+
+  /// When true: no side margins, no border, no rounded corners —
+  /// the content fills the full screen width.
+  final bool fullWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -17,22 +22,21 @@ class ItemContent extends StatelessWidget {
 
     return SingleChildScrollView(
       child: Container(
-        margin: const EdgeInsets.only(
-          top: 20,
-          left: 20,
-          right: 20,
-          bottom: 50,
-        ),
+        margin: fullWidth
+            ? const EdgeInsets.only(top: 0, bottom: 50)
+            : const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 50),
         child: Center(
           child: Container(
             width: contentWidth,
-            padding: const EdgeInsets.all(18),
+            padding: fullWidth
+                ? const EdgeInsets.symmetric(horizontal: 16, vertical: 18)
+                : const EdgeInsets.all(18),
             decoration: BoxDecoration(
               color: appColors.cardBg.withValues(alpha: 0.84),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: appColors.divider.withValues(alpha: 0.45),
-              ),
+              borderRadius: fullWidth ? BorderRadius.zero : BorderRadius.circular(24),
+              border: fullWidth
+                  ? null
+                  : Border.all(color: appColors.divider.withValues(alpha: 0.45)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

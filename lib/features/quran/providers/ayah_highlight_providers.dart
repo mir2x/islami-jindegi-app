@@ -301,7 +301,7 @@ void navigateToPage({required WidgetRef ref, required int pageNumber}) {
 }
 
 const List<(int sura, int ayah)> paraStarts = [
-  (1, 1),
+  (2, 1),
   (2, 142),
   (2, 253),
   (3, 93),
@@ -320,7 +320,7 @@ const List<(int sura, int ayah)> paraStarts = [
   (21, 1),
   (23, 1),
   (25, 21),
-  (27, 56),
+  (27, 60),
   (29, 46),
   (33, 31),
   (36, 22),

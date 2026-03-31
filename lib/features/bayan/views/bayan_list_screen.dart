@@ -77,7 +77,7 @@ class _BayanListScreenState extends ConsumerState<BayanListScreen> {
     final lastBayanId = lastVisited.value?.getString('lastBayan');
 
     return AppScaffold(
-      onBackPressed: () async => context.go('/'),
+      onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
       title: Text(locales.bayans),
       floatingActionButton: FloatingDownloadedButton(
         label: locales.downloadedBayans,

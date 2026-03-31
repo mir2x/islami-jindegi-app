@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:native_app/shared/quran_data.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import '../../../providers/ayah_highlight_providers.dart';
 
@@ -150,16 +151,24 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
         final paraNumber = index + 1;
         final isSelected = paraNumber == selectedPara;
 
+        final paraName = paraNamesBengali[index];
         return ListTile(
           tileColor: isSelected ? appColors.highlight : null,
-          title: Center(
-            child: Text(
-              toBengaliNumber(paraNumber),
-              style: TextStyle(
-                fontSize: fontSize,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected ? appColors.active : appColors.primaryText,
-              ),
+          title: Text(
+            'পারা ${toBengaliNumber(paraNumber)}',
+            style: TextStyle(
+              fontSize: fontSize,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              color: isSelected ? appColors.active : appColors.primaryText,
+            ),
+          ),
+          subtitle: Text(
+            paraName,
+            style: TextStyle(
+              fontSize: fontSize - 2,
+              color: isSelected
+                  ? appColors.active.withValues(alpha: 0.8)
+                  : appColors.secondaryText,
             ),
           ),
           onTap: () {

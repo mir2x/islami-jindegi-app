@@ -70,7 +70,7 @@ class MadrasahInfoScreen extends ConsumerWidget {
           storeKey: 'madrasahFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async => await context.push('/madrasahs/$madrasahId'),
+              onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/madrasahs/$madrasahId'); },
               showPattern: false,
               title: Text(resource.madrasahTitle ?? ''),
               body: NextPageSwipe(

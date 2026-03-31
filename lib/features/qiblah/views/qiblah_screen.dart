@@ -24,7 +24,7 @@ class Qiblah extends ConsumerWidget {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return AppScaffold(
-      onBackPressed: () async => context.go('/'),
+      onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
       title: Text(locales.qiblah),
       body: Container(
         margin: EdgeInsets.only(

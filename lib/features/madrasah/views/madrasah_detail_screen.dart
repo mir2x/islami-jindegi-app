@@ -36,7 +36,7 @@ class MadrasahDetailScreen extends ConsumerWidget {
 
         Future? previousPage() async {
           if (resource.position == null) {
-            await context.push('/madrasahs');
+            if (context.canPop()) context.pop();
             return;
           }
           var previousResources = await api.fetchMadrasahsByPosition(
@@ -45,7 +45,7 @@ class MadrasahDetailScreen extends ConsumerWidget {
           );
 
           if (previousResources.isEmpty) {
-            await context.push('/madrasahs');
+            if (context.canPop()) context.pop();
           } else {
             await context.push('/madrasahs/${previousResources.first.id}');
           }
@@ -70,7 +70,7 @@ class MadrasahDetailScreen extends ConsumerWidget {
         });
 
         return AppScaffold(
-          onBackPressed: () async => await context.push('/madrasahs'),
+          onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/madrasahs'); },
           title: Text(locales.madrasah),
           body: NextPageSwipe(
             onPrevious: previousPage,

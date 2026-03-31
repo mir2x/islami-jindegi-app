@@ -23,7 +23,7 @@ class MadrasahListScreen extends ConsumerWidget {
     var qParams = ref.watch(madrasahQueryParamsProvider);
 
     return AppScaffold(
-      onBackPressed: () async => context.go('/'),
+      onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
       title: Text(locales.madrasah),
       body: OfflineDbPrompt(
         feature: 'madrasahs',

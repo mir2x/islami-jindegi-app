@@ -434,8 +434,13 @@ class DrawerLink extends StatelessWidget {
         Scaffold.of(context).closeEndDrawer();
 
         final target = route.startsWith('/') ? route : '/$route';
-        if (GoRouterState.of(context).uri.path != target) {
-          context.go(target);
+        final currentPath = GoRouterState.of(context).uri.path;
+        if (currentPath != target) {
+          if (target == '/') {
+            context.go(target);
+          } else {
+            context.push(target);
+          }
         }
       },
       borderRadius: BorderRadius.circular(18),

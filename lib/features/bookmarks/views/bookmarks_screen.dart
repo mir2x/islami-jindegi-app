@@ -17,7 +17,7 @@ class Bookmarks extends ConsumerWidget {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return AppScaffold(
-      onBackPressed: () async => context.go('/'),
+      onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
       title: Text(locales.bookmarks),
       body: bookmarks.when(
         loading: () => const CircularProgressIndicator(),

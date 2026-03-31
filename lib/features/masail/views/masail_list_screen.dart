@@ -79,7 +79,7 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
     final lastMasailId = lastVisited.value?.getString('lastMasail');
 
     return AppScaffold(
-      onBackPressed: () async => context.go('/'),
+      onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
       title: Text(locales.masail),
       body: OfflineDbPrompt(
         feature: 'masails',

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
@@ -41,21 +43,33 @@ Future<Map> getFailSafeCoordinates() async {
 
 Future<Map> getFailSafeLocation() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
+  final String currentLocale = preferences.getString('locale') ?? 'bn';
 
   if (preferences.getString('city') != null &&
       preferences.getString('country') != null &&
       preferences.getString('countryCode') != null) {
+    final String? storedLocale = preferences.getString('locationLocale');
+
+    // Locale matches — use stored values as-is
+    if (storedLocale == currentLocale) {
+      return {
+        'city': preferences.getString('city'),
+        'country': preferences.getString('country'),
+        'countryCode': preferences.getString('countryCode'),
+      };
+    }
+
+    // Locale mismatch — return locale-appropriate defaults.
+    // The next GPS geocode or manual location save will persist the correct names.
     return {
-      'city': preferences.getString('city'),
-      'country': preferences.getString('country'),
-      'countryCode': preferences.getString('countryCode'),
+      'city': currentLocale == 'bn' ? 'ঢাকা' : 'Dhaka',
+      'country': currentLocale == 'bn' ? 'বাংলাদেশ' : 'Bangladesh',
+      'countryCode': preferences.getString('countryCode') ?? 'BD',
     };
   } else {
-    String locale = preferences.getString('locale') ?? 'bn';
-
     return {
-      'city': locale == 'bn' ? 'ঢাকা' : 'Dhaka',
-      'country': locale == 'bn' ? 'বাংলাদেশ' : 'Bangladesh',
+      'city': currentLocale == 'bn' ? 'ঢাকা' : 'Dhaka',
+      'country': currentLocale == 'bn' ? 'বাংলাদেশ' : 'Bangladesh',
       'countryCode': 'BD',
     };
   }
@@ -64,11 +78,44 @@ Future<Map> getFailSafeLocation() async {
 Future<String> getFailSafeTimezone() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
 
-  if (preferences.getString('timezone') != null) {
-    return preferences.getString('timezone')!;
-  } else {
-    return '';
+  final stored = preferences.getString('timezone');
+  if (stored != null && stored.isNotEmpty) return stored;
+
+  // No timezone stored yet — derive from countryCode and persist it
+  final countryCode = preferences.getString('countryCode');
+  if (countryCode != null && countryCode.isNotEmpty) {
+    final tz = await timezoneFromCountryCode(countryCode);
+    if (tz.isNotEmpty) {
+      preferences.setString('timezone', tz);
+      return tz;
+    }
   }
+
+  return '';
+}
+
+Map<String, String>? _countryTimezoneCache;
+
+Future<String> timezoneFromCountryCode(String isoCode) async {
+  if (_countryTimezoneCache == null) {
+    try {
+      final raw = await rootBundle.loadString(
+        'packages/country_state_city/lib/assets/country.json',
+      );
+      final list = jsonDecode(raw) as List;
+      _countryTimezoneCache = {};
+      for (final item in list) {
+        final code = item['isoCode'] as String?;
+        final zones = item['timezones'] as List?;
+        if (code != null && zones != null && zones.isNotEmpty) {
+          _countryTimezoneCache![code] = zones.first['zoneName'] as String? ?? '';
+        }
+      }
+    } catch (_) {
+      return '';
+    }
+  }
+  return _countryTimezoneCache![isoCode] ?? '';
 }
 
 Future<Map> getLocation(Position position) async {
@@ -107,6 +154,10 @@ Future<Map> getLocation(Position position) async {
 
 Future setLocation(Map location) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
+
+  // Always record the locale used when saving this location
+  final String currentLocale = preferences.getString('locale') ?? 'bn';
+  preferences.setString('locationLocale', currentLocale);
 
   if (preferences.getString('country') != location['country']) {
     preferences.setString('country', location['country']);

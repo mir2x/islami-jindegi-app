@@ -82,7 +82,7 @@ class Settings extends ConsumerWidget {
     final prefs = ref.watch(preferencesProvider);
 
     return AppScaffold(
-      onBackPressed: () async => context.go('/'),
+      onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
       title: Text(locales.settings),
       body: prefs.when(
         loading: () => const FullScreenLoader(),

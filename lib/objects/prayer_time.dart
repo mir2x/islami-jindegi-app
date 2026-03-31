@@ -4,7 +4,7 @@ import 'package:adhan/adhan.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timezone_utc_offset/timezone_utc_offset.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class PrayerTime {
   PrayerTime({
@@ -115,31 +115,41 @@ class PrayerTime {
     return windows[prayerKey]?.startDateTime;
   }
 
+  /// Returns the DST-aware UTC offset for [forDate] in the stored timezone.
+  Duration? _utcOffsetFor(DateTime forDate) {
+    if (timezone.isEmpty) return null;
+    try {
+      final location = tz.getLocation(timezone);
+      final tzDate = tz.TZDateTime(
+        location,
+        forDate.year,
+        forDate.month,
+        forDate.day,
+      );
+      return tzDate.timeZoneOffset;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Current moment expressed in the prayer location's timezone,
+  /// as a "shifted UTC" DateTime matching the format adhan returns.
+  /// Use this when computing time-remaining against adhan DateTimes.
+  DateTime get nowInPrayerTimezone => _nowInPrayerTimezone();
+
   DateTime _nowInPrayerTimezone() {
     final now = DateTime.now();
-    final daylight = preferences.getBool('daylight') ?? false;
-    final utcOffset = timezone.isEmpty
-        ? null
-        : getTimezoneUTCOffset(timezone, daylight: daylight);
-
-    if (utcOffset == null) {
-      return now;
-    }
-
+    final utcOffset = _utcOffsetFor(now);
+    if (utcOffset == null) return now;
     return now.toUtc().add(utcOffset);
   }
 
   PrayerTimes _createPrayerTimes(DateTime date) {
-    final daylight = preferences.getBool('daylight') ?? false;
-    final utcOffset = timezone.isEmpty
-        ? null
-        : getTimezoneUTCOffset(timezone, daylight: daylight);
-
     return PrayerTimes(
       coordinates,
       DateComponents(date.year, date.month, date.day),
       _adjustedParams(),
-      utcOffset: utcOffset,
+      utcOffset: _utcOffsetFor(date),
     );
   }
 
@@ -246,6 +256,12 @@ class PrayerTime {
         startDateTime: basePrayerTimes.asr,
         endDateTime: basePrayerTimes.maghrib.subtract(fourMins),
       ),
+      'sunset': _PrayerScheduleEntry(
+        key: 'sunset',
+        title: 'sunset',
+        startDateTime: basePrayerTimes.maghrib.subtract(threeMins),
+        endDateTime: basePrayerTimes.maghrib.subtract(oneMin),
+      ),
       'maghrib': _PrayerScheduleEntry(
         key: 'maghrib',
         title: 'maghrib',
@@ -273,6 +289,7 @@ class PrayerTime {
       currentDayWindows['ishraq']!,
       currentDayWindows['dhuhr']!,
       currentDayWindows['asr']!,
+      currentDayWindows['sunset']!,
       currentDayWindows['maghrib']!,
       currentDayWindows['isha']!,
     ];
@@ -334,7 +351,7 @@ class PrayerTime {
   }
 
   String _formatTime(DateTime time, String locale) {
-    return DateFormat.jm(locale).format(time);
+    return DateFormat('h:mm', locale).format(time);
   }
 
   CalculationParameters _adjustedParams() {

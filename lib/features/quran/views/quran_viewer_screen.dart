@@ -436,20 +436,6 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
                                   );
                                 },
                               ),
-                              // ── Zoom buttons ─────────────────────────
-                              AnimatedPositioned(
-                                duration: _animationDuration,
-                                curve: Curves.easeInOut,
-                                right: 12.0,
-                                bottom: barsVisible
-                                    ? bottomBarHeight + 8.0
-                                    : MediaQuery.of(context).padding.bottom +
-                                        16.0,
-                                child: _ZoomButtons(
-                                  isLandscape:
-                                      ori == Orientation.landscape,
-                                ),
-                              ),
                             ],
                           ),
                         ),
@@ -466,60 +452,3 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
   }
 }
 
-// ─────────────────────────────────────────
-//  ZOOM BUTTONS  (+  /  -)
-// ─────────────────────────────────────────
-
-class _ZoomButtons extends ConsumerWidget {
-  final bool isLandscape;
-  const _ZoomButtons({required this.isLandscape});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final notifier = ref.read(quranPageScaleProvider.notifier);
-    final scale = ref.watch(quranPageScaleProvider);
-    final colors = Theme.of(context).extension<AppThemeColors>()!;
-
-    final double size = isLandscape ? 34.0 : 40.0.h;
-    final double iconSz = isLandscape ? 18.0 : 20.0.r;
-
-    Widget btn(
-      IconData icon,
-      VoidCallback? onPressed,
-    ) {
-      return Padding(
-        padding: EdgeInsets.only(top: isLandscape ? 4.0 : 5.0.h),
-        child: Material(
-          color: colors.cardBg.withValues(alpha: 0.85),
-          borderRadius: BorderRadius.circular(10.r),
-          elevation: 2,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(10.r),
-            onTap: onPressed,
-            child: SizedBox(
-              width: size,
-              height: size,
-              child: Center(
-                child: Icon(
-                  icon,
-                  size: iconSz,
-                  color: onPressed != null
-                      ? colors.primaryText
-                      : colors.primaryText.withValues(alpha: 0.3),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        btn(Icons.add, scale < 3.0 ? notifier.zoomIn : null),
-        btn(Icons.remove, scale > 1.0 ? notifier.zoomOut : null),
-      ],
-    );
-  }
-}

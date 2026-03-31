@@ -50,7 +50,7 @@ class NewsDetailScreen extends ConsumerWidget {
           );
 
           if (previousResources.isEmpty) {
-            await context.push('/news');
+            if (context.canPop()) context.pop();
           } else {
             await context.push('/news/${previousResources.first.id}');
           }
@@ -75,7 +75,7 @@ class NewsDetailScreen extends ConsumerWidget {
           storeKey: 'newsFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async => await context.push('/news'),
+              onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/news'); },
               showPattern: false,
               title: Text(locales.news),
               body: NextPageSwipe(

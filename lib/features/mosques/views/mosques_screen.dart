@@ -192,7 +192,7 @@ class _MosquesState extends ConsumerState<Mosques> {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return AppScaffold(
-      onBackPressed: () async => context.go('/'),
+      onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
       title: Text(locales.mosques),
       body: geoData.when(
         loading: () => const Center(

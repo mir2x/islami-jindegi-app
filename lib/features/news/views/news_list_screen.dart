@@ -24,7 +24,7 @@ class NewsListScreen extends ConsumerWidget {
     var qParams = ref.watch(newsQueryParamsProvider);
 
     return AppScaffold(
-      onBackPressed: () async => context.go('/'),
+      onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
       title: Text(locales.news),
       body: WithConnectivity(
         builder: (context, isConnected) {

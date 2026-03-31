@@ -76,7 +76,7 @@ class _MalfuzatListScreenState extends ConsumerState<MalfuzatListScreen> {
     final lastMalfuzatId = lastVisited.value?.getString('lastMalfuzat');
 
     return AppScaffold(
-      onBackPressed: () async => context.go('/'),
+      onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
       title: Text(locales.malfuzat),
       body: OfflineDbPrompt(
         feature: 'malfuzats',
