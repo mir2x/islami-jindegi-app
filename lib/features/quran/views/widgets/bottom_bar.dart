@@ -123,6 +123,7 @@ class BottomBar extends ConsumerWidget {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: colors.drawerScrim.withValues(alpha: 0),
       builder: (_) => AudioBottomSheet(
         currentSura: ref.read(currentSuraProvider),
@@ -316,24 +317,17 @@ class _NavIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: isLandscape ? 1.5.w : 2.w),
-      child: Material(
-        color: colors.highlight.withValues(alpha: 0.55),
-        borderRadius: BorderRadius.circular(12.r),
-        child: IconButton(
-          iconSize: iconSize,
-          constraints: BoxConstraints(
-            minHeight: isLandscape ? 40.0 : 46.0.h,
-            minWidth: isLandscape ? 34.0 : 40.0.w,
-          ),
-          padding: EdgeInsets.zero,
-          splashColor: colors.selectionOverlay,
-          highlightColor: colors.selectionOverlay.withValues(alpha: 0.1),
-          icon: Center(child: Icon(icon, color: color)),
-          onPressed: onPressed,
-        ),
+    return IconButton(
+      iconSize: iconSize,
+      constraints: BoxConstraints(
+        minHeight: isLandscape ? 40.0 : 46.0.h,
+        minWidth: isLandscape ? 34.0 : 40.0.w,
       ),
+      padding: EdgeInsets.zero,
+      splashColor: colors.selectionOverlay,
+      highlightColor: colors.selectionOverlay.withValues(alpha: 0.1),
+      icon: Center(child: Icon(icon, color: color)),
+      onPressed: onPressed,
     );
   }
 }

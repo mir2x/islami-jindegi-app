@@ -24,6 +24,9 @@ class BookmarkButton extends ConsumerWidget {
     var bookmarkProviderWithLink = bookmarkProvider(link);
     var bookmarkQuery = ref.watch(bookmarkProviderWithLink);
     final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isClassic = colors.primary == AppThemeColors.classic.primary &&
+        colors.appBarBg == AppThemeColors.classic.appBarBg;
+    final controlColor = isClassic ? colors.appBarBg : colors.primary;
 
     return bookmarkQuery.when(
       loading: () => const CircularProgressIndicator(),
@@ -32,7 +35,7 @@ class BookmarkButton extends ConsumerWidget {
         if (bookmark != null) {
           return IconButton(
             icon: const Icon(Icons.bookmark_remove),
-            color: iconColor ?? colors.primary,
+            color: iconColor ?? controlColor,
             onPressed: () {
               ref
                   .read(bookmarkProviderWithLink.notifier)
@@ -49,7 +52,7 @@ class BookmarkButton extends ConsumerWidget {
         } else {
           return IconButton(
             icon: const Icon(Icons.bookmark_add),
-            color: iconColor ?? colors.primary,
+            color: iconColor ?? controlColor,
             onPressed: () {
               ref.read(bookmarkProviderWithLink.notifier).createItem({
                 'type': type,

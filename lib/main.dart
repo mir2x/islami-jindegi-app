@@ -12,6 +12,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:lehttp_overrides/lehttp_overrides.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/theme/themes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -56,6 +57,11 @@ Future<void> main() async {
 
   AppRoutes.initialize();
 
+  // Load preferences before runApp so the correct theme is available
+  // on the very first frame — avoids the theme flash/flicker.
+  final initialPrefs = await SharedPreferences.getInstance();
+  final initialTheme = initialPrefs.getString('theme') ?? 'classic';
+
   final container = ProviderContainer();
 
   if (Platform.isAndroid) {
@@ -76,7 +82,7 @@ Future<void> main() async {
   runApp(
     UncontrolledProviderScope(
       container: container,
-      child: const MyApp(),
+      child: MyApp(initialTheme: initialTheme),
     ),
   );
 
@@ -107,7 +113,9 @@ Future<void> _initializeNonBlockingServices() async {
 }
 
 class MyApp extends ConsumerWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.initialTheme});
+
+  final String initialTheme;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -127,7 +135,7 @@ class MyApp extends ConsumerWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        final currentTheme = prefs?.getString('theme') ?? 'light';
+        final currentTheme = prefs?.getString('theme') ?? initialTheme;
         final selectedTheme =
             currentTheme == 'light' ? lightTheme(fonts) : classicTheme(fonts);
         final selectedDarkTheme = darkTheme(fonts);

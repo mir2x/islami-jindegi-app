@@ -7,7 +7,6 @@ import 'package:native_app/shared/quran_data.dart';
 import 'package:go_router/go_router.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
-
 class ParaList extends ConsumerWidget {
   const ParaList({super.key});
 
@@ -85,12 +84,15 @@ class _ParaListItem extends StatelessWidget {
 
   Widget _buildParaNumber(BuildContext context) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isClassic = colors.primary == AppThemeColors.classic.primary &&
+        colors.appBarBg == AppThemeColors.classic.appBarBg;
+    final accentColor = isClassic ? colors.appBarBg : colors.active;
     return Container(
       width: 50,
       height: 50,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: colors.highlight,
+        color: colors.highlight.withValues(alpha: isClassic ? 0.62 : 1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
@@ -99,7 +101,7 @@ class _ParaListItem extends StatelessWidget {
           wordSpacing: 3,
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: colors.active,
+          color: accentColor,
         ),
       ),
     );

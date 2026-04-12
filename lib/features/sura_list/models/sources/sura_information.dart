@@ -453,7 +453,7 @@ const List<SuraListItemModel> allSuras = [
       nameArabic: 'سُورَةُ الْقِيَامَةِ'),
   SuraListItemModel(
       number: 76,
-      nameBangla: 'আল ইনসান',
+      nameBangla: 'সূরা আদ-দাহর',
       meaningBangla: 'মানুষ',
       revelationType: RevelationType.Madani,
       nameArabic: 'سُورَةُ الْإِنْسَانِ'),

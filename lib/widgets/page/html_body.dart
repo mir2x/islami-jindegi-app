@@ -7,10 +7,12 @@ class PageHtmlBody extends StatelessWidget {
     super.key,
     required this.text,
     required this.fontSizeRatio,
+    this.arabicFontScale = 1.0,
   });
 
   final String text;
   final FontSizeRatio fontSizeRatio;
+  final double arabicFontScale;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +22,7 @@ class PageHtmlBody extends StatelessWidget {
         return HtmlText(
           text: text,
           fontSizeRatio: ratio,
+          arabicFontScale: arabicFontScale,
         );
       },
     );

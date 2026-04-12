@@ -10,11 +10,13 @@ class GregorianDate extends StatelessWidget {
     this.currentDate,
     this.count,
     this.oppositeColor = false,
+    this.style,
   });
 
   final DateTime? currentDate;
   final int? count;
   final bool oppositeColor;
+  final TextStyle? style;
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +35,10 @@ class GregorianDate extends StatelessWidget {
 
         return Text(
           getGregorianDate(currentLang, currentDate),
-          style: textTheme.labelSmall?.copyWith(
-            color: oppositeColor ? appColors.appBarText : null,
-          ),
+          style: style ??
+              textTheme.labelSmall?.copyWith(
+                color: oppositeColor ? appColors.appBarText : null,
+              ),
         );
       },
     );

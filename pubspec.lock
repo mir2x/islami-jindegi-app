@@ -712,11 +712,9 @@ packages:
   hijri_picker:
     dependency: "direct main"
     description:
-      path: "."
-      ref: pass-weekday-number
-      resolved-ref: "87b57655e6d8f8ee60042a69eda3e3490d764f26"
-      url: "https://github.com/musaffa/hijri_picker.git"
-    source: git
+      path: "packages/hijri_picker"
+      relative: true
+    source: path
     version: "4.0.0"
   home_widget:
     dependency: "direct main"

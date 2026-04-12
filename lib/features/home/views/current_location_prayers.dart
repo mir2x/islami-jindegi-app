@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:adhan/adhan.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/theme/app_theme_color.dart';
@@ -11,12 +12,18 @@ import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/helpers/update_app_widget.dart';
 
 class CurrentLocationPrayers extends StatelessWidget {
-  const CurrentLocationPrayers({super.key});
+  const CurrentLocationPrayers({super.key, this.heroCard = false});
+
+  final bool heroCard;
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isMobile = screenWidth < 768;
+
+    if (heroCard) {
+      return const CurrentPrayers(heroCard: true);
+    }
 
     return Column(
       crossAxisAlignment:
@@ -39,7 +46,9 @@ class CurrentLocationPrayers extends StatelessWidget {
 }
 
 class CurrentPrayers extends ConsumerStatefulWidget {
-  const CurrentPrayers({super.key});
+  const CurrentPrayers({super.key, this.heroCard = false});
+
+  final bool heroCard;
 
   @override
   CurrentPrayersState createState() => CurrentPrayersState();
@@ -84,6 +93,7 @@ class CurrentPrayersState extends ConsumerState<CurrentPrayers> {
                 currentPrayerTime != null &&
                 nextPrayer != null) {
               return Prayers(
+                heroCard: widget.heroCard,
                 prayerTimes: {
                   'current': {
                     'title': currentPrayerTitle,
@@ -93,7 +103,7 @@ class CurrentPrayersState extends ConsumerState<CurrentPrayers> {
                 },
               );
             } else {
-              return const SizedBox(height: 45);
+              return SizedBox(height: widget.heroCard ? 80 : 45);
             }
           },
         );
@@ -118,10 +128,12 @@ class CurrentPrayersState extends ConsumerState<CurrentPrayers> {
         );
 
         return Prayers(
+          heroCard: widget.heroCard,
           prayerTimes: {
             'current': prayerTimes['current'],
-            'next':
-                '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}',
+            'next': widget.heroCard
+                ? prayerTimes['next']
+                : '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}',
           },
         );
       },
@@ -133,13 +145,16 @@ class Prayers extends StatelessWidget {
   const Prayers({
     super.key,
     required this.prayerTimes,
+    this.heroCard = false,
   });
 
   final Map prayerTimes;
+  final bool heroCard;
 
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
+    var locales = AppLocalizations.of(context)!;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isMobile = screenWidth < 768;
     bool isSmallMobile = screenWidth < 340;
@@ -175,53 +190,205 @@ class Prayers extends StatelessWidget {
           }
         }
 
-        if (preferences.getString('nextPrayer') != prayerTimes['next']) {
-          preferences.setString('nextPrayer', prayerTimes['next']);
-          updatableParams['nextPrayer'] = prayerTimes['next'];
+        final nextValue = prayerTimes['next'];
+        final nextString = nextValue is Map
+            ? '${nextValue['title']} ${nextValue['time']}'
+            : nextValue as String;
+        if (preferences.getString('nextPrayer') != nextString) {
+          preferences.setString('nextPrayer', nextString);
+          updatableParams['nextPrayer'] = nextString;
         }
 
         updateAppWidget(updatableParams);
 
-        return Column(
-          crossAxisAlignment:
-              isMobile ? CrossAxisAlignment.start : CrossAxisAlignment.end,
-          children: [
-            if (hasCurrentPrayer) ...[
-              Container(
-                margin: EdgeInsets.only(bottom: isMobile ? 0 : 5),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${prayerTimes['current']['title']}',
-                      style: isSmallMobile
-                          ? textTheme.titleMedium?.copyWith(
-                              fontSize: 17,
-                              color: titleColor,
-                            )
-                          : textTheme.titleLarge?.copyWith(color: titleColor),
+        if (heroCard) {
+          return InkWell(
+            borderRadius: BorderRadius.circular(20),
+            onTap: () => context.push('/namaz-times'),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          locales.currentPrayerLabel,
+                          style: textTheme.labelMedium?.copyWith(
+                            color: appColors.secondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        if (hasCurrentPrayer) ...[
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Text(
+                                '${prayerTimes['current']['title']}',
+                                style: textTheme.titleLarge?.copyWith(
+                                  color: titleColor,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                '${locales.startsLabel} ',
+                                style: textTheme.labelSmall?.copyWith(
+                                  color: appColors.secondary
+                                      .withValues(alpha: 0.85),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Text(
+                                (prayerTimes['current']['time'] as String)
+                                    .split(' - ')
+                                    .first,
+                                style: textTheme.titleLarge?.copyWith(
+                                  color: titleColor,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Text(
+                                '${locales.endsLabel} ',
+                                style: textTheme.labelSmall?.copyWith(
+                                  color: appColors.secondary
+                                      .withValues(alpha: 0.85),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Text(
+                                (prayerTimes['current']['time'] as String)
+                                    .split(' - ')
+                                    .last,
+                                style: textTheme.headlineMedium?.copyWith(
+                                  color: titleColor,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ],
                     ),
-                    const SizedBox(width: 8),
-                    Container(
-                      margin: EdgeInsets.only(top: isSmallMobile ? 1 : 3),
-                      child: Text(
-                        '${prayerTimes['current']['time']}',
-                        style: textTheme.titleMedium?.copyWith(
-                          color: titleColor,
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          locales.nextLabel,
+                          style: textTheme.labelMedium?.copyWith(
+                            color: appColors.secondary.withValues(alpha: 0.6),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        if (prayerTimes['next'] is Map) ...[
+                          Text(
+                            '${prayerTimes['next']['title']}',
+                            style: textTheme.labelMedium?.copyWith(
+                              color: labelColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            textAlign: TextAlign.end,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Text(
+                                '${locales.startsLabel} ',
+                                style: textTheme.labelSmall?.copyWith(
+                                  color: appColors.secondary
+                                      .withValues(alpha: 0.85),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Text(
+                                '${prayerTimes['next']['time']}',
+                                style: textTheme.titleMedium?.copyWith(
+                                  color: labelColor,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ] else
+                          Text(
+                            '${prayerTimes['next']}',
+                            style: textTheme.labelMedium?.copyWith(
+                              color: labelColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            textAlign: TextAlign.end,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: () => context.push('/namaz-times'),
+          child: Column(
+            crossAxisAlignment:
+                isMobile ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+            children: [
+              if (hasCurrentPrayer) ...[
+                Container(
+                  margin: EdgeInsets.only(bottom: isMobile ? 0 : 5),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${prayerTimes['current']['title']}',
+                        style: isSmallMobile
+                            ? textTheme.titleMedium?.copyWith(
+                                fontSize: 17,
+                                color: titleColor,
+                              )
+                            : textTheme.titleLarge?.copyWith(color: titleColor),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        margin: EdgeInsets.only(top: isSmallMobile ? 1 : 3),
+                        child: Text(
+                          '${prayerTimes['current']['time']}',
+                          style: textTheme.titleMedium?.copyWith(
+                            color: titleColor,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                ),
+              ],
+              Text(
+                prayerTimes['next'],
+                style: textTheme.labelSmall?.copyWith(
+                  color: labelColor,
                 ),
               ),
             ],
-            Text(
-              prayerTimes['next'],
-              style: textTheme.labelSmall?.copyWith(
-                color: labelColor,
-              ),
-            ),
-          ],
+          ),
         );
       },
     );

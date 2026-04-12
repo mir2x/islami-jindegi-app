@@ -77,6 +77,8 @@ class _BookmarkListItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isClassic = colors.primary == AppThemeColors.classic.primary &&
+        colors.appBarBg == AppThemeColors.classic.appBarBg;
     return Dismissible(
       key: Key(bookmark.id),
       direction: DismissDirection.endToStart,
@@ -95,7 +97,9 @@ class _BookmarkListItem extends ConsumerWidget {
         );
       },
       background: Container(
-        color: colors.primary.withValues(alpha: 0.9),
+        color: isClassic
+            ? colors.secondary.withValues(alpha: 0.9)
+            : colors.primary.withValues(alpha: 0.9),
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 16),
         child: Icon(Icons.delete, color: colors.appBarText),
@@ -126,11 +130,14 @@ class _BookmarkListItem extends ConsumerWidget {
 
   Widget _buildSuraInfo(BuildContext context) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isClassic = colors.primary == AppThemeColors.classic.primary &&
+        colors.appBarBg == AppThemeColors.classic.appBarBg;
+    final accentColor = isClassic ? colors.appBarBg : colors.active;
     return Container(
       width: 60,
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       decoration: BoxDecoration(
-        color: colors.highlight,
+        color: colors.highlight.withValues(alpha: isClassic ? 0.62 : 1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -142,7 +149,7 @@ class _BookmarkListItem extends ConsumerWidget {
               wordSpacing: 3,
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: colors.active,
+              color: accentColor,
             ),
           ),
           Text(
@@ -150,7 +157,7 @@ class _BookmarkListItem extends ConsumerWidget {
             style: TextStyle(
               wordSpacing: 3,
               fontSize: 12,
-              color: colors.active,
+              color: accentColor,
             ),
           ),
         ],
@@ -191,8 +198,11 @@ class _BookmarkListItem extends ConsumerWidget {
 
   Widget _buildDeleteButton(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isClassic = colors.primary == AppThemeColors.classic.primary &&
+        colors.appBarBg == AppThemeColors.classic.appBarBg;
+    final accentColor = isClassic ? colors.appBarBg : colors.active;
     return IconButton(
-      icon: Icon(Icons.bookmark, color: colors.active),
+      icon: Icon(Icons.bookmark, color: accentColor),
       onPressed: () {
         ref.read(bookmarkProvider.notifier).removeBookmark(
               bookmark.suraNumber,

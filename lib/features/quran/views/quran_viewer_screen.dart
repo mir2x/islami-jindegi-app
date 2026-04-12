@@ -350,7 +350,7 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
                     },
                     child: Scaffold(
                       key: _rootKey,
-                      backgroundColor: appThemeColors?.scaffoldBg ?? appBarBg,
+                      backgroundColor: appBarBg,
                       drawer: const SideDrawer(),
                       onDrawerChanged: (isOpen) {
                         Future(() {

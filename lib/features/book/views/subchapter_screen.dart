@@ -131,6 +131,7 @@ class SubchapterScreen extends ConsumerWidget {
                         child: PageHtmlBody(
                           text: resource.body ?? '',
                           fontSizeRatio: fontSizeRatio,
+                          arabicFontScale: 1.2,
                         ),
                       ),
                     ],

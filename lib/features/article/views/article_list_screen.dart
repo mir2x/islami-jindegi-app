@@ -13,17 +13,65 @@ import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/nested_item.dart';
 import 'package:native_app/widgets/filter/subitem.dart';
 import 'package:native_app/widgets/presentation/content_list_card.dart';
+import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
 import '../providers/article_providers.dart';
 
-class ArticleListScreen extends ConsumerWidget {
+class ArticleListScreen extends ConsumerStatefulWidget {
   const ArticleListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ArticleListScreen> createState() => _ArticleListScreenState();
+}
+
+class _ArticleListScreenState extends ConsumerState<ArticleListScreen> {
+  final ScrollController _scrollController = ScrollController();
+  final Map<String, GlobalKey> _itemKeys = {};
+  String? _lastScrolledToId;
+
+  GlobalKey _keyFor(String id) => _itemKeys.putIfAbsent(id, () => GlobalKey());
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToLastVisited(String? lastId) {
+    if (lastId == null || lastId == _lastScrolledToId) return;
+    final ctx = _keyFor(lastId).currentContext;
+    if (ctx != null) {
+      _lastScrolledToId = lastId;
+      Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+        alignment: 0.3,
+      );
+    } else {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (!mounted) return;
+        final retryCtx = _keyFor(lastId).currentContext;
+        if (retryCtx != null) {
+          _lastScrolledToId = lastId;
+          Scrollable.ensureVisible(
+            retryCtx,
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
+            alignment: 0.3,
+          );
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(articleQueryParamsProvider);
+    final lastVisited = ref.watch(lastVisitedProvider);
+    final lastArticleId = lastVisited.value?.getString('lastArticle');
 
     return AppScaffold(
       onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
@@ -233,6 +281,8 @@ class ArticleListScreen extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: InfiniteList(
                   qParams: qParams,
+                  scrollController: _scrollController,
+                  onFirstPageLoaded: () => _scrollToLastVisited(lastArticleId),
                   resourceFetcher: (Map<String, dynamic> params) async {
                     final api = ref.read(articleApiServiceProvider);
                     final offline = ref.read(articleOfflineServiceProvider);
@@ -257,11 +307,20 @@ class ArticleListScreen extends ConsumerWidget {
                     }
                   },
                   itemBuilder: (_, item, __) {
+                    final isRecent = item.id == lastArticleId;
+                    if (isRecent && _lastScrolledToId != item.id) {
+                      WidgetsBinding.instance.addPostFrameCallback(
+                        (_) => _scrollToLastVisited(item.id),
+                      );
+                    }
                     return InkWell(
+                      key: _keyFor(item.id),
                       onTap: () => context.push('/articles/${item.id}'),
                       child: ContentListCard(
+                        recentlyVisited: isRecent,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Flexible(
                               child: Column(

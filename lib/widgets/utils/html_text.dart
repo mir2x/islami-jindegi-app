@@ -10,10 +10,12 @@ class HtmlText extends StatelessWidget {
     super.key,
     required this.text,
     this.fontSizeRatio = 1.0,
+    this.arabicFontScale = 1.0,
   });
 
   final String text;
   final double fontSizeRatio;
+  final double arabicFontScale;
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +130,12 @@ class HtmlText extends StatelessWidget {
           '.tiptap-md-font': Style(fontSize: FontSize(17 * fontSizeRatio)),
           '.tiptap-lg-font': Style(fontSize: FontSize(20 * fontSizeRatio)),
           '.tiptap-xl-font': Style(fontSize: FontSize(24 * fontSizeRatio)),
-          '[dir="rtl"]': Style(direction: TextDirection.rtl),
+          '[dir="rtl"]': Style(
+            direction: TextDirection.rtl,
+            textAlign: TextAlign.right,
+            fontSize: FontSize(20 * fontSizeRatio * arabicFontScale),
+            lineHeight: const LineHeight(1.7),
+          ),
         },
       ),
     );

@@ -44,16 +44,16 @@ class _AudioBottomSheetState extends ConsumerState<AudioBottomSheet> {
 
     final colors = Theme.of(context).extension<AppThemeColors>()!;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: colors.cardBg,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-      ),
-      padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 24.h),
-      child: SingleChildScrollView(
+    return SafeArea(
+      child: Container(
+        decoration: BoxDecoration(
+          color: colors.cardBg,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+        ),
+        padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 24.h),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+            mainAxisSize: MainAxisSize.min,
+            children: [
             _labeledDropdown<String>(
               label: 'সূরা',
               icon: HugeIcons.strokeRoundedArrowRight01,
@@ -179,7 +179,7 @@ class _AudioBottomSheetState extends ConsumerState<AudioBottomSheet> {
                 },
               ),
             ),
-            SizedBox(height: 44.h),
+            SizedBox(height: 12.h),
           ],
         ),
       ),

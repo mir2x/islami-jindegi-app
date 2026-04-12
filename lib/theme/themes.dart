@@ -112,7 +112,7 @@ ThemeData classicTheme(Map fonts) {
       onPrimary: AppColors.appBarTextClassic,
       primaryContainer: AppColors.highlightClassic,
       secondary: AppColors.secondaryClassic,
-      onSecondary: AppColors.accentClassic,
+      onSecondary: AppColors.appBarTextClassic,
       secondaryContainer: AppColors.cardBgClassic,
       tertiary: AppColors.accentClassic,
       error: AppColors.danger,

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/features/quran/views/widgets/drawer/bookmark_navigation_view.dart';
 import 'package:native_app/features/quran/views/widgets/drawer/para_navigation_view.dart';
 import 'package:native_app/features/quran/views/widgets/drawer/sura_navigation_view.dart';
+import 'package:native_app/theme/app_colors.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import '../../../providers/ayah_highlight_providers.dart';
 
@@ -77,10 +78,10 @@ class _SideDrawerState extends ConsumerState<SideDrawer>
           } else {
             tabContent = TabBarView(
               controller: _tabController,
-              children: [
-                const SurahNavigationView(),
-                const ParaNavigationView(),
-                const BookmarkNavigationView(),
+              children: const [
+                SurahNavigationView(),
+                ParaNavigationView(),
+                BookmarkNavigationView(),
               ],
             );
           }
@@ -89,51 +90,71 @@ class _SideDrawerState extends ConsumerState<SideDrawer>
             padding: EdgeInsets.only(top: topInset, bottom: bottomInset),
             child: SizedBox(
               width: 250.w,
-              child: Material(
-                elevation: 0,
-                color: Theme.of(context).extension<AppThemeColors>()!.drawerBg,
-                clipBehavior: Clip.antiAlias,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(22.r),
-                    bottomRight: Radius.circular(22.r),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: tabContent,
+              child: Builder(
+                builder: (ctx) {
+                  final c = Theme.of(ctx).extension<AppThemeColors>()!;
+                  final bgDark =
+                      ThemeData.estimateBrightnessForColor(c.drawerBg) ==
+                          Brightness.dark;
+                  final textDark =
+                      ThemeData.estimateBrightnessForColor(c.primaryText) ==
+                          Brightness.dark;
+                  final isClassicTheme =
+                      c.highlight == AppColors.highlightClassic &&
+                          c.appBarText == AppColors.appBarTextClassic;
+                  final contentBg =
+                      (bgDark && textDark) ? c.surfaceBg : c.drawerBg;
+                  final selectedTabLabelColor =
+                      isClassicTheme ? c.primaryText : c.appBarText;
+                  return Material(
+                    elevation: 0,
+                    color: contentBg,
+                    clipBehavior: Clip.antiAlias,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(22.r),
+                        bottomRight: Radius.circular(22.r),
+                      ),
                     ),
-                    Builder(builder: (context) {
-                      final appColors =
-                          Theme.of(context).extension<AppThemeColors>()!;
-                      final appBarBg = appColors.drawerHeaderBg;
-                      final appBarFg = appColors.appBarText;
-                      final indicatorColor = appColors.highlight;
-                      return Container(
-                        color: appBarBg,
-                        child: TabBar(
-                          controller: _tabController,
-                          labelColor: appBarFg,
-                          dividerColor: appBarBg.withValues(alpha: 0),
-                          unselectedLabelColor:
-                              appBarFg.withValues(alpha: 0.72),
-                          indicator: BoxDecoration(
-                            color: indicatorColor,
-                            borderRadius: BorderRadius.zero,
-                          ),
-                          indicatorWeight: 0,
-                          indicatorSize: TabBarIndicatorSize.tab,
-                          tabs: const [
-                            Tab(text: 'সূরা'),
-                            Tab(text: 'পারা'),
-                            Tab(text: 'বুকমার্ক'),
-                          ],
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: tabContent,
                         ),
-                      );
-                    }),
-                  ],
-                ),
+                        Builder(
+                          builder: (context) {
+                            final appColors =
+                                Theme.of(context).extension<AppThemeColors>()!;
+                            final appBarBg = appColors.drawerHeaderBg;
+                            final appBarFg = appColors.appBarText;
+                            final indicatorColor = appColors.highlight;
+                            return Container(
+                              color: appBarBg,
+                              child: TabBar(
+                                controller: _tabController,
+                                labelColor: selectedTabLabelColor,
+                                dividerColor: appBarBg.withValues(alpha: 0),
+                                unselectedLabelColor:
+                                    appBarFg.withValues(alpha: 0.72),
+                                indicator: BoxDecoration(
+                                  color: indicatorColor,
+                                  borderRadius: BorderRadius.zero,
+                                ),
+                                indicatorWeight: 0,
+                                indicatorSize: TabBarIndicatorSize.tab,
+                                tabs: const [
+                                  Tab(text: 'সূরা'),
+                                  Tab(text: 'পারা'),
+                                  Tab(text: 'বুকমার্ক'),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
           );

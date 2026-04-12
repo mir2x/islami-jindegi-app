@@ -61,6 +61,12 @@ class _SuraSideDrawerState extends ConsumerState<SuraSideDrawer>
     final appBarBg = appColors.drawerHeaderBg;
     final appBarFg = appColors.appBarText;
     final indicatorColor = appColors.highlight;
+    final isClassic = appColors.primary == AppThemeColors.classic.primary &&
+        appColors.appBarBg == AppThemeColors.classic.appBarBg;
+    final selectedTabTextColor = isClassic ? appColors.appBarBg : appBarFg;
+    final unselectedTabTextColor = isClassic
+        ? appBarFg.withValues(alpha: 0.78)
+        : appBarFg.withValues(alpha: 0.72);
 
     return Align(
       alignment: Alignment.topLeft,
@@ -104,9 +110,9 @@ class _SuraSideDrawerState extends ConsumerState<SuraSideDrawer>
                   color: appBarBg,
                   child: TabBar(
                     controller: _tabController,
-                    labelColor: appBarFg,
+                    labelColor: selectedTabTextColor,
                     dividerColor: appBarBg.withValues(alpha: 0),
-                    unselectedLabelColor: appBarFg.withValues(alpha: 0.72),
+                    unselectedLabelColor: unselectedTabTextColor,
                     indicator: BoxDecoration(
                       color: indicatorColor,
                       borderRadius: BorderRadius.zero,

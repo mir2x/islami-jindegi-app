@@ -72,6 +72,13 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
     }
 
     final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isClassic = colors.primary == AppThemeColors.classic.primary &&
+        colors.appBarBg == AppThemeColors.classic.appBarBg;
+    final selectedTabTextColor =
+        isClassic ? colors.appBarBg : colors.appBarText;
+    final unselectedTabTextColor = isClassic
+        ? colors.appBarText.withValues(alpha: 0.76)
+        : colors.appBarText.withValues(alpha: 0.64);
 
     return AppScaffold(
       onBackPressed: () async => context.go('/qurans'),
@@ -96,8 +103,8 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
               ),
               dividerColor: colors.appBarBg.withValues(alpha: 0),
               indicatorSize: TabBarIndicatorSize.tab,
-              labelColor: colors.appBarText,
-              unselectedLabelColor: colors.appBarText.withValues(alpha: 0.64),
+              labelColor: selectedTabTextColor,
+              unselectedLabelColor: unselectedTabTextColor,
               tabs: const [
                 Tab(text: 'সূরা'),
                 Tab(text: 'পারা'),

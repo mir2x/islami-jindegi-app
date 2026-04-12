@@ -17,71 +17,113 @@ class Resource extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var textTheme = Theme.of(context).textTheme;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     double screenWidth = MediaQuery.of(context).size.width;
     bool isMobile = screenWidth < 768;
-    bool isSmallMobile = screenWidth < 340;
-
-    double iconSize;
-
-    if (isMobile) {
-      iconSize = isSmallMobile ? 36 : 42;
-    } else {
-      iconSize = 80;
-    }
 
     final targetRoute = route.startsWith('/') ? route : '/$route';
+    final tileBackground = isDarkTheme
+        ? Color.alphaBlend(
+            appColors.highlight.withValues(alpha: 0.42),
+            appColors.cardBg,
+          )
+        : appColors.cardBg.withValues(alpha: 0.7);
+    final tileBorderColor = isDarkTheme
+        ? appColors.highlightBorder.withValues(alpha: 0.92)
+        : appColors.divider.withValues(alpha: 0.4);
+    final tileBorderWidth = isDarkTheme ? 1.15 : 1.0;
+
     return InkWell(
       onTap: () => context.push(targetRoute),
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: isMobile ? 10 : 14,
-          vertical: isMobile ? 14 : 18,
-        ),
         decoration: BoxDecoration(
-          color: appColors.cardBg.withValues(alpha: 0.82),
-          borderRadius: BorderRadius.circular(24),
+          color: tileBackground,
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: appColors.divider.withValues(alpha: 0.5),
+            color: tileBorderColor,
+            width: tileBorderWidth,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: appColors.shadow.withValues(alpha: 0.08),
-              blurRadius: 16,
-              offset: const Offset(0, 8),
-            ),
-          ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              'assets/images/icons/$icon.svg',
-              fit: BoxFit.contain,
-              width: iconSize,
-              height: iconSize,
-            ),
-            SizedBox(height: isMobile ? 8 : 12),
-            Flexible(
-              child: Text(
-                title,
-                style: isSmallMobile
-                    ? textTheme.labelSmall?.copyWith(
-                        height: 1.1,
-                        color: appColors.primaryText,
-                      )
-                    : textTheme.labelMedium?.copyWith(
-                        height: 1.1,
-                        color: appColors.primaryText,
-                      ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final cellHeight = constraints.maxHeight;
+
+            // Scale icon and spacing based on available cell height
+            double iconSize;
+            double gap;
+            double verticalPad;
+            double horizontalPad;
+            TextStyle? textStyle;
+
+            if (!isMobile) {
+              iconSize = 56;
+              gap = 10;
+              verticalPad = 14;
+              horizontalPad = 12;
+              textStyle = Theme.of(context).textTheme.labelMedium?.copyWith(
+                    height: 1.1,
+                    color: appColors.primaryText,
+                  );
+            } else if (cellHeight < 70) {
+              iconSize = 20;
+              gap = 2;
+              verticalPad = 4;
+              horizontalPad = 4;
+              textStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+                    height: 1.1,
+                    fontSize: 9,
+                    color: appColors.primaryText,
+                  );
+            } else if (cellHeight < 85) {
+              iconSize = 24;
+              gap = 4;
+              verticalPad = 6;
+              horizontalPad = 4;
+              textStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+                    height: 1.1,
+                    color: appColors.primaryText,
+                  );
+            } else {
+              iconSize = screenWidth < 340 ? 24 : 30;
+              gap = 6;
+              verticalPad = 8;
+              horizontalPad = 6;
+              textStyle = Theme.of(context).textTheme.labelMedium?.copyWith(
+                    height: 1.1,
+                    color: appColors.primaryText,
+                  );
+            }
+
+            return Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPad,
+                vertical: verticalPad,
               ),
-            ),
-          ],
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    'assets/images/icons/$icon.svg',
+                    fit: BoxFit.contain,
+                    width: iconSize,
+                    height: iconSize,
+                  ),
+                  SizedBox(height: gap),
+                  Flexible(
+                    child: Text(
+                      title,
+                      style: textStyle,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );

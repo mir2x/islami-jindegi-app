@@ -124,7 +124,9 @@ class _TilawatSuraNavigationViewState
     final suraNames = ref.watch(suraNamesProvider);
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
     final selectedBg = appColors.highlight;
-    final selectedFg = appColors.primaryText;
+    final isClassic = appColors.primary == AppThemeColors.classic.primary &&
+        appColors.appBarBg == AppThemeColors.classic.appBarBg;
+    final selectedFg = isClassic ? appColors.appBarBg : appColors.primaryText;
 
     return ScrollablePositionedList.separated(
       itemScrollController: _surahScrollController,
@@ -161,6 +163,9 @@ class _TilawatSuraNavigationViewState
     final selectedSurah = ref.watch(_selectedTilawatSurahProvider);
     final ayahCounts = ref.watch(ayahCountsProvider);
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isClassic = appColors.primary == AppThemeColors.classic.primary &&
+        appColors.appBarBg == AppThemeColors.classic.appBarBg;
+    final selectedFg = isClassic ? appColors.appBarBg : appColors.primaryText;
 
     if (selectedSurah < 1 || selectedSurah > 114) return const SizedBox();
 
@@ -185,7 +190,10 @@ class _TilawatSuraNavigationViewState
               _toBengaliNumber(ayahNumber),
               style: TextStyle(
                 fontSize: 14.sp,
-                color: appColors.primaryText,
+                color: ayahNumber == widget.currentAyahNumber &&
+                        selectedSurah == widget.currentSuraNumber
+                    ? selectedFg
+                    : appColors.primaryText,
                 fontWeight: ayahNumber == widget.currentAyahNumber &&
                         selectedSurah == widget.currentSuraNumber
                     ? FontWeight.bold

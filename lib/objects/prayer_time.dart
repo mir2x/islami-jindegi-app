@@ -33,6 +33,7 @@ class PrayerTime {
   final Duration threeMins = const Duration(minutes: 3);
   final Duration fourMins = const Duration(minutes: 4);
   final Duration fiveMins = const Duration(minutes: 5);
+  final Duration tenMins = const Duration(minutes: 10);
   final Duration fourteenMins = const Duration(minutes: 14);
   final Duration fifteenMins = const Duration(minutes: 15);
 
@@ -153,11 +154,17 @@ class PrayerTime {
     );
   }
 
+  DateTime _sehriEndsAt(DateTime fajrTime) {
+    return fajrTime.subtract(tenMins);
+  }
+
   Map<String, _PrayerScheduleEntry> _buildDisplaySchedule(
     AppLocalizations locales,
     String currentLang,
     DateTime date,
   ) {
+    final previousPrayerTimes =
+        _createPrayerTimes(date.subtract(const Duration(days: 1)));
     final basePrayerTimes = _createPrayerTimes(date);
     final nextPrayerTimes =
         _createPrayerTimes(date.add(const Duration(days: 1)));
@@ -166,8 +173,8 @@ class PrayerTime {
       'tahajjud': _PrayerScheduleEntry(
         key: 'tahajjud',
         title: locales.tahajjudSehri,
-        startDateTime: basePrayerTimes.isha,
-        endDateTime: basePrayerTimes.fajr,
+        startDateTime: _sehriEndsAt(basePrayerTimes.fajr),
+        endDateTime: _sehriEndsAt(basePrayerTimes.fajr),
       ),
       'fajr': _PrayerScheduleEntry(
         key: 'fajr',
@@ -221,7 +228,7 @@ class PrayerTime {
         key: 'isha',
         title: locales.isha,
         startDateTime: basePrayerTimes.isha,
-        endDateTime: nextPrayerTimes.fajr.subtract(oneMin),
+        endDateTime: _sehriEndsAt(nextPrayerTimes.fajr),
       ),
     };
   }
@@ -238,11 +245,23 @@ class PrayerTime {
         startDateTime: basePrayerTimes.fajr,
         endDateTime: basePrayerTimes.sunrise.subtract(oneMin),
       ),
+      'sunrise': _PrayerScheduleEntry(
+        key: 'sunrise',
+        title: 'sunrise',
+        startDateTime: basePrayerTimes.sunrise,
+        endDateTime: basePrayerTimes.sunrise.add(fourteenMins),
+      ),
       'ishraq': _PrayerScheduleEntry(
         key: 'ishraq',
         title: 'ishraq',
         startDateTime: basePrayerTimes.sunrise.add(fifteenMins),
         endDateTime: basePrayerTimes.dhuhr.subtract(oneMin),
+      ),
+      'midday': _PrayerScheduleEntry(
+        key: 'midday',
+        title: 'midday',
+        startDateTime: basePrayerTimes.dhuhr,
+        endDateTime: basePrayerTimes.dhuhr.add(fourMins),
       ),
       'dhuhr': _PrayerScheduleEntry(
         key: 'dhuhr',
@@ -272,7 +291,7 @@ class PrayerTime {
         key: 'isha',
         title: 'isha',
         startDateTime: basePrayerTimes.isha,
-        endDateTime: nextPrayerTimes.fajr.subtract(oneMin),
+        endDateTime: _sehriEndsAt(nextPrayerTimes.fajr),
       ),
     };
   }
@@ -286,7 +305,9 @@ class PrayerTime {
     final windows = [
       previousDayWindows['isha']!,
       currentDayWindows['fajr']!,
+      currentDayWindows['sunrise']!,
       currentDayWindows['ishraq']!,
+      currentDayWindows['midday']!,
       currentDayWindows['dhuhr']!,
       currentDayWindows['asr']!,
       currentDayWindows['sunset']!,
@@ -314,9 +335,12 @@ class PrayerTime {
 
     final windows = [
       currentDayWindows['fajr']!,
+      currentDayWindows['sunrise']!,
       currentDayWindows['ishraq']!,
+      currentDayWindows['midday']!,
       currentDayWindows['dhuhr']!,
       currentDayWindows['asr']!,
+      currentDayWindows['sunset']!,
       currentDayWindows['maghrib']!,
       currentDayWindows['isha']!,
       nextDayWindows['fajr']!,
@@ -335,12 +359,18 @@ class PrayerTime {
     switch (prayerKey) {
       case 'fajr':
         return locales.fajr;
+      case 'sunrise':
+        return locales.sunrise;
       case 'ishraq':
         return locales.ishraqChasht;
       case 'dhuhr':
         return locales.zuhrZawal;
       case 'asr':
         return locales.asr;
+      case 'midday':
+        return locales.midday;
+      case 'sunset':
+        return locales.sunset;
       case 'maghrib':
         return locales.maghribIftar;
       case 'isha':

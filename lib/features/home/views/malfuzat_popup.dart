@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -34,7 +36,7 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
 
       final api = ref.read(malfuzatApiServiceProvider);
       final malfuzats = await api.fetchMalfuzat(
-        perPage: 1,
+        perPage: 50,
         hasAudio: 'false',
         malfuzatAuthorId: '6842ab90-27d0-4ef9-b783-3b03388a2304',
         includeAuthor: true,
@@ -45,7 +47,7 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
           context: context,
           builder: (BuildContext context) {
             var textTheme = Theme.of(context).textTheme;
-            var item = malfuzats.first;
+            var item = malfuzats[Random().nextInt(malfuzats.length)];
             String? author = item.authorName;
             final appColors = Theme.of(context).extension<AppThemeColors>()!;
 

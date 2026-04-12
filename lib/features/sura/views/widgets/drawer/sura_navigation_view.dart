@@ -115,7 +115,9 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
     final suraNames = ref.watch(suraNamesProvider);
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
     final selectedBg = appColors.highlight;
-    final selectedFg = appColors.primaryText;
+    final isClassic = appColors.primary == AppThemeColors.classic.primary &&
+        appColors.appBarBg == AppThemeColors.classic.appBarBg;
+    final selectedFg = isClassic ? appColors.appBarBg : appColors.primaryText;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
@@ -158,7 +160,9 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
     final ayahCounts = ref.watch(ayahCountsProvider);
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
     final selectedBg = appColors.highlight;
-    final selectedFg = appColors.primaryText;
+    final isClassic = appColors.primary == AppThemeColors.classic.primary &&
+        appColors.appBarBg == AppThemeColors.classic.appBarBg;
+    final selectedFg = isClassic ? appColors.appBarBg : appColors.primaryText;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 12.0 : 14.sp;

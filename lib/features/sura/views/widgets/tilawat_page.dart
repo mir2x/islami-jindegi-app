@@ -39,8 +39,10 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
   int _bottomVisibleIndex = 0;
   bool _nextSuraPromptShown = false;
   bool _prevSuraPromptShown = false;
+  bool _didApplyInitialScroll = false;
 
-  bool get _isAtEnd => _totalPages > 0 && _bottomVisibleIndex >= _totalPages - 1;
+  bool get _isAtEnd =>
+      _totalPages > 0 && _bottomVisibleIndex >= _totalPages - 1;
 
   @override
   void initState() {
@@ -52,6 +54,15 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
   void dispose() {
     _itemPositionsListener.itemPositions.removeListener(_onPositionsChanged);
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant TilawatPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialSuraNumber != widget.initialSuraNumber ||
+        oldWidget.initialAyahNumber != widget.initialAyahNumber) {
+      _didApplyInitialScroll = false;
+    }
   }
 
   void _onPositionsChanged() {
@@ -80,7 +91,8 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
       final threshold = _totalPages <= 1 ? 0.0 : 12.0;
       if (notification.overscroll > threshold && _isAtEnd) {
         _showNextSuraPrompt();
-      } else if (notification.overscroll < -threshold && _bottomVisibleIndex == 0) {
+      } else if (notification.overscroll < -threshold &&
+          _bottomVisibleIndex == 0) {
         _showPrevSuraPrompt();
       }
     }
@@ -279,17 +291,24 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
                       ),
                       borderRadius: BorderRadius.circular(18),
                     ),
-                    child: Icon(Icons.auto_stories_rounded, color: colors.appBarText),
+                    child: Icon(
+                      Icons.auto_stories_rounded,
+                      color: colors.appBarText,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'আগের সূরায় যাবেন?',
-                    style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+                    style: textTheme.headlineSmall
+                        ?.copyWith(fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'আগের সূরা $prevSuraName এ যেতে চান?',
-                    style: textTheme.bodyLarge?.copyWith(color: colors.secondaryText, height: 1.45),
+                    style: textTheme.bodyLarge?.copyWith(
+                      color: colors.secondaryText,
+                      height: 1.45,
+                    ),
                   ),
                   const SizedBox(height: 18),
                   Row(
@@ -299,7 +318,9 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
                           onPressed: () => Navigator.of(sheetContext).pop(),
                           style: OutlinedButton.styleFrom(
                             minimumSize: const Size.fromHeight(50),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
                           ),
                           child: const Text('এখন না'),
                         ),
@@ -320,9 +341,13 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
                           },
                           style: FilledButton.styleFrom(
                             minimumSize: const Size.fromHeight(50),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
                           ),
-                          child: Text('আগের সূরা ${prevSuraNumber.toBengaliDigit()}'),
+                          child: Text(
+                            'আগের সূরা ${prevSuraNumber.toBengaliDigit()}',
+                          ),
                         ),
                       ),
                     ],
@@ -401,14 +426,18 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
 
           final initialIndex = _findInitialPageIndex(surahPages);
 
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (_itemScrollController.isAttached) {
-              _itemScrollController.jumpTo(
-                index: initialIndex,
-                alignment: 0,
-              );
-            }
-          });
+          if (!_didApplyInitialScroll) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (!mounted || _didApplyInitialScroll) return;
+              if (_itemScrollController.isAttached) {
+                _itemScrollController.jumpTo(
+                  index: initialIndex,
+                  alignment: 0,
+                );
+                _didApplyInitialScroll = true;
+              }
+            });
+          }
 
           return NotificationListener<ScrollNotification>(
             onNotification: _handleScrollNotification,

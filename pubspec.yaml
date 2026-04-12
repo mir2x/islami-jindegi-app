@@ -230,3 +230,7 @@ flutter_native_splash:
 
   android_12:
     image: assets/images/logos/logo-transparent-android-12.png
+
+dependency_overrides:
+  hijri_picker:
+    path: packages/hijri_picker

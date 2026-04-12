@@ -15,11 +15,13 @@ class HijriDate extends ConsumerWidget {
     this.currentDate,
     this.count,
     this.oppositeColor = false,
+    this.style,
   });
 
   final HijriCalendar? currentDate;
   final int? count;
   final bool oppositeColor;
+  final TextStyle? style;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -51,9 +53,10 @@ class HijriDate extends ConsumerWidget {
               children: [
                 Text(
                   hijriText,
-                  style: textTheme.labelMedium?.copyWith(
-                    color: oppositeColor ? appColors.appBarText : null,
-                  ),
+                  style: style ??
+                      textTheme.labelMedium?.copyWith(
+                        color: oppositeColor ? appColors.appBarText : null,
+                      ),
                 ),
                 const SizedBox(width: 10),
                 const SizedBox(
@@ -85,9 +88,10 @@ class HijriDate extends ConsumerWidget {
 
             return Text(
               hijriText,
-              style: textTheme.labelMedium?.copyWith(
-                color: oppositeColor ? appColors.appBarText : null,
-              ),
+              style: style ??
+                  textTheme.labelMedium?.copyWith(
+                    color: oppositeColor ? appColors.appBarText : null,
+                  ),
             );
           },
         );

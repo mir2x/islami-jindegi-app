@@ -17,12 +17,20 @@ import 'package:native_app/theme/app_theme_color.dart';
 
 const Set<String> _availableBackgroundAssets = {
   'assets/images/background/mosque-classic.png',
+  'assets/images/background/mosque-light.png',
+  'assets/images/background/mosque-dark.png',
   'assets/images/background/pattern-classic.png',
+  'assets/images/background/pattern-light.png',
+  'assets/images/background/pattern-dark.png',
 };
 
 String _resolveBackgroundAsset(String background, String theme) {
   final direct = 'assets/images/background/$background-$theme.png';
   if (_availableBackgroundAssets.contains(direct)) return direct;
+
+  // Fallback to classic variant if theme-specific asset doesn't exist
+  final fallback = 'assets/images/background/$background-classic.png';
+  if (_availableBackgroundAssets.contains(fallback)) return fallback;
 
   return 'assets/images/background/mosque-classic.png';
 }
@@ -259,81 +267,78 @@ class AppScaffold extends ConsumerWidget {
             endDrawer: Drawer(
               backgroundColor: appColors.drawerBg,
               surfaceTintColor: Colors.transparent,
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(28, 56, 28, 24),
-                    decoration: BoxDecoration(
-                      color: appColors.drawerHeaderBg,
-                      border: Border(
-                        bottom: BorderSide(
-                          color: appColors.divider.withValues(alpha: 0.35),
+              child: SafeArea(
+                top: false,
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(28, 56, 28, 24),
+                      decoration: BoxDecoration(
+                        color: appColors.drawerHeaderBg,
+                        border: Border(
+                          bottom: BorderSide(
+                            color: appColors.divider.withValues(alpha: 0.35),
+                          ),
                         ),
                       ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          'ইসলামী জিন্দেগী',
-                          style: textTheme.headlineSmall?.copyWith(
-                            color: appColors.appBarText,
-                            fontWeight: FontWeight.w700,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            'ইসলামী জিন্দেগী',
+                            style: textTheme.headlineSmall?.copyWith(
+                              color: appColors.appBarText,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.right,
                           ),
-                          textAlign: TextAlign.right,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          locales.home,
-                          style: textTheme.labelLarge?.copyWith(
-                            color: appColors.appBarText.withValues(alpha: 0.8),
+                          const SizedBox(height: 8),
+                          Text(
+                            locales.home,
+                            style: textTheme.labelLarge?.copyWith(
+                              color: appColors.appBarText.withValues(alpha: 0.8),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(18, 18, 18, 26),
-                    child: Column(
-                      children: [
-                        DrawerLink(title: locales.home, route: '/'),
-                        DrawerLink(title: locales.quran, route: 'qurans'),
-                        DrawerLink(title: locales.books, route: 'books'),
-                        DrawerLink(title: locales.bayans, route: 'bayans'),
-                        DrawerLink(title: locales.malfuzat, route: 'malfuzat'),
-                        DrawerLink(title: locales.masail, route: 'masail'),
-                        DrawerLink(title: locales.duaDurud, route: 'duas'),
-                        DrawerLink(title: locales.articles, route: 'articles'),
-                        DrawerLink(title: locales.news, route: 'news'),
-                        DrawerLink(title: locales.madrasah, route: 'madrasahs'),
-                        DrawerLink(
-                          title: locales.namazTime,
-                          route: 'namaz-times',
-                        ),
-                        DrawerLink(title: locales.qiblah, route: 'qiblah'),
-                        DrawerLink(title: locales.mosques, route: 'mosques'),
-                        DrawerLink(title: locales.donation, route: 'donation'),
-                        DrawerLink(title: locales.location, route: 'location'),
-                        DrawerLink(title: locales.settings, route: 'settings'),
-                        DrawerLink(
-                          title: locales.bookmarks,
-                          route: 'bookmarks',
-                        ),
-                        DrawerLink(title: locales.aboutUs, route: 'about'),
-                        DrawerLink(
-                          title: locales.contactUs,
-                          route: 'contact-us',
-                        ),
-                      ],
+                    DrawerLink(title: locales.home, route: '/'),
+                    DrawerLink(title: locales.quran, route: 'qurans'),
+                    DrawerLink(title: locales.books, route: 'books'),
+                    DrawerLink(title: locales.bayans, route: 'bayans'),
+                    DrawerLink(title: locales.malfuzat, route: 'malfuzat'),
+                    DrawerLink(title: locales.masail, route: 'masail'),
+                    DrawerLink(title: locales.duaDurud, route: 'duas'),
+                    DrawerLink(title: locales.articles, route: 'articles'),
+                    DrawerLink(title: locales.news, route: 'news'),
+                    DrawerLink(title: locales.madrasah, route: 'madrasahs'),
+                    DrawerLink(
+                      title: locales.namazTime,
+                      route: 'namaz-times',
                     ),
-                  ),
-                ],
+                    DrawerLink(title: locales.qiblah, route: 'qiblah'),
+                    DrawerLink(title: locales.mosques, route: 'mosques'),
+                    DrawerLink(title: locales.donation, route: 'donation'),
+                    DrawerLink(title: locales.location, route: 'location'),
+                    DrawerLink(title: locales.settings, route: 'settings'),
+                    DrawerLink(
+                      title: locales.bookmarks,
+                      route: 'bookmarks',
+                    ),
+                    DrawerLink(title: locales.aboutUs, route: 'about'),
+                    DrawerLink(
+                      title: locales.contactUs,
+                      route: 'contact-us',
+                      isLast: true,
+                    ),
+                  ],
+                ),
               ),
             ),
             body: Container(
               decoration: BoxDecoration(
-                image: (theme == 'classic' &&
+                image: (!isHome &&
                         showPattern &&
                         background != 'no-background')
                     ? DecorationImage(
@@ -343,6 +348,12 @@ class AppScaffold extends ConsumerWidget {
                         repeat: background == 'pattern'
                             ? ImageRepeat.repeat
                             : ImageRepeat.noRepeat,
+                        fit: background == 'pattern'
+                            ? BoxFit.none
+                            : BoxFit.cover,
+                        alignment: background == 'pattern'
+                            ? Alignment.center
+                            : Alignment.bottomCenter,
                       )
                     : null,
                 color: Theme.of(context).extension<AppThemeColors>()!.surfaceBg,
@@ -388,24 +399,16 @@ class MenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    return InkWell(
-      onTap: () => Scaffold.of(context).openEndDrawer(),
-      borderRadius: BorderRadius.circular(14),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
-          color: appColors.surfaceBg.withValues(alpha: 0.22),
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: SvgPicture.asset(
-          'assets/images/icons/menu.svg',
-          fit: BoxFit.scaleDown,
-          width: 30,
-          height: 30,
-          colorFilter: ColorFilter.mode(
-            appColors.accent,
-            BlendMode.srcIn,
-          ),
+    return IconButton(
+      onPressed: () => Scaffold.of(context).openEndDrawer(),
+      icon: SvgPicture.asset(
+        'assets/images/icons/menu.svg',
+        fit: BoxFit.scaleDown,
+        width: 26,
+        height: 26,
+        colorFilter: ColorFilter.mode(
+          appColors.accent,
+          BlendMode.srcIn,
         ),
       ),
     );
@@ -417,10 +420,12 @@ class DrawerLink extends StatelessWidget {
     super.key,
     required this.title,
     required this.route,
+    this.isLast = false,
   });
 
   final String title;
   final String route;
+  final bool isLast;
 
   @override
   Widget build(BuildContext context) {
@@ -443,26 +448,26 @@ class DrawerLink extends StatelessWidget {
           }
         }
       },
-      borderRadius: BorderRadius.circular(18),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         decoration: BoxDecoration(
           color: isActive
-              ? appColors.primary.withValues(alpha: 0.12)
-              : appColors.cardBg.withValues(alpha: 0.72),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: isActive
-                ? appColors.primary.withValues(alpha: 0.5)
-                : appColors.divider.withValues(alpha: 0.4),
-          ),
+              ? appColors.primary.withValues(alpha: 0.08)
+              : Colors.transparent,
+          border: isLast
+              ? null
+              : Border(
+                  bottom: BorderSide(
+                    color: appColors.divider.withValues(alpha: 0.25),
+                  ),
+                ),
         ),
         child: Text(
           title,
           style: textTheme.titleMedium?.copyWith(
             color: isActive ? appColors.primary : appColors.primaryText,
-            fontWeight: FontWeight.w600,
+            fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
           ),
           textAlign: TextAlign.right,
         ),

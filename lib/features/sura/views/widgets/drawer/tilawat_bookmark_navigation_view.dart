@@ -27,142 +27,150 @@ class TilawatBookmarkNavigationView extends ConsumerWidget {
     final bookmarksAsync = ref.watch(bookmarkProvider);
     final suraNames = ref.watch(suraNamesProvider);
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
-    final accent = appColors.active;
+    final isClassic = appColors.primary == AppThemeColors.classic.primary &&
+        appColors.appBarBg == AppThemeColors.classic.appBarBg;
+    final accent = isClassic ? appColors.appBarBg : appColors.active;
+    final contentBg = isClassic ? appColors.cardBg : Colors.transparent;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final itemTitleFontSize = isLandscape ? 12.0 : 14.sp;
     final itemSubtitleFontSize = isLandscape ? 10.0 : 12.sp;
 
-    return bookmarksAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(
-        child: Text(
-          'বুকমার্ক লোড করা যায়নি',
-          style: TextStyle(
-            fontSize: 14.sp,
-            color: appColors.secondaryText,
+    return ColoredBox(
+      color: contentBg,
+      child: bookmarksAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => Center(
+          child: Text(
+            'বুকমার্ক লোড করা যায়নি',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: appColors.secondaryText,
+            ),
           ),
         ),
-      ),
-      data: (bookmarks) {
-        final ayahBookmarks =
-            bookmarks.where((bookmark) => bookmark.type == 'ayah').toList();
+        data: (bookmarks) {
+          final ayahBookmarks =
+              bookmarks.where((bookmark) => bookmark.type == 'ayah').toList();
 
-        if (ayahBookmarks.isEmpty) {
-          return Center(
-            child: Text(
-              'কোনো বুকমার্ক নেই।',
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: appColors.secondaryText,
-              ),
-            ),
-          );
-        }
-
-        return ListView.separated(
-          padding: EdgeInsets.zero,
-          itemCount: ayahBookmarks.length,
-          separatorBuilder: (context, _) =>
-              Divider(height: 1.h, color: appColors.divider),
-          itemBuilder: (context, i) {
-            final bookmark = ayahBookmarks[i];
-            final suraNumber = bookmark.sura;
-            final ayahNumber = bookmark.ayah;
-            final suraName = (suraNumber != null &&
-                    suraNumber > 0 &&
-                    suraNumber <= suraNames.length)
-                ? suraNames[suraNumber - 1]
-                : 'Unknown Sura';
-            final meta = <String>[
-              if (bookmark.para != null)
-                'পারা ${_toBengaliNumber(bookmark.para!)}',
-              if (bookmark.page != null)
-                'পৃষ্ঠা ${_toBengaliNumber(bookmark.page!)}',
-            ].join(', ');
-
-            return ListTile(
-              title: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    '${_toBengaliNumber(i + 1)}.',
-                    style: TextStyle(
-                      fontSize: itemTitleFontSize,
-                      fontWeight: FontWeight.bold,
-                      color: accent,
-                    ),
-                  ),
-                  SizedBox(width: 8.w),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          ayahNumber == null
-                              ? suraName
-                              : '$suraName, আয়াত ${_toBengaliNumber(ayahNumber)}',
-                          style: TextStyle(
-                            fontSize: itemSubtitleFontSize,
-                            fontWeight: FontWeight.w500,
-                            color: appColors.primaryText,
-                          ),
-                        ),
-                        if (meta.isNotEmpty) ...[
-                          SizedBox(height: 2.h),
-                          Text(
-                            meta,
-                            style: TextStyle(
-                              fontSize: itemSubtitleFontSize,
-                              color: appColors.secondaryText,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              onTap: suraNumber == null || ayahNumber == null
-                  ? null
-                  : () {
-                      Scaffold.of(context).closeDrawer();
-                      Future.delayed(const Duration(milliseconds: 200),
-                          () async {
-                        if (!context.mounted) return;
-                        if (context.canPop()) context.pop();
-                        await Future.delayed(const Duration(milliseconds: 50));
-                        if (!context.mounted) return;
-                        context.push(
-                          buildTilawatRoute(
-                            suraNumber: suraNumber,
-                            ayahNumber: ayahNumber,
-                            returnTo: returnTo,
-                          ),
-                        );
-                      });
-                    },
-              trailing: IconButton(
-                icon: Icon(
-                  Icons.delete,
-                  size: 20.r,
+          if (ayahBookmarks.isEmpty) {
+            return Center(
+              child: Text(
+                'কোনো বুকমার্ক নেই।',
+                style: TextStyle(
+                  fontSize: 14.sp,
                   color: appColors.secondaryText,
                 ),
-                onPressed: () {
-                  ref
-                      .read(bookmarkProvider.notifier)
-                      .remove(bookmark.identifier);
-                },
               ),
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              minVerticalPadding: 0,
-              visualDensity: VisualDensity.compact,
             );
-          },
-        );
-      },
+          }
+
+          return ListView.separated(
+            padding: EdgeInsets.zero,
+            itemCount: ayahBookmarks.length,
+            separatorBuilder: (context, _) =>
+                Divider(height: 1.h, color: appColors.divider),
+            itemBuilder: (context, i) {
+              final bookmark = ayahBookmarks[i];
+              final suraNumber = bookmark.sura;
+              final ayahNumber = bookmark.ayah;
+              final suraName = (suraNumber != null &&
+                      suraNumber > 0 &&
+                      suraNumber <= suraNames.length)
+                  ? suraNames[suraNumber - 1]
+                  : 'Unknown Sura';
+              final meta = <String>[
+                if (bookmark.para != null)
+                  'পারা ${_toBengaliNumber(bookmark.para!)}',
+                if (bookmark.page != null)
+                  'পৃষ্ঠা ${_toBengaliNumber(bookmark.page!)}',
+              ].join(', ');
+
+              return ListTile(
+                title: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      '${_toBengaliNumber(i + 1)}.',
+                      style: TextStyle(
+                        fontSize: itemTitleFontSize,
+                        fontWeight: FontWeight.bold,
+                        color: accent,
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            ayahNumber == null
+                                ? suraName
+                                : '$suraName, আয়াত ${_toBengaliNumber(ayahNumber)}',
+                            style: TextStyle(
+                              fontSize: itemSubtitleFontSize,
+                              fontWeight: FontWeight.w500,
+                              color: appColors.primaryText,
+                            ),
+                          ),
+                          if (meta.isNotEmpty) ...[
+                            SizedBox(height: 2.h),
+                            Text(
+                              meta,
+                              style: TextStyle(
+                                fontSize: itemSubtitleFontSize,
+                                color: appColors.secondaryText,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                onTap: suraNumber == null || ayahNumber == null
+                    ? null
+                    : () {
+                        Scaffold.of(context).closeDrawer();
+                        Future.delayed(const Duration(milliseconds: 200),
+                            () async {
+                          if (!context.mounted) return;
+                          if (context.canPop()) context.pop();
+                          await Future.delayed(
+                            const Duration(milliseconds: 50),
+                          );
+                          if (!context.mounted) return;
+                          context.push(
+                            buildTilawatRoute(
+                              suraNumber: suraNumber,
+                              ayahNumber: ayahNumber,
+                              returnTo: returnTo,
+                            ),
+                          );
+                        });
+                      },
+                trailing: IconButton(
+                  icon: Icon(
+                    Icons.delete,
+                    size: 20.r,
+                    color: appColors.secondaryText,
+                  ),
+                  onPressed: () {
+                    ref
+                        .read(bookmarkProvider.notifier)
+                        .remove(bookmark.identifier);
+                  },
+                ),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                minVerticalPadding: 0,
+                visualDensity: VisualDensity.compact,
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

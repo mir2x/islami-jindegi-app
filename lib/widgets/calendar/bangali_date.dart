@@ -9,10 +9,12 @@ class BangaliDate extends StatelessWidget {
     super.key,
     this.count,
     this.oppositeColor = false,
+    this.style,
   });
 
   final int? count;
   final bool oppositeColor;
+  final TextStyle? style;
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +34,10 @@ class BangaliDate extends StatelessWidget {
           margin: const EdgeInsets.only(top: 1),
           child: Text(
             bangaliDate,
-            style: textTheme.labelSmall?.copyWith(
-              color: oppositeColor ? appColors.appBarText : null,
-            ),
+            style: style ??
+                textTheme.labelSmall?.copyWith(
+                  color: oppositeColor ? appColors.appBarText : null,
+                ),
           ),
         );
       },

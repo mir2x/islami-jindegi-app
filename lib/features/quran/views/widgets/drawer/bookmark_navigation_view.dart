@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:native_app/theme/app_colors.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import '../../../providers/ayah_highlight_providers.dart';
 import '../../../providers/bookmark_providers.dart';
@@ -25,6 +26,12 @@ class BookmarkNavigationView extends ConsumerWidget {
     final tabBg = appColors.drawerHeaderBg;
     final tabFg = appColors.appBarText;
     final indicatorColor = appColors.highlight;
+    final isClassicTheme = appColors.highlight == AppColors.highlightClassic &&
+        appColors.appBarText == AppColors.appBarTextClassic;
+    final selectedTabLabelColor =
+        isClassicTheme ? appColors.primaryText : tabFg;
+    final bookmarkAccentColor =
+        isClassicTheme ? appColors.secondaryText : appColors.active;
     final bookmarksAsync = ref.watch(bookmarkProvider);
     final suraNames = ref.watch(suraNamesProvider);
     final isLandscape =
@@ -56,7 +63,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                 color: tabBg,
                 child: TabBar(
                   dividerColor: tabBg.withValues(alpha: 0),
-                  labelColor: tabFg,
+                  labelColor: selectedTabLabelColor,
                   unselectedLabelColor: tabFg.withValues(alpha: 0.7),
                   indicator: BoxDecoration(
                     color: indicatorColor,
@@ -68,13 +75,13 @@ class BookmarkNavigationView extends ConsumerWidget {
                     Tab(
                       child: Text(
                         'আয়াত',
-                        style: TextStyle(fontSize: tabFontSize, color: tabFg),
+                        style: TextStyle(fontSize: tabFontSize),
                       ),
                     ),
                     Tab(
                       child: Text(
                         'পৃষ্ঠা',
-                        style: TextStyle(fontSize: tabFontSize, color: tabFg),
+                        style: TextStyle(fontSize: tabFontSize),
                       ),
                     ),
                   ],
@@ -135,7 +142,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                                       style: TextStyle(
                                         fontSize: listTileTitleFontSize,
                                         fontWeight: FontWeight.bold,
-                                        color: appColors.active,
+                                        color: bookmarkAccentColor,
                                       ),
                                     ),
                                     SizedBox(width: 8.w),
@@ -292,7 +299,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                                       style: TextStyle(
                                         fontSize: listTileTitleFontSize,
                                         fontWeight: FontWeight.bold,
-                                        color: appColors.active,
+                                        color: bookmarkAccentColor,
                                       ),
                                     ),
                                     SizedBox(width: 8.w),

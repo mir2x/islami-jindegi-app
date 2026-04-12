@@ -55,6 +55,12 @@ class _SurahPageState extends ConsumerState<SurahPage> {
 
   late final StateController<Set<int>> _activePagesNotifier;
 
+  void _navigateBackToReturnRoute() {
+    ref.read(lastViewedSuraProvider.notifier).state = widget.suraNumber;
+    if (!mounted) return;
+    context.go(widget.returnTo);
+  }
+
   void _log(String msg) {
     debugPrint('[SurahPage] $msg');
   }
@@ -465,17 +471,22 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                       ),
                       borderRadius: BorderRadius.circular(18),
                     ),
-                    child: Icon(Icons.auto_stories_rounded, color: colors.appBarText),
+                    child: Icon(
+                      Icons.auto_stories_rounded,
+                      color: colors.appBarText,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'আগের সূরায় যাবেন?',
-                    style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+                    style: textTheme.headlineSmall
+                        ?.copyWith(fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'আগের সূরা $prevSuraName এ যেতে চান?',
-                    style: textTheme.bodyLarge?.copyWith(color: colors.secondaryText, height: 1.45),
+                    style: textTheme.bodyLarge
+                        ?.copyWith(color: colors.secondaryText, height: 1.45),
                   ),
                   const SizedBox(height: 18),
                   Row(
@@ -485,7 +496,9 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                           onPressed: () => Navigator.of(sheetContext).pop(),
                           style: OutlinedButton.styleFrom(
                             minimumSize: const Size.fromHeight(50),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
                           ),
                           child: const Text('এখন না'),
                         ),
@@ -505,9 +518,13 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                           },
                           style: FilledButton.styleFrom(
                             minimumSize: const Size.fromHeight(50),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
                           ),
-                          child: Text('আগের সূরা ${prevSuraNumber.toBengaliDigit()}'),
+                          child: Text(
+                            'আগের সূরা ${prevSuraNumber.toBengaliDigit()}',
+                          ),
                         ),
                       ),
                     ],
@@ -528,9 +545,11 @@ class _SurahPageState extends ConsumerState<SurahPage> {
 
   bool _handleScrollNotification(ScrollNotification notification) {
     if (notification is OverscrollNotification && !_isDraggingScrollThumb) {
-      if (notification.overscroll > (_totalItems <= 1 ? 0 : 12) && _isAtSuraEnd) {
+      if (notification.overscroll > (_totalItems <= 1 ? 0 : 12) &&
+          _isAtSuraEnd) {
         _showNextSuraPrompt();
-      } else if (notification.overscroll < (_totalItems <= 1 ? 0 : -12) && _topVisibleIndex == 0) {
+      } else if (notification.overscroll < (_totalItems <= 1 ? 0 : -12) &&
+          _topVisibleIndex == 0) {
         _showPrevSuraPrompt();
       }
     }
@@ -643,14 +662,10 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     });
 
     return PopScope(
-      canPop: true,
+      canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        if (didPop) {
-          // Delay the provider update to avoid modifying during widget tree building
-          Future(() {
-            ref.read(lastViewedSuraProvider.notifier).state = widget.suraNumber;
-          });
-        }
+        if (didPop) return;
+        _navigateBackToReturnRoute();
       },
       child: Scaffold(
         key: _scaffoldKey,
@@ -698,7 +713,8 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                                   scrollOffsetController:
                                       _scrollOffsetController,
                                   itemPositionsListener: _itemPositionsListener,
-                                  physics: const AlwaysScrollableScrollPhysics(),
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
                                   itemCount: _totalItems,
                                   initialScrollIndex: _resolvedScrollIndex ?? 0,
                                   padding: const EdgeInsets.only(

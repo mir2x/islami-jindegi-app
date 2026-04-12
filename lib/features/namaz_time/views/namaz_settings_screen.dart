@@ -111,6 +111,7 @@ class NamazSettings extends ConsumerWidget {
               settingsSection(
                 locales.fajr,
                 TimeInput(
+                  title: locales.fajr,
                   initialValue: selectedFajr.toString(),
                   onChanged: (value) {
                     ref.read(preferencesProvider.notifier).updateFajr(value);
@@ -120,6 +121,7 @@ class NamazSettings extends ConsumerWidget {
               settingsSection(
                 locales.sunrise,
                 TimeInput(
+                  title: locales.sunrise,
                   initialValue: selectedSunrise.toString(),
                   onChanged: (value) {
                     ref.read(preferencesProvider.notifier).updateSunrise(value);
@@ -129,6 +131,7 @@ class NamazSettings extends ConsumerWidget {
               settingsSection(
                 locales.zuhr,
                 TimeInput(
+                  title: locales.zuhr,
                   initialValue: selectedDhuhr.toString(),
                   onChanged: (value) {
                     ref.read(preferencesProvider.notifier).updateDhuhr(value);
@@ -138,6 +141,7 @@ class NamazSettings extends ConsumerWidget {
               settingsSection(
                 locales.asr,
                 TimeInput(
+                  title: locales.asr,
                   initialValue: selectedAsr.toString(),
                   onChanged: (value) {
                     ref.read(preferencesProvider.notifier).updateAsr(value);
@@ -147,6 +151,7 @@ class NamazSettings extends ConsumerWidget {
               settingsSection(
                 locales.maghrib,
                 TimeInput(
+                  title: locales.maghrib,
                   initialValue: selectedMaghrib.toString(),
                   onChanged: (value) {
                     ref.read(preferencesProvider.notifier).updateMaghrib(value);
@@ -156,6 +161,7 @@ class NamazSettings extends ConsumerWidget {
               settingsSection(
                 locales.isha,
                 TimeInput(
+                  title: locales.isha,
                   initialValue: selectedIsha.toString(),
                   onChanged: (value) {
                     ref.read(preferencesProvider.notifier).updateIsha(value);

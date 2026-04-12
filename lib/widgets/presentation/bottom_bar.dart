@@ -15,6 +15,11 @@ class BottomBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appTheme = Theme.of(context).extension<AppThemeColors>()!;
+    final isClassic = appTheme.primary == AppThemeColors.classic.primary &&
+        appTheme.appBarBg == AppThemeColors.classic.appBarBg;
+    final borderColor = isClassic
+        ? appTheme.secondary.withValues(alpha: 0.26)
+        : appTheme.divider.withValues(alpha: 0.78);
 
     return SafeArea(
       top: false,
@@ -27,7 +32,7 @@ class BottomBar extends ConsumerWidget {
               color: appTheme.cardBg.withValues(alpha: 0.97),
               borderRadius: BorderRadius.circular(28),
               border: Border.all(
-                color: appTheme.divider.withValues(alpha: 0.78),
+                color: borderColor,
               ),
               boxShadow: [
                 BoxShadow(

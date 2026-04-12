@@ -7,10 +7,15 @@ class ListItem extends ConsumerWidget {
     super.key,
     required this.item,
     this.highlightProvider,
+    this.recentlyVisited = false,
   });
 
   final Widget item;
   final dynamic highlightProvider;
+
+  /// When true the card background uses [AppThemeColors.highlight] to
+  /// visually distinguish the most-recently-opened item in the list.
+  final bool recentlyVisited;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,7 +29,7 @@ class ListItem extends ConsumerWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: appTheme.cardBg,
+        color: recentlyVisited ? appTheme.highlight : appTheme.cardBg,
         border: highlighter?.when(
           loading: () => null,
           error: (error, _) => null,
@@ -51,3 +56,4 @@ class ListItem extends ConsumerWidget {
     );
   }
 }
+

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:native_app/shared/quran_data.dart';
+import 'package:native_app/theme/app_colors.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import '../../../providers/ayah_highlight_providers.dart';
 
@@ -42,8 +43,11 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
     }
     if (mappingsAsync.hasError) {
       return Center(
-          child: Text('Error loading Para data',
-              style: TextStyle(fontSize: 14.sp)));
+        child: Text(
+          'Error loading Para data',
+          style: TextStyle(fontSize: 14.sp),
+        ),
+      );
     }
 
     final paraPageRanges = ref.watch(paraPageRangesProvider);
@@ -86,8 +90,9 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
                 color: appColors.divider,
               ),
               Expanded(
-                  flex: 1,
-                  child: _buildRightPane(ref, paraPageRanges, currentPage)),
+                flex: 1,
+                child: _buildRightPane(ref, paraPageRanges, currentPage),
+              ),
             ],
           ),
         ),
@@ -110,23 +115,27 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
         children: [
           Expanded(
             flex: 1,
-            child: Text('পারা',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: appBarFg,
-                  fontWeight: FontWeight.bold,
-                  fontSize: fontSize,
-                )),
+            child: Text(
+              'পারা',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: appBarFg,
+                fontWeight: FontWeight.bold,
+                fontSize: fontSize,
+              ),
+            ),
           ),
           Expanded(
             flex: 1,
-            child: Text('পাতা',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: appBarFg,
-                  fontWeight: FontWeight.bold,
-                  fontSize: fontSize,
-                )),
+            child: Text(
+              'পাতা',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: appBarFg,
+                fontWeight: FontWeight.bold,
+                fontSize: fontSize,
+              ),
+            ),
           ),
         ],
       ),
@@ -140,6 +149,10 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isClassicTheme = appColors.highlight == AppColors.highlightClassic &&
+        appColors.active == AppColors.activeClassic;
+    final selectedTextColor =
+        isClassicTheme ? appColors.primaryText : appColors.active;
 
     return ScrollablePositionedList.separated(
       itemScrollController: _paraScrollController,
@@ -159,7 +172,7 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
             style: TextStyle(
               fontSize: fontSize,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected ? appColors.active : appColors.primaryText,
+              color: isSelected ? selectedTextColor : appColors.primaryText,
             ),
           ),
           subtitle: Text(
@@ -167,7 +180,7 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
             style: TextStyle(
               fontSize: fontSize - 2,
               color: isSelected
-                  ? appColors.active.withValues(alpha: 0.8)
+                  ? selectedTextColor.withValues(alpha: 0.8)
                   : appColors.secondaryText,
             ),
           ),
@@ -184,7 +197,10 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
   }
 
   Widget _buildRightPane(
-      WidgetRef ref, Map<int, List<int>> paraPageRanges, int currentPage) {
+    WidgetRef ref,
+    Map<int, List<int>> paraPageRanges,
+    int currentPage,
+  ) {
     final selectedPara = ref.watch(selectedNavigationParaProvider);
     final selectedPage = ref.watch(selectedNavigationPageProvider);
     final pageNumbers = paraPageRanges[selectedPara];
@@ -192,11 +208,18 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 12.0 : 14.sp;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isClassicTheme = appColors.highlight == AppColors.highlightClassic &&
+        appColors.active == AppColors.activeClassic;
+    final selectedTextColor =
+        isClassicTheme ? appColors.primaryText : appColors.active;
 
     if (pageNumbers == null || pageNumbers.isEmpty) {
       return Center(
-          child: Text('পৃষ্ঠা তথ্য পাওয়া যায়নি',
-              style: TextStyle(fontSize: 14.sp)));
+        child: Text(
+          'পৃষ্ঠা তথ্য পাওয়া যায়নি',
+          style: TextStyle(fontSize: 14.sp),
+        ),
+      );
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -228,7 +251,7 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
               toBengaliNumber(displayPageNumber),
               style: TextStyle(
                 fontSize: fontSize,
-                color: isSelected ? appColors.active : appColors.primaryText,
+                color: isSelected ? selectedTextColor : appColors.primaryText,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),

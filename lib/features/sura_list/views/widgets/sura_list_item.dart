@@ -63,7 +63,9 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final highlightColor = colors.active;
+    final isClassic = colors.primary == AppThemeColors.classic.primary &&
+        colors.appBarBg == AppThemeColors.classic.appBarBg;
+    final highlightColor = isClassic ? colors.appBarBg : colors.active;
 
     return AnimatedBuilder(
       animation: _animation,
@@ -123,15 +125,16 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
   }
 
   Widget _buildSuraNumber() {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isClassic = colors.primary == AppThemeColors.classic.primary &&
+        colors.appBarBg == AppThemeColors.classic.appBarBg;
+    final accentColor = isClassic ? colors.appBarBg : colors.active;
     return Container(
       width: 45,
       height: 45,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Theme.of(context)
-            .extension<AppThemeColors>()!
-            .highlight
-            .withValues(alpha: 0.8),
+        color: colors.highlight.withValues(alpha: isClassic ? 0.62 : 0.8),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
@@ -140,7 +143,7 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
           wordSpacing: 3,
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: Theme.of(context).extension<AppThemeColors>()!.active,
+          color: accentColor,
         ),
       ),
     );

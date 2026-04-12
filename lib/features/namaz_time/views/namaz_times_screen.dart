@@ -4,18 +4,20 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:hijri_picker/hijri_picker.dart';
-import 'package:date_picker_plus/date_picker_plus.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/hijri_date_settings.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/helpers/adjusted_hijri_date.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/theme/app_theme_color.dart';
+import 'package:native_app/widgets/calendar/gregorian_month_picker.dart';
 
 import 'namaz_time_items.dart';
 
 class NamazTimes extends ConsumerWidget {
-  const NamazTimes({super.key});
+  const NamazTimes({super.key, this.initialDate});
+
+  final DateTime? initialDate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,7 +25,13 @@ class NamazTimes extends ConsumerWidget {
     var settingsProvider = ref.watch(hijriDateSettingsProvider);
 
     return AppScaffold(
-      onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
+      onBackPressed: () async {
+        if (context.canPop()) {
+          context.pop();
+        } else {
+          context.go('/');
+        }
+      },
       title: Text(locales.namazTime),
       body: settingsProvider.when(
         loading: () {
@@ -50,13 +58,14 @@ class NamazTimes extends ConsumerWidget {
                   'hijriAdjustment': adjustment,
                 },
                 isHijriLoading: true,
+                initialDate: initialDate,
               );
             },
           );
         },
         error: (error, _) => Text(error.toString()),
         data: (settings) {
-          return NamazTimesPage(settings: settings);
+          return NamazTimesPage(settings: settings, initialDate: initialDate);
         },
       ),
     );
@@ -68,10 +77,12 @@ class NamazTimesPage extends ConsumerStatefulWidget {
     super.key,
     required this.settings,
     this.isHijriLoading = false,
+    this.initialDate,
   });
 
   final Map settings;
   final bool isHijriLoading;
+  final DateTime? initialDate;
 
   @override
   NamazTimesPageState createState() => NamazTimesPageState();
@@ -80,6 +91,15 @@ class NamazTimesPage extends ConsumerStatefulWidget {
 class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
   DateTime? _selectedGregorianDate;
   HijriCalendar? _selectedHijriDate;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialDate != null) {
+      _selectedGregorianDate = widget.initialDate;
+      _selectedHijriDate = HijriCalendar.fromDate(widget.initialDate!);
+    }
+  }
 
   void _showCalendarSheet(BuildContext context) {
     final locales = AppLocalizations.of(context)!;
@@ -142,9 +162,6 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
       today = _selectedHijriDate!;
     } else {
       today = adjustedHijriDate(settings);
-      if (isAfterDateStartTime(DateTime.now(), settings)) {
-        adjustedWeekdayNumber -= 1;
-      }
     }
 
     showDialog(
@@ -173,8 +190,11 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
             onChanged: (HijriCalendar value) {
               setState(() {
                 _selectedHijriDate = value;
-                _selectedGregorianDate =
-                    value.hijriToGregorian(value.hYear, value.hMonth, value.hDay);
+                _selectedGregorianDate = value.hijriToGregorian(
+                  value.hYear,
+                  value.hMonth,
+                  value.hDay,
+                );
               });
               Navigator.of(ctx).pop();
             },
@@ -190,13 +210,11 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
       builder: (ctx) => Dialog(
         child: Container(
           padding: const EdgeInsets.all(10),
-          width: 300,
-          height: 300,
-          child: DatePicker(
-            selectedDate: _selectedGregorianDate,
-            minDate: DateTime(633, 1, 1),
-            maxDate: DateTime(2100, 1, 1),
-            onDateSelected: (DateTime value) {
+          child: GregorianMonthPicker(
+            selectedDate: _selectedGregorianDate ?? DateTime.now(),
+            firstDate: DateTime(633, 1, 1),
+            lastDate: DateTime(2100, 1, 1),
+            onChanged: (DateTime value) {
               setState(() => _selectedGregorianDate = value);
               Navigator.of(ctx).pop();
             },

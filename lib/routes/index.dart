@@ -235,7 +235,12 @@ class AppRoutes {
         path: '/madrasahs/:id/infos/:info_id',
         builder: (_, __) => const MadrasahInfoScreen(),
       ),
-      GoRoute(path: '/namaz-times', builder: (_, __) => const NamazTimes()),
+      GoRoute(
+        path: '/namaz-times',
+        builder: (_, state) => NamazTimes(
+          initialDate: state.extra is DateTime ? state.extra as DateTime : null,
+        ),
+      ),
       GoRoute(
         path: '/namaz-times/settings',
         builder: (_, __) => const NamazSettings(),

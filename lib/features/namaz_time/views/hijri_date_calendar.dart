@@ -4,6 +4,7 @@ import 'package:hijri_picker/hijri_picker.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:native_app/providers/hijri_date_settings.dart';
 import 'package:native_app/helpers/adjusted_hijri_date.dart';
+import 'package:native_app/helpers/hijri_localization.dart';
 
 class HijriDateCalendar extends ConsumerWidget {
   const HijriDateCalendar({
@@ -37,11 +38,10 @@ class HijriDateCalendar extends ConsumerWidget {
               today = currentDate!;
             } else {
               today = adjustedHijriDate(settings);
-
-              if (isAfterDateStartTime(DateTime.now(), settings)) {
-                adjustedWeekdayNumber -= 1;
-              }
             }
+
+            final String lang =
+                Localizations.localeOf(context).languageCode;
 
             showDialog(
               context: context,
@@ -52,15 +52,20 @@ class HijriDateCalendar extends ConsumerWidget {
                     child: HijriMonthPicker(
                       builders: HijriCalendarBuilders(
                         weekdayBuilder: (context, day, number) {
-                          MaterialLocalizations localizations =
-                              MaterialLocalizations.of(context);
-                          int num = (number + adjustedWeekdayNumber) % 7;
-                          final String weekday =
-                              localizations.narrowWeekdays[num];
-
-                          return Center(
-                            child: Text(weekday),
-                          );
+                          final int idx =
+                              (number + adjustedWeekdayNumber) % 7;
+                          final String label = lang == 'bn'
+                              ? weekdaysBengaliShort[idx]
+                              : _englishShortWeekdays[idx];
+                          return Center(child: Text(label));
+                        },
+                        monthYearBuilder: (context, month, year) {
+                          final String label = lang == 'bn'
+                              ? hijriMonthYearBengali(month, year)
+                              : hijriMonthYearEnglish(month, year);
+                          return Text(label,
+                              style:
+                                  Theme.of(context).textTheme.titleMedium);
                         },
                       ),
                       selectedDate: today,
@@ -88,3 +93,7 @@ class HijriDateCalendar extends ConsumerWidget {
     );
   }
 }
+
+const List<String> _englishShortWeekdays = [
+  'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat',
+];

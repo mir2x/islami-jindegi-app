@@ -62,6 +62,12 @@ class _TilawatSelectionDrawerState extends ConsumerState<TilawatSelectionDrawer>
     final headerBg = appColors.drawerHeaderBg;
     final headerFg = appColors.appBarText;
     final indicatorColor = appColors.highlight;
+    final isClassic = appColors.primary == AppThemeColors.classic.primary &&
+        appColors.appBarBg == AppThemeColors.classic.appBarBg;
+    final selectedTabTextColor = isClassic ? appColors.appBarBg : headerFg;
+    final unselectedTabTextColor = isClassic
+        ? headerFg.withValues(alpha: 0.78)
+        : headerFg.withValues(alpha: 0.72);
 
     return Align(
       alignment: Alignment.topLeft,
@@ -104,9 +110,9 @@ class _TilawatSelectionDrawerState extends ConsumerState<TilawatSelectionDrawer>
                   color: headerBg,
                   child: TabBar(
                     controller: _tabController,
-                    labelColor: headerFg,
+                    labelColor: selectedTabTextColor,
                     dividerColor: headerBg.withValues(alpha: 0),
-                    unselectedLabelColor: headerFg.withValues(alpha: 0.72),
+                    unselectedLabelColor: unselectedTabTextColor,
                     indicator: BoxDecoration(
                       color: indicatorColor,
                       borderRadius: BorderRadius.zero,

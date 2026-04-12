@@ -117,7 +117,9 @@ class _SuraParaNavigationViewState
     final selectedPara = ref.watch(selectedDrawerParaProvider);
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
     final selectedBg = appColors.highlight;
-    final selectedFg = appColors.primaryText;
+    final isClassic = appColors.primary == AppThemeColors.classic.primary &&
+        appColors.appBarBg == AppThemeColors.classic.appBarBg;
+    final selectedFg = isClassic ? appColors.appBarBg : appColors.primaryText;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final titleFontSize = isLandscape ? 14.0 : 16.sp;

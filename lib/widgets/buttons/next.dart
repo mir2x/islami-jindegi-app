@@ -18,11 +18,14 @@ class Next extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isClassic = colors.primary == AppThemeColors.classic.primary &&
+        colors.appBarBg == AppThemeColors.classic.appBarBg;
+    final controlColor = isClassic ? colors.appBarBg : colors.primary;
 
     Color? iconColor = nextDisabled
         ? colors.secondaryText
         : contrastColor
-            ? colors.primary
+            ? controlColor
             : null;
     iconColor = this.iconColor ?? iconColor;
 

@@ -85,7 +85,8 @@ class _DownloadItemState extends ConsumerState<DownloadItem> {
           context: context,
           builder: (_) => AlertDialog(
             title: Text(locales.errorTitle),
-            content: Text(locales.downloadErrorMsg, style: textTheme.labelMedium),
+            content:
+                Text(locales.downloadErrorMsg, style: textTheme.labelMedium),
           ),
         );
       }
@@ -94,7 +95,6 @@ class _DownloadItemState extends ConsumerState<DownloadItem> {
 
   @override
   Widget build(BuildContext context) {
-    var locales = AppLocalizations.of(context)!;
     var checkFileProvider = checkDownloadedFileProvider(widget.filePath);
     var checkDownloadedFile = ref.watch(checkFileProvider);
 
@@ -141,6 +141,9 @@ class _DownloadCard extends StatelessWidget {
     var locales = AppLocalizations.of(context)!;
     final colors = Theme.of(context).extension<AppThemeColors>()!;
     var textTheme = Theme.of(context).textTheme;
+    final isClassic = colors.primary == AppThemeColors.classic.primary &&
+        colors.appBarBg == AppThemeColors.classic.appBarBg;
+    final actionColor = isClassic ? colors.appBarBg : colors.active;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
@@ -166,7 +169,11 @@ class _DownloadCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.download_rounded, color: colors.active, size: 18),
+                      Icon(
+                        Icons.download_rounded,
+                        color: actionColor,
+                        size: 18,
+                      ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
@@ -177,7 +184,11 @@ class _DownloadCard extends StatelessWidget {
                       ),
                       GestureDetector(
                         onTap: onCancel,
-                        child: Icon(Icons.close, size: 18, color: colors.secondaryText),
+                        child: Icon(
+                          Icons.close,
+                          size: 18,
+                          color: colors.secondaryText,
+                        ),
                       ),
                     ],
                   ),
@@ -185,7 +196,7 @@ class _DownloadCard extends StatelessWidget {
                   LinearProgressIndicator(
                     value: ratio,
                     backgroundColor: colors.divider,
-                    valueColor: AlwaysStoppedAnimation<Color>(colors.active),
+                    valueColor: AlwaysStoppedAnimation<Color>(actionColor),
                     borderRadius: BorderRadius.circular(4),
                     minHeight: 4,
                   ),
@@ -202,7 +213,7 @@ class _DownloadCard extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.download_rounded, color: colors.active, size: 20),
+                  Icon(Icons.download_rounded, color: actionColor, size: 20),
                   const SizedBox(width: 10),
                   Text(
                     locales.download,
@@ -235,6 +246,9 @@ class _DownloadedCard extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     final colors = Theme.of(context).extension<AppThemeColors>()!;
     var textTheme = Theme.of(context).textTheme;
+    final isClassic = colors.primary == AppThemeColors.classic.primary &&
+        colors.appBarBg == AppThemeColors.classic.appBarBg;
+    final actionColor = isClassic ? colors.appBarBg : colors.active;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
@@ -246,7 +260,7 @@ class _DownloadedCard extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.download_done_rounded, color: colors.active, size: 20),
+          Icon(Icons.download_done_rounded, color: actionColor, size: 20),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -258,7 +272,11 @@ class _DownloadedCard extends ConsumerWidget {
             ),
           ),
           IconButton(
-            icon: Icon(Icons.file_open_outlined, color: colors.secondaryText, size: 22),
+            icon: Icon(
+              Icons.file_open_outlined,
+              color: colors.secondaryText,
+              size: 22,
+            ),
             onPressed: () async {
               var path = await fileFallbackPath(filePath);
               var downloadDir = Platform.isAndroid
@@ -270,7 +288,11 @@ class _DownloadedCard extends ConsumerWidget {
             },
           ),
           IconButton(
-            icon: Icon(Icons.delete_outline, color: colors.secondaryText, size: 22),
+            icon: Icon(
+              Icons.delete_outline,
+              color: colors.secondaryText,
+              size: 22,
+            ),
             onPressed: () async {
               await deleteFile(
                 context: context,

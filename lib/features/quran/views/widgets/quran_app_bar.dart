@@ -185,20 +185,13 @@ class _AppBarIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2),
-      child: Material(
-        color: colors.highlight.withValues(alpha: 0.55),
-        borderRadius: BorderRadius.circular(12),
-        child: IconButton(
-          icon: Icon(icon, color: color),
-          iconSize: iconSize,
-          splashRadius: iconSize,
-          splashColor: colors.selectionOverlay,
-          highlightColor: colors.selectionOverlay.withValues(alpha: 0.45),
-          onPressed: onPressed,
-        ),
-      ),
+    return IconButton(
+      icon: Icon(icon, color: color),
+      iconSize: iconSize,
+      splashRadius: iconSize,
+      splashColor: colors.selectionOverlay,
+      highlightColor: colors.selectionOverlay.withValues(alpha: 0.45),
+      onPressed: onPressed,
     );
   }
 }

@@ -27,13 +27,16 @@ class SocialShare extends StatelessWidget {
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isClassic = colors.primary == AppThemeColors.classic.primary &&
+        colors.appBarBg == AppThemeColors.classic.appBarBg;
+    final controlColor = isClassic ? colors.appBarBg : colors.primary;
 
     const appLink =
         'https://play.google.com/store/apps/details?id=com.islami_jindegi';
 
     return IconButton(
       icon: const Icon(Icons.ios_share_rounded),
-      color: iconColor ?? colors.primary,
+      color: iconColor ?? controlColor,
       onPressed: () async {
         String text = '';
 

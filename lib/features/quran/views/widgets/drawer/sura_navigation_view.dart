@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:native_app/theme/app_colors.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import '../../../providers/ayah_highlight_providers.dart';
 
@@ -43,8 +44,11 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
     }
     if (mappingsAsync.hasError) {
       return Center(
-          child: Text('Error loading Surah/Ayah data',
-              style: TextStyle(fontSize: 14.sp)));
+        child: Text(
+          'Error loading Surah/Ayah data',
+          style: TextStyle(fontSize: 14.sp),
+        ),
+      );
     }
 
     final suraPageMapping = ref.watch(suraPageMappingProvider);
@@ -117,23 +121,27 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
         children: [
           Expanded(
             flex: 3,
-            child: Text('সুরা',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: appBarFg,
-                  fontWeight: FontWeight.bold,
-                  fontSize: fontSize,
-                )),
+            child: Text(
+              'সুরা',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: appBarFg,
+                fontWeight: FontWeight.bold,
+                fontSize: fontSize,
+              ),
+            ),
           ),
           Expanded(
             flex: 2,
-            child: Text('আয়াত',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: appBarFg,
-                  fontWeight: FontWeight.bold,
-                  fontSize: fontSize,
-                )),
+            child: Text(
+              'আয়াত',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: appBarFg,
+                fontWeight: FontWeight.bold,
+                fontSize: fontSize,
+              ),
+            ),
           ),
         ],
       ),
@@ -148,6 +156,10 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 14.0 : 16.sp;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isClassicTheme = appColors.highlight == AppColors.highlightClassic &&
+        appColors.active == AppColors.activeClassic;
+    final selectedTextColor =
+        isClassicTheme ? appColors.primaryText : appColors.active;
 
     return ScrollablePositionedList.separated(
       itemScrollController: _surahScrollController,
@@ -166,7 +178,7 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
             style: TextStyle(
               fontSize: fontSize,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected ? appColors.active : appColors.primaryText,
+              color: isSelected ? selectedTextColor : appColors.primaryText,
             ),
           ),
           contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -191,6 +203,10 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     final fontSize = isLandscape ? 12.0 : 14.sp;
+    final isClassicTheme = appColors.highlight == AppColors.highlightClassic &&
+        appColors.active == AppColors.activeClassic;
+    final selectedTextColor =
+        isClassicTheme ? appColors.primaryText : appColors.active;
 
     final totalAyahs = ayahCounts[selectedSurah - 1];
 
@@ -221,7 +237,7 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
               toBengaliNumber(ayahNumber),
               style: TextStyle(
                 fontSize: fontSize,
-                color: isSelected ? appColors.active : appColors.primaryText,
+                color: isSelected ? selectedTextColor : appColors.primaryText,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -240,7 +256,8 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                    content: Text('Page data not found for this Ayah')),
+                  content: Text('Page data not found for this Ayah'),
+                ),
               );
             }
           },

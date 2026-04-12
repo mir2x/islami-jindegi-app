@@ -92,10 +92,13 @@ class DownloadIcon extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isClassic = colors.primary == AppThemeColors.classic.primary &&
+        colors.appBarBg == AppThemeColors.classic.appBarBg;
+    final actionColor = isClassic ? colors.appBarBg : colors.active;
 
     return IconButton(
       iconSize: 35,
-      icon: Icon(Icons.download, color: colors.active),
+      icon: Icon(Icons.download, color: actionColor),
       onPressed: () async {
         var params = DownloadParams(
           url: fileUrl,
@@ -149,6 +152,9 @@ class DownloadProgress extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var textTheme = Theme.of(context).textTheme;
     final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isClassic = colors.primary == AppThemeColors.classic.primary &&
+        colors.appBarBg == AppThemeColors.classic.appBarBg;
+    final actionColor = isClassic ? colors.appBarBg : colors.active;
 
     return ValueListenableBuilder<Map>(
       valueListenable: progressNotifier,
@@ -172,7 +178,7 @@ class DownloadProgress extends ConsumerWidget {
                     const SizedBox(height: 4),
                     LinearProgressIndicator(
                       backgroundColor: colors.divider,
-                      valueColor: AlwaysStoppedAnimation<Color>(colors.active),
+                      valueColor: AlwaysStoppedAnimation<Color>(actionColor),
                       value: received / total,
                     ),
                   ],

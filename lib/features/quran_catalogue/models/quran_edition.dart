@@ -1,6 +1,9 @@
+import 'dart:developer' as developer;
 import 'dart:io';
+
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../downloader/providers/download_providers.dart';
 
 class QuranEdition {
@@ -55,7 +58,9 @@ class QuranEdition {
           .length;
 
       if (files < 600) {
-        print("Quran edition $editionId has only $files pages (expected ~604)");
+        developer.log(
+          'Quran edition $editionId has only $files pages (expected ~604)',
+        );
         await _clearDownloadStatus(editionId);
         try {
           await editionDir.delete(recursive: true);
@@ -65,7 +70,7 @@ class QuranEdition {
 
       return true;
     } catch (e) {
-      print("Error validating Quran edition $editionId: $e");
+      developer.log('Error validating Quran edition $editionId: $e');
       await _clearDownloadStatus(editionId);
       return false;
     }

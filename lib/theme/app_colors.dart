@@ -7,10 +7,10 @@ class AppColors {
   static const Color danger = Color(0xFFa12f1f);
 
   //  CLASSIC
-  static const Color primaryClassic = Color(0xFFebebeb);
+  static const Color primaryClassic = Color(0xFF449b82);
   static const Color secondaryClassic = Color(0xFF449b82);
   static const Color accentClassic = Color(0xFF7ec7b2);
-  static const Color activeClassic = Color(0xFFebebeb);
+  static const Color activeClassic = Color(0xFF449b82);
   static const Color selectedItemClassic = Color(0xFF7ec7b2);
   static const Color scaffoldBgClassic = Color(0xFFbedbd7);
   static const Color appBarBgClassic = Color(0xFF004b44);
@@ -27,12 +27,12 @@ class AppColors {
   static const Color activeTabTextClassic = Color(0xFF7ec7b2);
   static const Color inactiveTabTextClassic = Color(0xFF212529);
   static const Color highlightClassic = Color(0xFFc7ebe7);
-  static const Color highlightBorderClassic = Color(0xFFfdfdfd);
+  static const Color highlightBorderClassic = Color(0xFFa3d4ca);
   static const Color selectionOverlayClassic = Color(0xFF7ec7b2);
   static const Color contextMenuBgClassic = Color(0xFFdaf5f2);
   static const Color contextMenuTextClassic = Color(0xFF212529);
   static const Color dropdownBgClassic = Color(0xFFdaf5f2);
-  static const Color dividerClassic = Color(0xFFfdfdfd);
+  static const Color dividerClassic = Color(0xFFa3d4ca);
   static const Color shadowClassic = Colors.black26;
   static const Color drawerScrimClassic = Colors.black54;
 

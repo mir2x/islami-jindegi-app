@@ -43,6 +43,7 @@ class SuraBottomNavBar extends ConsumerWidget {
           onStopAutoScroll();
           showModalBottomSheet(
             context: context,
+            isScrollControlled: true,
             backgroundColor: colors.drawerScrim.withValues(alpha: 0),
             builder: (context) => AudioRangeSelectionDialog(
               totalAyahs: totalAyahs,
