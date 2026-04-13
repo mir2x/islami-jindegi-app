@@ -23,11 +23,13 @@ class SurahPage extends ConsumerStatefulWidget {
   final int suraNumber;
   final int? initialScrollIndex;
   final String returnTo;
+  final bool popBack;
   const SurahPage({
     super.key,
     required this.suraNumber,
     this.initialScrollIndex,
     this.returnTo = suraListRoute,
+    this.popBack = false,
   });
 
   @override
@@ -58,7 +60,11 @@ class _SurahPageState extends ConsumerState<SurahPage> {
   void _navigateBackToReturnRoute() {
     ref.read(lastViewedSuraProvider.notifier).state = widget.suraNumber;
     if (!mounted) return;
-    context.go(widget.returnTo);
+    if (widget.popBack && context.canPop()) {
+      context.pop();
+    } else {
+      context.go(widget.returnTo);
+    }
   }
 
   void _log(String msg) {
@@ -676,6 +682,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
           scaffoldKey: _scaffoldKey,
           currentAyahNumber: _currentAyahNumber,
           returnTo: widget.returnTo,
+          popBack: widget.popBack,
         ),
         drawer: SuraSideDrawer(
           currentSuraNumber: widget.suraNumber,

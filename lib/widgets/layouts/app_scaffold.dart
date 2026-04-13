@@ -264,75 +264,90 @@ class AppScaffold extends ConsumerWidget {
                   )
                 : null,
             drawer: drawer,
-            endDrawer: Drawer(
-              backgroundColor: appColors.drawerBg,
-              surfaceTintColor: Colors.transparent,
-              child: SafeArea(
-                top: false,
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(28, 56, 28, 24),
-                      decoration: BoxDecoration(
-                        color: appColors.drawerHeaderBg,
-                        border: Border(
-                          bottom: BorderSide(
-                            color: appColors.divider.withValues(alpha: 0.35),
+            endDrawer: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.65,
+              child: Drawer(
+                backgroundColor: appColors.drawerBg,
+                surfaceTintColor: Colors.transparent,
+                child: SafeArea(
+                  top: false,
+                  child: ListView(
+                    padding: EdgeInsets.zero,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(28, 56, 28, 24),
+                        decoration: BoxDecoration(
+                          color: appColors.drawerHeaderBg,
+                          border: Border(
+                            bottom: BorderSide(
+                              color: appColors.divider.withValues(alpha: 0.35),
+                            ),
                           ),
                         ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            'ইসলামী জিন্দেগী',
-                            style: textTheme.headlineSmall?.copyWith(
-                              color: appColors.appBarText,
-                              fontWeight: FontWeight.w700,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              'ইসলামী যিন্দেগী',
+                              style: textTheme.headlineSmall?.copyWith(
+                                color: appColors.appBarText,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              textAlign: TextAlign.right,
                             ),
-                            textAlign: TextAlign.right,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            locales.home,
-                            style: textTheme.labelLarge?.copyWith(
-                              color: appColors.appBarText.withValues(alpha: 0.8),
-                            ),
-                          ),
-                        ],
+                            const SizedBox(height: 8),
+                          ],
+                        ),
                       ),
-                    ),
-                    DrawerLink(title: locales.home, route: '/'),
-                    DrawerLink(title: locales.quran, route: 'qurans'),
-                    DrawerLink(title: locales.books, route: 'books'),
-                    DrawerLink(title: locales.bayans, route: 'bayans'),
-                    DrawerLink(title: locales.malfuzat, route: 'malfuzat'),
-                    DrawerLink(title: locales.masail, route: 'masail'),
-                    DrawerLink(title: locales.duaDurud, route: 'duas'),
-                    DrawerLink(title: locales.articles, route: 'articles'),
-                    DrawerLink(title: locales.news, route: 'news'),
-                    DrawerLink(title: locales.madrasah, route: 'madrasahs'),
-                    DrawerLink(
-                      title: locales.namazTime,
-                      route: 'namaz-times',
-                    ),
-                    DrawerLink(title: locales.qiblah, route: 'qiblah'),
-                    DrawerLink(title: locales.mosques, route: 'mosques'),
-                    DrawerLink(title: locales.donation, route: 'donation'),
-                    DrawerLink(title: locales.location, route: 'location'),
-                    DrawerLink(title: locales.settings, route: 'settings'),
-                    DrawerLink(
-                      title: locales.bookmarks,
-                      route: 'bookmarks',
-                    ),
-                    DrawerLink(title: locales.aboutUs, route: 'about'),
-                    DrawerLink(
-                      title: locales.contactUs,
-                      route: 'contact-us',
-                      isLast: true,
-                    ),
-                  ],
+                      DrawerLink(title: locales.home, route: '/'),
+                      DrawerLink(title: locales.quran, route: 'qurans'),
+                      DrawerLink(title: locales.books, route: 'books'),
+                      DrawerLink(title: locales.bayans, route: 'bayans'),
+                      DrawerLink(title: locales.malfuzat, route: 'malfuzat'),
+                      DrawerLink(title: locales.masail, route: 'masail'),
+                      DrawerLink(title: locales.duaDurud, route: 'duas'),
+                      DrawerLink(title: locales.articles, route: 'articles'),
+                      DrawerLink(title: locales.news, route: 'news'),
+                      DrawerLink(title: locales.madrasah, route: 'madrasahs'),
+                      DrawerLink(
+                        title: locales.namazTime,
+                        route: 'namaz-times',
+                      ),
+                      DrawerLink(title: locales.qiblah, route: 'qiblah'),
+                      DrawerLink(title: locales.mosques, route: 'mosques'),
+                      DrawerLink(title: locales.donation, route: 'donation'),
+                      DrawerLink(title: locales.location, route: 'location'),
+                      DrawerLink(title: locales.settings, route: 'settings'),
+                      DrawerLink(
+                        title: locales.bookmarks,
+                        route: 'bookmarks',
+                      ),
+                      DrawerLink(title: locales.aboutUs, route: 'about'),
+                      DrawerLink(
+                        title: locales.contactUs,
+                        route: 'contact-us',
+                      ),
+                      DrawerAction(
+                        title: locales.rateThisApp,
+                        onTap: () {
+                          final appLink = Platform.isAndroid
+                              ? 'https://play.google.com/store/apps/details?id=com.islami_jindegi'
+                              : 'https://apps.apple.com/app/islami-jindegi/id1271205014';
+                          launchUrl(Uri.parse(appLink));
+                        },
+                      ),
+                      DrawerAction(
+                        title: locales.share,
+                        isLast: true,
+                        onTap: () {
+                          final appLink = Platform.isAndroid
+                              ? 'https://play.google.com/store/apps/details?id=com.islami_jindegi'
+                              : 'https://apps.apple.com/app/islami-jindegi/id1271205014';
+                          Share.share(appLink);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -468,6 +483,50 @@ class DrawerLink extends StatelessWidget {
           style: textTheme.titleMedium?.copyWith(
             color: isActive ? appColors.primary : appColors.primaryText,
             fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+          ),
+          textAlign: TextAlign.right,
+        ),
+      ),
+    );
+  }
+}
+
+class DrawerAction extends StatelessWidget {
+  const DrawerAction({
+    super.key,
+    required this.title,
+    required this.onTap,
+    this.isLast = false,
+  });
+
+  final String title;
+  final VoidCallback onTap;
+  final bool isLast;
+
+  @override
+  Widget build(BuildContext context) {
+    var textTheme = Theme.of(context).textTheme;
+    final appColors = Theme.of(context).extension<AppThemeColors>()!;
+
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        decoration: BoxDecoration(
+          border: isLast
+              ? null
+              : Border(
+                  bottom: BorderSide(
+                    color: appColors.divider.withValues(alpha: 0.25),
+                  ),
+                ),
+        ),
+        child: Text(
+          title,
+          style: textTheme.titleMedium?.copyWith(
+            color: appColors.primaryText,
+            fontWeight: FontWeight.w500,
           ),
           textAlign: TextAlign.right,
         ),

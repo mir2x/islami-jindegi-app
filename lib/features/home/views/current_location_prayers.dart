@@ -206,7 +206,7 @@ class Prayers extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             onTap: () => context.push('/namaz-times'),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -227,11 +227,13 @@ class Prayers extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.baseline,
                             textBaseline: TextBaseline.alphabetic,
                             children: [
-                              Text(
-                                '${prayerTimes['current']['title']}',
-                                style: textTheme.titleLarge?.copyWith(
-                                  color: titleColor,
-                                  fontWeight: FontWeight.w800,
+                              Flexible(
+                                child: Text(
+                                  '${prayerTimes['current']['title']}',
+                                  style: textTheme.titleMedium?.copyWith(
+                                    color: titleColor,
+                                    fontWeight: FontWeight.w800,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 6),
@@ -247,7 +249,7 @@ class Prayers extends StatelessWidget {
                                 (prayerTimes['current']['time'] as String)
                                     .split(' - ')
                                     .first,
-                                style: textTheme.titleLarge?.copyWith(
+                                style: textTheme.titleMedium?.copyWith(
                                   color: titleColor,
                                   fontWeight: FontWeight.w800,
                                 ),
@@ -271,7 +273,7 @@ class Prayers extends StatelessWidget {
                                 (prayerTimes['current']['time'] as String)
                                     .split(' - ')
                                     .last,
-                                style: textTheme.headlineMedium?.copyWith(
+                                style: textTheme.titleLarge?.copyWith(
                                   color: titleColor,
                                   fontWeight: FontWeight.w800,
                                 ),

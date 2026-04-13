@@ -13,6 +13,7 @@ class SuraAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final GlobalKey<ScaffoldState>? scaffoldKey;
   final int currentAyahNumber;
   final String? returnTo;
+  final bool popBack;
 
   /// When provided, replaces the default actions entirely.
   final List<Widget>? actions;
@@ -24,6 +25,7 @@ class SuraAppBar extends ConsumerWidget implements PreferredSizeWidget {
     this.scaffoldKey,
     this.currentAyahNumber = 1,
     this.returnTo,
+    this.popBack = false,
     this.actions,
   });
 
@@ -43,7 +45,11 @@ class SuraAppBar extends ConsumerWidget implements PreferredSizeWidget {
         icon: const Icon(Icons.arrow_back),
         onPressed: () {
           ref.read(lastViewedSuraProvider.notifier).state = suraNumber;
-          context.go(returnTo ?? suraListRoute);
+          if (popBack && context.canPop()) {
+            context.pop();
+          } else {
+            context.go(returnTo ?? suraListRoute);
+          }
         },
       ),
       title: Column(

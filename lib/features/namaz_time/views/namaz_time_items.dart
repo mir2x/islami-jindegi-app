@@ -79,6 +79,9 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
     if (target == null) return '';
     DateTime t = target;
     if (t.isBefore(now)) t = t.add(const Duration(days: 1));
+    // If still ≥24h away, the end time belongs to tomorrow's schedule but the
+    // active prayer is yesterday's (e.g. Isha after midnight). Subtract a day.
+    if (t.difference(now).inHours >= 24) t = t.subtract(const Duration(days: 1));
     final diff = t.difference(now);
     final hours = diff.inHours;
     final minutes = diff.inMinutes.remainder(60);

@@ -77,21 +77,23 @@ class Resource extends StatelessWidget {
                     color: appColors.primaryText,
                   );
             } else if (cellHeight < 85) {
-              iconSize = 24;
-              gap = 4;
-              verticalPad = 6;
+              iconSize = cellHeight * 0.50;
+              gap = cellHeight * 0.04;
+              verticalPad = 0;
               horizontalPad = 4;
               textStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
                     height: 1.1,
+                    fontSize: 13,
                     color: appColors.primaryText,
                   );
             } else {
-              iconSize = screenWidth < 340 ? 24 : 30;
-              gap = 6;
-              verticalPad = 8;
-              horizontalPad = 6;
+              iconSize = cellHeight * 0.52;
+              gap = cellHeight * 0.05;
+              verticalPad = 0;
+              horizontalPad = 4;
               textStyle = Theme.of(context).textTheme.labelMedium?.copyWith(
                     height: 1.1,
+                    fontSize: 15,
                     color: appColors.primaryText,
                   );
             }

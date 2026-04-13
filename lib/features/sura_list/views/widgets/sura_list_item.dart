@@ -75,14 +75,14 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
           decoration: BoxDecoration(
             color: isActive
                 ? highlightColor.withValues(
-                    alpha: 0.08 + _animation.value * 0.12,
+                    alpha: 0.28 + _animation.value * 0.20,
                   )
                 : null,
             border: isActive
                 ? Border(
                     left: BorderSide(
                       color: highlightColor.withValues(
-                        alpha: 0.6 + _animation.value * 0.4,
+                        alpha: 0.85 + _animation.value * 0.15,
                       ),
                       width: 4.0,
                     ),

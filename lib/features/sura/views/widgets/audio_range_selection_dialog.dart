@@ -54,7 +54,7 @@ class _AudioRangeSelectionDialogState
           color: colors.cardBg,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         ),
-        padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 24.h),
+        padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 16.h),
         child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -63,7 +63,7 @@ class _AudioRangeSelectionDialogState
                 icon: HugeIcons.strokeRoundedQuran01,
                 value: suraNames[widget.suraNumber - 1],
               ),
-              SizedBox(height: 12.h),
+              SizedBox(height: 8.h),
               _labeledDropdown<String>(
                 label: 'ক্বারী',
                 icon: HugeIcons.strokeRoundedMuslim,
@@ -79,7 +79,7 @@ class _AudioRangeSelectionDialogState
                   }
                 },
               ),
-              SizedBox(height: 12.h),
+              SizedBox(height: 8.h),
               _labeledDropdown<int>(
                 label: 'শুরু আয়াত',
                 icon: HugeIcons.strokeRoundedArrowLeft01,
@@ -96,7 +96,7 @@ class _AudioRangeSelectionDialogState
                   }
                 },
               ),
-              SizedBox(height: 12.h),
+              SizedBox(height: 8.h),
               _labeledDropdown<int>(
                 label: 'শেষ আয়াত',
                 icon: HugeIcons.strokeRoundedArrowRight01,
@@ -109,7 +109,7 @@ class _AudioRangeSelectionDialogState
                   }
                 },
               ),
-              SizedBox(height: 12.h),
+              SizedBox(height: 8.h),
               _buildFullSuraCheckbox(
                 onChanged: (isChecked) {
                   setState(() => _isFullSura = isChecked);
@@ -119,7 +119,7 @@ class _AudioRangeSelectionDialogState
                   }
                 },
               ),
-              SizedBox(height: 8.h),
+              SizedBox(height: 6.h),
               _buildRepeatStepper(
                 repeatCount: repeatCount,
                 onMinus: () {
@@ -133,18 +133,18 @@ class _AudioRangeSelectionDialogState
                       repeatCount + 1;
                 },
               ),
-              SizedBox(height: 20.h),
+              SizedBox(height: 12.h),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   icon: HugeIcon(
                     icon: HugeIcons.strokeRoundedPlay,
-                    size: 24.r,
+                    size: 20.r,
                     color: colors.appBarText,
                   ),
                   label: Text(
                     'অডিও শুনুন',
-                    style: TextStyle(fontSize: 16.sp, color: colors.appBarText),
+                    style: TextStyle(fontSize: 14.sp, color: colors.appBarText),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: colors.active,
@@ -152,7 +152,7 @@ class _AudioRangeSelectionDialogState
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14.r),
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 14.h),
+                    padding: EdgeInsets.symmetric(vertical: 10.h),
                   ),
                   onPressed: () async {
                     final service = ref.read(suraAudioPlayerProvider);
@@ -173,7 +173,7 @@ class _AudioRangeSelectionDialogState
                   },
                 ),
               ),
-              SizedBox(height: 12.h),
+              SizedBox(height: 8.h),
             ],
         ),
       ),
@@ -190,20 +190,20 @@ class _AudioRangeSelectionDialogState
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        HugeIcon(icon: icon, color: colors.active, size: 20.r),
+        HugeIcon(icon: icon, color: colors.active, size: 18.r),
         SizedBox(width: 8.w),
         Text(
           '$label:',
           style: TextStyle(
             color: colors.primaryText,
             fontWeight: FontWeight.w600,
-            fontSize: 16.sp,
+            fontSize: 14.sp,
           ),
         ),
         SizedBox(width: 12.w),
         Expanded(
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
             decoration: BoxDecoration(
               color: colors.highlight,
               border: Border.all(color: colors.divider),
@@ -214,7 +214,7 @@ class _AudioRangeSelectionDialogState
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: colors.primaryText,
-                fontSize: 16.sp,
+                fontSize: 14.sp,
               ),
             ),
           ),
@@ -235,20 +235,20 @@ class _AudioRangeSelectionDialogState
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        HugeIcon(icon: icon, color: colors.active, size: 20.r),
+        HugeIcon(icon: icon, color: colors.active, size: 18.r),
         SizedBox(width: 8.w),
         Text(
           '$label:',
           style: TextStyle(
             color: colors.primaryText,
             fontWeight: FontWeight.w600,
-            fontSize: 16.sp,
+            fontSize: 14.sp,
           ),
         ),
         SizedBox(width: 12.w),
         Expanded(
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
             decoration: BoxDecoration(
               color: colors.highlight,
               border: Border.all(color: colors.divider),
@@ -257,10 +257,11 @@ class _AudioRangeSelectionDialogState
             child: DropdownButtonHideUnderline(
               child: DropdownButton<T>(
                 isExpanded: true,
+                isDense: true,
                 value: value,
                 dropdownColor: colors.dropdownBg,
                 iconEnabledColor: colors.active,
-                style: TextStyle(color: colors.primaryText, fontSize: 16.sp),
+                style: TextStyle(color: colors.primaryText, fontSize: 14.sp),
                 items: items.map((e) {
                   return DropdownMenuItem<T>(
                     value: e,
@@ -269,7 +270,7 @@ class _AudioRangeSelectionDialogState
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: colors.primaryText,
-                        fontSize: 16.sp,
+                        fontSize: 14.sp,
                       ),
                     ),
                   );
@@ -289,22 +290,23 @@ class _AudioRangeSelectionDialogState
     final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
         color: colors.highlight,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(8.r),
         border: Border.all(color: colors.divider),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: 24.w,
-            height: 24.w,
+            width: 18.w,
+            height: 18.w,
             child: Checkbox(
               value: _isFullSura,
               onChanged: (value) => onChanged(value ?? false),
               activeColor: colors.active,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
           ),
           SizedBox(width: 8.w),
@@ -313,7 +315,7 @@ class _AudioRangeSelectionDialogState
             child: Text(
               'সম্পূর্ণ সূরা',
               style: TextStyle(
-                fontSize: 15.sp,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
                 color: colors.primaryText,
               ),
@@ -332,10 +334,10 @@ class _AudioRangeSelectionDialogState
     final colors = Theme.of(context).extension<AppThemeColors>()!;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
         color: colors.highlight,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(8.r),
         border: Border.all(color: colors.divider),
       ),
       child: Row(
@@ -344,29 +346,32 @@ class _AudioRangeSelectionDialogState
           Text(
             'আয়াতের পুনরাবৃত্তি',
             style: TextStyle(
-              fontSize: 15.sp,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w500,
               color: colors.primaryText,
             ),
           ),
           SizedBox(width: 12.w),
-          IconButton(
-            icon: const Icon(Icons.remove_circle_outline),
-            onPressed: onMinus,
-            color: colors.active,
+          GestureDetector(
+            onTap: onMinus,
+            child: Icon(Icons.remove_circle_outline,
+                color: colors.active, size: 20.r,),
           ),
-          Text(
-            repeatCount.toBengaliDigit(),
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w700,
-              color: colors.active,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
+            child: Text(
+              repeatCount.toBengaliDigit(),
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w700,
+                color: colors.active,
+              ),
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.add_circle_outline),
-            onPressed: onPlus,
-            color: colors.active,
+          GestureDetector(
+            onTap: onPlus,
+            child: Icon(Icons.add_circle_outline,
+                color: colors.active, size: 20.r,),
           ),
         ],
       ),

@@ -109,10 +109,13 @@ class AppRoutes {
               int.tryParse(state.uri.queryParameters['scroll'] ?? '');
           final returnTo =
               state.uri.queryParameters['returnTo'] ?? suraListRoute;
+          final popBack =
+              state.uri.queryParameters['popBack'] == 'true';
           return SurahPage(
             suraNumber: id,
             initialScrollIndex: initialScrollIndex,
             returnTo: returnTo,
+            popBack: popBack,
           );
         },
       ),

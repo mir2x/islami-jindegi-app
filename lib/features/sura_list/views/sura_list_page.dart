@@ -99,7 +99,9 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
                 fontSize: 16,
               ),
               indicator: BoxDecoration(
-                color: colors.highlight,
+                color: isClassic
+                    ? colors.appBarBg.withValues(alpha: 0.35)
+                    : colors.active.withValues(alpha: 0.28),
               ),
               dividerColor: colors.appBarBg.withValues(alpha: 0),
               indicatorSize: TabBarIndicatorSize.tab,

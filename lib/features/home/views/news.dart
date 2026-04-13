@@ -16,12 +16,18 @@ class News extends ConsumerWidget {
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
     final modelQuery = ref.watch(latestNewsProvider);
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: appColors.cardBg.withValues(alpha: 0.9),
+        color: isDark
+            ? appColors.highlight.withValues(alpha: 0.85)
+            : appColors.cardBg.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: appColors.divider.withValues(alpha: 0.4),
+          color: isDark
+              ? appColors.highlightBorder.withValues(alpha: 0.7)
+              : appColors.divider.withValues(alpha: 0.4),
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),

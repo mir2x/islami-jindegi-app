@@ -11,7 +11,9 @@ import 'package:native_app/features/sura/views/widgets/tafsir_view.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../models/ayah.dart';
+import '../../models/tafsir_source.dart';
 import '../../providers/sura_reciter_providers.dart';
+import '../../providers/tafsir_providers.dart';
 
 class AyahActionItem {
   final IconData icon;
@@ -23,6 +25,245 @@ class AyahActionItem {
     required this.label,
     required this.onTap,
   });
+}
+
+void showShareOptionsBottomSheet(
+  BuildContext context,
+  int suraNumber,
+  Ayah ayah,
+  String suraName,
+) {
+  final colors = Theme.of(context).extension<AppThemeColors>()!;
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: colors.cardBg,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+    ),
+    builder: (_) => _ShareOptionsSheet(
+      suraNumber: suraNumber,
+      ayah: ayah,
+      suraName: suraName,
+    ),
+  );
+}
+
+class _ShareOptionsSheet extends ConsumerStatefulWidget {
+  final int suraNumber;
+  final Ayah ayah;
+  final String suraName;
+
+  const _ShareOptionsSheet({
+    required this.suraNumber,
+    required this.ayah,
+    required this.suraName,
+  });
+
+  @override
+  ConsumerState<_ShareOptionsSheet> createState() => _ShareOptionsSheetState();
+}
+
+class _ShareOptionsSheetState extends ConsumerState<_ShareOptionsSheet> {
+  bool _includeArabic = true;
+  final Set<int> _selectedTranslations = {};
+  final Set<String> _selectedTafsirs = {};
+
+  String _buildShareText(List<TafsirSource>? tafsirs) {
+    final parts = <String>[
+      '${widget.suraName}, আয়াত ${widget.ayah.ayah.toBengaliDigit()}',
+    ];
+    if (_includeArabic) parts.add(widget.ayah.arabicText);
+    for (final i in _selectedTranslations) {
+      final t = widget.ayah.translations[i];
+      parts.add('— ${t.translatorName}\n${t.text}');
+    }
+    for (final id in _selectedTafsirs) {
+      final tafsir = tafsirs?.where((t) => t.id == id).firstOrNull;
+      if (tafsir?.content != null && tafsir!.content!.isNotEmpty) {
+        parts.add('— ${tafsir.title}\n${tafsir.content}');
+      }
+    }
+    return parts.join('\n\n');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final ayahIdentifier =
+        AyahIdentifier(sura: widget.suraNumber, ayah: widget.ayah.ayah);
+    final tafsirAsync = ref.watch(tafsirProvider(ayahIdentifier));
+    final tafsirs = tafsirAsync.valueOrNull;
+    final downloadedTafsirs =
+        tafsirs?.where((t) => t.isDownloaded).toList() ?? [];
+
+    final shareText = _buildShareText(tafsirs);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: colors.cardBg,
+        borderRadius:
+            const BorderRadius.vertical(top: Radius.circular(16.0)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
+            child: Text(
+              'শেয়ার: ${widget.suraName}, আয়াত ${widget.ayah.ayah.toBengaliDigit()}',
+              style: TextStyle(
+                fontFamily: 'bangla/solaimanlipi',
+                wordSpacing: 3,
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+                color: colors.primaryText,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          Divider(height: 1, thickness: 1, color: colors.divider),
+
+          // ── Arabic ───────────────────────────────────────────────
+          _SectionHeader(label: 'আরবি', colors: colors),
+          CheckboxListTile(
+            title: Text(
+              'আরবি পাঠ',
+              style: TextStyle(
+                fontFamily: 'bangla/solaimanlipi',
+                wordSpacing: 3,
+                fontSize: 15,
+                color: colors.primaryText,
+              ),
+            ),
+            value: _includeArabic,
+            activeColor: colors.active,
+            onChanged: (v) => setState(() => _includeArabic = v ?? true),
+          ),
+
+          // ── Translations ─────────────────────────────────────────
+          if (widget.ayah.translations.isNotEmpty) ...[
+            _SectionHeader(label: 'অনুবাদ', colors: colors),
+            ...widget.ayah.translations.asMap().entries.map((entry) {
+              final selected = _selectedTranslations.contains(entry.key);
+              return CheckboxListTile(
+                title: Text(
+                  entry.value.translatorName,
+                  style: TextStyle(
+                    fontFamily: 'bangla/solaimanlipi',
+                    wordSpacing: 3,
+                    fontSize: 15,
+                    color: colors.primaryText,
+                  ),
+                ),
+                value: selected,
+                activeColor: colors.active,
+                onChanged: (v) => setState(() {
+                  if (v == true) {
+                    _selectedTranslations.add(entry.key);
+                  } else {
+                    _selectedTranslations.remove(entry.key);
+                  }
+                }),
+              );
+            }),
+          ],
+
+          // ── Tafsirs ──────────────────────────────────────────────
+          if (tafsirAsync.isLoading)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Center(child: CircularProgressIndicator()),
+            )
+          else if (downloadedTafsirs.isNotEmpty) ...[
+            _SectionHeader(label: 'তাফসীর', colors: colors),
+            ...downloadedTafsirs.map((tafsir) {
+              final selected = _selectedTafsirs.contains(tafsir.id);
+              return CheckboxListTile(
+                title: Text(
+                  tafsir.title,
+                  style: TextStyle(
+                    fontFamily: 'bangla/solaimanlipi',
+                    wordSpacing: 3,
+                    fontSize: 15,
+                    color: colors.primaryText,
+                  ),
+                ),
+                value: selected,
+                activeColor: colors.active,
+                onChanged: (v) => setState(() {
+                  if (v == true) {
+                    _selectedTafsirs.add(tafsir.id);
+                  } else {
+                    _selectedTafsirs.remove(tafsir.id);
+                  }
+                }),
+              );
+            }),
+          ],
+
+          Divider(height: 1, thickness: 1, color: colors.divider),
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              16,
+              12,
+              16,
+              16 + MediaQuery.of(context).viewPadding.bottom,
+            ),
+            child: SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                icon: const Icon(Icons.share),
+                label: const Text(
+                  'শেয়ার করুন',
+                  style: TextStyle(
+                    fontFamily: 'bangla/solaimanlipi',
+                    wordSpacing: 3,
+                    fontSize: 16,
+                  ),
+                ),
+                style: FilledButton.styleFrom(
+                  backgroundColor: colors.active,
+                  foregroundColor: colors.appBarText,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                onPressed: (!_includeArabic && _selectedTranslations.isEmpty && _selectedTafsirs.isEmpty)
+                    ? null
+                    : () {
+                        Navigator.pop(context);
+                        Share.share(shareText);
+                      },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  final String label;
+  final AppThemeColors colors;
+
+  const _SectionHeader({required this.label, required this.colors});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontFamily: 'bangla/solaimanlipi',
+          wordSpacing: 3,
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: colors.secondaryText,
+        ),
+      ),
+    );
+  }
 }
 
 void showAyahActionBottomSheet(
@@ -159,9 +400,14 @@ void showAyahActionBottomSheet(
             AyahActionItem(
               icon: Icons.share,
               label: 'শেয়ার',
-              onTap: () async {
+              onTap: () {
                 Navigator.pop(bottomSheetContext);
-                await Share.share(ayah.arabicText);
+                showShareOptionsBottomSheet(
+                  context,
+                  suraNumber,
+                  ayah,
+                  suraName,
+                );
               },
             ),
           ];

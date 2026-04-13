@@ -84,9 +84,9 @@ class Home extends StatelessWidget {
                   color: homeHeroBg,
                   padding: EdgeInsets.fromLTRB(
                     sideMargin * 2,
-                    12,
+                    8,
                     sideMargin * 2,
-                    44, // green breathing room below prayer card
+                    36, // green breathing room below prayer card
                   ),
                   child: Theme(
                     data: Theme.of(context).copyWith(

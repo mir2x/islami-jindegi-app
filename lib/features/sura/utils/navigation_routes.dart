@@ -4,12 +4,14 @@ String buildSuraRoute({
   required int suraNumber,
   int? scrollIndex,
   String returnTo = suraListRoute,
+  bool popBack = false,
 }) {
   return Uri(
     path: '/qurans/sura/$suraNumber',
     queryParameters: {
       if (scrollIndex != null) 'scroll': '$scrollIndex',
       'returnTo': returnTo,
+      if (popBack) 'popBack': 'true',
     },
   ).toString();
 }

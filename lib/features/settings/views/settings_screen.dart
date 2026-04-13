@@ -73,7 +73,6 @@ class Settings extends ConsumerWidget {
   ];
 
   static const List<Map<String, String>> backgrounds = [
-    {'value': 'pattern'},
     {'value': 'mosque'},
     {'value': 'no-background'},
   ];

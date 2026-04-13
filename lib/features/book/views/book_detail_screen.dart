@@ -168,7 +168,7 @@ class _BookContent extends ConsumerWidget {
           return AppScaffold(
             onBackPressed: () async => context.canPop() ? context.pop() : context.go('/books'),
             showPattern: false,
-            title: Text(locales.book),
+            title: Text(book.title),
             body: NextPageSwipe(
               onPrevious: () => _previousPage(context, ref),
               onNext: () => _nextPage(context, ref),
@@ -425,7 +425,7 @@ class _BookContent extends ConsumerWidget {
           return AppScaffold(
             onBackPressed: () async => context.canPop() ? context.pop() : context.go('/books'),
             showPattern: false,
-            title: Text(locales.book),
+            title: Text(book.title),
             body: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

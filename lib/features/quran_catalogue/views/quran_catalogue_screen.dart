@@ -26,30 +26,51 @@ class QuranCatalogueScreen extends ConsumerWidget {
     final quranEditions = ref.watch(quranEditionProvider);
     final colors = Theme.of(context).extension<AppThemeColors>()!;
     final textTheme = Theme.of(context).textTheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isClassic = colors.primary == AppThemeColors.classic.primary &&
         colors.appBarBg == AppThemeColors.classic.appBarBg;
-    final heroBase = isClassic ? colors.secondary : colors.primary;
+    final heroBase = isClassic
+        ? colors.secondary
+        : isDark
+            ? Color.alphaBlend(colors.primary.withValues(alpha: 0.22), colors.scaffoldBg)
+            : colors.primary;
     final heroAccent = isClassic
         ? Color.alphaBlend(
             colors.accent.withValues(alpha: 0.26),
             colors.appBarBg,
           )
-        : Color.alphaBlend(
-            colors.secondary.withValues(alpha: 0.18),
-            colors.primary,
-          );
-    final heroForeground =
-        isClassic ? colors.appBarText : const Color(0xFFF7F4EC);
-    final heroMutedForeground = heroForeground.withValues(alpha: 0.82);
+        : isDark
+            ? Color.alphaBlend(
+                colors.secondary.withValues(alpha: 0.12),
+                colors.cardBg,
+              )
+            : Color.alphaBlend(
+                colors.secondary.withValues(alpha: 0.18),
+                colors.primary,
+              );
+    final heroForeground = isClassic
+        ? colors.appBarText
+        : isDark
+            ? colors.primaryText
+            : const Color(0xFFF7F4EC);
+    final heroMutedForeground = isDark
+        ? colors.secondaryText
+        : heroForeground.withValues(alpha: 0.82);
     final heroPanelColor = isClassic
         ? colors.highlight.withValues(alpha: 0.18)
-        : Colors.white.withValues(alpha: 0.12);
+        : isDark
+            ? colors.highlight.withValues(alpha: 0.6)
+            : Colors.white.withValues(alpha: 0.12);
     final heroPanelBorder = isClassic
         ? colors.highlight.withValues(alpha: 0.34)
-        : Colors.white.withValues(alpha: 0.16);
+        : isDark
+            ? colors.highlightBorder.withValues(alpha: 0.8)
+            : Colors.white.withValues(alpha: 0.16);
     final heroPanelIconBg = isClassic
         ? colors.highlight.withValues(alpha: 0.26)
-        : Colors.white.withValues(alpha: 0.14);
+        : isDark
+            ? colors.highlight
+            : Colors.white.withValues(alpha: 0.14);
 
     return AppScaffold(
       onBackPressed: () async {

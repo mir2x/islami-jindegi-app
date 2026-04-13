@@ -23,6 +23,20 @@ class LastVisited extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final locales = AppLocalizations.of(context)!;
     final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isClassic = colors.primary == AppThemeColors.classic.primary &&
+        colors.appBarBg == AppThemeColors.classic.appBarBg;
+
+    final accentColor = isClassic ? colors.appBarBg : colors.active;
+    final chipBg = (isDark || isClassic)
+        ? accentColor.withValues(alpha: 0.28)
+        : colors.highlight;
+    final chipBorder = (isDark || isClassic)
+        ? accentColor.withValues(alpha: 0.55)
+        : colors.highlightBorder;
+    final chipText = (isDark || isClassic)
+        ? accentColor
+        : colors.secondaryText;
 
     return WithLastVisited(
       builder: (context, settings) {
@@ -36,16 +50,16 @@ class LastVisited extends ConsumerWidget {
           margin: const EdgeInsets.only(left: 8),
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: colors.highlight,
+            color: chipBg,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: colors.highlightBorder, width: 1),
+            border: Border.all(color: chipBorder, width: 1),
           ),
           child: Text(
             label,
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w600,
-              color: colors.secondaryText,
+              color: chipText,
               height: 1.2,
             ),
           ),

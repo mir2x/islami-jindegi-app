@@ -24,6 +24,9 @@ class ContentListCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isClassic = colors.primary == AppThemeColors.classic.primary &&
+        colors.appBarBg == AppThemeColors.classic.appBarBg;
     AsyncValue? highlighter;
 
     if (highlightProvider != null) {
@@ -39,14 +42,34 @@ class ContentListCard extends ConsumerWidget {
       ),
     );
 
+    Color recentBg;
+    Border recentBorder;
+    if (recentlyVisited && (isDark || isClassic)) {
+      final accentColor = isClassic ? colors.appBarBg : colors.active;
+      recentBg = Color.alphaBlend(
+        accentColor.withValues(alpha: 0.22),
+        colors.cardBg,
+      );
+      recentBorder = Border.all(
+        color: accentColor.withValues(alpha: 0.48),
+        width: 1.25,
+      );
+    } else {
+      recentBg = recentlyVisited ? colors.highlight : colors.cardBg;
+      recentBorder = Border.all(
+        color: recentlyVisited ? colors.highlightBorder : colors.divider,
+        width: recentlyVisited ? 1.25 : 1,
+      );
+    }
+
     return Container(
       width: double.infinity,
       margin: margin,
       padding: padding,
       decoration: BoxDecoration(
-        color: recentlyVisited ? colors.highlight : colors.cardBg,
+        color: recentBg,
         borderRadius: BorderRadius.circular(20),
-        border: border ?? Border.all(color: colors.divider, width: 1),
+        border: border ?? recentBorder,
         boxShadow: [
           BoxShadow(
             color: colors.shadow.withValues(alpha: 0.08),

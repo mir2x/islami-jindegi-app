@@ -89,6 +89,7 @@ class QuranAppBar extends ConsumerWidget implements PreferredSizeWidget {
                 suraNumber: target.suraNumber,
                 scrollIndex: target.ayahNumber - 1,
                 returnTo: currentUri,
+                popBack: true,
               ),
             );
           },

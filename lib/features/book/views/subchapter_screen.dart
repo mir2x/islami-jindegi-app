@@ -112,7 +112,7 @@ class SubchapterScreen extends ConsumerWidget {
             return AppScaffold(
               onBackPressed: () async => context.go('/books/$bookId'),
               showPattern: false,
-              title: Text(locales.book),
+              title: Text(ref.watch(bookDetailProvider(bookId)).valueOrNull?.title ?? locales.book),
               body: NextPageSwipe(
                 onPrevious: previousPage,
                 onNext: nextPage,

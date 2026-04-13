@@ -257,6 +257,22 @@ class _BookListScreenState extends ConsumerState<BookListScreen> {
                         );
                       }
                     }
+                    final isDark = Theme.of(context).brightness == Brightness.dark;
+                    final isClassic = appTheme.primary == AppThemeColors.classic.primary &&
+                        appTheme.appBarBg == AppThemeColors.classic.appBarBg;
+                    Color recentCardBg;
+                    Color recentCardBorder;
+                    if (isRecent && (isDark || isClassic)) {
+                      final accentColor = isClassic ? appTheme.appBarBg : appTheme.active;
+                      recentCardBg = Color.alphaBlend(
+                        accentColor.withValues(alpha: 0.22),
+                        appTheme.cardBg,
+                      );
+                      recentCardBorder = accentColor.withValues(alpha: 0.48);
+                    } else {
+                      recentCardBg = isRecent ? appTheme.highlight : appTheme.cardBg;
+                      recentCardBorder = isRecent ? appTheme.highlightBorder : appTheme.divider;
+                    }
                     return InkWell(
                       key: _keyForBook(item.id),
                       onTap: () {
@@ -269,12 +285,10 @@ class _BookListScreenState extends ConsumerState<BookListScreen> {
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                          color: isRecent ? appTheme.highlight : appTheme.cardBg,
+                          color: recentCardBg,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: isRecent
-                                ? appTheme.highlightBorder
-                                : appTheme.divider,
+                            color: recentCardBorder,
                           ),
                           boxShadow: [
                             BoxShadow(

@@ -169,7 +169,7 @@ class _DatesPrayersState extends ConsumerState<DatesPrayers> {
             children: [
               HijriDate(
                 oppositeColor: true,
-                style: textTheme.headlineLarge?.copyWith(
+                style: textTheme.headlineMedium?.copyWith(
                   color: appColors.appBarText,
                   fontWeight: FontWeight.w800,
                   letterSpacing: -0.5,
@@ -182,13 +182,13 @@ class _DatesPrayersState extends ConsumerState<DatesPrayers> {
               ),
             ],
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 3),
           // Gregorian date + calendar icon
           Row(
             children: [
               GregorianDate(
                 oppositeColor: true,
-                style: textTheme.bodyMedium?.copyWith(
+                style: textTheme.bodySmall?.copyWith(
                   color: appColors.appBarText.withValues(alpha: 0.85),
                 ),
               ),
@@ -199,18 +199,18 @@ class _DatesPrayersState extends ConsumerState<DatesPrayers> {
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           // Bangla date (no calendar icon)
           BangaliDate(
             oppositeColor: true,
-            style: textTheme.bodyMedium?.copyWith(
+            style: textTheme.bodySmall?.copyWith(
               color: appColors.appBarText.withValues(alpha: 0.85),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 6),
           // Location row
           _LocationRow(appColors: appColors, textTheme: textTheme),
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
           // Glassmorphism prayer card
           const _PrayerCard(),
         ],

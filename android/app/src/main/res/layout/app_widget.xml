@@ -136,6 +136,7 @@
           android:scaleType="fitStart" />
       </LinearLayout>
 
+      <!-- Reload button hidden until refresh works
       <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -159,6 +160,7 @@
           android:contentDescription="@string/reload"
           android:src="@drawable/reload" />
       </LinearLayout>
+      -->
 
     </LinearLayout>
 
