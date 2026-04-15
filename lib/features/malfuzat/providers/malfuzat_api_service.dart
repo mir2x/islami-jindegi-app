@@ -27,11 +27,20 @@ class MalfuzatApiService {
     String? malfuzatSubcategoryId,
     String? hasAudio,
     bool includeAuthor = true,
+    bool random = false,
+    int? quantity,
+    bool? offline,
   }) async {
     final params = <String, dynamic>{
-      'page': page,
-      'per_page': perPage,
-      'published': true,
+      if (random) ...{
+        'random': true,
+        if (quantity != null) 'quantity': quantity,
+        if (offline != null) 'offline': offline,
+      } else ...{
+        'page': page,
+        'per_page': perPage,
+        'published': true,
+      },
       if (includeAuthor) 'include': 'malfuzat-author',
       if (search != null && search.isNotEmpty) 'search': search,
       if (malfuzatAuthorId != null) 'malfuzatAuthorId': malfuzatAuthorId,

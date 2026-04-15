@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/features/sura/views/widgets/quran_page_widget.dart';
+import 'package:native_app/features/sura/providers/sura_providers.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:native_app/shared/quran_data.dart';
 import 'package:native_app/theme/app_theme_color.dart';
@@ -31,10 +32,13 @@ class TilawatPage extends ConsumerStatefulWidget {
 
 class _TilawatPageState extends ConsumerState<TilawatPage> {
   final ItemScrollController _itemScrollController = ItemScrollController();
+  final ScrollOffsetController _scrollOffsetController =
+      ScrollOffsetController();
   final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  bool _isAutoScrollAnimating = false;
   int _totalPages = 0;
   int _bottomVisibleIndex = 0;
   bool _nextSuraPromptShown = false;
@@ -53,6 +57,7 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
   @override
   void dispose() {
     _itemPositionsListener.itemPositions.removeListener(_onPositionsChanged);
+    _isAutoScrollAnimating = false;
     super.dispose();
   }
 
@@ -366,6 +371,129 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
     });
   }
 
+  void _startAutoScroll() {
+    if (_isAutoScrollAnimating || _totalPages == 0) return;
+
+    ref.read(isAutoScrollingProvider.notifier).state = true;
+    ref.read(isAutoScrollPausedProvider.notifier).state = false;
+    _isAutoScrollAnimating = true;
+
+    _smoothScrollLoop();
+  }
+
+  Future<void> _smoothScrollLoop() async {
+    const tickDuration = Duration(milliseconds: 50);
+    const basePixelsPerTick = 1.2;
+
+    while (_isAutoScrollAnimating && mounted) {
+      if (ref.read(isAutoScrollPausedProvider)) {
+        await Future.delayed(tickDuration);
+        continue;
+      }
+
+      final speedFactor = ref.read(scrollSpeedFactorProvider);
+      final pixelsToScroll = basePixelsPerTick * speedFactor;
+
+      try {
+        await _scrollOffsetController.animateScroll(
+          offset: pixelsToScroll,
+          duration: tickDuration,
+          curve: Curves.linear,
+        );
+      } catch (_) {
+        break;
+      }
+
+      if (!mounted) break;
+    }
+  }
+
+  void _stopAutoScroll({bool resetSpeed = false}) {
+    if (!mounted) return;
+    _isAutoScrollAnimating = false;
+
+    ref.read(isAutoScrollingProvider.notifier).state = false;
+    ref.read(isAutoScrollPausedProvider.notifier).state = false;
+    if (resetSpeed) {
+      ref.read(scrollSpeedFactorProvider.notifier).state = 1.0;
+    }
+  }
+
+  void _togglePlayPauseAutoScroll() {
+    final bool isPaused = ref.read(isAutoScrollPausedProvider);
+    if (isPaused) {
+      ref.read(isAutoScrollPausedProvider.notifier).state = false;
+    } else {
+      ref.read(isAutoScrollPausedProvider.notifier).state = true;
+    }
+  }
+
+  void _changeScrollSpeed(double delta) {
+    final currentSpeed = ref.read(scrollSpeedFactorProvider);
+    final newSpeed = (currentSpeed + delta).clamp(0.5, 3.0);
+    ref.read(scrollSpeedFactorProvider.notifier).state = newSpeed;
+  }
+
+  Widget _buildAutoScrollController(BuildContext context) {
+    final scrollSpeedFactor = ref.watch(scrollSpeedFactorProvider);
+    final isPaused = ref.watch(isAutoScrollPausedProvider);
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final accent = colors.active;
+
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: 0,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+        decoration: BoxDecoration(
+          color: colors.cardBg,
+          border: Border(top: BorderSide(color: colors.divider)),
+          boxShadow: [
+            BoxShadow(
+              color: colors.shadow.withValues(alpha: 0.1),
+              spreadRadius: 1,
+              blurRadius: 5,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              icon: Icon(
+                isPaused ? Icons.play_arrow : Icons.pause,
+                color: accent,
+              ),
+              onPressed: _togglePlayPauseAutoScroll,
+            ),
+            IconButton(
+              icon: Icon(Icons.remove, color: accent),
+              onPressed: () => _changeScrollSpeed(-0.5),
+            ),
+            Text(
+              '${scrollSpeedFactor.toStringAsFixed(1)}x',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: accent,
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.add, color: accent),
+              onPressed: () => _changeScrollSpeed(0.5),
+            ),
+            IconButton(
+              icon: Icon(Icons.close, color: accent),
+              onPressed: () => _stopAutoScroll(resetSpeed: true),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   int _findInitialPageIndex(List<QuranPage> surahPages) {
     for (int i = 0; i < surahPages.length; i++) {
       final page = surahPages[i];
@@ -383,6 +511,7 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
   Widget build(BuildContext context) {
     final pagesAsync = ref.watch(quranPagesProvider(widget.initialSuraNumber));
     final suraName = 'সূরা ${suraNames[widget.initialSuraNumber - 1]}';
+    final isAutoScrolling = ref.watch(isAutoScrollingProvider);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -392,6 +521,22 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
         currentAyahNumber: widget.initialAyahNumber,
         returnTo: widget.returnTo,
         actions: [
+          IconButton(
+            icon: Icon(
+              Icons.swipe_outlined,
+              color: isAutoScrolling
+                  ? Theme.of(context).extension<AppThemeColors>()!.active
+                  : null,
+            ),
+            tooltip: 'অটো স্ক্রোল',
+            onPressed: () {
+              if (isAutoScrolling) {
+                _stopAutoScroll(resetSpeed: true);
+              } else {
+                _startAutoScroll();
+              }
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.menu),
             onPressed: () => _scaffoldKey.currentState?.openDrawer(),
@@ -413,48 +558,56 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
         currentAyahNumber: widget.initialAyahNumber,
         returnTo: widget.returnTo,
       ),
-      body: pagesAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) =>
-            Center(child: Text('পৃষ্ঠা লোড করা যায়নি:\n$err')),
-        data: (surahPages) {
-          if (surahPages.isEmpty) {
-            return const Center(child: Text('কোন পৃষ্ঠা পাওয়া যায়নি।'));
-          }
+      body: SafeArea(
+        child: pagesAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (err, stack) =>
+              Center(child: Text('পৃষ্ঠা লোড করা যায়নি:\n$err')),
+          data: (surahPages) {
+            if (surahPages.isEmpty) {
+              return const Center(child: Text('কোন পৃষ্ঠা পাওয়া যায়নি।'));
+            }
 
-          _totalPages = surahPages.length;
+            _totalPages = surahPages.length;
 
-          final initialIndex = _findInitialPageIndex(surahPages);
+            final initialIndex = _findInitialPageIndex(surahPages);
 
-          if (!_didApplyInitialScroll) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (!mounted || _didApplyInitialScroll) return;
-              if (_itemScrollController.isAttached) {
-                _itemScrollController.jumpTo(
-                  index: initialIndex,
-                  alignment: 0,
-                );
-                _didApplyInitialScroll = true;
-              }
-            });
-          }
+            if (!_didApplyInitialScroll) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (!mounted || _didApplyInitialScroll) return;
+                if (_itemScrollController.isAttached) {
+                  _itemScrollController.jumpTo(
+                    index: initialIndex,
+                    alignment: 0,
+                  );
+                  _didApplyInitialScroll = true;
+                }
+              });
+            }
 
-          return NotificationListener<ScrollNotification>(
-            onNotification: _handleScrollNotification,
-            child: ScrollablePositionedList.builder(
-              itemScrollController: _itemScrollController,
-              itemPositionsListener: _itemPositionsListener,
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: surahPages.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 24.0),
-                  child: QuranPageWidget(page: surahPages[index]),
-                );
-              },
-            ),
-          );
-        },
+            return Stack(
+              children: [
+                NotificationListener<ScrollNotification>(
+                  onNotification: _handleScrollNotification,
+                  child: ScrollablePositionedList.builder(
+                    itemScrollController: _itemScrollController,
+                    scrollOffsetController: _scrollOffsetController,
+                    itemPositionsListener: _itemPositionsListener,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: surahPages.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 24.0),
+                        child: QuranPageWidget(page: surahPages[index]),
+                      );
+                    },
+                  ),
+                ),
+                if (isAutoScrolling) _buildAutoScrollController(context),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

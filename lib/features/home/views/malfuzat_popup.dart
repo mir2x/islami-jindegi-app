@@ -64,10 +64,12 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
       try {
         final api = ref.read(malfuzatApiServiceProvider);
         malfuzats = await api.fetchMalfuzat(
-          perPage: 50,
-          hasAudio: 'false',
           malfuzatAuthorId: '6842ab90-27d0-4ef9-b783-3b03388a2304',
+          hasAudio: 'false',
           includeAuthor: true,
+          random: true,
+          quantity: 1,
+          offline: true,
         );
         debugPrint('[MalfuzatPopup] API returned ${malfuzats.length} items');
       } catch (e, stack) {
