@@ -36,12 +36,18 @@ class OfflineDbPrompt extends StatefulWidget {
 
 class _OfflineDbPromptState extends State<OfflineDbPrompt> {
   bool _downloading = false;
-  double _downloadProgress = 0.0;
+  final _progressNotifier = ValueNotifier<double>(0.0);
 
   @override
   void initState() {
     super.initState();
     _checkAndPrompt();
+  }
+
+  @override
+  void dispose() {
+    _progressNotifier.dispose();
+    super.dispose();
   }
 
   Future<void> _checkAndPrompt() async {
@@ -231,16 +237,56 @@ class _OfflineDbPromptState extends State<OfflineDbPrompt> {
   }
 
   Future<void> _startBackgroundDownload() async {
-    setState(() {
-      _downloading = true;
-      _downloadProgress = 0.0;
-    });
+    if (_downloading) return;
+    _downloading = true;
+    _progressNotifier.value = 0.0;
+
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final messenger = ScaffoldMessenger.of(context);
+
+    messenger.showSnackBar(
+      SnackBar(
+        duration: const Duration(hours: 1),
+        backgroundColor: colors.highlight,
+        content: ValueListenableBuilder<double>(
+          valueListenable: _progressNotifier,
+          builder: (_, progress, __) {
+            return Row(
+              children: [
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    value: progress > 0 ? progress : null,
+                    color: colors.primaryText,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'অফলাইন ডাটা ডাউনলোড হচ্ছে... ${(progress * 100).toStringAsFixed(0)}%',
+                    style: TextStyle(
+                      fontFamily: 'bangla/solaimanlipi',
+                      wordSpacing: 3,
+                      fontSize: 13,
+                      color: colors.primaryText,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
 
     try {
       final assetResponse = await StaticAssetApi().getDbUrl(widget.feature);
       if (assetResponse == null) {
+        messenger.hideCurrentSnackBar();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
+          messenger.showSnackBar(
             const SnackBar(
               content: Text(
                 'ডাউনলোড লিংক তৈরি করতে সমস্যা হয়েছে।',
@@ -249,7 +295,7 @@ class _OfflineDbPromptState extends State<OfflineDbPrompt> {
             ),
           );
         }
-        setState(() => _downloading = false);
+        _downloading = false;
         return;
       }
 
@@ -266,9 +312,7 @@ class _OfflineDbPromptState extends State<OfflineDbPrompt> {
         dbPath,
         onReceiveProgress: (received, total) {
           if (total > 0 && mounted) {
-            setState(() {
-              _downloadProgress = received / total;
-            });
+            _progressNotifier.value = received / total;
           }
         },
       );
@@ -276,10 +320,9 @@ class _OfflineDbPromptState extends State<OfflineDbPrompt> {
       // Mark version so OfflineDatabaseHelper knows it's current
       await OfflineDatabaseHelper.markVersion(widget.feature, 1);
 
+      messenger.hideCurrentSnackBar();
       if (mounted) {
-        setState(() => _downloading = false);
-        final colors = Theme.of(context).extension<AppThemeColors>()!;
-        ScaffoldMessenger.of(context).showSnackBar(
+        messenger.showSnackBar(
           SnackBar(
             backgroundColor: colors.highlight,
             content: Text(
@@ -294,9 +337,9 @@ class _OfflineDbPromptState extends State<OfflineDbPrompt> {
       }
     } catch (e) {
       debugPrint('Error downloading DB for ${widget.feature}: $e');
+      messenger.hideCurrentSnackBar();
       if (mounted) {
-        setState(() => _downloading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
+        messenger.showSnackBar(
           const SnackBar(
             content: Text(
               'ডাউনলোড করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।',
@@ -306,50 +349,12 @@ class _OfflineDbPromptState extends State<OfflineDbPrompt> {
         );
       }
     }
+
+    _downloading = false;
   }
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppThemeColors>()!;
-
-    return Stack(
-      children: [
-        widget.child,
-        if (_downloading)
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              color: colors.highlight,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2.5,
-                      value: _downloadProgress > 0 ? _downloadProgress : null,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      'অফলাইন ডাটা ডাউনলোড হচ্ছে... ${(_downloadProgress * 100).toStringAsFixed(0)}%',
-                      style: TextStyle(
-                        fontFamily: 'bangla/solaimanlipi',
-                        wordSpacing: 3,
-                        fontSize: 13,
-                        color: colors.primaryText,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-      ],
-    );
+    return widget.child;
   }
 }

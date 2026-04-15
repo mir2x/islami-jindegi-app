@@ -446,6 +446,10 @@ class DrawerLink extends StatelessWidget {
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isClassic = appColors.primary == AppThemeColors.classic.primary &&
+        appColors.appBarBg == AppThemeColors.classic.appBarBg;
+    final drawerTextColor =
+        isClassic ? appColors.appBarText : appColors.primaryText;
     final isActive = GoRouterState.of(context).uri.path == '/' &&
         (route == '/' || route.isEmpty);
 
@@ -481,7 +485,7 @@ class DrawerLink extends StatelessWidget {
         child: Text(
           title,
           style: textTheme.titleMedium?.copyWith(
-            color: isActive ? appColors.primary : appColors.primaryText,
+            color: isActive ? appColors.primary : drawerTextColor,
             fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
           ),
           textAlign: TextAlign.right,
@@ -507,6 +511,10 @@ class DrawerAction extends StatelessWidget {
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
+    final isClassic = appColors.primary == AppThemeColors.classic.primary &&
+        appColors.appBarBg == AppThemeColors.classic.appBarBg;
+    final drawerTextColor =
+        isClassic ? appColors.appBarText : appColors.primaryText;
 
     return InkWell(
       onTap: onTap,
@@ -525,7 +533,7 @@ class DrawerAction extends StatelessWidget {
         child: Text(
           title,
           style: textTheme.titleMedium?.copyWith(
-            color: appColors.primaryText,
+            color: drawerTextColor,
             fontWeight: FontWeight.w500,
           ),
           textAlign: TextAlign.right,

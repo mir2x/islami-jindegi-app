@@ -142,7 +142,7 @@ class QuranAudioPlayer {
       final confirmed = await showDownloadPermissionDialog(
         context,
         assetName:
-            'সুরা ${suraNames[sura - 1]} আয়াত (${ayahsToDownload.first.toBengaliDigit()}-${ayahsToDownload.last.toBengaliDigit()})',
+            'সূরা ${suraNames[sura - 1]} আয়াত (${ayahsToDownload.first.toBengaliDigit()}-${ayahsToDownload.last.toBengaliDigit()})',
       );
       if (!confirmed || !context.mounted) return false;
 
@@ -166,7 +166,7 @@ class QuranAudioPlayer {
 
       final audioDownloadTask = MultiFileDownloadTask(
         id: 'reciter_${reciterId}_sura_$sura',
-        displayName: 'সুরা ${suraNames[sura]}',
+        displayName: 'সূরা ${suraNames[sura]}',
         urlToPathMap: urlToPathMap,
       );
 

@@ -22,9 +22,7 @@ class Settings extends ConsumerWidget {
   static const List<Map<String, String>> banglaFonts = [
     {'label': 'Solaiman Lipi', 'value': 'bangla/solaimanlipi'},
     {'label': 'Siyam Rupali', 'value': 'bangla/siyamrupali'},
-    {'label': 'Kalpurush', 'value': 'bangla/kalpurush'},
     {'label': 'Noto Sans Bengali', 'value': 'bangla/noto-sans-bengali'},
-    {'label': 'Ben Sen Handwriting', 'value': 'bangla/ben-sen-handwriting'},
   ];
 
   static const List<Map<String, String>> arabicFonts = [
@@ -95,7 +93,8 @@ class Settings extends ConsumerWidget {
         loading: () => const FullScreenLoader(),
         error: (error, _) => Center(child: Text(error.toString())),
         data: (preferences) {
-          final selectedHijriAdj = preferences.getInt('hijriLocalAdjustment');
+          final selectedHijriAdj = preferences.getInt('hijriLocalAdjustment') ?? 0;
+          final countryHijriAdj = preferences.getInt('hijriCountryAdjustment');
           final selectedLocale = _selectedValue(
             items: languages,
             value: preferences.getString('locale'),
@@ -122,16 +121,27 @@ class Settings extends ConsumerWidget {
             fallback: 'mosque',
           );
           final selectedDaylight = preferences.getBool('daylight') ?? false;
-          final effectiveHijriAdj = selectedHijriAdj ?? 0;
 
           return ItemContent(
             children: [
               _SectionLabel(label: locales.hijriDateAdjustment),
+              if (countryHijriAdj != null) ...[
+                const SizedBox(height: 6),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Text(
+                    'দেশভিত্তিক সমন্বয়: ${countryHijriAdj > 0 ? '+' : ''}$countryHijriAdj দিন। নিচে ব্যক্তিগত সমন্বয় যোগ করুন।',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Theme.of(context).extension<AppThemeColors>()!.secondaryText,
+                    ),
+                  ),
+                ),
+              ],
               const SizedBox(height: 10),
               _HijriAdjustmentStrip(
-                selectedValue: effectiveHijriAdj,
+                selectedValue: selectedHijriAdj,
                 onSelected: (value) {
-                  if (effectiveHijriAdj == value) {
+                  if (selectedHijriAdj == value) {
                     ref
                         .read(preferencesProvider.notifier)
                         .removeHijriLocalAdjustment();

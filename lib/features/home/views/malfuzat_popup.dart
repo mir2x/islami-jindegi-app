@@ -22,27 +22,72 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      var locales = AppLocalizations.of(context)!;
-      final preferences = await SharedPreferences.getInstance();
-      int? timestamp = preferences.getInt('lastMalfuzatPopup');
+      // Small delay so the app fully settles (permissions, navigation, etc.)
+      await Future.delayed(const Duration(seconds: 2));
 
-      if (timestamp != null) {
-        DateTime lastClosed = DateTime.fromMillisecondsSinceEpoch(timestamp);
-
-        if (DateUtils.isSameDay(lastClosed, DateTime.now())) {
-          return;
-        }
+      if (!mounted) {
+        debugPrint('[MalfuzatPopup] not mounted after initial delay — aborting');
+        return;
       }
 
-      final api = ref.read(malfuzatApiServiceProvider);
-      final malfuzats = await api.fetchMalfuzat(
-        perPage: 50,
-        hasAudio: 'false',
-        malfuzatAuthorId: '6842ab90-27d0-4ef9-b783-3b03388a2304',
-        includeAuthor: true,
-      );
+      var locales = AppLocalizations.of(context)!;
 
-      if (mounted && malfuzats.isNotEmpty) {
+      late final SharedPreferences preferences;
+      try {
+        preferences = await SharedPreferences.getInstance();
+      } catch (e) {
+        debugPrint('[MalfuzatPopup] failed to get SharedPreferences: $e');
+        return;
+      }
+
+      final int? timestamp = preferences.getInt('lastMalfuzatPopup');
+      debugPrint('[MalfuzatPopup] lastMalfuzatPopup timestamp: $timestamp');
+
+      if (timestamp != null) {
+        final DateTime lastClosed =
+            DateTime.fromMillisecondsSinceEpoch(timestamp);
+        if (DateUtils.isSameDay(lastClosed, DateTime.now())) {
+          debugPrint('[MalfuzatPopup] already shown today — skipping');
+          return;
+        }
+      } else {
+        debugPrint('[MalfuzatPopup] no prior timestamp — first run or cache cleared');
+      }
+
+      if (!mounted) {
+        debugPrint('[MalfuzatPopup] not mounted before API call — aborting');
+        return;
+      }
+
+      debugPrint('[MalfuzatPopup] fetching malfuzat from API...');
+      List malfuzats = [];
+      try {
+        final api = ref.read(malfuzatApiServiceProvider);
+        malfuzats = await api.fetchMalfuzat(
+          perPage: 50,
+          hasAudio: 'false',
+          malfuzatAuthorId: '6842ab90-27d0-4ef9-b783-3b03388a2304',
+          includeAuthor: true,
+        );
+        debugPrint('[MalfuzatPopup] API returned ${malfuzats.length} items');
+      } catch (e, stack) {
+        debugPrint('[MalfuzatPopup] API error: $e');
+        debugPrint('[MalfuzatPopup] Stack: $stack');
+        return;
+      }
+
+      if (malfuzats.isEmpty) {
+        debugPrint('[MalfuzatPopup] empty result — not showing popup');
+        return;
+      }
+
+      if (!mounted) {
+        debugPrint('[MalfuzatPopup] not mounted after API call — aborting');
+        return;
+      }
+
+      debugPrint('[MalfuzatPopup] showing popup...');
+      try {
         await showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -161,8 +206,12 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
           },
         );
 
-        int timestamp = DateTime.now().millisecondsSinceEpoch;
-        await preferences.setInt('lastMalfuzatPopup', timestamp);
+        final int now = DateTime.now().millisecondsSinceEpoch;
+        await preferences.setInt('lastMalfuzatPopup', now);
+        debugPrint('[MalfuzatPopup] popup shown and timestamp saved');
+      } catch (e, stack) {
+        debugPrint('[MalfuzatPopup] showDialog error: $e');
+        debugPrint('[MalfuzatPopup] Stack: $stack');
       }
     });
   }

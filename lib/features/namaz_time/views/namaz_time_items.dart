@@ -155,7 +155,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
         final String currentPrayerKey = prayerNames['currentPrayer']!;
 
         final String location = getLocationName(geolocation['location']);
-        final int adjustment = prefs.getInt('hijriLocalAdjustment') ?? 0;
+        final int adjustment = prefs.getInt('hijriAdjustment') ?? 0;
         final HijriCalendar hijri = widget.selectedHijriDate ??
             adjustedHijriDate({
               'preferences': prefs,
@@ -620,7 +620,9 @@ class _PrayerCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              '${prayer.startTime} – ${prayer.endTime}',
+                              prayer.startTime == prayer.endTime
+                                  ? prayer.endTime
+                                  : '${prayer.startTime} – ${prayer.endTime}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.end,

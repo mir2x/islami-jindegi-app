@@ -237,13 +237,13 @@ const List<SuraListItemModel> allSuras = [
       nameArabic: 'سُورَةُ الزُّمَرِ'),
   SuraListItemModel(
       number: 40,
-      nameBangla: 'গাফির',
+      nameBangla: 'আল মু\u2019মিন',
       meaningBangla: 'ক্ষমাকারী',
       revelationType: RevelationType.Makki,
       nameArabic: 'سُورَةُ غَافِرٍ'),
   SuraListItemModel(
       number: 41,
-      nameBangla: 'ফুসসিলাত',
+      nameBangla: 'হা-মীম আস সিজদাহ',
       meaningBangla: 'বিস্তারিতভাবে বর্ণিত',
       revelationType: RevelationType.Makki,
       nameArabic: 'سُورَةُ فُصِّلَتْ'),
@@ -561,7 +561,7 @@ const List<SuraListItemModel> allSuras = [
       nameArabic: 'سُورَةُ الضُّحَىٰ'),
   SuraListItemModel(
       number: 94,
-      nameBangla: 'আশ শারহ',
+      nameBangla: 'আল ইনশিরাহ',
       meaningBangla: 'প্রশস্তকরণ',
       revelationType: RevelationType.Makki,
       nameArabic: 'سُورَةُ الشَّرْحِ'),
@@ -591,7 +591,7 @@ const List<SuraListItemModel> allSuras = [
       nameArabic: 'سُورَةُ الْبَيِّنَةِ'),
   SuraListItemModel(
       number: 99,
-      nameBangla: 'আয যিলযাল',
+      nameBangla: 'আল যিলযাল',
       meaningBangla: 'ভূমিকম্প',
       revelationType: RevelationType.Madani,
       nameArabic: 'سُورَةُ الزَّلْزَلَةِ'),

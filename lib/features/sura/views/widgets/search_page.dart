@@ -8,13 +8,12 @@ import '../../../../shared/quran_data.dart';
 import '../../providers/search_providers.dart';
 
 class SearchPage extends ConsumerWidget {
-  const SearchPage({super.key});
+  final String returnTo;
+
+  const SearchPage({super.key, required this.returnTo});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final returnTo =
-        GoRouterState.of(context).uri.queryParameters['returnTo'] ??
-            suraListRoute;
     final searchQuery = ref.watch(searchQueryProvider);
     final searchResults = ref.watch(searchResultsProvider);
     final colors = Theme.of(context).extension<AppThemeColors>()!;
@@ -99,20 +98,15 @@ class SearchPage extends ConsumerWidget {
                     ),
                   ),
                   onTap: () {
-                    Future.delayed(Duration.zero, () {
-                      if (!context.mounted) return;
-
-                      final targetSura = ayah.sura;
-                      final targetIndex = ayah.ayah - 1;
-
-                      context.push(
-                        buildSuraRoute(
-                          suraNumber: targetSura,
-                          scrollIndex: targetIndex,
-                          returnTo: returnTo,
-                        ),
-                      );
-                    });
+                    final targetSura = ayah.sura;
+                    final targetIndex = ayah.ayah - 1;
+                    final route = buildSuraRoute(
+                      suraNumber: targetSura,
+                      scrollIndex: targetIndex,
+                      returnTo: returnTo,
+                    );
+                    Navigator.of(context).pop();
+                    context.push(route);
                   },
                 ),
               );

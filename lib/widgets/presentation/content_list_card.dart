@@ -69,7 +69,7 @@ class ContentListCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: recentBg,
         borderRadius: BorderRadius.circular(20),
-        border: border ?? recentBorder,
+        border: recentlyVisited ? recentBorder : (border ?? recentBorder),
         boxShadow: [
           BoxShadow(
             color: colors.shadow.withValues(alpha: 0.08),
@@ -82,3 +82,4 @@ class ContentListCard extends ConsumerWidget {
     );
   }
 }
+

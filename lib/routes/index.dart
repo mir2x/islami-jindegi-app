@@ -119,7 +119,12 @@ class AppRoutes {
           );
         },
       ),
-      GoRoute(path: '/qurans/search', builder: (_, __) => const SearchPage()),
+      GoRoute(
+        path: '/qurans/search',
+        builder: (_, state) => SearchPage(
+          returnTo: state.uri.queryParameters['returnTo'] ?? suraListRoute,
+        ),
+      ),
       GoRoute(
         path: '/qurans/tilawat',
         builder: (_, state) {

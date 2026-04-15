@@ -114,7 +114,7 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
           Expanded(
             flex: 3,
             child: Text(
-              'সুরা',
+              'সূরা',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: headerFg,

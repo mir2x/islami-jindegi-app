@@ -122,7 +122,7 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
           Expanded(
             flex: 3,
             child: Text(
-              'সুরা',
+              'সূরা',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: appBarFg,

@@ -74,11 +74,9 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
     final colors = Theme.of(context).extension<AppThemeColors>()!;
     final isClassic = colors.primary == AppThemeColors.classic.primary &&
         colors.appBarBg == AppThemeColors.classic.appBarBg;
-    final selectedTabTextColor =
-        isClassic ? colors.appBarBg : colors.appBarText;
-    final unselectedTabTextColor = isClassic
-        ? colors.appBarText.withValues(alpha: 0.76)
-        : colors.appBarText.withValues(alpha: 0.64);
+    final selectedTabTextColor = colors.appBarText;
+    final unselectedTabTextColor =
+        colors.appBarText.withValues(alpha: isClassic ? 0.64 : 0.64);
 
     return AppScaffold(
       onBackPressed: () async => context.go('/qurans'),
@@ -100,7 +98,7 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
               ),
               indicator: BoxDecoration(
                 color: isClassic
-                    ? colors.appBarBg.withValues(alpha: 0.35)
+                    ? colors.appBarText.withValues(alpha: 0.18)
                     : colors.active.withValues(alpha: 0.28),
               ),
               dividerColor: colors.appBarBg.withValues(alpha: 0),

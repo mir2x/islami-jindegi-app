@@ -20,27 +20,52 @@ class ListItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appTheme = Theme.of(context).extension<AppThemeColors>()!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isClassic = appTheme.primary == AppThemeColors.classic.primary &&
+        appTheme.appBarBg == AppThemeColors.classic.appBarBg;
     AsyncValue? highlighter;
 
     if (highlightProvider != null) {
       highlighter = ref.watch(highlightProvider);
     }
 
+    Color recentBg;
+    Border recentBorder;
+    if (recentlyVisited && (isDark || isClassic)) {
+      final accentColor = isClassic ? appTheme.appBarBg : appTheme.active;
+      recentBg = Color.alphaBlend(
+        accentColor.withValues(alpha: 0.22),
+        appTheme.cardBg,
+      );
+      recentBorder = Border.all(
+        color: accentColor.withValues(alpha: 0.48),
+        width: 1.25,
+      );
+    } else {
+      recentBg = recentlyVisited ? appTheme.highlight : appTheme.cardBg;
+      recentBorder = Border.all(
+        color: recentlyVisited ? appTheme.highlightBorder : appTheme.divider,
+        width: recentlyVisited ? 1.25 : 1,
+      );
+    }
+
+    final highlightBorder = highlighter?.when(
+      loading: () => Border.all(color: appTheme.divider, width: 1),
+      error: (error, _) => Border.all(color: appTheme.divider, width: 1),
+      data: (highlight) {
+        if (highlight != null) {
+          return Border.all(color: appTheme.highlightBorder, width: 1.2);
+        } else {
+          return Border.all(color: appTheme.divider, width: 1);
+        }
+      },
+    );
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: recentlyVisited ? appTheme.highlight : appTheme.cardBg,
-        border: highlighter?.when(
-          loading: () => null,
-          error: (error, _) => null,
-          data: (highlight) {
-            if (highlight != null) {
-              return Border.all(color: appTheme.highlightBorder, width: 1.2);
-            } else {
-              return Border.all(color: appTheme.divider, width: 1);
-            }
-          },
-        ),
+        color: recentBg,
+        border: recentlyVisited ? recentBorder : (highlightBorder ?? recentBorder),
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(

@@ -718,7 +718,7 @@ class _SubchaptersState extends ConsumerState<_Subchapters> {
           ),
           if (isOpen) ...[
             Container(
-              padding: const EdgeInsets.only(left: 30, bottom: 10),
+              padding: const EdgeInsets.only(left: 30, top: 2, bottom: 10),
               constraints: BoxConstraints(
                 maxHeight: screenHeight * 0.4,
               ),
@@ -729,15 +729,29 @@ class _SubchaptersState extends ConsumerState<_Subchapters> {
                   controller: sectionController,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      ...widget.chapter.subchapters.map((subchapter) {
+                    children: List.generate(
+                      widget.chapter.subchapters.length,
+                      (subIdx) {
+                        final subchapter = widget.chapter.subchapters[subIdx];
+                        final isLastSub = subIdx == widget.chapter.subchapters.length - 1;
+                        final dividerColor = Theme.of(context).extension<AppThemeColors>()!.divider;
                         return InkWell(
                           onTap: () => context.push(
                             '/books/${widget.book.id}/subchapters/${subchapter.id}',
                           ),
                           child: Container(
-                            padding:
-                                const EdgeInsets.only(bottom: 15, right: 15),
+                            decoration: isLastSub
+                                ? null
+                                : BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(color: dividerColor),
+                                    ),
+                                  ),
+                            padding: EdgeInsets.only(
+                              top: 10,
+                              bottom: isLastSub ? 4 : 10,
+                              right: 15,
+                            ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -765,8 +779,8 @@ class _SubchaptersState extends ConsumerState<_Subchapters> {
                             ),
                           ),
                         );
-                      }),
-                    ],
+                      },
+                    ),
                   ),
                 ),
               ),

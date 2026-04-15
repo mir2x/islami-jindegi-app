@@ -89,7 +89,7 @@ class _TilawatSuraNavigationViewState
           Expanded(
             flex: 3,
             child: Text(
-              'সুরা',
+              'সূরা',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: headerFg,
