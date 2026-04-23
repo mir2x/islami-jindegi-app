@@ -62,6 +62,13 @@ Future<void> main() async {
   final initialPrefs = await SharedPreferences.getInstance();
   final initialTheme = initialPrefs.getString('theme') ?? 'classic';
 
+  // Persist backend URL so the background Workmanager isolate (which never
+  // calls main() and therefore has no dotenv) can reach the hijri backend.
+  final hijriBackendUrl = dotenv.env['HIJRI_BACKEND_URL'];
+  if (hijriBackendUrl != null) {
+    await initialPrefs.setString('hijriBackendUrl', hijriBackendUrl);
+  }
+
   final container = ProviderContainer();
 
   if (Platform.isAndroid) {

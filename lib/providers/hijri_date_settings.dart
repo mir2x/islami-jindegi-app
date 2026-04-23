@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,61 +7,79 @@ import 'package:native_app/providers/geolocation.dart';
 final hijriDateSettingsProvider = FutureProvider((ref) async {
   final data = await ref.watch(preferencesAndGeolocationProvider.future);
   final prefs = data['preferences'];
-  final String? countryCode = data['geolocation']['location']['countryCode'];
+  final String? countryCode =
+      data['geolocation']['location']['countryCode'] ??
+      prefs.getString('countryCode');
+  final coordinates = data['geolocation']['coordinates'];
+  final String timezone = data['geolocation']['timezone'] ?? '';
+  final int hijriAdjustment = prefs.getInt('hijriLocalAdjustment') ?? 0;
 
-  // Step 1: Always fetch country-level adjustment from API.
-  // Cache the last successful result in 'hijriCountryAdjustment'.
-  // Fallback: cached value → -1 (most users are from Bangladesh).
-  int countryAdjustment;
-  if (countryCode != null) {
+  final now = DateTime.now();
+  final todayStr = _dateStr(
+    DateTime(now.year, now.month, now.day + hijriAdjustment),
+  );
+  final tomorrowStr = _dateStr(
+    DateTime(now.year, now.month, now.day + hijriAdjustment + 1),
+  );
+
+  Map<String, dynamic>? hijriToday;
+  Map<String, dynamic>? hijriTomorrow;
+  final cachedToday = _readCached(prefs.getString('hijriDataToday'), todayStr);
+  final cachedTomorrow =
+      _readCached(prefs.getString('hijriDataTomorrow'), tomorrowStr);
+
+  if (countryCode != null && countryCode.isNotEmpty) {
     try {
       final dio = Dio(BaseOptions(
-        baseUrl: '${dotenv.env['API_HOST_NAME']}/api',
-        headers: {'Accept': 'application/vnd.api+json'},
-      ));
+        baseUrl: '${dotenv.env['HIJRI_BACKEND_URL']}/api',
+        connectTimeout: const Duration(seconds: 5),
+        receiveTimeout: const Duration(seconds: 5),
+      ),);
 
-      final response = await dio.get('/hijri_adjustments', queryParameters: {
-        'country-code': countryCode,
-        'quantity': 1,
-      });
+      final results = await Future.wait([
+        dio.get('/hijri_date', queryParameters: {'date': todayStr, 'country-code': countryCode}),
+        dio.get('/hijri_date', queryParameters: {'date': tomorrowStr, 'country-code': countryCode}),
+      ]);
 
-      final dataList = response.data['data'] as List? ?? [];
-      if (dataList.isNotEmpty) {
-        final attrs =
-            dataList.first['attributes'] as Map<String, dynamic>? ?? {};
-        countryAdjustment =
-            attrs['adjustment'] is int ? attrs['adjustment'] : -1;
+      final todayData = results[0].data['data'];
+      final tomorrowData = results[1].data['data'];
+
+      if (todayData != null) {
+        hijriToday = {...Map<String, dynamic>.from(todayData), 'date': todayStr};
+        await prefs.setString('hijriDataToday', jsonEncode(hijriToday));
       } else {
-        countryAdjustment = prefs.getInt('hijriCountryAdjustment') ?? -1;
+        hijriToday = cachedToday;
       }
-
-      // Cache the fresh API value
-      await prefs.setInt('hijriCountryAdjustment', countryAdjustment);
+      if (tomorrowData != null) {
+        hijriTomorrow = {...Map<String, dynamic>.from(tomorrowData), 'date': tomorrowStr};
+        await prefs.setString('hijriDataTomorrow', jsonEncode(hijriTomorrow));
+      } else {
+        hijriTomorrow = cachedTomorrow;
+      }
     } catch (_) {
-      // API failed — use last cached value, else fall back to -1
-      countryAdjustment = prefs.getInt('hijriCountryAdjustment') ?? -1;
+      hijriToday = cachedToday;
+      hijriTomorrow = cachedTomorrow;
     }
   } else {
-    countryAdjustment = prefs.getInt('hijriCountryAdjustment') ?? -1;
-  }
-
-  // Step 2: User's personal fine-tuning, additive on top of country value.
-  // Defaults to 0 (no personal override).
-  final int localAdjustment = prefs.getInt('hijriLocalAdjustment') ?? 0;
-
-  // Step 3: Effective = country + local (additive, not substitutive).
-  final int effectiveAdjustment = countryAdjustment + localAdjustment;
-
-  // Persist effective value so other parts of the app (e.g. namaz time page)
-  // can read it directly from SharedPreferences without re-computing.
-  if (effectiveAdjustment != prefs.getInt('hijriAdjustment')) {
-    await prefs.setInt('hijriAdjustment', effectiveAdjustment);
+    hijriToday = cachedToday;
+    hijriTomorrow = cachedTomorrow;
   }
 
   return {
     'preferences': prefs,
-    'coordinates': data['geolocation']['coordinates'],
-    'timezone': data['geolocation']['timezone'],
-    'hijriAdjustment': effectiveAdjustment,
+    'coordinates': coordinates,
+    'timezone': timezone,
+    'hijriDataToday': hijriToday,
+    'hijriDataTomorrow': hijriTomorrow,
+    'hijriAdjustment': hijriAdjustment,
   };
 });
+
+String _dateStr(DateTime d) =>
+    '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+Map<String, dynamic>? _readCached(String? raw, String expectedDate) {
+  if (raw == null) return null;
+  final decoded = jsonDecode(raw) as Map<String, dynamic>;
+  return decoded['date'] == expectedDate ? decoded : null;
+}

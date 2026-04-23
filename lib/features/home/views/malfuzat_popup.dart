@@ -1,9 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:native_app/features/malfuzat/models/malfuzat.dart';
 import 'package:native_app/widgets/presentation/popup_dialog.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/features/malfuzat/providers/malfuzat_providers.dart';
@@ -60,25 +59,22 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
       }
 
       debugPrint('[MalfuzatPopup] fetching malfuzat from API...');
-      List malfuzats = [];
+      MalfuzatItem? randomMalfuzat;
       try {
         final api = ref.read(malfuzatApiServiceProvider);
-        malfuzats = await api.fetchMalfuzat(
+        randomMalfuzat = await api.fetchRandomMalfuzat(
           malfuzatAuthorId: '6842ab90-27d0-4ef9-b783-3b03388a2304',
           hasAudio: 'false',
           includeAuthor: true,
-          random: true,
-          quantity: 1,
-          offline: true,
         );
-        debugPrint('[MalfuzatPopup] API returned ${malfuzats.length} items');
+        debugPrint('[MalfuzatPopup] API returned random item: $randomMalfuzat');
       } catch (e, stack) {
         debugPrint('[MalfuzatPopup] API error: $e');
         debugPrint('[MalfuzatPopup] Stack: $stack');
         return;
       }
 
-      if (malfuzats.isEmpty) {
+      if (randomMalfuzat == null) {
         debugPrint('[MalfuzatPopup] empty result — not showing popup');
         return;
       }
@@ -94,7 +90,7 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
           context: context,
           builder: (BuildContext context) {
             var textTheme = Theme.of(context).textTheme;
-            var item = malfuzats[Random().nextInt(malfuzats.length)];
+            final item = randomMalfuzat!;
             String? author = item.authorName;
             final appColors = Theme.of(context).extension<AppThemeColors>()!;
 

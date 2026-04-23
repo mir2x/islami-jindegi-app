@@ -77,10 +77,10 @@ class _DatesPrayersState extends ConsumerState<DatesPrayers> {
     final settings = ref.read(hijriDateSettingsProvider).valueOrNull;
     if (settings == null) return;
 
-    final int adjustment = settings['hijriAdjustment'] as int;
-    final int adjustedWeekdayNumber = -adjustment;
+    final int shift = hijriWeekdayShift(settings);
     final String lang = Localizations.localeOf(context).languageCode;
     final today = adjustedHijriDate(settings);
+    final pickerToday = displayHijriToPickerHijri(settings, today);
 
     showDialog(
       context: context,
@@ -90,20 +90,62 @@ class _DatesPrayersState extends ConsumerState<DatesPrayers> {
           child: HijriMonthPicker(
             builders: HijriCalendarBuilders(
               weekdayBuilder: (context, day, number) {
-                final int idx = (number + adjustedWeekdayNumber) % 7;
+                final int idx = (number + shift) % 7;
                 final String label = lang == 'bn'
                     ? weekdaysBengaliShort[idx]
                     : _englishShortWeekdays[idx];
                 return Center(child: Text(label));
               },
               monthYearBuilder: (context, month, year) {
+                final HijriCalendar displayMonth = pickerHijriToDisplayHijri(
+                  settings,
+                  HijriCalendar()
+                    ..hYear = year
+                    ..hMonth = month
+                    ..hDay = 15,
+                );
                 final String label = lang == 'bn'
-                    ? hijriMonthYearBengali(month, year)
-                    : hijriMonthYearEnglish(month, year);
+                    ? hijriMonthYearBengali(
+                        displayMonth.hMonth,
+                        displayMonth.hYear,
+                      )
+                    : hijriMonthYearEnglish(
+                        displayMonth.hMonth,
+                        displayMonth.hYear,
+                      );
                 return Text(label, style: Theme.of(context).textTheme.titleMedium);
               },
+              dayBuilder: (context, hijriDay, isSelected) {
+                final th = Theme.of(context);
+                final loc = MaterialLocalizations.of(context);
+                final displayDay =
+                    pickerHijriToDisplayHijri(settings, hijriDay);
+                final isToday = displayDay.hYear == today.hYear &&
+                    displayDay.hMonth == today.hMonth &&
+                    displayDay.hDay == today.hDay;
+                BoxDecoration? deco;
+                TextStyle? style = th.textTheme.bodyMedium;
+                if (isSelected) {
+                  style = th.textTheme.bodyLarge
+                      ?.copyWith(color: th.colorScheme.onSecondary);
+                  deco = BoxDecoration(
+                      color: th.colorScheme.secondary, shape: BoxShape.circle,);
+                } else if (isToday) {
+                  style = th.textTheme.bodyLarge
+                      ?.copyWith(color: th.colorScheme.secondary);
+                }
+                return Container(
+                  decoration: deco,
+                  child: Center(
+                    child: Text(
+                      loc.formatDecimal(displayDay.hDay),
+                      style: style,
+                    ),
+                  ),
+                );
+              },
             ),
-            selectedDate: today,
+            selectedDate: pickerToday,
             firstDate: HijriCalendar()
               ..hYear = 1400
               ..hMonth = 1

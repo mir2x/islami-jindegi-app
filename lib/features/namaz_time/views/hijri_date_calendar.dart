@@ -28,20 +28,13 @@ class HijriDateCalendar extends ConsumerWidget {
       data: (settings) {
         return InkWell(
           onTap: () {
-            HijriCalendar today;
-            int adjustedWeekdayNumber = 0;
-
-            int adjustment = settings['hijriAdjustment'];
-            adjustedWeekdayNumber -= adjustment;
-
-            if (currentDate != null) {
-              today = currentDate!;
-            } else {
-              today = adjustedHijriDate(settings);
-            }
-
+            final HijriCalendar bdToday = adjustedHijriDate(settings);
+            final HijriCalendar selected = currentDate ?? bdToday;
+            final HijriCalendar pickerSelected =
+                displayHijriToPickerHijri(settings, selected);
             final String lang =
                 Localizations.localeOf(context).languageCode;
+            final int shift = hijriWeekdayShift(settings);
 
             showDialog(
               context: context,
@@ -52,23 +45,66 @@ class HijriDateCalendar extends ConsumerWidget {
                     child: HijriMonthPicker(
                       builders: HijriCalendarBuilders(
                         weekdayBuilder: (context, day, number) {
-                          final int idx =
-                              (number + adjustedWeekdayNumber) % 7;
+                          final int idx = (number + shift) % 7;
                           final String label = lang == 'bn'
                               ? weekdaysBengaliShort[idx]
                               : _englishShortWeekdays[idx];
                           return Center(child: Text(label));
                         },
                         monthYearBuilder: (context, month, year) {
-                          final String label = lang == 'bn'
-                              ? hijriMonthYearBengali(month, year)
-                              : hijriMonthYearEnglish(month, year);
-                          return Text(label,
-                              style:
-                                  Theme.of(context).textTheme.titleMedium);
+                          final displayMonth = pickerHijriToDisplayHijri(
+                            settings,
+                            HijriCalendar()
+                              ..hYear = year
+                              ..hMonth = month
+                              ..hDay = 15,
+                          );
+                          final String adjustedLabel = lang == 'bn'
+                              ? hijriMonthYearBengali(
+                                  displayMonth.hMonth,
+                                  displayMonth.hYear,
+                                )
+                              : hijriMonthYearEnglish(
+                                  displayMonth.hMonth,
+                                  displayMonth.hYear,
+                                );
+                          return Text(
+                            adjustedLabel,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          );
+                        },
+                        dayBuilder: (context, hijriDay, isSelected) {
+                          final th = Theme.of(context);
+                          final loc = MaterialLocalizations.of(context);
+                          final displayDay =
+                              pickerHijriToDisplayHijri(settings, hijriDay);
+                          final isToday = displayDay.hYear == bdToday.hYear &&
+                              displayDay.hMonth == bdToday.hMonth &&
+                              displayDay.hDay == bdToday.hDay;
+                          BoxDecoration? deco;
+                          TextStyle? style = th.textTheme.bodyMedium;
+                          if (isSelected) {
+                            style = th.textTheme.bodyLarge
+                                ?.copyWith(color: th.colorScheme.onSecondary);
+                            deco = BoxDecoration(
+                                color: th.colorScheme.secondary,
+                                shape: BoxShape.circle,);
+                          } else if (isToday) {
+                            style = th.textTheme.bodyLarge
+                                ?.copyWith(color: th.colorScheme.secondary);
+                          }
+                          return Container(
+                            decoration: deco,
+                            child: Center(
+                              child: Text(
+                                loc.formatDecimal(displayDay.hDay),
+                                style: style,
+                              ),
+                            ),
+                          );
                         },
                       ),
-                      selectedDate: today,
+                      selectedDate: pickerSelected,
                       firstDate: HijriCalendar()
                         ..hYear = 1400
                         ..hMonth = 1
@@ -78,7 +114,7 @@ class HijriDateCalendar extends ConsumerWidget {
                         ..hMonth = 1
                         ..hDay = 1,
                       onChanged: (HijriCalendar value) {
-                        onUpdate(value);
+                        onUpdate(pickerHijriToDisplayHijri(settings, value));
                         Navigator.of(context).pop();
                       },
                     ),

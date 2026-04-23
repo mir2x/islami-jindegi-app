@@ -9,10 +9,10 @@ const List<String> hijriMonthsBengali = [
   'জুমাদাল উখরা',
   'রজব',
   'শাবান',
-  'রমজান',
-  'শাওয়াল',
-  'জিলকদ',
-  'জিলহজ',
+  'রমাযান',
+  'শাউয়াল',
+  'যিলক্বদ',
+  'যিলহাজ্জ',
 ];
 
 const List<String> hijriMonthsEnglish = [

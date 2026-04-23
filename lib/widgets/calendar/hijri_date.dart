@@ -8,7 +8,6 @@ import 'package:native_app/helpers/split_hijri_date.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/helpers/update_app_widget.dart';
-
 class HijriDate extends ConsumerWidget {
   const HijriDate({
     super.key,
@@ -35,24 +34,11 @@ class HijriDate extends ConsumerWidget {
       builder: (context, preferences) {
         return settingsProvider.when(
           loading: () {
-            String? hijriDate = preferences.getString('hijriDate');
-            String hijriText;
-
-            if (hijriDate != null) {
-              hijriText = '$hijriDate ${locales.hijri}';
-            } else {
-              HijriCalendar date = HijriCalendar.now();
-
-              Map h = splitHijriDate(date, locales, currentLang);
-              hijriText =
-                  '${h['day']} ${h['month']}, ${h['year']} ${locales.hijri}';
-            }
-
             return Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  hijriText,
+                  '— ${locales.hijri}',
                   style: style ??
                       textTheme.labelMedium?.copyWith(
                         color: oppositeColor ? appColors.appBarText : null,

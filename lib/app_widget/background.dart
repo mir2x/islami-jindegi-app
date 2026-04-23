@@ -3,7 +3,7 @@ import 'update_data.dart';
 
 @pragma('vm:entry-point')
 Future<void> backgroundCallback(Uri? data) async {
-  return await updateData();
+  await updateData();
 }
 
 Future setAppWidgetBackground() async {

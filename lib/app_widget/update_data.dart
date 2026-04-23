@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -14,7 +16,7 @@ import 'package:native_app/helpers/get_gregorian_date.dart';
 import 'package:native_app/helpers/get_location_name.dart';
 import 'package:native_app/core/services/prayer_alarm_service.dart';
 
-Future updateData() async {
+Future<bool> updateData() async {
   final preferences = await SharedPreferences.getInstance();
   var currentLang = preferences.getString('locale') ?? 'bn';
   var locales = await AppLocalizations.delegate.load(Locale(currentLang));
@@ -29,12 +31,75 @@ Future updateData() async {
   Map location = await getFailSafeLocation();
   String timezone = await getFailSafeTimezone();
   String locationName = getLocationName(location);
+  final int hijriAdjustment = preferences.getInt('hijriLocalAdjustment') ?? 0;
+
+  final now = DateTime.now();
+  final adjustedToday = DateTime(
+    now.year,
+    now.month,
+    now.day + hijriAdjustment,
+  );
+  final adjustedTomorrow = DateTime(
+    now.year,
+    now.month,
+    now.day + hijriAdjustment + 1,
+  );
+  final todayStr =
+      '${adjustedToday.year}-${adjustedToday.month.toString().padLeft(2, '0')}-${adjustedToday.day.toString().padLeft(2, '0')}';
+  final tomorrowStr =
+      '${adjustedTomorrow.year}-${adjustedTomorrow.month.toString().padLeft(2, '0')}-${adjustedTomorrow.day.toString().padLeft(2, '0')}';
+
+  Map<String, dynamic>? hijriDataToday;
+  Map<String, dynamic>? hijriDataTomorrow;
+  final cachedToday = preferences.getString('hijriDataToday');
+  final cachedTomorrow = preferences.getString('hijriDataTomorrow');
+  if (cachedToday != null) {
+    final decoded = jsonDecode(cachedToday) as Map<String, dynamic>;
+    if (decoded['date'] == todayStr) hijriDataToday = decoded;
+  }
+  if (cachedTomorrow != null) {
+    final decoded = jsonDecode(cachedTomorrow) as Map<String, dynamic>;
+    if (decoded['date'] == tomorrowStr) hijriDataTomorrow = decoded;
+  }
+
+  // If cache is stale (app not opened today), fetch fresh data from backend.
+  if (hijriDataToday == null || hijriDataTomorrow == null) {
+    final String? countryCode = location['countryCode'] as String?;
+    final String? backendUrl = preferences.getString('hijriBackendUrl');
+    if (countryCode != null && backendUrl != null) {
+      try {
+        final dio = Dio(BaseOptions(
+          baseUrl: '$backendUrl/api',
+          connectTimeout: const Duration(seconds: 5),
+          receiveTimeout: const Duration(seconds: 5),
+        ),);
+        final results = await Future.wait([
+          dio.get('/hijri_date', queryParameters: {'date': todayStr, 'country-code': countryCode}),
+          dio.get('/hijri_date', queryParameters: {'date': tomorrowStr, 'country-code': countryCode}),
+        ]);
+        final todayData = results[0].data['data'];
+        final tomorrowData = results[1].data['data'];
+        if (todayData != null) {
+          hijriDataToday = {...Map<String, dynamic>.from(todayData), 'date': todayStr};
+          await preferences.setString('hijriDataToday', jsonEncode(hijriDataToday));
+        }
+        if (tomorrowData != null) {
+          hijriDataTomorrow = {...Map<String, dynamic>.from(tomorrowData), 'date': tomorrowStr};
+          await preferences.setString('hijriDataTomorrow', jsonEncode(hijriDataTomorrow));
+        }
+      } catch (_) {
+        // Network unavailable — will fall back to Umm al-Qura below.
+      }
+    }
+  }
 
   HijriCalendar hijri = adjustedHijriDate({
     'preferences': preferences,
     'coordinates': coordinates,
     'timezone': timezone,
-    'hijriAdjustment': preferences.getInt('hijriAdjustment') ?? 0,
+    'hijriAdjustment': hijriAdjustment,
+    'hijriDataToday': hijriDataToday,
+    'hijriDataTomorrow': hijriDataTomorrow,
   });
 
   Map h = splitHijriDate(hijri, locales, currentLang);
@@ -108,5 +173,5 @@ Future updateData() async {
     // Alarm scheduling may fail in background isolate
   }
 
-  return Future.value();
+  return true;
 }

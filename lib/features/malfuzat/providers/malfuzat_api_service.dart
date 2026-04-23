@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/malfuzat.dart';
@@ -13,7 +15,7 @@ class MalfuzatApiService {
     _dio = Dio(BaseOptions(
       baseUrl: '${dotenv.env['API_HOST_NAME']}/api',
       headers: {'Accept': 'application/vnd.api+json'},
-    ));
+    ),);
   }
 
   // ───────────────────── Malfuzat ─────────────────────
@@ -54,8 +56,64 @@ class MalfuzatApiService {
     return _parseMalfuzatResponse(response.data);
   }
 
-  Future<MalfuzatItem> fetchSingleMalfuzat(String id,
-      {bool includeAuthor = true}) async {
+  Future<MalfuzatItem?> fetchRandomMalfuzat({
+    String? search,
+    String? malfuzatAuthorId,
+    String? malfuzatCategoryId,
+    String? malfuzatSubcategoryId,
+    String? hasAudio,
+    bool includeAuthor = true,
+  }) async {
+    final baseParams = <String, dynamic>{
+      'page': 1,
+      'per_page': 1,
+      'published': true,
+      if (includeAuthor) 'include': 'malfuzat-author',
+      if (search != null && search.isNotEmpty) 'search': search,
+      if (malfuzatAuthorId != null) 'malfuzatAuthorId': malfuzatAuthorId,
+      if (malfuzatCategoryId != null) 'malfuzatCategoryId': malfuzatCategoryId,
+      if (malfuzatSubcategoryId != null)
+        'malfuzatSubcategoryId': malfuzatSubcategoryId,
+      if (hasAudio != null && hasAudio.isNotEmpty) 'hasAudio': hasAudio,
+    };
+
+    final initialResponse =
+        await _dio.get('/malfuzats', queryParameters: baseParams);
+    final initialItems = _parseMalfuzatResponse(initialResponse.data);
+
+    if (initialItems.isEmpty) {
+      return null;
+    }
+
+    final totalPages =
+        (initialResponse.data['meta']?['total_pages'] as num?)?.toInt() ?? 1;
+
+    if (totalPages <= 1) {
+      return initialItems.first;
+    }
+
+    final randomPage = Random().nextInt(totalPages) + 1;
+
+    if (randomPage == 1) {
+      return initialItems.first;
+    }
+
+    final randomResponse = await _dio.get(
+      '/malfuzats',
+      queryParameters: {
+        ...baseParams,
+        'page': randomPage,
+      },
+    );
+    final randomItems = _parseMalfuzatResponse(randomResponse.data);
+
+    return randomItems.isNotEmpty ? randomItems.first : initialItems.first;
+  }
+
+  Future<MalfuzatItem> fetchSingleMalfuzat(
+    String id, {
+    bool includeAuthor = true,
+  }) async {
     final params = <String, dynamic>{
       if (includeAuthor) 'include': 'malfuzat-author',
     };
@@ -220,8 +278,10 @@ class MalfuzatApiService {
           .map((s) => MalfuzatSubcategory.fromJsonApi(s!))
           .toList();
 
-      return MalfuzatCategory.fromJsonApi(resource,
-          resolvedSubcategories: subcategories);
+      return MalfuzatCategory.fromJsonApi(
+        resource,
+        resolvedSubcategories: subcategories,
+      );
     }).toList();
   }
 }

@@ -10,6 +10,7 @@ import 'package:native_app/theme/app_theme_color.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
+import 'date_button.dart';
 
 class Settings extends ConsumerWidget {
   const Settings({super.key});
@@ -93,8 +94,6 @@ class Settings extends ConsumerWidget {
         loading: () => const FullScreenLoader(),
         error: (error, _) => Center(child: Text(error.toString())),
         data: (preferences) {
-          final selectedHijriAdj = preferences.getInt('hijriLocalAdjustment') ?? 0;
-          final countryHijriAdj = preferences.getInt('hijriCountryAdjustment');
           final selectedLocale = _selectedValue(
             items: languages,
             value: preferences.getString('locale'),
@@ -121,38 +120,11 @@ class Settings extends ConsumerWidget {
             fallback: 'mosque',
           );
           final selectedDaylight = preferences.getBool('daylight') ?? false;
+          final selectedHijriAdjustment =
+              preferences.getInt('hijriLocalAdjustment') ?? 0;
 
           return ItemContent(
             children: [
-              _SectionLabel(label: locales.hijriDateAdjustment),
-              if (countryHijriAdj != null) ...[
-                const SizedBox(height: 6),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Text(
-                    'দেশভিত্তিক সমন্বয়: ${countryHijriAdj > 0 ? '+' : ''}$countryHijriAdj দিন। নিচে ব্যক্তিগত সমন্বয় যোগ করুন।',
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).extension<AppThemeColors>()!.secondaryText,
-                    ),
-                  ),
-                ),
-              ],
-              const SizedBox(height: 10),
-              _HijriAdjustmentStrip(
-                selectedValue: selectedHijriAdj,
-                onSelected: (value) {
-                  if (selectedHijriAdj == value) {
-                    ref
-                        .read(preferencesProvider.notifier)
-                        .removeHijriLocalAdjustment();
-                    return;
-                  }
-                  ref
-                      .read(preferencesProvider.notifier)
-                      .updateHijriLocalAdjustment(value);
-                },
-              ),
-              const SizedBox(height: 18),
               _SettingsGroupCard(
                 children: [
                   _SettingsSwitchRow(
@@ -226,6 +198,10 @@ class Settings extends ConsumerWidget {
                     },
                   ),
                 ],
+              ),
+              const SizedBox(height: 18),
+              _HijriAdjustmentCard(
+                selectedValue: selectedHijriAdjustment,
               ),
               const SizedBox(height: 18),
               _SettingsGroupCard(
@@ -321,6 +297,103 @@ class Settings extends ConsumerWidget {
       'no-background' => locales.noBackground,
       _ => value,
     };
+  }
+}
+
+class _HijriAdjustmentCard extends ConsumerWidget {
+  const _HijriAdjustmentCard({
+    required this.selectedValue,
+  });
+
+  final int selectedValue;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locales = AppLocalizations.of(context)!;
+    final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final textTheme = Theme.of(context).textTheme;
+    final currentLang = Localizations.localeOf(context).languageCode;
+    final subtitle = currentLang == 'bn'
+        ? 'দেশভিত্তিক হিজরী তারিখ প্রয়োগ করা আছে। নিচে ব্যক্তিগত দিন সমন্বয় করুন।'
+        : 'Country-based Hijri date is already applied. Add your personal day adjustment below.';
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: colors.cardBg.withValues(alpha: 0.96),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: colors.divider.withValues(alpha: 0.42)),
+        boxShadow: [
+          BoxShadow(
+            color: colors.shadow.withValues(alpha: 0.06),
+            blurRadius: 14,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            locales.hijriDateAdjustment,
+            style: textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: colors.primaryText,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            subtitle,
+            style: textTheme.bodyMedium?.copyWith(
+              color: colors.secondaryText,
+              height: 1.45,
+            ),
+          ),
+          const SizedBox(height: 18),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            decoration: BoxDecoration(
+              color: colors.surfaceBg.withValues(alpha: 0.78),
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(
+                color: colors.divider.withValues(alpha: 0.42),
+              ),
+            ),
+            child: const Row(
+              children: [
+                _HijriAdjustmentButtonValue(value: -2),
+                _HijriAdjustmentButtonValue(value: -1),
+                _HijriAdjustmentButtonValue(value: 0),
+                _HijriAdjustmentButtonValue(value: 1),
+                _HijriAdjustmentButtonValue(value: 2),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HijriAdjustmentButtonValue extends ConsumerWidget {
+  const _HijriAdjustmentButtonValue({
+    required this.value,
+  });
+
+  final int value;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final prefs = ref.watch(preferencesProvider).value;
+    final selectedValue = prefs?.getInt('hijriLocalAdjustment') ?? 0;
+    final label = value > 0 ? '+$value' : '$value';
+
+    return DateButton(
+      label: label,
+      value: value,
+      selectedValue: selectedValue,
+    );
   }
 }
 
@@ -432,91 +505,6 @@ Future<void> _showSelectionSheet<T>({
       );
     },
   );
-}
-
-class _SectionLabel extends StatelessWidget {
-  const _SectionLabel({
-    required this.label,
-  });
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppThemeColors>()!;
-    return Padding(
-      padding: const EdgeInsets.only(left: 2),
-      child: Text(
-        label.toUpperCase(),
-        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: colors.secondary,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.0,
-            ),
-      ),
-    );
-  }
-}
-
-class _HijriAdjustmentStrip extends StatelessWidget {
-  const _HijriAdjustmentStrip({
-    required this.selectedValue,
-    required this.onSelected,
-  });
-
-  final int selectedValue;
-  final ValueChanged<int> onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppThemeColors>()!;
-    final isClassic = colors.primary == AppThemeColors.classic.primary &&
-        colors.appBarBg == AppThemeColors.classic.appBarBg;
-    final accentColor = isClassic ? colors.appBarBg : colors.primary;
-    final accentBrightness = ThemeData.estimateBrightnessForColor(accentColor);
-    final accentForeground = accentBrightness == Brightness.dark
-        ? colors.appBarText
-        : colors.primaryText;
-    const options = [-2, -1, 0, 1, 2];
-
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: colors.cardBg.withValues(alpha: 0.96),
-        borderRadius: BorderRadius.circular(26),
-        border: Border.all(color: colors.divider.withValues(alpha: 0.42)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: options.map((value) {
-          final isSelected = value == selectedValue;
-          final label = value > 0 ? '+$value' : '$value';
-          return GestureDetector(
-            onTap: () => onSelected(value),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
-              width: 48,
-              height: 48,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: isSelected ? accentColor : Colors.transparent,
-                shape: BoxShape.circle,
-              ),
-              child: Text(
-                label,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight:
-                          isSelected ? FontWeight.w800 : FontWeight.w600,
-                      color:
-                          isSelected ? accentForeground : colors.secondaryText,
-                    ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
 }
 
 class _SettingsGroupCard extends StatelessWidget {

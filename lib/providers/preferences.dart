@@ -8,18 +8,6 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
     return await SharedPreferences.getInstance();
   }
 
-  Future<dynamic> updateHijriLocalAdjustment(int value) async {
-    var prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('hijriLocalAdjustment', value);
-    state = AsyncValue.data(prefs);
-  }
-
-  Future<dynamic> removeHijriLocalAdjustment() async {
-    var prefs = await SharedPreferences.getInstance();
-    await prefs.remove('hijriLocalAdjustment');
-    state = AsyncValue.data(prefs);
-  }
-
   Future<dynamic> updateDaylight(bool value) async {
     var prefs = await SharedPreferences.getInstance();
     await prefs.setBool('daylight', value);
@@ -58,6 +46,12 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
   Future<dynamic> updateBackground(value) async {
     var prefs = await SharedPreferences.getInstance();
     await prefs.setString('background', value);
+    state = AsyncValue.data(prefs);
+  }
+
+  Future<dynamic> updateHijriLocalAdjustment(int value) async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('hijriLocalAdjustment', value);
     state = AsyncValue.data(prefs);
   }
 

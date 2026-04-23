@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:adhan/adhan.dart';
 import 'package:flutter/material.dart';
@@ -155,13 +156,45 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
         final String currentPrayerKey = prayerNames['currentPrayer']!;
 
         final String location = getLocationName(geolocation['location']);
-        final int adjustment = prefs.getInt('hijriAdjustment') ?? 0;
+        final now = DateTime.now();
+        final int hijriAdjustment =
+            prefs.getInt('hijriLocalAdjustment') ?? 0;
+        final adjustedToday = DateTime(
+          now.year,
+          now.month,
+          now.day + hijriAdjustment,
+        );
+        final adjustedTomorrow = DateTime(
+          now.year,
+          now.month,
+          now.day + hijriAdjustment + 1,
+        );
+        final todayStr =
+            '${adjustedToday.year}-${adjustedToday.month.toString().padLeft(2, '0')}-${adjustedToday.day.toString().padLeft(2, '0')}';
+        final tomorrowStr =
+            '${adjustedTomorrow.year}-${adjustedTomorrow.month.toString().padLeft(2, '0')}-${adjustedTomorrow.day.toString().padLeft(2, '0')}';
+
+        Map<String, dynamic>? hijriDataToday;
+        Map<String, dynamic>? hijriDataTomorrow;
+        final cachedToday = prefs.getString('hijriDataToday');
+        final cachedTomorrow = prefs.getString('hijriDataTomorrow');
+        if (cachedToday != null) {
+          final decoded = jsonDecode(cachedToday) as Map<String, dynamic>;
+          if (decoded['date'] == todayStr) hijriDataToday = decoded;
+        }
+        if (cachedTomorrow != null) {
+          final decoded = jsonDecode(cachedTomorrow) as Map<String, dynamic>;
+          if (decoded['date'] == tomorrowStr) hijriDataTomorrow = decoded;
+        }
+
         final HijriCalendar hijri = widget.selectedHijriDate ??
             adjustedHijriDate({
               'preferences': prefs,
               'coordinates': geolocation['coordinates'],
               'timezone': geolocation['timezone'],
-              'hijriAdjustment': adjustment,
+              'hijriAdjustment': hijriAdjustment,
+              'hijriDataToday': hijriDataToday,
+              'hijriDataTomorrow': hijriDataTomorrow,
             });
         final hijriParts = splitHijriDate(hijri, locales, currentLang);
         final String hijriText =

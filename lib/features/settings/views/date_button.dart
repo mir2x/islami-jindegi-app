@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/app_widget/update_data.dart';
+import 'package:native_app/providers/hijri_date_settings.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
@@ -37,14 +39,12 @@ class DateButton extends ConsumerWidget {
                 selectedValue == value ? colors.appBarText : colors.primaryText,
           ),
         ),
-        onPressed: () {
-          if (selectedValue == value) {
-            ref.read(preferencesProvider.notifier).removeHijriLocalAdjustment();
-          } else {
-            ref
-                .read(preferencesProvider.notifier)
-                .updateHijriLocalAdjustment(value);
-          }
+        onPressed: () async {
+          await ref
+              .read(preferencesProvider.notifier)
+              .updateHijriLocalAdjustment(value);
+          ref.invalidate(hijriDateSettingsProvider);
+          await updateData();
         },
       ),
     );
