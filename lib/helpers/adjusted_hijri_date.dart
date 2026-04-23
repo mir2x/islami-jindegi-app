@@ -74,6 +74,28 @@ HijriCalendar displayHijriToPickerHijri(
   return _shiftHijriByDays(displayDate, delta);
 }
 
+DateTime displayHijriToGregorian(
+  Map settings,
+  HijriCalendar displayDate,
+) {
+  final pickerDate = displayHijriToPickerHijri(settings, displayDate);
+  return pickerDate.hijriToGregorian(
+    pickerDate.hYear,
+    pickerDate.hMonth,
+    pickerDate.hDay,
+  );
+}
+
+HijriCalendar gregorianToDisplayHijri(
+  Map settings,
+  DateTime gregorianDate,
+) {
+  return pickerHijriToDisplayHijri(
+    settings,
+    HijriCalendar.fromDate(gregorianDate),
+  );
+}
+
 HijriCalendar adjustedHijriDate(Map settings) {
   final now = DateTime.now();
   final bool pastMaghrib = _isPastMaghrib(settings, now);

@@ -75,6 +75,8 @@ final hijriDateSettingsProvider = FutureProvider((ref) async {
     'preferences': prefs,
     'coordinates': coordinates,
     'timezone': timezone,
+    'countryCode': countryCode,
+    'backendUrl': backendUrl,
     'hijriDataToday': hijriToday,
     'hijriDataTomorrow': hijriTomorrow,
     'hijriAdjustment': hijriAdjustment,
