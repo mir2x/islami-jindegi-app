@@ -17,10 +17,13 @@ class Resource extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
     final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
-    double screenWidth = MediaQuery.of(context).size.width;
+    double screenWidth = media.size.width;
+    final screenHeight = media.size.height;
     bool isMobile = screenWidth < 768;
+    final isShortMobile = isMobile && screenHeight < 760;
 
     final targetRoute = route.startsWith('/') ? route : '/$route';
     final tileBackground = isDarkTheme
@@ -49,48 +52,74 @@ class Resource extends StatelessWidget {
         child: LayoutBuilder(
           builder: (context, constraints) {
             final cellHeight = constraints.maxHeight;
+            final cellWidth = constraints.maxWidth;
+            final media = MediaQuery.of(context);
+            final isShortHeightMobile =
+                isMobile && media.size.height < 760;
 
-            // Scale icon and spacing based on available cell height
             double iconSize;
             double gap;
             double verticalPad;
             double horizontalPad;
+            double iconBoxHeightFactor;
+            double textBoxHeightFactor;
             TextStyle? textStyle;
 
             if (!isMobile) {
-              iconSize = 56;
-              gap = 10;
-              verticalPad = 14;
-              horizontalPad = 12;
+              iconSize = 64;
+              gap = 6;
+              verticalPad = 4;
+              horizontalPad = 4;
+              iconBoxHeightFactor = 0.64;
+              textBoxHeightFactor = 0.26;
               textStyle = Theme.of(context).textTheme.labelMedium?.copyWith(
                     height: 1.1,
                     color: appColors.primaryText,
                   );
+            } else if (isShortHeightMobile) {
+              iconSize = cellWidth * 0.60;
+              gap = 0;
+              verticalPad = 0;
+              horizontalPad = 0;
+              iconBoxHeightFactor = 0.68;
+              textBoxHeightFactor = 0.26;
+              textStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+                    height: 1.0,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: appColors.primaryText,
+                  );
             } else if (cellHeight < 70) {
-              iconSize = 20;
+              iconSize = 22;
               gap = 2;
-              verticalPad = 4;
-              horizontalPad = 4;
+              verticalPad = 2;
+              horizontalPad = 2;
+              iconBoxHeightFactor = 0.58;
+              textBoxHeightFactor = 0.24;
               textStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
                     height: 1.1,
                     fontSize: 9,
                     color: appColors.primaryText,
                   );
             } else if (cellHeight < 85) {
-              iconSize = cellHeight * 0.50;
-              gap = cellHeight * 0.04;
+              iconSize = cellHeight * 0.56;
+              gap = cellHeight * 0.02;
               verticalPad = 0;
-              horizontalPad = 4;
+              horizontalPad = 0;
+              iconBoxHeightFactor = 0.62;
+              textBoxHeightFactor = 0.24;
               textStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
                     height: 1.1,
                     fontSize: 13,
                     color: appColors.primaryText,
                   );
             } else {
-              iconSize = cellHeight * 0.52;
-              gap = cellHeight * 0.05;
+              iconSize = cellHeight * 0.60;
+              gap = cellHeight * 0.02;
               verticalPad = 0;
-              horizontalPad = 4;
+              horizontalPad = 0;
+              iconBoxHeightFactor = 0.66;
+              textBoxHeightFactor = 0.26;
               textStyle = Theme.of(context).textTheme.labelMedium?.copyWith(
                     height: 1.1,
                     fontSize: 15,
@@ -106,20 +135,28 @@ class Resource extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SvgPicture.asset(
-                    'assets/images/icons/$icon.svg',
-                    fit: BoxFit.contain,
-                    width: iconSize,
-                    height: iconSize,
+                  SizedBox(
+                    height: cellHeight * iconBoxHeightFactor,
+                    child: Center(
+                      child: SvgPicture.asset(
+                        'assets/images/icons/$icon.svg',
+                        fit: BoxFit.contain,
+                        width: iconSize,
+                        height: iconSize,
+                      ),
+                    ),
                   ),
                   SizedBox(height: gap),
-                  Flexible(
-                    child: Text(
-                      title,
-                      style: textStyle,
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                  SizedBox(
+                    height: cellHeight * textBoxHeightFactor,
+                    child: Center(
+                      child: Text(
+                        title,
+                        style: textStyle,
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
                 ],

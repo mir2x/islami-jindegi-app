@@ -16,8 +16,12 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
-    double screenWidth = MediaQuery.of(context).size.width;
+    final media = MediaQuery.of(context);
+    double screenWidth = media.size.width;
+    final screenHeight = media.size.height;
     bool isMobile = screenWidth < 768;
+    final isShortMobile = isMobile && screenHeight < 760;
+    final isVeryShortMobile = isMobile && screenHeight < 700;
 
     double sideMargin = screenWidth < 340 ? 12 : (isMobile ? 16 : 40);
 
@@ -84,9 +88,9 @@ class Home extends StatelessWidget {
                   color: homeHeroBg,
                   padding: EdgeInsets.fromLTRB(
                     sideMargin * 2,
-                    8,
+                    isVeryShortMobile ? 4 : (isShortMobile ? 6 : 8),
                     sideMargin * 2,
-                    36, // green breathing room below prayer card
+                    isVeryShortMobile ? 22 : (isShortMobile ? 28 : 36),
                   ),
                   child: Theme(
                     data: Theme.of(context).copyWith(
@@ -101,7 +105,7 @@ class Home extends StatelessWidget {
                     clipBehavior: Clip.none,
                     children: [
                       Positioned(
-                        top: -28,
+                        top: isVeryShortMobile ? -18 : (isShortMobile ? -22 : -28),
                         left: 0,
                         right: 0,
                         bottom: 0,
@@ -109,13 +113,13 @@ class Home extends StatelessWidget {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       color: homeContentBg,
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(32),
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(isVeryShortMobile ? 24 : 32),
                       ),
                     ),
                     child: Column(
                       children: [
-                        const SizedBox(height: 28),
+                        SizedBox(height: isVeryShortMobile ? 18 : (isShortMobile ? 22 : 28)),
                         // Grid fills all remaining space
                         Expanded(
                           child: Padding(
@@ -125,7 +129,7 @@ class Home extends StatelessWidget {
                             child: LayoutBuilder(
                               builder: (context, constraints) {
                                 const rows = 4;
-                                const spacing = 10.0;
+                                final spacing = isVeryShortMobile ? 7.0 : (isShortMobile ? 8.0 : 10.0);
                                 final itemHeight =
                                     (constraints.maxHeight - (rows - 1) * spacing) / rows;
                                 final itemWidth =
@@ -211,9 +215,9 @@ class Home extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.fromLTRB(
                             sideMargin,
-                            8,
+                            isVeryShortMobile ? 4 : (isShortMobile ? 6 : 8),
                             sideMargin,
-                            12,
+                            isVeryShortMobile ? 8 : 12,
                           ),
                           child: const News(),
                         ),

@@ -196,65 +196,79 @@ class _DatesPrayersState extends ConsumerState<DatesPrayers> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+    final media = MediaQuery.of(context);
+    double screenWidth = media.size.width;
+    final screenHeight = media.size.height;
     bool isMobile = screenWidth < 768;
+    final isShortMobile = isMobile && screenHeight < 760;
+    final isVeryShortMobile = isMobile && screenHeight < 700;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
     var textTheme = Theme.of(context).textTheme;
 
     if (isMobile) {
+      final headlineStyle = (isVeryShortMobile
+              ? textTheme.titleLarge
+              : isShortMobile
+                  ? textTheme.headlineSmall
+                  : textTheme.headlineMedium)
+          ?.copyWith(
+            color: appColors.appBarText,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
+          );
+      final metaStyle = (isVeryShortMobile
+              ? textTheme.labelSmall
+              : textTheme.bodySmall)
+          ?.copyWith(
+            color: appColors.appBarText.withValues(alpha: 0.85),
+          );
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Large Hijri headline + hijri calendar icon
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               HijriDate(
                 oppositeColor: true,
-                style: textTheme.headlineMedium?.copyWith(
-                  color: appColors.appBarText,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -0.5,
-                ),
+                style: headlineStyle,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: isVeryShortMobile ? 6 : 8),
               _HeroCalendarButton(
                 appColors: appColors,
+                compact: isShortMobile,
                 onTap: () => _showHijriPicker(context),
               ),
             ],
           ),
-          const SizedBox(height: 3),
-          // Gregorian date + calendar icon
+          SizedBox(height: isVeryShortMobile ? 1 : 3),
           Row(
             children: [
               GregorianDate(
                 oppositeColor: true,
-                style: textTheme.bodySmall?.copyWith(
-                  color: appColors.appBarText.withValues(alpha: 0.85),
-                ),
+                style: metaStyle,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: isVeryShortMobile ? 6 : 8),
               _HeroCalendarButton(
                 appColors: appColors,
+                compact: isShortMobile,
                 onTap: () => _showGregorianPicker(context),
               ),
             ],
           ),
-          const SizedBox(height: 2),
-          // Bangla date (no calendar icon)
+          SizedBox(height: isVeryShortMobile ? 1 : 2),
           BangaliDate(
             oppositeColor: true,
-            style: textTheme.bodySmall?.copyWith(
-              color: appColors.appBarText.withValues(alpha: 0.85),
-            ),
+            style: metaStyle,
           ),
-          const SizedBox(height: 6),
-          // Location row
-          _LocationRow(appColors: appColors, textTheme: textTheme),
-          const SizedBox(height: 10),
-          // Glassmorphism prayer card
-          const _PrayerCard(),
+          SizedBox(height: isVeryShortMobile ? 4 : 6),
+          _LocationRow(
+            appColors: appColors,
+            textTheme: textTheme,
+            compact: isShortMobile,
+          ),
+          SizedBox(height: isVeryShortMobile ? 6 : 10),
+          _PrayerCard(compact: isShortMobile),
         ],
       );
     } else {
@@ -270,10 +284,15 @@ class _DatesPrayersState extends ConsumerState<DatesPrayers> {
 }
 
 class _HeroCalendarButton extends StatelessWidget {
-  const _HeroCalendarButton({required this.appColors, required this.onTap});
+  const _HeroCalendarButton({
+    required this.appColors,
+    required this.onTap,
+    this.compact = false,
+  });
 
   final AppThemeColors appColors;
   final VoidCallback onTap;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -281,8 +300,8 @@ class _HeroCalendarButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       onTap: onTap,
       child: Container(
-        width: 24,
-        height: 24,
+        width: compact ? 22 : 24,
+        height: compact ? 22 : 24,
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(12),
@@ -290,7 +309,7 @@ class _HeroCalendarButton extends StatelessWidget {
         ),
         child: Icon(
           Icons.calendar_month_outlined,
-          size: 13,
+          size: compact ? 12 : 13,
           color: appColors.appBarText.withValues(alpha: 0.85),
         ),
       ),
@@ -299,10 +318,15 @@ class _HeroCalendarButton extends StatelessWidget {
 }
 
 class _LocationRow extends ConsumerWidget {
-  const _LocationRow({required this.appColors, required this.textTheme});
+  const _LocationRow({
+    required this.appColors,
+    required this.textTheme,
+    this.compact = false,
+  });
 
   final AppThemeColors appColors;
   final TextTheme textTheme;
+  final bool compact;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -316,17 +340,17 @@ class _LocationRow extends ConsumerWidget {
           children: [
             Text(
               location,
-              style: textTheme.bodyMedium?.copyWith(
+              style: (compact ? textTheme.bodySmall : textTheme.bodyMedium)?.copyWith(
                 color: appColors.appBarText.withValues(alpha: 0.85),
               ),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: compact ? 6 : 8),
             InkWell(
               borderRadius: BorderRadius.circular(12),
               onTap: () => context.push('/location'),
               child: Container(
-                width: 24,
-                height: 24,
+                width: compact ? 22 : 24,
+                height: compact ? 22 : 24,
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
@@ -334,7 +358,7 @@ class _LocationRow extends ConsumerWidget {
                 ),
                 child: Icon(
                   Icons.place_outlined,
-                  size: 13,
+                  size: compact ? 12 : 13,
                   color: appColors.appBarText,
                 ),
               ),
@@ -348,19 +372,21 @@ class _LocationRow extends ConsumerWidget {
 }
 
 class _PrayerCard extends StatelessWidget {
-  const _PrayerCard();
+  const _PrayerCard({this.compact = false});
+
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(compact ? 18 : 20),
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.1),
         ),
       ),
-      child: const CurrentLocationPrayers(heroCard: true),
+      child: CurrentLocationPrayers(heroCard: true, compactHero: compact),
     );
   }
 }

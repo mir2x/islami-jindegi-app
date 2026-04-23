@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:io' show Platform, HttpOverrides;
-import 'package:flutter/foundation.dart' show kReleaseMode;
+import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'package:device_preview/device_preview.dart';
+import 'package:flutter/foundation.dart' show kDebugMode, kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -69,6 +72,8 @@ Future<void> main() async {
     await initialPrefs.setString('hijriBackendUrl', hijriBackendUrl);
   }
 
+  await _primeHijriDateCache(initialPrefs);
+
   final container = ProviderContainer();
 
   if (Platform.isAndroid) {
@@ -87,9 +92,12 @@ Future<void> main() async {
   }
 
   runApp(
-    UncontrolledProviderScope(
-      container: container,
-      child: MyApp(initialTheme: initialTheme),
+    DevicePreview(
+      enabled: kDebugMode,
+      builder: (context) => UncontrolledProviderScope(
+        container: container,
+        child: MyApp(initialTheme: initialTheme),
+      ),
     ),
   );
 
@@ -118,6 +126,64 @@ Future<void> _initializeNonBlockingServices() async {
     debugPrint('Quran initialization failed: $error\n$stackTrace');
   }
 }
+
+Future<void> _primeHijriDateCache(SharedPreferences prefs) async {
+  final backendUrl = prefs.getString('hijriBackendUrl');
+  final countryCode = prefs.getString('countryCode') ?? 'BD';
+  if (backendUrl == null || backendUrl.isEmpty || countryCode.isEmpty) {
+    return;
+  }
+
+  final int hijriAdjustment = prefs.getInt('hijriLocalAdjustment') ?? 0;
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day + hijriAdjustment);
+  final tomorrow =
+      DateTime(now.year, now.month, now.day + hijriAdjustment + 1);
+  final todayStr = _dateStr(today);
+  final tomorrowStr = _dateStr(tomorrow);
+
+  try {
+    final dio = Dio(BaseOptions(
+      baseUrl: '$backendUrl/api',
+      connectTimeout: const Duration(seconds: 5),
+      receiveTimeout: const Duration(seconds: 5),
+    ),);
+
+    final results = await Future.wait([
+      dio.get(
+        '/hijri_date',
+        queryParameters: {'date': todayStr, 'country-code': countryCode},
+      ),
+      dio.get(
+        '/hijri_date',
+        queryParameters: {'date': tomorrowStr, 'country-code': countryCode},
+      ),
+    ]);
+
+    final todayData = results[0].data['data'];
+    final tomorrowData = results[1].data['data'];
+
+    if (todayData != null) {
+      await prefs.setString(
+        'hijriDataToday',
+        jsonEncode({...Map<String, dynamic>.from(todayData), 'date': todayStr}),
+      );
+    }
+    if (tomorrowData != null) {
+      await prefs.setString(
+        'hijriDataTomorrow',
+        jsonEncode(
+          {...Map<String, dynamic>.from(tomorrowData), 'date': tomorrowStr},
+        ),
+      );
+    }
+  } catch (_) {
+    // Leave any existing cache in place; later code will fall back as needed.
+  }
+}
+
+String _dateStr(DateTime d) =>
+    '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key, required this.initialTheme});
@@ -152,6 +218,13 @@ class MyApp extends ConsumerWidget {
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           routerConfig: AppRoutes.router,
+          builder: (context, child) {
+            if (!kDebugMode) {
+              return child ?? const SizedBox.shrink();
+            }
+
+            return DevicePreview.appBuilder(context, child);
+          },
           theme: selectedTheme,
           darkTheme: selectedDarkTheme,
           themeMode: selectedThemeMode,

@@ -12,9 +12,14 @@ import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/helpers/update_app_widget.dart';
 
 class CurrentLocationPrayers extends StatelessWidget {
-  const CurrentLocationPrayers({super.key, this.heroCard = false});
+  const CurrentLocationPrayers({
+    super.key,
+    this.heroCard = false,
+    this.compactHero = false,
+  });
 
   final bool heroCard;
+  final bool compactHero;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +27,7 @@ class CurrentLocationPrayers extends StatelessWidget {
     bool isMobile = screenWidth < 768;
 
     if (heroCard) {
-      return const CurrentPrayers(heroCard: true);
+      return CurrentPrayers(heroCard: true, compactHero: compactHero);
     }
 
     return Column(
@@ -46,9 +51,14 @@ class CurrentLocationPrayers extends StatelessWidget {
 }
 
 class CurrentPrayers extends ConsumerStatefulWidget {
-  const CurrentPrayers({super.key, this.heroCard = false});
+  const CurrentPrayers({
+    super.key,
+    this.heroCard = false,
+    this.compactHero = false,
+  });
 
   final bool heroCard;
+  final bool compactHero;
 
   @override
   CurrentPrayersState createState() => CurrentPrayersState();
@@ -94,6 +104,7 @@ class CurrentPrayersState extends ConsumerState<CurrentPrayers> {
                 nextPrayer != null) {
               return Prayers(
                 heroCard: widget.heroCard,
+                compactHero: widget.compactHero,
                 prayerTimes: {
                   'current': {
                     'title': currentPrayerTitle,
@@ -129,6 +140,7 @@ class CurrentPrayersState extends ConsumerState<CurrentPrayers> {
 
         return Prayers(
           heroCard: widget.heroCard,
+          compactHero: widget.compactHero,
           prayerTimes: {
             'current': prayerTimes['current'],
             'next': widget.heroCard
@@ -146,10 +158,12 @@ class Prayers extends StatelessWidget {
     super.key,
     required this.prayerTimes,
     this.heroCard = false,
+    this.compactHero = false,
   });
 
   final Map prayerTimes;
   final bool heroCard;
+  final bool compactHero;
 
   @override
   Widget build(BuildContext context) {
@@ -202,11 +216,32 @@ class Prayers extends StatelessWidget {
         updateAppWidget(updatableParams);
 
         if (heroCard) {
+          final cardRadius = compactHero ? 18.0 : 20.0;
+          final horizontalPad = compactHero ? 10.0 : 12.0;
+          final verticalPad = compactHero ? 6.0 : 8.0;
+          final titleStyle = (compactHero
+                  ? textTheme.titleSmall
+                  : textTheme.titleMedium)
+              ?.copyWith(
+                color: titleColor,
+                fontWeight: FontWeight.w800,
+              );
+          final emphasisStyle = (compactHero
+                  ? textTheme.titleMedium
+                  : textTheme.titleLarge)
+              ?.copyWith(
+                color: titleColor,
+                fontWeight: FontWeight.w800,
+              );
+
           return InkWell(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(cardRadius),
             onTap: () => context.push('/namaz-times'),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPad,
+                vertical: verticalPad,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -216,12 +251,15 @@ class Prayers extends StatelessWidget {
                       children: [
                         Text(
                           locales.currentPrayerLabel,
-                          style: textTheme.labelMedium?.copyWith(
+                          style: (compactHero
+                                  ? textTheme.labelSmall
+                                  : textTheme.labelMedium)
+                              ?.copyWith(
                             color: appColors.secondary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const SizedBox(height: 2),
+                        SizedBox(height: compactHero ? 1 : 2),
                         if (hasCurrentPrayer) ...[
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -230,13 +268,10 @@ class Prayers extends StatelessWidget {
                               Flexible(
                                 child: Text(
                                   '${prayerTimes['current']['title']}',
-                                  style: textTheme.titleMedium?.copyWith(
-                                    color: titleColor,
-                                    fontWeight: FontWeight.w800,
-                                  ),
+                                  style: titleStyle,
                                 ),
                               ),
-                              const SizedBox(width: 6),
+                              SizedBox(width: compactHero ? 4 : 6),
                               Text(
                                 '${locales.startsLabel} ',
                                 style: textTheme.labelSmall?.copyWith(
@@ -249,14 +284,11 @@ class Prayers extends StatelessWidget {
                                 (prayerTimes['current']['time'] as String)
                                     .split(' - ')
                                     .first,
-                                style: textTheme.titleMedium?.copyWith(
-                                  color: titleColor,
-                                  fontWeight: FontWeight.w800,
-                                ),
+                                style: titleStyle,
                               ),
                             ],
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: compactHero ? 1 : 2),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.baseline,
                             textBaseline: TextBaseline.alphabetic,
@@ -273,10 +305,7 @@ class Prayers extends StatelessWidget {
                                 (prayerTimes['current']['time'] as String)
                                     .split(' - ')
                                     .last,
-                                style: textTheme.titleLarge?.copyWith(
-                                  color: titleColor,
-                                  fontWeight: FontWeight.w800,
-                                ),
+                                style: emphasisStyle,
                               ),
                             ],
                           ),
@@ -284,14 +313,17 @@ class Prayers extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: compactHero ? 6 : 8),
                   Flexible(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
                           locales.nextLabel,
-                          style: textTheme.labelMedium?.copyWith(
+                          style: (compactHero
+                                  ? textTheme.labelSmall
+                                  : textTheme.labelMedium)
+                              ?.copyWith(
                             color: appColors.secondary.withValues(alpha: 0.6),
                             fontWeight: FontWeight.w600,
                           ),
@@ -299,7 +331,10 @@ class Prayers extends StatelessWidget {
                         if (prayerTimes['next'] is Map) ...[
                           Text(
                             '${prayerTimes['next']['title']}',
-                            style: textTheme.labelMedium?.copyWith(
+                            style: (compactHero
+                                    ? textTheme.labelSmall
+                                    : textTheme.labelMedium)
+                                ?.copyWith(
                               color: labelColor,
                               fontWeight: FontWeight.w600,
                             ),
@@ -320,7 +355,10 @@ class Prayers extends StatelessWidget {
                               ),
                               Text(
                                 '${prayerTimes['next']['time']}',
-                                style: textTheme.titleMedium?.copyWith(
+                                style: (compactHero
+                                        ? textTheme.titleSmall
+                                        : textTheme.titleMedium)
+                                    ?.copyWith(
                                   color: labelColor,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -330,7 +368,10 @@ class Prayers extends StatelessWidget {
                         ] else
                           Text(
                             '${prayerTimes['next']}',
-                            style: textTheme.labelMedium?.copyWith(
+                            style: (compactHero
+                                    ? textTheme.labelSmall
+                                    : textTheme.labelMedium)
+                                ?.copyWith(
                               color: labelColor,
                               fontWeight: FontWeight.w600,
                             ),

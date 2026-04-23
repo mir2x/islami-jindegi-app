@@ -9,10 +9,13 @@ final hijriDateSettingsProvider = FutureProvider((ref) async {
   final prefs = data['preferences'];
   final String? countryCode =
       data['geolocation']['location']['countryCode'] ??
-      prefs.getString('countryCode');
+      prefs.getString('countryCode') ??
+      'BD';
   final coordinates = data['geolocation']['coordinates'];
   final String timezone = data['geolocation']['timezone'] ?? '';
   final int hijriAdjustment = prefs.getInt('hijriLocalAdjustment') ?? 0;
+  final String? backendUrl =
+      prefs.getString('hijriBackendUrl') ?? dotenv.env['HIJRI_BACKEND_URL'];
 
   final now = DateTime.now();
   final todayStr = _dateStr(
@@ -28,10 +31,13 @@ final hijriDateSettingsProvider = FutureProvider((ref) async {
   final cachedTomorrow =
       _readCached(prefs.getString('hijriDataTomorrow'), tomorrowStr);
 
-  if (countryCode != null && countryCode.isNotEmpty) {
+  if (countryCode != null &&
+      countryCode.isNotEmpty &&
+      backendUrl != null &&
+      backendUrl.isNotEmpty) {
     try {
       final dio = Dio(BaseOptions(
-        baseUrl: '${dotenv.env['HIJRI_BACKEND_URL']}/api',
+        baseUrl: '$backendUrl/api',
         connectTimeout: const Duration(seconds: 5),
         receiveTimeout: const Duration(seconds: 5),
       ),);

@@ -15,6 +15,9 @@ class News extends ConsumerWidget {
     var textTheme = Theme.of(context).textTheme;
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
     final modelQuery = ref.watch(latestNewsProvider);
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isShortMobile = MediaQuery.of(context).size.width < 768 &&
+        screenHeight < 760;
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -30,7 +33,10 @@ class News extends ConsumerWidget {
               : appColors.divider.withValues(alpha: 0.4),
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: EdgeInsets.symmetric(
+        horizontal: isShortMobile ? 12 : 14,
+        vertical: isShortMobile ? 8 : 10,
+      ),
       child: Row(
         children: [
           Text(
@@ -40,17 +46,17 @@ class News extends ConsumerWidget {
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: isShortMobile ? 8 : 10),
           Container(
             width: 1,
-            height: 28,
+            height: isShortMobile ? 24 : 28,
             color: appColors.divider.withValues(alpha: 0.5),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: isShortMobile ? 8 : 10),
           Expanded(
             child: modelQuery.when(
               loading: () => SizedBox(
-                height: 20,
+                height: isShortMobile ? 18 : 20,
                 child: Center(
                   child: SizedBox(
                     width: 16,
@@ -83,7 +89,7 @@ class News extends ConsumerWidget {
                   options: CarouselOptions(
                     autoPlay: true,
                     viewportFraction: 1.0,
-                    height: 36,
+                    height: isShortMobile ? 32 : 36,
                   ),
                   itemCount: resources.length,
                   itemBuilder: (context, index, _) {
