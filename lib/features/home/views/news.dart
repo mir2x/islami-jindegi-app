@@ -45,6 +45,8 @@ class News extends ConsumerWidget {
               color: appColors.secondary,
               fontWeight: FontWeight.w700,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           SizedBox(width: isShortMobile ? 8 : 10),
           Container(
@@ -73,7 +75,8 @@ class News extends ConsumerWidget {
                 style: textTheme.labelSmall?.copyWith(
                   color: appColors.secondaryText,
                 ),
-                maxLines: 2,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               data: (resources) {
                 if (resources.isEmpty) {
@@ -82,7 +85,8 @@ class News extends ConsumerWidget {
                     style: textTheme.labelSmall?.copyWith(
                       color: appColors.secondaryText,
                     ),
-                    maxLines: 2,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   );
                 }
                 return CarouselSlider.builder(
@@ -103,7 +107,7 @@ class News extends ConsumerWidget {
                             color: appColors.primaryText,
                             height: 1.3,
                           ),
-                          maxLines: 2,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
