@@ -19,7 +19,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/theme/themes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:native_app/core/services/offline_db_prefetch_service.dart';
 import 'package:native_app/core/services/prayer_alarm_service.dart';
+import 'package:native_app/widgets/utils/offline_db_prefetch_banner.dart';
 
 import 'routes/index.dart';
 import 'firebase_options.dart';
@@ -137,17 +139,18 @@ Future<void> _primeHijriDateCache(SharedPreferences prefs) async {
   final int hijriAdjustment = prefs.getInt('hijriLocalAdjustment') ?? 0;
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day + hijriAdjustment);
-  final tomorrow =
-      DateTime(now.year, now.month, now.day + hijriAdjustment + 1);
+  final tomorrow = DateTime(now.year, now.month, now.day + hijriAdjustment + 1);
   final todayStr = _dateStr(today);
   final tomorrowStr = _dateStr(tomorrow);
 
   try {
-    final dio = Dio(BaseOptions(
-      baseUrl: '$backendUrl/api',
-      connectTimeout: const Duration(seconds: 5),
-      receiveTimeout: const Duration(seconds: 5),
-    ),);
+    final dio = Dio(
+      BaseOptions(
+        baseUrl: '$backendUrl/api',
+        connectTimeout: const Duration(seconds: 5),
+        receiveTimeout: const Duration(seconds: 5),
+      ),
+    );
 
     final results = await Future.wait([
       dio.get(
@@ -194,6 +197,10 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final prefs = ref.watch(preferencesProvider).value;
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(offlineDbPrefetchProvider.notifier).start();
+    });
+
     final banglaFont = prefs?.getString('banglaFont') ?? 'bangla/solaimanlipi';
     final arabicFont = prefs?.getString('arabicFont') ?? 'arabic/noorehuda';
     final locale = prefs?.getString('locale') ?? 'bn';
@@ -219,11 +226,22 @@ class MyApp extends ConsumerWidget {
           debugShowCheckedModeBanner: false,
           routerConfig: AppRoutes.router,
           builder: (context, child) {
+            final app = !kDebugMode
+                ? child ?? const SizedBox.shrink()
+                : DevicePreview.appBuilder(context, child);
+
+            final stack = Stack(
+              children: [
+                app,
+                const OfflineDbPrefetchBanner(),
+              ],
+            );
+
             if (!kDebugMode) {
-              return child ?? const SizedBox.shrink();
+              return stack;
             }
 
-            return DevicePreview.appBuilder(context, child);
+            return stack;
           },
           theme: selectedTheme,
           darkTheme: selectedDarkTheme,
