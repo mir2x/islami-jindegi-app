@@ -16,6 +16,8 @@ import 'book_offline_service.dart';
 final bookApiServiceProvider = Provider((ref) => BookApiService());
 final bookOfflineServiceProvider = Provider((ref) => BookOfflineService());
 
+const _chapterPageSize = 20;
+
 // ═══════════════════════════════════════════════════
 //  Connectivity
 // ═══════════════════════════════════════════════════
@@ -24,7 +26,8 @@ final _connectivityProvider = FutureProvider<bool>((ref) async {
   final result = await Connectivity().checkConnectivity();
   final isConnected = !result.contains(ConnectivityResult.none);
   debugPrint(
-      '[BookProviders] Connectivity check: $isConnected (results: $result)');
+    '[BookProviders] Connectivity check: $isConnected (results: $result)',
+  );
   return isConnected;
 });
 
@@ -32,9 +35,8 @@ final _connectivityProvider = FutureProvider<bool>((ref) async {
 //  Query params (filter/search state)
 // ═══════════════════════════════════════════════════
 
-final bookQueryParamsProvider =
-    StateNotifierProvider.autoDispose<BookQueryParamsNotifier,
-        Map<String, dynamic>>((ref) {
+final bookQueryParamsProvider = StateNotifierProvider.autoDispose<
+    BookQueryParamsNotifier, Map<String, dynamic>>((ref) {
   return BookQueryParamsNotifier();
 });
 
@@ -159,10 +161,13 @@ final bookDetailProvider =
       return book;
     } catch (e) {
       debugPrint('[bookDetailProvider] API error: $e');
-      debugPrint('[bookDetailProvider] Falling back to offline for book: $id');
+      debugPrint(
+        '[bookDetailProvider] Falling back to offline for book: $id',
+      );
       final offlineBook = await offline.findBookById(id);
       debugPrint(
-          '[bookDetailProvider] Offline result: ${offlineBook?.title ?? 'null'}');
+        '[bookDetailProvider] Offline result: ${offlineBook?.title ?? 'null'}',
+      );
       return offlineBook;
     }
   } else {
@@ -216,26 +221,31 @@ class ChapterListParams {
 final chapterListProvider = FutureProvider.autoDispose
     .family<List<BookChapter>, ChapterListParams>((ref, params) async {
   debugPrint(
-      '[chapterListProvider] Fetching chapters for bookId=${params.bookId} qty=${params.quantity} sort=${params.sort}');
+    '[chapterListProvider] Fetching chapters for bookId=${params.bookId} qty=${params.quantity} sort=${params.sort}',
+  );
   final isConnected = await ref.watch(_connectivityProvider.future);
   final api = ref.read(bookApiServiceProvider);
   final offline = ref.read(bookOfflineServiceProvider);
 
   if (isConnected) {
     try {
-      final chapters = await api.fetchChapters(
-        bookId: params.bookId,
-        quantity: params.quantity,
-        sort: params.sort,
-        position: params.position,
-        includeSubchapters: params.includeSubchapters,
-      );
+      final chapters = params.quantity == null && params.position == null
+          ? await _fetchAllChapters(api, params)
+          : await api.fetchChapters(
+              bookId: params.bookId,
+              quantity: params.quantity,
+              sort: params.sort,
+              position: params.position,
+              includeSubchapters: params.includeSubchapters,
+            );
       debugPrint(
-          '[chapterListProvider] API returned ${chapters.length} chapters');
+        '[chapterListProvider] API returned ${chapters.length} chapters',
+      );
       return chapters;
     } catch (e) {
       debugPrint(
-          '[chapterListProvider] API error: $e, falling back to offline');
+        '[chapterListProvider] API error: $e, falling back to offline',
+      );
       return await offline.queryChapters(
         bookId: params.bookId,
         quantity: params.quantity,
@@ -254,6 +264,34 @@ final chapterListProvider = FutureProvider.autoDispose
     );
   }
 });
+
+Future<List<BookChapter>> _fetchAllChapters(
+  BookApiService api,
+  ChapterListParams params,
+) async {
+  final chapters = <BookChapter>[];
+  var page = 1;
+
+  while (true) {
+    final pageChapters = await api.fetchChapters(
+      bookId: params.bookId,
+      page: page,
+      perPage: _chapterPageSize,
+      sort: params.sort,
+      includeSubchapters: params.includeSubchapters,
+    );
+
+    chapters.addAll(pageChapters);
+
+    if (pageChapters.length < _chapterPageSize) {
+      break;
+    }
+
+    page++;
+  }
+
+  return chapters;
+}
 
 /// Fetch a single chapter by ID.
 final chapterDetailProvider =

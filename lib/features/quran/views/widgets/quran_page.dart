@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/features/quran/views/widgets/page_info_overlay.dart';
@@ -83,7 +82,11 @@ class _QuranPageState extends ConsumerState<QuranPage> {
       // (buttons always reset pan so you see the full page at new scale)
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        _controller.value = Matrix4.diagonal3Values(targetScale, targetScale, 1.0);
+        _controller.value = Matrix4.diagonal3Values(
+          targetScale,
+          targetScale,
+          1.0,
+        );
       });
     }
 
@@ -97,14 +100,17 @@ class _QuranPageState extends ConsumerState<QuranPage> {
         ? const <AyahBox>[]
         : ref.watch(boxesForPageProvider(pageNumber));
     final notifier = ref.read(selectedAyahProvider.notifier);
-    final imgFile =
-        File('${widget.editionDir.path}/qm${widget.pageIndex + 1}.${widget.imageExt}');
+    final imgFile = File(
+      '${widget.editionDir.path}/qm${widget.pageIndex + 1}.${widget.imageExt}',
+    );
 
     final bool isSelectedAyahOnThisPage = selectedState != null &&
         pageNumber != -1 &&
-        boxes.any((box) =>
-            box.suraNumber == selectedState.suraNumber &&
-            box.ayahNumber == selectedState.ayahNumber);
+        boxes.any(
+          (box) =>
+              box.suraNumber == selectedState.suraNumber &&
+              box.ayahNumber == selectedState.ayahNumber,
+        );
 
     final bool showMenuOnThisPage = selectedState != null &&
         selectedState.source == AyahSelectionSource.tap &&
@@ -125,9 +131,11 @@ class _QuranPageState extends ConsumerState<QuranPage> {
 
           if (selectedState != null && isSelectedAyahOnThisPage) {
             final boxesForAyah = boxes
-                .where((box) =>
-                    box.suraNumber == selectedState.suraNumber &&
-                    box.ayahNumber == selectedState.ayahNumber)
+                .where(
+                  (box) =>
+                      box.suraNumber == selectedState.suraNumber &&
+                      box.ayahNumber == selectedState.ayahNumber,
+                )
                 .toList();
 
             if (boxesForAyah.isNotEmpty) {
@@ -161,7 +169,7 @@ class _QuranPageState extends ConsumerState<QuranPage> {
               // ── Zoomable content ──────────────────────────────────────
               InteractiveViewer(
                 transformationController: _controller,
-                boundaryMargin: EdgeInsets.all(double.infinity),
+                boundaryMargin: const EdgeInsets.all(double.infinity),
                 minScale: 1.0,
                 maxScale: 3.0,
                 panEnabled: _getScale() > 1.05,
@@ -174,7 +182,10 @@ class _QuranPageState extends ConsumerState<QuranPage> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.file(imgFile, fit: BoxFit.fill),
+                    ColoredBox(
+                      color: Colors.white,
+                      child: Image.file(imgFile, fit: BoxFit.fill),
+                    ),
                     CustomPaint(
                       painter: AyahHighlighter(
                         highlightRects,

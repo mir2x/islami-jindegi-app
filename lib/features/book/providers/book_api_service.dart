@@ -13,10 +13,12 @@ class BookApiService {
   late final Dio _dio;
 
   BookApiService() {
-    _dio = Dio(BaseOptions(
-      baseUrl: '${dotenv.env['API_HOST_NAME']}/api',
-      headers: {'Accept': 'application/vnd.api+json'},
-    ));
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: '${dotenv.env['API_HOST_NAME']}/api',
+        headers: {'Accept': 'application/vnd.api+json'},
+      ),
+    );
   }
 
   // ───────────────────── Books ─────────────────────
@@ -43,7 +45,8 @@ class BookApiService {
 
     final response = await _dio.get('/books', queryParameters: params);
     debugPrint(
-        '[BookApiService] fetchBooks response status: ${response.statusCode}');
+      '[BookApiService] fetchBooks response status: ${response.statusCode}',
+    );
     return _parseBooksResponse(response.data);
   }
 
@@ -54,7 +57,8 @@ class BookApiService {
 
     final response = await _dio.get('/books/$id', queryParameters: params);
     debugPrint(
-        '[BookApiService] fetchBook($id) response status: ${response.statusCode}');
+      '[BookApiService] fetchBook($id) response status: ${response.statusCode}',
+    );
     return _parseSingleBookResponse(response.data);
   }
 
@@ -62,6 +66,8 @@ class BookApiService {
 
   Future<List<BookChapter>> fetchChapters({
     required String bookId,
+    int? page,
+    int? perPage,
     int? quantity,
     String? sort,
     int? position,
@@ -69,6 +75,8 @@ class BookApiService {
   }) async {
     final params = <String, dynamic>{
       'bookId': bookId,
+      if (page != null) 'page': page,
+      if (perPage != null) 'per_page': perPage,
       if (quantity != null) 'quantity': quantity,
       if (sort != null) 'sort': sort,
       if (position != null) 'position': position,
@@ -101,8 +109,10 @@ class BookApiService {
     return _parseSubchaptersResponse(response.data);
   }
 
-  Future<BookSubchapter> fetchSubchapter(String id,
-      {bool includeChapter = false}) async {
+  Future<BookSubchapter> fetchSubchapter(
+    String id, {
+    bool includeChapter = false,
+  }) async {
     final params = <String, dynamic>{
       if (includeChapter) 'include': 'chapter',
     };
@@ -247,8 +257,10 @@ class BookApiService {
           .map((s) => BookSubchapter.fromJsonApi(s!))
           .toList();
 
-      return BookChapter.fromJsonApi(resource,
-          resolvedSubchapters: subchapters);
+      return BookChapter.fromJsonApi(
+        resource,
+        resolvedSubchapters: subchapters,
+      );
     }).toList();
   }
 
@@ -319,8 +331,10 @@ class BookApiService {
           .map((s) => BookSubcategory.fromJsonApi(s!))
           .toList();
 
-      return BookCategory.fromJsonApi(resource,
-          resolvedSubcategories: subcategories);
+      return BookCategory.fromJsonApi(
+        resource,
+        resolvedSubcategories: subcategories,
+      );
     }).toList();
   }
 }
