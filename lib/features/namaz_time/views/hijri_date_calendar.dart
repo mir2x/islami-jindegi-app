@@ -47,8 +47,8 @@ class HijriDateCalendar extends ConsumerWidget {
                         ..hYear = 1500
                         ..hMonth = 1
                         ..hDay = 1,
-                      onChanged: (HijriCalendar value) {
-                        onUpdate(value);
+                      onChanged: (HijriCalendar value, DateTime gregorian) {
+                        onUpdate(value, gregorian);
                         Navigator.of(context).pop();
                       },
                     ),

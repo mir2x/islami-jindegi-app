@@ -223,7 +223,11 @@ Map<String, dynamic>? _readCachedHijriData(
 
   try {
     final decoded = jsonDecode(raw) as Map<String, dynamic>;
-    return decoded['date'] == expectedDate ? decoded : null;
+    if (decoded['date'] != expectedDate) return null;
+    final cachedCountry = decoded['countryCode'] as String?;
+    final currentCountry = prefs.getString('countryCode');
+    if (cachedCountry != null && currentCountry != null && cachedCountry != currentCountry) return null;
+    return decoded;
   } catch (_) {
     return null;
   }

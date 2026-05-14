@@ -28,7 +28,10 @@ class BdHijriMonthPicker extends StatefulWidget {
 
   final Map settings;
   final HijriCalendar selectedDate;
-  final ValueChanged<HijriCalendar> onChanged;
+  // Passes both the BD Hijri date and the exact Gregorian date (derived from
+  // the backend's gregorianStartDate, so it is correct across month boundaries
+  // where BD and SA month lengths differ).
+  final void Function(HijriCalendar hijri, DateTime gregorian) onChanged;
   final HijriCalendar firstDate;
   final HijriCalendar lastDate;
 
@@ -275,7 +278,7 @@ class _BdHijriMonthGrid extends StatelessWidget {
   final HijriCalendar today;
   final HijriCalendar firstDate;
   final HijriCalendar lastDate;
-  final ValueChanged<HijriCalendar> onChanged;
+  final void Function(HijriCalendar hijri, DateTime gregorian) onChanged;
   final Future<_BdHijriMonthData?> monthDataFuture;
   final VoidCallback onRetry;
 
@@ -406,9 +409,11 @@ class _BdHijriMonthGrid extends StatelessWidget {
                   );
 
                   if (!disabled) {
+                    final gregorian = monthData.gregorianStartDate
+                        .add(Duration(days: d - 1));
                     cell = GestureDetector(
                       behavior: HitTestBehavior.opaque,
-                      onTap: () => onChanged(date),
+                      onTap: () => onChanged(date, gregorian),
                       child: cell,
                     );
                   }

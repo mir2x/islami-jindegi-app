@@ -94,11 +94,10 @@ class _DatesPrayersState extends ConsumerState<DatesPrayers> {
               ..hYear = 1500
               ..hMonth = 1
               ..hDay = 1,
-            onChanged: (HijriCalendar value) {
+            onChanged: (HijriCalendar value, DateTime gregorian) {
               Navigator.of(ctx).pop();
-              final gregorian = displayHijriToGregorian(settings, value);
               if (context.mounted) {
-                context.push('/namaz-times', extra: gregorian);
+                context.push('/namaz-times', extra: {'date': gregorian, 'hijri': value});
               }
             },
           ),

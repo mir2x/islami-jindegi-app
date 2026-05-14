@@ -9,7 +9,6 @@ import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/helpers/adjusted_hijri_date.dart'
     show
         adjustedHijriDate,
-        displayHijriToGregorian,
         gregorianToDisplayHijri;
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/theme/app_theme_color.dart';
@@ -19,9 +18,10 @@ import 'package:native_app/widgets/calendar/gregorian_month_picker.dart';
 import 'namaz_time_items.dart';
 
 class NamazTimes extends ConsumerWidget {
-  const NamazTimes({super.key, this.initialDate});
+  const NamazTimes({super.key, this.initialDate, this.initialHijriDate});
 
   final DateTime? initialDate;
+  final HijriCalendar? initialHijriDate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -58,13 +58,14 @@ class NamazTimes extends ConsumerWidget {
                 },
                 isHijriLoading: true,
                 initialDate: initialDate,
+                initialHijriDate: initialHijriDate,
               );
             },
           );
         },
         error: (error, _) => Text(error.toString()),
         data: (settings) {
-          return NamazTimesPage(settings: settings, initialDate: initialDate);
+          return NamazTimesPage(settings: settings, initialDate: initialDate, initialHijriDate: initialHijriDate);
         },
       ),
     );
@@ -77,11 +78,13 @@ class NamazTimesPage extends ConsumerStatefulWidget {
     required this.settings,
     this.isHijriLoading = false,
     this.initialDate,
+    this.initialHijriDate,
   });
 
   final Map settings;
   final bool isHijriLoading;
   final DateTime? initialDate;
+  final HijriCalendar? initialHijriDate;
 
   @override
   NamazTimesPageState createState() => NamazTimesPageState();
@@ -96,6 +99,9 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
     super.initState();
     if (widget.initialDate != null) {
       _selectedGregorianDate = widget.initialDate;
+    }
+    if (widget.initialHijriDate != null) {
+      _selectedHijriDate = widget.initialHijriDate;
     }
   }
 
@@ -172,13 +178,10 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
               ..hYear = 1500
               ..hMonth = 1
               ..hDay = 1,
-            onChanged: (HijriCalendar value) {
+            onChanged: (HijriCalendar value, DateTime gregorian) {
               setState(() {
                 _selectedHijriDate = value;
-                _selectedGregorianDate = displayHijriToGregorian(
-                  settings,
-                  value,
-                );
+                _selectedGregorianDate = gregorian;
               });
               Navigator.of(ctx).pop();
             },
@@ -213,9 +216,13 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final HijriCalendar? selectedHijriDate = _selectedGregorianDate != null
-        ? gregorianToDisplayHijri(widget.settings, _selectedGregorianDate!)
-        : _selectedHijriDate;
+    // Prefer _selectedHijriDate (set directly by the BD Hijri picker — correct).
+    // Fall back to gregorianToDisplayHijri only when using the Gregorian picker,
+    // where _selectedHijriDate is cleared to null.
+    final HijriCalendar? selectedHijriDate = _selectedHijriDate ??
+        (_selectedGregorianDate != null
+            ? gregorianToDisplayHijri(widget.settings, _selectedGregorianDate!)
+            : null);
 
     return ItemContent(
       fullWidth: true,

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hijri/hijri_calendar.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
 import 'package:native_app/features/quran/views/quran_viewer_screen.dart';
 import 'package:native_app/features/quran_catalogue/views/quran_catalogue_screen.dart';
@@ -245,9 +246,21 @@ class AppRoutes {
       ),
       GoRoute(
         path: '/namaz-times',
-        builder: (_, state) => NamazTimes(
-          initialDate: state.extra is DateTime ? state.extra as DateTime : null,
-        ),
+        builder: (_, state) {
+          final extra = state.extra;
+          DateTime? initialDate;
+          HijriCalendar? initialHijriDate;
+          if (extra is DateTime) {
+            initialDate = extra;
+          } else if (extra is Map) {
+            initialDate = extra['date'] as DateTime?;
+            initialHijriDate = extra['hijri'] as HijriCalendar?;
+          }
+          return NamazTimes(
+            initialDate: initialDate,
+            initialHijriDate: initialHijriDate,
+          );
+        },
       ),
       GoRoute(
         path: '/namaz-times/settings',

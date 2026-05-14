@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -95,27 +96,43 @@ Future<String> getFailSafeTimezone() async {
 }
 
 Map<String, String>? _countryTimezoneCache;
+Map<String, String>? _countryNameToCodeCache;
 
-Future<String> timezoneFromCountryCode(String isoCode) async {
-  if (_countryTimezoneCache == null) {
-    try {
-      final raw = await rootBundle.loadString(
-        'packages/country_state_city/lib/assets/country.json',
-      );
-      final list = jsonDecode(raw) as List;
-      _countryTimezoneCache = {};
-      for (final item in list) {
-        final code = item['isoCode'] as String?;
-        final zones = item['timezones'] as List?;
-        if (code != null && zones != null && zones.isNotEmpty) {
+/// Loads country.json once and populates both caches.
+Future<void> _ensureCountryCache() async {
+  if (_countryTimezoneCache != null && _countryNameToCodeCache != null) return;
+  try {
+    final raw = await rootBundle.loadString(
+      'packages/country_state_city/lib/assets/country.json',
+    );
+    final list = jsonDecode(raw) as List;
+    _countryTimezoneCache = {};
+    _countryNameToCodeCache = {};
+    for (final item in list) {
+      final code = item['isoCode'] as String?;
+      final name = item['name'] as String?;
+      final zones = item['timezones'] as List?;
+      if (code != null) {
+        if (name != null) _countryNameToCodeCache![name.toLowerCase()] = code;
+        if (zones != null && zones.isNotEmpty) {
           _countryTimezoneCache![code] = zones.first['zoneName'] as String? ?? '';
         }
       }
-    } catch (_) {
-      return '';
     }
-  }
-  return _countryTimezoneCache![isoCode] ?? '';
+  } catch (_) {}
+}
+
+Future<String> timezoneFromCountryCode(String isoCode) async {
+  await _ensureCountryCache();
+  return _countryTimezoneCache?[isoCode] ?? '';
+}
+
+/// Resolves an ISO country code from a country name (e.g. "Bangladesh" → "BD").
+/// Returns empty string if not found.
+Future<String> _isoCodeFromCountryName(String? name) async {
+  if (name == null || name.isEmpty) return '';
+  await _ensureCountryCache();
+  return _countryNameToCodeCache?[name.toLowerCase()] ?? '';
 }
 
 Future<Map> getLocation(Position position) async {
@@ -142,10 +159,26 @@ Future<Map> getLocation(Position position) async {
       country = 'ফিলিস্তিন';
     }
 
+    // Three-tier fallback for countryCode:
+    //   1. placemark.isoCountryCode  (direct from geocoder — most reliable)
+    //   2. name lookup via country_state_city JSON (geocoder sometimes omits code)
+    //   3. previously stored countryCode                (last resort)
+    String isoCode = placemark.isoCountryCode ?? '';
+    if (isoCode.isEmpty) {
+      isoCode = await _isoCodeFromCountryName(placemark.country);
+      debugPrint('[Hijri][getLocation] isoCountryCode was empty; '
+          'name-lookup for "${placemark.country}" → "$isoCode"');
+    }
+    if (isoCode.isEmpty) {
+      isoCode = preferences.getString('countryCode') ?? '';
+      debugPrint('[Hijri][getLocation] name-lookup failed; '
+          'using stored countryCode="$isoCode"');
+    }
+
     return {
       'city': placemark.locality,
       'country': country,
-      'countryCode': placemark.isoCountryCode,
+      'countryCode': isoCode.isNotEmpty ? isoCode : null,
     };
   } catch (error) {
     return await getFailSafeLocation();
@@ -164,7 +197,16 @@ Future setLocation(Map location) async {
   }
 
   if (preferences.getString('countryCode') != location['countryCode']) {
+    debugPrint('[Hijri][setLocation] countryCode changed: '
+        '${preferences.getString('countryCode')} → ${location['countryCode']}. '
+        'Clearing Hijri cache.');
     preferences.setString('countryCode', location['countryCode']);
+    // Hijri date is country-specific — stale cache from another country must not
+    // survive a location switch.
+    preferences.remove('hijriDataToday');
+    preferences.remove('hijriDataTomorrow');
+  } else {
+    debugPrint('[Hijri][setLocation] countryCode unchanged: ${location['countryCode']}. Cache kept.');
   }
 
   if (preferences.getString('city') != location['city']) {
@@ -307,9 +349,13 @@ class GeolocationNotifier extends AsyncNotifier<Map> {
     }
 
     var location = await getLocation(position);
+    debugPrint('[Hijri][updateCoordinates] GPS location resolved: '
+        'city=${location['city']}, country=${location['country']}, '
+        'countryCode=${location['countryCode']}');
     String timezone = '';
 
     await updatePreferences(location, position, timezone);
+    debugPrint('[Hijri][updateCoordinates] updatePreferences done. Setting state with countryCode=${location['countryCode']}');
 
     state = AsyncValue.data({
       'coordinates': {
@@ -320,6 +366,7 @@ class GeolocationNotifier extends AsyncNotifier<Map> {
       'timezone': timezone,
       'isGeolocated': true,
     });
+    debugPrint('[Hijri][updateCoordinates] geolocationProvider state updated.');
   }
 
   Future<dynamic> updateGeolocation() async {
