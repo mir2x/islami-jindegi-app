@@ -22,6 +22,7 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
   final ItemScrollController _itemScrollController = ItemScrollController();
   int? _highlightedSuraNumber;
   late TabController _tabController;
+  int? _handlingSuraNumber;
 
   @override
   void initState() {
@@ -40,18 +41,7 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
     // Listen to the lastViewedSuraProvider for changes
     ref.listen<int?>(lastViewedSuraProvider, (previous, next) {
       if (next != null) {
-        // Switch to sura tab if not already there
-        if (_tabController.index != 0) {
-          _tabController.animateTo(0);
-        }
-        // Delay scroll to allow tab switch
-        Future.delayed(const Duration(milliseconds: 100), () {
-          _scrollAndHighlight(next);
-        });
-        // Clear the provider state after handling
-        Future(() {
-          ref.read(lastViewedSuraProvider.notifier).state = null;
-        });
+        _handleLastViewedSura(next);
       }
     });
 
@@ -59,15 +49,7 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
     final lastViewedSura = ref.watch(lastViewedSuraProvider);
     if (lastViewedSura != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_tabController.index != 0) {
-          _tabController.animateTo(0);
-        }
-        Future.delayed(const Duration(milliseconds: 100), () {
-          _scrollAndHighlight(lastViewedSura);
-        });
-        Future(() {
-          ref.read(lastViewedSuraProvider.notifier).state = null;
-        });
+        _handleLastViewedSura(lastViewedSura);
       });
     }
 
@@ -154,24 +136,70 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
   void _scrollAndHighlight(int suraNumber) {
     final scrollIndex = suraNumber - 1;
 
-    if (_itemScrollController.isAttached &&
-        scrollIndex >= 0 &&
-        scrollIndex < allSuras.length) {
-      _itemScrollController.scrollTo(
-        index: scrollIndex,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-        alignment: 0.3,
-      );
-
-      // Trigger highlight animation after scroll completes
-      Future.delayed(const Duration(milliseconds: 550), () {
-        if (mounted) {
-          setState(() {
-            _highlightedSuraNumber = suraNumber;
-          });
-        }
-      });
+    if (!_itemScrollController.isAttached ||
+        scrollIndex < 0 ||
+        scrollIndex >= allSuras.length) {
+      return;
     }
+
+    _itemScrollController.scrollTo(
+      index: scrollIndex,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+      alignment: 0.3,
+    );
+
+    // Trigger highlight animation after scroll completes
+    Future.delayed(const Duration(milliseconds: 550), () {
+      if (!mounted) return;
+      setState(() {
+        _highlightedSuraNumber = suraNumber;
+      });
+      if (ref.read(lastViewedSuraProvider) == suraNumber) {
+        ref.read(lastViewedSuraProvider.notifier).state = null;
+      }
+      if (_handlingSuraNumber == suraNumber) {
+        _handlingSuraNumber = null;
+      }
+    });
+  }
+
+  void _handleLastViewedSura(int suraNumber) {
+    if (!mounted || _handlingSuraNumber == suraNumber) return;
+    _handlingSuraNumber = suraNumber;
+
+    if (_tabController.index != 0) {
+      _tabController.animateTo(0);
+    }
+
+    _tryScrollAndHighlight(suraNumber);
+  }
+
+  void _tryScrollAndHighlight(int suraNumber, {int attempt = 0}) {
+    if (!mounted || _handlingSuraNumber != suraNumber) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _handlingSuraNumber != suraNumber) return;
+
+      if (_itemScrollController.isAttached) {
+        _scrollAndHighlight(suraNumber);
+        return;
+      }
+
+      if (attempt >= 12) {
+        setState(() {
+          _highlightedSuraNumber = suraNumber;
+        });
+        if (ref.read(lastViewedSuraProvider) == suraNumber) {
+          ref.read(lastViewedSuraProvider.notifier).state = null;
+        }
+        _handlingSuraNumber = null;
+        return;
+      }
+
+      Future.delayed(const Duration(milliseconds: 80), () {
+        _tryScrollAndHighlight(suraNumber, attempt: attempt + 1);
+      });
+    });
   }
 }

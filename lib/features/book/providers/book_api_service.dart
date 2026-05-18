@@ -13,10 +13,27 @@ class BookApiService {
   late final Dio _dio;
 
   BookApiService() {
+    final baseUrl = '${dotenv.env['API_HOST_NAME']}/api';
     _dio = Dio(
       BaseOptions(
-        baseUrl: '${dotenv.env['API_HOST_NAME']}/api',
+        baseUrl: baseUrl,
         headers: {'Accept': 'application/vnd.api+json'},
+      ),
+    );
+    debugPrint('[BookApiService] baseUrl=$baseUrl');
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          debugPrint('[BookApiService] → ${options.method} ${options.uri}');
+          handler.next(options);
+        },
+        onError: (DioException e, handler) {
+          debugPrint('[BookApiService] ✗ ${e.type.name} status=${e.response?.statusCode}');
+          debugPrint('[BookApiService]   url=${e.requestOptions.uri}');
+          debugPrint('[BookApiService]   responseHeaders=${e.response?.headers.map}');
+          debugPrint('[BookApiService]   responseBody=${e.response?.data}');
+          handler.next(e);
+        },
       ),
     );
   }
@@ -215,6 +232,9 @@ class BookApiService {
 
   List<Book> _parseBooksResponse(Map<String, dynamic> json) {
     final dataList = json['data'] as List? ?? [];
+    if (dataList.isNotEmpty) {
+      debugPrint('[BookApiService] first book raw: ${dataList.first}');
+    }
     final included = _buildIncludedMap(json['included']);
 
     return dataList.map((resource) {

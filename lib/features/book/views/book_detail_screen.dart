@@ -17,7 +17,6 @@ import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
-import 'package:native_app/widgets/buttons/download.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/presentation/connect_to_internet.dart';
@@ -166,7 +165,8 @@ class _BookContent extends ConsumerWidget {
         });
         if (chapters.isNotEmpty) {
           return AppScaffold(
-            onBackPressed: () async => context.canPop() ? context.pop() : context.go('/books'),
+            onBackPressed: () async =>
+                context.canPop() ? context.pop() : context.go('/books'),
             showPattern: false,
             title: Text(book.title),
             body: NextPageSwipe(
@@ -347,6 +347,7 @@ class _BookContent extends ConsumerWidget {
                                 child: ListView.builder(
                                   key: PageStorageKey<String>(book.id),
                                   physics: const BouncingScrollPhysics(),
+                                  padding: const EdgeInsets.only(bottom: 64),
                                   itemCount: resources.length,
                                   itemBuilder: buildChapterItem,
                                 ),
@@ -423,7 +424,8 @@ class _BookContent extends ConsumerWidget {
           double screenWidth = MediaQuery.of(context).size.width;
 
           return AppScaffold(
-            onBackPressed: () async => context.canPop() ? context.pop() : context.go('/books'),
+            onBackPressed: () async =>
+                context.canPop() ? context.pop() : context.go('/books'),
             showPattern: false,
             title: Text(book.title),
             body: SingleChildScrollView(
@@ -699,7 +701,9 @@ class _SubchaptersState extends ConsumerState<_Subchapters> {
                           fit: BoxFit.scaleDown,
                           width: 20,
                           colorFilter: ColorFilter.mode(
-                            Theme.of(context).extension<AppThemeColors>()!.primary,
+                            Theme.of(context)
+                                .extension<AppThemeColors>()!
+                                .primary,
                             BlendMode.srcIn,
                           ),
                         )
@@ -708,7 +712,9 @@ class _SubchaptersState extends ConsumerState<_Subchapters> {
                           fit: BoxFit.scaleDown,
                           width: 20,
                           colorFilter: ColorFilter.mode(
-                            Theme.of(context).extension<AppThemeColors>()!.primary,
+                            Theme.of(context)
+                                .extension<AppThemeColors>()!
+                                .primary,
                             BlendMode.srcIn,
                           ),
                         ),
@@ -733,8 +739,11 @@ class _SubchaptersState extends ConsumerState<_Subchapters> {
                       widget.chapter.subchapters.length,
                       (subIdx) {
                         final subchapter = widget.chapter.subchapters[subIdx];
-                        final isLastSub = subIdx == widget.chapter.subchapters.length - 1;
-                        final dividerColor = Theme.of(context).extension<AppThemeColors>()!.divider;
+                        final isLastSub =
+                            subIdx == widget.chapter.subchapters.length - 1;
+                        final dividerColor = Theme.of(context)
+                            .extension<AppThemeColors>()!
+                            .divider;
                         return InkWell(
                           onTap: () => context.push(
                             '/books/${widget.book.id}/subchapters/${subchapter.id}',

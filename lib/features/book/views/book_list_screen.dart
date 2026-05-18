@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -224,6 +225,11 @@ class _BookListScreenState extends ConsumerState<BookListScreen> {
                       return books;
                     } catch (e) {
                       debugPrint('[BookListScreen] API error: $e');
+                      if (e is DioException) {
+                        debugPrint('[BookListScreen]   type=${e.type.name} status=${e.response?.statusCode}');
+                        debugPrint('[BookListScreen]   url=${e.requestOptions.uri}');
+                        debugPrint('[BookListScreen]   responseBody=${e.response?.data}');
+                      }
                       debugPrint('[BookListScreen] Falling back to offline...');
                       try {
                         final offlineBooks = await offline.queryBooks(

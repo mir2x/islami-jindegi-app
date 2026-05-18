@@ -1,8 +1,8 @@
 import 'package:adhan/adhan.dart';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timezone/timezone.dart' as tz;
 
 /// Returns how many columns to shift weekday labels in HijriMonthPicker so
 /// that day numbers align with real-world weekdays for the user's country.
@@ -98,7 +98,9 @@ HijriCalendar gregorianToDisplayHijri(
 
 HijriCalendar adjustedHijriDate(Map settings) {
   final now = DateTime.now();
-  final bool pastMaghrib = _isPastMaghrib(settings, now);
+  final maghrib = getMaghribTime(settings, now);
+  final bool pastMaghrib = maghrib != null && now.isAfter(maghrib);
+  debugPrint('[Hijri][adjustedHijriDate] now=$now, maghrib=$maghrib, pastMaghrib=$pastMaghrib');
   final prefs = settings['preferences'] as SharedPreferences?;
 
   final todayData = settings['hijriDataToday'];
@@ -108,10 +110,12 @@ HijriCalendar adjustedHijriDate(Map settings) {
   final cachedTomorrowData =
       prefs != null ? _readCachedHijriData(prefs, offsetDays: 1) : null;
 
-  // Pick tomorrow's data after Maghrib (Islamic day already changed), else today's.
+  // After Maghrib use only tomorrow's data; never fall back to today's data
+  // here — the legacy sunsetShift=1 fallback below handles the no-data case.
   final hijriData = pastMaghrib
-      ? (tomorrowData ?? cachedTomorrowData ?? todayData ?? cachedTodayData)
+      ? (tomorrowData ?? cachedTomorrowData)
       : (todayData ?? cachedTodayData);
+  debugPrint('[Hijri][adjustedHijriDate] tomorrowData day=${tomorrowData?['hijri_day']}, hijriData day=${hijriData?['hijri_day']}');
 
   if (hijriData != null) {
     final cal = HijriCalendar();
@@ -138,10 +142,18 @@ HijriCalendar _shiftHijriByDays(HijriCalendar date, int days) {
   return HijriCalendar.fromDate(shiftedGregorian);
 }
 
-bool _isPastMaghrib(Map settings, DateTime now) {
+/// Returns the Maghrib time for [date] as a UTC [DateTime], or null if it
+/// cannot be calculated.
+///
+/// The adhan package, when given utcOffset, stores the offset-adjusted hours
+/// inside a UTC DateTime — e.g. Dhaka Maghrib 12:36 UTC becomes
+/// DateTime.utc(…,18,36), shifting the epoch 6 h forward. Omitting utcOffset
+/// keeps the returned DateTime in true UTC so that isAfter(DateTime.now())
+/// works correctly regardless of the device timezone.
+DateTime? getMaghribTime(Map settings, DateTime date) {
   final coordinates = settings['coordinates'];
   final preferences = settings['preferences'];
-  if (coordinates == null || preferences == null) return false;
+  if (coordinates == null || preferences == null) return null;
 
   try {
     final coords = Coordinates(
@@ -154,26 +166,17 @@ bool _isPastMaghrib(Map settings, DateTime now) {
     final params = _calculationMethod(method);
     params.adjustments.maghrib = prefs.getInt('maghrib') ?? 3;
 
-    final String timezone = settings['timezone'] ?? '';
-    Duration? utcOffset;
-    if (timezone.isNotEmpty) {
-      try {
-        final location = tz.getLocation(timezone);
-        final tzDate = tz.TZDateTime(location, now.year, now.month, now.day);
-        utcOffset = tzDate.timeZoneOffset;
-      } catch (_) {}
-    }
-
+    // No utcOffset — adhan returns a true UTC DateTime whose epoch is correct
+    // for direct comparison with DateTime.now().
     final prayerTimes = PrayerTimes(
       coords,
-      DateComponents(now.year, now.month, now.day),
+      DateComponents(date.year, date.month, date.day),
       params,
-      utcOffset: utcOffset,
     );
 
-    return now.isAfter(prayerTimes.maghrib);
+    return prayerTimes.maghrib;
   } catch (_) {
-    return false;
+    return null;
   }
 }
 

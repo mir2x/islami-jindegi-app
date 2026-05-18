@@ -166,13 +166,9 @@ Future<Map> getLocation(Position position) async {
     String isoCode = placemark.isoCountryCode ?? '';
     if (isoCode.isEmpty) {
       isoCode = await _isoCodeFromCountryName(placemark.country);
-      debugPrint('[Hijri][getLocation] isoCountryCode was empty; '
-          'name-lookup for "${placemark.country}" → "$isoCode"');
     }
     if (isoCode.isEmpty) {
       isoCode = preferences.getString('countryCode') ?? '';
-      debugPrint('[Hijri][getLocation] name-lookup failed; '
-          'using stored countryCode="$isoCode"');
     }
 
     return {
