@@ -252,7 +252,7 @@ class PrayerAlarmService {
       await prefs.setInt(_afterKey(prayerKey), 0);
     } else if (mode == reminderModeAfter) {
       final currentAfter = prefs.getInt(_afterKey(prayerKey)) ?? 0;
-      await prefs.setInt(_afterKey(prayerKey), currentAfter);
+      await prefs.setInt(_afterKey(prayerKey), currentAfter == 0 ? 10 : currentAfter);
       await prefs.setInt(_beforeKey(prayerKey), 0);
     }
 

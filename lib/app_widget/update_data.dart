@@ -169,8 +169,9 @@ Future<bool> updateData() async {
   // Reschedule prayer alarms for today
   try {
     await PrayerAlarmService.scheduleAllAlarms();
-  } catch (_) {
-    // Alarm scheduling may fail in background isolate
+    debugPrint('[BackgroundTask] scheduleAllAlarms() completed');
+  } catch (e, st) {
+    debugPrint('[BackgroundTask] scheduleAllAlarms() failed: $e\n$st');
   }
 
   return true;

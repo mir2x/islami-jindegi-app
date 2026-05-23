@@ -87,7 +87,7 @@ final bengaliFontProvider =
 
 // Bengali Font Size Provider
 class BengaliFontSizeNotifier extends StateNotifier<double> {
-  BengaliFontSizeNotifier() : super(16.0) {
+  BengaliFontSizeNotifier() : super(14.0) {
     _loadFromPrefs();
   }
 

@@ -726,7 +726,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                                   initialScrollIndex: _resolvedScrollIndex ?? 0,
                                   padding: const EdgeInsets.only(
                                     left: 4,
-                                    right: 44,
+                                    right: 30,
                                     bottom: 80,
                                   ),
                                   itemBuilder: (context, index) {
@@ -874,10 +874,10 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     return Stack(
       children: [
         Positioned(
-          right: 20,
+          right: 12,
           top: trackTop,
           child: Container(
-            width: 6,
+            width: 3,
             height: trackHeight,
             decoration: BoxDecoration(
               color: colors.divider.withValues(alpha: 0.4),
@@ -888,7 +888,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
         Positioned(
           right: 0,
           top: trackTop,
-          width: 56,
+          width: 38,
           height: trackHeight,
           child: GestureDetector(
             behavior: HitTestBehavior.translucent,
@@ -929,8 +929,8 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                   top: top - trackTop,
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 120),
-                    width: _isDraggingScrollThumb ? 42 : 26,
-                    height: _isDraggingScrollThumb ? thumbHeight : 44,
+                    width: _isDraggingScrollThumb ? 32 : 16,
+                    height: _isDraggingScrollThumb ? thumbHeight : 32,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [

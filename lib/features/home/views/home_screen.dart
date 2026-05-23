@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import 'package:upgrader/upgrader.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
@@ -10,8 +12,37 @@ import 'resource.dart';
 import 'malfuzat_popup.dart';
 import 'news.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    super.initState();
+    if (Platform.isAndroid) {
+      _checkForAndroidUpdate();
+    }
+  }
+
+  Future<void> _checkForAndroidUpdate() async {
+    try {
+      final info = await InAppUpdate.checkForUpdate();
+      if (!mounted) return;
+      if (info.updateAvailability == UpdateAvailability.updateAvailable) {
+        final result = await InAppUpdate.performImmediateUpdate();
+        // Immediate mode should block, but if somehow dismissed, re-trigger
+        if (mounted && result != AppUpdateResult.success) {
+          _checkForAndroidUpdate();
+        }
+      }
+    } catch (e) {
+      debugPrint('[InAppUpdate] $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,8 +111,52 @@ class Home extends StatelessWidget {
                   width: 150,
                   height: 25,
                 ),
-          body: UpgradeAlert(
-            child: Column(
+          body: Platform.isIOS
+              ? UpgradeAlert(
+                  upgrader: Upgrader(
+                    durationUntilAlertAgain: Duration.zero,
+                  ),
+                  showLater: false,
+                  showIgnore: false,
+                  barrierDismissible: false,
+                  shouldPopScope: () => false,
+                  child: _buildContent(
+                    context,
+                    locales,
+                    sideMargin,
+                    isShortMobile,
+                    isVeryShortMobile,
+                    homeHeroBg,
+                    homeContentBg,
+                    heroAppColors,
+                  ),
+                )
+              : _buildContent(
+                  context,
+                  locales,
+                  sideMargin,
+                  isShortMobile,
+                  isVeryShortMobile,
+                  homeHeroBg,
+                  homeContentBg,
+                  heroAppColors,
+                ),
+        );
+      },
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    dynamic locales,
+    double sideMargin,
+    bool isShortMobile,
+    bool isVeryShortMobile,
+    Color homeHeroBg,
+    Color homeContentBg,
+    AppThemeColors heroAppColors,
+  ) {
+    return Column(
               children: [
                 // ── Hero ──────────────────────────────────────
                 Container(
@@ -229,10 +304,6 @@ class Home extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-          ),
-        );
-      },
     );
   }
 }

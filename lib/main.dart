@@ -118,6 +118,8 @@ Future<void> main() async {
 Future<void> _initializeNonBlockingServices() async {
   try {
     await PrayerAlarmService.initialize();
+    await PrayerAlarmService.scheduleAllAlarms();
+    debugPrint('[Main] Prayer alarms initialized and scheduled');
   } catch (error, stackTrace) {
     debugPrint('Prayer alarm initialization failed: $error\n$stackTrace');
   }
