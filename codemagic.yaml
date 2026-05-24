@@ -11,23 +11,14 @@ workflows:
       cocoapods: default
       groups:
         - app_credentials
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.topofstacksoftware.IslamiJindegi
     scripts:
       - name: Create .env file
         script: echo "$ENV_FILE" > .env
 
       - name: Set up code signing
-        script: |
-          keychain initialize
-
-          app-store-connect fetch-signing-files \
-            "com.topofstacksoftware.IslamiJindegi" \
-            --type IOS_APP_STORE \
-            --certificate-key @env:CM_CERTIFICATE_PRIVATE_KEY \
-            --create
-
-          keychain add-certificates
-
-      - name: Set up Xcode project settings
         script: xcode-project use-profiles
 
       - name: Install dependencies
