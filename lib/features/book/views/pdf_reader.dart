@@ -471,10 +471,9 @@ class _PDFReaderState extends ConsumerState<PDFReader>
                   otherSearchTextHighlightColor:
                       colors.highlightBorder.withValues(alpha: 0.42),
                   onDocumentLoaded: (PdfDocumentLoadedDetails details) {
-                    _extractToc(details.document);
-                    setState(() {
-                      _totalPages = details.document.pages.count;
-                    });
+                    final doc = details.document;
+                    setState(() => _totalPages = doc.pages.count);
+                    Future.microtask(() => _extractToc(doc));
                   },
                   onPageChanged: (PdfPageChangedDetails details) {
                     setState(() {
