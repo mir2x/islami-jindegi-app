@@ -170,37 +170,39 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
     final isBn = Localizations.localeOf(context).languageCode == 'bn';
     final count = _ayahCounts[widget.sura.number] ?? 0;
     final countStr = isBn ? count.toBengaliDigit() : count.toString();
-    final ayahLabel = isBn ? 'আয়াত সংখ্যাঃ $countStr' : 'Ayahs: $countStr';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.sura.nameBangla,
-          style: const TextStyle(
-            wordSpacing: 3,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 2),
         RichText(
           text: TextSpan(
-            style: TextStyle(
-              wordSpacing: 3,
-              fontSize: 13,
-              color: colors.secondaryText,
-            ),
             children: [
-              TextSpan(text: widget.sura.meaningBangla),
               TextSpan(
-                text: '  ·  $ayahLabel',
+                text: widget.sura.nameBangla,
+                style: const TextStyle(
+                  wordSpacing: 3,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              TextSpan(
+                text: ' ($countStr)',
                 style: TextStyle(
-                  fontSize: 12,
-                  color: colors.secondaryText.withValues(alpha: 0.75),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: colors.secondaryText,
                 ),
               ),
             ],
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          widget.sura.meaningBangla,
+          style: TextStyle(
+            wordSpacing: 3,
+            fontSize: 13,
+            color: colors.secondaryText,
           ),
         ),
       ],
