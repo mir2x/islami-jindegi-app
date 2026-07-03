@@ -56,3 +56,29 @@ class WordByWord {
     required this.bengali,
   });
 }
+
+/// Lightweight result used only by the search UI — does not carry word-by-word
+/// data.  [matchedTranslation] is non-null when the ayah was found via a
+/// translation match and carries the matching translation text for display.
+class SearchResult {
+  final int sura;
+  final int ayah;
+  final String arabicText;
+  final String? matchedTranslation;
+
+  const SearchResult({
+    required this.sura,
+    required this.ayah,
+    required this.arabicText,
+    this.matchedTranslation,
+  });
+}
+
+/// Return value of [QuranDataService.searchQuran]: the paged results plus the
+/// total match count (before the page limit was applied).
+class SearchResultPage {
+  final List<SearchResult> results;
+  final int totalCount;
+
+  const SearchResultPage({required this.results, required this.totalCount});
+}

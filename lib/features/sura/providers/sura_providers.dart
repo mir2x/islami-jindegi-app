@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/core/utils/arabic_utils.dart';
 import 'package:native_app/features/sura/models/ayah.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
@@ -95,67 +96,79 @@ class QuranDataService {
     return Ayah.fromDb(ayahMap.first, translations: translations, words: words);
   }
 
-  Future<List<Ayah>> searchQuran(Database db, String query) async {
-    final String searchTerm = '%$query%';
-    final List<Map<String, dynamic>> idResults = await db.rawQuery('''
-    SELECT DISTINCT sura, ayah FROM ayahs WHERE arabic_text LIKE ?
-    UNION
-    SELECT DISTINCT sura, ayah FROM translations WHERE translation_text LIKE ?
-    ORDER BY sura, ayah
-  ''', [searchTerm, searchTerm]);
-    if (idResults.isEmpty) {
-      return [];
-    }
-    const int chunkSize = 250;
-    final List<Ayah> resultAyahs = [];
-    for (int i = 0; i < idResults.length; i += chunkSize) {
-      final chunkIds = idResults.sublist(i,
-          i + chunkSize > idResults.length ? idResults.length : i + chunkSize);
-      if (chunkIds.isEmpty) continue;
-      final whereClause =
-          chunkIds.map((_) => '(sura = ? AND ayah = ?)').join(' OR ');
-      final whereArgs =
-          chunkIds.expand((row) => [row['sura'], row['ayah']]).toList();
-      final ayahsFuture =
-          db.query('ayahs', where: whereClause, whereArgs: whereArgs);
-      final translationsFuture =
-          db.query('translations', where: whereClause, whereArgs: whereArgs);
-      final wordsFuture = db.query('words',
-          where: whereClause, whereArgs: whereArgs, orderBy: 'word_id ASC');
-      final allData = await Future.wait([
-        ayahsFuture,
-        translationsFuture,
-        wordsFuture,
-      ]);
-      final List<Map<String, dynamic>> ayahData = allData[0];
-      final List<Map<String, dynamic>> translationData = allData[1];
-      final List<Map<String, dynamic>> wordData = allData[2];
-      final Map<String, List<Translation>> translationsByAyah = {};
-      for (final row in translationData) {
-        final key = "${row['sura']}:${row['ayah']}";
-        translationsByAyah
-            .putIfAbsent(key, () => [])
-            .add(Translation.fromDb(row));
-      }
-      final Map<String, List<WordByWord>> wordsByAyah = {};
-      for (final row in wordData) {
-        final key = "${row['sura']}:${row['ayah']}";
-        wordsByAyah.putIfAbsent(key, () => []).add(WordByWord.fromDb(row));
-      }
-      for (final row in ayahData) {
-        final key = "${row['sura']}:${row['ayah']}";
-        resultAyahs.add(Ayah.fromDb(
-          row,
-          translations: translationsByAyah[key] ?? [],
-          words: wordsByAyah[key] ?? [],
-        ));
+  Future<SearchResultPage> searchQuran(
+    Database db,
+    String query, {
+    int limit = 100,
+  }) async {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) return const SearchResultPage(results: [], totalCount: 0);
+
+    final stripped = stripArabicDiacritics(trimmed);
+
+    // Arabic search on the pre-stripped column (diacritic-insensitive)
+    final arabicMatchKeys = <String>{};
+    if (stripped.isNotEmpty) {
+      final rows = await db.rawQuery(
+        'SELECT DISTINCT sura, ayah FROM ayahs WHERE arabic_text_plain LIKE ?',
+        ['%$stripped%'],
+      );
+      for (final r in rows) {
+        arabicMatchKeys.add('${r['sura']}:${r['ayah']}');
       }
     }
-    resultAyahs.sort((a, b) {
-      if (a.sura != b.sura) return a.sura.compareTo(b.sura);
-      return a.ayah.compareTo(b.ayah);
+
+    // Translation search (Bengali / plain text — no stripping needed)
+    final translationMatchTexts = <String, String>{};
+    final translRows = await db.rawQuery(
+      'SELECT sura, ayah, MIN(translation_text) AS matched_text '
+      'FROM translations WHERE translation_text LIKE ? GROUP BY sura, ayah',
+      ['%$trimmed%'],
+    );
+    for (final r in translRows) {
+      translationMatchTexts['${r['sura']}:${r['ayah']}'] =
+          r['matched_text'] as String;
+    }
+
+    // Merge and sort all matching keys
+    final allKeys = {...arabicMatchKeys, ...translationMatchTexts.keys}.toList();
+    allKeys.sort((a, b) {
+      final ap = a.split(':'), bp = b.split(':');
+      final s = int.parse(ap[0]).compareTo(int.parse(bp[0]));
+      return s != 0 ? s : int.parse(ap[1]).compareTo(int.parse(bp[1]));
     });
-    return resultAyahs;
+
+    final totalCount = allKeys.length;
+    if (totalCount == 0) return const SearchResultPage(results: [], totalCount: 0);
+
+    final page = allKeys.take(limit).toList();
+
+    // Fetch arabic_text for the page (word-by-word data not needed in search)
+    final whereClause =
+        page.map((_) => '(sura = ? AND ayah = ?)').join(' OR ');
+    final whereArgs = page.expand((k) {
+      final p = k.split(':');
+      return [int.parse(p[0]), int.parse(p[1])];
+    }).toList();
+
+    final ayahRows =
+        await db.query('ayahs', where: whereClause, whereArgs: whereArgs);
+
+    final results = ayahRows.map((row) {
+      final key = '${row['sura']}:${row['ayah']}';
+      return SearchResult(
+        sura: row['sura'] as int,
+        ayah: row['ayah'] as int,
+        arabicText: row['arabic_text'] as String,
+        matchedTranslation: translationMatchTexts[key],
+      );
+    }).toList()
+      ..sort((a, b) {
+        final s = a.sura.compareTo(b.sura);
+        return s != 0 ? s : a.ayah.compareTo(b.ayah);
+      });
+
+    return SearchResultPage(results: results, totalCount: totalCount);
   }
 }
 
