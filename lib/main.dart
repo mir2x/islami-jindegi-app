@@ -39,11 +39,14 @@ Future<void> main() async {
   ]);
 
   await dotenv.load(fileName: '.env');
-  tz_data.initializeTimeZones();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // Firebase and SharedPreferences can start in parallel.
+  final results = await Future.wait([
+    Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
+    SharedPreferences.getInstance(),
+  ]);
+  final initialPrefs = results[1] as SharedPreferences;
+  final initialTheme = initialPrefs.getString('theme') ?? 'classic';
 
   FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kReleaseMode);
   FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(kReleaseMode);
@@ -52,20 +55,9 @@ Future<void> main() async {
     FlutterError.onError = (errorDetails) {
       FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
     };
-    // Pass all uncaught asynchronous errors that aren't handled by the Flutter
-    // framework to Crashlytics
-    // PlatformDispatcher.instance.onError = (error, stack) {
-    //   FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    //   return true;
-    // };
   }
 
   AppRoutes.initialize();
-
-  // Load preferences before runApp so the correct theme is available
-  // on the very first frame — avoids the theme flash/flicker.
-  final initialPrefs = await SharedPreferences.getInstance();
-  final initialTheme = initialPrefs.getString('theme') ?? 'classic';
 
   // Persist backend URL so the background Workmanager isolate (which never
   // calls main() and therefore has no dotenv) can reach the hijri backend.
@@ -73,8 +65,6 @@ Future<void> main() async {
   if (hijriBackendUrl != null) {
     await initialPrefs.setString('hijriBackendUrl', hijriBackendUrl);
   }
-
-  await _primeHijriDateCache(initialPrefs);
 
   final container = ProviderContainer();
 
@@ -90,7 +80,7 @@ Future<void> main() async {
       initialDelay: const Duration(seconds: 35),
     );
 
-    await setAppWidgetBackground();
+    unawaited(setAppWidgetBackground());
   }
 
   runApp(
@@ -112,10 +102,16 @@ Future<void> main() async {
     FlutterNativeSplash.remove();
   });
 
-  unawaited(_initializeNonBlockingServices());
+  unawaited(_initializeNonBlockingServices(initialPrefs));
 }
 
-Future<void> _initializeNonBlockingServices() async {
+Future<void> _initializeNonBlockingServices(SharedPreferences prefs) async {
+  // Timezone data is large — load it off the critical path.
+  tz_data.initializeTimeZones();
+
+  // Prime hijri date cache with a network call — must not block startup.
+  unawaited(_primeHijriDateCache(prefs));
+
   try {
     await PrayerAlarmService.initialize();
     await PrayerAlarmService.scheduleAllAlarms();
