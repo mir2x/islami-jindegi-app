@@ -287,7 +287,11 @@ class GeolocationNotifier extends AsyncNotifier<Map> {
     }
 
     var location = await getLocation(position);
-    String timezone = await getFailSafeTimezone();
+    final isoCode = (location['countryCode'] as String?) ?? '';
+    String timezone = isoCode.isNotEmpty
+        ? await timezoneFromCountryCode(isoCode)
+        : '';
+    if (timezone.isEmpty) timezone = await getFailSafeTimezone();
 
     await updatePreferences(location, position, timezone);
 
@@ -348,7 +352,11 @@ class GeolocationNotifier extends AsyncNotifier<Map> {
     debugPrint('[Hijri][updateCoordinates] GPS location resolved: '
         'city=${location['city']}, country=${location['country']}, '
         'countryCode=${location['countryCode']}');
-    String timezone = '';
+    final isoCode = (location['countryCode'] as String?) ?? '';
+    String timezone = isoCode.isNotEmpty
+        ? await timezoneFromCountryCode(isoCode)
+        : '';
+    if (timezone.isEmpty) timezone = await getFailSafeTimezone();
 
     await updatePreferences(location, position, timezone);
     debugPrint('[Hijri][updateCoordinates] updatePreferences done. Setting state with countryCode=${location['countryCode']}');
