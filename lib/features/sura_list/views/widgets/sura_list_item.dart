@@ -144,13 +144,16 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
     final colors = Theme.of(context).extension<AppThemeColors>()!;
     final isClassic = colors.primary == AppThemeColors.classic.primary &&
         colors.appBarBg == AppThemeColors.classic.appBarBg;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final accentColor = isClassic ? colors.appBarBg : colors.active;
     return Container(
       width: 45,
       height: 45,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: colors.highlight.withValues(alpha: isClassic ? 0.62 : 0.8),
+        color: colors.highlight.withValues(
+          alpha: isClassic ? 0.62 : (isDark ? 0.8 : 1.0),
+        ),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
@@ -167,6 +170,7 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
 
   Widget _buildSuraNames() {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isBn = Localizations.localeOf(context).languageCode == 'bn';
     final count = _ayahCounts[widget.sura.number] ?? 0;
     final countStr = isBn ? count.toBengaliDigit() : count.toString();
@@ -179,10 +183,11 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
             children: [
               TextSpan(
                 text: widget.sura.nameBangla,
-                style: const TextStyle(
+                style: TextStyle(
                   wordSpacing: 3,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: isDark ? null : colors.primaryText,
                 ),
               ),
               TextSpan(
