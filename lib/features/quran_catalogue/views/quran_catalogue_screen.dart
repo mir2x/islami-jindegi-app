@@ -81,6 +81,14 @@ class QuranCatalogueScreen extends ConsumerWidget {
         }
       },
       title: Text(locales.quranCatalogueEyebrow),
+      extraActions: [
+        IconButton(
+          icon: const Icon(Icons.search),
+          onPressed: () => context.push(
+            buildSearchRoute(returnTo: '/qurans'),
+          ),
+        ),
+      ],
       body: SingleChildScrollView(
         padding: EdgeInsets.only(bottom: 28.h),
         child: Column(
