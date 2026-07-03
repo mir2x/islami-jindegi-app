@@ -99,7 +99,7 @@ class QuranDataService {
   Future<({List<String> keys, Map<String, String> translationMatches})>
       searchQuranKeys(Database db, String query) async {
     final trimmed = query.trim();
-    if (trimmed.isEmpty) return (keys: [], translationMatches: {});
+    if (trimmed.isEmpty) return (keys: <String>[], translationMatches: <String, String>{});
 
     final stripped = stripArabicDiacritics(trimmed);
 
