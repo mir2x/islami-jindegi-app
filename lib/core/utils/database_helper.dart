@@ -8,7 +8,7 @@ class DatabaseHelper {
   static Database? _database;
   static const String _dbName = 'quran.db';
   // Increment this version when the database content changes
-  static const int _dbVersion = 2;
+  static const int _dbVersion = 3;
   static const String _dbVersionKey = 'quran_db_version';
 
   Future<Database> get database async {
