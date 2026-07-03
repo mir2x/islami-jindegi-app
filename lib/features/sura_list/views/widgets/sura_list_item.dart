@@ -130,7 +130,7 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
             children: [
               _buildSuraNumber(),
               const SizedBox(width: 16.0),
-              Flexible(child: _buildSuraNames()),
+              Expanded(child: _buildSuraNames()),
               const SizedBox(width: 8.0),
               _buildRevelationInfo(),
             ],
@@ -221,6 +221,7 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
         HugeIcon(
           icon: iconData,
@@ -230,6 +231,7 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
         const SizedBox(width: 8.0),
         Text(
           widget.sura.nameArabic,
+          textDirection: TextDirection.rtl,
           style: GoogleFonts.amiri(
             fontSize: 18,
             color: Theme.of(context).extension<AppThemeColors>()!.arabicText,
