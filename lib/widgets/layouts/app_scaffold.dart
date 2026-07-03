@@ -49,6 +49,7 @@ class AppScaffold extends ConsumerWidget {
     this.showBottomBar = true,
     this.showPattern = true,
     this.tabletBodyPadding = true,
+    this.extraActions,
   });
 
   final Widget title;
@@ -62,6 +63,9 @@ class AppScaffold extends ConsumerWidget {
   final bool showBottomBar;
   final bool showPattern;
   final bool tabletBodyPadding;
+  /// Optional widgets inserted between the notification button and the
+  /// hamburger/menu button in the app bar.
+  final List<Widget>? extraActions;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -145,6 +149,7 @@ class AppScaffold extends ConsumerWidget {
                     ),
                     actions: <Widget>[
                       const NotificationButton(),
+                      ...?extraActions,
                       Padding(
                         padding: const EdgeInsets.only(right: 5),
                         child: isHome
