@@ -105,11 +105,19 @@ class _DuaListScreenState extends ConsumerState<DuaListScreen> {
                       queryProvider: duaQueryParamsProvider,
                       resourceFetcher: (Map<String, dynamic> params) async {
                         final api = ref.read(duaApiServiceProvider);
-                        return await api.fetchCategories(
-                          page: params['page'] ?? 1,
-                          perPage: params['per_page'] ?? 16,
-                          search: params['search'],
-                        );
+                        final offline = ref.read(duaOfflineServiceProvider);
+                        try {
+                          return await api.fetchCategories(
+                            page: params['page'] ?? 1,
+                            perPage: params['per_page'] ?? 16,
+                            search: params['search'],
+                          );
+                        } catch (_) {
+                          return await offline.queryCategories(
+                            page: params['page'] ?? 1,
+                            perPage: params['per_page'] ?? 16,
+                          );
+                        }
                       },
                       itemBuilder: (_, item, __) {
                         return FilterItem(
