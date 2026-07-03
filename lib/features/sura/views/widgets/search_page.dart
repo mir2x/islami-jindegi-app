@@ -209,13 +209,12 @@ class _SearchResultCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () {
-          final route = buildSuraRoute(
+          context.push(buildSuraRoute(
             suraNumber: result.sura,
             scrollIndex: result.ayah - 1,
             returnTo: returnTo,
-          );
-          Navigator.of(context).pop();
-          context.push(route);
+            popBack: true,
+          ));
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
