@@ -96,17 +96,13 @@ class QuranDataService {
     return Ayah.fromDb(ayahMap.first, translations: translations, words: words);
   }
 
-  Future<SearchResultPage> searchQuran(
-    Database db,
-    String query, {
-    int limit = 100,
-  }) async {
+  Future<({List<String> keys, Map<String, String> translationMatches})>
+      searchQuranKeys(Database db, String query) async {
     final trimmed = query.trim();
-    if (trimmed.isEmpty) return const SearchResultPage(results: [], totalCount: 0);
+    if (trimmed.isEmpty) return (keys: [], translationMatches: {});
 
     final stripped = stripArabicDiacritics(trimmed);
 
-    // Arabic search on the pre-stripped column (diacritic-insensitive)
     final arabicMatchKeys = <String>{};
     if (stripped.isNotEmpty) {
       final rows = await db.rawQuery(
@@ -118,7 +114,6 @@ class QuranDataService {
       }
     }
 
-    // Translation search (Bengali / plain text — no stripping needed)
     final translationMatchTexts = <String, String>{};
     final translRows = await db.rawQuery(
       'SELECT sura, ayah, MIN(translation_text) AS matched_text '
@@ -130,7 +125,6 @@ class QuranDataService {
           r['matched_text'] as String;
     }
 
-    // Merge and sort all matching keys
     final allKeys = {...arabicMatchKeys, ...translationMatchTexts.keys}.toList();
     allKeys.sort((a, b) {
       final ap = a.split(':'), bp = b.split(':');
@@ -138,12 +132,19 @@ class QuranDataService {
       return s != 0 ? s : int.parse(ap[1]).compareTo(int.parse(bp[1]));
     });
 
-    final totalCount = allKeys.length;
-    if (totalCount == 0) return const SearchResultPage(results: [], totalCount: 0);
+    return (keys: allKeys, translationMatches: translationMatchTexts);
+  }
 
-    final page = allKeys.take(limit).toList();
+  Future<List<SearchResult>> fetchSearchResults(
+    Database db,
+    List<String> allKeys,
+    Map<String, String> translationMatches, {
+    int offset = 0,
+    int limit = 20,
+  }) async {
+    final page = allKeys.skip(offset).take(limit).toList();
+    if (page.isEmpty) return [];
 
-    // Fetch arabic_text for the page (word-by-word data not needed in search)
     final whereClause =
         page.map((_) => '(sura = ? AND ayah = ?)').join(' OR ');
     final whereArgs = page.expand((k) {
@@ -154,21 +155,19 @@ class QuranDataService {
     final ayahRows =
         await db.query('ayahs', where: whereClause, whereArgs: whereArgs);
 
-    final results = ayahRows.map((row) {
+    return ayahRows.map((row) {
       final key = '${row['sura']}:${row['ayah']}';
       return SearchResult(
         sura: row['sura'] as int,
         ayah: row['ayah'] as int,
         arabicText: row['arabic_text'] as String,
-        matchedTranslation: translationMatchTexts[key],
+        matchedTranslation: translationMatches[key],
       );
     }).toList()
       ..sort((a, b) {
         final s = a.sura.compareTo(b.sura);
         return s != 0 ? s : a.ayah.compareTo(b.ayah);
       });
-
-    return SearchResultPage(results: results, totalCount: totalCount);
   }
 }
 

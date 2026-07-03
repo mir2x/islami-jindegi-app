@@ -74,11 +74,3 @@ class SearchResult {
   });
 }
 
-/// Return value of [QuranDataService.searchQuran]: the paged results plus the
-/// total match count (before the page limit was applied).
-class SearchResultPage {
-  final List<SearchResult> results;
-  final int totalCount;
-
-  const SearchResultPage({required this.results, required this.totalCount});
-}

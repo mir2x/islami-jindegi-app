@@ -9,15 +9,41 @@ import 'package:native_app/theme/app_theme_color.dart';
 import '../../../../shared/quran_data.dart';
 import '../../providers/search_providers.dart';
 
-class SearchPage extends ConsumerWidget {
+class SearchPage extends ConsumerStatefulWidget {
   final String returnTo;
 
   const SearchPage({super.key, required this.returnTo});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SearchPage> createState() => _SearchPageState();
+}
+
+class _SearchPageState extends ConsumerState<SearchPage> {
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 300) {
+      ref.read(searchNotifierProvider.notifier).loadMore();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final searchQuery = ref.watch(searchQueryProvider);
-    final searchResults = ref.watch(searchResultsProvider);
+    final searchAsync = ref.watch(searchNotifierProvider);
     final colors = Theme.of(context).extension<AppThemeColors>()!;
     final appBarBg = colors.appBarBg;
     final appBarFg = colors.appBarText;
@@ -50,33 +76,39 @@ class SearchPage extends ConsumerWidget {
           },
         ),
       ),
-      body: searchResults.when(
-        data: (page) {
+      body: searchAsync.when(
+        data: (state) {
           if (searchQuery.isEmpty) {
-            return const Center(
+            return Center(
               child: Text(
                 'আয়াত বা অনুবাদ খুঁজতে টাইপ করুন।',
-                style: TextStyle(fontFamily: 'bangla/solaimanlipi'),
+                style: TextStyle(
+                  fontFamily: 'bangla/solaimanlipi',
+                  color: colors.secondaryText,
+                ),
               ),
             );
           }
-          if (page.results.isEmpty) {
-            return const Center(
+          if (state.results.isEmpty) {
+            return Center(
               child: Text(
                 'কোন ফলাফল পাওয়া যায়নি।',
-                style: TextStyle(fontFamily: 'bangla/solaimanlipi'),
+                style: TextStyle(
+                  fontFamily: 'bangla/solaimanlipi',
+                  color: colors.secondaryText,
+                ),
               ),
             );
           }
-          return Column(
-            children: [
-              if (page.totalCount > page.results.length)
-                Padding(
+          return CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: Text(
-                    'প্রথম ${page.results.length} টি ফলাফল দেখানো হচ্ছে'
-                    ' (মোট ${page.totalCount} টি) — অনুসন্ধান সীমিত করুন।',
+                    '${state.totalCount.toBengaliDigit()} টি ফলাফল',
                     style: TextStyle(
                       fontFamily: 'bangla/solaimanlipi',
                       fontSize: 13,
@@ -84,22 +116,55 @@ class SearchPage extends ConsumerWidget {
                     ),
                   ),
                 ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: page.results.length,
-                  itemBuilder: (context, index) {
-                    final result = page.results[index];
+              ),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final result = state.results[index];
                     return _SearchResultCard(
                       result: result,
                       searchQuery: searchQuery,
                       highlightBg: highlightBg,
                       highlightFg: highlightFg,
                       colors: colors,
-                      returnTo: returnTo,
+                      returnTo: widget.returnTo,
                     );
                   },
+                  childCount: state.results.length,
                 ),
               ),
+              if (state.isLoadingMore)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Center(
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: colors.secondary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              if (!state.hasMore && state.results.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Center(
+                      child: Text(
+                        'সব ফলাফল দেখানো হয়েছে',
+                        style: TextStyle(
+                          fontFamily: 'bangla/solaimanlipi',
+                          fontSize: 12,
+                          color: colors.secondaryText.withValues(alpha: 0.6),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
             ],
           );
         },
@@ -223,17 +288,12 @@ class HighlightedText extends StatelessWidget {
   Widget build(BuildContext context) {
     if (query.isEmpty) return Text(text, style: style);
 
-    // Strip diacritics from both sides so Arabic diacritic-insensitive
-    // matching works even though `text` is the original (with diacritics).
     final plainText = stripArabicDiacritics(text);
     final strippedQuery = stripArabicDiacritics(query).toLowerCase();
     final lowerPlain = plainText.toLowerCase();
 
     if (strippedQuery.isEmpty) return Text(text, style: style);
 
-    // Build a mapping: plainToOrig[i] = index in `text` of the i-th kept
-    // character.  Characters are "kept" if they survive diacritic stripping,
-    // i.e. text[j] == plainText[pi] at the same relative position.
     final plainToOrig = <int>[];
     var pi = 0;
     for (var i = 0; i < text.length && pi < plainText.length; i++) {
