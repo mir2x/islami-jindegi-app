@@ -387,6 +387,10 @@ class MushafMappings {
   }
 }
 
+// Bump this when the mapping logic or data corrections change. Any cached
+// mappings with a different version are discarded and rebuilt from the source.
+const int _kMappingsCacheVersion = 2;
+
 Future<File> _mushafMappingsCacheFile(EditionConfig config) async {
   final docsDir = await getApplicationDocumentsDirectory();
   final cacheDir = Directory('${docsDir.path}/quran_mappings_cache');
@@ -412,6 +416,13 @@ MushafMappings _buildMushafMappings({
       () => box.pageNumber,
     );
   }
+
+  // Correct known wrong page assignments in older ayah_boxes.json files.
+  // These entries were off by one, causing para 10/11 and 13/14 boundaries
+  // to be wrong in the Hafizi mushaf. Only triggers if the value is exactly
+  // the bad value, so other mushaf editions are unaffected.
+  if (ayahMapping[(9, 93)] == 203) ayahMapping[(9, 93)] = 204;
+  if (ayahMapping[(15, 1)] == 263) ayahMapping[(15, 1)] = 264;
 
   final Map<int, int> paraMapping = {};
   for (int i = 0; i < paraStarts.length; i++) {
@@ -450,11 +461,23 @@ final quranMappingsProvider = FutureProvider<MushafMappings>((ref) async {
   }
 
   final cacheFile = await _mushafMappingsCacheFile(config);
+  final sourceFile = File('${config.dir.path}/ayah_boxes.json');
+
   if (await cacheFile.exists()) {
     try {
-      final cachedJson =
-          jsonDecode(await cacheFile.readAsString()) as Map<String, dynamic>;
-      return MushafMappings.fromJson(cachedJson);
+      final raw = await cacheFile.readAsString();
+      final cachedJson = jsonDecode(raw) as Map<String, dynamic>;
+      // Invalidate if version mismatch or if source file is newer than cache.
+      final version = cachedJson['_v'] as int?;
+      final sourceMod = await sourceFile.exists()
+          ? await sourceFile.lastModified()
+          : null;
+      final cacheMod = await cacheFile.lastModified();
+      final sourceNewer = sourceMod != null && sourceMod.isAfter(cacheMod);
+      if (version == _kMappingsCacheVersion && !sourceNewer) {
+        return MushafMappings.fromJson(cachedJson);
+      }
+      await cacheFile.delete();
     } catch (_) {
       await cacheFile.delete();
     }
@@ -463,7 +486,9 @@ final quranMappingsProvider = FutureProvider<MushafMappings>((ref) async {
   final boxes = await ref.watch(allBoxesProvider.future);
   final totalPages = await ref.watch(totalPageCountProvider.future);
   final mappings = _buildMushafMappings(boxes: boxes, totalPages: totalPages);
-  await cacheFile.writeAsString(jsonEncode(mappings.toJson()));
+  await cacheFile.writeAsString(
+    jsonEncode({'_v': _kMappingsCacheVersion, ...mappings.toJson()}),
+  );
   return mappings;
 });
 
