@@ -16,9 +16,41 @@ import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import '../providers/madrasah_providers.dart';
+import '../models/madrasah.dart';
 
 class MadrasahDetailScreen extends ConsumerWidget {
   const MadrasahDetailScreen({super.key});
+
+  /// Fetch the previous/next madrasah by walking the cached, order-preserved
+  /// id list. The .NET API has no server-side "item at position N" lookup
+  /// (unlike the old JSON:API backend's `fetchMadrasahsByPosition`), so —
+  /// matching the dua/book modules' pattern — adjacency is resolved from
+  /// `madrasahNavigationIdsProvider`'s in-memory ordered list.
+  Future<MadrasahItem?> _findAdjacentMadrasah(
+    WidgetRef ref,
+    MadrasahItem current, {
+    required bool next,
+  }) async {
+    try {
+      final orderedIds = await ref.read(madrasahNavigationIdsProvider.future);
+      final currentIndex = orderedIds.indexOf(current.id);
+      if (currentIndex == -1) return null;
+
+      final targetIndex = next ? currentIndex + 1 : currentIndex - 1;
+      if (targetIndex < 0 || targetIndex >= orderedIds.length) return null;
+
+      final targetId = orderedIds[targetIndex];
+      final api = ref.read(madrasahApiServiceProvider);
+      try {
+        return await api.fetchSingleMadrasah(targetId);
+      } catch (_) {
+        final offline = ref.read(madrasahOfflineServiceProvider);
+        return await offline.findMadrasahById(targetId);
+      }
+    } catch (_) {
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,34 +64,24 @@ class MadrasahDetailScreen extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
-        final api = ref.read(madrasahApiServiceProvider);
-
         Future? previousPage() async {
-          if (resource.position == null) {
-            if (context.canPop()) context.pop();
-            return;
-          }
-          var previousResources = await api.fetchMadrasahsByPosition(
-            quantity: 1,
-            position: resource.position! - 1,
-          );
-
-          if (previousResources.isEmpty) {
-            if (context.canPop()) context.pop();
+          final previous =
+              await _findAdjacentMadrasah(ref, resource, next: false);
+          if (previous == null) {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/madrasahs');
+            }
           } else {
-            await context.push('/madrasahs/${previousResources.first.id}');
+            await context.push('/madrasahs/${previous.id}');
           }
         }
 
         Future? nextPage() async {
-          if (resource.position == null) return;
-          var nextResources = await api.fetchMadrasahsByPosition(
-            quantity: 1,
-            position: resource.position! + 1,
-          );
-
-          if (nextResources.isNotEmpty) {
-            await context.push('/madrasahs/${nextResources.first.id}');
+          final next = await _findAdjacentMadrasah(ref, resource, next: true);
+          if (next != null) {
+            await context.push('/madrasahs/${next.id}');
           }
         }
 
@@ -110,7 +132,7 @@ class MadrasahDetailScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-                ...resource.madrasahInfos.map((info) {
+                ...resource.infos.map((info) {
                   return InkWell(
                     onTap: () => context
                         .push('/madrasahs/${resource.id}/infos/${info.id}'),

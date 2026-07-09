@@ -1,43 +1,38 @@
-import 'dart:convert';
-
-/// Pure Dart model for MadrasahPhoto.
+/// Pure Dart model for a madrasah gallery photo.
+///
+/// The .NET API exposes a flat `imageUrl` string (unlike the old JSON:API
+/// backend's derivative-map `image` attribute), so the gallery screen renders
+/// it directly via `CachedNetworkImage` instead of the shared
+/// `ResponsiveImage` widget, which still expects the old map shape and is
+/// used elsewhere.
 class MadrasahPhotoItem {
   final String id;
   final String? title;
-  final Map<dynamic, dynamic>? image;
+  final String? imageUrl;
   final int? position;
 
   MadrasahPhotoItem({
     required this.id,
     this.title,
-    this.image,
+    this.imageUrl,
     this.position,
   });
 
-  factory MadrasahPhotoItem.fromDb(Map<String, dynamic> row) {
-    Map<dynamic, dynamic>? image;
-    final raw = row['image_data'];
-    if (raw != null) {
-      try {
-        final decoded = json.decode(raw as String);
-        image = decoded is Map ? decoded : null;
-      } catch (_) {}
-    }
+  factory MadrasahPhotoItem.fromJson(Map<String, dynamic> json) {
     return MadrasahPhotoItem(
-      id: row['id'].toString(),
-      title: row['title']?.toString(),
-      image: image,
-      position: row['position'] is int ? row['position'] : null,
+      id: json['id']?.toString() ?? '',
+      title: json['title'],
+      imageUrl: json['imageUrl'],
+      position: json['position'] is int ? json['position'] : null,
     );
   }
 
-  factory MadrasahPhotoItem.fromJsonApi(Map<String, dynamic> resource) {
-    final attrs = resource['attributes'] as Map<String, dynamic>? ?? {};
+  factory MadrasahPhotoItem.fromDb(Map<String, dynamic> row) {
     return MadrasahPhotoItem(
-      id: resource['id']?.toString() ?? '',
-      title: attrs['title'],
-      image: attrs['image'] is Map ? attrs['image'] : null,
-      position: attrs['position'] is int ? attrs['position'] : null,
+      id: row['id'].toString(),
+      title: row['title']?.toString(),
+      imageUrl: row['image_url'] ?? row['imageUrl'],
+      position: row['position'] is int ? row['position'] : null,
     );
   }
 }

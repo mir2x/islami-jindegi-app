@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:transparent_image/transparent_image.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
 import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
-import 'package:native_app/widgets/responsive/image.dart';
+import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
+import 'package:native_app/theme/app_theme_color.dart';
 import '../providers/madrasah_providers.dart';
 
 class MadrasahGalleryScreen extends ConsumerWidget {
@@ -21,7 +24,7 @@ class MadrasahGalleryScreen extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var madrasahId = GoRouterState.of(context).pathParameters['id'].toString();
-    var madrasahQuery = ref.watch(singleMadrasahWithPhotosProvider(madrasahId));
+    var madrasahQuery = ref.watch(singleMadrasahProvider(madrasahId));
 
     return madrasahQuery.when(
       loading: () {
@@ -33,18 +36,10 @@ class MadrasahGalleryScreen extends ConsumerWidget {
       },
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
-        final api = ref.read(madrasahApiServiceProvider);
-
         Future? previousPage() async {
-          var previousResources = await api.fetchInfosByMadrasah(
-            madrasahId: resource.id,
-            sort: '-position',
-            quantity: 1,
-          );
-
-          if (previousResources.isNotEmpty) {
+          if (resource.infos.isNotEmpty) {
             await context.push(
-              'madrasahs/${resource.id}/infos/${previousResources.first.id}',
+              'madrasahs/${resource.id}/infos/${resource.infos.last.id}',
             );
           } else {
             await context.push('/madrasahs/${resource.id}/introduction');
@@ -66,13 +61,10 @@ class MadrasahGalleryScreen extends ConsumerWidget {
                   margin: const EdgeInsets.only(bottom: 25),
                   child: Text(locales.gallery, style: textTheme.labelLarge),
                 ),
-                ...resource.madrasahPhotos.map((photo) {
+                ...resource.photos.map((photo) {
                   return Container(
                     padding: const EdgeInsets.only(bottom: 20),
-                    child: ResponsiveImage(
-                      image: photo.image,
-                      model: 'madrasahPhoto',
-                    ),
+                    child: _MadrasahPhotoImage(imageUrl: photo.imageUrl),
                   );
                 }),
               ],
@@ -90,6 +82,51 @@ class MadrasahGalleryScreen extends ConsumerWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// Renders a madrasah gallery photo directly via `CachedNetworkImage` off the
+/// .NET API's flat `imageUrl` string — mirroring how `BookImage`
+/// (`features/book/views/image.dart`) was forked off the shared
+/// `ResponsiveImage` widget rather than adapting `ResponsiveImage` itself.
+/// `ResponsiveImage` still expects the old JSON:API derivative-map `image`
+/// shape and isn't touched here.
+class _MadrasahPhotoImage extends StatelessWidget {
+  const _MadrasahPhotoImage({required this.imageUrl});
+
+  final String? imageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final appTheme = Theme.of(context).extension<AppThemeColors>()!;
+
+    if (imageUrl == null || imageUrl!.isEmpty) {
+      return _placeholder(appTheme);
+    }
+
+    return WithConnectivity(
+      builder: (context, isConnected) {
+        if (!isConnected) return _placeholder(appTheme);
+        return AspectRatio(
+          aspectRatio: 1,
+          child: CachedNetworkImage(
+            imageUrl: imageUrl!,
+            placeholder: (context, url) => Image.memory(kTransparentImage),
+            fit: BoxFit.fill,
+            fadeInDuration: const Duration(milliseconds: 150),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _placeholder(AppThemeColors appTheme) {
+    return AspectRatio(
+      aspectRatio: 1,
+      child: DecoratedBox(
+        decoration: BoxDecoration(color: appTheme.highlight),
+      ),
     );
   }
 }

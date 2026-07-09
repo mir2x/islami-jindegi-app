@@ -10,16 +10,18 @@ import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/page/title.dart';
 import 'package:native_app/widgets/page/html_body.dart';
-import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
-import 'package:native_app/helpers/file_title_path.dart';
-import 'package:native_app/helpers/file_utils.dart';
 import '../providers/madrasah_providers.dart';
 
+/// Note: unlike book/article/malfuzat/masail/dua, a madrasah has no
+/// `document` field on the .NET API (confirmed against `Models/Madrasah.cs`
+/// and the migration command's `SELECT` list, neither of which carry a
+/// document/download concept for this entity), so the old download-item
+/// block from the JSON:API version is dropped entirely rather than ported.
 class MadrasahIntroductionScreen extends ConsumerWidget {
   const MadrasahIntroductionScreen({super.key});
 
@@ -28,29 +30,20 @@ class MadrasahIntroductionScreen extends ConsumerWidget {
     var locales = AppLocalizations.of(context)!;
     var madrasahId = GoRouterState.of(context).pathParameters['id'].toString();
 
-    // Fetch madrasah without infos (just need intro + document)
     var madrasahQuery = ref.watch(singleMadrasahProvider(madrasahId));
 
     return madrasahQuery.when(
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
-        final api = ref.read(madrasahApiServiceProvider);
-
         Future? previousPage() async {
           await context.push('/madrasahs/${resource.id}');
         }
 
         Future? nextPage() async {
-          var nextResources = await api.fetchInfosByMadrasah(
-            madrasahId: resource.id,
-            quantity: 1,
-            position: 1,
-          );
-
-          if (nextResources.isNotEmpty) {
+          if (resource.infos.isNotEmpty) {
             await context.push(
-              'madrasahs/${resource.id}/infos/${nextResources.first.id}',
+              'madrasahs/${resource.id}/infos/${resource.infos.first.id}',
             );
           } else {
             await context.push('/madrasahs/${resource.id}/gallery');
@@ -84,15 +77,6 @@ class MadrasahIntroductionScreen extends ConsumerWidget {
                         fontSizeRatio: fontSizeRatio,
                       ),
                     ),
-                    if (resource.document != null) ...[
-                      DownloadItem(
-                        filePath: fileTitlePath(
-                          resource.title,
-                          resource.document!['id'],
-                        ),
-                        fileUrl: fileSrcUrl(resource.document),
-                      ),
-                    ],
                   ],
                 ),
               ),

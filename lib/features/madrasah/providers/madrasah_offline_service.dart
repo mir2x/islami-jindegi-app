@@ -5,8 +5,11 @@ import '../models/madrasah_info.dart';
 import '../models/madrasah_photo.dart';
 
 class MadrasahOfflineService {
+  // Bumped from 1 -> 2: pre-migration snapshots contain Ruby integer ids that
+  // don't reconcile with the .NET API's Guid ids, so existing installs must
+  // evict their cache and re-fetch once a Guid-based snapshot is published.
   Future<Database> get _db =>
-      OfflineDatabaseHelper(feature: 'madrasahs', version: 1).database;
+      OfflineDatabaseHelper(feature: 'madrasahs', version: 2).database;
 
   // ───────────────────── Madrasahs ─────────────────────
 
@@ -16,7 +19,7 @@ class MadrasahOfflineService {
     String? search,
   }) async {
     final db = await _db;
-    final where = <String>['published = 1'];
+    final where = <String>[];
     final args = <dynamic>[];
 
     if (search != null && search.isNotEmpty) {
@@ -26,8 +29,8 @@ class MadrasahOfflineService {
 
     final rows = await db.query(
       'madrasahs',
-      where: where.join(' AND '),
-      whereArgs: args,
+      where: where.isNotEmpty ? where.join(' AND ') : null,
+      whereArgs: args.isNotEmpty ? args : null,
       orderBy: 'position ASC',
       limit: perPage,
       offset: (page - 1) * perPage,
@@ -35,48 +38,23 @@ class MadrasahOfflineService {
     return rows.map((r) => MadrasahItem.fromDb(r)).toList();
   }
 
-  Future<MadrasahItem?> findMadrasahById(String id,
-      {bool includeInfos = false, bool includePhotos = false}) async {
+  /// Loads a madrasah with its infos and photos always joined in — the .NET
+  /// API's detail response always nests both, so there's no equivalent of
+  /// the old `includeInfos`/`includePhotos` flags to thread through here.
+  Future<MadrasahItem?> findMadrasahById(String id) async {
     final db = await _db;
     final rows =
         await db.query('madrasahs', where: 'id = ?', whereArgs: [id]);
     if (rows.isEmpty) return null;
 
-    List<MadrasahInfoItem> infos = [];
-    if (includeInfos) {
-      final infoRows = await db.query('madrasah_infos',
-          where: 'madrasah_id = ?', whereArgs: [id], orderBy: 'position ASC');
-      infos = infoRows.map((r) => MadrasahInfoItem.fromDb(r)).toList();
-    }
+    final infoRows = await db.query('madrasah_infos',
+        where: 'madrasah_id = ?', whereArgs: [id], orderBy: 'position ASC');
+    final infos = infoRows.map((r) => MadrasahInfoItem.fromDb(r)).toList();
 
-    List<MadrasahPhotoItem> photos = [];
-    if (includePhotos) {
-      final photoRows = await db.query('madrasah_photos',
-          where: 'madrasah_id = ?', whereArgs: [id], orderBy: 'position ASC');
-      photos = photoRows.map((r) => MadrasahPhotoItem.fromDb(r)).toList();
-    }
+    final photoRows = await db.query('madrasah_photos',
+        where: 'madrasah_id = ?', whereArgs: [id], orderBy: 'position ASC');
+    final photos = photoRows.map((r) => MadrasahPhotoItem.fromDb(r)).toList();
 
     return MadrasahItem.fromDb(rows.first, infos: infos, photos: photos);
-  }
-
-  // ───────────────────── Infos ─────────────────────
-
-  Future<MadrasahInfoItem?> findInfoById(String id,
-      {bool includeMadrasah = false}) async {
-    final db = await _db;
-    final rows =
-        await db.query('madrasah_infos', where: 'id = ?', whereArgs: [id]);
-    if (rows.isEmpty) return null;
-
-    String? madrasahTitle;
-    if (includeMadrasah) {
-      final mid = rows.first['madrasah_id']?.toString();
-      if (mid != null) {
-        final mRows =
-            await db.query('madrasahs', where: 'id = ?', whereArgs: [mid]);
-        if (mRows.isNotEmpty) madrasahTitle = mRows.first['title']?.toString();
-      }
-    }
-    return MadrasahInfoItem.fromDb(rows.first, madrasahTitle: madrasahTitle);
   }
 }

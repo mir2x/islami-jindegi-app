@@ -16,50 +16,48 @@ import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
 import '../providers/madrasah_providers.dart';
 
+/// A madrasah's individual info entries (label/value pairs) are nested
+/// directly inside `MadrasahDetail.infos` on the .NET API — there's no
+/// standalone `/madrasah_infos/:id` endpoint to fetch one by id (unlike the
+/// old JSON:API backend's `fetchSingleInfo`/`fetchInfosByMadrasah`), so this
+/// screen just loads the parent madrasah via `singleMadrasahProvider` (the
+/// same provider the detail/introduction/gallery screens use — Riverpod
+/// dedupes the in-flight/cached fetch) and looks up the requested info, and
+/// its previous/next neighbours, by index within that embedded list.
 class MadrasahInfoScreen extends ConsumerWidget {
   const MadrasahInfoScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var infoId = GoRouterState.of(context).pathParameters['info_id'].toString();
-    var infoQuery = ref.watch(singleMadrasahInfoProvider(infoId));
+    var madrasahId = GoRouterState.of(context).pathParameters['id'].toString();
+    var infoId =
+        GoRouterState.of(context).pathParameters['info_id'].toString();
+    var madrasahQuery = ref.watch(singleMadrasahProvider(madrasahId));
 
-    return infoQuery.when(
+    return madrasahQuery.when(
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
-      data: (resource) {
-        final api = ref.read(madrasahApiServiceProvider);
-        final madrasahId = resource.madrasahId ?? GoRouterState.of(context).pathParameters['id'].toString();
+      data: (madrasah) {
+        final index = madrasah.infos.indexWhere((i) => i.id == infoId);
+        if (index == -1) {
+          return const ModelExeptionHandler(error: 'Info not found');
+        }
+        final resource = madrasah.infos[index];
 
         Future? previousPage() async {
-          if (resource.position != null && resource.position! > 1) {
-            var previousResources = await api.fetchInfosByMadrasah(
-              madrasahId: madrasahId,
-              quantity: 1,
-              position: resource.position! - 1,
+          if (index > 0) {
+            await context.push(
+              'madrasahs/$madrasahId/infos/${madrasah.infos[index - 1].id}',
             );
-
-            if (previousResources.isNotEmpty) {
-              await context.push(
-                'madrasahs/$madrasahId/infos/${previousResources.first.id}',
-              );
-            }
           } else {
             await context.push('/madrasahs/$madrasahId/introduction');
           }
         }
 
         Future? nextPage() async {
-          if (resource.position == null) return;
-          var nextResources = await api.fetchInfosByMadrasah(
-            madrasahId: madrasahId,
-            quantity: 1,
-            position: resource.position! + 1,
-          );
-
-          if (nextResources.isNotEmpty) {
+          if (index < madrasah.infos.length - 1) {
             await context.push(
-              'madrasahs/$madrasahId/infos/${nextResources.first.id}',
+              'madrasahs/$madrasahId/infos/${madrasah.infos[index + 1].id}',
             );
           } else {
             await context.push('/madrasahs/$madrasahId/gallery');
@@ -72,7 +70,7 @@ class MadrasahInfoScreen extends ConsumerWidget {
             return AppScaffold(
               onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/madrasahs/$madrasahId'); },
               showPattern: false,
-              title: Text(resource.madrasahTitle ?? ''),
+              title: Text(madrasah.title),
               body: NextPageSwipe(
                 onPrevious: previousPage,
                 onNext: nextPage,

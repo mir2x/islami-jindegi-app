@@ -1,36 +1,57 @@
-import 'dart:convert';
 import 'madrasah_info.dart';
 import 'madrasah_photo.dart';
 
 /// Pure Dart model for Madrasah — no Flutter Data dependency.
+///
+/// Madrasah has no author/category/audio concept (unlike book/article/
+/// malfuzat/masail/dua) and no `document`/`published` fields either — just a
+/// title/excerpt/introduction plus embedded `infos` (label/value pairs) and
+/// `photos` (gallery), both nested directly in `MadrasahDetail` by the .NET
+/// API (no separate sub-resource fetch, unlike the old JSON:API backend).
 class MadrasahItem {
   final String id;
   final String title;
-  final String introduction;
   final String? excerpt;
-  final Map<dynamic, dynamic>? document;
+  final String introduction;
   final int? position;
-  final bool? published;
   final String? createdAt;
   final String? updatedAt;
-
-  /// Resolved from included relationships
-  final List<MadrasahInfoItem> madrasahInfos;
-  final List<MadrasahPhotoItem> madrasahPhotos;
+  final List<MadrasahInfoItem> infos;
+  final List<MadrasahPhotoItem> photos;
 
   MadrasahItem({
     required this.id,
     required this.title,
-    required this.introduction,
     this.excerpt,
-    this.document,
+    this.introduction = '',
     this.position,
-    this.published,
     this.createdAt,
     this.updatedAt,
-    this.madrasahInfos = const [],
-    this.madrasahPhotos = const [],
+    this.infos = const [],
+    this.photos = const [],
   });
+
+  /// Parse from the .NET API's flat MadrasahListItem/MadrasahDetail JSON.
+  /// MadrasahListItem omits `introduction`/`infos`/`photos` (detail-only
+  /// fields, exposed there only as `infoCount`/`photoCount`), so those stay
+  /// empty/default when parsing a list response.
+  factory MadrasahItem.fromJson(Map<String, dynamic> json) {
+    return MadrasahItem(
+      id: json['id']?.toString() ?? '',
+      title: json['title'] ?? '',
+      excerpt: json['excerpt'],
+      introduction: json['introduction'] ?? '',
+      position: json['position'] is int ? json['position'] : null,
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
+      infos: (json['infos'] as List? ?? [])
+          .map((i) => MadrasahInfoItem.fromJson(i))
+          .toList(),
+      photos: (json['photos'] as List? ?? [])
+          .map((p) => MadrasahPhotoItem.fromJson(p))
+          .toList(),
+    );
+  }
 
   factory MadrasahItem.fromDb(
     Map<String, dynamic> row, {
@@ -40,47 +61,13 @@ class MadrasahItem {
     return MadrasahItem(
       id: row['id'].toString(),
       title: row['title'] ?? '',
-      introduction: row['introduction'] ?? '',
       excerpt: row['excerpt']?.toString(),
-      document: _decodeJson(row['document_data']),
+      introduction: row['introduction'] ?? '',
       position: row['position'] is int ? row['position'] : null,
-      published: row['published'] == 1 || row['published'] == true,
       createdAt: row['created_at']?.toString(),
       updatedAt: row['updated_at']?.toString(),
-      madrasahInfos: infos,
-      madrasahPhotos: photos,
-    );
-  }
-
-  static Map<dynamic, dynamic>? _decodeJson(dynamic value) {
-    if (value == null) return null;
-    if (value is Map) return value;
-    try {
-      final decoded = json.decode(value as String);
-      return decoded is Map ? decoded : null;
-    } catch (_) {
-      return null;
-    }
-  }
-
-  factory MadrasahItem.fromJsonApi(
-    Map<String, dynamic> resource, {
-    List<MadrasahInfoItem> resolvedInfos = const [],
-    List<MadrasahPhotoItem> resolvedPhotos = const [],
-  }) {
-    final attrs = resource['attributes'] as Map<String, dynamic>? ?? {};
-    return MadrasahItem(
-      id: resource['id']?.toString() ?? '',
-      title: attrs['title'] ?? '',
-      introduction: attrs['introduction'] ?? '',
-      excerpt: attrs['excerpt'],
-      document: attrs['document'] is Map ? attrs['document'] : null,
-      position: attrs['position'] is int ? attrs['position'] : null,
-      published: attrs['published'],
-      createdAt: attrs['created-at'],
-      updatedAt: attrs['updated-at'],
-      madrasahInfos: resolvedInfos,
-      madrasahPhotos: resolvedPhotos,
+      infos: infos,
+      photos: photos,
     );
   }
 }
