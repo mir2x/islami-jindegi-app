@@ -1,3 +1,8 @@
+/// Pure Dart model for DuaCategory.
+///
+/// Flat — the .NET API's `GetCategoriesAsync` only returns top-level
+/// categories (`ParentId == null`) with `Count > 0`, matching how the web app
+/// and every other module's category filter work. No subcategory drill-down.
 class DuaCategory {
   final String id;
   final String title;
@@ -9,12 +14,12 @@ class DuaCategory {
     this.position,
   });
 
-  factory DuaCategory.fromJsonApi(Map<String, dynamic> resource) {
-    final attrs = resource['attributes'] as Map<String, dynamic>? ?? {};
+  /// From the .NET API's flat CategoryResponse/DuaCategoryOption JSON.
+  factory DuaCategory.fromJson(Map<String, dynamic> json) {
     return DuaCategory(
-      id: resource['id']?.toString() ?? '',
-      title: attrs['title'] ?? '',
-      position: attrs['position'] is int ? attrs['position'] : null,
+      id: json['id'].toString(),
+      title: json['title'] ?? '',
+      position: json['position'] is int ? json['position'] : null,
     );
   }
 

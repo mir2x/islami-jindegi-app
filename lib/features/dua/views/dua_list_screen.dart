@@ -82,15 +82,15 @@ class _DuaListScreenState extends ConsumerState<DuaListScreen> {
               padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
               child: FilterButton(
                 label: locales.categories,
-                active: qParams.containsKey('duaCategoryId'),
+                active: qParams.containsKey('categoryId'),
                 onClear: () {
                   ref
                       .read(duaQueryParamsProvider.notifier)
-                      .updateParams('duaCategoryId', '');
+                      .updateParams('categoryId', '');
                 },
-                selectedItemProvider: qParams.containsKey('duaCategoryId')
+                selectedItemProvider: qParams.containsKey('categoryId')
                     ? singleDuaCategoryProvider(
-                        qParams['duaCategoryId'],
+                        qParams['categoryId'],
                       )
                     : null,
                 selectedItemLabel: (dynamic item) {
@@ -100,7 +100,7 @@ class _DuaListScreenState extends ConsumerState<DuaListScreen> {
                   Expanded(
                     child: FilterList(
                       title: locales.categories,
-                      paramKeys: const ['duaCategoryId'],
+                      paramKeys: const ['categoryId'],
                       searchEnabled: true,
                       queryProvider: duaQueryParamsProvider,
                       resourceFetcher: (Map<String, dynamic> params) async {
@@ -116,6 +116,7 @@ class _DuaListScreenState extends ConsumerState<DuaListScreen> {
                           return await offline.queryCategories(
                             page: params['page'] ?? 1,
                             perPage: params['per_page'] ?? 16,
+                            search: params['search'],
                           );
                         }
                       },
@@ -123,7 +124,7 @@ class _DuaListScreenState extends ConsumerState<DuaListScreen> {
                         return FilterItem(
                           itemId: item.id,
                           itemTitle: item.title,
-                          paramKey: 'duaCategoryId',
+                          paramKey: 'categoryId',
                           queryProvider: duaQueryParamsProvider,
                         );
                       },
@@ -158,14 +159,14 @@ class _DuaListScreenState extends ConsumerState<DuaListScreen> {
                         page: params['page'] ?? 1,
                         perPage: params['per_page'] ?? 20,
                         search: params['search'],
-                        duaCategoryId: params['duaCategoryId'],
+                        categoryId: params['categoryId'],
                       );
                     } catch (_) {
                       return await offline.queryDuas(
                         page: params['page'] ?? 1,
                         perPage: params['per_page'] ?? 20,
                         search: params['search'],
-                        duaCategoryId: params['duaCategoryId'],
+                        categoryId: params['categoryId'],
                       );
                     }
                   },

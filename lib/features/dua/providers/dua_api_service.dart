@@ -3,15 +3,16 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/dua.dart';
 import '../models/dua_category.dart';
 
-/// Dio-based service for fetching duas from the JSON:API backend.
+/// Dio-based service for fetching duas from the .NET API (plain JSON).
+///
+/// Dua has no author concept — only a flat category filter.
 class DuaApiService {
   late final Dio _dio;
 
   DuaApiService() {
     _dio = Dio(
       BaseOptions(
-        baseUrl: '${dotenv.env['API_HOST_NAME']}/api',
-        headers: {'Accept': 'application/vnd.api+json'},
+        baseUrl: '${dotenv.env['DOTNET_API_HOST_NAME']}/api',
       ),
     );
   }
@@ -22,38 +23,24 @@ class DuaApiService {
     int page = 1,
     int perPage = 20,
     String? search,
-    String? duaCategoryId,
-    bool offline = true,
+    String? categoryId,
   }) async {
     final params = <String, dynamic>{
       'page': page,
-      'per_page': perPage,
+      'pageSize': perPage,
       'published': true,
-      'offline': offline,
       if (search != null && search.isNotEmpty) 'search': search,
-      if (duaCategoryId != null) 'duaCategoryId': duaCategoryId,
+      if (categoryId != null) 'categoryId': categoryId,
     };
 
-    final response = await _dio.get('/duas', queryParameters: params);
-    return _parseDuasResponse(response.data);
+    final response = await _dio.get('/dua', queryParameters: params);
+    final data = response.data['data'] as List? ?? [];
+    return data.map((r) => DuaItem.fromJson(r)).toList();
   }
 
   Future<DuaItem> fetchSingleDua(String id) async {
-    final response = await _dio.get('/duas/$id');
-    final data = response.data['data'] as Map<String, dynamic>;
-    return DuaItem.fromJsonApi(data);
-  }
-
-  Future<List<DuaItem>> fetchDuasByPosition({
-    int quantity = 1,
-    required int position,
-  }) async {
-    final params = <String, dynamic>{
-      'quantity': quantity,
-      'position': position,
-    };
-    final response = await _dio.get('/duas', queryParameters: params);
-    return _parseDuasResponse(response.data);
+    final response = await _dio.get('/dua/$id');
+    return DuaItem.fromJson(response.data as Map<String, dynamic>);
   }
 
   // ───────────────────── Categories ─────────────────────
@@ -62,35 +49,20 @@ class DuaApiService {
     int page = 1,
     int perPage = 16,
     String? search,
-    bool offline = true,
   }) async {
     final params = <String, dynamic>{
+      'published': true,
       'page': page,
-      'per_page': perPage,
+      'pageSize': perPage,
       if (search != null && search.isNotEmpty) 'search': search,
-      'offline': offline,
     };
-    final response = await _dio.get('/dua_categories', queryParameters: params);
-    return _parseCategoriesResponse(response.data);
+    final response = await _dio.get('/dua/categories', queryParameters: params);
+    final data = response.data as List? ?? [];
+    return data.map((r) => DuaCategory.fromJson(r)).toList();
   }
 
   Future<DuaCategory> fetchCategory(String id) async {
-    final response = await _dio.get('/dua_categories/$id');
-    final data = response.data['data'] as Map<String, dynamic>;
-    return DuaCategory.fromJsonApi(data);
-  }
-
-  // ═══════════════════════════════════════════════
-  //  JSON:API Response Parsing
-  // ═══════════════════════════════════════════════
-
-  List<DuaItem> _parseDuasResponse(Map<String, dynamic> json) {
-    final dataList = json['data'] as List? ?? [];
-    return dataList.map((r) => DuaItem.fromJsonApi(r)).toList();
-  }
-
-  List<DuaCategory> _parseCategoriesResponse(Map<String, dynamic> json) {
-    final dataList = json['data'] as List? ?? [];
-    return dataList.map((r) => DuaCategory.fromJsonApi(r)).toList();
+    final response = await _dio.get('/categories/$id');
+    return DuaCategory.fromJson(response.data as Map<String, dynamic>);
   }
 }
