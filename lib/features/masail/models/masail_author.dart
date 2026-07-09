@@ -12,13 +12,13 @@ class MasailAuthor {
     this.position,
   });
 
-  factory MasailAuthor.fromJsonApi(Map<String, dynamic> resource) {
-    final attrs = resource['attributes'] as Map<String, dynamic>? ?? {};
+  /// From the .NET API's flat AuthorResponse/MasailAuthorOption JSON
+  factory MasailAuthor.fromJson(Map<String, dynamic> json) {
     return MasailAuthor(
-      id: resource['id']?.toString() ?? '',
-      name: attrs['name'] ?? '',
-      info: attrs['info'],
-      position: attrs['position'] is int ? attrs['position'] : null,
+      id: json['id'].toString(),
+      name: json['name'] ?? '',
+      info: json['info'],
+      position: json['position'] is int ? json['position'] : null,
     );
   }
 

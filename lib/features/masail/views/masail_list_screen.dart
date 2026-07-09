@@ -10,8 +10,6 @@ import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
-import 'package:native_app/widgets/filter/nested_item.dart';
-import 'package:native_app/widgets/filter/subitem.dart';
 import 'package:native_app/widgets/filter/triple_switch_button.dart';
 import 'package:native_app/widgets/presentation/content_list_card.dart';
 import 'package:native_app/providers/downloaded_masail.dart';
@@ -99,16 +97,16 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
                             Expanded(
                               child: FilterButton(
                                 label: locales.authorsOrSpeakers,
-                                active: qParams.containsKey('masailAuthorId'),
+                                active: qParams.containsKey('authorId'),
                                 onClear: () {
                                   ref
                                       .read(masailQueryParamsProvider.notifier)
-                                      .updateParams('masailAuthorId', '');
+                                      .updateParams('authorId', '');
                                 },
                                 selectedItemProvider:
-                                    qParams.containsKey('masailAuthorId')
+                                    qParams.containsKey('authorId')
                                         ? singleMasailAuthorProvider(
-                                            qParams['masailAuthorId'],
+                                            qParams['authorId'],
                                           )
                                         : null,
                                 selectedItemLabel: (dynamic item) {
@@ -118,7 +116,7 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
                                   Expanded(
                                     child: FilterList(
                                       title: locales.authorsOrSpeakers,
-                                      paramKeys: const ['masailAuthorId'],
+                                      paramKeys: const ['authorId'],
                                       queryProvider: masailQueryParamsProvider,
                                       resourceFetcher:
                                           (Map<String, dynamic> params) async {
@@ -134,7 +132,7 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
                                         return FilterItem(
                                           itemId: item.id,
                                           itemTitle: item.name,
-                                          paramKey: 'masailAuthorId',
+                                          paramKey: 'authorId',
                                           queryProvider:
                                               masailQueryParamsProvider,
                                         );
@@ -146,110 +144,55 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
                             ),
                             const SizedBox(width: 15),
                             Expanded(
-                              child: Builder(
-                                builder: (context) {
-                                  dynamic selectedProvider;
-
-                                  if (qParams.containsKey('masailCategoryId')) {
-                                    selectedProvider =
-                                        singleMasailCategoryProvider(
-                                      qParams['masailCategoryId'],
-                                    );
-                                  } else if (qParams
-                                      .containsKey('masailSubcategoryId')) {
-                                    selectedProvider =
-                                        singleMasailSubcategoryProvider(
-                                      qParams['masailSubcategoryId'],
-                                    );
-                                  }
-
-                                  return FilterButton(
-                                    label: locales.categories,
-                                    active: qParams.keys.any(
-                                      (k) => [
-                                        'masailCategoryId',
-                                        'masailSubcategoryId',
-                                      ].contains(k),
-                                    ),
-                                    onClear: () {
-                                      ref
-                                          .read(
-                                            masailQueryParamsProvider.notifier,
+                              child: FilterButton(
+                                label: locales.categories,
+                                active: qParams.containsKey('categoryId'),
+                                onClear: () {
+                                  ref
+                                      .read(
+                                        masailQueryParamsProvider.notifier,
+                                      )
+                                      .updateParams('categoryId', '');
+                                },
+                                selectedItemProvider:
+                                    qParams.containsKey('categoryId')
+                                        ? singleMasailCategoryProvider(
+                                            qParams['categoryId'],
                                           )
-                                          .updateParams('masailCategoryId', '');
-                                      ref
-                                          .read(
-                                            masailQueryParamsProvider.notifier,
-                                          )
-                                          .updateParams(
-                                            'masailSubcategoryId',
-                                            '',
-                                          );
-                                    },
-                                    selectedItemProvider: selectedProvider,
-                                    selectedItemLabel: (dynamic item) {
-                                      return item.title;
-                                    },
-                                    children: [
-                                      Expanded(
-                                        child: FilterList(
-                                          title: locales.categories,
-                                          paramKeys: const [
-                                            'masailCategoryId',
-                                            'masailSubcategoryId',
-                                          ],
-                                          searchEnabled: true,
+                                        : null,
+                                selectedItemLabel: (dynamic item) {
+                                  return item.title;
+                                },
+                                children: [
+                                  Expanded(
+                                    child: FilterList(
+                                      title: locales.categories,
+                                      paramKeys: const ['categoryId'],
+                                      searchEnabled: true,
+                                      queryProvider: masailQueryParamsProvider,
+                                      resourceFetcher: (
+                                        Map<String, dynamic> params,
+                                      ) async {
+                                        final api =
+                                            ref.read(masailApiServiceProvider);
+                                        return await api.fetchCategories(
+                                          page: params['page'] ?? 1,
+                                          perPage: params['per_page'] ?? 16,
+                                          search: params['search'],
+                                        );
+                                      },
+                                      itemBuilder: (_, item, __) {
+                                        return FilterItem(
+                                          itemId: item.id,
+                                          itemTitle: item.title,
+                                          paramKey: 'categoryId',
                                           queryProvider:
                                               masailQueryParamsProvider,
-                                          resourceFetcher: (
-                                            Map<String, dynamic> params,
-                                          ) async {
-                                            final api = ref
-                                                .read(masailApiServiceProvider);
-                                            return await api.fetchCategories(
-                                              page: params['page'] ?? 1,
-                                              perPage: params['per_page'] ?? 16,
-                                              search: params['search'],
-                                            );
-                                          },
-                                          itemBuilder: (_, item, __) {
-                                            if (item.masailSubcategories
-                                                    .length >
-                                                0) {
-                                              return FilterNestedItem(
-                                                itemId: item.id,
-                                                itemTitle: item.title,
-                                                paramKey: 'masailSubcategoryId',
-                                                subitems:
-                                                    item.masailSubcategories,
-                                                queryProvider:
-                                                    masailQueryParamsProvider,
-                                                subitemBuilder: (var subitem) {
-                                                  return FilterSubitem(
-                                                    itemId: subitem.id,
-                                                    itemTitle: subitem.title,
-                                                    paramKey:
-                                                        'masailSubcategoryId',
-                                                    queryProvider:
-                                                        masailQueryParamsProvider,
-                                                  );
-                                                },
-                                              );
-                                            } else {
-                                              return FilterItem(
-                                                itemId: item.id,
-                                                itemTitle: item.title,
-                                                paramKey: 'masailCategoryId',
-                                                queryProvider:
-                                                    masailQueryParamsProvider,
-                                              );
-                                            }
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -317,9 +260,8 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
                         page: params['page'] ?? 1,
                         perPage: params['per_page'] ?? 9,
                         search: qParams['search'],
-                        masailAuthorId: qParams['masailAuthorId'],
-                        masailCategoryId: qParams['masailCategoryId'],
-                        masailSubcategoryId: qParams['masailSubcategoryId'],
+                        authorId: qParams['authorId'],
+                        categoryId: qParams['categoryId'],
                         hasAudio: qParams['hasAudio'],
                       );
                     } catch (_) {
@@ -327,9 +269,8 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
                         page: params['page'] ?? 1,
                         perPage: params['per_page'] ?? 9,
                         search: qParams['search'],
-                        masailAuthorId: qParams['masailAuthorId'],
-                        masailCategoryId: qParams['masailCategoryId'],
-                        masailSubcategoryId: qParams['masailSubcategoryId'],
+                        authorId: qParams['authorId'],
+                        categoryId: qParams['categoryId'],
                         hasAudio: qParams['hasAudio'] == 'true'
                             ? true
                             : (qParams['hasAudio'] == 'false' ? false : null),
@@ -382,7 +323,7 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
                             LastVisited(
                               resourceKey: 'lastMasail',
                               resourceId: item.id,
-                              isAudio: item.audio != null,
+                              isAudio: item.hasAudio == true,
                             ),
                           ],
                         ),

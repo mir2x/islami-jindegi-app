@@ -10,12 +10,12 @@ class PageContent {
     this.slug,
   });
 
-  factory PageContent.fromJsonApi(Map<String, dynamic> resource) {
-    final attrs = resource['attributes'] as Map<String, dynamic>? ?? {};
+  /// From the .NET API's flat PageDetail JSON
+  factory PageContent.fromJson(Map<String, dynamic> json) {
     return PageContent(
-      id: resource['id']?.toString() ?? '',
-      body: attrs['body'],
-      slug: attrs['slug'],
+      id: json['id'].toString(),
+      body: json['body'],
+      slug: json['slug'],
     );
   }
 

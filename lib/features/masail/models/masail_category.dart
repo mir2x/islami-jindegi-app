@@ -1,41 +1,33 @@
-import 'masail_subcategory.dart';
-
-/// Pure Dart model for MasailCategory with resolved subcategories.
+/// Pure Dart model for MasailCategory.
+///
+/// Flat — the .NET API's `GetCategoriesAsync` only returns top-level
+/// categories (`ParentId == null`) with `Count > 0`, matching how the web app
+/// and the book module's category filter work. No subcategory drill-down.
 class MasailCategory {
   final String id;
   final String title;
   final int? position;
-  final List<MasailSubcategory> masailSubcategories;
 
   MasailCategory({
     required this.id,
     required this.title,
     this.position,
-    this.masailSubcategories = const [],
   });
 
-  factory MasailCategory.fromJsonApi(
-    Map<String, dynamic> resource, {
-    List<MasailSubcategory> resolvedSubcategories = const [],
-  }) {
-    final attrs = resource['attributes'] as Map<String, dynamic>? ?? {};
+  /// From the .NET API's flat CategoryResponse/MasailCategoryOption JSON
+  factory MasailCategory.fromJson(Map<String, dynamic> json) {
     return MasailCategory(
-      id: resource['id']?.toString() ?? '',
-      title: attrs['title'] ?? '',
-      position: attrs['position'] is int ? attrs['position'] : null,
-      masailSubcategories: resolvedSubcategories,
+      id: json['id'].toString(),
+      title: json['title'] ?? '',
+      position: json['position'] is int ? json['position'] : null,
     );
   }
 
-  factory MasailCategory.fromDb(
-    Map<String, dynamic> row, {
-    List<MasailSubcategory> subcategories = const [],
-  }) {
+  factory MasailCategory.fromDb(Map<String, dynamic> row) {
     return MasailCategory(
       id: row['id'].toString(),
       title: row['title'] ?? '',
       position: row['position'] is int ? row['position'] : null,
-      masailSubcategories: subcategories,
     );
   }
 }

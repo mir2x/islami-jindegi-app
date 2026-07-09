@@ -3,12 +3,14 @@ import '../../../core/utils/offline_database_helper.dart';
 import '../models/masail.dart';
 import '../models/masail_author.dart';
 import '../models/masail_category.dart';
-import '../models/masail_subcategory.dart';
 import '../models/page_content.dart';
 
 class MasailOfflineService {
+  // Bumped from 1 -> 2: pre-migration snapshots contain Ruby integer ids that
+  // don't reconcile with the .NET API's Guid ids, so existing installs must
+  // evict their cache and re-fetch once a Guid-based snapshot is published.
   Future<Database> get _db =>
-      OfflineDatabaseHelper(feature: 'masails', version: 1).database;
+      OfflineDatabaseHelper(feature: 'masails', version: 2).database;
   Future<Database> get _miscDb =>
       OfflineDatabaseHelper(feature: 'misc', version: 1).database;
 
@@ -18,28 +20,22 @@ class MasailOfflineService {
     int page = 1,
     int perPage = 9,
     String? search,
-    String? masailAuthorId,
-    String? masailCategoryId,
-    String? masailSubcategoryId,
+    String? authorId,
+    String? categoryId,
     bool? hasAudio,
   }) async {
     final db = await _db;
     final where = <String>['published = 1'];
     final args = <dynamic>[];
 
-    if (masailAuthorId != null) {
+    if (authorId != null) {
       where.add('masail_author_id = ?');
-      args.add(masailAuthorId);
+      args.add(authorId);
     }
-    if (masailCategoryId != null) {
+    if (categoryId != null) {
       where.add(
           'id IN (SELECT masail_id FROM masail_categorizations WHERE masail_category_id = ?)');
-      args.add(masailCategoryId);
-    }
-    if (masailSubcategoryId != null) {
-      where.add(
-          'id IN (SELECT masail_id FROM masail_subcategorizations WHERE masail_subcategory_id = ?)');
-      args.add(masailSubcategoryId);
+      args.add(categoryId);
     }
     if (hasAudio == true) {
       where.add('has_audio = 1');
@@ -138,6 +134,8 @@ class MasailOfflineService {
   }
 
   // ───────────────────── Categories ─────────────────────
+  // Flat — no subcategory drill-down (matches the .NET category options
+  // endpoint, which only returns top-level categories).
 
   Future<List<MasailCategory>> queryCategories({
     int page = 1,
@@ -161,27 +159,8 @@ class MasailOfflineService {
       limit: perPage,
       offset: (page - 1) * perPage,
     );
-    if (catRows.isEmpty) return [];
 
-    final catIds = catRows.map((r) => r['id'].toString()).toList();
-    final ph = List.filled(catIds.length, '?').join(',');
-    final subRows = await db.query(
-      'masail_subcategories',
-      where: 'masail_category_id IN ($ph)',
-      whereArgs: catIds,
-      orderBy: 'position ASC',
-    );
-
-    final subsByCat = <String, List<MasailSubcategory>>{};
-    for (final r in subRows) {
-      final catId = r['masail_category_id'].toString();
-      subsByCat.putIfAbsent(catId, () => []).add(MasailSubcategory.fromDb(r));
-    }
-
-    return catRows.map((row) {
-      final id = row['id'].toString();
-      return MasailCategory.fromDb(row, subcategories: subsByCat[id] ?? []);
-    }).toList();
+    return catRows.map((row) => MasailCategory.fromDb(row)).toList();
   }
 
   Future<MasailCategory?> findCategoryById(String id) async {
@@ -189,21 +168,7 @@ class MasailOfflineService {
     final rows = await db
         .query('masail_categories', where: 'id = ?', whereArgs: [id]);
     if (rows.isEmpty) return null;
-
-    final subRows = await db.query('masail_subcategories',
-        where: 'masail_category_id = ?',
-        whereArgs: [id],
-        orderBy: 'position ASC');
-    final subs = subRows.map((r) => MasailSubcategory.fromDb(r)).toList();
-    return MasailCategory.fromDb(rows.first, subcategories: subs);
-  }
-
-  Future<MasailSubcategory?> findSubcategoryById(String id) async {
-    final db = await _db;
-    final rows = await db
-        .query('masail_subcategories', where: 'id = ?', whereArgs: [id]);
-    if (rows.isEmpty) return null;
-    return MasailSubcategory.fromDb(rows.first);
+    return MasailCategory.fromDb(rows.first);
   }
 
   // ───────────────────── Pages ─────────────────────

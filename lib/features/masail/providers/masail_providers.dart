@@ -1,10 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'masail_api_service.dart';
 import 'masail_offline_service.dart';
 import '../models/masail.dart';
 import '../models/masail_author.dart';
 import '../models/masail_category.dart';
-import '../models/masail_subcategory.dart';
 import '../models/page_content.dart';
 
 // ───────────────────── Services ─────────────────────
@@ -15,6 +16,13 @@ final masailApiServiceProvider = Provider<MasailApiService>((ref) {
 
 final masailOfflineServiceProvider = Provider<MasailOfflineService>((ref) {
   return MasailOfflineService();
+});
+
+// ───────────────────── Connectivity ─────────────────────
+
+final _connectivityProvider = FutureProvider<bool>((ref) async {
+  final result = await Connectivity().checkConnectivity();
+  return !result.contains(ConnectivityResult.none);
 });
 
 // ───────────────────── Query Params ─────────────────────
@@ -78,17 +86,45 @@ final singleMasailCategoryProvider =
   }
 });
 
-final singleMasailSubcategoryProvider = FutureProvider.autoDispose
-    .family<MasailSubcategory, String>((ref, id) async {
+// ───────────────────── Previous/Next navigation ─────────────────────
+
+/// Cached ordered masail IDs for previous/next navigation, mirroring
+/// `bookNavigationIdsProvider`. The .NET API has no `position`/`quantity`
+/// adjacency query (unlike the old Ruby `fetchMasailByPosition`), so
+/// previous/next is resolved by paging through the (unfiltered, published)
+/// list once and looking up the current masail's index in that cache.
+final masailNavigationIdsProvider = FutureProvider<List<String>>((ref) async {
+  final isConnected = await ref.watch(_connectivityProvider.future);
   final api = ref.read(masailApiServiceProvider);
   final offline = ref.read(masailOfflineServiceProvider);
-  try {
-    return await api.fetchSubcategory(id);
-  } catch (_) {
-    final item = await offline.findSubcategoryById(id);
-    if (item != null) return item;
-    rethrow;
+  const perPage = 50;
+  final ids = <String>[];
+
+  if (isConnected) {
+    try {
+      int page = 1;
+      while (true) {
+        final items = await api.fetchMasail(page: page, perPage: perPage);
+        if (items.isEmpty) break;
+        ids.addAll(items.map((item) => item.id));
+        if (items.length < perPage) break;
+        page++;
+      }
+      return ids;
+    } catch (e) {
+      debugPrint('[masailNavigationIdsProvider] API error: $e');
+    }
   }
+
+  int page = 1;
+  while (true) {
+    final items = await offline.queryMasails(page: page, perPage: perPage);
+    if (items.isEmpty) break;
+    ids.addAll(items.map((item) => item.id));
+    if (items.length < perPage) break;
+    page++;
+  }
+  return ids;
 });
 
 // ───────────────────── Pages (for ask-question) ─────────────────────
@@ -98,8 +134,7 @@ final askQuestionPageProvider =
   final api = ref.read(masailApiServiceProvider);
   final offline = ref.read(masailOfflineServiceProvider);
   try {
-    final pages = await api.fetchPages(slug: 'ask-masail', quantity: 1);
-    return pages.isNotEmpty ? pages.first : null;
+    return await api.fetchPageBySlug('ask-masail');
   } catch (_) {
     return await offline.findPageBySlug('ask-masail');
   }

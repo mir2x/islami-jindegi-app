@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -12,7 +11,6 @@ import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/helpers/file_title_path.dart';
-import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
@@ -31,7 +29,11 @@ class DownloadedMasailScreen extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
-        Map audio = json.decode(resource.audio);
+        final masailId = resource.masailId ?? '';
+        final audioUrl = resource.audio;
+        final filePath = audioUrl != null
+            ? fileTitlePath(resource.title ?? '', 'masails/$masailId')
+            : null;
 
         return ResizableFont(
           storeKey: 'masailFontRatio',
@@ -42,19 +44,17 @@ class DownloadedMasailScreen extends ConsumerWidget {
               body: ItemContent(
                 children: [
                   MasailDisplay(
-                    title: resource.title,
-                    question: resource.question,
+                    masailId: masailId,
+                    title: resource.title ?? '',
+                    question: resource.question ?? '',
                     answer: resource.answer,
-                    audio: audio,
+                    audioUrl: audioUrl,
                     author: resource.author,
                     fontSizeRatio: fontSizeRatio,
-                    downloadItem: (audio.isNotEmpty)
+                    downloadItem: (audioUrl != null && filePath != null)
                         ? DownloadItem(
-                            filePath: fileTitlePath(
-                              resource.title,
-                              audio['id'],
-                            ),
-                            fileUrl: fileSrcUrl(audio),
+                            filePath: filePath,
+                            fileUrl: audioUrl,
                             deleteCallback: () async {
                               await ref
                                   .watch(downloadedMasailProvider.notifier)
