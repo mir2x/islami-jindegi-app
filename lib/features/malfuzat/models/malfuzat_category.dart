@@ -1,41 +1,33 @@
-import 'malfuzat_subcategory.dart';
-
-/// Pure Dart model for MalfuzatCategory with resolved subcategories.
+/// Pure Dart model for MalfuzatCategory.
+/// Category filtering is flat (top-level only) — matches the .NET API's
+/// `GetCategoriesAsync`, which only returns top-level categories with
+/// `Count > 0`. No subcategory drill-down (see `malfuzat_subcategory.dart`
+/// removal in the .NET migration).
 class MalfuzatCategory {
   final String id;
   final String title;
   final int? position;
-  final List<MalfuzatSubcategory> malfuzatSubcategories;
 
   MalfuzatCategory({
     required this.id,
     required this.title,
     this.position,
-    this.malfuzatSubcategories = const [],
   });
 
-  factory MalfuzatCategory.fromJsonApi(
-    Map<String, dynamic> resource, {
-    List<MalfuzatSubcategory> resolvedSubcategories = const [],
-  }) {
-    final attrs = resource['attributes'] as Map<String, dynamic>? ?? {};
+  /// From the .NET API's flat CategoryResponse/MalfuzatCategoryOption JSON
+  factory MalfuzatCategory.fromJson(Map<String, dynamic> json) {
     return MalfuzatCategory(
-      id: resource['id']?.toString() ?? '',
-      title: attrs['title'] ?? '',
-      position: attrs['position'] is int ? attrs['position'] : null,
-      malfuzatSubcategories: resolvedSubcategories,
+      id: json['id'].toString(),
+      title: json['title'] ?? '',
+      position: json['position'] is int ? json['position'] : null,
     );
   }
 
-  factory MalfuzatCategory.fromDb(
-    Map<String, dynamic> row, {
-    List<MalfuzatSubcategory> subcategories = const [],
-  }) {
+  factory MalfuzatCategory.fromDb(Map<String, dynamic> row) {
     return MalfuzatCategory(
       id: row['id'].toString(),
       title: row['title'] ?? '',
       position: row['position'] is int ? row['position'] : null,
-      malfuzatSubcategories: subcategories,
     );
   }
 }

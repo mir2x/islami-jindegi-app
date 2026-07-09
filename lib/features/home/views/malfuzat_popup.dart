@@ -63,9 +63,8 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
       try {
         final api = ref.read(malfuzatApiServiceProvider);
         randomMalfuzat = await api.fetchRandomMalfuzat(
-          malfuzatAuthorId: '6842ab90-27d0-4ef9-b783-3b03388a2304',
-          hasAudio: 'false',
-          includeAuthor: true,
+          authorId: '6842ab90-27d0-4ef9-b783-3b03388a2304',
+          hasAudio: false,
         );
         debugPrint('[MalfuzatPopup] API returned random item: $randomMalfuzat');
       } catch (e, stack) {

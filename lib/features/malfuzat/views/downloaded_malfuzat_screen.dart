@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -12,7 +11,6 @@ import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/helpers/file_title_path.dart';
-import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
@@ -31,7 +29,7 @@ class DownloadedMalfuzatScreen extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
-        Map audio = json.decode(resource.audio);
+        String? audioUrl = resource.audio;
 
         return ResizableFont(
           storeKey: 'malfuzatFontRatio',
@@ -42,19 +40,20 @@ class DownloadedMalfuzatScreen extends ConsumerWidget {
               body: ItemContent(
                 children: [
                   MalfuzatDisplay(
-                    title: resource.title,
+                    malfuzatId: resource.malfuzatId ?? '',
+                    title: resource.title ?? '',
                     body: resource.body,
                     excerpt: resource.excerpt,
-                    audio: audio,
+                    audioUrl: audioUrl,
                     author: resource.author,
                     fontSizeRatio: fontSizeRatio,
-                    downloadItem: (audio.isNotEmpty)
+                    downloadItem: (audioUrl != null && audioUrl.isNotEmpty)
                         ? DownloadItem(
                             filePath: fileTitlePath(
-                              resource.title,
-                              audio['id'],
+                              resource.title ?? '',
+                              'malfuzats/${resource.malfuzatId}',
                             ),
-                            fileUrl: fileSrcUrl(audio),
+                            fileUrl: audioUrl,
                             deleteCallback: () async {
                               await ref
                                   .watch(downloadedMalfuzatProvider.notifier)

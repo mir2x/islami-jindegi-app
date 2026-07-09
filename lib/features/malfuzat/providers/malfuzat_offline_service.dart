@@ -3,11 +3,13 @@ import '../../../core/utils/offline_database_helper.dart';
 import '../models/malfuzat.dart';
 import '../models/malfuzat_author.dart';
 import '../models/malfuzat_category.dart';
-import '../models/malfuzat_subcategory.dart';
 
 class MalfuzatOfflineService {
+  // Bumped from 1 -> 2: pre-migration snapshots contain Ruby integer ids that
+  // don't reconcile with the .NET API's Guid ids, so existing installs must
+  // evict their cache and re-fetch once a Guid-based snapshot is published.
   Future<Database> get _db =>
-      OfflineDatabaseHelper(feature: 'malfuzats', version: 1).database;
+      OfflineDatabaseHelper(feature: 'malfuzats', version: 2).database;
 
   // ───────────────────── Malfuzats ─────────────────────
 
@@ -15,28 +17,22 @@ class MalfuzatOfflineService {
     int page = 1,
     int perPage = 9,
     String? search,
-    String? malfuzatAuthorId,
-    String? malfuzatCategoryId,
-    String? malfuzatSubcategoryId,
+    String? authorId,
+    String? categoryId,
     bool? hasAudio,
   }) async {
     final db = await _db;
     final where = <String>['published = 1'];
     final args = <dynamic>[];
 
-    if (malfuzatAuthorId != null) {
+    if (authorId != null) {
       where.add('malfuzat_author_id = ?');
-      args.add(malfuzatAuthorId);
+      args.add(authorId);
     }
-    if (malfuzatCategoryId != null) {
+    if (categoryId != null) {
       where.add(
           'id IN (SELECT malfuzat_id FROM malfuzat_categorizations WHERE malfuzat_category_id = ?)');
-      args.add(malfuzatCategoryId);
-    }
-    if (malfuzatSubcategoryId != null) {
-      where.add(
-          'id IN (SELECT malfuzat_id FROM malfuzat_subcategorizations WHERE malfuzat_subcategory_id = ?)');
-      args.add(malfuzatSubcategoryId);
+      args.add(categoryId);
     }
     if (hasAudio == true) {
       where.add('has_audio = 1');
@@ -99,6 +95,34 @@ class MalfuzatOfflineService {
     return MalfuzatItem.fromDb(row, authorName: authorName);
   }
 
+  Future<MalfuzatItem?> findPreviousMalfuzatByPosition(int position) async {
+    final db = await _db;
+    final rows = await db.query(
+      'malfuzats',
+      where: 'position < ?',
+      whereArgs: [position],
+      orderBy: 'position DESC',
+      limit: 1,
+    );
+
+    if (rows.isEmpty) return null;
+    return findMalfuzatById(rows.first['id'].toString());
+  }
+
+  Future<MalfuzatItem?> findNextMalfuzatByPosition(int position) async {
+    final db = await _db;
+    final rows = await db.query(
+      'malfuzats',
+      where: 'position > ?',
+      whereArgs: [position],
+      orderBy: 'position ASC',
+      limit: 1,
+    );
+
+    if (rows.isEmpty) return null;
+    return findMalfuzatById(rows.first['id'].toString());
+  }
+
   // ───────────────────── Authors ─────────────────────
 
   Future<List<MalfuzatAuthor>> queryAuthors({
@@ -158,30 +182,7 @@ class MalfuzatOfflineService {
       limit: perPage,
       offset: (page - 1) * perPage,
     );
-    if (catRows.isEmpty) return [];
-
-    final catIds = catRows.map((r) => r['id'].toString()).toList();
-    final ph = List.filled(catIds.length, '?').join(',');
-    final subRows = await db.query(
-      'malfuzat_subcategories',
-      where: 'malfuzat_category_id IN ($ph)',
-      whereArgs: catIds,
-      orderBy: 'position ASC',
-    );
-
-    final subsByCat = <String, List<MalfuzatSubcategory>>{};
-    for (final r in subRows) {
-      final catId = r['malfuzat_category_id'].toString();
-      subsByCat
-          .putIfAbsent(catId, () => [])
-          .add(MalfuzatSubcategory.fromDb(r));
-    }
-
-    return catRows.map((row) {
-      final id = row['id'].toString();
-      return MalfuzatCategory.fromDb(row,
-          subcategories: subsByCat[id] ?? []);
-    }).toList();
+    return catRows.map((row) => MalfuzatCategory.fromDb(row)).toList();
   }
 
   Future<MalfuzatCategory?> findCategoryById(String id) async {
@@ -189,20 +190,6 @@ class MalfuzatOfflineService {
     final rows = await db
         .query('malfuzat_categories', where: 'id = ?', whereArgs: [id]);
     if (rows.isEmpty) return null;
-
-    final subRows = await db.query('malfuzat_subcategories',
-        where: 'malfuzat_category_id = ?',
-        whereArgs: [id],
-        orderBy: 'position ASC');
-    final subs = subRows.map((r) => MalfuzatSubcategory.fromDb(r)).toList();
-    return MalfuzatCategory.fromDb(rows.first, subcategories: subs);
-  }
-
-  Future<MalfuzatSubcategory?> findSubcategoryById(String id) async {
-    final db = await _db;
-    final rows = await db
-        .query('malfuzat_subcategories', where: 'id = ?', whereArgs: [id]);
-    if (rows.isEmpty) return null;
-    return MalfuzatSubcategory.fromDb(rows.first);
+    return MalfuzatCategory.fromDb(rows.first);
   }
 }

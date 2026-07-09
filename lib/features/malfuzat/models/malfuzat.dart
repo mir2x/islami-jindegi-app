@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 /// Pure Dart model for Malfuzat — no Flutter Data dependency.
 class MalfuzatItem {
   final String id;
@@ -8,15 +6,16 @@ class MalfuzatItem {
   final String? excerpt;
   final String language;
   final bool? hasAudio;
-  final Map<dynamic, dynamic>? audio;
-  final Map<dynamic, dynamic>? document;
+  final String? audioUrl;
+  final String? documentUrl;
   final int? position;
   final bool? published;
   final String? publishedAt;
   final String? createdAt;
   final String? updatedAt;
 
-  /// Resolved from the included malfuzat-author relationship
+  /// Resolved from the .NET API's embedded `author` object (Malfuzat has a
+  /// single author via a foreign key, unlike Book's many-to-many authors).
   final String? authorName;
 
   MalfuzatItem({
@@ -26,8 +25,8 @@ class MalfuzatItem {
     this.excerpt,
     required this.language,
     this.hasAudio,
-    this.audio,
-    this.document,
+    this.audioUrl,
+    this.documentUrl,
     this.position,
     this.published,
     this.publishedAt,
@@ -36,26 +35,23 @@ class MalfuzatItem {
     this.authorName,
   });
 
-  factory MalfuzatItem.fromJsonApi(
-    Map<String, dynamic> resource, {
-    String? resolvedAuthorName,
-  }) {
-    final attrs = resource['attributes'] as Map<String, dynamic>? ?? {};
+  /// Parse from the .NET API's flat MalfuzatListItem/MalfuzatDetail JSON
+  factory MalfuzatItem.fromJson(Map<String, dynamic> json) {
     return MalfuzatItem(
-      id: resource['id']?.toString() ?? '',
-      title: attrs['title'] ?? '',
-      body: attrs['body'],
-      excerpt: attrs['excerpt'],
-      language: attrs['language'] ?? 'bn',
-      hasAudio: attrs['has-audio'],
-      audio: attrs['audio'] is Map ? attrs['audio'] : null,
-      document: attrs['document'] is Map ? attrs['document'] : null,
-      position: attrs['position'] is int ? attrs['position'] : null,
-      published: attrs['published'],
-      publishedAt: attrs['published-at'],
-      createdAt: attrs['created-at'],
-      updatedAt: attrs['updated-at'],
-      authorName: resolvedAuthorName,
+      id: json['id'].toString(),
+      title: json['title'] ?? '',
+      body: json['body'],
+      excerpt: json['excerpt'],
+      language: json['language'] ?? 'bn',
+      hasAudio: json['hasAudio'],
+      audioUrl: json['audioUrl'],
+      documentUrl: json['documentUrl'],
+      position: json['position'] is int ? json['position'] : null,
+      published: json['published'],
+      publishedAt: json['publishedAt'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
+      authorName: json['author'] is Map ? json['author']['name'] : null,
     );
   }
 
@@ -67,8 +63,8 @@ class MalfuzatItem {
       excerpt: row['excerpt'],
       language: row['language'] ?? 'bn',
       hasAudio: row['has_audio'] == 1 || row['has_audio'] == true,
-      audio: _decodeJson(row['audio_data']),
-      document: _decodeJson(row['document_data']),
+      audioUrl: row['audio_url'] ?? row['audioUrl'],
+      documentUrl: row['document_url'] ?? row['documentUrl'],
       position: row['position'] is int ? row['position'] : null,
       published: row['published'] == 1 || row['published'] == true,
       publishedAt: row['published_at'],
@@ -76,16 +72,5 @@ class MalfuzatItem {
       updatedAt: row['updated_at'],
       authorName: authorName,
     );
-  }
-
-  static Map<dynamic, dynamic>? _decodeJson(dynamic value) {
-    if (value == null) return null;
-    if (value is Map) return value;
-    if (value is String) {
-      try {
-        return json.decode(value) as Map;
-      } catch (_) {}
-    }
-    return null;
   }
 }

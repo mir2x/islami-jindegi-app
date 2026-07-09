@@ -10,8 +10,6 @@ import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
-import 'package:native_app/widgets/filter/nested_item.dart';
-import 'package:native_app/widgets/filter/subitem.dart';
 import 'package:native_app/widgets/filter/triple_switch_button.dart';
 import 'package:native_app/widgets/presentation/content_list_card.dart';
 import 'package:native_app/providers/downloaded_malfuzat.dart';
@@ -96,18 +94,18 @@ class _MalfuzatListScreenState extends ConsumerState<MalfuzatListScreen> {
                             Expanded(
                               child: FilterButton(
                                 label: locales.authorsOrSpeakers,
-                                active: qParams.containsKey('malfuzatAuthorId'),
+                                active: qParams.containsKey('authorId'),
                                 onClear: () {
                                   ref
                                       .read(
                                         malfuzatQueryParamsProvider.notifier,
                                       )
-                                      .updateParams('malfuzatAuthorId', '');
+                                      .updateParams('authorId', '');
                                 },
                                 selectedItemProvider:
-                                    qParams.containsKey('malfuzatAuthorId')
+                                    qParams.containsKey('authorId')
                                         ? singleMalfuzatAuthorProvider(
-                                            qParams['malfuzatAuthorId'],
+                                            qParams['authorId'],
                                           )
                                         : null,
                                 selectedItemLabel: (dynamic item) {
@@ -117,7 +115,7 @@ class _MalfuzatListScreenState extends ConsumerState<MalfuzatListScreen> {
                                   Expanded(
                                     child: FilterList(
                                       title: locales.authorsOrSpeakers,
-                                      paramKeys: const ['malfuzatAuthorId'],
+                                      paramKeys: const ['authorId'],
                                       searchEnabled: true,
                                       queryProvider:
                                           malfuzatQueryParamsProvider,
@@ -135,7 +133,7 @@ class _MalfuzatListScreenState extends ConsumerState<MalfuzatListScreen> {
                                         return FilterItem(
                                           itemId: item.id,
                                           itemTitle: item.name,
-                                          paramKey: 'malfuzatAuthorId',
+                                          paramKey: 'authorId',
                                           queryProvider:
                                               malfuzatQueryParamsProvider,
                                         );
@@ -147,118 +145,57 @@ class _MalfuzatListScreenState extends ConsumerState<MalfuzatListScreen> {
                             ),
                             const SizedBox(width: 15),
                             Expanded(
-                              child: Builder(
-                                builder: (context) {
-                                  dynamic selectedProvider;
-
-                                  if (qParams
-                                      .containsKey('malfuzatCategoryId')) {
-                                    selectedProvider =
-                                        singleMalfuzatCategoryProvider(
-                                      qParams['malfuzatCategoryId'],
-                                    );
-                                  } else if (qParams
-                                      .containsKey('malfuzatSubcategoryId')) {
-                                    selectedProvider =
-                                        singleMalfuzatSubcategoryProvider(
-                                      qParams['malfuzatSubcategoryId'],
-                                    );
-                                  }
-
-                                  return FilterButton(
-                                    label: locales.categories,
-                                    active: qParams.keys.any(
-                                      (k) => [
-                                        'malfuzatCategoryId',
-                                        'malfuzatSubcategoryId',
-                                      ].contains(k),
-                                    ),
-                                    onClear: () {
-                                      ref
-                                          .read(
-                                            malfuzatQueryParamsProvider
-                                                .notifier,
+                              child: FilterButton(
+                                label: locales.categories,
+                                active: qParams.containsKey('categoryId'),
+                                onClear: () {
+                                  ref
+                                      .read(
+                                        malfuzatQueryParamsProvider.notifier,
+                                      )
+                                      .updateParams('categoryId', '');
+                                },
+                                selectedItemProvider:
+                                    qParams.containsKey('categoryId')
+                                        ? singleMalfuzatCategoryProvider(
+                                            qParams['categoryId'],
                                           )
-                                          .updateParams(
-                                            'malfuzatCategoryId',
-                                            '',
-                                          );
-                                      ref
-                                          .read(
-                                            malfuzatQueryParamsProvider
-                                                .notifier,
-                                          )
-                                          .updateParams(
-                                            'malfuzatSubcategoryId',
-                                            '',
-                                          );
-                                    },
-                                    selectedItemProvider: selectedProvider,
-                                    selectedItemLabel: (dynamic item) {
-                                      return item.title;
-                                    },
-                                    children: [
-                                      Expanded(
-                                        child: FilterList(
-                                          title: locales.categories,
-                                          paramKeys: const [
-                                            'malfuzatCategoryId',
-                                            'malfuzatSubcategoryId',
-                                          ],
-                                          searchEnabled: true,
+                                        : null,
+                                selectedItemLabel: (dynamic item) {
+                                  return item.title;
+                                },
+                                children: [
+                                  Expanded(
+                                    child: FilterList(
+                                      title: locales.categories,
+                                      paramKeys: const ['categoryId'],
+                                      searchEnabled: true,
+                                      queryProvider:
+                                          malfuzatQueryParamsProvider,
+                                      resourceFetcher: (
+                                        Map<String, dynamic> params,
+                                      ) async {
+                                        final api = ref.read(
+                                          malfuzatApiServiceProvider,
+                                        );
+                                        return await api.fetchCategories(
+                                          page: params['page'] ?? 1,
+                                          perPage: params['per_page'] ?? 16,
+                                          search: params['search'],
+                                        );
+                                      },
+                                      itemBuilder: (_, item, __) {
+                                        return FilterItem(
+                                          itemId: item.id,
+                                          itemTitle: item.title,
+                                          paramKey: 'categoryId',
                                           queryProvider:
                                               malfuzatQueryParamsProvider,
-                                          resourceFetcher: (
-                                            Map<String, dynamic> params,
-                                          ) async {
-                                            final api = ref.read(
-                                              malfuzatApiServiceProvider,
-                                            );
-                                            return await api.fetchCategories(
-                                              page: params['page'] ?? 1,
-                                              perPage: params['per_page'] ?? 16,
-                                              search: params['search'],
-                                            );
-                                          },
-                                          itemBuilder: (_, item, __) {
-                                            if (item.malfuzatSubcategories
-                                                    .length >
-                                                0) {
-                                              return FilterNestedItem(
-                                                itemId: item.id,
-                                                itemTitle: item.title,
-                                                paramKey:
-                                                    'malfuzatSubcategoryId',
-                                                subitems:
-                                                    item.malfuzatSubcategories,
-                                                queryProvider:
-                                                    malfuzatQueryParamsProvider,
-                                                subitemBuilder: (var subitem) {
-                                                  return FilterSubitem(
-                                                    itemId: subitem.id,
-                                                    itemTitle: subitem.title,
-                                                    paramKey:
-                                                        'malfuzatSubcategoryId',
-                                                    queryProvider:
-                                                        malfuzatQueryParamsProvider,
-                                                  );
-                                                },
-                                              );
-                                            } else {
-                                              return FilterItem(
-                                                itemId: item.id,
-                                                itemTitle: item.title,
-                                                paramKey: 'malfuzatCategoryId',
-                                                queryProvider:
-                                                    malfuzatQueryParamsProvider,
-                                              );
-                                            }
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -321,27 +258,26 @@ class _MalfuzatListScreenState extends ConsumerState<MalfuzatListScreen> {
                   resourceFetcher: (Map<String, dynamic> params) async {
                     final api = ref.read(malfuzatApiServiceProvider);
                     final offline = ref.read(malfuzatOfflineServiceProvider);
+                    final hasAudio = qParams['hasAudio'] == 'true'
+                        ? true
+                        : (qParams['hasAudio'] == 'false' ? false : null);
                     try {
                       return await api.fetchMalfuzat(
                         page: params['page'] ?? 1,
                         perPage: params['per_page'] ?? 9,
                         search: qParams['search'],
-                        malfuzatAuthorId: qParams['malfuzatAuthorId'],
-                        malfuzatCategoryId: qParams['malfuzatCategoryId'],
-                        malfuzatSubcategoryId: qParams['malfuzatSubcategoryId'],
-                        hasAudio: qParams['hasAudio'],
+                        authorId: qParams['authorId'],
+                        categoryId: qParams['categoryId'],
+                        hasAudio: hasAudio,
                       );
                     } catch (_) {
                       return await offline.queryMalfuzats(
                         page: params['page'] ?? 1,
                         perPage: params['per_page'] ?? 9,
                         search: qParams['search'],
-                        malfuzatAuthorId: qParams['malfuzatAuthorId'],
-                        malfuzatCategoryId: qParams['malfuzatCategoryId'],
-                        malfuzatSubcategoryId: qParams['malfuzatSubcategoryId'],
-                        hasAudio: qParams['hasAudio'] == 'true'
-                            ? true
-                            : (qParams['hasAudio'] == 'false' ? false : null),
+                        authorId: qParams['authorId'],
+                        categoryId: qParams['categoryId'],
+                        hasAudio: hasAudio,
                       );
                     }
                   },
@@ -391,7 +327,7 @@ class _MalfuzatListScreenState extends ConsumerState<MalfuzatListScreen> {
                             LastVisited(
                               resourceKey: 'lastMalfuzat',
                               resourceId: item.id,
-                              isAudio: item.audio != null,
+                              isAudio: item.audioUrl != null,
                             ),
                           ],
                         ),
