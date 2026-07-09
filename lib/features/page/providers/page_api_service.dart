@@ -7,19 +7,11 @@ class PageApiService {
   late final Dio _dio;
 
   PageApiService() {
-    _dio = Dio(BaseOptions(
-      baseUrl: '${dotenv.env['API_HOST_NAME']}/api',
-      headers: {'Accept': 'application/vnd.api+json'},
-    ));
+    _dio = Dio(BaseOptions(baseUrl: '${dotenv.env['DOTNET_API_HOST_NAME']}/api'));
   }
 
-  Future<List<PageItem>> fetchBySlug(String slug) async {
-    final params = <String, dynamic>{
-      'slug': slug,
-      'quantity': 1,
-    };
-    final response = await _dio.get('/pages', queryParameters: params);
-    final dataList = response.data['data'] as List? ?? [];
-    return dataList.map((r) => PageItem.fromJsonApi(r)).toList();
+  Future<PageItem> fetchBySlug(String slug) async {
+    final response = await _dio.get('/pages/by-slug/$slug');
+    return PageItem.fromJson(response.data as Map<String, dynamic>);
   }
 }

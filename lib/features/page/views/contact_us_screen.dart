@@ -29,8 +29,7 @@ class ContactUsScreen extends ConsumerWidget {
         );
       },
       error: (error, _) => ModelExeptionHandler(error: error),
-      data: (resources) {
-        var item = resources.first;
+      data: (item) {
 
         return ResizableFont(
           storeKey: 'contactFontRatio',

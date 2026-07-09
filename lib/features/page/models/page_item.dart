@@ -4,7 +4,7 @@ class PageItem {
   final String title;
   final String slug;
   final String body;
-  final Map<dynamic, dynamic>? image;
+  final String? imageUrl;
   final String? createdAt;
   final String? updatedAt;
 
@@ -13,21 +13,21 @@ class PageItem {
     required this.title,
     required this.slug,
     required this.body,
-    this.image,
+    this.imageUrl,
     this.createdAt,
     this.updatedAt,
   });
 
-  factory PageItem.fromJsonApi(Map<String, dynamic> resource) {
-    final attrs = resource['attributes'] as Map<String, dynamic>? ?? {};
+  /// From the .NET API's flat PageDetail JSON
+  factory PageItem.fromJson(Map<String, dynamic> json) {
     return PageItem(
-      id: resource['id']?.toString() ?? '',
-      title: attrs['title'] ?? '',
-      slug: attrs['slug'] ?? '',
-      body: attrs['body'] ?? '',
-      image: attrs['image'] is Map ? attrs['image'] : null,
-      createdAt: attrs['created-at'],
-      updatedAt: attrs['updated-at'],
+      id: json['id'].toString(),
+      title: json['title'] ?? '',
+      slug: json['slug'] ?? '',
+      body: json['body'] ?? '',
+      imageUrl: json['imageUrl'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
     );
   }
 }
