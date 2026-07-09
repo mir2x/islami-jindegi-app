@@ -2,28 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:native_app/widgets/presentation/description_item.dart';
-import 'package:native_app/widgets/audio/player.dart';
 import 'package:native_app/helpers/format_date.dart';
-import 'package:native_app/helpers/file_size.dart';
-import 'package:native_app/helpers/play_duration.dart';
 import 'package:native_app/theme/app_theme_color.dart';
+import 'audio_player.dart';
 
 class BayanDisplay extends ConsumerWidget {
   const BayanDisplay({
     super.key,
+    required this.bayanId,
     required this.title,
     required this.excerpt,
     required this.location,
-    required this.audio,
+    required this.audioUrl,
     required this.speaker,
     required this.publishedAt,
     required this.downloadItem,
   });
 
+  final String bayanId;
   final String title;
   final String? excerpt;
   final String? location;
-  final Map? audio;
+  final String? audioUrl;
   final String? speaker;
   final String publishedAt;
   final Widget? downloadItem;
@@ -67,12 +67,12 @@ class BayanDisplay extends ConsumerWidget {
             ],
           ),
         ),
-        if (audio != null) ...[
+        if (audioUrl != null) ...[
           Container(
             margin: const EdgeInsets.only(top: 30),
-            child: AudioPlayerWidget(
-              audio: audio!,
-              album: locales.bayan,
+            child: BayanAudioPlayer(
+              bayanId: bayanId,
+              audioUrl: audioUrl!,
               title: title,
             ),
           ),
@@ -105,24 +105,6 @@ class BayanDisplay extends ConsumerWidget {
                   title: '${locales.topic}:',
                   description: Text(
                     excerpt!,
-                    style: textTheme.labelMedium,
-                  ),
-                ),
-              ],
-              if (audio?['metadata']?['size'] != null) ...[
-                DescriptionItem(
-                  title: '${locales.audioSize}:',
-                  description: Text(
-                    fileSize(audio?['metadata']?['size']!),
-                    style: textTheme.labelMedium,
-                  ),
-                ),
-              ],
-              if (audio?['metadata']?['duration'] != null) ...[
-                DescriptionItem(
-                  title: '${locales.audioDuration}:',
-                  description: Text(
-                    playDuration(audio?['metadata']?['duration']!),
                     style: textTheme.labelMedium,
                   ),
                 ),

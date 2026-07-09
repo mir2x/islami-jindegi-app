@@ -5,8 +5,11 @@ import '../models/speaker.dart';
 import '../models/bayan_category.dart';
 
 class BayanOfflineService {
+  // Bumped from 1 -> 2: pre-migration snapshots contain Ruby integer ids that
+  // don't reconcile with the .NET API's Guid ids, so existing installs must
+  // evict their cache and re-fetch once a Guid-based snapshot is published.
   Future<Database> get _db =>
-      OfflineDatabaseHelper(feature: 'bayans', version: 1).database;
+      OfflineDatabaseHelper(feature: 'bayans', version: 2).database;
 
   // ───────────────────── Bayans ─────────────────────
 
@@ -15,7 +18,7 @@ class BayanOfflineService {
     int perPage = 9,
     String? search,
     String? speakerId,
-    String? bayanCategoryId,
+    String? categoryId,
   }) async {
     final db = await _db;
     final where = <String>['published = 1'];
@@ -25,10 +28,10 @@ class BayanOfflineService {
       where.add('speaker_id = ?');
       args.add(speakerId);
     }
-    if (bayanCategoryId != null) {
+    if (categoryId != null) {
       where.add(
           'id IN (SELECT bayan_id FROM bayan_categorizations WHERE bayan_category_id = ?)');
-      args.add(bayanCategoryId);
+      args.add(categoryId);
     }
     if (search != null && search.isNotEmpty) {
       where.add('(title LIKE ? OR excerpt LIKE ?)');

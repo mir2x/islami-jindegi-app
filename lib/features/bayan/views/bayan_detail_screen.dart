@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -11,7 +10,6 @@ import 'package:native_app/widgets/gestures/next_page_swipe.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
-import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
@@ -19,10 +17,42 @@ import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
 import '../providers/bayan_providers.dart';
+import '../models/bayan.dart';
 import 'bayan_display.dart';
 
 class BayanDetailScreen extends ConsumerWidget {
   const BayanDetailScreen({super.key});
+
+  /// Fetch the previous/next bayan by walking the cached, position-ordered
+  /// id list. The .NET API has no server-side "item at position N" lookup
+  /// (unlike the old JSON:API backend's `fetchBayansByPosition`), so —
+  /// matching the malfuzat/masail module's pattern — we resolve adjacency
+  /// from `bayanNavigationIdsProvider`'s in-memory ordered list.
+  Future<Bayan?> _findAdjacentBayan(
+    WidgetRef ref,
+    Bayan current, {
+    required bool next,
+  }) async {
+    try {
+      final orderedIds = await ref.read(bayanNavigationIdsProvider.future);
+      final currentIndex = orderedIds.indexOf(current.id);
+      if (currentIndex == -1) return null;
+
+      final targetIndex = next ? currentIndex + 1 : currentIndex - 1;
+      if (targetIndex < 0 || targetIndex >= orderedIds.length) return null;
+
+      final targetId = orderedIds[targetIndex];
+      final api = ref.read(bayanApiServiceProvider);
+      try {
+        return await api.fetchBayan(targetId);
+      } catch (_) {
+        final offline = ref.read(bayanOfflineServiceProvider);
+        return await offline.findBayanById(targetId);
+      }
+    } catch (_) {
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,34 +64,19 @@ class BayanDetailScreen extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
-        final api = ref.read(bayanApiServiceProvider);
-
         Future? previousPage() async {
-          if (resource.position == null) {
-            context.go('/bayans');
-            return;
-          }
-          var previousResources = await api.fetchBayansByPosition(
-            quantity: 1,
-            position: resource.position! + 1,
-          );
-
-          if (previousResources.isEmpty) {
+          final previous = await _findAdjacentBayan(ref, resource, next: false);
+          if (previous == null) {
             context.go('/bayans');
           } else {
-            context.go('/bayans/${previousResources.first.id}');
+            context.go('/bayans/${previous.id}');
           }
         }
 
         Future? nextPage() async {
-          if (resource.position == null) return;
-          var nextResources = await api.fetchBayansByPosition(
-            quantity: 1,
-            position: resource.position! - 1,
-          );
-
-          if (nextResources.isNotEmpty) {
-            context.go('/bayans/${nextResources.first.id}');
+          final next = await _findAdjacentBayan(ref, resource, next: true);
+          if (next != null) {
+            context.go('/bayans/${next.id}');
           }
         }
 
@@ -79,19 +94,20 @@ class BayanDetailScreen extends ConsumerWidget {
             child: ItemContent(
               children: [
                 BayanDisplay(
+                  bayanId: resource.id,
                   title: resource.title,
                   excerpt: resource.excerpt,
                   location: resource.location,
-                  audio: resource.audio,
+                  audioUrl: resource.audioUrl,
                   speaker: resource.speakerName,
                   publishedAt: resource.publishedAt,
-                  downloadItem: (resource.audio != null)
+                  downloadItem: (resource.audioUrl != null)
                       ? DownloadItem(
                           filePath: fileTitlePath(
                             resource.title,
-                            resource.audio!['id'],
+                            'bayans/${resource.id}',
                           ),
-                          fileUrl: fileSrcUrl(resource.audio),
+                          fileUrl: resource.audioUrl!,
                           downloadCallback: () async {
                             await ref.watch(
                               createDownloadedBayanProvider({
@@ -99,7 +115,7 @@ class BayanDetailScreen extends ConsumerWidget {
                                 'title': resource.title,
                                 'excerpt': resource.excerpt,
                                 'location': resource.location,
-                                'audio': json.encode(resource.audio),
+                                'audio': resource.audioUrl,
                                 'speaker': resource.speakerName,
                                 'publishedAt': resource.publishedAt,
                               }).future,
@@ -126,7 +142,7 @@ class BayanDetailScreen extends ConsumerWidget {
                     title: resource.title,
                     subtitle: resource.speakerName,
                     link: 'bayans/${resource.id}',
-                    fileLink: fileSrcUrl(resource.audio),
+                    fileLink: resource.audioUrl,
                   ),
                   BookmarkButton(
                     type: 'Bayan',

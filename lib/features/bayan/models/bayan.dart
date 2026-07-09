@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 /// Pure Dart model for Bayan — no Flutter Data dependency.
 class Bayan {
   final String id;
@@ -7,14 +5,18 @@ class Bayan {
   final String? excerpt;
   final String language;
   final String? location;
-  final Map<dynamic, dynamic>? audio;
+  final String? audioUrl;
   final bool? published;
   final String publishedAt;
   final int? position;
   final String? createdAt;
   final String? updatedAt;
 
-  /// Resolved from the included speaker relationship
+  /// Resolved from the .NET API's embedded `author` object (Bayan has a
+  /// single author via a foreign key — the old Rails "speaker" concept,
+  /// unified into the shared Authors table on the .NET side). Kept as
+  /// `speakerName` here since that's the bayan-domain-appropriate term the
+  /// UI already uses.
   final String? speakerName;
 
   Bayan({
@@ -23,7 +25,7 @@ class Bayan {
     this.excerpt,
     required this.language,
     this.location,
-    this.audio,
+    this.audioUrl,
     this.published,
     required this.publishedAt,
     this.position,
@@ -32,24 +34,22 @@ class Bayan {
     this.speakerName,
   });
 
-  factory Bayan.fromJsonApi(
-    Map<String, dynamic> resource, {
-    String? resolvedSpeakerName,
-  }) {
-    final attrs = resource['attributes'] as Map<String, dynamic>? ?? {};
+  /// Parse from the .NET API's flat BayanListItem/BayanDetail JSON
+  factory Bayan.fromJson(Map<String, dynamic> json) {
+    final author = json['author'] as Map<String, dynamic>?;
     return Bayan(
-      id: resource['id']?.toString() ?? '',
-      title: attrs['title'] ?? '',
-      excerpt: attrs['excerpt'],
-      language: attrs['language'] ?? 'bn',
-      location: attrs['location'],
-      audio: attrs['audio'] is Map ? attrs['audio'] : null,
-      published: attrs['published'],
-      publishedAt: attrs['published-at'] ?? '',
-      position: attrs['position'] is int ? attrs['position'] : null,
-      createdAt: attrs['created-at'],
-      updatedAt: attrs['updated-at'],
-      speakerName: resolvedSpeakerName,
+      id: json['id'].toString(),
+      title: json['title'] ?? '',
+      excerpt: json['excerpt'],
+      language: json['language'] ?? 'bn',
+      location: json['location'],
+      audioUrl: json['audioUrl'],
+      published: json['published'],
+      publishedAt: json['publishedAt'] ?? '',
+      position: json['position'] is int ? json['position'] : null,
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
+      speakerName: author?['name'],
     );
   }
 
@@ -60,7 +60,7 @@ class Bayan {
       excerpt: row['excerpt'],
       language: row['language'] ?? 'bn',
       location: row['location'],
-      audio: _decodeJson(row['audio_data']),
+      audioUrl: row['audio_url'] ?? row['audioUrl'],
       published: row['published'] == 1 || row['published'] == true,
       publishedAt: row['published_at'] ?? '',
       position: row['position'] is int ? row['position'] : null,
@@ -68,16 +68,5 @@ class Bayan {
       updatedAt: row['updated_at'],
       speakerName: speakerName,
     );
-  }
-
-  static Map<dynamic, dynamic>? _decodeJson(dynamic value) {
-    if (value == null) return null;
-    if (value is Map) return value;
-    if (value is String) {
-      try {
-        return json.decode(value) as Map;
-      } catch (_) {}
-    }
-    return null;
   }
 }

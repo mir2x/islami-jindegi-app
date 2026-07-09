@@ -1,4 +1,7 @@
 /// Pure Dart model for DownloadedBayan — stored locally via SharedPreferences.
+/// `audio` now holds the flat `audioUrl` string from the .NET API directly
+/// (previously a JSON-encoded JSON:API `{id, storage, metadata}` attachment
+/// map that had to be decoded back into a Map at display time).
 class DownloadedBayan {
   int id;
   String? bayanId;

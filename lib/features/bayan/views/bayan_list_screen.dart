@@ -10,7 +10,6 @@ import 'package:native_app/widgets/utils/offline_db_prompt.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
-import 'package:native_app/widgets/filter/date.dart';
 import 'package:native_app/widgets/presentation/content_list_card.dart';
 import 'package:native_app/providers/downloaded_bayans.dart';
 import 'package:native_app/providers/last_visited.dart';
@@ -152,16 +151,16 @@ class _BayanListScreenState extends ConsumerState<BayanListScreen> {
                             Expanded(
                               child: FilterButton(
                                 label: locales.categories,
-                                active: qParams.containsKey('bayanCategoryId'),
+                                active: qParams.containsKey('categoryId'),
                                 onClear: () {
                                   ref
                                       .read(bayanQueryParamsProvider.notifier)
-                                      .updateParams('bayanCategoryId', '');
+                                      .updateParams('categoryId', '');
                                 },
                                 selectedItemProvider:
-                                    qParams.containsKey('bayanCategoryId')
+                                    qParams.containsKey('categoryId')
                                         ? singleBayanCategoryProvider(
-                                            qParams['bayanCategoryId'],
+                                            qParams['categoryId'],
                                           )
                                         : null,
                                 selectedItemLabel: (dynamic item) {
@@ -171,7 +170,7 @@ class _BayanListScreenState extends ConsumerState<BayanListScreen> {
                                   Expanded(
                                     child: FilterList(
                                       title: locales.categories,
-                                      paramKeys: const ['bayanCategoryId'],
+                                      paramKeys: const ['categoryId'],
                                       pageSize: 16,
                                       searchEnabled: true,
                                       queryProvider: bayanQueryParamsProvider,
@@ -189,7 +188,7 @@ class _BayanListScreenState extends ConsumerState<BayanListScreen> {
                                         return FilterItem(
                                           itemId: item.id,
                                           itemTitle: item.title,
-                                          paramKey: 'bayanCategoryId',
+                                          paramKey: 'categoryId',
                                           queryProvider:
                                               bayanQueryParamsProvider,
                                         );
@@ -206,25 +205,13 @@ class _BayanListScreenState extends ConsumerState<BayanListScreen> {
                         width: double.infinity,
                         padding:
                             const EdgeInsets.only(top: 10, left: 15, right: 15),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: DateFilter(
-                                queryProvider: bayanQueryParamsProvider,
-                              ),
-                            ),
-                            const SizedBox(width: 15),
-                            Expanded(
-                              child: SearchButtonField(
-                                value: qParams['search'],
-                                onUpdate: (value) {
-                                  ref
-                                      .read(bayanQueryParamsProvider.notifier)
-                                      .updateParams('search', value);
-                                },
-                              ),
-                            ),
-                          ],
+                        child: SearchButtonField(
+                          value: qParams['search'],
+                          onUpdate: (value) {
+                            ref
+                                .read(bayanQueryParamsProvider.notifier)
+                                .updateParams('search', value);
+                          },
                         ),
                       ),
                     ],
@@ -251,10 +238,7 @@ class _BayanListScreenState extends ConsumerState<BayanListScreen> {
                         perPage: params['per_page'] ?? 9,
                         search: qParams['search'],
                         speakerId: qParams['speakerId'],
-                        bayanCategoryId: qParams['bayanCategoryId'],
-                        dateRange: qParams['dateRange'],
-                        dateFrom: qParams['dateFrom'],
-                        dateTo: qParams['dateTo'],
+                        categoryId: qParams['categoryId'],
                       );
                     } catch (_) {
                       return await offline.queryBayans(
@@ -262,7 +246,7 @@ class _BayanListScreenState extends ConsumerState<BayanListScreen> {
                         perPage: params['per_page'] ?? 9,
                         search: qParams['search'],
                         speakerId: qParams['speakerId'],
-                        bayanCategoryId: qParams['bayanCategoryId'],
+                        categoryId: qParams['categoryId'],
                       );
                     }
                   },
