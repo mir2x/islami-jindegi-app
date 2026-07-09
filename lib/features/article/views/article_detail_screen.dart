@@ -14,7 +14,6 @@ import 'package:native_app/widgets/page/title.dart';
 import 'package:native_app/widgets/page/subtitle.dart';
 import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/helpers/file_title_path.dart';
-import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
@@ -99,13 +98,13 @@ class ArticleDetailScreen extends ConsumerWidget {
                         ),
                       ),
                     ],
-                    if (resource.document != null) ...[
+                    if (resource.documentUrl != null) ...[
                       DownloadItem(
                         filePath: fileTitlePath(
                           resource.title,
-                          resource.document!['id'],
+                          'articles/${resource.id}',
                         ),
-                        fileUrl: fileSrcUrl(resource.document),
+                        fileUrl: resource.documentUrl!,
                       ),
                     ],
                     Container(

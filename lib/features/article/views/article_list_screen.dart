@@ -10,8 +10,6 @@ import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
-import 'package:native_app/widgets/filter/nested_item.dart';
-import 'package:native_app/widgets/filter/subitem.dart';
 import 'package:native_app/widgets/presentation/content_list_card.dart';
 import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/widgets/utils/last_visited.dart';
@@ -142,116 +140,57 @@ class _ArticleListScreenState extends ConsumerState<ArticleListScreen> {
                             ),
                             const SizedBox(width: 15),
                             Expanded(
-                              child: Builder(
-                                builder: (context) {
-                                  dynamic selectedProvider;
-
-                                  if (qParams
-                                      .containsKey('articleCategoryId')) {
-                                    selectedProvider =
-                                        singleArticleCategoryProvider(
-                                      qParams['articleCategoryId'],
-                                    );
-                                  } else if (qParams
-                                      .containsKey('articleSubcategoryId')) {
-                                    selectedProvider =
-                                        singleArticleSubcategoryProvider(
-                                      qParams['articleSubcategoryId'],
-                                    );
-                                  }
-
-                                  return FilterButton(
-                                    label: locales.categories,
-                                    active: qParams.keys.any(
-                                      (k) => [
-                                        'articleCategoryId',
-                                        'articleSubcategoryId',
-                                      ].contains(k),
-                                    ),
-                                    onClear: () {
-                                      ref
-                                          .read(
-                                            articleQueryParamsProvider.notifier,
+                              child: FilterButton(
+                                label: locales.categories,
+                                active: qParams.containsKey('categoryId'),
+                                onClear: () {
+                                  ref
+                                      .read(
+                                        articleQueryParamsProvider.notifier,
+                                      )
+                                      .updateParams('categoryId', '');
+                                },
+                                selectedItemProvider:
+                                    qParams.containsKey('categoryId')
+                                        ? singleArticleCategoryProvider(
+                                            qParams['categoryId'],
                                           )
-                                          .updateParams(
-                                            'articleCategoryId',
-                                            '',
-                                          );
-                                      ref
-                                          .read(
-                                            articleQueryParamsProvider.notifier,
-                                          )
-                                          .updateParams(
-                                            'articleSubcategoryId',
-                                            '',
-                                          );
-                                    },
-                                    selectedItemProvider: selectedProvider,
-                                    selectedItemLabel: (dynamic item) {
-                                      return item.title;
-                                    },
-                                    children: [
-                                      Expanded(
-                                        child: FilterList(
-                                          title: locales.categories,
-                                          paramKeys: const [
-                                            'articleCategoryId',
-                                            'articleSubcategoryId',
-                                          ],
-                                          searchEnabled: true,
+                                        : null,
+                                selectedItemLabel: (dynamic item) {
+                                  return item.title;
+                                },
+                                children: [
+                                  Expanded(
+                                    child: FilterList(
+                                      title: locales.categories,
+                                      paramKeys: const ['categoryId'],
+                                      searchEnabled: true,
+                                      queryProvider:
+                                          articleQueryParamsProvider,
+                                      resourceFetcher: (
+                                        Map<String, dynamic> params,
+                                      ) async {
+                                        final api = ref.read(
+                                          articleApiServiceProvider,
+                                        );
+                                        return await api.fetchCategories(
+                                          page: params['page'] ?? 1,
+                                          perPage: params['per_page'] ?? 16,
+                                          search: params['search'],
+                                        );
+                                      },
+                                      itemBuilder: (_, item, __) {
+                                        return FilterItem(
+                                          itemId: item.id,
+                                          itemTitle: item.title,
+                                          paramKey: 'categoryId',
                                           queryProvider:
                                               articleQueryParamsProvider,
-                                          resourceFetcher: (
-                                            Map<String, dynamic> params,
-                                          ) async {
-                                            final api = ref.read(
-                                              articleApiServiceProvider,
-                                            );
-                                            return await api.fetchCategories(
-                                              page: params['page'] ?? 1,
-                                              perPage: params['per_page'] ?? 16,
-                                              search: params['search'],
-                                            );
-                                          },
-                                          itemBuilder: (_, item, __) {
-                                            if (item.articleSubcategories
-                                                    .length >
-                                                0) {
-                                              return FilterNestedItem(
-                                                itemId: item.id,
-                                                itemTitle: item.title,
-                                                paramKey:
-                                                    'articleSubcategoryId',
-                                                subitems:
-                                                    item.articleSubcategories,
-                                                queryProvider:
-                                                    articleQueryParamsProvider,
-                                                subitemBuilder: (var subitem) {
-                                                  return FilterSubitem(
-                                                    itemId: subitem.id,
-                                                    itemTitle: subitem.title,
-                                                    paramKey:
-                                                        'articleSubcategoryId',
-                                                    queryProvider:
-                                                        articleQueryParamsProvider,
-                                                  );
-                                                },
-                                              );
-                                            } else {
-                                              return FilterItem(
-                                                itemId: item.id,
-                                                itemTitle: item.title,
-                                                paramKey: 'articleCategoryId',
-                                                queryProvider:
-                                                    articleQueryParamsProvider,
-                                              );
-                                            }
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -292,8 +231,7 @@ class _ArticleListScreenState extends ConsumerState<ArticleListScreen> {
                         perPage: params['per_page'] ?? 9,
                         search: qParams['search'],
                         articleAuthorId: qParams['articleAuthorId'],
-                        articleCategoryId: qParams['articleCategoryId'],
-                        articleSubcategoryId: qParams['articleSubcategoryId'],
+                        articleCategoryId: qParams['categoryId'],
                       );
                     } catch (_) {
                       return await offline.queryArticles(
@@ -301,8 +239,7 @@ class _ArticleListScreenState extends ConsumerState<ArticleListScreen> {
                         perPage: params['per_page'] ?? 9,
                         search: qParams['search'],
                         articleAuthorId: qParams['articleAuthorId'],
-                        articleCategoryId: qParams['articleCategoryId'],
-                        articleSubcategoryId: qParams['articleSubcategoryId'],
+                        articleCategoryId: qParams['categoryId'],
                       );
                     }
                   },

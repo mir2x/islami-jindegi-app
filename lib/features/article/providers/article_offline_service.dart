@@ -3,11 +3,13 @@ import '../../../core/utils/offline_database_helper.dart';
 import '../models/article.dart';
 import '../models/article_author.dart';
 import '../models/article_category.dart';
-import '../models/article_subcategory.dart';
 
 class ArticleOfflineService {
+  // Bumped from 1 -> 2: pre-migration snapshots contain Ruby integer ids that
+  // don't reconcile with the .NET API's Guid ids, so existing installs must
+  // evict their cache and re-fetch once a Guid-based snapshot is published.
   Future<Database> get _db =>
-      OfflineDatabaseHelper(feature: 'articles', version: 1).database;
+      OfflineDatabaseHelper(feature: 'articles', version: 2).database;
 
   // ───────────────────── Articles ─────────────────────
 
@@ -17,7 +19,6 @@ class ArticleOfflineService {
     String? search,
     String? articleAuthorId,
     String? articleCategoryId,
-    String? articleSubcategoryId,
   }) async {
     final db = await _db;
     final where = <String>['published = 1'];
@@ -31,11 +32,6 @@ class ArticleOfflineService {
       where.add(
           'id IN (SELECT article_id FROM article_categorizations WHERE article_category_id = ?)');
       args.add(articleCategoryId);
-    }
-    if (articleSubcategoryId != null) {
-      where.add(
-          'id IN (SELECT article_id FROM article_subcategorizations WHERE article_subcategory_id = ?)');
-      args.add(articleSubcategoryId);
     }
     if (search != null && search.isNotEmpty) {
       where.add('(title LIKE ? OR excerpt LIKE ?)');
@@ -144,7 +140,7 @@ class ArticleOfflineService {
       args.add('%$search%');
     }
 
-    final catRows = await db.query(
+    final rows = await db.query(
       'article_categories',
       where: where.isNotEmpty ? where.join(' AND ') : null,
       whereArgs: args.isNotEmpty ? args : null,
@@ -152,27 +148,7 @@ class ArticleOfflineService {
       limit: perPage,
       offset: (page - 1) * perPage,
     );
-    if (catRows.isEmpty) return [];
-
-    final catIds = catRows.map((r) => r['id'].toString()).toList();
-    final ph = List.filled(catIds.length, '?').join(',');
-    final subRows = await db.query(
-      'article_subcategories',
-      where: 'article_category_id IN ($ph)',
-      whereArgs: catIds,
-      orderBy: 'position ASC',
-    );
-
-    final subsByCat = <String, List<ArticleSubcategory>>{};
-    for (final r in subRows) {
-      final catId = r['article_category_id'].toString();
-      subsByCat.putIfAbsent(catId, () => []).add(ArticleSubcategory.fromDb(r));
-    }
-
-    return catRows.map((row) {
-      final id = row['id'].toString();
-      return ArticleCategory.fromDb(row, subcategories: subsByCat[id] ?? []);
-    }).toList();
+    return rows.map((r) => ArticleCategory.fromDb(r)).toList();
   }
 
   Future<ArticleCategory?> findCategoryById(String id) async {
@@ -180,18 +156,6 @@ class ArticleOfflineService {
     final rows = await db
         .query('article_categories', where: 'id = ?', whereArgs: [id]);
     if (rows.isEmpty) return null;
-
-    final subRows = await db.query('article_subcategories',
-        where: 'article_category_id = ?', whereArgs: [id], orderBy: 'position ASC');
-    final subs = subRows.map((r) => ArticleSubcategory.fromDb(r)).toList();
-    return ArticleCategory.fromDb(rows.first, subcategories: subs);
-  }
-
-  Future<ArticleSubcategory?> findSubcategoryById(String id) async {
-    final db = await _db;
-    final rows = await db
-        .query('article_subcategories', where: 'id = ?', whereArgs: [id]);
-    if (rows.isEmpty) return null;
-    return ArticleSubcategory.fromDb(rows.first);
+    return ArticleCategory.fromDb(rows.first);
   }
 }

@@ -4,7 +4,6 @@ import 'article_offline_service.dart';
 import '../models/article.dart';
 import '../models/article_author.dart';
 import '../models/article_category.dart';
-import '../models/article_subcategory.dart';
 
 // ───────────────────── Services ─────────────────────
 
@@ -72,19 +71,6 @@ final singleArticleCategoryProvider =
     return await api.fetchCategory(id);
   } catch (_) {
     final item = await offline.findCategoryById(id);
-    if (item != null) return item;
-    rethrow;
-  }
-});
-
-final singleArticleSubcategoryProvider = FutureProvider.autoDispose
-    .family<ArticleSubcategory, String>((ref, id) async {
-  final api = ref.read(articleApiServiceProvider);
-  final offline = ref.read(articleOfflineServiceProvider);
-  try {
-    return await api.fetchSubcategory(id);
-  } catch (_) {
-    final item = await offline.findSubcategoryById(id);
     if (item != null) return item;
     rethrow;
   }

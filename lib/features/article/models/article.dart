@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 class ArticleItem {
   final String id;
   final String title;
   final String body;
   final String? excerpt;
   final String language;
-  final Map<dynamic, dynamic>? document;
+  final String? documentUrl;
   final int? position;
   final bool? published;
   final String? publishedAt;
@@ -20,7 +18,7 @@ class ArticleItem {
     required this.body,
     this.excerpt,
     required this.language,
-    this.document,
+    this.documentUrl,
     this.position,
     this.published,
     this.publishedAt,
@@ -29,24 +27,22 @@ class ArticleItem {
     this.authorName,
   });
 
-  factory ArticleItem.fromJsonApi(
-    Map<String, dynamic> resource, {
-    String? resolvedAuthorName,
-  }) {
-    final attrs = resource['attributes'] as Map<String, dynamic>? ?? {};
+  /// Parse from the .NET API's flat ArticleListItem/ArticleDetail JSON
+  factory ArticleItem.fromJson(Map<String, dynamic> json) {
+    final author = json['author'] as Map<String, dynamic>?;
     return ArticleItem(
-      id: resource['id']?.toString() ?? '',
-      title: attrs['title'] ?? '',
-      body: attrs['body'] ?? '',
-      excerpt: attrs['excerpt'],
-      language: attrs['language'] ?? 'bn',
-      document: attrs['document'] is Map ? attrs['document'] : null,
-      position: attrs['position'] is int ? attrs['position'] : null,
-      published: attrs['published'],
-      publishedAt: attrs['published-at'],
-      createdAt: attrs['created-at'],
-      updatedAt: attrs['updated-at'],
-      authorName: resolvedAuthorName,
+      id: json['id']?.toString() ?? '',
+      title: json['title'] ?? '',
+      body: json['body'] ?? '',
+      excerpt: json['excerpt'],
+      language: json['language'] ?? 'bn',
+      documentUrl: json['documentUrl'],
+      position: json['position'] is int ? json['position'] : null,
+      published: json['published'],
+      publishedAt: json['publishedAt'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
+      authorName: author?['name'],
     );
   }
 
@@ -60,7 +56,7 @@ class ArticleItem {
       body: row['body'] ?? '',
       excerpt: row['excerpt'],
       language: row['language'] ?? 'bn',
-      document: _decodeJson(row['document_data']),
+      documentUrl: row['document_url'] ?? row['documentUrl'],
       position: row['position'] is int ? row['position'] : null,
       published: row['published'] == 1 || row['published'] == true,
       publishedAt: row['published_at'],
@@ -68,16 +64,5 @@ class ArticleItem {
       updatedAt: row['updated_at'],
       authorName: authorName,
     );
-  }
-
-  static Map<dynamic, dynamic>? _decodeJson(dynamic value) {
-    if (value == null) return null;
-    if (value is Map) return value;
-    if (value is String) {
-      try {
-        return json.decode(value) as Map;
-      } catch (_) {}
-    }
-    return null;
   }
 }

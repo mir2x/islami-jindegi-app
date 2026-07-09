@@ -11,13 +11,13 @@ class ArticleAuthor {
     this.position,
   });
 
-  factory ArticleAuthor.fromJsonApi(Map<String, dynamic> resource) {
-    final attrs = resource['attributes'] as Map<String, dynamic>? ?? {};
+  /// From the .NET API's flat AuthorResponse/ArticleAuthorOption JSON
+  factory ArticleAuthor.fromJson(Map<String, dynamic> json) {
     return ArticleAuthor(
-      id: resource['id']?.toString() ?? '',
-      name: attrs['name'] ?? '',
-      info: attrs['info'],
-      position: attrs['position'] is int ? attrs['position'] : null,
+      id: json['id'].toString(),
+      name: json['name'] ?? '',
+      info: json['info'],
+      position: json['position'] is int ? json['position'] : null,
     );
   }
 
