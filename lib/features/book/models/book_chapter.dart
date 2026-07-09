@@ -6,8 +6,6 @@ class BookChapter {
   final String? body;
   final int? position;
   final String? bookId;
-  final String? createdAt;
-  final String? updatedAt;
   final List<BookSubchapter> subchapters;
 
   BookChapter({
@@ -16,25 +14,20 @@ class BookChapter {
     this.body,
     this.position,
     this.bookId,
-    this.createdAt,
-    this.updatedAt,
     this.subchapters = const [],
   });
 
-  /// From JSON:API resource + resolved included subchapters
-  factory BookChapter.fromJsonApi(
-    Map<String, dynamic> resource, {
-    List<BookSubchapter> resolvedSubchapters = const [],
-  }) {
-    final attrs = resource['attributes'] as Map<String, dynamic>? ?? {};
+  /// From the .NET API's flat ChapterResponse/ChapterDetail JSON
+  factory BookChapter.fromJson(Map<String, dynamic> json) {
     return BookChapter(
-      id: resource['id'].toString(),
-      title: attrs['title'] ?? '',
-      body: attrs['body'],
-      position: attrs['position'] is int ? attrs['position'] : null,
-      createdAt: attrs['created-at'],
-      updatedAt: attrs['updated-at'],
-      subchapters: resolvedSubchapters,
+      id: json['id'].toString(),
+      title: json['title'] ?? '',
+      body: json['body'],
+      position: json['position'] is int ? json['position'] : null,
+      bookId: json['bookId']?.toString(),
+      subchapters: (json['subChapters'] as List? ?? [])
+          .map((s) => BookSubchapter.fromJson(s))
+          .toList(),
     );
   }
 
@@ -49,8 +42,6 @@ class BookChapter {
       body: row['body'],
       position: row['position'] is int ? row['position'] : null,
       bookId: row['book_id']?.toString() ?? row['bookId']?.toString(),
-      createdAt: row['created_at'] ?? row['createdAt'],
-      updatedAt: row['updated_at'] ?? row['updatedAt'],
       subchapters: subchapters,
     );
   }

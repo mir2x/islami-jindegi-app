@@ -16,8 +16,6 @@ import 'book_offline_service.dart';
 final bookApiServiceProvider = Provider((ref) => BookApiService());
 final bookOfflineServiceProvider = Provider((ref) => BookOfflineService());
 
-const _chapterPageSize = 20;
-
 // ═══════════════════════════════════════════════════
 //  Connectivity
 // ═══════════════════════════════════════════════════
@@ -78,8 +76,7 @@ final bookListProvider = FutureProvider.autoDispose
         perPage: params['perPage'] ?? 20,
         search: params['search'],
         authorId: params['authorId'],
-        bookCategoryId: params['bookCategoryId'],
-        bookSubcategoryId: params['bookSubcategoryId'],
+        categoryId: params['categoryId'],
       );
     } catch (e) {
       // Fallback to offline on network error
@@ -113,7 +110,6 @@ final bookNavigationIdsProvider = FutureProvider<List<String>>((ref) async {
         final books = await api.fetchBooks(
           page: page,
           perPage: perPage,
-          includeAuthors: false,
         );
         if (books.isEmpty) break;
         ids.addAll(books.map((book) => book.id));
@@ -229,15 +225,9 @@ final chapterListProvider = FutureProvider.autoDispose
 
   if (isConnected) {
     try {
-      final chapters = params.quantity == null && params.position == null
-          ? await _fetchAllChapters(api, params)
-          : await api.fetchChapters(
-              bookId: params.bookId,
-              quantity: params.quantity,
-              sort: params.sort,
-              position: params.position,
-              includeSubchapters: params.includeSubchapters,
-            );
+      // .NET returns the full chapter+subchapter tree for a book in one call;
+      // quantity/sort/position only apply to the offline SQLite fallback below.
+      final chapters = await api.fetchChaptersByBook(params.bookId);
       debugPrint(
         '[chapterListProvider] API returned ${chapters.length} chapters',
       );
@@ -265,34 +255,6 @@ final chapterListProvider = FutureProvider.autoDispose
   }
 });
 
-Future<List<BookChapter>> _fetchAllChapters(
-  BookApiService api,
-  ChapterListParams params,
-) async {
-  final chapters = <BookChapter>[];
-  var page = 1;
-
-  while (true) {
-    final pageChapters = await api.fetchChapters(
-      bookId: params.bookId,
-      page: page,
-      perPage: _chapterPageSize,
-      sort: params.sort,
-      includeSubchapters: params.includeSubchapters,
-    );
-
-    chapters.addAll(pageChapters);
-
-    if (pageChapters.length < _chapterPageSize) {
-      break;
-    }
-
-    page++;
-  }
-
-  return chapters;
-}
-
 /// Fetch a single chapter by ID.
 final chapterDetailProvider =
     FutureProvider.autoDispose.family<BookChapter?, String>((ref, id) async {
@@ -315,61 +277,6 @@ final chapterDetailProvider =
 //  Subchapters
 // ═══════════════════════════════════════════════════
 
-/// Parameter class with proper equality for subchapter list queries.
-class SubchapterListParams {
-  final String chapterId;
-  final int? quantity;
-  final int? position;
-
-  const SubchapterListParams({
-    required this.chapterId,
-    this.quantity,
-    this.position,
-  });
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is SubchapterListParams &&
-          runtimeType == other.runtimeType &&
-          chapterId == other.chapterId &&
-          quantity == other.quantity &&
-          position == other.position;
-
-  @override
-  int get hashCode => Object.hash(chapterId, quantity, position);
-}
-
-/// Fetch subchapters.
-final subchapterListProvider = FutureProvider.autoDispose
-    .family<List<BookSubchapter>, SubchapterListParams>((ref, params) async {
-  final isConnected = await ref.watch(_connectivityProvider.future);
-  final api = ref.read(bookApiServiceProvider);
-  final offline = ref.read(bookOfflineServiceProvider);
-
-  if (isConnected) {
-    try {
-      return await api.fetchSubchapters(
-        chapterId: params.chapterId,
-        quantity: params.quantity,
-        position: params.position,
-      );
-    } catch (_) {
-      return await offline.querySubchapters(
-        chapterId: params.chapterId,
-        quantity: params.quantity,
-        position: params.position,
-      );
-    }
-  } else {
-    return await offline.querySubchapters(
-      chapterId: params.chapterId,
-      quantity: params.quantity,
-      position: params.position,
-    );
-  }
-});
-
 /// Fetch a single subchapter by ID.
 final subchapterDetailProvider =
     FutureProvider.autoDispose.family<BookSubchapter?, String>((ref, id) async {
@@ -379,7 +286,7 @@ final subchapterDetailProvider =
 
   if (isConnected) {
     try {
-      return await api.fetchSubchapter(id, includeChapter: true);
+      return await api.fetchSubchapter(id);
     } catch (_) {
       return await offline.findSubchapterById(id, includeChapter: true);
     }
@@ -413,12 +320,6 @@ final singleCategoryProvider =
     FutureProvider.autoDispose.family<BookCategory?, String>((ref, id) async {
   final api = ref.read(bookApiServiceProvider);
   return await api.fetchBookCategory(id);
-});
-
-final singleSubcategoryProvider = FutureProvider.autoDispose
-    .family<BookSubcategory?, String>((ref, id) async {
-  final api = ref.read(bookApiServiceProvider);
-  return await api.fetchBookSubcategory(id);
 });
 
 // ═══════════════════════════════════════════════════

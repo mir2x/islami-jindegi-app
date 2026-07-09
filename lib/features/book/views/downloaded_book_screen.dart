@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,7 +5,6 @@ import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/helpers/file_title_path.dart';
-import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/features/book/views/pdf_reader.dart';
 import '../providers/book_download_providers.dart';
 
@@ -26,8 +24,8 @@ class DownloadedBookScreen extends ConsumerWidget {
           return const ModelExeptionHandler(error: 'Downloaded book not found');
         }
 
-        Map document = json.decode(book.document ?? '{}');
-        String filePath = fileTitlePath(book.title ?? '', document['id']);
+        String filePath =
+            fileTitlePath(book.title ?? '', 'books/${book.bookId}');
 
         return WithPreferences(
           builder: (context, preferences) {
@@ -38,7 +36,7 @@ class DownloadedBookScreen extends ConsumerWidget {
                 preferences: preferences,
                 title: book.title ?? '',
                 authors: book.authors,
-                fileLink: fileSrcUrl(document),
+                fileLink: book.document,
               ),
             );
           },

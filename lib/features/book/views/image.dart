@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:transparent_image/transparent_image.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:native_app/providers/check_asset_file.dart';
-import 'package:native_app/widgets/responsive/image.dart';
+import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/settings/image.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
@@ -9,12 +12,12 @@ class BookImage extends ConsumerWidget {
   const BookImage({
     super.key,
     required this.bookId,
-    required this.image,
+    required this.coverUrl,
     this.highlightProvider,
   });
 
   final String bookId;
-  final dynamic image;
+  final String? coverUrl;
   final dynamic highlightProvider;
 
   @override
@@ -63,14 +66,37 @@ class BookImage extends ConsumerWidget {
                 fit: BoxFit.fill,
               ),
             );
+          } else if (coverUrl == null || coverUrl!.isEmpty) {
+            return _placeholder(dimensions);
           } else {
-            return ResponsiveImage(
-              image: image,
-              model: 'book',
-              vwset: const {'xs': 50},
+            return WithConnectivity(
+              builder: (context, isConnected) {
+                if (!isConnected) return _placeholder(dimensions);
+                return AspectRatio(
+                  aspectRatio: dimensions['width']! / dimensions['height']!,
+                  child: CachedNetworkImage(
+                    imageUrl: coverUrl!,
+                    placeholder: (context, url) {
+                      return Image.memory(kTransparentImage);
+                    },
+                    fit: BoxFit.fill,
+                    fadeInDuration: const Duration(milliseconds: 150),
+                  ),
+                );
+              },
             );
           }
         },
+      ),
+    );
+  }
+
+  Widget _placeholder(Map<String, int> dimensions) {
+    return AspectRatio(
+      aspectRatio: dimensions['width']! / dimensions['height']!,
+      child: SvgPicture.asset(
+        'assets/images/books/default.svg',
+        fit: BoxFit.contain,
       ),
     );
   }

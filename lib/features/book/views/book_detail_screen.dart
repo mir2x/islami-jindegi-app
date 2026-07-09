@@ -24,7 +24,6 @@ import 'package:native_app/widgets/presentation/description_item.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';
 import 'package:native_app/helpers/file_title_path.dart';
-import 'package:native_app/helpers/file_utils.dart';
 import 'package:native_app/features/book/views/pdf_reader.dart';
 import 'package:native_app/features/book/views/image.dart';
 import 'package:native_app/theme/app_theme_color.dart';
@@ -84,7 +83,7 @@ class _BookContent extends ConsumerWidget {
           final targetId = orderedIds[targetIndex];
           final api = ref.read(bookApiServiceProvider);
           try {
-            return await api.fetchBook(targetId, includeAuthors: false);
+            return await api.fetchBook(targetId);
           } catch (_) {
             final offline = ref.read(bookOfflineServiceProvider);
             return await offline.findBookById(targetId, includeAuthors: false);
@@ -137,20 +136,16 @@ class _BookContent extends ConsumerWidget {
     final textTheme = Theme.of(context).textTheme;
     final appTheme = Theme.of(context).extension<AppThemeColors>()!;
 
-    // Check if book has chapters by fetching the last chapter
+    // Check if book has chapters. .NET returns the full tree in one call, so
+    // this is the same cheap request the "all chapters" query below makes.
     final chaptersQuery = ref.watch(chapterListProvider(
       ChapterListParams(
         bookId: book.id,
-        quantity: 1,
-        sort: '-position',
         includeSubchapters: true,
       ),
     ));
 
-    String? fileLink;
-    if (book.document != null) {
-      fileLink = fileSrcUrl(book.document);
-    }
+    String? fileLink = book.documentUrl;
 
     return chaptersQuery.when(
       loading: () {
@@ -396,8 +391,8 @@ class _BookContent extends ConsumerWidget {
   Widget _buildPdfOnlyBook(BuildContext context, WidgetRef ref,
       AppLocalizations locales, TextTheme textTheme, String? fileLink) {
     String? filePath;
-    if (book.document != null) {
-      filePath = fileTitlePath(book.title, book.document!['id']);
+    if (book.documentUrl != null) {
+      filePath = fileTitlePath(book.title, 'books/${book.id}');
     }
 
     final checkDownloadedFile = filePath != null
@@ -479,7 +474,7 @@ class _BookContent extends ConsumerWidget {
                       width: screenWidth / 2,
                       child: BookImage(
                         bookId: book.id,
-                        image: book.image,
+                        coverUrl: book.coverUrl,
                       ),
                     ),
                   ),
@@ -488,10 +483,10 @@ class _BookContent extends ConsumerWidget {
                         top: 30, left: 20, right: 20, bottom: 50),
                     child: Column(
                       children: [
-                        if (book.document != null && filePath != null) ...[
+                        if (book.documentUrl != null && filePath != null) ...[
                           DownloadItem(
-                            filePath: filePath!,
-                            fileUrl: fileSrcUrl(book.document),
+                            filePath: filePath,
+                            fileUrl: book.documentUrl!,
                             downloadCallback: () async {
                               await ref.read(
                                 createDownloadedBookProvider({
@@ -500,8 +495,8 @@ class _BookContent extends ConsumerWidget {
                                   'excerpt': book.excerpt,
                                   'publisher': book.publisher,
                                   'price': book.price,
-                                  'image': json.encode(book.image),
-                                  'document': json.encode(book.document),
+                                  'image': book.coverUrl,
+                                  'document': book.documentUrl,
                                   'authors': book.authors
                                       .map((e) => e.name)
                                       .toList()

@@ -6,8 +6,11 @@ import '../models/book_chapter.dart';
 import '../models/book_subchapter.dart';
 
 class BookOfflineService {
+  // Bumped from 1 -> 2: pre-migration snapshots contain Ruby integer ids that
+  // don't reconcile with the .NET API's Guid ids, so existing installs must
+  // evict their cache and re-fetch once a Guid-based snapshot is published.
   Future<Database> get _db =>
-      OfflineDatabaseHelper(feature: 'books', version: 1).database;
+      OfflineDatabaseHelper(feature: 'books', version: 2).database;
 
   // ───────────────────── Books ─────────────────────
 
@@ -283,12 +286,7 @@ class BookOfflineService {
         body: sub.body,
         position: sub.position,
         chapterId: sub.chapterId,
-        createdAt: sub.createdAt,
-        updatedAt: sub.updatedAt,
-        chapter: chapter != null
-            ? BookSubchapterParentChapter(
-                id: chapter.id, position: chapter.position)
-            : null,
+        chapterTitle: chapter?.title,
       );
     }
 
