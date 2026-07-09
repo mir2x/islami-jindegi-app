@@ -2,14 +2,20 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/news.dart';
 
-/// Dio-based service for fetching news from the JSON:API backend.
+/// Dio-based service for fetching news from the .NET API (plain JSON).
+///
+/// The .NET `GetList` endpoint has no `gtPublishedAt`/`ltPublishedAt`
+/// adjacency filter the legacy Ruby API had, so date-based prev/next lookup
+/// is gone. Previous/next navigation is instead resolved via
+/// `newsNavigationIdsProvider`, which pages through the (published) list
+/// once and looks up the current item's index — mirroring the pattern used
+/// by book/masail/dua.
 class NewsApiService {
   late final Dio _dio;
 
   NewsApiService() {
     _dio = Dio(BaseOptions(
-      baseUrl: '${dotenv.env['API_HOST_NAME']}/api',
-      headers: {'Accept': 'application/vnd.api+json'},
+      baseUrl: '${dotenv.env['DOTNET_API_HOST_NAME']}/api',
     ));
   }
 
@@ -22,55 +28,18 @@ class NewsApiService {
   }) async {
     final params = <String, dynamic>{
       'page': page,
-      'per_page': perPage,
+      'pageSize': perPage,
       'published': true,
       if (search != null && search.isNotEmpty) 'search': search,
     };
 
     final response = await _dio.get('/news', queryParameters: params);
-    return _parseNewsResponse(response.data);
+    final data = response.data['data'] as List? ?? [];
+    return data.map((r) => NewsItem.fromJson(r)).toList();
   }
 
   Future<NewsItem> fetchSingleNews(String id) async {
     final response = await _dio.get('/news/$id');
-    final data = response.data['data'] as Map<String, dynamic>;
-    return NewsItem.fromJsonApi(data);
-  }
-
-  /// Navigate by date — previous item (published after current).
-  Future<List<NewsItem>> fetchNewsByGtPublishedAt({
-    int quantity = 1,
-    required String gtPublishedAt,
-  }) async {
-    final params = <String, dynamic>{
-      'quantity': quantity,
-      'published': true,
-      'gtPublishedAt': gtPublishedAt,
-    };
-    final response = await _dio.get('/news', queryParameters: params);
-    return _parseNewsResponse(response.data);
-  }
-
-  /// Navigate by date — next item (published before current).
-  Future<List<NewsItem>> fetchNewsByLtPublishedAt({
-    int quantity = 1,
-    required String ltPublishedAt,
-  }) async {
-    final params = <String, dynamic>{
-      'quantity': quantity,
-      'published': true,
-      'ltPublishedAt': ltPublishedAt,
-    };
-    final response = await _dio.get('/news', queryParameters: params);
-    return _parseNewsResponse(response.data);
-  }
-
-  // ═══════════════════════════════════════════════
-  //  JSON:API Response Parsing
-  // ═══════════════════════════════════════════════
-
-  List<NewsItem> _parseNewsResponse(Map<String, dynamic> json) {
-    final dataList = json['data'] as List? ?? [];
-    return dataList.map((r) => NewsItem.fromJsonApi(r)).toList();
+    return NewsItem.fromJson(response.data as Map<String, dynamic>);
   }
 }

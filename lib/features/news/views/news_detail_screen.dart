@@ -20,9 +20,31 @@ import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
 import '../providers/news_providers.dart';
+import '../models/news.dart';
 
 class NewsDetailScreen extends ConsumerWidget {
   const NewsDetailScreen({super.key});
+
+  Future<NewsItem?> _findAdjacentNews(
+    WidgetRef ref,
+    NewsItem current, {
+    required bool next,
+  }) async {
+    try {
+      final orderedIds = await ref.read(newsNavigationIdsProvider.future);
+      final currentIndex = orderedIds.indexOf(current.id);
+      if (currentIndex == -1) return null;
+
+      final targetIndex = next ? currentIndex + 1 : currentIndex - 1;
+      if (targetIndex < 0 || targetIndex >= orderedIds.length) return null;
+
+      final targetId = orderedIds[targetIndex];
+      final api = ref.read(newsApiServiceProvider);
+      return await api.fetchSingleNews(targetId);
+    } catch (_) {
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,29 +63,19 @@ class NewsDetailScreen extends ConsumerWidget {
       },
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
-        final api = ref.read(newsApiServiceProvider);
-
         Future? previousPage() async {
-          var previousResources = await api.fetchNewsByGtPublishedAt(
-            quantity: 1,
-            gtPublishedAt: resource.publishedAt,
-          );
-
-          if (previousResources.isEmpty) {
+          final previous = await _findAdjacentNews(ref, resource, next: false);
+          if (previous == null) {
             if (context.canPop()) context.pop();
           } else {
-            await context.push('/news/${previousResources.first.id}');
+            await context.push('/news/${previous.id}');
           }
         }
 
         Future? nextPage() async {
-          var nextResources = await api.fetchNewsByLtPublishedAt(
-            quantity: 1,
-            ltPublishedAt: resource.publishedAt,
-          );
-
-          if (nextResources.isNotEmpty) {
-            await context.push('/news/${nextResources.first.id}');
+          final next = await _findAdjacentNews(ref, resource, next: true);
+          if (next != null) {
+            await context.push('/news/${next.id}');
           }
         }
 
@@ -100,7 +112,7 @@ class NewsDetailScreen extends ConsumerWidget {
                     Container(
                       margin: const EdgeInsets.only(bottom: 30),
                       child: PageHtmlBody(
-                        text: resource.body,
+                        text: resource.body ?? '',
                         fontSizeRatio: fontSizeRatio,
                       ),
                     ),
