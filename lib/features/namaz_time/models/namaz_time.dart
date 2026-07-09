@@ -1,9 +1,37 @@
-/// Pure Dart model for NamazTime — no Flutter Data dependency.
+// Pure Dart models for NamazTime — flat REST JSON from the .NET API
+// (no JSON:API envelope, no `slug` field; ordering is by `position`).
+
+/// Lightweight list-item shape, matching .NET's `NamazTimeListItem` DTO
+/// (`Id, Title, TitleBn, Position, ...`).
+class NamazTimeListItem {
+  final String id;
+  final String title;
+  final String? titleBn;
+  final int position;
+
+  NamazTimeListItem({
+    required this.id,
+    required this.title,
+    this.titleBn,
+    required this.position,
+  });
+
+  factory NamazTimeListItem.fromJson(Map<String, dynamic> json) {
+    return NamazTimeListItem(
+      id: json['id']?.toString() ?? '',
+      title: json['title'] ?? '',
+      titleBn: json['titleBn'],
+      position: json['position'] is int ? json['position'] : 0,
+    );
+  }
+}
+
+/// Full detail shape (adds the masail/fazail text), matching .NET's
+/// `NamazTimeDetail` DTO (`Id, Title, TitleBn, Masail, Fazail, Position, ...`).
 class NamazTimeItem {
   final String id;
   final String title;
   final String? titleBn;
-  final String slug;
   final String masail;
   final String? fazail;
   final int? position;
@@ -14,7 +42,6 @@ class NamazTimeItem {
     required this.id,
     required this.title,
     this.titleBn,
-    required this.slug,
     required this.masail,
     this.fazail,
     this.position,
@@ -22,18 +49,16 @@ class NamazTimeItem {
     this.updatedAt,
   });
 
-  factory NamazTimeItem.fromJsonApi(Map<String, dynamic> resource) {
-    final attrs = resource['attributes'] as Map<String, dynamic>? ?? {};
+  factory NamazTimeItem.fromJson(Map<String, dynamic> json) {
     return NamazTimeItem(
-      id: resource['id']?.toString() ?? '',
-      title: attrs['title'] ?? '',
-      titleBn: attrs['title-bn'],
-      slug: attrs['slug'] ?? '',
-      masail: attrs['masail'] ?? '',
-      fazail: attrs['fazail'],
-      position: attrs['position'] is int ? attrs['position'] : null,
-      createdAt: attrs['created-at'],
-      updatedAt: attrs['updated-at'],
+      id: json['id']?.toString() ?? '',
+      title: json['title'] ?? '',
+      titleBn: json['titleBn'],
+      masail: json['masail'] ?? '',
+      fazail: json['fazail'],
+      position: json['position'] is int ? json['position'] : null,
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
     );
   }
 }

@@ -35,15 +35,12 @@ class NamazTimeDetailScreen extends ConsumerWidget {
         );
       },
       error: (error, _) => ModelExeptionHandler(error: error),
-      data: (resources) {
-        if (resources.isEmpty) {
+      data: (item) {
+        if (item == null) {
           return const PlaceholderScaffold(
             body: Center(child: Text('Not found')),
           );
         }
-
-        var item = resources.first;
-        final api = ref.read(namazTimeApiServiceProvider);
 
         String itemTitle = contextualTranslation(
           locale: currentLang,
@@ -51,30 +48,23 @@ class NamazTimeDetailScreen extends ConsumerWidget {
           bnText: item.titleBn,
         );
 
-        Future? previousPage() async {
-          if (item.position == null) return;
-          var previousResources = await api.fetchByPosition(
-            quantity: 1,
-            position: item.position! - 1,
-          );
+        final slugIndex = namazTimeSlugOrder.indexOf(slug);
 
-          if (previousResources.isNotEmpty) {
-            await context.push('/namaz-times/${previousResources.first.slug}');
-          } else {
+        Future? previousPage() async {
+          if (slugIndex <= 0) {
             await context.push('/namaz-times');
+            return;
           }
+          await context
+              .push('/namaz-times/${namazTimeSlugOrder[slugIndex - 1]}');
         }
 
         Future? nextPage() async {
-          if (item.position == null) return;
-          var nextResources = await api.fetchByPosition(
-            quantity: 1,
-            position: item.position! + 1,
-          );
-
-          if (nextResources.isNotEmpty) {
-            await context.push('/namaz-times/${nextResources.first.slug}');
+          if (slugIndex < 0 || slugIndex >= namazTimeSlugOrder.length - 1) {
+            return;
           }
+          await context
+              .push('/namaz-times/${namazTimeSlugOrder[slugIndex + 1]}');
         }
 
         return ResizableFont(
@@ -82,7 +72,12 @@ class NamazTimeDetailScreen extends ConsumerWidget {
           builder: (context, fontSizeRatio) {
             final appTheme = Theme.of(context).extension<AppThemeColors>()!;
             return AppScaffold(
-              onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/namaz-times'); },
+              onBackPressed: () async {
+                if (context.canPop())
+                  context.pop();
+                else
+                  context.go('/namaz-times');
+              },
               showPattern: false,
               title: Text(itemTitle),
               body: NextPageSwipe(
