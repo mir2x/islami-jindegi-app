@@ -231,7 +231,7 @@ class _ShareOptionsSheetState extends ConsumerState<_ShareOptionsSheet> {
                     ? null
                     : () {
                         Navigator.pop(context);
-                        Share.share(shareText);
+                        SharePlus.instance.share(ShareParams(text: shareText));
                       },
               ),
             ),

@@ -79,9 +79,8 @@ class SocialShare extends StatelessWidget {
 
         await Clipboard.setData(ClipboardData(text: text));
 
-        Share.share(
-          text,
-          subject: title,
+        SharePlus.instance.share(
+          ShareParams(text: text, subject: title),
         );
       },
     );

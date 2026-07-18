@@ -234,7 +234,8 @@ class AppScaffold extends ConsumerWidget {
                                       context.push('/contact-us');
                                       break;
                                     case 2:
-                                      Share.share(appLink);
+                                      SharePlus.instance
+                                          .share(ShareParams(text: appLink));
                                       break;
                                     case 3:
                                       final Uri url = Uri.parse(appLink);
@@ -348,7 +349,7 @@ class AppScaffold extends ConsumerWidget {
                           final appLink = Platform.isAndroid
                               ? 'https://play.google.com/store/apps/details?id=com.islami_jindegi'
                               : 'https://apps.apple.com/app/islami-jindegi/id1271205014';
-                          Share.share(appLink);
+                          SharePlus.instance.share(ShareParams(text: appLink));
                         },
                       ),
                     ],

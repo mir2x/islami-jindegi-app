@@ -187,7 +187,8 @@ class AyahMenu extends ConsumerWidget {
                       final ayah = await ref
                           .read(quranDataServiceProvider)
                           .getAyah(db, selectedSura, selectedAyah);
-                      await Share.share(ayah.arabicText);
+                      await SharePlus.instance
+                          .share(ShareParams(text: ayah.arabicText));
                     } catch (e) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(

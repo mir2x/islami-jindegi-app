@@ -172,7 +172,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
     }
     text +=
         '\n\nhttps://play.google.com/store/apps/details?id=com.islami_jindegi';
-    Share.share(text, subject: widget.title);
+    SharePlus.instance.share(ShareParams(text: text, subject: widget.title));
   }
 
   // --- Open in external app ---
