@@ -25,8 +25,9 @@ final _connectivityProvider = FutureProvider<bool>((ref) async {
 
 // ───────────────────── Query Params ─────────────────────
 
-class DuaQueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
-  DuaQueryParamsNotifier() : super({});
+class DuaQueryParamsNotifier extends Notifier<Map<String, dynamic>> {
+  @override
+  Map<String, dynamic> build() => {};
 
   void updateParams(String key, String value) {
     if (value.isNotEmpty) {
@@ -38,10 +39,8 @@ class DuaQueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
 }
 
 final duaQueryParamsProvider =
-    StateNotifierProvider.autoDispose<DuaQueryParamsNotifier,
-        Map<String, dynamic>>((ref) {
-  return DuaQueryParamsNotifier();
-});
+    NotifierProvider.autoDispose<DuaQueryParamsNotifier,
+        Map<String, dynamic>>(DuaQueryParamsNotifier.new);
 
 // ───────────────────── Single Item Providers ─────────────────────
 

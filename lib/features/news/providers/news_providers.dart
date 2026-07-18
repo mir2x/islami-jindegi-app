@@ -11,8 +11,9 @@ final newsApiServiceProvider = Provider<NewsApiService>((ref) {
 
 // ───────────────────── Query Params ─────────────────────
 
-class NewsQueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
-  NewsQueryParamsNotifier() : super({});
+class NewsQueryParamsNotifier extends Notifier<Map<String, dynamic>> {
+  @override
+  Map<String, dynamic> build() => {};
 
   void updateParams(String key, String value) {
     if (value.isNotEmpty) {
@@ -24,9 +25,7 @@ class NewsQueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
 }
 
 final newsQueryParamsProvider =
-    StateNotifierProvider<NewsQueryParamsNotifier, Map<String, dynamic>>((ref) {
-  return NewsQueryParamsNotifier();
-});
+    NotifierProvider<NewsQueryParamsNotifier, Map<String, dynamic>>(NewsQueryParamsNotifier.new);
 
 // ───────────────────── Latest News (home page) ─────────────────────
 

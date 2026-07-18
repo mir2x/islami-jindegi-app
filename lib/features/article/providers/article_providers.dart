@@ -17,8 +17,9 @@ final articleOfflineServiceProvider = Provider<ArticleOfflineService>((ref) {
 
 // ───────────────────── Query Params ─────────────────────
 
-class ArticleQueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
-  ArticleQueryParamsNotifier() : super({});
+class ArticleQueryParamsNotifier extends Notifier<Map<String, dynamic>> {
+  @override
+  Map<String, dynamic> build() => {};
 
   void updateParams(String key, String value) {
     if (value.isNotEmpty) {
@@ -30,10 +31,8 @@ class ArticleQueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
 }
 
 final articleQueryParamsProvider =
-    StateNotifierProvider<ArticleQueryParamsNotifier, Map<String, dynamic>>(
-        (ref) {
-  return ArticleQueryParamsNotifier();
-});
+    NotifierProvider<ArticleQueryParamsNotifier, Map<String, dynamic>>(
+        ArticleQueryParamsNotifier.new);
 
 // ───────────────────── Single Item Providers ─────────────────────
 

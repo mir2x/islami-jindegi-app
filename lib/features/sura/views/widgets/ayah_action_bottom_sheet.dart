@@ -93,7 +93,7 @@ class _ShareOptionsSheetState extends ConsumerState<_ShareOptionsSheet> {
     final ayahIdentifier =
         AyahIdentifier(sura: widget.suraNumber, ayah: widget.ayah.ayah);
     final tafsirAsync = ref.watch(tafsirProvider(ayahIdentifier));
-    final tafsirs = tafsirAsync.valueOrNull;
+    final tafsirs = tafsirAsync.value;
     final downloadedTafsirs =
         tafsirs?.where((t) => t.isDownloaded).toList() ?? [];
 
@@ -338,11 +338,9 @@ void showAyahActionBottomSheet(
               label: 'অডিও শুনুন',
               onTap: () async {
                 final audioPlayer = ref.read(suraAudioPlayerProvider);
-                ref.read(selectedAudioSuraProvider.notifier).state = suraNumber;
-                ref.read(selectedStartAyahProvider.notifier).state =
-                    selectedStartAyah;
-                ref.read(selectedEndAyahProvider.notifier).state =
-                    selectedEndAyah;
+                ref.read(selectedAudioSuraProvider.notifier).set(suraNumber);
+                ref.read(selectedStartAyahProvider.notifier).set(selectedStartAyah);
+                ref.read(selectedEndAyahProvider.notifier).set(selectedEndAyah);
 
                 if (!context.mounted) return;
                 final bool playbackStarted = await audioPlayer.playAyahs(

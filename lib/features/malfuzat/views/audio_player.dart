@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_debounce/easy_debounce.dart';
@@ -33,7 +34,7 @@ class MalfuzatAudioSource extends Equatable {
 // Tracks which malfuzat audio currently "owns" the shared player, mirroring
 // `providers/audio_player.dart`'s ownership pattern so a disposing provider
 // doesn't stop audio that a newer provider has already taken over.
-final _currentMalfuzatAudioIdProvider = StateProvider<String?>((ref) => null);
+final _currentMalfuzatAudioIdProvider = valueProvider<String?>(null);
 
 /// Prepares playback for a malfuzat's audio. Unlike the legacy shared
 /// `audioPlayerProvider` (still used by bayan/dua/masail), which reconstructs
@@ -55,7 +56,7 @@ final malfuzatAudioPlayerProvider = FutureProvider.autoDispose
       fileTitlePath(source.title, 'malfuzats/${source.malfuzatId}');
   final localFile = await ref.read(localFileProvider(filePath).future);
 
-  ref.read(_currentMalfuzatAudioIdProvider.notifier).state = source.malfuzatId;
+  ref.read(_currentMalfuzatAudioIdProvider.notifier).set(source.malfuzatId);
 
   if (localFile != null) {
     await player.stop();

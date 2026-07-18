@@ -181,10 +181,10 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
   }
 
   void _navigateToSuraPage(int suraNumber, int ayahNumber) {
-    ref.read(suraScrollCommandProvider.notifier).state = ScrollCommand(
+    ref.read(suraScrollCommandProvider.notifier).set(ScrollCommand(
       suraNumber: suraNumber,
       scrollIndex: ayahNumber - 1,
-    );
+    ));
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
     }
@@ -192,15 +192,15 @@ class _QuranPageWidgetState extends ConsumerState<QuranPageWidget> {
 
   void _navigateToSuraPageWithTafsir(int suraNumber, int ayahNumber) {
     // Set scroll command
-    ref.read(suraScrollCommandProvider.notifier).state = ScrollCommand(
+    ref.read(suraScrollCommandProvider.notifier).set(ScrollCommand(
       suraNumber: suraNumber,
       scrollIndex: ayahNumber - 1,
-    );
+    ));
     // Set tafsir command to open after navigation
-    ref.read(openTafsirCommandProvider.notifier).state = OpenTafsirCommand(
+    ref.read(openTafsirCommandProvider.notifier).set(OpenTafsirCommand(
       suraNumber: suraNumber,
       ayahNumber: ayahNumber,
-    );
+    ));
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
     }

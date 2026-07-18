@@ -55,7 +55,7 @@ class _QuranPageState extends ConsumerState<QuranPage> {
     // Update zoom state for PageView physics
     final isZoomed = scale > 1.05;
     if (ref.read(quranPageZoomedProvider) != isZoomed) {
-      ref.read(quranPageZoomedProvider.notifier).state = isZoomed;
+      ref.read(quranPageZoomedProvider.notifier).set(isZoomed);
     }
   }
 

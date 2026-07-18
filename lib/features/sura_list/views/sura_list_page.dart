@@ -163,7 +163,7 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
         _highlightedSuraNumber = suraNumber;
       });
       if (ref.read(lastViewedSuraProvider) == suraNumber) {
-        ref.read(lastViewedSuraProvider.notifier).state = null;
+        ref.read(lastViewedSuraProvider.notifier).set(null);
       }
       if (_handlingSuraNumber == suraNumber) {
         _handlingSuraNumber = null;
@@ -198,7 +198,7 @@ class _SuraListPageState extends ConsumerState<SuraListPage>
           _highlightedSuraNumber = suraNumber;
         });
         if (ref.read(lastViewedSuraProvider) == suraNumber) {
-          ref.read(lastViewedSuraProvider.notifier).state = null;
+          ref.read(lastViewedSuraProvider.notifier).set(null);
         }
         _handlingSuraNumber = null;
         return;

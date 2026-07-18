@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
@@ -9,8 +10,8 @@ import 'package:native_app/theme/app_theme_color.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final selectedDrawerSurahProvider = StateProvider<int>((ref) => 1);
-final selectedDrawerAyahProvider = StateProvider<int?>((ref) => null);
+final selectedDrawerSurahProvider = valueProvider<int>(1);
+final selectedDrawerAyahProvider = valueProvider<int?>(null);
 
 class SuraSelectionDrawer extends ConsumerStatefulWidget {
   final int currentSuraNumber;
@@ -42,8 +43,7 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(selectedDrawerSurahProvider.notifier).state =
-          widget.currentSuraNumber;
+      ref.read(selectedDrawerSurahProvider.notifier).set(widget.currentSuraNumber);
     });
   }
 
@@ -175,7 +175,7 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
           ),
           contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
           onTap: () {
-            ref.read(selectedDrawerSurahProvider.notifier).state = suraNumber;
+            ref.read(selectedDrawerSurahProvider.notifier).set(suraNumber);
           },
         );
       },
@@ -234,10 +234,10 @@ class _SuraSelectionDrawerState extends ConsumerState<SuraSelectionDrawer> {
 
     if (suraNumber == widget.currentSuraNumber) {
       // Same sura - just scroll to the ayah
-      ref.read(suraScrollCommandProvider.notifier).state = ScrollCommand(
+      ref.read(suraScrollCommandProvider.notifier).set(ScrollCommand(
         suraNumber: suraNumber,
         scrollIndex: ayahNumber - 1,
-      );
+      ));
     } else {
       // Different sura:
       // 1. Go back to sura-list

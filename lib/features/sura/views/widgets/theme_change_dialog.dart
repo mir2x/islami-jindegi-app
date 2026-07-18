@@ -22,7 +22,7 @@ class _ThemeChangeDialogState extends ConsumerState<ThemeChangeDialog> {
   @override
   void initState() {
     super.initState();
-    final prefs = ref.read(preferencesProvider).valueOrNull;
+    final prefs = ref.read(preferencesProvider).value;
     final currentTheme = prefs?.getString('theme') ?? 'classic';
     if (_themes.any((theme) => theme['value'] == currentTheme)) {
       _selectedTheme = currentTheme;

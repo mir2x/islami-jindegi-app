@@ -92,7 +92,7 @@ class _HijriDateState extends ConsumerState<HijriDate> {
       ref.invalidate(hijriDateSettingsProvider);
       // Schedule next timer. Coordinates/prefs in the current settings are still
       // valid for computing the next Maghrib even before the re-fetch completes.
-      final latest = ref.read(hijriDateSettingsProvider).valueOrNull;
+      final latest = ref.read(hijriDateSettingsProvider).value;
       if (latest != null) _scheduleMaghribRefresh(latest);
     });
   }

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/providers/player.dart';
@@ -18,7 +19,7 @@ import 'package:native_app/helpers/file_title_path.dart';
 /// `masails/<id>`-keyed cache path that the download flow writes to via
 /// `fileTitlePath`, so a downloaded masail is played from disk instead of
 /// streamed.
-final _currentMasailAudioIdProvider = StateProvider<String?>((ref) => null);
+final _currentMasailAudioIdProvider = valueProvider<String?>(null);
 
 final masailAudioPlayerProvider = FutureProvider.autoDispose
     .family<AudioPlayer, ({String masailId, String title, String audioUrl})>(
@@ -36,7 +37,7 @@ final masailAudioPlayerProvider = FutureProvider.autoDispose
   final filePath = fileTitlePath(params.title, 'masails/${params.masailId}');
   final localFile = await ref.read(localFileProvider(filePath).future);
 
-  ref.read(_currentMasailAudioIdProvider.notifier).state = params.masailId;
+  ref.read(_currentMasailAudioIdProvider.notifier).set(params.masailId);
 
   if (localFile != null) {
     await player.stop();

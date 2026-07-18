@@ -979,7 +979,7 @@ class _PrayerActionRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedSoundKey =
-        soundKey.valueOrNull ?? PrayerAlarmService.defaultSoundKey;
+        soundKey.value ?? PrayerAlarmService.defaultSoundKey;
 
     return Row(
       children: [

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart'
@@ -9,7 +10,7 @@ import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import 'package:native_app/shared/quran_data.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
-final selectedDrawerParaProvider = StateProvider<int>((_) => 1);
+final selectedDrawerParaProvider = valueProvider<int>(1);
 
 class SuraParaNavigationView extends ConsumerStatefulWidget {
   final int currentSuraNumber;
@@ -46,7 +47,7 @@ class _SuraParaNavigationViewState
       );
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          ref.read(selectedDrawerParaProvider.notifier).state = initialPara;
+          ref.read(selectedDrawerParaProvider.notifier).set(initialPara);
         }
       });
       _isInitialStateSet = true;
@@ -71,7 +72,7 @@ class _SuraParaNavigationViewState
       );
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          ref.read(selectedDrawerParaProvider.notifier).state = para;
+          ref.read(selectedDrawerParaProvider.notifier).set(para);
         }
       });
     }
@@ -164,7 +165,7 @@ class _SuraParaNavigationViewState
             ),
           ),
           onTap: () {
-            ref.read(selectedDrawerParaProvider.notifier).state = paraNumber;
+            ref.read(selectedDrawerParaProvider.notifier).set(paraNumber);
             _navigateToAyah(context, suraNumber, ayahNumber);
           },
           minVerticalPadding: 0,
@@ -177,10 +178,10 @@ class _SuraParaNavigationViewState
     Scaffold.of(context).closeDrawer();
 
     if (suraNumber == widget.currentSuraNumber) {
-      ref.read(suraScrollCommandProvider.notifier).state = ScrollCommand(
+      ref.read(suraScrollCommandProvider.notifier).set(ScrollCommand(
         suraNumber: suraNumber,
         scrollIndex: ayahNumber - 1,
-      );
+      ));
       return;
     }
 

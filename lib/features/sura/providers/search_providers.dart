@@ -1,8 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:native_app/features/sura/models/ayah.dart';
 import 'package:native_app/features/sura/providers/sura_providers.dart';
 
-final searchQueryProvider = StateProvider<String>((ref) => '');
+final searchQueryProvider = valueProvider<String>('');
 
 class SearchPaginationState {
   final List<SearchResult> results;
@@ -31,7 +32,7 @@ class SearchPaginationState {
 }
 
 class SearchNotifier
-    extends AutoDisposeAsyncNotifier<SearchPaginationState> {
+    extends AsyncNotifier<SearchPaginationState> {
   static const _pageSize = 20;
 
   List<String> _allKeys = [];
@@ -89,7 +90,7 @@ class SearchNotifier
   }
 
   Future<void> loadMore() async {
-    final current = state.valueOrNull;
+    final current = state.value;
     if (current == null || !current.hasMore || current.isLoadingMore) return;
 
     state = AsyncData(current.copyWith(isLoadingMore: true));
@@ -115,5 +116,5 @@ class SearchNotifier
   }
 }
 
-final searchNotifierProvider = AutoDisposeAsyncNotifierProvider<SearchNotifier,
+final searchNotifierProvider = AsyncNotifierProvider.autoDispose<SearchNotifier,
     SearchPaginationState>(SearchNotifier.new);

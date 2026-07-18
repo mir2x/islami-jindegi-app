@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart';
@@ -7,7 +8,7 @@ import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-final _selectedTilawatSurahProvider = StateProvider<int>((ref) => 1);
+final _selectedTilawatSurahProvider = valueProvider<int>(1);
 
 class TilawatSuraNavigationView extends ConsumerStatefulWidget {
   final int currentSuraNumber;
@@ -41,8 +42,7 @@ class _TilawatSuraNavigationViewState
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(_selectedTilawatSurahProvider.notifier).state =
-          widget.currentSuraNumber;
+      ref.read(_selectedTilawatSurahProvider.notifier).set(widget.currentSuraNumber);
     });
   }
 
@@ -152,7 +152,7 @@ class _TilawatSuraNavigationViewState
           ),
           contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
           onTap: () {
-            ref.read(_selectedTilawatSurahProvider.notifier).state = suraNumber;
+            ref.read(_selectedTilawatSurahProvider.notifier).set(suraNumber);
           },
         );
       },

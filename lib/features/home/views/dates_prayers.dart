@@ -73,7 +73,7 @@ class _DatesPrayersState extends ConsumerState<DatesPrayers> {
   }
 
   void _showHijriPicker(BuildContext context) {
-    final settings = ref.read(hijriDateSettingsProvider).valueOrNull;
+    final settings = ref.read(hijriDateSettingsProvider).value;
     if (settings == null) return;
 
     final today = adjustedHijriDate(settings);

@@ -24,10 +24,12 @@ int _nextId(List<Bookmark> items) {
   return items.map((e) => e.id).reduce((a, b) => a > b ? a : b) + 1;
 }
 
-class BookmarkNotifier
-    extends AutoDisposeFamilyAsyncNotifier<Bookmark?, String> {
+class BookmarkNotifier extends AsyncNotifier<Bookmark?> {
+  BookmarkNotifier(this.arg);
+  final String arg;
+
   @override
-  Future<Bookmark?> build(String arg) async {
+  Future<Bookmark?> build() async {
     final items = await _loadAll();
     return items.cast<Bookmark?>().firstWhere(
           (b) => b?.link == arg,
@@ -65,7 +67,7 @@ final bookmarkProvider = AsyncNotifierProvider.autoDispose
   BookmarkNotifier.new,
 );
 
-class BookmarksNotifier extends AutoDisposeAsyncNotifier<List> {
+class BookmarksNotifier extends AsyncNotifier<List> {
   @override
   Future<List> build() async {
     final items = await _loadAll();

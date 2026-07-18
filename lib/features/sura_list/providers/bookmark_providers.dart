@@ -4,9 +4,11 @@ import '../models/bookmark.dart';
 
 const String _bookmarksKey = 'ayah_bookmarks';
 
-class BookmarkNotifier extends StateNotifier<List<Bookmark>> {
-  BookmarkNotifier() : super([]) {
+class BookmarkNotifier extends Notifier<List<Bookmark>> {
+  @override
+  List<Bookmark> build() {
     _loadBookmarks();
+    return [];
   }
 
   Future<void> _loadBookmarks() async {
@@ -75,8 +77,8 @@ class BookmarkNotifier extends StateNotifier<List<Bookmark>> {
 }
 
 final bookmarkProvider =
-    StateNotifierProvider<BookmarkNotifier, List<Bookmark>>(
-        (ref) => BookmarkNotifier());
+    NotifierProvider<BookmarkNotifier, List<Bookmark>>(
+        BookmarkNotifier.new);
 
 /// Provider to check if a specific ayah is bookmarked
 final isAyahBookmarkedProvider =

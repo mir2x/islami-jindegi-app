@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
@@ -68,8 +69,9 @@ class AudioFileManager {
 
 final audioFileManagerProvider = Provider((ref) => AudioFileManager());
 
-class QuranAudioNotifier extends StateNotifier<QuranAudioState?> {
-  QuranAudioNotifier() : super(null);
+class QuranAudioNotifier extends Notifier<QuranAudioState?> {
+  @override
+  QuranAudioState? build() => null;
   void start(int surah, int ayah) =>
       state = QuranAudioState(surah: surah, ayah: ayah, isPlaying: true);
   void updateAyah(int ayah) {
@@ -89,13 +91,13 @@ class QuranAudioNotifier extends StateNotifier<QuranAudioState?> {
 }
 
 final quranAudioProvider =
-    StateNotifierProvider<QuranAudioNotifier, QuranAudioState?>(
-        (ref) => QuranAudioNotifier());
+    NotifierProvider<QuranAudioNotifier, QuranAudioState?>(
+        QuranAudioNotifier.new);
 
-final selectedAudioSuraProvider = StateProvider<int>((_) => 1);
-final selectedStartAyahProvider = StateProvider<int>((_) => 1);
-final selectedEndAyahProvider = StateProvider<int>((_) => 1);
-final selectedAyahRepeatCountProvider = StateProvider<int>((_) => 0);
+final selectedAudioSuraProvider = valueProvider<int>(1);
+final selectedStartAyahProvider = valueProvider<int>(1);
+final selectedEndAyahProvider = valueProvider<int>(1);
+final selectedAyahRepeatCountProvider = valueProvider<int>(0);
 
 class QuranAudioPlayer {
   final AudioPlayer _player;
@@ -265,7 +267,7 @@ class QuranAudioPlayer {
   void _highlightAndNavigate(int sura, int ayah) {
     debugPrint(
         "🎨 [_highlightAndNavigate] CALLED for Sura: $sura, Ayah: $ayah");
-    final allAyahBoxes = _ref.read(allBoxesProvider).valueOrNull;
+    final allAyahBoxes = _ref.read(allBoxesProvider).value;
 
     if (allAyahBoxes == null) {
       debugPrint("  [HN] ❌ ERROR: Ayah boxes data is NULL. Cannot highlight.");
@@ -282,7 +284,7 @@ class QuranAudioPlayer {
       final currentPage = _ref.read(currentPageProvider) + 1;
       if (targetPage != currentPage) {
         debugPrint("  [HN]  NAVIGATING from page $currentPage to $targetPage.");
-        _ref.read(navigateToPageCommandProvider.notifier).state = targetPage;
+        _ref.read(navigateToPageCommandProvider.notifier).set(targetPage);
       }
     } else {
       debugPrint(

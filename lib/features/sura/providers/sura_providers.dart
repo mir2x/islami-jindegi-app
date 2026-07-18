@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:native_app/core/utils/arabic_utils.dart';
 import 'package:native_app/features/sura/models/ayah.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -215,9 +216,11 @@ final ayahByIndexProvider = FutureProvider.family<Ayah, AyahProviderParams>((
 
 const String _selectedTranslatorsKey = 'sura_selected_translators';
 
-class SelectedTranslatorsNotifier extends StateNotifier<List<String>> {
-  SelectedTranslatorsNotifier() : super([]) {
+class SelectedTranslatorsNotifier extends Notifier<List<String>> {
+  @override
+  List<String> build() {
     _loadFromPrefs();
+    return [];
   }
 
   Future<void> _loadFromPrefs() async {
@@ -258,9 +261,7 @@ class SelectedTranslatorsNotifier extends StateNotifier<List<String>> {
 }
 
 final selectedTranslatorsProvider =
-    StateNotifierProvider<SelectedTranslatorsNotifier, List<String>>((ref) {
-  return SelectedTranslatorsNotifier();
-});
+    NotifierProvider<SelectedTranslatorsNotifier, List<String>>(SelectedTranslatorsNotifier.new);
 
 class ScrollCommand {
   final int suraNumber;
@@ -269,8 +270,8 @@ class ScrollCommand {
   ScrollCommand({required this.suraNumber, required this.scrollIndex});
 }
 
-final activeSurahPagesProvider = StateProvider<Set<int>>((ref) => {});
-final suraScrollCommandProvider = StateProvider<ScrollCommand?>((ref) => null);
+final activeSurahPagesProvider = valueProvider<Set<int>>({});
+final suraScrollCommandProvider = valueProvider<ScrollCommand?>(null);
 
 /// Command to open tafsir after navigation - contains sura and ayah number
 class OpenTafsirCommand {
@@ -281,9 +282,9 @@ class OpenTafsirCommand {
 }
 
 final openTafsirCommandProvider =
-    StateProvider<OpenTafsirCommand?>((ref) => null);
-final showTranslationsProvider = StateProvider<bool>((ref) => true);
-final showWordByWordProvider = StateProvider<bool>((ref) => false);
-final isAutoScrollingProvider = StateProvider<bool>((ref) => false);
-final scrollSpeedFactorProvider = StateProvider<double>((ref) => 1.0);
-final isAutoScrollPausedProvider = StateProvider<bool>((ref) => false);
+    valueProvider<OpenTafsirCommand?>(null);
+final showTranslationsProvider = valueProvider<bool>(true);
+final showWordByWordProvider = valueProvider<bool>(false);
+final isAutoScrollingProvider = valueProvider<bool>(false);
+final scrollSpeedFactorProvider = valueProvider<double>(1.0);
+final isAutoScrollPausedProvider = valueProvider<bool>(false);

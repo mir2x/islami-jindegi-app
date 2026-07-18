@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:native_app/features/quran/providers/ayah_highlight_providers.dart'
@@ -8,7 +9,7 @@ import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import 'package:native_app/shared/quran_data.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
-final selectedTilawatDrawerParaProvider = StateProvider<int>((_) => 1);
+final selectedTilawatDrawerParaProvider = valueProvider<int>(1);
 
 class TilawatParaNavigationView extends ConsumerStatefulWidget {
   final int currentSuraNumber;
@@ -45,8 +46,7 @@ class _TilawatParaNavigationViewState
       );
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          ref.read(selectedTilawatDrawerParaProvider.notifier).state =
-              initialPara;
+          ref.read(selectedTilawatDrawerParaProvider.notifier).set(initialPara);
         }
       });
       _isInitialStateSet = true;
@@ -71,7 +71,7 @@ class _TilawatParaNavigationViewState
       );
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          ref.read(selectedTilawatDrawerParaProvider.notifier).state = para;
+          ref.read(selectedTilawatDrawerParaProvider.notifier).set(para);
         }
       });
     }
@@ -162,8 +162,7 @@ class _TilawatParaNavigationViewState
             ),
           ),
           onTap: () {
-            ref.read(selectedTilawatDrawerParaProvider.notifier).state =
-                paraNumber;
+            ref.read(selectedTilawatDrawerParaProvider.notifier).set(paraNumber);
             _navigateToAyah(context, suraNumber, ayahNumber);
           },
           minVerticalPadding: 0,

@@ -127,11 +127,10 @@ class SuraBookmarkNavigationView extends ConsumerWidget {
                     : () {
                         Scaffold.of(context).closeDrawer();
                         if (suraNumber == currentSuraNumber) {
-                          ref.read(suraScrollCommandProvider.notifier).state =
-                              ScrollCommand(
+                          ref.read(suraScrollCommandProvider.notifier).set(ScrollCommand(
                             suraNumber: suraNumber,
                             scrollIndex: ayahNumber - 1,
-                          );
+                          ));
                         } else {
                           Future.delayed(const Duration(milliseconds: 200),
                               () async {

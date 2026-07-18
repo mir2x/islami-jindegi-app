@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:just_audio/just_audio.dart';
 /* import 'package:just_audio_background/just_audio_background.dart'; */
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -11,7 +12,7 @@ import 'local_file.dart';
 // Tracks which audio resource currently "owns" the shared player.
 // Used to prevent a disposing provider from stopping audio that the
 // next provider has already set up.
-final _currentAudioIdProvider = StateProvider<String?>((ref) => null);
+final _currentAudioIdProvider = valueProvider<String?>(null);
 
 final audioPlayerProvider =
     FutureProvider.autoDispose.family((ref, AudioResource audioResource) async {
@@ -31,7 +32,7 @@ final audioPlayerProvider =
 
   // Claim ownership after the first await (outside the build phase),
   // still before stop()/setAudioSource() so the race condition is avoided.
-  ref.read(_currentAudioIdProvider.notifier).state = audioResource.id;
+  ref.read(_currentAudioIdProvider.notifier).set(audioResource.id);
 
   if (localFile != null) {
     var audioSource = AudioSource.file(

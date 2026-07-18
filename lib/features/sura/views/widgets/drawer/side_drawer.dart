@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/features/sura/views/widgets/drawer/bookmark_navigation_view.dart';
 import 'package:native_app/features/sura/views/widgets/drawer/para_navigation_view.dart';
 import 'package:native_app/features/sura/views/widgets/drawer/sura_navigation_view.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
-final suraDrawerTabIndexProvider = StateProvider<int>((_) => 0);
+final suraDrawerTabIndexProvider = valueProvider<int>(0);
 
 class SuraSideDrawer extends ConsumerStatefulWidget {
   final int currentSuraNumber;
@@ -39,8 +40,7 @@ class _SuraSideDrawerState extends ConsumerState<SuraSideDrawer>
 
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
-        ref.read(suraDrawerTabIndexProvider.notifier).state =
-            _tabController.index;
+        ref.read(suraDrawerTabIndexProvider.notifier).set(_tabController.index);
       }
     });
   }

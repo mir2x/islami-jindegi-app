@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/features/quran/views/widgets/drawer/bookmark_navigation_view.dart';
 import 'package:native_app/features/quran/views/widgets/drawer/para_navigation_view.dart';
@@ -8,7 +9,7 @@ import 'package:native_app/theme/app_colors.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import '../../../providers/ayah_highlight_providers.dart';
 
-final drawerTabIndexProvider = StateProvider<int>((_) => 0);
+final drawerTabIndexProvider = valueProvider<int>(0);
 
 class SideDrawer extends ConsumerStatefulWidget {
   const SideDrawer({super.key});
@@ -33,7 +34,7 @@ class _SideDrawerState extends ConsumerState<SideDrawer>
 
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
-        ref.read(drawerTabIndexProvider.notifier).state = _tabController.index;
+        ref.read(drawerTabIndexProvider.notifier).set(_tabController.index);
       }
     });
   }

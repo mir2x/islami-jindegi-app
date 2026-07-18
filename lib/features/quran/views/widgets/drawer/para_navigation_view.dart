@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:native_app/shared/quran_data.dart';
@@ -7,8 +8,8 @@ import 'package:native_app/theme/app_colors.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import '../../../providers/ayah_highlight_providers.dart';
 
-final selectedNavigationParaProvider = StateProvider<int>((_) => 1);
-final selectedNavigationPageProvider = StateProvider<int?>((_) => null);
+final selectedNavigationParaProvider = valueProvider<int>(1);
+final selectedNavigationPageProvider = valueProvider<int?>(null);
 
 class ParaNavigationView extends ConsumerStatefulWidget {
   const ParaNavigationView({super.key});
@@ -64,8 +65,8 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          ref.read(selectedNavigationParaProvider.notifier).state = currentPara;
-          ref.read(selectedNavigationPageProvider.notifier).state = currentPage;
+          ref.read(selectedNavigationParaProvider.notifier).set(currentPara);
+          ref.read(selectedNavigationPageProvider.notifier).set(currentPage);
           _paraScrollController.jumpTo(index: currentPara - 1);
           final pageList = paraPageRanges[currentPara] ?? [];
           final pageIndex = pageList.indexOf(currentPage);
@@ -185,10 +186,8 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
             ),
           ),
           onTap: () {
-            ref.read(selectedNavigationParaProvider.notifier).state =
-                paraNumber;
-            ref.read(selectedNavigationPageProvider.notifier).state =
-                currentPage;
+            ref.read(selectedNavigationParaProvider.notifier).set(paraNumber);
+            ref.read(selectedNavigationPageProvider.notifier).set(currentPage);
             ref.read(selectedAyahProvider.notifier).clear();
           },
         );
@@ -260,8 +259,7 @@ class _ParaNavigationViewState extends ConsumerState<ParaNavigationView> {
             // Clear selection FIRST
             ref.read(selectedAyahProvider.notifier).clear();
             // THEN Navigate
-            ref.read(navigateToPageCommandProvider.notifier).state =
-                actualPageNumber;
+            ref.read(navigateToPageCommandProvider.notifier).set(actualPageNumber);
             Scaffold.of(context).closeDrawer();
           },
         );

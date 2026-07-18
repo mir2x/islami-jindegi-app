@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:native_app/theme/app_colors.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import '../../../providers/ayah_highlight_providers.dart';
 
-final selectedNavigationSurahProvider = StateProvider<int>((_) => 1);
+final selectedNavigationSurahProvider = valueProvider<int>(1);
 
-final selectedNavigationAyahProvider = StateProvider<int?>((_) => null);
+final selectedNavigationAyahProvider = valueProvider<int?>(null);
 
 class SurahNavigationView extends ConsumerStatefulWidget {
   const SurahNavigationView({super.key});
@@ -72,9 +73,8 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          ref.read(selectedNavigationSurahProvider.notifier).state =
-              currentSurah;
-          ref.read(selectedNavigationAyahProvider.notifier).state = currentAyah;
+          ref.read(selectedNavigationSurahProvider.notifier).set(currentSurah);
+          ref.read(selectedNavigationAyahProvider.notifier).set(currentAyah);
 
           _surahScrollController.jumpTo(index: currentSurah - 1);
 
@@ -183,11 +183,9 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
           ),
           contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
           onTap: () {
-            ref.read(selectedNavigationSurahProvider.notifier).state =
-                suraNumber;
+            ref.read(selectedNavigationSurahProvider.notifier).set(suraNumber);
 
-            ref.read(selectedNavigationAyahProvider.notifier).state =
-                selectedAyah?.ayahNumber;
+            ref.read(selectedNavigationAyahProvider.notifier).set(selectedAyah?.ayahNumber);
           },
         );
       },
@@ -250,8 +248,7 @@ class _SurahNavigationViewState extends ConsumerState<SurahNavigationView> {
                   .read(selectedAyahProvider.notifier)
                   .selectByNavigation(selectedSurah, ayahNumber);
               // THEN Navigate
-              ref.read(navigateToPageCommandProvider.notifier).state =
-                  targetPage;
+              ref.read(navigateToPageCommandProvider.notifier).set(targetPage);
               Scaffold.of(context).closeDrawer();
             } else {
               ScaffoldMessenger.of(context).showSnackBar(

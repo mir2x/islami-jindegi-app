@@ -117,12 +117,9 @@ class AyahMenu extends ConsumerWidget {
                     final selectedState = ref.read(selectedAyahProvider);
                     if (selectedState == null) return;
 
-                    ref.read(selectedAudioSuraProvider.notifier).state =
-                        selectedState.suraNumber;
-                    ref.read(selectedStartAyahProvider.notifier).state =
-                        selectedState.ayahNumber;
-                    ref.read(selectedEndAyahProvider.notifier).state =
-                        selectedState.ayahNumber;
+                    ref.read(selectedAudioSuraProvider.notifier).set(selectedState.suraNumber);
+                    ref.read(selectedStartAyahProvider.notifier).set(selectedState.ayahNumber);
+                    ref.read(selectedEndAyahProvider.notifier).set(selectedState.ayahNumber);
 
                     ref.read(selectedAyahProvider.notifier).clear();
 

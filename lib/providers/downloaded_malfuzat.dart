@@ -69,7 +69,7 @@ final deleteDownloadedMalfuzatProvider = FutureProvider.autoDispose
   await _saveAll(items);
 });
 
-class DownloadedMalfuzatNotifier extends AutoDisposeAsyncNotifier<List> {
+class DownloadedMalfuzatNotifier extends AsyncNotifier<List> {
   @override
   Future<List> build() async {
     final items = await _loadAll();

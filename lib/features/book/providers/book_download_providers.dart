@@ -18,7 +18,7 @@ final _prefsProvider = FutureProvider<SharedPreferences>((ref) async {
 // ═══════════════════════════════════════════════════
 
 class DownloadedBooksNotifier
-    extends AutoDisposeAsyncNotifier<List<DownloadedBook>> {
+    extends AsyncNotifier<List<DownloadedBook>> {
   @override
   Future<List<DownloadedBook>> build() async {
     final prefs = await ref.watch(_prefsProvider.future);

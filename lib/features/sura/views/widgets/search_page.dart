@@ -72,7 +72,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             fontSize: 18,
           ),
           onChanged: (value) {
-            ref.read(searchQueryProvider.notifier).state = value;
+            ref.read(searchQueryProvider.notifier).set(value);
           },
         ),
       ),

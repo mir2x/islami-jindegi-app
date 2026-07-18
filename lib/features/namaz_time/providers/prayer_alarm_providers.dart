@@ -32,15 +32,17 @@ class PrayerAlarmNotifier extends AsyncNotifier<Map<String, bool>> {
 }
 
 final prayerAlarmProvider =
-    AsyncNotifierProvider<PrayerAlarmNotifier, Map<String, bool>>(() {
-  return PrayerAlarmNotifier();
-});
+    AsyncNotifierProvider<PrayerAlarmNotifier, Map<String, bool>>(
+        PrayerAlarmNotifier.new);
 
 // ───────────────────── Reminder Mode ─────────────────────
 
-class PrayerReminderModeNotifier extends FamilyAsyncNotifier<String, String> {
+class PrayerReminderModeNotifier extends AsyncNotifier<String> {
+  PrayerReminderModeNotifier(this.arg);
+  final String arg;
+
   @override
-  Future<String> build(String arg) async {
+  Future<String> build() async {
     return await PrayerAlarmService.getReminderMode(arg);
   }
 
@@ -53,15 +55,16 @@ class PrayerReminderModeNotifier extends FamilyAsyncNotifier<String, String> {
 }
 
 final prayerReminderModeProvider = AsyncNotifierProvider.family<
-    PrayerReminderModeNotifier, String, String>(() {
-  return PrayerReminderModeNotifier();
-});
+    PrayerReminderModeNotifier, String, String>(PrayerReminderModeNotifier.new);
 
 // ───────────────────── Reminder Offset ─────────────────────
 
-class PrayerReminderOffsetNotifier extends FamilyAsyncNotifier<int, String> {
+class PrayerReminderOffsetNotifier extends AsyncNotifier<int> {
+  PrayerReminderOffsetNotifier(this.arg);
+  final String arg;
+
   @override
-  Future<int> build(String arg) async {
+  Future<int> build() async {
     return await PrayerAlarmService.getReminderOffset(arg);
   }
 
@@ -74,16 +77,16 @@ class PrayerReminderOffsetNotifier extends FamilyAsyncNotifier<int, String> {
 }
 
 final prayerReminderOffsetProvider = AsyncNotifierProvider.family<
-    PrayerReminderOffsetNotifier, int, String>(() {
-  return PrayerReminderOffsetNotifier();
-});
+    PrayerReminderOffsetNotifier, int, String>(PrayerReminderOffsetNotifier.new);
 
 // ───────────────────── Repeat Days ─────────────────────
 
-class PrayerRepeatDaysNotifier
-    extends FamilyAsyncNotifier<Set<int>, String> {
+class PrayerRepeatDaysNotifier extends AsyncNotifier<Set<int>> {
+  PrayerRepeatDaysNotifier(this.arg);
+  final String arg;
+
   @override
-  Future<Set<int>> build(String arg) async {
+  Future<Set<int>> build() async {
     return await PrayerAlarmService.getRepeatDays(arg);
   }
 
@@ -97,15 +100,16 @@ class PrayerRepeatDaysNotifier
 
 final prayerRepeatDaysProvider =
     AsyncNotifierProvider.family<PrayerRepeatDaysNotifier, Set<int>, String>(
-        () {
-  return PrayerRepeatDaysNotifier();
-});
+        PrayerRepeatDaysNotifier.new);
 
 // ───────────────────── Per Prayer Sound ─────────────────────
 
-class PrayerAlarmSoundNotifier extends FamilyAsyncNotifier<String, String> {
+class PrayerAlarmSoundNotifier extends AsyncNotifier<String> {
+  PrayerAlarmSoundNotifier(this.arg);
+  final String arg;
+
   @override
-  Future<String> build(String arg) async {
+  Future<String> build() async {
     return await PrayerAlarmService.getSoundKey(arg);
   }
 
@@ -117,9 +121,7 @@ class PrayerAlarmSoundNotifier extends FamilyAsyncNotifier<String, String> {
 }
 
 final prayerAlarmSoundProvider = AsyncNotifierProvider.family<
-    PrayerAlarmSoundNotifier, String, String>(() {
-  return PrayerAlarmSoundNotifier();
-});
+    PrayerAlarmSoundNotifier, String, String>(PrayerAlarmSoundNotifier.new);
 
 // ───────────────────── Schedule Preview ─────────────────────
 
@@ -150,6 +152,5 @@ class ExactAlarmPermissionNotifier extends AsyncNotifier<PermissionStatus> {
 }
 
 final exactAlarmPermissionProvider =
-    AsyncNotifierProvider<ExactAlarmPermissionNotifier, PermissionStatus>(() {
-  return ExactAlarmPermissionNotifier();
-});
+    AsyncNotifierProvider<ExactAlarmPermissionNotifier, PermissionStatus>(
+        ExactAlarmPermissionNotifier.new);

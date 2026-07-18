@@ -27,8 +27,9 @@ final _connectivityProvider = FutureProvider<bool>((ref) async {
 
 // ───────────────────── Query Params ─────────────────────
 
-class MasailQueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
-  MasailQueryParamsNotifier() : super({});
+class MasailQueryParamsNotifier extends Notifier<Map<String, dynamic>> {
+  @override
+  Map<String, dynamic> build() => {};
 
   void updateParams(String key, String value) {
     if (value.isNotEmpty) {
@@ -40,10 +41,8 @@ class MasailQueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
 }
 
 final masailQueryParamsProvider =
-    StateNotifierProvider.autoDispose<MasailQueryParamsNotifier,
-        Map<String, dynamic>>((ref) {
-  return MasailQueryParamsNotifier();
-});
+    NotifierProvider.autoDispose<MasailQueryParamsNotifier,
+        Map<String, dynamic>>(MasailQueryParamsNotifier.new);
 
 // ───────────────────── Single Item Providers ─────────────────────
 

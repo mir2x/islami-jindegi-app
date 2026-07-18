@@ -60,7 +60,7 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
     super.initState();
     // Reset current page to 0 immediately to prevent inheriting from previous mushaf
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(currentPageProvider.notifier).state = 0;
+      ref.read(currentPageProvider.notifier).set(0);
       ref.read(pageInfoVisibilityProvider.notifier).show();
       ref.read(editionConfigProvider.notifier).set(
             EditionConfig(
@@ -84,7 +84,7 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
         _isInitialized = true;
       });
       // Update the current page provider
-      ref.read(currentPageProvider.notifier).state = savedPage;
+      ref.read(currentPageProvider.notifier).set(savedPage);
     }
   }
 
@@ -169,14 +169,14 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
           }
 
           Future.microtask(() {
-            ref.read(navigateToPageCommandProvider.notifier).state = null;
+            ref.read(navigateToPageCommandProvider.notifier).set(null);
           });
         } else {
           debugPrint(
             'Navigation command received for invalid page number: $newPageNum',
           );
           Future.microtask(() {
-            ref.read(navigateToPageCommandProvider.notifier).state = null;
+            ref.read(navigateToPageCommandProvider.notifier).set(null);
           });
         }
       }
@@ -253,7 +253,7 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
                         : null,
                     itemCount: pageCount,
                     onPageChanged: (idx) {
-                      ref.read(currentPageProvider.notifier).state = idx;
+                      ref.read(currentPageProvider.notifier).set(idx);
                       ref.read(pageInfoVisibilityProvider.notifier).show();
                       _saveCurrentPage(idx); // Persist page
                       final currentSelectedState = ref.read(
@@ -280,8 +280,7 @@ class _QuranViewerState extends ConsumerState<QuranViewerScreen> {
                             math.max(0, pageCount - 1),
                           );
                       if (ref.read(currentPageProvider) != p.toInt()) {
-                        ref.read(currentPageProvider.notifier).state =
-                            p.toInt();
+                        ref.read(currentPageProvider.notifier).set(p.toInt());
                         ref.read(pageInfoVisibilityProvider.notifier).show();
                         _saveCurrentPage(p.toInt()); // Persist page
                         final currentSelectedState = ref.read(

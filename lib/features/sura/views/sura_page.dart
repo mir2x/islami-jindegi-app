@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
@@ -55,10 +56,10 @@ class _SurahPageState extends ConsumerState<SurahPage> {
   bool _isDraggingScrollThumb = false;
   double? _dragThumbProgress;
 
-  late final StateController<Set<int>> _activePagesNotifier;
+  late final ValueController<Set<int>> _activePagesNotifier;
 
   void _navigateBackToReturnRoute() {
-    ref.read(lastViewedSuraProvider.notifier).state = widget.suraNumber;
+    ref.read(lastViewedSuraProvider.notifier).set(widget.suraNumber);
     if (!mounted) return;
     if (widget.popBack && context.canPop()) {
       context.pop();
@@ -185,8 +186,8 @@ class _SurahPageState extends ConsumerState<SurahPage> {
   void _startAutoScroll() {
     if (_isAutoScrollAnimating || _totalItems == 0) return;
 
-    ref.read(isAutoScrollingProvider.notifier).state = true;
-    ref.read(isAutoScrollPausedProvider.notifier).state = false;
+    ref.read(isAutoScrollingProvider.notifier).set(true);
+    ref.read(isAutoScrollPausedProvider.notifier).set(false);
     _isAutoScrollAnimating = true;
 
     _smoothScrollLoop();
@@ -229,27 +230,27 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     if (!mounted) return;
     _isAutoScrollAnimating = false;
 
-    ref.read(isAutoScrollingProvider.notifier).state = false;
-    ref.read(isAutoScrollPausedProvider.notifier).state = false;
+    ref.read(isAutoScrollingProvider.notifier).set(false);
+    ref.read(isAutoScrollPausedProvider.notifier).set(false);
     if (resetSpeed) {
-      ref.read(scrollSpeedFactorProvider.notifier).state = 1.0;
+      ref.read(scrollSpeedFactorProvider.notifier).set(1.0);
     }
   }
 
   void _togglePlayPauseAutoScroll() {
     final bool isPaused = ref.read(isAutoScrollPausedProvider);
     if (isPaused) {
-      ref.read(isAutoScrollPausedProvider.notifier).state = false;
+      ref.read(isAutoScrollPausedProvider.notifier).set(false);
       // Loop will resume automatically via the pause check
     } else {
-      ref.read(isAutoScrollPausedProvider.notifier).state = true;
+      ref.read(isAutoScrollPausedProvider.notifier).set(true);
     }
   }
 
   void _changeScrollSpeed(double delta) {
     final currentSpeed = ref.read(scrollSpeedFactorProvider);
     final newSpeed = (currentSpeed + delta).clamp(0.5, 3.0);
-    ref.read(scrollSpeedFactorProvider.notifier).state = newSpeed;
+    ref.read(scrollSpeedFactorProvider.notifier).set(newSpeed);
     // Speed change takes effect immediately — the loop reads speed each tick
   }
 
@@ -607,7 +608,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
           duration: const Duration(milliseconds: 700),
           curve: Curves.easeInOutCubic,
         );
-        ref.read(suraScrollCommandProvider.notifier).state = null;
+        ref.read(suraScrollCommandProvider.notifier).set(null);
       }
     });
 
@@ -615,12 +616,12 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     ref.listen<OpenTafsirCommand?>(openTafsirCommandProvider, (previous, next) {
       if (next != null && next.suraNumber == widget.suraNumber) {
         // Clear the command
-        ref.read(openTafsirCommandProvider.notifier).state = null;
+        ref.read(openTafsirCommandProvider.notifier).set(null);
         // Wait for scroll to complete, then open tafsir
         Future.delayed(const Duration(milliseconds: 800), () {
           if (!mounted) return;
           final ayahs =
-              ref.read(suraDataProvider(widget.suraNumber)).valueOrNull;
+              ref.read(suraDataProvider(widget.suraNumber)).value;
           if (ayahs != null && next.ayahNumber <= ayahs.length) {
             final ayah = ayahs[next.ayahNumber - 1];
             if (!context.mounted) return;

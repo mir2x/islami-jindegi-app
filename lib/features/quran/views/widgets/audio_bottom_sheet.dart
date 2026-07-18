@@ -24,7 +24,7 @@ class _AudioBottomSheetState extends ConsumerState<AudioBottomSheet> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      ref.read(selectedAudioSuraProvider.notifier).state = widget.currentSura;
+      ref.read(selectedAudioSuraProvider.notifier).set(widget.currentSura);
     });
   }
 
@@ -64,11 +64,10 @@ class _AudioBottomSheetState extends ConsumerState<AudioBottomSheet> {
                   final newSuraIndex = suraNames.indexOf(val);
                   if (newSuraIndex != -1) {
                     final newSuraNumber = newSuraIndex + 1;
-                    ref.read(selectedAudioSuraProvider.notifier).state =
-                        newSuraNumber;
+                    ref.read(selectedAudioSuraProvider.notifier).set(newSuraNumber);
 
-                    ref.read(selectedStartAyahProvider.notifier).state = 1;
-                    ref.read(selectedEndAyahProvider.notifier).state = 1;
+                    ref.read(selectedStartAyahProvider.notifier).set(1);
+                    ref.read(selectedEndAyahProvider.notifier).set(1);
                     setState(() => _isFullSura = false);
                   }
                 }
@@ -99,10 +98,10 @@ class _AudioBottomSheetState extends ConsumerState<AudioBottomSheet> {
               onChanged: (val) {
                 if (val != null) {
                   setState(() => _isFullSura = false);
-                  ref.read(selectedStartAyahProvider.notifier).state = val;
+                  ref.read(selectedStartAyahProvider.notifier).set(val);
                   final currentEndAyah = ref.read(selectedEndAyahProvider);
                   if (val > currentEndAyah) {
-                    ref.read(selectedEndAyahProvider.notifier).state = val;
+                    ref.read(selectedEndAyahProvider.notifier).set(val);
                   }
                 }
               },
@@ -116,7 +115,7 @@ class _AudioBottomSheetState extends ConsumerState<AudioBottomSheet> {
               onChanged: (val) {
                 if (val != null) {
                   setState(() => _isFullSura = false);
-                  ref.read(selectedEndAyahProvider.notifier).state = val;
+                  ref.read(selectedEndAyahProvider.notifier).set(val);
                 }
               },
             ),
@@ -125,8 +124,8 @@ class _AudioBottomSheetState extends ConsumerState<AudioBottomSheet> {
               onChanged: (isChecked) {
                 setState(() => _isFullSura = isChecked);
                 if (isChecked) {
-                  ref.read(selectedStartAyahProvider.notifier).state = 1;
-                  ref.read(selectedEndAyahProvider.notifier).state = lastAyah;
+                  ref.read(selectedStartAyahProvider.notifier).set(1);
+                  ref.read(selectedEndAyahProvider.notifier).set(lastAyah);
                 }
               },
             ),
@@ -135,13 +134,11 @@ class _AudioBottomSheetState extends ConsumerState<AudioBottomSheet> {
               repeatCount: repeatCount,
               onMinus: () {
                 if (repeatCount > 0) {
-                  ref.read(selectedAyahRepeatCountProvider.notifier).state =
-                      repeatCount - 1;
+                  ref.read(selectedAyahRepeatCountProvider.notifier).set(repeatCount - 1);
                 }
               },
               onPlus: () {
-                ref.read(selectedAyahRepeatCountProvider.notifier).state =
-                    repeatCount + 1;
+                ref.read(selectedAyahRepeatCountProvider.notifier).set(repeatCount + 1);
               },
             ),
             SizedBox(height: 12.h),

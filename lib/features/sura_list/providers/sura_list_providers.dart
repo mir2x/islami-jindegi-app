@@ -1,3 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 
-final lastViewedSuraProvider = StateProvider<int?>((ref) => null);
+final lastViewedSuraProvider = valueProvider<int?>(null);

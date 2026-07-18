@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/features/quran/providers/reciter_providers.dart';
@@ -12,8 +13,9 @@ import '../../downloader/providers/download_providers.dart';
 import '../../quran/providers/audio_providers.dart';
 import '../models/sura_audio_state.dart';
 
-class SuraAudioNotifier extends StateNotifier<SuraAudioState?> {
-  SuraAudioNotifier() : super(null);
+class SuraAudioNotifier extends Notifier<SuraAudioState?> {
+  @override
+  SuraAudioState? build() => null;
   void start(int surah, int ayah) =>
       state = SuraAudioState(surah: surah, ayah: ayah, isPlaying: true);
   void updateAyah(int ayah) {
@@ -33,13 +35,13 @@ class SuraAudioNotifier extends StateNotifier<SuraAudioState?> {
 }
 
 final suraAudioProvider =
-    StateNotifierProvider<SuraAudioNotifier, SuraAudioState?>(
-        (ref) => SuraAudioNotifier());
+    NotifierProvider<SuraAudioNotifier, SuraAudioState?>(
+        SuraAudioNotifier.new);
 
-final selectedAudioSuraProvider = StateProvider<int>((_) => 1);
-final selectedStartAyahProvider = StateProvider<int>((_) => 1);
-final selectedEndAyahProvider = StateProvider<int>((_) => 1);
-final selectedAyahRepeatCountProvider = StateProvider<int>((_) => 0);
+final selectedAudioSuraProvider = valueProvider<int>(1);
+final selectedStartAyahProvider = valueProvider<int>(1);
+final selectedEndAyahProvider = valueProvider<int>(1);
+final selectedAyahRepeatCountProvider = valueProvider<int>(0);
 
 class SuraAudioPlayer {
   final AudioPlayer _player;

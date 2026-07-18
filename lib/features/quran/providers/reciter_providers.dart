@@ -13,9 +13,11 @@ final Map<String, String> reciters = {
   'সৌদ আল-শুরাইম': 'qari-saud-bin-ibrahim-ash-shuraim',
 };
 
-class SelectedReciterNotifier extends StateNotifier<String> {
-  SelectedReciterNotifier() : super('qari-maher-al-muaiqly') {
+class SelectedReciterNotifier extends Notifier<String> {
+  @override
+  String build() {
     _loadFromPrefs();
+    return 'qari-maher-al-muaiqly';
   }
 
   Future<void> _loadFromPrefs() async {
@@ -34,6 +36,4 @@ class SelectedReciterNotifier extends StateNotifier<String> {
 }
 
 final selectedReciterProvider =
-    StateNotifierProvider<SelectedReciterNotifier, String>((ref) {
-  return SelectedReciterNotifier();
-});
+    NotifierProvider<SelectedReciterNotifier, String>(SelectedReciterNotifier.new);

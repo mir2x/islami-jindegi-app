@@ -154,7 +154,7 @@ class NamazTimesPageState extends ConsumerState<NamazTimesPage> {
   }
 
   void _showHijriPicker(BuildContext context) {
-    final settings = ref.read(hijriDateSettingsProvider).valueOrNull;
+    final settings = ref.read(hijriDateSettingsProvider).value;
     if (settings == null) return;
 
     final HijriCalendar bdToday = adjustedHijriDate(settings);

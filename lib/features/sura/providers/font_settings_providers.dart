@@ -8,9 +8,11 @@ const String _bengaliFontKey = 'sura_bengali_font';
 const String _bengaliFontSizeKey = 'sura_bengali_font_size';
 
 // Arabic Font Provider
-class ArabicFontNotifier extends StateNotifier<String> {
-  ArabicFontNotifier() : super('arabic/noorehuda') {
+class ArabicFontNotifier extends Notifier<String> {
+  @override
+  String build() {
     _loadFromPrefs();
+    return 'arabic/noorehuda';
   }
 
   Future<void> _loadFromPrefs() async {
@@ -29,14 +31,14 @@ class ArabicFontNotifier extends StateNotifier<String> {
 }
 
 final arabicFontProvider =
-    StateNotifierProvider<ArabicFontNotifier, String>((ref) {
-  return ArabicFontNotifier();
-});
+    NotifierProvider<ArabicFontNotifier, String>(ArabicFontNotifier.new);
 
 // Arabic Font Size Provider
-class ArabicFontSizeNotifier extends StateNotifier<double> {
-  ArabicFontSizeNotifier() : super(30.0) {
+class ArabicFontSizeNotifier extends Notifier<double> {
+  @override
+  double build() {
     _loadFromPrefs();
+    return 30.0;
   }
 
   Future<void> _loadFromPrefs() async {
@@ -55,14 +57,14 @@ class ArabicFontSizeNotifier extends StateNotifier<double> {
 }
 
 final arabicFontSizeProvider =
-    StateNotifierProvider<ArabicFontSizeNotifier, double>((ref) {
-  return ArabicFontSizeNotifier();
-});
+    NotifierProvider<ArabicFontSizeNotifier, double>(ArabicFontSizeNotifier.new);
 
 // Bengali Font Provider
-class BengaliFontNotifier extends StateNotifier<String> {
-  BengaliFontNotifier() : super('bangla/solaimanlipi') {
+class BengaliFontNotifier extends Notifier<String> {
+  @override
+  String build() {
     _loadFromPrefs();
+    return 'bangla/solaimanlipi';
   }
 
   Future<void> _loadFromPrefs() async {
@@ -81,14 +83,14 @@ class BengaliFontNotifier extends StateNotifier<String> {
 }
 
 final bengaliFontProvider =
-    StateNotifierProvider<BengaliFontNotifier, String>((ref) {
-  return BengaliFontNotifier();
-});
+    NotifierProvider<BengaliFontNotifier, String>(BengaliFontNotifier.new);
 
 // Bengali Font Size Provider
-class BengaliFontSizeNotifier extends StateNotifier<double> {
-  BengaliFontSizeNotifier() : super(14.0) {
+class BengaliFontSizeNotifier extends Notifier<double> {
+  @override
+  double build() {
     _loadFromPrefs();
+    return 14.0;
   }
 
   Future<void> _loadFromPrefs() async {
@@ -106,7 +108,5 @@ class BengaliFontSizeNotifier extends StateNotifier<double> {
   }
 }
 
-final bengaliFontSizeProvider =
-    StateNotifierProvider<BengaliFontSizeNotifier, double>((ref) {
-  return BengaliFontSizeNotifier();
-});
+final bengaliFontSizeProvider = NotifierProvider<BengaliFontSizeNotifier,
+    double>(BengaliFontSizeNotifier.new);

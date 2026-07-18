@@ -197,7 +197,7 @@ class _ReciterDropdown extends StatelessWidget {
           }).toList(),
           onChanged: (val) {
             if (val != null) {
-              ref.read(selectedReciterProvider.notifier).state = reciters[val]!;
+              ref.read(selectedReciterProvider.notifier).setReciter(reciters[val]!);
             }
           },
         ),

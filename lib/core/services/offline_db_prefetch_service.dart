@@ -76,8 +76,9 @@ class OfflineDbPrefetchState {
   }
 }
 
-class OfflineDbPrefetchNotifier extends StateNotifier<OfflineDbPrefetchState> {
-  OfflineDbPrefetchNotifier() : super(const OfflineDbPrefetchState());
+class OfflineDbPrefetchNotifier extends Notifier<OfflineDbPrefetchState> {
+  @override
+  OfflineDbPrefetchState build() => const OfflineDbPrefetchState();
 
   final Dio _dio = Dio();
   bool _started = false;
@@ -191,7 +192,5 @@ class OfflineDbPrefetchNotifier extends StateNotifier<OfflineDbPrefetchState> {
 }
 
 final offlineDbPrefetchProvider =
-    StateNotifierProvider<OfflineDbPrefetchNotifier, OfflineDbPrefetchState>(
-        (ref) {
-  return OfflineDbPrefetchNotifier();
-});
+    NotifierProvider<OfflineDbPrefetchNotifier, OfflineDbPrefetchState>(
+        OfflineDbPrefetchNotifier.new);

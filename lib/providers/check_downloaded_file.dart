@@ -2,10 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'local_file.dart';
 
-class CheckDownloadedFileNotifier
-    extends AutoDisposeFamilyAsyncNotifier<bool, String> {
+class CheckDownloadedFileNotifier extends AsyncNotifier<bool> {
+  CheckDownloadedFileNotifier(this.arg);
+  final String arg;
+
   @override
-  Future<bool> build(String arg) async {
+  Future<bool> build() async {
     // Keep the provider alive to prevent auto-dispose during widget tree changes
     ref.keepAlive();
 

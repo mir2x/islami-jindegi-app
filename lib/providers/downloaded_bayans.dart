@@ -69,7 +69,7 @@ final deleteDownloadedBayanProvider = FutureProvider.autoDispose
   await _saveAll(items);
 });
 
-class DownloadedBayansNotifier extends AutoDisposeAsyncNotifier<List> {
+class DownloadedBayansNotifier extends AsyncNotifier<List> {
   @override
   Future<List> build() async {
     final items = await _loadAll();

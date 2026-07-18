@@ -4,9 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
-class LocalFileNotifier extends AutoDisposeFamilyAsyncNotifier<File?, String> {
+class LocalFileNotifier extends AsyncNotifier<File?> {
+  LocalFileNotifier(this.arg);
+  final String arg;
+
   @override
-  Future<File?> build(String arg) async {
+  Future<File?> build() async {
     // Keep the provider alive to prevent auto-dispose during widget tree changes
     ref.keepAlive();
 

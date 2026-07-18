@@ -33,13 +33,12 @@ final _connectivityProvider = FutureProvider<bool>((ref) async {
 //  Query params (filter/search state)
 // ═══════════════════════════════════════════════════
 
-final bookQueryParamsProvider = StateNotifierProvider.autoDispose<
-    BookQueryParamsNotifier, Map<String, dynamic>>((ref) {
-  return BookQueryParamsNotifier();
-});
+final bookQueryParamsProvider = NotifierProvider.autoDispose<
+    BookQueryParamsNotifier, Map<String, dynamic>>(BookQueryParamsNotifier.new);
 
-class BookQueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
-  BookQueryParamsNotifier() : super({});
+class BookQueryParamsNotifier extends Notifier<Map<String, dynamic>> {
+  @override
+  Map<String, dynamic> build() => {};
 
   void updateParam(String key, dynamic value) {
     if (value == null || (value is String && value.isEmpty)) {
@@ -327,12 +326,11 @@ final singleCategoryProvider =
 // ═══════════════════════════════════════════════════
 
 final bookLastChapterProvider =
-    StateNotifierProvider<BookLastChapterNotifier, Map<String, String>>((ref) {
-  return BookLastChapterNotifier();
-});
+    NotifierProvider<BookLastChapterNotifier, Map<String, String>>(BookLastChapterNotifier.new);
 
-class BookLastChapterNotifier extends StateNotifier<Map<String, String>> {
-  BookLastChapterNotifier() : super({});
+class BookLastChapterNotifier extends Notifier<Map<String, String>> {
+  @override
+  Map<String, String> build() => {};
 
   void updateLastChapter(String bookId, String chapterId) {
     state = {...state, bookId: chapterId};

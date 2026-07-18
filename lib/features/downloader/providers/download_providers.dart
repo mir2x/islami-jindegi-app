@@ -161,8 +161,9 @@ class SingleFileDownloadTask extends DownloadTask {
   }
 }
 
-class DownloadNotifier extends StateNotifier<DownloadState> {
-  DownloadNotifier() : super(DownloadState());
+class DownloadNotifier extends Notifier<DownloadState> {
+  @override
+  DownloadState build() => DownloadState();
 
   void start(DownloadTask task) {
     state = DownloadState(
@@ -199,8 +200,8 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
 }
 
 final downloadStateProvider =
-    StateNotifierProvider<DownloadNotifier, DownloadState>(
-        (ref) => DownloadNotifier());
+    NotifierProvider<DownloadNotifier, DownloadState>(
+        DownloadNotifier.new);
 
 class DownloadManager {
   final Ref _ref;

@@ -31,9 +31,9 @@ class _AudioRangeSelectionDialogState
   void initState() {
     super.initState();
     Future.microtask(() {
-      ref.read(selectedAudioSuraProvider.notifier).state = widget.suraNumber;
-      ref.read(selectedStartAyahProvider.notifier).state = 1;
-      ref.read(selectedEndAyahProvider.notifier).state = 1;
+      ref.read(selectedAudioSuraProvider.notifier).set(widget.suraNumber);
+      ref.read(selectedStartAyahProvider.notifier).set(1);
+      ref.read(selectedEndAyahProvider.notifier).set(1);
     });
   }
 
@@ -88,10 +88,10 @@ class _AudioRangeSelectionDialogState
                 onChanged: (val) {
                   if (val != null) {
                     setState(() => _isFullSura = false);
-                    ref.read(selectedStartAyahProvider.notifier).state = val;
+                    ref.read(selectedStartAyahProvider.notifier).set(val);
                     final currentEndAyah = ref.read(selectedEndAyahProvider);
                     if (val > currentEndAyah) {
-                      ref.read(selectedEndAyahProvider.notifier).state = val;
+                      ref.read(selectedEndAyahProvider.notifier).set(val);
                     }
                   }
                 },
@@ -105,7 +105,7 @@ class _AudioRangeSelectionDialogState
                 onChanged: (val) {
                   if (val != null) {
                     setState(() => _isFullSura = false);
-                    ref.read(selectedEndAyahProvider.notifier).state = val;
+                    ref.read(selectedEndAyahProvider.notifier).set(val);
                   }
                 },
               ),
@@ -114,8 +114,8 @@ class _AudioRangeSelectionDialogState
                 onChanged: (isChecked) {
                   setState(() => _isFullSura = isChecked);
                   if (isChecked) {
-                    ref.read(selectedStartAyahProvider.notifier).state = 1;
-                    ref.read(selectedEndAyahProvider.notifier).state = lastAyah;
+                    ref.read(selectedStartAyahProvider.notifier).set(1);
+                    ref.read(selectedEndAyahProvider.notifier).set(lastAyah);
                   }
                 },
               ),
@@ -124,13 +124,11 @@ class _AudioRangeSelectionDialogState
                 repeatCount: repeatCount,
                 onMinus: () {
                   if (repeatCount > 0) {
-                    ref.read(selectedAyahRepeatCountProvider.notifier).state =
-                        repeatCount - 1;
+                    ref.read(selectedAyahRepeatCountProvider.notifier).set(repeatCount - 1);
                   }
                 },
                 onPlus: () {
-                  ref.read(selectedAyahRepeatCountProvider.notifier).state =
-                      repeatCount + 1;
+                  ref.read(selectedAyahRepeatCountProvider.notifier).set(repeatCount + 1);
                 },
               ),
               SizedBox(height: 12.h),

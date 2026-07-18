@@ -44,7 +44,7 @@ class SuraAppBar extends ConsumerWidget implements PreferredSizeWidget {
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
         onPressed: () {
-          ref.read(lastViewedSuraProvider.notifier).state = suraNumber;
+          ref.read(lastViewedSuraProvider.notifier).set(suraNumber);
           if (popBack && context.canPop()) {
             context.pop();
           } else {

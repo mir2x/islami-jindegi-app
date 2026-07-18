@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:native_app/providers/player.dart';
@@ -19,7 +20,7 @@ import 'package:native_app/helpers/file_title_path.dart';
 /// `duas/<id>`-keyed cache path that the download flow writes to via
 /// `fileTitlePath`, so a downloaded dua is played from disk instead of
 /// streamed.
-final _currentDuaAudioIdProvider = StateProvider<String?>((ref) => null);
+final _currentDuaAudioIdProvider = valueProvider<String?>(null);
 
 final duaAudioPlayerProvider = FutureProvider.autoDispose
     .family<AudioPlayer, ({String duaId, String title, String audioUrl})>(
@@ -37,7 +38,7 @@ final duaAudioPlayerProvider = FutureProvider.autoDispose
   final filePath = fileTitlePath(params.title, 'duas/${params.duaId}');
   final localFile = await ref.read(localFileProvider(filePath).future);
 
-  ref.read(_currentDuaAudioIdProvider.notifier).state = params.duaId;
+  ref.read(_currentDuaAudioIdProvider.notifier).set(params.duaId);
 
   if (localFile != null) {
     await player.stop();

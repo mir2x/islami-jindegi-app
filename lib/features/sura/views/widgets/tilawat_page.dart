@@ -374,8 +374,8 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
   void _startAutoScroll() {
     if (_isAutoScrollAnimating || _totalPages == 0) return;
 
-    ref.read(isAutoScrollingProvider.notifier).state = true;
-    ref.read(isAutoScrollPausedProvider.notifier).state = false;
+    ref.read(isAutoScrollingProvider.notifier).set(true);
+    ref.read(isAutoScrollPausedProvider.notifier).set(false);
     _isAutoScrollAnimating = true;
 
     _smoothScrollLoop();
@@ -412,26 +412,26 @@ class _TilawatPageState extends ConsumerState<TilawatPage> {
     if (!mounted) return;
     _isAutoScrollAnimating = false;
 
-    ref.read(isAutoScrollingProvider.notifier).state = false;
-    ref.read(isAutoScrollPausedProvider.notifier).state = false;
+    ref.read(isAutoScrollingProvider.notifier).set(false);
+    ref.read(isAutoScrollPausedProvider.notifier).set(false);
     if (resetSpeed) {
-      ref.read(scrollSpeedFactorProvider.notifier).state = 1.0;
+      ref.read(scrollSpeedFactorProvider.notifier).set(1.0);
     }
   }
 
   void _togglePlayPauseAutoScroll() {
     final bool isPaused = ref.read(isAutoScrollPausedProvider);
     if (isPaused) {
-      ref.read(isAutoScrollPausedProvider.notifier).state = false;
+      ref.read(isAutoScrollPausedProvider.notifier).set(false);
     } else {
-      ref.read(isAutoScrollPausedProvider.notifier).state = true;
+      ref.read(isAutoScrollPausedProvider.notifier).set(true);
     }
   }
 
   void _changeScrollSpeed(double delta) {
     final currentSpeed = ref.read(scrollSpeedFactorProvider);
     final newSpeed = (currentSpeed + delta).clamp(0.5, 3.0);
-    ref.read(scrollSpeedFactorProvider.notifier).state = newSpeed;
+    ref.read(scrollSpeedFactorProvider.notifier).set(newSpeed);
   }
 
   Widget _buildAutoScrollController(BuildContext context) {

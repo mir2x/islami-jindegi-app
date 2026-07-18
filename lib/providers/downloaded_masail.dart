@@ -69,7 +69,7 @@ final deleteDownloadedMasailProvider = FutureProvider.autoDispose
   await _saveAll(items);
 });
 
-class DownloadedMasailNotifier extends AutoDisposeAsyncNotifier<List> {
+class DownloadedMasailNotifier extends AsyncNotifier<List> {
   @override
   Future<List> build() async {
     final items = await _loadAll();

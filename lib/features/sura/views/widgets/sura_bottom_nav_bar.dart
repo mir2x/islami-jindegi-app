@@ -36,7 +36,7 @@ class SuraBottomNavBar extends ConsumerWidget {
         break;
       case 1:
         final currentState = ref.read(showWordByWordProvider);
-        ref.read(showWordByWordProvider.notifier).state = !currentState;
+        ref.read(showWordByWordProvider.notifier).set(!currentState);
         break;
       case 2:
         if (totalAyahs > 0) {

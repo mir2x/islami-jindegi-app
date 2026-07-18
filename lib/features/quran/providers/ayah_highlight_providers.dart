@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../core/constants.dart';
 import '../../../shared/quran_data.dart';
@@ -143,8 +144,9 @@ class EditionConfig {
   });
 }
 
-class EditionConfigNotifier extends StateNotifier<EditionConfig?> {
-  EditionConfigNotifier() : super(null);
+class EditionConfigNotifier extends Notifier<EditionConfig?> {
+  @override
+  EditionConfig? build() => null;
 
   void set(EditionConfig config) => state = config;
 
@@ -152,8 +154,8 @@ class EditionConfigNotifier extends StateNotifier<EditionConfig?> {
 }
 
 final editionConfigProvider =
-    StateNotifierProvider<EditionConfigNotifier, EditionConfig?>(
-  (_) => EditionConfigNotifier(),
+    NotifierProvider<EditionConfigNotifier, EditionConfig?>(
+  EditionConfigNotifier.new,
 );
 
 final allBoxesProvider = FutureProvider<List<AyahBox>>((ref) async {
@@ -187,8 +189,9 @@ final boxesForPageProvider = Provider.family<List<AyahBox>, int>((
   return all.where((b) => b.pageNumber == logicalPage).toList(growable: false);
 });
 
-class SelectedAyahNotifier extends StateNotifier<SelectedAyahState?> {
-  SelectedAyahNotifier() : super(null);
+class SelectedAyahNotifier extends Notifier<SelectedAyahState?> {
+  @override
+  SelectedAyahState? build() => null;
 
   void selectByTap(int sura, int ayah) {
     if (state?.suraNumber == sura &&
@@ -222,10 +225,10 @@ class SelectedAyahNotifier extends StateNotifier<SelectedAyahState?> {
 }
 
 final selectedAyahProvider =
-    StateNotifierProvider<SelectedAyahNotifier, SelectedAyahState?>(
-  (ref) => SelectedAyahNotifier(),
+    NotifierProvider<SelectedAyahNotifier, SelectedAyahState?>(
+  SelectedAyahNotifier.new,
 );
-final currentPageProvider = StateProvider<int>((_) => 0);
+final currentPageProvider = valueProvider<int>(0);
 
 final currentSuraProvider = Provider<int>((ref) {
   final page = ref.watch(currentPageProvider) + 1;
@@ -246,14 +249,15 @@ final currentSuraProvider = Provider<int>((ref) {
   return currentSura;
 });
 
-class TouchModeNotifier extends StateNotifier<bool> {
-  TouchModeNotifier() : super(false);
+class TouchModeNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
 
   void toggle() => state = !state;
 }
 
-final touchModeProvider = StateNotifierProvider<TouchModeNotifier, bool>(
-  (_) => TouchModeNotifier(),
+final touchModeProvider = NotifierProvider<TouchModeNotifier, bool>(
+  TouchModeNotifier.new,
 );
 
 class OrientationToggle {
@@ -282,22 +286,23 @@ class OrientationToggle {
   }
 }
 
-class DrawerNotifier extends StateNotifier<bool> {
-  DrawerNotifier() : super(false);
+class DrawerNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
 
   void open() => state = true;
 
   void close() => state = false;
 }
 
-final drawerOpenProvider = StateNotifierProvider<DrawerNotifier, bool>(
-  (_) => DrawerNotifier(),
+final drawerOpenProvider = NotifierProvider<DrawerNotifier, bool>(
+  DrawerNotifier.new,
 );
 
-final navigateToPageCommandProvider = StateProvider<int?>((_) => null);
+final navigateToPageCommandProvider = valueProvider<int?>(null);
 
 void navigateToPage({required WidgetRef ref, required int pageNumber}) {
-  ref.read(navigateToPageCommandProvider.notifier).state = pageNumber;
+  ref.read(navigateToPageCommandProvider.notifier).set(pageNumber);
 }
 
 const List<(int sura, int ayah)> paraStarts = [
@@ -507,7 +512,7 @@ final ayahPageMappingProvider = Provider<Map<(int, int), int>>((ref) {
 });
 
 final suraNamesProvider = Provider<List<String>>((_) => suraNames);
-final selectedNavigationSurahProvider = StateProvider<int?>((_) => null);
+final selectedNavigationSurahProvider = valueProvider<int?>(null);
 final paraPageMappingProvider = Provider<Map<int, int>>((ref) {
   return ref.watch(quranMappingsProvider).maybeWhen(
     data: (mappings) => mappings.paraPageMapping,
@@ -521,7 +526,7 @@ final paraPageRangesProvider = Provider<Map<int, List<int>>>((ref) {
     orElse: () => const {},
   );
 });
-final selectedNavigationParaProvider = StateProvider<int?>((_) => null);
+final selectedNavigationParaProvider = valueProvider<int?>(null);
 
 class QuranInfoService {
   final Ref _ref;
@@ -592,8 +597,9 @@ final quranInfoServiceProvider = Provider<QuranInfoService>(
   (ref) => QuranInfoService(ref),
 );
 
-class BarsVisibilityNotifier extends StateNotifier<bool> {
-  BarsVisibilityNotifier() : super(true);
+class BarsVisibilityNotifier extends Notifier<bool> {
+  @override
+  bool build() => true;
 
   void show() {
     if (!state) {
@@ -647,8 +653,9 @@ final pageInfoProvider = Provider.family<PageQuranInfo, int>((ref, pageNumber) {
   );
 });
 
-class PageInfoVisibilityNotifier extends StateNotifier<bool> {
-  PageInfoVisibilityNotifier() : super(false);
+class PageInfoVisibilityNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
   void show() {
     if (state) return;
     state = true;
@@ -659,23 +666,24 @@ class PageInfoVisibilityNotifier extends StateNotifier<bool> {
 }
 
 final pageInfoVisibilityProvider =
-    StateNotifierProvider<PageInfoVisibilityNotifier, bool>(
-  (_) => PageInfoVisibilityNotifier(),
+    NotifierProvider<PageInfoVisibilityNotifier, bool>(
+  PageInfoVisibilityNotifier.new,
 );
 
 final barsVisibilityProvider =
-    StateNotifierProvider<BarsVisibilityNotifier, bool>(
-  (ref) => BarsVisibilityNotifier(),
+    NotifierProvider<BarsVisibilityNotifier, bool>(
+  BarsVisibilityNotifier.new,
 );
 
 // ── Zoom / Page Scale ─────────────────────────────────────────────────────────
 
-class QuranPageScaleNotifier extends StateNotifier<double> {
+class QuranPageScaleNotifier extends Notifier<double> {
   static const double _min = 1.0;
   static const double _max = 3.0;
   static const double _step = 0.25;
 
-  QuranPageScaleNotifier() : super(1.0);
+  @override
+  double build() => 1.0;
 
   void zoomIn() => state = (state + _step).clamp(_min, _max);
   void zoomOut() => state = (state - _step).clamp(_min, _max);
@@ -686,10 +694,10 @@ class QuranPageScaleNotifier extends StateNotifier<double> {
 }
 
 final quranPageScaleProvider =
-    StateNotifierProvider<QuranPageScaleNotifier, double>(
-  (_) => QuranPageScaleNotifier(),
+    NotifierProvider<QuranPageScaleNotifier, double>(
+  QuranPageScaleNotifier.new,
 );
 
 /// True when the viewer is zoomed in (either by button or pinch).
 /// Updated by QuranPage whenever its TransformationController changes.
-final quranPageZoomedProvider = StateProvider<bool>((_) => false);
+final quranPageZoomedProvider = valueProvider<bool>(false);

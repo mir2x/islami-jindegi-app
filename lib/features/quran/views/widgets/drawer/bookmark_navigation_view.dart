@@ -206,7 +206,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                                             navigateToPageCommandProvider
                                                 .notifier,
                                           )
-                                          .state = targetPage;
+                                          .set(targetPage);
                                       Scaffold.of(context).closeDrawer();
                                     } catch (e) {
                                       debugPrint(
@@ -362,7 +362,7 @@ class BookmarkNavigationView extends ConsumerWidget {
                                             navigateToPageCommandProvider
                                                 .notifier,
                                           )
-                                          .state = page;
+                                          .set(page);
                                       Scaffold.of(context).closeDrawer();
                                     } catch (e) {
                                       debugPrint(

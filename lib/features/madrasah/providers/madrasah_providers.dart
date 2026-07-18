@@ -25,8 +25,9 @@ final _connectivityProvider = FutureProvider<bool>((ref) async {
 
 // ───────────────────── Query Params ─────────────────────
 
-class MadrasahQueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
-  MadrasahQueryParamsNotifier() : super({});
+class MadrasahQueryParamsNotifier extends Notifier<Map<String, dynamic>> {
+  @override
+  Map<String, dynamic> build() => {};
 
   void updateParams(String key, String value) {
     if (value.isNotEmpty) {
@@ -38,10 +39,8 @@ class MadrasahQueryParamsNotifier extends StateNotifier<Map<String, dynamic>> {
 }
 
 final madrasahQueryParamsProvider =
-    StateNotifierProvider<MadrasahQueryParamsNotifier, Map<String, dynamic>>(
-        (ref) {
-  return MadrasahQueryParamsNotifier();
-});
+    NotifierProvider<MadrasahQueryParamsNotifier, Map<String, dynamic>>(
+        MadrasahQueryParamsNotifier.new);
 
 // ───────────────────── Single Item Provider ─────────────────────
 

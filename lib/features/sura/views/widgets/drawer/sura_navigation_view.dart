@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/providers/value_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:go_router/go_router.dart';
@@ -9,8 +10,8 @@ import 'package:native_app/features/sura/providers/sura_providers.dart';
 import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
-final selectedSuraNavSurahProvider = StateProvider<int>((_) => 1);
-final selectedSuraNavAyahProvider = StateProvider<int?>((_) => null);
+final selectedSuraNavSurahProvider = valueProvider<int>(1);
+final selectedSuraNavAyahProvider = valueProvider<int?>(null);
 
 class SuraNavigationTabView extends ConsumerStatefulWidget {
   final int currentSuraNumber;
@@ -42,9 +43,8 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
     if (!_isInitialStateSet) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        ref.read(selectedSuraNavSurahProvider.notifier).state =
-            widget.currentSuraNumber;
-        ref.read(selectedSuraNavAyahProvider.notifier).state = null;
+        ref.read(selectedSuraNavSurahProvider.notifier).set(widget.currentSuraNumber);
+        ref.read(selectedSuraNavAyahProvider.notifier).set(null);
         if (_surahScrollController.isAttached) {
           _surahScrollController.jumpTo(index: widget.currentSuraNumber - 1);
         }
@@ -146,8 +146,8 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
           ),
           contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
           onTap: () {
-            ref.read(selectedSuraNavSurahProvider.notifier).state = suraNumber;
-            ref.read(selectedSuraNavAyahProvider.notifier).state = null;
+            ref.read(selectedSuraNavSurahProvider.notifier).set(suraNumber);
+            ref.read(selectedSuraNavAyahProvider.notifier).set(null);
           },
         );
       },
@@ -216,10 +216,10 @@ class _SuraNavigationTabViewState extends ConsumerState<SuraNavigationTabView> {
     Scaffold.of(context).closeDrawer();
 
     if (suraNumber == widget.currentSuraNumber) {
-      ref.read(suraScrollCommandProvider.notifier).state = ScrollCommand(
+      ref.read(suraScrollCommandProvider.notifier).set(ScrollCommand(
         suraNumber: suraNumber,
         scrollIndex: ayahNumber - 1,
-      );
+      ));
       return;
     }
 

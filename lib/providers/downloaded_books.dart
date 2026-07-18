@@ -70,7 +70,7 @@ final deleteDownloadedBookProvider = FutureProvider.autoDispose
   await _saveAll(items);
 });
 
-class DownloadedBooksNotifier extends AutoDisposeAsyncNotifier<List> {
+class DownloadedBooksNotifier extends AsyncNotifier<List> {
   @override
   Future<List> build() async {
     final items = await _loadAll();

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class QueryParamsNotifier extends AutoDisposeNotifier<Map<String, dynamic>> {
+class QueryParamsNotifier extends Notifier<Map<String, dynamic>> {
   @override
   Map<String, dynamic> build() {
     return {};

@@ -62,9 +62,11 @@ Future<List<QuranEdition>> getQuranEditionData() async {
   return Future.wait(editions.map(QuranEdition.fromMap));
 }
 
-class QuranEditionNotifier extends StateNotifier<List<QuranEdition>> {
-  QuranEditionNotifier() : super([]) {
+class QuranEditionNotifier extends Notifier<List<QuranEdition>> {
+  @override
+  List<QuranEdition> build() {
     refreshDownloadStatus();
+    return [];
   }
 
   Future<void> refreshDownloadStatus() async {
@@ -74,6 +76,4 @@ class QuranEditionNotifier extends StateNotifier<List<QuranEdition>> {
 }
 
 final quranEditionProvider =
-    StateNotifierProvider<QuranEditionNotifier, List<QuranEdition>>((ref) {
-  return QuranEditionNotifier();
-});
+    NotifierProvider<QuranEditionNotifier, List<QuranEdition>>(QuranEditionNotifier.new);
