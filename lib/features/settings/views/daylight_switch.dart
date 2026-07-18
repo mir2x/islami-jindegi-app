@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:native_app/l10n/app_localizations.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:native_app/providers/preferences.dart';
 import 'package:native_app/theme/app_theme_color.dart';

@@ -210,7 +210,7 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
                 ),
                 Expanded(
                   child: DropdownButtonFormField<double>(
-                    value: currentSizeSelection,
+                    initialValue: currentSizeSelection,
                     items: _fontSizes.map((size) {
                       return DropdownMenuItem<double>(
                         value: size,
@@ -299,7 +299,7 @@ class _FontChangeDialogState extends ConsumerState<FontChangeDialog> {
         DropdownButtonFormField<T>(
           dropdownColor:
               Theme.of(context).extension<AppThemeColors>()!.dropdownBg,
-          value: value,
+          initialValue: value,
           items: items.map((item) {
             return DropdownMenuItem<T>(
               value: item,

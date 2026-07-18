@@ -1,7 +1,7 @@
 import 'dart:core';
 
 import 'package:adhan/adhan.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:native_app/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;

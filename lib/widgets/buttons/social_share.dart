@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:native_app/l10n/app_localizations.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
 class SocialShare extends StatelessWidget {

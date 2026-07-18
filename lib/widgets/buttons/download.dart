@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:native_app/l10n/app_localizations.dart';
 import 'package:dio/dio.dart';
 import 'package:native_app/providers/downloader.dart';
 import 'package:native_app/providers/check_downloaded_file.dart';

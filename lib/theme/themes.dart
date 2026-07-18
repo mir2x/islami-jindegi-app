@@ -220,7 +220,7 @@ ThemeData _buildTheme({
           ),
     dialogTheme: dialogBackgroundColor == null
         ? null
-        : DialogTheme(
+        : DialogThemeData(
             backgroundColor: dialogBackgroundColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),

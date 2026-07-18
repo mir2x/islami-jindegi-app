@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:adhan/adhan.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:native_app/l10n/app_localizations.dart';
 import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/objects/prayer_time.dart';
 import 'package:native_app/helpers/update_app_widget.dart';

@@ -52,7 +52,7 @@ class _ThemeChangeDialogState extends ConsumerState<ThemeChangeDialog> {
       ),
       content: DropdownButtonFormField<String>(
         dropdownColor: colors.dropdownBg,
-        value: _selectedTheme,
+        initialValue: _selectedTheme,
         items: _themes
             .map(
               (theme) => DropdownMenuItem<String>(

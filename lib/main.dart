@@ -12,7 +12,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:native_app/l10n/app_localizations.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:lehttp_overrides/lehttp_overrides.dart';
 import 'package:shared_preferences/shared_preferences.dart';
