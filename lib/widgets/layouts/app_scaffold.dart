@@ -234,8 +234,7 @@ class AppScaffold extends ConsumerWidget {
                                       context.push('/contact-us');
                                       break;
                                     case 2:
-                                      SharePlus.instance
-                                          .share(ShareParams(text: appLink));
+                                      SharePlus.instance.share(ShareParams(text: appLink));
                                       break;
                                     case 3:
                                       final Uri url = Uri.parse(appLink);

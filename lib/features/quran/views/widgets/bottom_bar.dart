@@ -229,7 +229,7 @@ class _BookmarkButton extends ConsumerWidget {
     final isBookmarked = bookmarkNotifier.isPageBookmarked(currentPage);
 
     return _NavIconButton(
-      icon: isBookmarked ? Icons.star_rounded : HugeIcons.strokeRoundedStar,
+      icon: HugeIcons.strokeRoundedStar,
       iconSize: iconSize,
       color: isBookmarked ? colors.secondary : colors.appBarText,
       isLandscape: isLandscape,
@@ -300,7 +300,7 @@ class _BookmarkButton extends ConsumerWidget {
 // ─────────────────────────────────────────
 
 class _NavIconButton extends StatelessWidget {
-  final IconData icon;
+  final List<List<dynamic>> icon;
   final double iconSize;
   final Color color;
   final bool isLandscape;
@@ -326,7 +326,7 @@ class _NavIconButton extends StatelessWidget {
       padding: EdgeInsets.zero,
       splashColor: colors.selectionOverlay,
       highlightColor: colors.selectionOverlay.withValues(alpha: 0.1),
-      icon: Center(child: Icon(icon, color: color)),
+      icon: Center(child: HugeIcon(icon: icon, color: color, size: iconSize)),
       onPressed: onPressed,
     );
   }

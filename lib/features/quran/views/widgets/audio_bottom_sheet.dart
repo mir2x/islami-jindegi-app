@@ -185,7 +185,7 @@ class _AudioBottomSheetState extends ConsumerState<AudioBottomSheet> {
 
   Widget _labeledDropdown<T>({
     required String label,
-    required IconData icon,
+    required List<List<dynamic>> icon,
     required T value,
     required List<T> items,
     required void Function(T?) onChanged,

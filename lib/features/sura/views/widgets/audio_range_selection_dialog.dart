@@ -180,7 +180,7 @@ class _AudioRangeSelectionDialogState
 
   Widget _labeledValue({
     required String label,
-    required IconData icon,
+    required List<List<dynamic>> icon,
     required String value,
   }) {
     final colors = Theme.of(context).extension<AppThemeColors>()!;
@@ -223,7 +223,7 @@ class _AudioRangeSelectionDialogState
 
   Widget _labeledDropdown<T>({
     required String label,
-    required IconData icon,
+    required List<List<dynamic>> icon,
     required T value,
     required List<T> items,
     required void Function(T?) onChanged,

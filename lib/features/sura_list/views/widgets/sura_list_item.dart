@@ -215,9 +215,10 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
   }
 
   Widget _buildRevelationInfo() {
-    IconData iconData = widget.sura.revelationType == RevelationType.Makki
-        ? HugeIcons.strokeRoundedKaaba01
-        : HugeIcons.strokeRoundedMosque04;
+    List<List<dynamic>> iconData =
+        widget.sura.revelationType == RevelationType.Makki
+            ? HugeIcons.strokeRoundedKaaba01
+            : HugeIcons.strokeRoundedMosque04;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,

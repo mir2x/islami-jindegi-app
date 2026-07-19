@@ -141,12 +141,14 @@ Future<Map> getLocation(Position position) async {
   String locale = preferences.getString('locale') ?? 'bn';
 
   try {
-    await setLocaleIdentifier(locale);
+    Geocoding().setLocaleIdentifier(locale);
 
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-      position.latitude,
-      position.longitude,
-    ).timeout(const Duration(seconds: 30));
+    List<Placemark> placemarks = await Geocoding()
+        .placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
+        )
+        .timeout(const Duration(seconds: 30));
 
     Placemark placemark = placemarks.first;
     String? country = placemark.country;

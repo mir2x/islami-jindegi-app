@@ -68,9 +68,7 @@ class AyahMenu extends ConsumerWidget {
               Expanded(
                 child: IconButton(
                   icon: HugeIcon(
-                    icon: isBookmarked
-                        ? Icons.star_rounded
-                        : HugeIcons.strokeRoundedStar,
+                    icon: HugeIcons.strokeRoundedStar,
                     color: isBookmarked ? colors.secondary : colors.primaryText,
                     size: 24.r,
                   ),

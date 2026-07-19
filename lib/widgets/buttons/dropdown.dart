@@ -29,10 +29,21 @@ class Dropdown extends ConsumerStatefulWidget {
 
 class DropdownState extends ConsumerState<Dropdown> {
   final TextEditingController textEditingController = TextEditingController();
+  late final ValueNotifier<dynamic> _valueListenable =
+      ValueNotifier<dynamic>(widget.selectedValue);
+
+  @override
+  void didUpdateWidget(covariant Dropdown oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedValue != _valueListenable.value) {
+      _valueListenable.value = widget.selectedValue;
+    }
+  }
 
   @override
   void dispose() {
     textEditingController.dispose();
+    _valueListenable.dispose();
     super.dispose();
   }
 
@@ -52,9 +63,9 @@ class DropdownState extends ConsumerState<Dropdown> {
       child: DropdownButton2<dynamic>(
         isExpanded: true,
         hint: widget.hint,
-        value: widget.selectedValue,
-        items: widget.items.map<DropdownMenuItem<dynamic>>((Map item) {
-          return DropdownMenuItem<dynamic>(
+        valueListenable: _valueListenable,
+        items: widget.items.map<DropdownItem<dynamic>>((Map item) {
+          return DropdownItem<dynamic>(
             value: item['value'],
             child: Text(
               item['label'],
@@ -91,8 +102,8 @@ class DropdownState extends ConsumerState<Dropdown> {
         dropdownSearchData: widget.searchEnabled
             ? DropdownSearchData(
                 searchController: textEditingController,
-                searchInnerWidgetHeight: 60,
-                searchInnerWidget: Container(
+                searchBarWidgetHeight: 60,
+                searchBarWidget: Container(
                   height: 60,
                   padding: const EdgeInsets.all(10),
                   child: TextFormField(

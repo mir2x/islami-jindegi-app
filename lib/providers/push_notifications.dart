@@ -37,7 +37,7 @@ Future initLocalNotifications() async {
   );
 
   await localNotifications.initialize(
-    initializationSettings,
+    settings: initializationSettings,
     onDidReceiveNotificationResponse: (NotificationResponse response) {
       if (response.payload != null) {
         final message = RemoteMessage.fromMap(jsonDecode(response.payload!));
