@@ -23,35 +23,42 @@ final _currentMasailAudioIdProvider = valueProvider<String?>(null);
 
 final masailAudioPlayerProvider = FutureProvider.autoDispose
     .family<AudioPlayer, ({String masailId, String title, String audioUrl})>(
-        (ref, params) async {
-  final AudioPlayer player = ref.read(playerProvider);
+  (ref, params) async {
+    final AudioPlayer player = ref.read(playerProvider);
 
-  ref.onDispose(() async {
-    // Only stop the player if we still own it — prevents a disposing
-    // provider from silencing audio that a newer masail already configured.
-    if (ref.read(_currentMasailAudioIdProvider) == params.masailId) {
+    ref.onDispose(() async {
+      // Only stop the player if we still own it — prevents a disposing
+      // provider from silencing audio that a newer masail already configured.
+      if (ref.read(_currentMasailAudioIdProvider) == params.masailId) {
+        await player.stop();
+      }
+    });
+
+    final filePath = fileTitlePath(params.title, 'masails/${params.masailId}');
+    final localFile = await ref.read(localFileProvider(filePath).future);
+
+    ref.read(_currentMasailAudioIdProvider.notifier).set(params.masailId);
+
+    if (localFile != null) {
       await player.stop();
-    }
-  });
-
-  final filePath = fileTitlePath(params.title, 'masails/${params.masailId}');
-  final localFile = await ref.read(localFileProvider(filePath).future);
-
-  ref.read(_currentMasailAudioIdProvider.notifier).set(params.masailId);
-
-  if (localFile != null) {
-    await player.stop();
-    await player.setAudioSource(AudioSource.file(localFile.path));
-  } else {
-    final connectivityResult = await Connectivity().checkConnectivity();
-
-    if (!connectivityResult.contains(ConnectivityResult.none)) {
-      await player.stop();
-      await player.setAudioSource(AudioSource.uri(Uri.parse(params.audioUrl)));
+      await player.setAudioSource(AudioSource.file(localFile.path));
     } else {
-      throw Exception('no connection');
-    }
-  }
+      final connectivityResult = await Connectivity().checkConnectivity();
 
-  return player;
-});
+      if (!connectivityResult.contains(ConnectivityResult.none)) {
+        await player.stop();
+        await player
+            .setAudioSource(AudioSource.uri(Uri.parse(params.audioUrl)));
+      } else {
+        throw Exception('no connection');
+      }
+    }
+
+    return player;
+  },
+  // Riverpod 3 retries a throwing provider by default (exponential backoff,
+  // up to ~35s across 10 attempts), which would hide the "no connection"
+  // state behind a long-looking loading spinner. Retrying a connectivity
+  // check gains nothing, so it's disabled here.
+  retry: (retryCount, error) => null,
+);

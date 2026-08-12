@@ -1,12 +1,26 @@
 import 'dart:convert';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:native_app/routes/index.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'notification_status.dart';
+import '../features/article/providers/article_sync_service.dart';
+import '../features/bayan/providers/bayan_sync_service.dart';
+import '../features/book/providers/book_sync_service.dart';
+import '../features/dua/providers/dua_sync_service.dart';
+import '../features/madrasah/providers/madrasah_sync_service.dart';
+import '../features/malfuzat/providers/malfuzat_sync_service.dart';
+import '../features/masail/providers/masail_sync_service.dart';
 
-Future<void> handleBackgroundMessage(RemoteMessage message) async {}
+const contentSyncTopic = 'content-sync';
+
+Future<void> handleBackgroundMessage(RemoteMessage message) async {
+  if (message.data.containsKey('feature')) {
+    await _syncContentFeature(message.data['feature']);
+  }
+}
 
 Future<void> handleMessage(RemoteMessage? message) async {
   if (message == null) return;
@@ -19,6 +33,40 @@ Future<void> handleMessage(RemoteMessage? message) async {
   } else if (message.data.containsKey('link')) {
     final Uri url = Uri.parse(message.data['link']);
     launchUrl(url);
+  } else if (message.data.containsKey('feature')) {
+    await _syncContentFeature(message.data['feature']);
+  }
+}
+
+/// Dispatches a "content-sync" data push straight to the matching sync
+/// service, bypassing `offlineDbPrefetchProvider`'s 30-minute throttle so an
+/// admin change reaches the app immediately instead of waiting for the next
+/// poll. Mirrors `OfflineDbPrefetchNotifier._syncFeature` — these sync
+/// service classes are plain Dart with no Riverpod dependency, so the same
+/// call works whether this runs in the foreground or the background isolate
+/// (see `handleBackgroundMessage`, which has no access to the app's
+/// `ProviderContainer`). Does not touch the global poll throttle key, since
+/// this only syncs one feature, not the full sweep.
+Future<void> _syncContentFeature(String? feature) async {
+  if (feature == null) return;
+
+  final connectivity = await Connectivity().checkConnectivity();
+  if (connectivity.contains(ConnectivityResult.none)) return;
+
+  try {
+    await switch (feature) {
+      'books' => BookSyncService().sync(),
+      'duas' => DuaSyncService().sync(),
+      'malfuzats' => MalfuzatSyncService().sync(),
+      'articles' => ArticleSyncService().sync(),
+      'madrasahs' => MadrasahSyncService().sync(),
+      'masails' => MasailSyncService().sync(),
+      'bayans' => BayanSyncService().sync(),
+      _ => Future.value(),
+    };
+  } catch (_) {
+    // A push-triggered sync failing silently is fine — the periodic poll
+    // fallback will pick up the same change on its next pass.
   }
 }
 
@@ -71,6 +119,7 @@ final pushNotificationProvider = FutureProvider((ref) async {
     /* } */
 
     await ref.read(notificationStatusProvider.notifier).updateStatus();
+    await messaging.subscribeToTopic(contentSyncTopic);
 
     final localNotifications = await initLocalNotifications();
 

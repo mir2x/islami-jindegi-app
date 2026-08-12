@@ -26,6 +26,7 @@ class ArticleApiService {
       'page': page,
       'pageSize': perPage,
       'published': true,
+      'sort': 'position_desc',
       if (search != null && search.isNotEmpty) 'search': search,
       if (articleAuthorId != null) 'authorId': articleAuthorId,
       if (articleCategoryId != null) 'categoryId': articleCategoryId,

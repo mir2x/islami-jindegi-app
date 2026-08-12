@@ -31,6 +31,7 @@ class MalfuzatApiService {
       'page': page,
       'pageSize': perPage,
       'published': true,
+      'sort': 'position_desc',
       if (search != null && search.isNotEmpty) 'search': search,
       if (authorId != null) 'authorId': authorId,
       if (categoryId != null) 'categoryId': categoryId,

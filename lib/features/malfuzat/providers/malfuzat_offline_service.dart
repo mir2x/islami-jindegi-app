@@ -5,11 +5,13 @@ import '../models/malfuzat_author.dart';
 import '../models/malfuzat_category.dart';
 
 class MalfuzatOfflineService {
-  // Bumped from 1 -> 2: pre-migration snapshots contain Ruby integer ids that
-  // don't reconcile with the .NET API's Guid ids, so existing installs must
-  // evict their cache and re-fetch once a Guid-based snapshot is published.
+  // Bumped 1 -> 2 for Guid ids, then 2 -> 3 for the move from a prebuilt
+  // downloaded file to an admin-curated, client-created-and-synced schema
+  // (see OfflineDatabaseHelper / MalfuzatSyncService) — existing installs
+  // must rebuild their local schema and re-sync from the offline-sync
+  // endpoint.
   Future<Database> get _db =>
-      OfflineDatabaseHelper(feature: 'malfuzats', version: 2).database;
+      OfflineDatabaseHelper(feature: 'malfuzats', version: 3).database;
 
   // ───────────────────── Malfuzats ─────────────────────
 
@@ -48,7 +50,7 @@ class MalfuzatOfflineService {
       'malfuzats',
       where: where.join(' AND '),
       whereArgs: args,
-      orderBy: 'position ASC',
+      orderBy: 'position DESC',
       limit: perPage,
       offset: (page - 1) * perPage,
     );

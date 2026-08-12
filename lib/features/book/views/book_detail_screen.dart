@@ -475,6 +475,7 @@ class _BookContent extends ConsumerWidget {
                       child: BookImage(
                         bookId: book.id,
                         coverUrl: book.coverUrl,
+                        coverImagePath: book.coverImagePath,
                       ),
                     ),
                   ),

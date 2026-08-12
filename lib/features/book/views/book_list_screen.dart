@@ -301,6 +301,7 @@ class _BookListScreenState extends ConsumerState<BookListScreen> {
                               child: BookImage(
                                 bookId: item.id,
                                 coverUrl: item.coverUrl,
+                                coverImagePath: item.coverImagePath,
                                 highlightProvider:
                                     downloadedBookByBookIdProvider(
                                   item.id,

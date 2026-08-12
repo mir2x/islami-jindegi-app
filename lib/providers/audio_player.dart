@@ -14,49 +14,29 @@ import 'local_file.dart';
 // next provider has already set up.
 final _currentAudioIdProvider = valueProvider<String?>(null);
 
-final audioPlayerProvider =
-    FutureProvider.autoDispose.family((ref, AudioResource audioResource) async {
-  final AudioPlayer player = ref.read(playerProvider);
+final audioPlayerProvider = FutureProvider.autoDispose.family(
+  (ref, AudioResource audioResource) async {
+    final AudioPlayer player = ref.read(playerProvider);
 
-  ref.onDispose(() async {
-    // Only stop the player if we still own it (i.e. no newer audio has
-    // taken over). This prevents the old bayan's dispose from silencing
-    // audio that the next bayan already configured.
-    if (ref.read(_currentAudioIdProvider) == audioResource.id) {
-      await player.stop();
-    }
-  });
+    ref.onDispose(() async {
+      // Only stop the player if we still own it (i.e. no newer audio has
+      // taken over). This prevents the old bayan's dispose from silencing
+      // audio that the next bayan already configured.
+      if (ref.read(_currentAudioIdProvider) == audioResource.id) {
+        await player.stop();
+      }
+    });
 
-  String filePath = fileTitlePath(audioResource.title, audioResource.id);
-  var localFile = await ref.read(localFileProvider(filePath).future);
+    String filePath = fileTitlePath(audioResource.title, audioResource.id);
+    var localFile = await ref.read(localFileProvider(filePath).future);
 
-  // Claim ownership after the first await (outside the build phase),
-  // still before stop()/setAudioSource() so the race condition is avoided.
-  ref.read(_currentAudioIdProvider.notifier).set(audioResource.id);
+    // Claim ownership after the first await (outside the build phase),
+    // still before stop()/setAudioSource() so the race condition is avoided.
+    ref.read(_currentAudioIdProvider.notifier).set(audioResource.id);
 
-  if (localFile != null) {
-    var audioSource = AudioSource.file(
-      localFile.path,
-      /* tag: MediaItem( */
-      /*   id: audioResource.id, */
-      /*   album: audioResource.album, */
-      /*   title: audioResource.title, */
-      /* ), */
-    );
-
-    await player.stop();
-    await player.setAudioSource(audioSource);
-  } else {
-    final connectivityResult = await Connectivity().checkConnectivity();
-
-    if (!connectivityResult.contains(ConnectivityResult.none)) {
-      String url = fileSrcUrl({
-        'id': audioResource.id,
-        'storage': audioResource.storage,
-      });
-
-      var audioSource = AudioSource.uri(
-        Uri.parse(url),
+    if (localFile != null) {
+      var audioSource = AudioSource.file(
+        localFile.path,
         /* tag: MediaItem( */
         /*   id: audioResource.id, */
         /*   album: audioResource.album, */
@@ -67,9 +47,35 @@ final audioPlayerProvider =
       await player.stop();
       await player.setAudioSource(audioSource);
     } else {
-      throw Exception('no connection');
-    }
-  }
+      final connectivityResult = await Connectivity().checkConnectivity();
 
-  return player;
-});
+      if (!connectivityResult.contains(ConnectivityResult.none)) {
+        String url = fileSrcUrl({
+          'id': audioResource.id,
+          'storage': audioResource.storage,
+        });
+
+        var audioSource = AudioSource.uri(
+          Uri.parse(url),
+          /* tag: MediaItem( */
+          /*   id: audioResource.id, */
+          /*   album: audioResource.album, */
+          /*   title: audioResource.title, */
+          /* ), */
+        );
+
+        await player.stop();
+        await player.setAudioSource(audioSource);
+      } else {
+        throw Exception('no connection');
+      }
+    }
+
+    return player;
+  },
+  // Riverpod 3 retries a throwing provider by default (exponential backoff,
+  // up to ~35s across 10 attempts), which would hide the "no connection"
+  // state behind a long-looking loading spinner. Retrying a connectivity
+  // check gains nothing, so it's disabled here.
+  retry: (retryCount, error) => null,
+);

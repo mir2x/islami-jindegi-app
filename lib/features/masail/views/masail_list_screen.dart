@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
-import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/utils/offline_db_prompt.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
@@ -83,16 +82,13 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
         feature: 'masails',
         child: Column(
           children: [
-            WithConnectivity(
-              builder: (context, isConnected) {
-                if (isConnected) {
-                  return Column(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        padding:
-                            const EdgeInsets.only(top: 20, left: 15, right: 15),
-                        child: Row(
+            Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.only(top: 20, left: 15, right: 15),
+                  child: Row(
                           children: [
                             Expanded(
                               child: FilterButton(
@@ -122,11 +118,21 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
                                           (Map<String, dynamic> params) async {
                                         final api =
                                             ref.read(masailApiServiceProvider);
-                                        return await api.fetchAuthors(
-                                          page: params['page'] ?? 1,
-                                          perPage: params['per_page'] ?? 16,
-                                          search: params['search'],
-                                        );
+                                        final offline = ref.read(
+                                            masailOfflineServiceProvider);
+                                        try {
+                                          return await api.fetchAuthors(
+                                            page: params['page'] ?? 1,
+                                            perPage: params['per_page'] ?? 16,
+                                            search: params['search'],
+                                          );
+                                        } catch (_) {
+                                          return await offline.queryAuthors(
+                                            page: params['page'] ?? 1,
+                                            perPage: params['per_page'] ?? 16,
+                                            search: params['search'],
+                                          );
+                                        }
                                       },
                                       itemBuilder: (_, item, __) {
                                         return FilterItem(
@@ -175,11 +181,21 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
                                       ) async {
                                         final api =
                                             ref.read(masailApiServiceProvider);
-                                        return await api.fetchCategories(
-                                          page: params['page'] ?? 1,
-                                          perPage: params['per_page'] ?? 16,
-                                          search: params['search'],
-                                        );
+                                        final offline = ref.read(
+                                            masailOfflineServiceProvider);
+                                        try {
+                                          return await api.fetchCategories(
+                                            page: params['page'] ?? 1,
+                                            perPage: params['per_page'] ?? 16,
+                                            search: params['search'],
+                                          );
+                                        } catch (_) {
+                                          return await offline.queryCategories(
+                                            page: params['page'] ?? 1,
+                                            perPage: params['per_page'] ?? 16,
+                                            search: params['search'],
+                                          );
+                                        }
                                       },
                                       itemBuilder: (_, item, __) {
                                         return FilterItem(
@@ -210,12 +226,7 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
                           },
                         ),
                       ),
-                    ],
-                  );
-                } else {
-                  return const SizedBox.shrink();
-                }
-              },
+              ],
             ),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 15),

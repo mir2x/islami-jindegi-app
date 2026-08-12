@@ -11,82 +11,90 @@ import 'local_file.dart';
 import 'connectivity_result.dart';
 import 'downloader.dart';
 
-final qiratPlayerProvider =
-    FutureProvider.autoDispose.family((ref, QiratAudio qirat) async {
-  final AudioPlayer player = ref.read(playerProvider);
-  String staticHostName = dotenv.env['STATIC_HOST_NAME']!;
-  String fileUrl = '$staticHostName/assets/al-quran/qirats/${qirat.audioPath}';
-  String filePath = 'al-quran/qirats/${qirat.audioPath}';
+final qiratPlayerProvider = FutureProvider.autoDispose.family(
+  (ref, QiratAudio qirat) async {
+    final AudioPlayer player = ref.read(playerProvider);
+    String staticHostName = dotenv.env['STATIC_HOST_NAME']!;
+    String fileUrl =
+        '$staticHostName/assets/al-quran/qirats/${qirat.audioPath}';
+    String filePath = 'al-quran/qirats/${qirat.audioPath}';
 
-  var fileProvider = localFileProvider(filePath);
-  var localFile = await ref.watch(fileProvider.future);
+    var fileProvider = localFileProvider(filePath);
+    var localFile = await ref.watch(fileProvider.future);
 
-  if (localFile == null) {
-    var connectivityResult = await ref.watch(connectivityResultProvider.future);
-
-    if (!connectivityResult.contains(ConnectivityResult.none)) {
-      var params = DownloadParams(
-        url: fileUrl,
-        savePath: filePath,
-      );
-
-      Response? response = await ref.watch(
-        downloaderProvider(params).future,
-      );
-
-      if (response != null && response.statusCode == 200) {
-        await ref.read(fileProvider.notifier).check(filePath);
-        localFile = await ref.watch(fileProvider.future);
-      } else {
-        throw Exception('download error');
-      }
-    } else {
-      throw Exception('no connection');
-    }
-  }
-
-  if (qirat.nextAudioPath != null) {
-    String nextFileUrl =
-        '$staticHostName/assets/al-quran/qirats/${qirat.nextAudioPath}';
-    String nextFilePath = 'al-quran/qirats/${qirat.nextAudioPath}';
-
-    var nextFileProvider = localFileProvider(nextFilePath);
-    var nextLocalFile = await ref.watch(nextFileProvider.future);
-
-    if (nextLocalFile == null) {
+    if (localFile == null) {
       var connectivityResult =
           await ref.watch(connectivityResultProvider.future);
 
       if (!connectivityResult.contains(ConnectivityResult.none)) {
         var params = DownloadParams(
-          url: nextFileUrl,
-          savePath: nextFilePath,
+          url: fileUrl,
+          savePath: filePath,
         );
 
-        ref.watch(downloaderProvider(params).future);
+        Response? response = await ref.watch(
+          downloaderProvider(params).future,
+        );
+
+        if (response != null && response.statusCode == 200) {
+          await ref.read(fileProvider.notifier).check(filePath);
+          localFile = await ref.watch(fileProvider.future);
+        } else {
+          throw Exception('download error');
+        }
+      } else {
+        throw Exception('no connection');
       }
     }
-  }
 
-  if (localFile != null) {
-    var audioSource = AudioSource.file(
-      localFile.path,
-      /* tag: MediaItem( */
-      /*   id: qirat.audioPath, */
-      /*   album: qirat.surah, */
-      /*   title: qirat.ayah, */
-      /* ), */
-    );
+    if (qirat.nextAudioPath != null) {
+      String nextFileUrl =
+          '$staticHostName/assets/al-quran/qirats/${qirat.nextAudioPath}';
+      String nextFilePath = 'al-quran/qirats/${qirat.nextAudioPath}';
 
-    await player.setAudioSource(audioSource);
-    await player.setSpeed(0.8);
+      var nextFileProvider = localFileProvider(nextFilePath);
+      var nextLocalFile = await ref.watch(nextFileProvider.future);
 
-    if (qirat.autoPlay) {
-      player.play();
+      if (nextLocalFile == null) {
+        var connectivityResult =
+            await ref.watch(connectivityResultProvider.future);
+
+        if (!connectivityResult.contains(ConnectivityResult.none)) {
+          var params = DownloadParams(
+            url: nextFileUrl,
+            savePath: nextFilePath,
+          );
+
+          ref.watch(downloaderProvider(params).future);
+        }
+      }
     }
-  } else {
-    throw Exception('no file');
-  }
 
-  return player;
-});
+    if (localFile != null) {
+      var audioSource = AudioSource.file(
+        localFile.path,
+        /* tag: MediaItem( */
+        /*   id: qirat.audioPath, */
+        /*   album: qirat.surah, */
+        /*   title: qirat.ayah, */
+        /* ), */
+      );
+
+      await player.setAudioSource(audioSource);
+      await player.setSpeed(0.8);
+
+      if (qirat.autoPlay) {
+        player.play();
+      }
+    } else {
+      throw Exception('no file');
+    }
+
+    return player;
+  },
+  // Riverpod 3 retries a throwing provider by default (exponential backoff,
+  // up to ~35s across 10 attempts), which would hide the "no connection"
+  // state behind a long-looking loading spinner. Retrying gains nothing for
+  // any of this provider's error paths, so it's disabled here.
+  retry: (retryCount, error) => null,
+);

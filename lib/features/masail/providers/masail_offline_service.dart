@@ -6,13 +6,15 @@ import '../models/masail_category.dart';
 import '../models/page_content.dart';
 
 class MasailOfflineService {
-  // Bumped from 1 -> 2: pre-migration snapshots contain Ruby integer ids that
-  // don't reconcile with the .NET API's Guid ids, so existing installs must
-  // evict their cache and re-fetch once a Guid-based snapshot is published.
+  // Bumped 1 -> 2 for Guid ids, then 2 -> 3 for the move from a prebuilt
+  // downloaded file to an admin-curated, client-created-and-synced schema
+  // (see OfflineDatabaseHelper / MasailSyncService) — existing installs
+  // must rebuild their local schema and re-sync from the offline-sync
+  // endpoint. Same story for `misc`, bumped 1 -> 2.
   Future<Database> get _db =>
-      OfflineDatabaseHelper(feature: 'masails', version: 2).database;
+      OfflineDatabaseHelper(feature: 'masails', version: 3).database;
   Future<Database> get _miscDb =>
-      OfflineDatabaseHelper(feature: 'misc', version: 1).database;
+      OfflineDatabaseHelper(feature: 'misc', version: 2).database;
 
   // ───────────────────── Masails ─────────────────────
 
@@ -51,7 +53,7 @@ class MasailOfflineService {
       'masails',
       where: where.join(' AND '),
       whereArgs: args,
-      orderBy: 'position ASC',
+      orderBy: 'position DESC',
       limit: perPage,
       offset: (page - 1) * perPage,
     );

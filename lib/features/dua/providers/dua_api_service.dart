@@ -29,6 +29,7 @@ class DuaApiService {
       'page': page,
       'pageSize': perPage,
       'published': true,
+      'sort': 'position_asc',
       if (search != null && search.isNotEmpty) 'search': search,
       if (categoryId != null) 'categoryId': categoryId,
     };

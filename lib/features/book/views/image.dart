@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -13,11 +15,17 @@ class BookImage extends ConsumerWidget {
     super.key,
     required this.bookId,
     required this.coverUrl,
+    this.coverImagePath,
     this.highlightProvider,
   });
 
   final String bookId;
   final String? coverUrl;
+
+  /// Local file cached by the offline sync (`BookSyncService`), when this
+  /// book is admin-marked offline-available. Preferred over the network
+  /// image so covers render without connectivity.
+  final String? coverImagePath;
   final dynamic highlightProvider;
 
   @override
@@ -56,7 +64,13 @@ class BookImage extends ConsumerWidget {
         ),
         error: (error, _) => const SizedBox.shrink(),
         data: (exists) {
-          if (exists) {
+          final localCover = coverImagePath;
+          if (localCover != null && File(localCover).existsSync()) {
+            return AspectRatio(
+              aspectRatio: dimensions['width']! / dimensions['height']!,
+              child: Image.file(File(localCover), fit: BoxFit.fill),
+            );
+          } else if (exists) {
             return AspectRatio(
               aspectRatio: dimensions['width']! / dimensions['height']!,
               child: Image(

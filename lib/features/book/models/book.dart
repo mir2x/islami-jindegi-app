@@ -18,6 +18,11 @@ class Book {
   final List<BookAuthor> authors;
   final List<BookCategory> categories;
 
+  /// Local file path for a cover image cached by the offline sync (see
+  /// `BookSyncService`). Only ever set when reading from the local SQLite
+  /// DB — online reads always render `coverUrl` directly.
+  final String? coverImagePath;
+
   Book({
     required this.id,
     required this.title,
@@ -34,6 +39,7 @@ class Book {
     this.updatedAt,
     this.authors = const [],
     this.categories = const [],
+    this.coverImagePath,
   });
 
   /// Parse from the .NET API's flat BookListItem/BookDetail JSON
@@ -80,6 +86,7 @@ class Book {
       createdAt: row['created_at'] ?? row['createdAt'],
       updatedAt: row['updated_at'] ?? row['updatedAt'],
       authors: authors,
+      coverImagePath: row['cover_image_path'],
     );
   }
 }

@@ -6,11 +6,12 @@ import '../models/book_chapter.dart';
 import '../models/book_subchapter.dart';
 
 class BookOfflineService {
-  // Bumped from 1 -> 2: pre-migration snapshots contain Ruby integer ids that
-  // don't reconcile with the .NET API's Guid ids, so existing installs must
-  // evict their cache and re-fetch once a Guid-based snapshot is published.
+  // Bumped 1 -> 2 for Guid ids, then 2 -> 3 for the move from a prebuilt
+  // downloaded file to an admin-curated, client-created-and-synced schema
+  // (see OfflineDatabaseHelper / BookSyncService) — existing installs must
+  // rebuild their local schema and re-sync from the offline-sync endpoint.
   Future<Database> get _db =>
-      OfflineDatabaseHelper(feature: 'books', version: 2).database;
+      OfflineDatabaseHelper(feature: 'books', version: 3).database;
 
   // ───────────────────── Books ─────────────────────
 

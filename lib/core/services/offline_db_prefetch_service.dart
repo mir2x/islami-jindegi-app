@@ -1,14 +1,19 @@
-import 'dart:io';
-
-import 'package:dio/dio.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../utils/offline_database_helper.dart';
-import 'static_asset_api.dart';
+import '../../features/article/providers/article_sync_service.dart';
+import '../../features/bayan/providers/bayan_sync_service.dart';
+import '../../features/book/providers/book_sync_service.dart';
+import '../../features/dua/providers/dua_sync_service.dart';
+import '../../features/madrasah/providers/madrasah_sync_service.dart';
+import '../../features/malfuzat/providers/malfuzat_sync_service.dart';
+import '../../features/masail/providers/masail_sync_service.dart';
 
+/// Domains synced on every cycle. Note `misc` (the shared Pages bucket used
+/// by the "ask a question" screen) isn't listed separately — it's synced
+/// together with `masails` by `MasailSyncService`.
 const offlineDbFeatures = <String>[
   'books',
   'duas',
@@ -16,9 +21,17 @@ const offlineDbFeatures = <String>[
   'articles',
   'madrasahs',
   'masails',
-  'misc',
   'bayans',
 ];
+
+/// Skip a sync pass if the last successful one finished more recently than
+/// this. Now a pure fallback safety net for missed/undelivered pushes (see
+/// `push_notifications.dart`'s "content-sync" topic handling, which triggers
+/// an immediate single-feature sync on admin changes) rather than the
+/// primary propagation path — stretched well past 30 minutes since it's no
+/// longer carrying the "reach the device soon" requirement on its own.
+const _throttle = Duration(hours: 6);
+const _lastSyncPrefKey = 'last_offline_sync_at';
 
 enum OfflineDbPrefetchStatus {
   idle,
@@ -76,118 +89,108 @@ class OfflineDbPrefetchState {
   }
 }
 
+/// Drives the admin-curated offline content sync: for each domain in
+/// [offlineDbFeatures], fetches the currently offline-marked set from the
+/// `.NET` API and applies it to that domain's local SQLite tables (see the
+/// per-feature `X_sync_service.dart` files).
+///
+/// Unlike the old bulk-download flow this replaced (one prebuilt `.sqlite3`
+/// file per feature, downloaded once at first launch), this runs on cold
+/// start *and* every time the app resumes from background (see
+/// `OfflineDbPrefetchBanner`'s lifecycle observer), throttled by
+/// [_throttle] — content curated in the admin panel needs to reach devices
+/// that already have the app installed, not just fresh installs.
 class OfflineDbPrefetchNotifier extends Notifier<OfflineDbPrefetchState> {
   @override
   OfflineDbPrefetchState build() => const OfflineDbPrefetchState();
 
-  final Dio _dio = Dio();
-  bool _started = false;
+  bool _running = false;
 
   Future<void> start() async {
-    if (_started) return;
-    _started = true;
+    if (_running) return;
 
+    final prefs = await SharedPreferences.getInstance();
+    final lastSync = prefs.getInt(_lastSyncPrefKey);
+    if (lastSync != null) {
+      final elapsed = DateTime.now().millisecondsSinceEpoch - lastSync;
+      if (elapsed < _throttle.inMilliseconds) return;
+    }
+
+    _running = true;
     state = state.copyWith(status: OfflineDbPrefetchStatus.checking);
 
-    final missingFeatures = <String>[];
-    for (final feature in offlineDbFeatures) {
-      if (!await _isCurrent(feature)) {
-        missingFeatures.add(feature);
+    try {
+      final connectivity = await Connectivity().checkConnectivity();
+      if (connectivity.contains(ConnectivityResult.none)) {
+        state = const OfflineDbPrefetchState();
+        return;
       }
-    }
 
-    if (missingFeatures.isEmpty) {
-      state = const OfflineDbPrefetchState();
-      return;
-    }
-
-    final failed = <String>[];
-    var completed = 0;
-    state = OfflineDbPrefetchState(
-      status: OfflineDbPrefetchStatus.downloading,
-      total: missingFeatures.length,
-    );
-
-    for (final feature in missingFeatures) {
-      state = state.copyWith(
+      final failed = <String>[];
+      var completed = 0;
+      state = OfflineDbPrefetchState(
         status: OfflineDbPrefetchStatus.downloading,
-        currentFeature: feature,
-        completed: completed,
-        currentProgress: 0,
-        failedFeatures: failed,
+        total: offlineDbFeatures.length,
       );
 
-      try {
-        await _downloadFeature(feature);
-      } catch (error, stackTrace) {
-        debugPrint(
-          'Offline DB prefetch failed for $feature: $error\n$stackTrace',
+      for (final feature in offlineDbFeatures) {
+        state = state.copyWith(
+          status: OfflineDbPrefetchStatus.downloading,
+          currentFeature: feature,
+          completed: completed,
+          currentProgress: 0,
+          failedFeatures: failed,
         );
-        failed.add(feature);
+
+        try {
+          await _syncFeature(feature);
+        } catch (error, stackTrace) {
+          debugPrint('Offline sync failed for $feature: $error\n$stackTrace');
+          failed.add(feature);
+        }
+
+        completed++;
+        state = state.copyWith(
+          completed: completed,
+          currentProgress: 0,
+          failedFeatures: List.unmodifiable(failed),
+        );
       }
 
-      completed++;
       state = state.copyWith(
+        status: failed.isEmpty
+            ? OfflineDbPrefetchStatus.completed
+            : OfflineDbPrefetchStatus.failed,
+        clearCurrentFeature: true,
         completed: completed,
         currentProgress: 0,
         failedFeatures: List.unmodifiable(failed),
       );
+
+      // Only the domains that actually failed should be retried soon;
+      // record this as "synced" regardless so a handful of flaky domains
+      // don't force a full re-run on every app resume.
+      await prefs.setInt(
+          _lastSyncPrefKey, DateTime.now().millisecondsSinceEpoch);
+
+      await Future.delayed(const Duration(seconds: 4));
+      state = const OfflineDbPrefetchState();
+    } finally {
+      _running = false;
     }
-
-    state = state.copyWith(
-      status: failed.isEmpty
-          ? OfflineDbPrefetchStatus.completed
-          : OfflineDbPrefetchStatus.failed,
-      clearCurrentFeature: true,
-      completed: completed,
-      currentProgress: 0,
-      failedFeatures: List.unmodifiable(failed),
-    );
-
-    await Future.delayed(const Duration(seconds: 4));
-    state = const OfflineDbPrefetchState();
   }
 
-  Future<bool> _isCurrent(String feature) async {
-    final isAvailable = await OfflineDatabaseHelper.isAvailable(feature);
-    if (!isAvailable) return false;
-
-    final prefs = await SharedPreferences.getInstance();
-    final version = prefs.getInt('offline_db_version_$feature') ?? 0;
-    return version >= 1;
-  }
-
-  Future<void> _downloadFeature(String feature) async {
-    final assetResponse = await StaticAssetApi().getDbUrl(feature);
-    if (assetResponse == null) {
-      throw StateError('No download URL returned');
-    }
-
-    final dbPath = await OfflineDatabaseHelper.getDbPath(feature);
-    final tempPath = '$dbPath.download';
-    final tempFile = File(tempPath);
-    final dbFile = File(dbPath);
-
-    await Directory(p.dirname(dbPath)).create(recursive: true);
-    if (await tempFile.exists()) {
-      await tempFile.delete();
-    }
-
-    await _dio.download(
-      assetResponse.url,
-      tempPath,
-      onReceiveProgress: (received, total) {
-        if (total <= 0) return;
-        state = state.copyWith(currentProgress: received / total);
-      },
-    );
-
-    await OfflineDatabaseHelper.evict(feature);
-    if (await dbFile.exists()) {
-      await dbFile.delete();
-    }
-    await tempFile.rename(dbPath);
-    await OfflineDatabaseHelper.markVersion(feature, 1);
+  Future<void> _syncFeature(String feature) {
+    return switch (feature) {
+      'books' => BookSyncService().sync(),
+      'duas' => DuaSyncService().sync(),
+      'malfuzats' => MalfuzatSyncService().sync(),
+      'articles' => ArticleSyncService().sync(),
+      'madrasahs' => MadrasahSyncService().sync(),
+      'masails' => MasailSyncService().sync(),
+      'bayans' => BayanSyncService().sync(),
+      _ => throw ArgumentError('Unknown offline feature "$feature"'),
+    };
   }
 }
 

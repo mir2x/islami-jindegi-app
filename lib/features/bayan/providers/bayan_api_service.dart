@@ -27,6 +27,7 @@ class BayanApiService {
       'page': page,
       'pageSize': perPage,
       'published': true,
+      'sort': 'position_desc',
       if (search != null && search.isNotEmpty) 'search': search,
       if (speakerId != null) 'authorId': speakerId,
       if (categoryId != null) 'categoryId': categoryId,

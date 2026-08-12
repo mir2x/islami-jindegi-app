@@ -4,11 +4,43 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/services/offline_db_prefetch_service.dart';
 import '../../theme/app_theme_color.dart';
 
-class OfflineDbPrefetchBanner extends ConsumerWidget {
+/// Also doubles as the lifecycle trigger for the offline content sync: it's
+/// mounted for the app's whole lifetime (see `main.dart`), so it's a
+/// convenient place to re-trigger a sync pass on resume — admin-curated
+/// content needs to reach devices that are already installed, not just
+/// fresh installs or cold starts (`OfflineDbPrefetchNotifier.start()` is
+/// itself throttled, so frequent resumes don't spam the API).
+class OfflineDbPrefetchBanner extends ConsumerStatefulWidget {
   const OfflineDbPrefetchBanner({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<OfflineDbPrefetchBanner> createState() =>
+      _OfflineDbPrefetchBannerState();
+}
+
+class _OfflineDbPrefetchBannerState extends ConsumerState<OfflineDbPrefetchBanner>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState lifecycleState) {
+    if (lifecycleState == AppLifecycleState.resumed) {
+      ref.read(offlineDbPrefetchProvider.notifier).start();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(offlineDbPrefetchProvider);
     if (!state.isVisible || state.total == 0) {
       return const SizedBox.shrink();

@@ -30,6 +30,7 @@ class NewsApiService {
       'page': page,
       'pageSize': perPage,
       'published': true,
+      'sort': 'position_desc',
       if (search != null && search.isNotEmpty) 'search': search,
     };
 
