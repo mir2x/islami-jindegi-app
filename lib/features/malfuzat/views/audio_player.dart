@@ -42,36 +42,43 @@ final _currentMalfuzatAudioIdProvider = valueProvider<String?>(null);
 /// .NET API already returns a complete `audioUrl`, so this plays that
 /// directly — falling back to a locally downloaded copy if one exists at the
 /// same path `DownloadItem` saves to.
-final malfuzatAudioPlayerProvider = FutureProvider.autoDispose
-    .family<AudioPlayer, MalfuzatAudioSource>((ref, source) async {
-  final AudioPlayer player = ref.read(playerProvider);
+final malfuzatAudioPlayerProvider =
+    FutureProvider.autoDispose.family<AudioPlayer, MalfuzatAudioSource>(
+  (ref, source) async {
+    final AudioPlayer player = ref.read(playerProvider);
 
-  ref.onDispose(() async {
-    if (ref.read(_currentMalfuzatAudioIdProvider) == source.malfuzatId) {
+    ref.onDispose(() async {
+      if (ref.read(_currentMalfuzatAudioIdProvider) == source.malfuzatId) {
+        await player.stop();
+      }
+    });
+
+    final filePath =
+        fileTitlePath(source.title, 'malfuzats/${source.malfuzatId}');
+    final localFile = await ref.read(localFileProvider(filePath).future);
+
+    ref.read(_currentMalfuzatAudioIdProvider.notifier).set(source.malfuzatId);
+
+    if (localFile != null) {
       await player.stop();
+      await player.setAudioSource(AudioSource.file(localFile.path));
+    } else {
+      final connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult.contains(ConnectivityResult.none)) {
+        throw Exception('no connection');
+      }
+      await player.stop();
+      await player.setAudioSource(AudioSource.uri(Uri.parse(source.audioUrl)));
     }
-  });
 
-  final filePath =
-      fileTitlePath(source.title, 'malfuzats/${source.malfuzatId}');
-  final localFile = await ref.read(localFileProvider(filePath).future);
-
-  ref.read(_currentMalfuzatAudioIdProvider.notifier).set(source.malfuzatId);
-
-  if (localFile != null) {
-    await player.stop();
-    await player.setAudioSource(AudioSource.file(localFile.path));
-  } else {
-    final connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult.contains(ConnectivityResult.none)) {
-      throw Exception('no connection');
-    }
-    await player.stop();
-    await player.setAudioSource(AudioSource.uri(Uri.parse(source.audioUrl)));
-  }
-
-  return player;
-});
+    return player;
+  },
+  // Riverpod 3 retries a throwing provider by default (exponential backoff,
+  // up to ~35s across 10 attempts), which would hide the "no connection"
+  // state behind a long-looking loading spinner. Retrying a connectivity
+  // check gains nothing, so it's disabled here.
+  retry: (retryCount, error) => null,
+);
 
 class MalfuzatAudioPlayerWidget extends ConsumerWidget {
   const MalfuzatAudioPlayerWidget({
@@ -181,7 +188,8 @@ class _StatefulMalfuzatAudioPlayerState
     _playbackEventSubscription = widget.player.playbackEventStream.listen(
       (event) {
         if (isPlaying && (event.processingState == ProcessingState.idle)) {
-          EasyDebounce.debounce('malfuzat-player-idle', const Duration(seconds: 10), () {
+          EasyDebounce.debounce(
+              'malfuzat-player-idle', const Duration(seconds: 10), () {
             if (isPlaying && isIdle) {
               widget.player.stop();
             }
