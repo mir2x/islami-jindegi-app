@@ -3,7 +3,7 @@ import Flutter
 import UserNotifications
 import alarm
 import home_widget
-import workmanager
+import workmanager_apple
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
