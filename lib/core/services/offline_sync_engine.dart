@@ -15,7 +15,16 @@ import '../utils/offline_database_helper.dart';
 class OfflineSyncEngine {
   OfflineSyncEngine()
       : _dio = Dio(
-          BaseOptions(baseUrl: '${dotenv.env['DOTNET_API_HOST_NAME']}/api'),
+          BaseOptions(
+            baseUrl: '${dotenv.env['DOTNET_API_HOST_NAME']}/api',
+            // A sync pass with no timeout can stall indefinitely on a network
+            // that connects but never delivers, which is exactly when the
+            // offline copies matter most. `receiveTimeout` is Dio's
+            // between-chunks budget, not a whole-response one, so a generous
+            // value stays safe for the larger domain feeds.
+            connectTimeout: const Duration(seconds: 10),
+            receiveTimeout: const Duration(seconds: 30),
+          ),
         );
 
   final Dio _dio;

@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'offline_reset_service.dart';
+
 import '../../features/article/providers/article_sync_service.dart';
 import '../../features/bayan/providers/bayan_sync_service.dart';
 import '../../features/book/providers/book_sync_service.dart';
@@ -31,7 +33,15 @@ const offlineDbFeatures = <String>[
 /// primary propagation path — stretched well past 30 minutes since it's no
 /// longer carrying the "reach the device soon" requirement on its own.
 const _throttle = Duration(hours: 6);
+
+/// Retry window after a pass where at least one domain failed. The long
+/// [_throttle] assumes the last sweep actually landed; when it didn't, waiting
+/// six hours to try again leaves the device with a knowingly incomplete
+/// offline store for the rest of the day.
+const _failedRetryThrottle = Duration(minutes: 15);
+
 const _lastSyncPrefKey = 'last_offline_sync_at';
+const _lastSyncFailedPrefKey = 'last_offline_sync_had_failures';
 
 enum OfflineDbPrefetchStatus {
   idle,
@@ -109,11 +119,17 @@ class OfflineDbPrefetchNotifier extends Notifier<OfflineDbPrefetchState> {
   Future<void> start() async {
     if (_running) return;
 
+    // Before anything reads or writes the local store, in case this build
+    // has to discard what a previous one left behind.
+    await OfflineResetService.ensureApplied();
+
     final prefs = await SharedPreferences.getInstance();
     final lastSync = prefs.getInt(_lastSyncPrefKey);
     if (lastSync != null) {
+      final hadFailures = prefs.getBool(_lastSyncFailedPrefKey) ?? false;
+      final window = hadFailures ? _failedRetryThrottle : _throttle;
       final elapsed = DateTime.now().millisecondsSinceEpoch - lastSync;
-      if (elapsed < _throttle.inMilliseconds) return;
+      if (elapsed < window.inMilliseconds) return;
     }
 
     _running = true;
@@ -167,11 +183,13 @@ class OfflineDbPrefetchNotifier extends Notifier<OfflineDbPrefetchState> {
         failedFeatures: List.unmodifiable(failed),
       );
 
-      // Only the domains that actually failed should be retried soon;
-      // record this as "synced" regardless so a handful of flaky domains
-      // don't force a full re-run on every app resume.
+      // Record the sweep as done regardless, so a handful of flaky domains
+      // don't force a full re-run on every app resume — but remember whether
+      // anything failed, which shortens the next wait to
+      // [_failedRetryThrottle] instead of the full [_throttle].
       await prefs.setInt(
           _lastSyncPrefKey, DateTime.now().millisecondsSinceEpoch);
+      await prefs.setBool(_lastSyncFailedPrefKey, failed.isNotEmpty);
 
       await Future.delayed(const Duration(seconds: 4));
       state = const OfflineDbPrefetchState();

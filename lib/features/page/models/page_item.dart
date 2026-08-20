@@ -30,4 +30,18 @@ class PageItem {
       updatedAt: json['updatedAt'],
     );
   }
+
+  /// From a row of the local `pages` table in the `misc` offline database
+  /// (see `OfflineDatabaseHelper`), populated by `MasailSyncService`.
+  factory PageItem.fromDb(Map<String, dynamic> row) {
+    return PageItem(
+      id: row['id'].toString(),
+      title: row['title'] ?? '',
+      slug: row['slug'] ?? '',
+      body: row['body'] ?? '',
+      imageUrl: row['image_url'],
+      createdAt: row['created_at'],
+      updatedAt: row['updated_at'],
+    );
+  }
 }

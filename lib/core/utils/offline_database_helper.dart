@@ -1,4 +1,5 @@
 import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 /// CREATE TABLE statements per offline feature. This is the single source of
@@ -255,6 +256,39 @@ const Map<String, List<String>> _schemas = {
   ],
 };
 
+/// Which `OfflineSyncEngine` watermarks belong to each database.
+///
+/// Almost 1:1 with the schema keys — the exception is `misc`, which holds the
+/// Pages table synced under the `pages` watermark by `MasailSyncService`.
+/// Dropping a database's tables must clear these, or the next sync asks the
+/// server for "everything changed since <before the wipe>", gets nothing back,
+/// and leaves the feature permanently empty.
+const Map<String, List<String>> _watermarkKeys = {
+  'books': ['books'],
+  'duas': ['duas'],
+  'malfuzats': ['malfuzats'],
+  'articles': ['articles'],
+  'madrasahs': ['madrasahs'],
+  'masails': ['masails'],
+  'bayans': ['bayans'],
+  'misc': ['pages'],
+};
+
+/// Every feature with a registered local schema (includes `misc`, which isn't
+/// one of the synced *domains* in `offlineDbFeatures`).
+Iterable<String> get registeredOfflineFeatures => _schemas.keys;
+
+/// Clears the sync watermarks for [feature] so the next pass re-fetches that
+/// domain from scratch.
+Future<void> clearOfflineWatermarks(String feature) async {
+  final keys = _watermarkKeys[feature];
+  if (keys == null) return;
+  final prefs = await SharedPreferences.getInstance();
+  for (final key in keys) {
+    await prefs.remove('offline_sync_since_$key');
+  }
+}
+
 /// Opens a per-feature SQLite database for read-write access.
 ///
 /// The database is created empty (schema only, from [_schemas]) the first
@@ -313,6 +347,10 @@ class OfflineDatabaseHelper {
         for (final statement in statements) {
           await db.execute(statement);
         }
+        // The tables are now empty, so the server-side "changed since" cursor
+        // no longer describes what's on disk. Without this the next sync
+        // returns an empty delta and the feature stays empty forever.
+        await clearOfflineWatermarks(feature);
       },
     );
   }

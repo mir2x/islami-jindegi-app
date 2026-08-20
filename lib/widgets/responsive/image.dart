@@ -85,7 +85,7 @@ class ResponsiveImage extends ConsumerWidget {
       return AspectRatio(
         aspectRatio: settings['width']! / settings['height']!,
         child: SvgPicture.asset(
-          'assets/images/books/default.svg',
+          'assets/images/book-placeholder.svg',
           fit: BoxFit.contain,
         ),
       );

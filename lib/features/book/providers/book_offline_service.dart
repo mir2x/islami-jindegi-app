@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import '../../../core/utils/offline_database_helper.dart';
+import '../../../core/utils/offline_storage.dart';
 import '../models/book.dart';
 import '../models/book_author.dart';
 import '../models/book_chapter.dart';
@@ -12,6 +13,10 @@ class BookOfflineService {
   // rebuild their local schema and re-sync from the offline-sync endpoint.
   Future<Database> get _db =>
       OfflineDatabaseHelper(feature: 'books', version: 3).database;
+
+  /// Where cached covers live right now. Resolved per read because the iOS
+  /// app container path changes across updates (see `OfflineStorage`).
+  Future<String> get _imagesDirPath => OfflineStorage.imagesDirPath('books');
 
   // ───────────────────── Books ─────────────────────
 
@@ -65,9 +70,14 @@ class BookOfflineService {
       authorsByBook.putIfAbsent(bookId, () => []).add(BookAuthor.fromDb(row));
     }
 
+    final imagesDirPath = await _imagesDirPath;
     return bookRows.map((row) {
       final id = row['id'].toString();
-      return Book.fromDb(row, authors: authorsByBook[id] ?? []);
+      return Book.fromDb(
+        row,
+        authors: authorsByBook[id] ?? [],
+        imagesDirPath: imagesDirPath,
+      );
     }).toList();
   }
 
@@ -87,7 +97,11 @@ class BookOfflineService {
       authors = authorJoins.map((r) => BookAuthor.fromDb(r)).toList();
     }
 
-    return Book.fromDb(rows.first, authors: authors);
+    return Book.fromDb(
+      rows.first,
+      authors: authors,
+      imagesDirPath: await _imagesDirPath,
+    );
   }
 
   Future<Book?> findPreviousBookByPosition(int position) async {

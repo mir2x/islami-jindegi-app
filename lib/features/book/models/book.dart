@@ -1,5 +1,6 @@
 import 'book_author.dart';
 import 'book_category.dart';
+import '../../../core/utils/offline_storage.dart';
 
 class Book {
   final String id;
@@ -68,9 +69,14 @@ class Book {
   }
 
   /// Parse from local SQLite row + pre-joined authors
+  ///
+  /// [imagesDirPath] is where cached covers currently live; `cover_image_path`
+  /// holds a bare file name, so it has to be resolved at read time rather than
+  /// stored absolute (see `OfflineStorage`).
   factory Book.fromDb(
     Map<String, dynamic> row, {
     List<BookAuthor> authors = const [],
+    String? imagesDirPath,
   }) {
     return Book(
       id: row['id'].toString(),
@@ -86,7 +92,10 @@ class Book {
       createdAt: row['created_at'] ?? row['createdAt'],
       updatedAt: row['updated_at'] ?? row['updatedAt'],
       authors: authors,
-      coverImagePath: row['cover_image_path'],
+      coverImagePath: OfflineStorage.resolve(
+        row['cover_image_path'] as String?,
+        imagesDirPath,
+      ),
     );
   }
 }

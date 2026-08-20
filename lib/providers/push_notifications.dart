@@ -6,6 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:native_app/routes/index.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'notification_status.dart';
+import '../core/services/offline_reset_service.dart';
 import '../features/article/providers/article_sync_service.dart';
 import '../features/bayan/providers/bayan_sync_service.dart';
 import '../features/book/providers/book_sync_service.dart';
@@ -52,6 +53,11 @@ Future<void> _syncContentFeature(String? feature) async {
 
   final connectivity = await Connectivity().checkConnectivity();
   if (connectivity.contains(ConnectivityResult.none)) return;
+
+  // The background isolate can reach a sync before the UI ever starts one,
+  // so the one-time store reset has to be checked here too. It's a single
+  // preference read once applied.
+  await OfflineResetService.ensureApplied();
 
   try {
     await switch (feature) {

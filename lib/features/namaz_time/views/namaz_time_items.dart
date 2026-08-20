@@ -38,6 +38,18 @@ class NamazTimeItems extends ConsumerStatefulWidget {
 class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
   Timer? timer;
 
+  /// Marks whichever prayer card is currently active, so it can be scrolled
+  /// into view. Only ever attached to one card at a time (exactly one prayer
+  /// matches `currentPrayerKey`).
+  final GlobalKey _activeCardKey = GlobalKey();
+
+  /// The auto-scroll is a one-shot per viewed day. The 1-minute [timer]
+  /// rebuilds this widget constantly to refresh the "time left" label, and
+  /// re-scrolling on each of those would drag the list back under the user
+  /// every minute.
+  bool _autoScrollDone = false;
+  bool _autoScrollScheduled = false;
+
   String? _detailRouteForPrayerKey(String prayerKey) {
     final slug = switch (prayerKey) {
       'tahajjud' => 'tahajjud',
@@ -66,9 +78,60 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
   }
 
   @override
+  void didUpdateWidget(NamazTimeItems oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Picking another date from the calendar re-arms the one-shot, so coming
+    // back to today scrolls to the live prayer again.
+    if (oldWidget.currentDate != widget.currentDate) {
+      _autoScrollDone = false;
+    }
+  }
+
+  @override
   void dispose() {
     timer?.cancel();
     super.dispose();
+  }
+
+  /// Whether the list is showing today — the only case where "current prayer"
+  /// refers to something happening now. `currentAndNextPrayerNames()` is
+  /// always computed against the real clock, so on a past or future date it
+  /// still highlights a card; jumping the scroll to it there would be noise.
+  bool get _isViewingToday {
+    final date = widget.currentDate;
+    if (date == null) return true;
+    final now = DateTime.now();
+    return date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day;
+  }
+
+  /// Scrolls the active prayer card into view once, after the frame that
+  /// first lays it out. Called from `build`; if the card isn't mounted yet
+  /// (data still resolving) the attempt is a no-op and the next build retries.
+  void _scheduleAutoScrollToCurrentPrayer() {
+    if (_autoScrollDone || _autoScrollScheduled || !_isViewingToday) return;
+    _autoScrollScheduled = true;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _autoScrollScheduled = false;
+      if (!mounted || _autoScrollDone) return;
+
+      final cardContext = _activeCardKey.currentContext;
+      if (cardContext == null) return;
+
+      _autoScrollDone = true;
+      Scrollable.ensureVisible(
+        cardContext,
+        // Upper third rather than dead centre, so the prayers still to come
+        // stay visible below the current one.
+        alignment: 0.3,
+        duration: MediaQuery.disableAnimationsOf(context)
+            ? Duration.zero
+            : const Duration(milliseconds: 450),
+        curve: Curves.easeOutCubic,
+      );
+    });
   }
 
   String _timeUntil(
@@ -154,6 +217,11 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
 
         final prayerNames = prayerTime.currentAndNextPrayerNames();
         final String currentPrayerKey = prayerNames['currentPrayer']!;
+
+        // Arm the one-shot scroll now that we know there's an active prayer to
+        // scroll to. `currentPrayer` is 'none' outside every window, in which
+        // case no card carries the key and nothing happens.
+        if (currentPrayerKey != 'none') _scheduleAutoScrollToCurrentPrayer();
 
         final String location = getLocationName(geolocation['location']);
         final now = DateTime.now();
@@ -454,6 +522,7 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                   : '';
 
               return Padding(
+                key: isActive ? _activeCardKey : null,
                 padding: const EdgeInsets.only(bottom: 8),
                 child: _PrayerCard(
                   prayer: p,

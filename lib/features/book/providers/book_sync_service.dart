@@ -1,10 +1,11 @@
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../../../core/services/offline_sync_engine.dart';
 import '../../../core/utils/offline_database_helper.dart';
+import '../../../core/utils/offline_storage.dart';
 
 /// Incrementally syncs the admin-curated offline-available Book set into the
 /// local `books` SQLite database, including nested chapters/subchapters/
@@ -41,12 +42,7 @@ class BookSyncService {
     // and "removed" (no replacement coming) books need their old children wiped.
     final idsToClearChildren = changedIds.union(removedIds);
 
-    final imagesDir = Directory(p.join(
-      (await getApplicationDocumentsDirectory()).path,
-      'offline_images',
-      'books',
-    ));
-    await imagesDir.create(recursive: true);
+    final imagesDir = await OfflineStorage.imagesDir('books');
 
     final bookRows = <Map<String, dynamic>>[];
     final chapterRows = <Map<String, dynamic>>[];
@@ -59,13 +55,13 @@ class BookSyncService {
       final coverUrl = json['coverUrl'] as String?;
       final updatedAt = json['updatedAt'] as String?;
       final prior = existingById[id];
-      final coverPath = await _resolveCoverPath(
+      final coverFile = await _resolveCoverFile(
         imagesDir: imagesDir,
         id: id,
         coverUrl: coverUrl,
         updatedAt: updatedAt,
         priorUpdatedAt: prior?['updated_at'] as String?,
-        priorPath: prior?['cover_image_path'] as String?,
+        priorFile: prior?['cover_image_path'] as String?,
       );
 
       bookRows.add({
@@ -80,7 +76,7 @@ class BookSyncService {
         'position': json['position'],
         'published': json['published'] == true ? 1 : 0,
         'published_at': json['publishedAt'],
-        'cover_image_path': coverPath,
+        'cover_image_path': coverFile,
         'created_at': json['createdAt'],
         'updated_at': updatedAt,
       });
@@ -120,7 +116,8 @@ class BookSyncService {
 
     // Drop cached cover files for books that fell out of the offline set.
     for (final removedId in removedIds) {
-      final path = existingById[removedId]?['cover_image_path'] as String?;
+      final name = existingById[removedId]?['cover_image_path'] as String?;
+      final path = OfflineStorage.resolve(name, imagesDir.path);
       if (path != null) {
         final file = File(path);
         if (await file.exists()) await file.delete();
@@ -149,40 +146,104 @@ class BookSyncService {
       await _engine.upsertRows(txn, 'books_authors', booksAuthorsRows);
     });
 
+    // Must run before the watermark moves: once it advances, books whose
+    // cover failed here drop out of the changed set and are never revisited.
+    await _repairMissingCovers(db, imagesDir);
+
     await _engine.commitSince('books', serverTime);
   }
 
-  /// Downloads [coverUrl] to disk only when needed (missing locally, or the
-  /// book changed since the last sync); otherwise reuses the existing path.
-  Future<String?> _resolveCoverPath({
+  /// Re-downloads covers for books whose cached file is missing.
+  ///
+  /// Covers this pass' failures (a download that threw is stored as a null
+  /// path) and every earlier pass' too, plus files lost to an iOS container
+  /// change or manual storage clearing. Without it a single failed download
+  /// is permanent: the book only reappears in `/books/offline-sync` when an
+  /// admin edits it, so nothing would ever retry.
+  Future<void> _repairMissingCovers(Database db, Directory imagesDir) async {
+    final rows = await db.query(
+      'books',
+      columns: ['id', 'cover_url', 'cover_image_path'],
+      where: "cover_url IS NOT NULL AND cover_url != ''",
+    );
+
+    for (final row in rows) {
+      final name = row['cover_image_path'] as String?;
+      final path = OfflineStorage.resolve(name, imagesDir.path);
+      if (path != null && await File(path).exists()) continue;
+
+      final id = row['id'].toString();
+      final fileName = await _downloadCover(
+        imagesDir: imagesDir,
+        id: id,
+        coverUrl: row['cover_url'] as String,
+      );
+      if (fileName == null) continue;
+
+      await db.update(
+        'books',
+        {'cover_image_path': fileName},
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    }
+  }
+
+  /// Downloads [coverUrl] only when needed (nothing cached locally, or the
+  /// book changed since the last sync); otherwise reuses the cached file.
+  ///
+  /// Returns the *file name*, not a full path — see [OfflineStorage] for why
+  /// absolute paths must not be persisted.
+  Future<String?> _resolveCoverFile({
     required Directory imagesDir,
     required String id,
     required String? coverUrl,
     required String? updatedAt,
     required String? priorUpdatedAt,
-    required String? priorPath,
+    required String? priorFile,
   }) async {
     if (coverUrl == null || coverUrl.isEmpty) return null;
 
-    final ext = p.extension(Uri.parse(coverUrl).path);
-    final localPath =
-        p.join(imagesDir.path, '$id${ext.isNotEmpty ? ext : '.jpg'}');
-    final localFile = File(localPath);
+    final fileName = _coverFileName(id, coverUrl);
+    final priorPath = OfflineStorage.resolve(priorFile, imagesDir.path);
 
-    final upToDate = priorPath == localPath &&
+    final upToDate = priorFile == fileName &&
         priorUpdatedAt == updatedAt &&
-        await localFile.exists();
-    if (upToDate) return localPath;
+        priorPath != null &&
+        await File(priorPath).exists();
+    if (upToDate) return fileName;
 
+    final downloaded =
+        await _downloadCover(imagesDir: imagesDir, id: id, coverUrl: coverUrl);
+    if (downloaded != null) return downloaded;
+
+    // Network hiccup on a single cover shouldn't fail the whole sync — keep
+    // whatever was cached before, and let `_repairMissingCovers` retry on a
+    // later pass when there's nothing to fall back to.
+    return (priorPath != null && await File(priorPath).exists())
+        ? priorFile
+        : null;
+  }
+
+  /// Fetches one cover into [imagesDir], returning its file name or null if
+  /// the download failed. Dio deletes the partial file on error, so a failure
+  /// never leaves a truncated image behind.
+  Future<String?> _downloadCover({
+    required Directory imagesDir,
+    required String id,
+    required String coverUrl,
+  }) async {
+    final fileName = _coverFileName(id, coverUrl);
     try {
-      await _engine.downloadFile(coverUrl, localPath);
-      return localPath;
+      await _engine.downloadFile(coverUrl, p.join(imagesDir.path, fileName));
+      return fileName;
     } catch (_) {
-      // Network hiccup on a single cover shouldn't fail the whole sync —
-      // fall back to whatever was cached before, or no local cover at all.
-      return (priorPath != null && await File(priorPath).exists())
-          ? priorPath
-          : null;
+      return null;
     }
+  }
+
+  String _coverFileName(String id, String coverUrl) {
+    final ext = p.extension(Uri.parse(coverUrl).path);
+    return '$id${ext.isNotEmpty ? ext : '.jpg'}';
   }
 }
