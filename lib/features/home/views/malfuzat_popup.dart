@@ -7,6 +7,7 @@ import 'package:native_app/widgets/presentation/popup_dialog.dart';
 import 'package:native_app/widgets/utils/html_text.dart';
 import 'package:native_app/features/malfuzat/providers/malfuzat_providers.dart';
 import 'package:native_app/theme/app_theme_color.dart';
+import 'package:native_app/widgets/buttons/social_share.dart';
 
 class MalfuzatPopup extends ConsumerStatefulWidget {
   const MalfuzatPopup({super.key});
@@ -25,7 +26,8 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
       await Future.delayed(const Duration(seconds: 2));
 
       if (!mounted) {
-        debugPrint('[MalfuzatPopup] not mounted after initial delay — aborting');
+        debugPrint(
+            '[MalfuzatPopup] not mounted after initial delay — aborting');
         return;
       }
 
@@ -50,7 +52,8 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
           return;
         }
       } else {
-        debugPrint('[MalfuzatPopup] no prior timestamp — first run or cache cleared');
+        debugPrint(
+            '[MalfuzatPopup] no prior timestamp — first run or cache cleared');
       }
 
       if (!mounted) {
@@ -134,6 +137,13 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
+                        ),
+                        SocialShare(
+                          title: item.title,
+                          subtitle: author,
+                          body: item.body,
+                          link: 'malfuzat/${item.id}',
+                          iconColor: appColors.appBarText,
                         ),
                       ],
                     ),

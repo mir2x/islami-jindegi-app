@@ -20,10 +20,8 @@ class Resource extends StatelessWidget {
     final media = MediaQuery.of(context);
     final appColors = Theme.of(context).extension<AppThemeColors>()!;
     final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
-    double screenWidth = media.size.width;
-    final screenHeight = media.size.height;
-    bool isMobile = screenWidth < 768;
-    final isShortMobile = isMobile && screenHeight < 760;
+    final screenWidth = media.size.width;
+    final isMobile = screenWidth < 768;
 
     final targetRoute = route.startsWith('/') ? route : '/$route';
     final tileBackground = isDarkTheme

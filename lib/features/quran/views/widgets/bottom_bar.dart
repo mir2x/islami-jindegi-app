@@ -94,7 +94,7 @@ class BottomBar extends ConsumerWidget {
             iconSize: _iconSize,
             color: barFg,
             isLandscape: isLandscape,
-            onPressed: OrientationToggle.toggle,
+            onPressed: () => OrientationToggle.toggle(context),
           ),
 
           // ── Bookmark ───────────────────────
@@ -197,7 +197,9 @@ class _ReciterDropdown extends StatelessWidget {
           }).toList(),
           onChanged: (val) {
             if (val != null) {
-              ref.read(selectedReciterProvider.notifier).setReciter(reciters[val]!);
+              ref
+                  .read(selectedReciterProvider.notifier)
+                  .setReciter(reciters[val]!);
             }
           },
         ),

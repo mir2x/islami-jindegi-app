@@ -9,7 +9,7 @@ import 'package:native_app/features/quran/providers/bookmark_providers.dart';
 import 'package:native_app/features/sura/utils/navigation_routes.dart';
 import 'package:native_app/features/sura/views/widgets/tafsir_view.dart';
 import 'package:native_app/theme/app_theme_color.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:native_app/helpers/share_content.dart';
 import '../../models/ayah.dart';
 import '../../models/tafsir_source.dart';
 import '../../providers/sura_reciter_providers.dart';
@@ -102,8 +102,7 @@ class _ShareOptionsSheetState extends ConsumerState<_ShareOptionsSheet> {
     return Container(
       decoration: BoxDecoration(
         color: colors.cardBg,
-        borderRadius:
-            const BorderRadius.vertical(top: Radius.circular(16.0)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -227,11 +226,13 @@ class _ShareOptionsSheetState extends ConsumerState<_ShareOptionsSheet> {
                   foregroundColor: colors.appBarText,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                onPressed: (!_includeArabic && _selectedTranslations.isEmpty && _selectedTafsirs.isEmpty)
+                onPressed: (!_includeArabic &&
+                        _selectedTranslations.isEmpty &&
+                        _selectedTafsirs.isEmpty)
                     ? null
                     : () {
                         Navigator.pop(context);
-                        SharePlus.instance.share(ShareParams(text: shareText));
+                        shareContent(context, text: shareText);
                       },
               ),
             ),
@@ -339,7 +340,9 @@ void showAyahActionBottomSheet(
               onTap: () async {
                 final audioPlayer = ref.read(suraAudioPlayerProvider);
                 ref.read(selectedAudioSuraProvider.notifier).set(suraNumber);
-                ref.read(selectedStartAyahProvider.notifier).set(selectedStartAyah);
+                ref
+                    .read(selectedStartAyahProvider.notifier)
+                    .set(selectedStartAyah);
                 ref.read(selectedEndAyahProvider.notifier).set(selectedEndAyah);
 
                 if (!context.mounted) return;

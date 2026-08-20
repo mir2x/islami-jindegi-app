@@ -209,7 +209,9 @@ class _AlarmPermissionStatusCard extends ConsumerWidget {
             ),
           const SizedBox(height: 10),
           Text(
-            'এগুলোর কোনোটি বন্ধ থাকলে কিছু Android ডিভাইসে আযানের অ্যালার্ম কাজ নাও করতে পারে।',
+            Platform.isIOS
+                ? 'iPhone রিস্টার্ট হলে বা অ্যাপটি সিস্টেম বন্ধ করে দিলে আযানের অ্যালার্ম নির্ভরযোগ্যভাবে বাজবে না। অ্যালার্মের জন্য Background App Refresh চালু রাখুন।'
+                : 'এগুলোর কোনোটি বন্ধ থাকলে কিছু Android ডিভাইসে আযানের অ্যালার্ম কাজ নাও করতে পারে।',
             style: textTheme.bodySmall?.copyWith(
               color: colors.secondaryText,
             ),

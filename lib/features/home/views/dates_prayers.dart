@@ -24,6 +24,8 @@ class DatesPrayers extends ConsumerStatefulWidget {
 }
 
 class _DatesPrayersState extends ConsumerState<DatesPrayers> {
+  // Kept as the entry point for the date-picker action.
+  // ignore: unused_element
   void _showCalendarSheet(BuildContext context) {
     final locales = AppLocalizations.of(context)!;
     final appTheme = Theme.of(context).extension<AppThemeColors>()!;

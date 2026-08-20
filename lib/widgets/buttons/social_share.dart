@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:native_app/l10n/app_localizations.dart';
 import 'package:native_app/theme/app_theme_color.dart';
+import 'package:native_app/helpers/share_content.dart';
 
 class SocialShare extends StatelessWidget {
   const SocialShare({
@@ -30,9 +30,6 @@ class SocialShare extends StatelessWidget {
     final isClassic = colors.primary == AppThemeColors.classic.primary &&
         colors.appBarBg == AppThemeColors.classic.appBarBg;
     final controlColor = isClassic ? colors.appBarBg : colors.primary;
-
-    const appLink =
-        'https://play.google.com/store/apps/details?id=com.islami_jindegi';
 
     return IconButton(
       icon: const Icon(Icons.ios_share_rounded),
@@ -75,13 +72,13 @@ class SocialShare extends StatelessWidget {
           text += '\n\n${locales.link}: https://islamijindegi.com/$link';
         }
 
-        text += '\n\n$appLink';
+        text += '\n\n$appStoreShareUrl';
 
-        await Clipboard.setData(ClipboardData(text: text));
+        // Copying is a convenience feature; do not await it because this
+        // StatelessWidget's BuildContext is needed immediately for the sheet.
+        Clipboard.setData(ClipboardData(text: text));
 
-        SharePlus.instance.share(
-          ShareParams(text: text, subject: title),
-        );
+        await shareContent(context, text: text, subject: title);
       },
     );
   }

@@ -4,13 +4,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:share_plus/share_plus.dart';
 import '../../models/bookmark.dart';
 import '../../providers/audio_providers.dart';
 import '../../providers/ayah_highlight_providers.dart';
 import '../../providers/bookmark_providers.dart';
 import '../../../sura/providers/sura_providers.dart';
 import 'package:native_app/theme/app_theme_color.dart';
+import 'package:native_app/helpers/share_content.dart';
 
 import 'audio_bottom_sheet.dart';
 
@@ -115,9 +115,15 @@ class AyahMenu extends ConsumerWidget {
                     final selectedState = ref.read(selectedAyahProvider);
                     if (selectedState == null) return;
 
-                    ref.read(selectedAudioSuraProvider.notifier).set(selectedState.suraNumber);
-                    ref.read(selectedStartAyahProvider.notifier).set(selectedState.ayahNumber);
-                    ref.read(selectedEndAyahProvider.notifier).set(selectedState.ayahNumber);
+                    ref
+                        .read(selectedAudioSuraProvider.notifier)
+                        .set(selectedState.suraNumber);
+                    ref
+                        .read(selectedStartAyahProvider.notifier)
+                        .set(selectedState.ayahNumber);
+                    ref
+                        .read(selectedEndAyahProvider.notifier)
+                        .set(selectedState.ayahNumber);
 
                     ref.read(selectedAyahProvider.notifier).clear();
 
@@ -185,8 +191,8 @@ class AyahMenu extends ConsumerWidget {
                       final ayah = await ref
                           .read(quranDataServiceProvider)
                           .getAyah(db, selectedSura, selectedAyah);
-                      await SharePlus.instance
-                          .share(ShareParams(text: ayah.arabicText));
+                      if (!context.mounted) return;
+                      await shareContent(context, text: ayah.arabicText);
                     } catch (e) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(

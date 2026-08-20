@@ -81,6 +81,15 @@ Future<void> main() async {
     );
 
     unawaited(setAppWidgetBackground());
+  } else if (Platform.isIOS) {
+    // iOS decides the exact execution time, but this keeps the widget's shared
+    // data fresh when the system grants an app-refresh opportunity.
+    Workmanager().initialize(callbackDispatcher);
+    Workmanager().registerPeriodicTask(
+      'app-widget-task',
+      'appWidgetTask',
+      frequency: const Duration(minutes: 15),
+    );
   }
 
   runApp(

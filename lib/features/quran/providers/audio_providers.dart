@@ -326,7 +326,7 @@ class QuranAudioPlayer {
       return;
     }
 
-    if (currentAyahInPlaylistIndex < (_player.sequence!.length ?? 0) - 1) {
+    if (currentAyahInPlaylistIndex < _player.sequence.length - 1) {
       _player.seekToNext();
     } else {
       debugPrint("  [playNext] Reached end of current playlist. Stopping.");

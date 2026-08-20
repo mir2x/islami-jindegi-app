@@ -6,7 +6,9 @@ workflows:
     integrations:
       app_store_connect: Islami Jindegi
     environment:
-      flutter: 3.27.4
+      # Keep CI on the Flutter SDK declared in .fvmrc (currently 3.44.6).
+      # This prevents local and release builds from silently using different SDKs.
+      flutter: fvm
       xcode: latest
       cocoapods: default
       groups:

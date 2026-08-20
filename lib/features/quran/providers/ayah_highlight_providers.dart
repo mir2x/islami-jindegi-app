@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/providers/value_provider.dart';
 import 'package:path_provider/path_provider.dart';
@@ -261,11 +262,13 @@ final touchModeProvider = NotifierProvider<TouchModeNotifier, bool>(
 );
 
 class OrientationToggle {
-  static bool _isPortraitOnly = true;
-
-  static Future<void> toggle() async {
-    _isPortraitOnly = !_isPortraitOnly;
-    if (_isPortraitOnly) {
+  /// Uses the rendered orientation instead of retained global state. The latter
+  /// can be stale after returning from another reader that also changes device
+  /// orientation, which is especially visible on iOS.
+  static Future<void> toggle(BuildContext context) async {
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
+    if (isLandscape) {
       await SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
       ]);
@@ -279,7 +282,6 @@ class OrientationToggle {
 
   /// Explicitly set portrait mode regardless of current state
   static Future<void> setPortrait() async {
-    _isPortraitOnly = true;
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
@@ -359,7 +361,8 @@ class MushafMappings {
       ayahPageMapping: (json['ayahPageMapping'] as Map<String, dynamic>).map(
         (key, value) {
           final parts = key.split(':');
-          return MapEntry((int.parse(parts[0]), int.parse(parts[1])), value as int);
+          return MapEntry(
+              (int.parse(parts[0]), int.parse(parts[1])), value as int);
         },
       ),
       paraPageMapping: (json['paraPageMapping'] as Map<String, dynamic>).map(
@@ -442,7 +445,9 @@ MushafMappings _buildMushafMappings({
   final Map<int, List<int>> paraRanges = {};
   for (int i = 1; i <= 30; i++) {
     final startPage = paraMapping[i];
-    final endPage = i < 30 ? (paraMapping[i + 1] != null ? paraMapping[i + 1]! - 1 : null) : totalPages;
+    final endPage = i < 30
+        ? (paraMapping[i + 1] != null ? paraMapping[i + 1]! - 1 : null)
+        : totalPages;
     if (startPage != null && endPage != null && startPage <= endPage) {
       paraRanges[i] = List<int>.generate(
         endPage - startPage + 1,
@@ -474,9 +479,8 @@ final quranMappingsProvider = FutureProvider<MushafMappings>((ref) async {
       final cachedJson = jsonDecode(raw) as Map<String, dynamic>;
       // Invalidate if version mismatch or if source file is newer than cache.
       final version = cachedJson['_v'] as int?;
-      final sourceMod = await sourceFile.exists()
-          ? await sourceFile.lastModified()
-          : null;
+      final sourceMod =
+          await sourceFile.exists() ? await sourceFile.lastModified() : null;
       final cacheMod = await cacheFile.lastModified();
       final sourceNewer = sourceMod != null && sourceMod.isAfter(cacheMod);
       if (version == _kMappingsCacheVersion && !sourceNewer) {
@@ -515,16 +519,16 @@ final suraNamesProvider = Provider<List<String>>((_) => suraNames);
 final selectedNavigationSurahProvider = valueProvider<int?>(null);
 final paraPageMappingProvider = Provider<Map<int, int>>((ref) {
   return ref.watch(quranMappingsProvider).maybeWhen(
-    data: (mappings) => mappings.paraPageMapping,
-    orElse: () => const {},
-  );
+        data: (mappings) => mappings.paraPageMapping,
+        orElse: () => const {},
+      );
 });
 
 final paraPageRangesProvider = Provider<Map<int, List<int>>>((ref) {
   return ref.watch(quranMappingsProvider).maybeWhen(
-    data: (mappings) => mappings.paraPageRanges,
-    orElse: () => const {},
-  );
+        data: (mappings) => mappings.paraPageRanges,
+        orElse: () => const {},
+      );
 });
 final selectedNavigationParaProvider = valueProvider<int?>(null);
 
@@ -670,8 +674,7 @@ final pageInfoVisibilityProvider =
   PageInfoVisibilityNotifier.new,
 );
 
-final barsVisibilityProvider =
-    NotifierProvider<BarsVisibilityNotifier, bool>(
+final barsVisibilityProvider = NotifierProvider<BarsVisibilityNotifier, bool>(
   BarsVisibilityNotifier.new,
 );
 
@@ -693,8 +696,7 @@ class QuranPageScaleNotifier extends Notifier<double> {
   bool get canZoomOut => state > _min;
 }
 
-final quranPageScaleProvider =
-    NotifierProvider<QuranPageScaleNotifier, double>(
+final quranPageScaleProvider = NotifierProvider<QuranPageScaleNotifier, double>(
   QuranPageScaleNotifier.new,
 );
 

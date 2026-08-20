@@ -7,13 +7,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:native_app/providers/push_notifications.dart';
 import 'package:native_app/providers/launch_app_widget_link.dart';
 import 'package:native_app/providers/background_app_widget_link.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/providers/notification_status.dart';
 import 'package:native_app/theme/app_theme_color.dart';
+import 'package:native_app/helpers/share_content.dart';
 
 const Set<String> _availableBackgroundAssets = {
   'assets/images/background/mosque-classic.png',
@@ -63,6 +63,7 @@ class AppScaffold extends ConsumerWidget {
   final bool showBottomBar;
   final bool showPattern;
   final bool tabletBodyPadding;
+
   /// Optional widgets inserted between the notification button and the
   /// hamburger/menu button in the app bar.
   final List<Widget>? extraActions;
@@ -234,7 +235,7 @@ class AppScaffold extends ConsumerWidget {
                                       context.push('/contact-us');
                                       break;
                                     case 2:
-                                      SharePlus.instance.share(ShareParams(text: appLink));
+                                      shareContent(context, text: appLink);
                                       break;
                                     case 3:
                                       final Uri url = Uri.parse(appLink);
@@ -348,7 +349,7 @@ class AppScaffold extends ConsumerWidget {
                           final appLink = Platform.isAndroid
                               ? 'https://play.google.com/store/apps/details?id=com.islami_jindegi'
                               : 'https://apps.apple.com/app/islami-jindegi/id1271205014';
-                          SharePlus.instance.share(ShareParams(text: appLink));
+                          shareContent(context, text: appLink);
                         },
                       ),
                     ],
@@ -358,9 +359,7 @@ class AppScaffold extends ConsumerWidget {
             ),
             body: Container(
               decoration: BoxDecoration(
-                image: (!isHome &&
-                        showPattern &&
-                        background != 'no-background')
+                image: (!isHome && showPattern && background != 'no-background')
                     ? DecorationImage(
                         image: AssetImage(
                           _resolveBackgroundAsset(background, theme),

@@ -163,8 +163,6 @@ class PrayerTime {
     String currentLang,
     DateTime date,
   ) {
-    final previousPrayerTimes =
-        _createPrayerTimes(date.subtract(const Duration(days: 1)));
     final basePrayerTimes = _createPrayerTimes(date);
     final nextPrayerTimes =
         _createPrayerTimes(date.add(const Duration(days: 1)));

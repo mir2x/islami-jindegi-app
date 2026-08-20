@@ -2,6 +2,8 @@ import UIKit
 import Flutter
 import UserNotifications
 import alarm
+import home_widget
+import workmanager
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -14,6 +16,20 @@ import alarm
     }
     SwiftAlarmPlugin.registerBackgroundTasks()
     GeneratedPluginRegistrant.register(with: self)
+    WorkmanagerPlugin.setPluginRegistrantCallback { registry in
+      GeneratedPluginRegistrant.register(with: registry)
+    }
+    if #available(iOS 13.0, *) {
+      WorkmanagerPlugin.registerPeriodicTask(
+        withIdentifier: "app-widget-task",
+        frequency: NSNumber(value: 15 * 60),
+      )
+    }
+    if #available(iOS 17, *) {
+      HomeWidgetBackgroundWorker.setPluginRegistrantCallback { registry in
+        GeneratedPluginRegistrant.register(with: registry)
+      }
+    }
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }

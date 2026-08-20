@@ -9,3 +9,5 @@ analyzer:
   exclude:
     - '**/*.g.dart'
     - lib/main.data.dart
+    # The bundled package's standalone, legacy demo is not part of this app.
+    - packages/hijri_picker/example/**

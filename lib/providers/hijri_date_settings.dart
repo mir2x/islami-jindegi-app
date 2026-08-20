@@ -63,7 +63,7 @@ final hijriDateSettingsProvider = FutureProvider((ref) async {
       if (todayData != null) {
         hijriToday = {...Map<String, dynamic>.from(todayData), 'date': todayStr, 'countryCode': countryCode};
         await prefs.setString('hijriDataToday', jsonEncode(hijriToday));
-        debugPrint('[Hijri][provider] Backend success: hijri_day=${hijriToday!['hijri_day']}');
+        debugPrint('[Hijri][provider] Backend success: hijri_day=${hijriToday['hijri_day']}');
       } else {
         hijriToday = cachedToday;
         debugPrint('[Hijri][provider] Backend returned null data, using cache: ${cachedToday?['hijri_day']}');

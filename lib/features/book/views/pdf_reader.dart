@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/providers/local_file.dart';
 
@@ -8,12 +9,12 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart' as pdf_lib;
 import 'package:easy_debounce/easy_debounce.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:open_filex/open_filex.dart';
 import 'package:native_app/helpers/file_fallback_path.dart';
 import 'package:native_app/theme/app_theme_color.dart';
+import 'package:native_app/helpers/share_content.dart';
 
 class PDFReader extends ConsumerStatefulWidget {
   const PDFReader({
@@ -53,6 +54,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
   bool _showToolbar = true;
   bool _showSearchBar = false;
   bool _isContinuousScroll = false;
+  bool _isLandscape = false;
   Set<int> _bookmarkedPages = {};
 
   // Store PDF document bookmarks (TOC) extracted on load
@@ -66,6 +68,9 @@ class _PDFReaderState extends ConsumerState<PDFReader>
 
   @override
   void dispose() {
+    // PDF reading may temporarily enable landscape; all other screens are
+    // portrait-first, so restore that contract when leaving the reader.
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     _searchController.dispose();
     _pdfViewerController.dispose();
     super.dispose();
@@ -162,7 +167,7 @@ class _PDFReaderState extends ConsumerState<PDFReader>
   }
 
   // --- Share ---
-  void _shareBook() {
+  Future<void> _shareBook() async {
     String text = widget.title;
     if (widget.authors != null && widget.authors!.isNotEmpty) {
       text += '\n\n${widget.authors}';
@@ -170,9 +175,18 @@ class _PDFReaderState extends ConsumerState<PDFReader>
     if (widget.fileLink != null) {
       text += '\n\n${widget.fileLink}';
     }
-    text +=
-        '\n\nhttps://play.google.com/store/apps/details?id=com.islami_jindegi';
-    SharePlus.instance.share(ShareParams(text: text, subject: widget.title));
+    text += '\n\n$appStoreShareUrl';
+    await shareContent(context, text: text, subject: widget.title);
+  }
+
+  Future<void> _toggleOrientation() async {
+    final nextLandscape = !_isLandscape;
+    await SystemChrome.setPreferredOrientations(
+      nextLandscape
+          ? [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]
+          : [DeviceOrientation.portraitUp],
+    );
+    if (mounted) setState(() => _isLandscape = nextLandscape);
   }
 
   // --- Open in external app ---
@@ -864,6 +878,16 @@ class _PDFReaderState extends ConsumerState<PDFReader>
                         _isContinuousScroll = !_isContinuousScroll;
                       });
                     },
+                  ),
+                  // Rotate reader
+                  _BottomAction(
+                    icon: _isLandscape
+                        ? Icons.stay_primary_portrait_rounded
+                        : Icons.stay_primary_landscape_rounded,
+                    label: _isLandscape ? 'Portrait' : 'Rotate',
+                    color: iconClr,
+                    labelColor: colors.primaryText,
+                    onTap: _toggleOrientation,
                   ),
                   // Bookmark current page
                   _BottomAction(
