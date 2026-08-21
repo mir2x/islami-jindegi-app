@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/core/services/hijri_api.dart';
 import 'package:native_app/providers/geolocation.dart';
 
 final hijriDateSettingsProvider = FutureProvider((ref) async {
@@ -20,8 +20,7 @@ final hijriDateSettingsProvider = FutureProvider((ref) async {
   final coordinates = data['geolocation']['coordinates'];
   final String timezone = data['geolocation']['timezone'] ?? '';
   final int hijriAdjustment = prefs.getInt('hijriLocalAdjustment') ?? 0;
-  final String? backendUrl =
-      prefs.getString('hijriBackendUrl') ?? dotenv.env['HIJRI_BACKEND_URL'];
+  final String? backendUrl = dotenv.env['DOTNET_API_HOST_NAME'];
 
   final now = DateTime.now();
   final todayStr = _dateStr(
@@ -44,20 +43,16 @@ final hijriDateSettingsProvider = FutureProvider((ref) async {
       backendUrl != null &&
       backendUrl.isNotEmpty) {
     try {
-      debugPrint('[Hijri][provider] Calling backend: $backendUrl/api/hijri_date?date=$todayStr&country-code=$countryCode');
-      final dio = Dio(BaseOptions(
-        baseUrl: '$backendUrl/api',
-        connectTimeout: const Duration(seconds: 5),
-        receiveTimeout: const Duration(seconds: 5),
-      ),);
+      debugPrint('[Hijri][provider] Calling .NET Hijri API for $countryCode');
+      final api = HijriApi(backendUrl);
 
       final results = await Future.wait([
-        dio.get('/hijri_date', queryParameters: {'date': todayStr, 'country-code': countryCode}),
-        dio.get('/hijri_date', queryParameters: {'date': tomorrowStr, 'country-code': countryCode}),
+        api.getDate(date: todayStr, countryCode: countryCode),
+        api.getDate(date: tomorrowStr, countryCode: countryCode),
       ]);
 
-      final todayData = results[0].data['data'];
-      final tomorrowData = results[1].data['data'];
+      final todayData = results[0];
+      final tomorrowData = results[1];
       debugPrint('[Hijri][provider] Backend response — todayData=$todayData');
 
       if (todayData != null) {

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/providers/value_provider.dart';
 import 'package:just_audio/just_audio.dart';
@@ -18,13 +19,16 @@ import '../models/sura_audio_data.dart';
 import 'ayah_highlight_providers.dart';
 
 class AudioDataSource {
-  final Dio _dio = Dio();
-  final String _baseUrl = 'https://islami-jindegi-backend.fly.dev';
+  late final Dio _dio = Dio(
+    BaseOptions(
+      baseUrl: '${dotenv.env['DOTNET_API_HOST_NAME']}/api/quran',
+    ),
+  );
 
   Future<SuraAudioData?> getSuraAudioUrls(String reciterId, int sura) async {
     try {
       final response = await _dio.post(
-        '$_baseUrl/get-sura-audio-urls',
+        '/sura-audio-urls',
         data: {
           'reciterId': reciterId,
           'sura': sura,

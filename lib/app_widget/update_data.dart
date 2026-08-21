@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -15,6 +14,7 @@ import 'package:native_app/helpers/get_bangali_date.dart';
 import 'package:native_app/helpers/get_gregorian_date.dart';
 import 'package:native_app/helpers/get_location_name.dart';
 import 'package:native_app/core/services/prayer_alarm_service.dart';
+import 'package:native_app/core/services/hijri_api.dart';
 
 Future<bool> updateData() async {
   final preferences = await SharedPreferences.getInstance();
@@ -68,17 +68,13 @@ Future<bool> updateData() async {
     final String? backendUrl = preferences.getString('hijriBackendUrl');
     if (countryCode != null && backendUrl != null) {
       try {
-        final dio = Dio(BaseOptions(
-          baseUrl: '$backendUrl/api',
-          connectTimeout: const Duration(seconds: 5),
-          receiveTimeout: const Duration(seconds: 5),
-        ),);
+        final api = HijriApi(backendUrl);
         final results = await Future.wait([
-          dio.get('/hijri_date', queryParameters: {'date': todayStr, 'country-code': countryCode}),
-          dio.get('/hijri_date', queryParameters: {'date': tomorrowStr, 'country-code': countryCode}),
+          api.getDate(date: todayStr, countryCode: countryCode),
+          api.getDate(date: tomorrowStr, countryCode: countryCode),
         ]);
-        final todayData = results[0].data['data'];
-        final tomorrowData = results[1].data['data'];
+        final todayData = results[0];
+        final tomorrowData = results[1];
         if (todayData != null) {
           hijriDataToday = {...Map<String, dynamic>.from(todayData), 'date': todayStr};
           await preferences.setString('hijriDataToday', jsonEncode(hijriDataToday));

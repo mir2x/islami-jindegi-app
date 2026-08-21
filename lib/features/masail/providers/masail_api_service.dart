@@ -7,23 +7,14 @@ import '../models/page_content.dart';
 
 /// Dio-based service for fetching masail from the .NET API (plain JSON).
 ///
-/// `fetchSettings` is the exception: it backs the "ask a question" FAB's
-/// contact info, which is generic Ruby `Settings` content. The .NET API has
-/// no Settings controller yet, so that call stays on the legacy JSON:API host
-/// via a second Dio client instead of being ported. `fetchPages` (the
-/// question body/rules text, slug `ask-masail`) now uses the .NET Pages API
-/// like the `page` module does, since that module has been migrated.
+/// `fetchSettings` backs the "ask a question" FAB. Both the settings and the
+/// rules page now come from the .NET API.
 class MasailApiService {
   late final Dio _dio;
-  late final Dio _legacyDio;
 
   MasailApiService() {
     _dio = Dio(BaseOptions(
       baseUrl: '${dotenv.env['DOTNET_API_HOST_NAME']}/api',
-    ));
-    _legacyDio = Dio(BaseOptions(
-      baseUrl: '${dotenv.env['API_HOST_NAME']}/api',
-      headers: {'Accept': 'application/vnd.api+json'},
     ));
   }
 
@@ -112,15 +103,11 @@ class MasailApiService {
     return PageContent.fromJson(response.data as Map<String, dynamic>);
   }
 
-  // ───────────────────── Settings (for ask-question FAB) — legacy Ruby API
+  // ───────────────────── Settings (for ask-question FAB)
 
   Future<Map<String, dynamic>> fetchSettings() async {
-    final response = await _legacyDio.get('/settings', queryParameters: {
-      'quantity': 1,
-    });
-    final dataList = response.data['data'] as List? ?? [];
-    if (dataList.isEmpty) return {};
-    final attrs = dataList.first['attributes'] as Map<String, dynamic>? ?? {};
-    return attrs;
+    final response = await _dio.get('/settings');
+    final data = Map<String, dynamic>.from(response.data as Map);
+    return {'ask-question': data['askQuestion'] == true};
   }
 }

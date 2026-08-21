@@ -1,9 +1,8 @@
 import 'dart:async';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hijri/hijri_calendar.dart';
+import 'package:native_app/core/services/hijri_api.dart';
 import 'package:native_app/core/utils/bengali_digit_extension.dart';
 import 'package:native_app/helpers/adjusted_hijri_date.dart';
 import 'package:native_app/helpers/hijri_localization.dart';
@@ -121,10 +120,7 @@ class _BdHijriMonthPickerState extends State<BdHijriMonthPicker> {
 
   Future<_BdHijriMonthData?> _fetchMonth(_HijriMonth month) async {
     final prefs = widget.settings['preferences'];
-    final String? backendUrl =
-        widget.settings['backendUrl'] as String? ??
-        prefs?.getString('hijriBackendUrl') ??
-        dotenv.env['HIJRI_BACKEND_URL'];
+    final String? backendUrl = widget.settings['backendUrl'] as String?;
     final String countryCode =
         widget.settings['countryCode'] as String? ??
         prefs?.getString('countryCode') ??
@@ -132,20 +128,11 @@ class _BdHijriMonthPickerState extends State<BdHijriMonthPicker> {
     if (backendUrl == null || backendUrl.isEmpty) return null;
 
     try {
-      final dio = Dio(BaseOptions(
-        baseUrl: '$backendUrl/api',
-        connectTimeout: const Duration(seconds: 5),
-        receiveTimeout: const Duration(seconds: 5),
-      ),);
-      final response = await dio.get(
-        '/hijri_month',
-        queryParameters: {
-          'country-code': countryCode,
-          'hijri-year': month.year,
-          'hijri-month': month.month,
-        },
+      final data = await HijriApi(backendUrl).getMonth(
+        countryCode: countryCode,
+        hijriYear: month.year,
+        hijriMonth: month.month,
       );
-      final data = response.data['data'];
       if (data == null) return null;
       return _BdHijriMonthData(
         monthLength: (data['month_length'] as num).toInt(),

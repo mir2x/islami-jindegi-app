@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AssetUrlResponse {
   final String url;
@@ -20,13 +21,16 @@ class StaticAssetApi {
   factory StaticAssetApi() => _instance;
   StaticAssetApi._();
 
-  final Dio _dio = Dio();
-  static const String _baseUrl = 'https://islami-jindegi-backend.fly.dev';
+  late final Dio _dio = Dio(
+    BaseOptions(
+      baseUrl: '${dotenv.env['DOTNET_API_HOST_NAME']}/api/quran',
+    ),
+  );
 
   Future<AssetUrlResponse?> getMushafUrl(String mushafId) async {
     try {
       final response = await _dio.post(
-        '$_baseUrl/get-mushaf-url',
+        '/mushaf-url',
         data: {'mushafId': mushafId},
       );
       if (response.statusCode == 200) {
@@ -42,7 +46,7 @@ class StaticAssetApi {
   Future<AssetUrlResponse?> getTafsirUrl(String tafsirId) async {
     try {
       final response = await _dio.post(
-        '$_baseUrl/get-tafsir-url',
+        '/tafsir-url',
         data: {'tafsirId': tafsirId},
       );
       if (response.statusCode == 200) {
@@ -58,7 +62,7 @@ class StaticAssetApi {
   Future<AssetUrlResponse?> getDbUrl(String dbName) async {
     try {
       final response = await _dio.post(
-        '$_baseUrl/get-db-url',
+        '/db-url',
         data: {'dbName': dbName},
       );
       if (response.statusCode == 200) {

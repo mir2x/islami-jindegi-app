@@ -8,6 +8,17 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
     return await SharedPreferences.getInstance();
   }
 
+  // SharedPreferences is a singleton. After a write, the previous and next
+  // AsyncData values contain the same object identity, so Riverpod's default
+  // equality check can suppress the notification. Preferences drive app-wide
+  // state such as theme and locale, therefore every completed write must
+  // rebuild listeners.
+  @override
+  bool updateShouldNotify(
+    AsyncValue<SharedPreferences> previous,
+    AsyncValue<SharedPreferences> next,
+  ) => true;
+
   Future<dynamic> updateDaylight(bool value) async {
     var prefs = await SharedPreferences.getInstance();
     await prefs.setBool('daylight', value);

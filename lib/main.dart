@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform, HttpOverrides;
 import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, kReleaseMode;
 import 'package:flutter/material.dart';
@@ -21,6 +20,7 @@ import 'package:native_app/theme/themes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/core/services/offline_db_prefetch_service.dart';
 import 'package:native_app/core/services/prayer_alarm_service.dart';
+import 'package:native_app/core/services/hijri_api.dart';
 import 'package:native_app/widgets/utils/offline_db_prefetch_banner.dart';
 
 import 'routes/index.dart';
@@ -61,7 +61,7 @@ Future<void> main() async {
 
   // Persist backend URL so the background Workmanager isolate (which never
   // calls main() and therefore has no dotenv) can reach the hijri backend.
-  final hijriBackendUrl = dotenv.env['HIJRI_BACKEND_URL'];
+  final hijriBackendUrl = dotenv.env['DOTNET_API_HOST_NAME'];
   if (hijriBackendUrl != null) {
     await initialPrefs.setString('hijriBackendUrl', hijriBackendUrl);
   }
@@ -151,27 +151,15 @@ Future<void> _primeHijriDateCache(SharedPreferences prefs) async {
   final tomorrowStr = _dateStr(tomorrow);
 
   try {
-    final dio = Dio(
-      BaseOptions(
-        baseUrl: '$backendUrl/api',
-        connectTimeout: const Duration(seconds: 5),
-        receiveTimeout: const Duration(seconds: 5),
-      ),
-    );
+    final api = HijriApi(backendUrl);
 
     final results = await Future.wait([
-      dio.get(
-        '/hijri_date',
-        queryParameters: {'date': todayStr, 'country-code': countryCode},
-      ),
-      dio.get(
-        '/hijri_date',
-        queryParameters: {'date': tomorrowStr, 'country-code': countryCode},
-      ),
+      api.getDate(date: todayStr, countryCode: countryCode),
+      api.getDate(date: tomorrowStr, countryCode: countryCode),
     ]);
 
-    final todayData = results[0].data['data'];
-    final tomorrowData = results[1].data['data'];
+    final todayData = results[0];
+    final tomorrowData = results[1];
 
     if (todayData != null) {
       await prefs.setString(
