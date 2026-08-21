@@ -50,7 +50,7 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
       _ => 'classic',
     };
     await prefs.setString('theme', nextTheme);
-    updateAppWidget({'theme': nextTheme});
+    await updateAppWidget({'theme': nextTheme});
     state = AsyncValue.data(prefs);
   }
 

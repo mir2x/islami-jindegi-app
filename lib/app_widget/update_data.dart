@@ -137,7 +137,7 @@ Future<bool> updateData() async {
   String nextPrayer =
       '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}';
 
-  updateAppWidget({
+  await updateAppWidget({
     'theme': theme,
     'hijriDate': hijriDate,
     'bangaliDate': bangaliDate,

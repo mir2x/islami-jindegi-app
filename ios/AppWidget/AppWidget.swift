@@ -31,7 +31,7 @@ struct IslamiJindegiWidgetProvider: TimelineProvider {
       date: Date(),
       hijriDate: defaults?.string(forKey: "hijriDate") ?? "হিজরি তারিখ",
       bangaliDate: defaults?.string(forKey: "bangaliDate") ?? "বাংলা তারিখ",
-      gregorianDate: defaults?.string(forKey: "gregorianDate") ?? "Gregorian date",
+      gregorianDate: defaults?.string(forKey: "gregorianDate") ?? "",
       location: defaults?.string(forKey: "location") ?? "লোকেশন নির্ধারণ করুন",
       currentPrayer: defaults?.string(forKey: "currentPrayer") ?? "",
       nextPrayer: defaults?.string(forKey: "nextPrayer") ?? "নামাজের সময়",
@@ -42,12 +42,42 @@ struct IslamiJindegiWidgetProvider: TimelineProvider {
   }
 
   func placeholder(in context: Context) -> IslamiJindegiWidgetEntry { entry() }
-  func getSnapshot(in context: Context, completion: @escaping (IslamiJindegiWidgetEntry) -> Void) {
-    completion(entry())
-  }
+  func getSnapshot(in context: Context, completion: @escaping (IslamiJindegiWidgetEntry) -> Void) { completion(entry()) }
   func getTimeline(in context: Context, completion: @escaping (Timeline<IslamiJindegiWidgetEntry>) -> Void) {
-    // The Flutter app explicitly reloads this timeline after saving fresh data.
     completion(Timeline(entries: [entry()], policy: .never))
+  }
+}
+
+private struct WidgetPalette {
+  let background: Color
+  let text: Color
+  let accent: Color
+  let divider: Color
+
+  static func forTheme(_ theme: String) -> WidgetPalette {
+    switch theme {
+    case "light":
+      return WidgetPalette(
+        background: Color(red: 0.969, green: 0.949, blue: 0.910),
+        text: Color(red: 0.122, green: 0.141, blue: 0.122),
+        accent: Color(red: 0.106, green: 0.420, blue: 0.290),
+        divider: Color(red: 0.106, green: 0.420, blue: 0.290).opacity(0.24)
+      )
+    case "dark":
+      return WidgetPalette(
+        background: Color(red: 0.090, green: 0.098, blue: 0.114),
+        text: Color(red: 0.949, green: 0.941, blue: 0.918),
+        accent: Color(red: 0.498, green: 0.784, blue: 0.663),
+        divider: Color.white.opacity(0.16)
+      )
+    default:
+      return WidgetPalette(
+        background: Color(red: 0.745, green: 0.859, blue: 0.843),
+        text: Color(red: 0.129, green: 0.145, blue: 0.161),
+        accent: Color(red: 0.098, green: 0.329, blue: 0.424),
+        divider: Color(red: 0.098, green: 0.329, blue: 0.424).opacity(0.22)
+      )
+    }
   }
 }
 
@@ -55,55 +85,103 @@ struct IslamiJindegiWidgetView: View {
   @Environment(\.widgetFamily) private var family
   let entry: IslamiJindegiWidgetEntry
 
-  private var isDark: Bool { entry.theme == "dark" }
-  private var background: Color {
-    isDark ? Color(red: 0.07, green: 0.13, blue: 0.13) : Color(red: 0.02, green: 0.29, blue: 0.28)
-  }
-  private var primaryText: Color { isDark ? .white : Color(red: 0.96, green: 0.94, blue: 0.84) }
-  private var accent: Color { Color(red: 0.96, green: 0.77, blue: 0.30) }
+  private var palette: WidgetPalette { .forTheme(entry.theme) }
 
   private func destination(for route: String) -> URL {
     URL(string: "appWidget://message?route=\(route)")!
   }
 
+  private var datesAndSun: some View {
+    HStack(alignment: .top, spacing: 12) {
+      VStack(alignment: .leading, spacing: 3) {
+        Text(entry.hijriDate).font(.system(size: family == .systemSmall ? 15 : 17, weight: .semibold))
+        Text(entry.bangaliDate).font(.system(size: 12))
+        if !entry.gregorianDate.isEmpty { Text(entry.gregorianDate).font(.system(size: 11)) }
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+
+      VStack(alignment: .leading, spacing: 4) {
+        if !entry.sunrise.isEmpty { Text(entry.sunrise) }
+        if !entry.sunset.isEmpty { Text(entry.sunset) }
+        Text(entry.location).foregroundStyle(palette.accent).lineLimit(1)
+      }
+      .font(.system(size: 11))
+      .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    .foregroundStyle(palette.text)
+    .lineLimit(1)
+    .minimumScaleFactor(0.72)
+  }
+
+  private var prayer: some View {
+    VStack(alignment: .leading, spacing: 3) {
+      if !entry.currentPrayer.isEmpty {
+        Text(entry.currentPrayer)
+          .font(.system(size: family == .systemSmall ? 15 : 17, weight: .bold))
+          .foregroundStyle(palette.accent)
+      }
+      Text(entry.nextPrayer).font(.system(size: 12, weight: .medium)).foregroundStyle(palette.text)
+    }
+    .lineLimit(1)
+    .minimumScaleFactor(0.72)
+  }
+
   private var shortcuts: some View {
-    LazyVGrid(
-      columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 3),
-      spacing: 4,
-    ) {
+    HStack(spacing: 4) {
       ForEach(widgetActions, id: \.2) { action in
         Link(destination: destination(for: action.2)) {
-          Label(action.0, systemImage: action.1)
-            .font(.caption2)
-            .lineLimit(1)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 4)
-            .foregroundStyle(primaryText)
-            .background(primaryText.opacity(0.12), in: RoundedRectangle(cornerRadius: 5))
+          VStack(spacing: 2) {
+            Image(systemName: action.1).font(.system(size: 16, weight: .medium))
+            Text(action.0).font(.system(size: 8, weight: .medium))
+          }
+          .foregroundStyle(palette.accent)
+          .frame(maxWidth: .infinity, minHeight: 34)
+          .background(palette.text.opacity(0.08), in: RoundedRectangle(cornerRadius: 7))
         }
       }
     }
   }
 
-  var body: some View {
+  private var smallLayout: some View {
     VStack(alignment: .leading, spacing: 7) {
-      Text(entry.hijriDate).font(.headline).foregroundStyle(primaryText).lineLimit(1)
-      Text(entry.bangaliDate).font(.subheadline).foregroundStyle(primaryText).lineLimit(1)
-      Text(entry.gregorianDate).font(.caption).foregroundStyle(primaryText.opacity(0.82)).lineLimit(1)
-      Divider().overlay(primaryText.opacity(0.28))
-      Text(entry.location).font(.caption).foregroundStyle(accent).lineLimit(1)
-      if !entry.currentPrayer.isEmpty {
-        Text(entry.currentPrayer).font(.subheadline.weight(.semibold)).foregroundStyle(accent).lineLimit(1)
-      }
-      Text(entry.nextPrayer).font(.caption).foregroundStyle(primaryText).lineLimit(1)
-      if family == .systemMedium {
-        shortcuts
-      } else if !entry.sunrise.isEmpty || !entry.sunset.isEmpty {
-        Text("\(entry.sunrise)   \(entry.sunset)").font(.caption2).foregroundStyle(primaryText.opacity(0.78)).lineLimit(1)
-      }
+      Text(entry.hijriDate).font(.system(size: 15, weight: .semibold))
+      Text(entry.bangaliDate).font(.system(size: 12))
+      Divider().overlay(palette.divider)
+      prayer
+      Spacer(minLength: 0)
+      Text(entry.location).font(.system(size: 10)).foregroundStyle(palette.accent).lineLimit(1)
     }
-    .padding()
-    .background(background)
+  }
+
+  private var expandedLayout: some View {
+    VStack(alignment: .leading, spacing: family == .systemLarge ? 11 : 7) {
+      datesAndSun
+      Divider().overlay(palette.divider)
+      prayer
+      Spacer(minLength: 0)
+      shortcuts
+    }
+  }
+
+  private var content: some View {
+    Group {
+      if family == .systemSmall { smallLayout } else { expandedLayout }
+    }
+    .padding(family == .systemSmall ? 13 : 15)
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+  }
+
+  @ViewBuilder
+  private var backgroundedContent: some View {
+    if #available(iOSApplicationExtension 17.0, *) {
+      content.containerBackground(for: .widget) { palette.background }
+    } else {
+      content.background(palette.background)
+    }
+  }
+
+  var body: some View {
+    backgroundedContent
     .widgetURL(URL(string: "appWidget://message?route=/"))
   }
 }
@@ -118,6 +196,6 @@ struct AppWidget: Widget {
     }
     .configurationDisplayName("ইসলামী যিন্দেগী")
     .description("আজকের তারিখ ও নামাজের সময় দেখুন।")
-    .supportedFamilies([.systemSmall, .systemMedium])
+    .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
   }
 }

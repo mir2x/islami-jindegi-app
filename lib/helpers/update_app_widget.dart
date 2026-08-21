@@ -1,17 +1,21 @@
 import 'package:home_widget/home_widget.dart';
 
-void updateAppWidget(Map params) {
-  HomeWidget.setAppGroupId('group.islami_jindegi');
+Future<void> updateAppWidget(Map params) async {
+  await HomeWidget.setAppGroupId('group.islami_jindegi');
 
-  params.forEach((key, value) {
-    if (value is int) {
-      HomeWidget.saveWidgetData<int>(key, value);
-    } else {
-      HomeWidget.saveWidgetData<String>(key, value);
-    }
-  });
+  await Future.wait(
+    params.entries.map((entry) {
+      final key = entry.key as String;
+      final value = entry.value;
+      if (value is int) {
+        return HomeWidget.saveWidgetData<int>(key, value);
+      } else {
+        return HomeWidget.saveWidgetData<String>(key, value.toString());
+      }
+    }),
+  );
 
-  HomeWidget.updateWidget(
+  await HomeWidget.updateWidget(
     name: 'AppWidget',
     androidName: 'AppWidget',
     iOSName: 'AppWidget',
