@@ -76,12 +76,20 @@ Future<bool> updateData() async {
         final todayData = results[0];
         final tomorrowData = results[1];
         if (todayData != null) {
-          hijriDataToday = {...Map<String, dynamic>.from(todayData), 'date': todayStr};
-          await preferences.setString('hijriDataToday', jsonEncode(hijriDataToday));
+          hijriDataToday = {
+            ...Map<String, dynamic>.from(todayData),
+            'date': todayStr
+          };
+          await preferences.setString(
+              'hijriDataToday', jsonEncode(hijriDataToday));
         }
         if (tomorrowData != null) {
-          hijriDataTomorrow = {...Map<String, dynamic>.from(tomorrowData), 'date': tomorrowStr};
-          await preferences.setString('hijriDataTomorrow', jsonEncode(hijriDataTomorrow));
+          hijriDataTomorrow = {
+            ...Map<String, dynamic>.from(tomorrowData),
+            'date': tomorrowStr
+          };
+          await preferences.setString(
+              'hijriDataTomorrow', jsonEncode(hijriDataTomorrow));
         }
       } catch (_) {
         // Network unavailable — will fall back to Umm al-Qura below.

@@ -7,7 +7,7 @@ private let widgetActions = [
   ("বই", "books.vertical", "/books"),
   ("বয়ান", "speaker.wave.2", "/bayans"),
   ("মালফুযাত", "quote.bubble", "/malfuzat"),
-  ("মাসায়েল", "questionmark.circle", "/masails"),
+  ("মাসায়েল", "questionmark.circle", "/masail"),
   ("দোয়া", "hands.clap", "/duas"),
 ]
 
@@ -25,19 +25,26 @@ struct IslamiJindegiWidgetEntry: TimelineEntry {
 }
 
 struct IslamiJindegiWidgetProvider: TimelineProvider {
+  private func savedText(_ defaults: UserDefaults?, key: String, fallback: String) -> String {
+    guard let value = defaults?.string(forKey: key), !value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+      return fallback
+    }
+    return value
+  }
+
   private func entry() -> IslamiJindegiWidgetEntry {
     let defaults = UserDefaults(suiteName: appGroupId)
     return IslamiJindegiWidgetEntry(
       date: Date(),
-      hijriDate: defaults?.string(forKey: "hijriDate") ?? "হিজরি তারিখ",
-      bangaliDate: defaults?.string(forKey: "bangaliDate") ?? "বাংলা তারিখ",
-      gregorianDate: defaults?.string(forKey: "gregorianDate") ?? "",
-      location: defaults?.string(forKey: "location") ?? "লোকেশন নির্ধারণ করুন",
-      currentPrayer: defaults?.string(forKey: "currentPrayer") ?? "",
-      nextPrayer: defaults?.string(forKey: "nextPrayer") ?? "নামাজের সময়",
-      sunrise: defaults?.string(forKey: "sunrise") ?? "",
-      sunset: defaults?.string(forKey: "sunset") ?? "",
-      theme: defaults?.string(forKey: "theme") ?? "classic"
+      hijriDate: savedText(defaults, key: "hijriDate", fallback: "হিজরি তারিখ"),
+      bangaliDate: savedText(defaults, key: "bangaliDate", fallback: "বাংলা তারিখ"),
+      gregorianDate: savedText(defaults, key: "gregorianDate", fallback: ""),
+      location: savedText(defaults, key: "location", fallback: "ঢাকা, বাংলাদেশ"),
+      currentPrayer: savedText(defaults, key: "currentPrayer", fallback: ""),
+      nextPrayer: savedText(defaults, key: "nextPrayer", fallback: "নামাজের সময়"),
+      sunrise: savedText(defaults, key: "sunrise", fallback: ""),
+      sunset: savedText(defaults, key: "sunset", fallback: ""),
+      theme: savedText(defaults, key: "theme", fallback: "classic")
     )
   }
 
@@ -88,15 +95,23 @@ struct IslamiJindegiWidgetView: View {
   private var palette: WidgetPalette { .forTheme(entry.theme) }
 
   private func destination(for route: String) -> URL {
-    URL(string: "appWidget://message?route=\(route)")!
+    var components = URLComponents()
+    components.scheme = "appWidget"
+    components.host = "message"
+    components.queryItems = [URLQueryItem(name: "route", value: route)]
+    return components.url!
+  }
+
+  private func font(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+    .custom("SolaimanLipi", size: size).weight(weight)
   }
 
   private var datesAndSun: some View {
     HStack(alignment: .top, spacing: 12) {
       VStack(alignment: .leading, spacing: 3) {
-        Text(entry.hijriDate).font(.system(size: family == .systemSmall ? 15 : 17, weight: .semibold))
-        Text(entry.bangaliDate).font(.system(size: 12))
-        if !entry.gregorianDate.isEmpty { Text(entry.gregorianDate).font(.system(size: 11)) }
+        Text(entry.hijriDate).font(font(family == .systemSmall ? 16 : 18, weight: .semibold))
+        Text(entry.bangaliDate).font(font(14))
+        if !entry.gregorianDate.isEmpty { Text(entry.gregorianDate).font(font(12)) }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -105,7 +120,7 @@ struct IslamiJindegiWidgetView: View {
         if !entry.sunset.isEmpty { Text(entry.sunset) }
         Text(entry.location).foregroundStyle(palette.accent).lineLimit(1)
       }
-      .font(.system(size: 11))
+      .font(font(13))
       .frame(maxWidth: .infinity, alignment: .leading)
     }
     .foregroundStyle(palette.text)
@@ -117,10 +132,10 @@ struct IslamiJindegiWidgetView: View {
     VStack(alignment: .leading, spacing: 3) {
       if !entry.currentPrayer.isEmpty {
         Text(entry.currentPrayer)
-          .font(.system(size: family == .systemSmall ? 15 : 17, weight: .bold))
+          .font(font(family == .systemSmall ? 16 : 18, weight: .bold))
           .foregroundStyle(palette.accent)
       }
-      Text(entry.nextPrayer).font(.system(size: 12, weight: .medium)).foregroundStyle(palette.text)
+      Text(entry.nextPrayer).font(font(14, weight: .medium)).foregroundStyle(palette.text)
     }
     .lineLimit(1)
     .minimumScaleFactor(0.72)
@@ -131,11 +146,11 @@ struct IslamiJindegiWidgetView: View {
       ForEach(widgetActions, id: \.2) { action in
         Link(destination: destination(for: action.2)) {
           VStack(spacing: 2) {
-            Image(systemName: action.1).font(.system(size: 16, weight: .medium))
-            Text(action.0).font(.system(size: 8, weight: .medium))
+            Image(systemName: action.1).font(.system(size: 18, weight: .medium))
+            Text(action.0).font(font(10, weight: .medium))
           }
           .foregroundStyle(palette.accent)
-          .frame(maxWidth: .infinity, minHeight: 34)
+          .frame(maxWidth: .infinity, minHeight: 39)
           .background(palette.text.opacity(0.08), in: RoundedRectangle(cornerRadius: 7))
         }
       }
@@ -144,12 +159,12 @@ struct IslamiJindegiWidgetView: View {
 
   private var smallLayout: some View {
     VStack(alignment: .leading, spacing: 7) {
-      Text(entry.hijriDate).font(.system(size: 15, weight: .semibold))
-      Text(entry.bangaliDate).font(.system(size: 12))
+      Text(entry.hijriDate).font(font(16, weight: .semibold))
+      Text(entry.bangaliDate).font(font(14))
       Divider().overlay(palette.divider)
       prayer
       Spacer(minLength: 0)
-      Text(entry.location).font(.system(size: 10)).foregroundStyle(palette.accent).lineLimit(1)
+      Text(entry.location).font(font(12)).foregroundStyle(palette.accent).lineLimit(1)
     }
   }
 
@@ -181,8 +196,11 @@ struct IslamiJindegiWidgetView: View {
   }
 
   var body: some View {
-    backgroundedContent
-    .widgetURL(URL(string: "appWidget://message?route=/"))
+    if family == .systemSmall {
+      backgroundedContent.widgetURL(destination(for: "/"))
+    } else {
+      backgroundedContent
+    }
   }
 }
 

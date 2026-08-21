@@ -16,6 +16,7 @@ import 'package:workmanager/workmanager.dart';
 import 'package:lehttp_overrides/lehttp_overrides.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:native_app/providers/preferences.dart';
+import 'package:native_app/providers/geolocation.dart';
 import 'package:native_app/theme/themes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/core/services/offline_db_prefetch_service.dart';
@@ -67,6 +68,10 @@ Future<void> main() async {
   }
 
   final container = ProviderContainer();
+
+  // WidgetKit may not run its first background refresh for some time after a
+  // new install. Sync the saved/fallback location as soon as the app opens.
+  unawaited(syncAppWidgetLocation());
 
   if (Platform.isAndroid) {
     // fixes Let's Encrypt SSL certificate problems with Android 7.1.1 and below

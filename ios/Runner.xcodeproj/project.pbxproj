@@ -17,6 +17,7 @@
 		FABBFFEDC627181C7D7EE47F /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9AD71AC9F5262DAB9633817 /* Pods_Runner.framework */; };
 		AA1000000000000000000001 /* AppWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000004 /* AppWidget.swift */; };
 		AA1000000000000000000002 /* AppWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000003 /* AppWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		AA1000000000000000000017 /* solaimanlipi.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000018 /* solaimanlipi.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -67,6 +68,7 @@
 		AA1000000000000000000004 /* AppWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppWidget.swift; sourceTree = "<group>"; };
 		AA1000000000000000000005 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA1000000000000000000006 /* AppWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AppWidget.entitlements; sourceTree = "<group>"; };
+		AA1000000000000000000018 /* solaimanlipi.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = solaimanlipi.ttf; path = "../assets/fonts/solaimanlipi.ttf"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +156,7 @@
 				AA1000000000000000000004 /* AppWidget.swift */,
 				AA1000000000000000000005 /* Info.plist */,
 				AA1000000000000000000006 /* AppWidget.entitlements */,
+				AA1000000000000000000018 /* solaimanlipi.ttf */,
 			);
 			path = AppWidget;
 			sourceTree = "<group>";
@@ -202,6 +205,7 @@
 			buildConfigurationList = AA1000000000000000000016 /* Build configuration list for PBXNativeTarget "AppWidget" */;
 			buildPhases = (
 				AA1000000000000000000009 /* Sources */,
+				AA1000000000000000000019 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -258,6 +262,14 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		AA1000000000000000000019 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA1000000000000000000017 /* solaimanlipi.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		97C146EC1CF9000F007C117D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;

@@ -46,8 +46,8 @@ Future<Map> getFailSafeLocation() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   final String currentLocale = preferences.getString('locale') ?? 'bn';
 
-  if (preferences.getString('city') != null &&
-      preferences.getString('country') != null &&
+  if ((preferences.getString('city')?.trim().isNotEmpty ?? false) &&
+      (preferences.getString('country')?.trim().isNotEmpty ?? false) &&
       preferences.getString('countryCode') != null) {
     final String? storedLocale = preferences.getString('locationLocale');
 
@@ -74,6 +74,14 @@ Future<Map> getFailSafeLocation() async {
       'countryCode': 'BD',
     };
   }
+}
+
+/// Keeps the widget useful immediately after installation, before iOS grants
+/// the first background refresh. A later GPS/manual-location update replaces
+/// this fallback with the user's actual location.
+Future<void> syncAppWidgetLocation() async {
+  final location = await getFailSafeLocation();
+  await updateAppWidget({'location': getLocationName(location)});
 }
 
 Future<String> getFailSafeTimezone() async {
@@ -115,7 +123,8 @@ Future<void> _ensureCountryCache() async {
       if (code != null) {
         if (name != null) _countryNameToCodeCache![name.toLowerCase()] = code;
         if (zones != null && zones.isNotEmpty) {
-          _countryTimezoneCache![code] = zones.first['zoneName'] as String? ?? '';
+          _countryTimezoneCache![code] =
+              zones.first['zoneName'] as String? ?? '';
         }
       }
     }
@@ -204,7 +213,8 @@ Future setLocation(Map location) async {
     preferences.remove('hijriDataToday');
     preferences.remove('hijriDataTomorrow');
   } else {
-    debugPrint('[Hijri][setLocation] countryCode unchanged: ${location['countryCode']}. Cache kept.');
+    debugPrint(
+        '[Hijri][setLocation] countryCode unchanged: ${location['countryCode']}. Cache kept.');
   }
 
   if (preferences.getString('city') != location['city']) {
@@ -236,7 +246,7 @@ Future setLocation(Map location) async {
 
   if (preferences.getString('location') != locationName) {
     preferences.setString('location', locationName);
-    updateAppWidget({'location': locationName});
+    await updateAppWidget({'location': locationName});
   }
 }
 
@@ -290,9 +300,8 @@ class GeolocationNotifier extends AsyncNotifier<Map> {
 
     var location = await getLocation(position);
     final isoCode = (location['countryCode'] as String?) ?? '';
-    String timezone = isoCode.isNotEmpty
-        ? await timezoneFromCountryCode(isoCode)
-        : '';
+    String timezone =
+        isoCode.isNotEmpty ? await timezoneFromCountryCode(isoCode) : '';
     if (timezone.isEmpty) timezone = await getFailSafeTimezone();
 
     await updatePreferences(location, position, timezone);
@@ -355,13 +364,13 @@ class GeolocationNotifier extends AsyncNotifier<Map> {
         'city=${location['city']}, country=${location['country']}, '
         'countryCode=${location['countryCode']}');
     final isoCode = (location['countryCode'] as String?) ?? '';
-    String timezone = isoCode.isNotEmpty
-        ? await timezoneFromCountryCode(isoCode)
-        : '';
+    String timezone =
+        isoCode.isNotEmpty ? await timezoneFromCountryCode(isoCode) : '';
     if (timezone.isEmpty) timezone = await getFailSafeTimezone();
 
     await updatePreferences(location, position, timezone);
-    debugPrint('[Hijri][updateCoordinates] updatePreferences done. Setting state with countryCode=${location['countryCode']}');
+    debugPrint(
+        '[Hijri][updateCoordinates] updatePreferences done. Setting state with countryCode=${location['countryCode']}');
 
     state = AsyncValue.data({
       'coordinates': {

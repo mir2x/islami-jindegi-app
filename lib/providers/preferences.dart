@@ -17,7 +17,8 @@ class PreferenceNotifier extends AsyncNotifier<SharedPreferences> {
   bool updateShouldNotify(
     AsyncValue<SharedPreferences> previous,
     AsyncValue<SharedPreferences> next,
-  ) => true;
+  ) =>
+      true;
 
   Future<dynamic> updateDaylight(bool value) async {
     var prefs = await SharedPreferences.getInstance();
