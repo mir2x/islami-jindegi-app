@@ -52,8 +52,7 @@ class Resource extends StatelessWidget {
             final cellHeight = constraints.maxHeight;
             final cellWidth = constraints.maxWidth;
             final media = MediaQuery.of(context);
-            final isShortHeightMobile =
-                isMobile && media.size.height < 760;
+            final isShortHeightMobile = isMobile && media.size.height < 760;
 
             double iconSize;
             double gap;
@@ -88,12 +87,15 @@ class Resource extends StatelessWidget {
                     color: appColors.primaryText,
                   );
             } else if (cellHeight < 70) {
-              iconSize = 22;
+              // Small iPhones can leave each grid cell under 70px tall. The
+              // old fixed 22px icon looked disproportionately tiny there;
+              // scale within the available icon area, with a safe upper cap.
+              iconSize = (cellHeight * 0.54).clamp(28.0, 38.0).toDouble();
               gap = 2;
               verticalPad = 2;
               horizontalPad = 2;
-              iconBoxHeightFactor = 0.58;
-              textBoxHeightFactor = 0.24;
+              iconBoxHeightFactor = 0.62;
+              textBoxHeightFactor = 0.25;
               textStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
                     height: 1.1,
                     fontSize: 9,
