@@ -114,18 +114,18 @@ struct IslamiJindegiWidgetView: View {
     VStack(alignment: .leading, spacing: 3) {
       HStack(alignment: .firstTextBaseline, spacing: 8) {
         Text(entry.hijriDate)
-          .font(font(family == .systemSmall ? 16 : 17, weight: .semibold))
+          .font(font(family == .systemSmall ? 17 : 18, weight: .semibold))
           .layoutPriority(1)
         Spacer(minLength: 0)
         Text(entry.location)
-          .font(font(13, weight: .medium))
+          .font(font(12, weight: .medium))
           .foregroundStyle(palette.accent)
           .fixedSize(horizontal: true, vertical: false)
       }
-      Text(entry.bangaliDate).font(font(14))
-      if !entry.gregorianDate.isEmpty { Text(entry.gregorianDate).font(font(12)) }
-      if !entry.sunrise.isEmpty { Text(entry.sunrise).font(font(12)) }
-      if !entry.sunset.isEmpty { Text(entry.sunset).font(font(12)) }
+      Text(entry.bangaliDate).font(font(15))
+      if !entry.gregorianDate.isEmpty { Text(entry.gregorianDate).font(font(13)) }
+      if !entry.sunrise.isEmpty { Text(entry.sunrise).font(font(13)) }
+      if !entry.sunset.isEmpty { Text(entry.sunset).font(font(13)) }
     }
     .foregroundStyle(palette.text)
     .lineLimit(1)
@@ -136,10 +136,10 @@ struct IslamiJindegiWidgetView: View {
     VStack(alignment: .leading, spacing: 3) {
       if !entry.currentPrayer.isEmpty {
         Text(entry.currentPrayer)
-          .font(font(family == .systemSmall ? 16 : 18, weight: .bold))
+          .font(font(family == .systemSmall ? 17 : 19, weight: .bold))
           .foregroundStyle(palette.accent)
       }
-      Text(entry.nextPrayer).font(font(14, weight: .medium)).foregroundStyle(palette.text)
+      Text(entry.nextPrayer).font(font(15, weight: .medium)).foregroundStyle(palette.text)
     }
     .lineLimit(1)
     .minimumScaleFactor(0.72)
@@ -151,11 +151,10 @@ struct IslamiJindegiWidgetView: View {
         Link(destination: destination(for: action.2)) {
           VStack(spacing: 2) {
             shortcutIcon(named: action.1)
-              .frame(height: 23)
-            Text(action.0).font(font(10, weight: .medium))
+              .frame(height: 34)
           }
           .foregroundStyle(palette.accent)
-          .frame(maxWidth: .infinity, minHeight: 39)
+          .frame(maxWidth: .infinity, minHeight: 42)
           .background(palette.text.opacity(0.08), in: RoundedRectangle(cornerRadius: 7))
         }
       }
