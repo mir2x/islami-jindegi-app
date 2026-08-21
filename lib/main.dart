@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:home_widget/home_widget.dart' hide callbackDispatcher;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -68,6 +69,12 @@ Future<void> main() async {
   }
 
   final container = ProviderContainer();
+
+  // The widget can cold-launch the app. This must happen before Flutter reads
+  // the launch URL, otherwise HomeWidget cannot return the tapped shortcut.
+  if (Platform.isIOS) {
+    await HomeWidget.setAppGroupId('group.islami_jindegi');
+  }
 
   // WidgetKit may not run its first background refresh for some time after a
   // new install. Sync the saved/fallback location as soon as the app opens.

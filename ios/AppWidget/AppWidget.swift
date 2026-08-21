@@ -1,14 +1,15 @@
 import SwiftUI
+import UIKit
 import WidgetKit
 
 private let appGroupId = "group.islami_jindegi"
 private let widgetActions = [
-  ("কুরআন", "book.closed", "/qurans"),
-  ("বই", "books.vertical", "/books"),
-  ("বয়ান", "speaker.wave.2", "/bayans"),
-  ("মালফুযাত", "quote.bubble", "/malfuzat"),
-  ("মাসায়েল", "questionmark.circle", "/masail"),
-  ("দোয়া", "hands.clap", "/duas"),
+  ("কুরআন", "quran", "/qurans"),
+  ("বই", "book", "/books"),
+  ("বয়ান", "bayan", "/bayans"),
+  ("মালফুযাত", "malfuzat", "/malfuzat"),
+  ("মাসায়েল", "masail", "/masail"),
+  ("দোয়া", "dua", "/duas"),
 ]
 
 struct IslamiJindegiWidgetEntry: TimelineEntry {
@@ -98,7 +99,10 @@ struct IslamiJindegiWidgetView: View {
     var components = URLComponents()
     components.scheme = "appWidget"
     components.host = "message"
-    components.queryItems = [URLQueryItem(name: "route", value: route)]
+    components.queryItems = [
+      URLQueryItem(name: "homeWidget", value: "1"),
+      URLQueryItem(name: "route", value: route),
+    ]
     return components.url!
   }
 
@@ -107,25 +111,25 @@ struct IslamiJindegiWidgetView: View {
   }
 
   private var datesAndSun: some View {
-    HStack(alignment: .top, spacing: 12) {
-      VStack(alignment: .leading, spacing: 3) {
-        Text(entry.hijriDate).font(font(family == .systemSmall ? 16 : 18, weight: .semibold))
-        Text(entry.bangaliDate).font(font(14))
-        if !entry.gregorianDate.isEmpty { Text(entry.gregorianDate).font(font(12)) }
+    VStack(alignment: .leading, spacing: 3) {
+      HStack(alignment: .firstTextBaseline, spacing: 8) {
+        Text(entry.hijriDate)
+          .font(font(family == .systemSmall ? 16 : 17, weight: .semibold))
+          .layoutPriority(1)
+        Spacer(minLength: 0)
+        Text(entry.location)
+          .font(font(13, weight: .medium))
+          .foregroundStyle(palette.accent)
+          .fixedSize(horizontal: true, vertical: false)
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
-
-      VStack(alignment: .leading, spacing: 4) {
-        if !entry.sunrise.isEmpty { Text(entry.sunrise) }
-        if !entry.sunset.isEmpty { Text(entry.sunset) }
-        Text(entry.location).foregroundStyle(palette.accent).lineLimit(1)
-      }
-      .font(font(13))
-      .frame(maxWidth: .infinity, alignment: .leading)
+      Text(entry.bangaliDate).font(font(14))
+      if !entry.gregorianDate.isEmpty { Text(entry.gregorianDate).font(font(12)) }
+      if !entry.sunrise.isEmpty { Text(entry.sunrise).font(font(12)) }
+      if !entry.sunset.isEmpty { Text(entry.sunset).font(font(12)) }
     }
     .foregroundStyle(palette.text)
     .lineLimit(1)
-    .minimumScaleFactor(0.72)
+    .minimumScaleFactor(0.78)
   }
 
   private var prayer: some View {
@@ -146,7 +150,8 @@ struct IslamiJindegiWidgetView: View {
       ForEach(widgetActions, id: \.2) { action in
         Link(destination: destination(for: action.2)) {
           VStack(spacing: 2) {
-            Image(systemName: action.1).font(.system(size: 18, weight: .medium))
+            shortcutIcon(named: action.1)
+              .frame(height: 23)
             Text(action.0).font(font(10, weight: .medium))
           }
           .foregroundStyle(palette.accent)
@@ -154,6 +159,20 @@ struct IslamiJindegiWidgetView: View {
           .background(palette.text.opacity(0.08), in: RoundedRectangle(cornerRadius: 7))
         }
       }
+    }
+  }
+
+  @ViewBuilder
+  private func shortcutIcon(named name: String) -> some View {
+    if let path = Bundle.main.path(forResource: name, ofType: "png", inDirectory: "WidgetIcons"),
+       let image = UIImage(contentsOfFile: path) {
+      Image(uiImage: image)
+        .resizable()
+        .scaledToFit()
+    } else {
+      Image(systemName: "square.dashed")
+        .resizable()
+        .scaledToFit()
     }
   }
 
