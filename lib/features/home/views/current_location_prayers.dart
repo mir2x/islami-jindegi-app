@@ -206,7 +206,7 @@ class Prayers extends StatelessWidget {
 
         final nextValue = prayerTimes['next'];
         final nextString = nextValue is Map
-            ? '${nextValue['title']} ${nextValue['time']}'
+            ? '${locales.next} ${nextValue['title']} ${nextValue['time']}'
             : nextValue as String;
         if (preferences.getString('nextPrayer') != nextString) {
           preferences.setString('nextPrayer', nextString);
@@ -219,20 +219,18 @@ class Prayers extends StatelessWidget {
           final cardRadius = compactHero ? 18.0 : 20.0;
           final horizontalPad = compactHero ? 10.0 : 12.0;
           final verticalPad = compactHero ? 6.0 : 8.0;
-          final titleStyle = (compactHero
-                  ? textTheme.titleSmall
-                  : textTheme.titleMedium)
-              ?.copyWith(
-                color: titleColor,
-                fontWeight: FontWeight.w800,
-              );
-          final emphasisStyle = (compactHero
-                  ? textTheme.titleMedium
-                  : textTheme.titleLarge)
-              ?.copyWith(
-                color: titleColor,
-                fontWeight: FontWeight.w800,
-              );
+          final titleStyle =
+              (compactHero ? textTheme.titleSmall : textTheme.titleMedium)
+                  ?.copyWith(
+            color: titleColor,
+            fontWeight: FontWeight.w800,
+          );
+          final emphasisStyle =
+              (compactHero ? textTheme.titleMedium : textTheme.titleLarge)
+                  ?.copyWith(
+            color: titleColor,
+            fontWeight: FontWeight.w800,
+          );
 
           return InkWell(
             borderRadius: BorderRadius.circular(cardRadius),

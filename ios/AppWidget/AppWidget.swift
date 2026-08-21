@@ -111,21 +111,26 @@ struct IslamiJindegiWidgetView: View {
   }
 
   private var datesAndSun: some View {
-    VStack(alignment: .leading, spacing: 3) {
-      HStack(alignment: .firstTextBaseline, spacing: 8) {
+    HStack(alignment: .top, spacing: 12) {
+      VStack(alignment: .leading, spacing: 3) {
         Text(entry.hijriDate)
           .font(font(family == .systemSmall ? 17 : 18, weight: .semibold))
           .layoutPriority(1)
-        Spacer(minLength: 0)
+        Text(entry.bangaliDate).font(font(15))
+        if !entry.gregorianDate.isEmpty { Text(entry.gregorianDate).font(font(13)) }
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+
+      VStack(alignment: .leading, spacing: 3) {
+        if !entry.sunrise.isEmpty { Text(entry.sunrise) }
+        if !entry.sunset.isEmpty { Text(entry.sunset) }
         Text(entry.location)
           .font(font(12, weight: .medium))
           .foregroundStyle(palette.accent)
-          .fixedSize(horizontal: true, vertical: false)
+          .lineLimit(1)
       }
-      Text(entry.bangaliDate).font(font(15))
-      if !entry.gregorianDate.isEmpty { Text(entry.gregorianDate).font(font(13)) }
-      if !entry.sunrise.isEmpty { Text(entry.sunrise).font(font(13)) }
-      if !entry.sunset.isEmpty { Text(entry.sunset).font(font(13)) }
+      .font(font(13))
+      .frame(width: family == .systemLarge ? 145 : 105, alignment: .leading)
     }
     .foregroundStyle(palette.text)
     .lineLimit(1)
@@ -139,26 +144,28 @@ struct IslamiJindegiWidgetView: View {
           .font(font(family == .systemSmall ? 17 : 19, weight: .bold))
           .foregroundStyle(palette.accent)
       }
-      Text(entry.nextPrayer).font(font(15, weight: .medium)).foregroundStyle(palette.text)
+      Text(nextPrayerText).font(font(15, weight: .medium)).foregroundStyle(palette.text)
     }
     .lineLimit(1)
     .minimumScaleFactor(0.72)
   }
 
   private var shortcuts: some View {
-    HStack(spacing: 4) {
+    HStack(spacing: 10) {
       ForEach(widgetActions, id: \.2) { action in
         Link(destination: destination(for: action.2)) {
-          VStack(spacing: 2) {
-            shortcutIcon(named: action.1)
-              .frame(height: 34)
-          }
-          .foregroundStyle(palette.accent)
-          .frame(maxWidth: .infinity, minHeight: 42)
-          .background(palette.text.opacity(0.08), in: RoundedRectangle(cornerRadius: 7))
+          shortcutIcon(named: action.1)
+            .frame(maxWidth: .infinity, maxHeight: 28)
+            .frame(maxWidth: .infinity, minHeight: 34)
         }
       }
     }
+  }
+
+  private var nextPrayerText: String {
+    let text = entry.nextPrayer.trimmingCharacters(in: .whitespacesAndNewlines)
+    if text.hasPrefix("পরবর্তী") || text.hasPrefix("Next") { return text }
+    return "পরবর্তীতে \(text)"
   }
 
   @ViewBuilder
