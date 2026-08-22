@@ -90,6 +90,24 @@
         </receiver>
 
         <receiver
+            android:name=".HijriPrayerWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/hijri_prayer_widget_info"/>
+        </receiver>
+
+        <receiver android:name=".PrayerScheduleWidget" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/prayer_schedule_widget_info"/>
+        </receiver>
+
+        <receiver
           android:name="es.antonborri.home_widget.HomeWidgetBackgroundReceiver"
           android:exported="true">
             <intent-filter>

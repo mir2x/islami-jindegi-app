@@ -62,8 +62,18 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
     val hijriDate = widgetData.getString("hijriDate", "Hijri Date")
     val bangaliDate = widgetData.getString("bangaliDate", "Bangali Date")
     val gregorianDate = widgetData.getString("gregorianDate", "Gregorian Date")
-    val sunrise = widgetData.getString("sunrise", "Sunrise")
-    val sunset = widgetData.getString("sunset", "Sunset")
+    val savedSunrise = widgetData.getString("sunrise", "") ?: ""
+    val savedSunset = widgetData.getString("sunset", "") ?: ""
+    val sunrise = if (savedSunrise.startsWith("Sunrise", ignoreCase = true) || savedSunrise.isBlank()) {
+      "সূর্যোদয় --:--"
+    } else {
+      savedSunrise
+    }
+    val sunset = if (savedSunset.startsWith("Sunset", ignoreCase = true) || savedSunset.isBlank()) {
+      "সূর্যাস্ত --:--"
+    } else {
+      savedSunset
+    }
     val location = widgetData.getString("location", "Location")
     val currentPrayer = widgetData.getString("currentPrayer", "Current Prayer")
     val nextPrayer = widgetData.getString("nextPrayer", "Prayers")
@@ -156,6 +166,31 @@ fun getFontBitmap(context: Context, text: String?, color: Int, ratio: Float, fon
   val bitmap = Bitmap.createBitmap(textWidth, height, Bitmap.Config.ARGB_8888)
   val canvas = Canvas(bitmap)
   canvas.drawText(text!!, pad, fontSizePX, paint)
+  return bitmap
+}
+
+fun getTwoLineFontBitmap(
+  context: Context,
+  firstLine: String,
+  secondLine: String,
+  color: Int,
+  ratio: Float,
+  fontSizeSP: Float,
+): Bitmap {
+  val size = ratio * convertDipToPix(context, fontSizeSP)
+  val paint = Paint().apply {
+    isAntiAlias = true
+    typeface = Typeface.createFromAsset(context.assets, "fonts/solaimanlipi.ttf")
+    this.color = color
+    textSize = size
+    textAlign = Paint.Align.CENTER
+  }
+  val width = max(paint.measureText(firstLine), paint.measureText(secondLine)).toInt() + size.toInt()
+  val bitmap = Bitmap.createBitmap(max(width, 1), (size * 2.45f).toInt(), Bitmap.Config.ARGB_8888)
+  val canvas = Canvas(bitmap)
+  val center = bitmap.width / 2f
+  canvas.drawText(firstLine, center, size, paint)
+  canvas.drawText(secondLine, center, size * 2.1f, paint)
   return bitmap
 }
 

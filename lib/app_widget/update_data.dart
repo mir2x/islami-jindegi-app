@@ -139,6 +139,7 @@ Future<bool> updateData() async {
         },
       )
       .toList();
+  final prayerScheduleJson = jsonEncode(prayerSchedule);
 
   String sunrise =
       "${sunriseSunset['sunrise']['title']} ${sunriseSunset['sunrise']['time']}";
@@ -149,18 +150,21 @@ Future<bool> updateData() async {
       prayerTimes.containsKey('current') && (prayerTimes['current'] != null);
 
   String? currentPrayer;
-  int countdownTarget;
-
+  int countdownSeconds;
   if (hasCurrentPrayer) {
     currentPrayer =
         "${prayerTimes['current']['title']} ${prayerTimes['current']['time']}";
-    countdownTarget = prayerTimes['current']['endsAt'] as int;
+    countdownSeconds = prayerTimes['current']['remainingSeconds'] as int;
   } else {
-    countdownTarget = prayerTimes['next']['startsAt'] as int;
+    countdownSeconds = prayerTimes['next']['remainingSeconds'] as int;
   }
+  final countdownTarget =
+      DateTime.now().millisecondsSinceEpoch + (countdownSeconds * 1000);
 
   String nextPrayer =
       '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}';
+  final nextPrayerName = prayerTimes['next']['title'] as String;
+  final nextPrayerTime = prayerTimes['next']['time'] as String;
 
   await updateAppWidget({
     'theme': theme,
@@ -174,8 +178,17 @@ Future<bool> updateData() async {
       'currentPrayer': currentPrayer,
     },
     'nextPrayer': nextPrayer,
-    'countdownTarget': countdownTarget,
-    'prayerSchedule': jsonEncode(prayerSchedule),
+    'nextPrayerName': nextPrayerName,
+    'nextPrayerTime': nextPrayerTime,
+    'countdownTarget': countdownTarget.toString(),
+    'prayerSchedule': prayerScheduleJson,
+    // Keep individual values as well as the JSON list. Android launchers can
+    // deliver an older or partially-written SharedPreferences snapshot to a
+    // newly-added widget; the individual values make its display reliable.
+    for (var i = 0; i < prayerSchedule.length; i++) ...{
+      'schedule${i}Title': prayerSchedule[i]['title']!,
+      'schedule${i}Time': prayerSchedule[i]['time']!,
+    },
   });
 
   await preferences.setString('hijriDate', hijriDate);
@@ -188,8 +201,7 @@ Future<bool> updateData() async {
   }
 
   await preferences.setString('nextPrayer', nextPrayer);
-  await preferences.setInt('countdownTarget', countdownTarget);
-  await preferences.setString('prayerSchedule', jsonEncode(prayerSchedule));
+  await preferences.setString('prayerSchedule', prayerScheduleJson);
 
   // Reschedule prayer alarms for today
   try {

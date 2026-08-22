@@ -19,6 +19,7 @@
 		AA1000000000000000000002 /* AppWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000003 /* AppWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		AA1000000000000000000017 /* solaimanlipi.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000018 /* solaimanlipi.ttf */; };
 		AA1000000000000000000020 /* WidgetIcons in Resources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000021 /* WidgetIcons */; };
+		AA1000000000000000000022 /* Islami Jindegi app icon in Resources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000023 /* Icon-App-1024x1024@1x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -71,6 +72,7 @@
 		AA1000000000000000000006 /* AppWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AppWidget.entitlements; sourceTree = "<group>"; };
 		AA1000000000000000000018 /* solaimanlipi.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = solaimanlipi.ttf; path = "../assets/fonts/solaimanlipi.ttf"; sourceTree = SOURCE_ROOT; };
 		AA1000000000000000000021 /* WidgetIcons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = WidgetIcons; sourceTree = "<group>"; };
+		AA1000000000000000000023 /* Icon-App-1024x1024@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Islami Jindegi app icon"; path = "../Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -271,6 +273,7 @@
 			files = (
 				AA1000000000000000000017 /* solaimanlipi.ttf in Resources */,
 				AA1000000000000000000020 /* WidgetIcons in Resources */,
+				AA1000000000000000000022 /* Islami Jindegi app icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

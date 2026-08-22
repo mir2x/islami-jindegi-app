@@ -17,15 +17,15 @@ Future<void> updateAppWidget(Map params) async {
 
   await Future.wait([
     'AppWidget',
-    'PrayerCountdownWidget',
     'HijriPrayerWidget',
     'PrayerScheduleWidget',
   ].map(
     (widgetName) => HomeWidget.updateWidget(
       name: widgetName,
-      androidName: 'AppWidget',
+      androidName: widgetName,
       iOSName: widgetName,
-      qualifiedAndroidName: 'com.islami_jindegi.native_app.AppWidget',
+      qualifiedAndroidName:
+          'com.islami_jindegi.native_app.$widgetName',
     ),
     ),
   );

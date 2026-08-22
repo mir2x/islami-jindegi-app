@@ -81,6 +81,11 @@ class PrayerTime {
           'time':
               '${_formatTime(currentWindow.startDateTime, currentLang)} - ${_formatTime(currentWindow.endDateTime, currentLang)}',
           'endsAt': currentWindow.endDateTime.millisecondsSinceEpoch,
+          'remainingSeconds': currentWindow.endDateTime
+              .difference(now)
+              .inSeconds
+              .clamp(0, 86400)
+              .toInt(),
         },
       },
       'next': {
@@ -93,6 +98,12 @@ class PrayerTime {
         'startsAt': (nextWindow?.startDateTime ??
                 todaySchedule['fajr']!.startDateTime)
             .millisecondsSinceEpoch,
+        'remainingSeconds': (nextWindow?.startDateTime ??
+                todaySchedule['fajr']!.startDateTime)
+            .difference(now)
+            .inSeconds
+            .clamp(0, 86400)
+            .toInt(),
       },
     };
   }

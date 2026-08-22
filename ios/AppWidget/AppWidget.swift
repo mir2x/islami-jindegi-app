@@ -37,6 +37,20 @@ private func widgetIcon(named name: String) -> some View {
   }
 }
 
+@ViewBuilder
+private func islamiJindegiAppIcon() -> some View {
+  if let path = Bundle.main.path(forResource: "Icon-App-1024x1024@1x", ofType: "png"),
+     let image = UIImage(contentsOfFile: path) {
+    Image(uiImage: image)
+      .resizable()
+      .scaledToFit()
+  } else {
+    Image(systemName: "app.fill")
+      .resizable()
+      .scaledToFit()
+  }
+}
+
 struct IslamiJindegiWidgetEntry: TimelineEntry {
   let date: Date
   let hijriDate: String
@@ -45,6 +59,8 @@ struct IslamiJindegiWidgetEntry: TimelineEntry {
   let location: String
   let currentPrayer: String
   let nextPrayer: String
+  let nextPrayerName: String
+  let nextPrayerTime: String
   let sunrise: String
   let sunset: String
   let countdownTarget: Date
@@ -67,13 +83,6 @@ struct IslamiJindegiWidgetProvider: TimelineProvider {
     return value
   }
 
-  private func savedDate(_ defaults: UserDefaults?, key: String) -> Date {
-    guard let milliseconds = defaults?.object(forKey: key) as? NSNumber else {
-      return Date()
-    }
-    return Date(timeIntervalSince1970: milliseconds.doubleValue / 1000)
-  }
-
   private func savedPrayerSchedule(_ defaults: UserDefaults?) -> [PrayerScheduleItem] {
     guard let rawValue = defaults?.string(forKey: "prayerSchedule"),
           let data = rawValue.data(using: .utf8),
@@ -81,6 +90,15 @@ struct IslamiJindegiWidgetProvider: TimelineProvider {
       return []
     }
     return schedule
+  }
+
+  private func savedDate(_ defaults: UserDefaults?, key: String) -> Date {
+    let milliseconds = (defaults?.object(forKey: key) as? NSNumber)?.doubleValue ??
+      Double(defaults?.string(forKey: key) ?? "")
+    guard let milliseconds else {
+      return Date()
+    }
+    return Date(timeIntervalSince1970: milliseconds / 1000)
   }
 
   private func entry() -> IslamiJindegiWidgetEntry {
@@ -93,8 +111,10 @@ struct IslamiJindegiWidgetProvider: TimelineProvider {
       location: savedText(defaults, key: "location", fallback: "ঢাকা, বাংলাদেশ"),
       currentPrayer: savedText(defaults, key: "currentPrayer", fallback: ""),
       nextPrayer: savedText(defaults, key: "nextPrayer", fallback: "নামাজের সময়"),
-      sunrise: savedText(defaults, key: "sunrise", fallback: ""),
-      sunset: savedText(defaults, key: "sunset", fallback: ""),
+      nextPrayerName: savedText(defaults, key: "nextPrayerName", fallback: "ফজর"),
+      nextPrayerTime: savedText(defaults, key: "nextPrayerTime", fallback: "--:--"),
+      sunrise: savedText(defaults, key: "sunrise", fallback: "সূর্যোদয় --:--"),
+      sunset: savedText(defaults, key: "sunset", fallback: "সূর্যাস্ত --:--"),
       countdownTarget: savedDate(defaults, key: "countdownTarget"),
       prayerSchedule: savedPrayerSchedule(defaults),
       theme: savedText(defaults, key: "theme", fallback: "classic")
@@ -162,15 +182,15 @@ struct IslamiJindegiWidgetView: View {
       .frame(maxWidth: .infinity, alignment: .leading)
 
       VStack(alignment: .leading, spacing: 3) {
-        if !entry.sunrise.isEmpty { Text(entry.sunrise) }
-        if !entry.sunset.isEmpty { Text(entry.sunset) }
+        Text(entry.sunrise)
+        Text(entry.sunset)
         Text(entry.location)
           .font(font(12 * scale, weight: .medium))
           .foregroundStyle(palette.accent)
           .lineLimit(1)
       }
-      .font(font(13 * scale))
-      .frame(width: min(112 * scale, availableWidth * 0.38), alignment: .leading)
+      .font(font(12 * scale))
+      .frame(width: min(118 * scale, availableWidth * 0.4), alignment: .leading)
     }
     .foregroundStyle(palette.text)
     .lineLimit(1)
@@ -258,93 +278,51 @@ struct AppWidget: Widget {
   }
 }
 
-private struct PrayerCountdownWidgetView: View {
-  let entry: IslamiJindegiWidgetEntry
-
-  private var palette: WidgetPalette { .forTheme(entry.theme) }
-
-  var body: some View {
-    VStack(spacing: 8) {
-      HStack(spacing: 8) {
-        widgetIcon(named: "dua")
-          .frame(width: 30, height: 30)
-        Text("নামাজের সময়")
-          .font(.custom("SolaimanLipi", size: 17).weight(.semibold))
-        Spacer(minLength: 0)
-      }
-      .foregroundStyle(palette.text)
-
-      ZStack {
-        Circle()
-          .stroke(palette.divider, lineWidth: 9)
-        Circle()
-          .trim(from: 0.06, to: 0.78)
-          .stroke(palette.accent, style: StrokeStyle(lineWidth: 9, lineCap: .round))
-          .rotationEffect(.degrees(-90))
-        VStack(spacing: 3) {
-          Text(entry.countdownTarget, style: .timer)
-            .font(.system(size: 24, weight: .bold, design: .rounded))
-            .minimumScaleFactor(0.7)
-          Text(entry.currentPrayer.isEmpty ? entry.nextPrayer : entry.currentPrayer)
-            .font(.custom("SolaimanLipi", size: 13))
-            .lineLimit(1)
-            .minimumScaleFactor(0.6)
-        }
-        .foregroundStyle(palette.text)
-      }
-      .frame(maxWidth: 112, maxHeight: 112)
-    }
-    .padding(14)
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .containerWidgetBackground(palette.background)
-    .widgetURL(widgetDestination(for: "/namaz-times"))
-  }
-}
-
 private struct HijriPrayerWidgetView: View {
   let entry: IslamiJindegiWidgetEntry
 
   private var palette: WidgetPalette { .forTheme(entry.theme) }
+  private var hijriDay: String { entry.hijriDate.split(separator: " ").first.map(String.init) ?? "" }
+  private var hijriMonthAndYear: String {
+    entry.hijriDate.split(separator: " ").dropFirst().joined(separator: " ")
+  }
+  private var currentPrayerName: String {
+    entry.currentPrayer.split(separator: " ").first.map(String.init) ?? "নামাজ"
+  }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 10) {
-      HStack(spacing: 9) {
-        widgetIcon(named: "quran")
-          .frame(width: 42, height: 42)
-        VStack(alignment: .leading, spacing: 1) {
-          Text(entry.hijriDate)
-            .font(.custom("SolaimanLipi", size: 17).weight(.semibold))
+    VStack(alignment: .leading, spacing: 0) {
+      HStack(alignment: .top, spacing: 10) {
+        islamiJindegiAppIcon()
+          .frame(width: 52, height: 52)
+        VStack(alignment: .leading, spacing: 0) {
+          Text(hijriDay)
+            .font(.custom("SolaimanLipi", size: 34).weight(.bold))
+          Text(hijriMonthAndYear)
+            .font(.custom("SolaimanLipi", size: 16))
             .lineLimit(1)
             .minimumScaleFactor(0.65)
-          Text(entry.bangaliDate)
-            .font(.custom("SolaimanLipi", size: 13))
-            .lineLimit(1)
         }
       }
       .foregroundStyle(palette.text)
 
-      Divider().overlay(palette.divider)
-
-      Text(entry.currentPrayer.isEmpty ? "নামাজের সময়" : entry.currentPrayer)
-        .font(.custom("SolaimanLipi", size: 18).weight(.semibold))
-        .foregroundStyle(palette.accent)
-        .lineLimit(1)
-        .minimumScaleFactor(0.6)
-      Text(entry.nextPrayer)
-        .font(.custom("SolaimanLipi", size: 15))
-        .foregroundStyle(palette.text)
-        .lineLimit(1)
-        .minimumScaleFactor(0.6)
       Spacer(minLength: 0)
-      HStack {
-        Text(entry.location)
-          .font(.custom("SolaimanLipi", size: 12))
-          .lineLimit(1)
-        Spacer(minLength: 0)
-        Image(systemName: "chevron.right")
-          .font(.caption.weight(.semibold))
+      VStack(spacing: 2) {
+        Text("\(currentPrayerName) শেষ হতে")
+          .font(.custom("SolaimanLipi", size: 19))
+        Text(entry.countdownTarget, style: .timer)
+          .font(.system(size: 28, weight: .bold, design: .rounded))
+        HStack(spacing: 12) {
+          Text(entry.nextPrayerName)
+          Divider().frame(height: 22)
+          Text(entry.nextPrayerTime)
+        }
+        .font(.custom("SolaimanLipi", size: 16))
+        .foregroundStyle(palette.text)
       }
-      .foregroundStyle(palette.accent)
+      .frame(maxWidth: .infinity)
+      .foregroundStyle(palette.text)
+      Spacer(minLength: 0)
     }
     .padding(14)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -361,19 +339,6 @@ private extension View {
     } else {
       self.background(color)
     }
-  }
-}
-
-struct PrayerCountdownWidget: Widget {
-  let kind = "PrayerCountdownWidget"
-
-  var body: some WidgetConfiguration {
-    StaticConfiguration(kind: kind, provider: IslamiJindegiWidgetProvider()) { entry in
-      PrayerCountdownWidgetView(entry: entry)
-    }
-    .configurationDisplayName("নামাজের কাউন্টডাউন")
-    .description("পরবর্তী নামাজের সময় পর্যন্ত বাকি সময় দেখুন।")
-    .supportedFamilies([.systemSmall])
   }
 }
 
@@ -394,27 +359,44 @@ private struct PrayerScheduleWidgetView: View {
   let entry: IslamiJindegiWidgetEntry
 
   private var palette: WidgetPalette { .forTheme(entry.theme) }
+  // Keep the five columns visually consistent. Full names such as
+  // "যুহর, যাওয়াল" and "মাগরিব, ইফতার" are intentionally not used here.
+  private let shortPrayerTitles = ["ফজর", "যোহর", "আসর", "মাগরিব", "ইশা"]
+
+  private var schedule: [(title: String, sourceTitle: String, time: String)] {
+    shortPrayerTitles.enumerated().map { index, shortTitle in
+      let item = entry.prayerSchedule.indices.contains(index)
+        ? entry.prayerSchedule[index]
+        : nil
+      return (
+        title: shortTitle,
+        sourceTitle: item?.title ?? shortTitle,
+        time: item?.time ?? "--:--"
+      )
+    }
+  }
+
+  private var currentPrayerName: String {
+    entry.currentPrayer.split(separator: " ").first.map(String.init) ?? "নামাজ"
+  }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 6) {
+    VStack(alignment: .leading, spacing: 5) {
       HStack(spacing: 8) {
-        widgetIcon(named: "quran")
-          .frame(width: 30, height: 30)
+        islamiJindegiAppIcon()
+          .frame(width: 34, height: 34)
         VStack(alignment: .leading, spacing: 1) {
           Text(entry.hijriDate)
-            .font(.custom("SolaimanLipi", size: 16).weight(.semibold))
+            .font(.custom("SolaimanLipi", size: 15).weight(.semibold))
             .lineLimit(1)
             .minimumScaleFactor(0.65)
           Text(entry.bangaliDate)
-            .font(.custom("SolaimanLipi", size: 12))
+            .font(.custom("SolaimanLipi", size: 11))
             .lineLimit(1)
         }
         Spacer(minLength: 0)
-        VStack(alignment: .trailing, spacing: 1) {
-          if !entry.sunrise.isEmpty { Text(entry.sunrise) }
-          if !entry.sunset.isEmpty { Text(entry.sunset) }
-        }
-        .font(.custom("SolaimanLipi", size: 12))
+        Text(entry.sunrise)
+        .font(.custom("SolaimanLipi", size: 11))
         .foregroundStyle(palette.accent)
         .lineLimit(1)
       }
@@ -423,8 +405,8 @@ private struct PrayerScheduleWidgetView: View {
       Divider().overlay(palette.divider)
 
       HStack(spacing: 0) {
-        ForEach(entry.prayerSchedule) { prayer in
-          let isCurrent = !entry.currentPrayer.isEmpty && entry.currentPrayer.contains(prayer.title)
+        ForEach(Array(schedule.enumerated()), id: \.offset) { _, prayer in
+          let isCurrent = !entry.currentPrayer.isEmpty && entry.currentPrayer.contains(prayer.sourceTitle)
           VStack(spacing: 3) {
             Text(prayer.title)
               .font(.custom("SolaimanLipi", size: 13).weight(.semibold))
@@ -436,20 +418,19 @@ private struct PrayerScheduleWidgetView: View {
               .minimumScaleFactor(0.65)
           }
           .foregroundStyle(isCurrent ? palette.accent : palette.text)
+          .padding(.vertical, 4)
+          .background(isCurrent ? palette.accent.opacity(0.12) : .clear)
+          .overlay(
+            RoundedRectangle(cornerRadius: 5)
+              .stroke(isCurrent ? palette.accent : .clear, lineWidth: 1)
+          )
           .frame(maxWidth: .infinity)
         }
       }
 
-      HStack {
-        Text(entry.nextPrayer)
-          .font(.custom("SolaimanLipi", size: 13))
-          .lineLimit(1)
-          .minimumScaleFactor(0.65)
-        Spacer(minLength: 0)
-        Text(entry.location)
-          .font(.custom("SolaimanLipi", size: 12))
-          .lineLimit(1)
-      }
+      Text("\(currentPrayerName) শেষ হতে বাকি: \(entry.countdownTarget, style: .timer)")
+        .font(.custom("SolaimanLipi", size: 13))
+        .frame(maxWidth: .infinity, alignment: .center)
       .foregroundStyle(palette.accent)
     }
     .padding(.horizontal, 14)
@@ -477,7 +458,6 @@ struct PrayerScheduleWidget: Widget {
 struct IslamiJindegiWidgetBundle: WidgetBundle {
   var body: some Widget {
     AppWidget()
-    PrayerCountdownWidget()
     HijriPrayerWidget()
     PrayerScheduleWidget()
   }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+  android:description="@string/add_widget"
+  android:initialKeyguardLayout="@layout/hijri_prayer_widget"
+  android:initialLayout="@layout/hijri_prayer_widget"
+  android:targetCellWidth="2"
+  android:targetCellHeight="2"
+  android:minWidth="160dp"
+  android:minHeight="160dp"
+  android:minResizeWidth="150dp"
+  android:minResizeHeight="150dp"
+  android:resizeMode="horizontal|vertical"
+  android:widgetCategory="home_screen" />
