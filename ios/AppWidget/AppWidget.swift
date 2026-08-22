@@ -52,7 +52,7 @@ struct IslamiJindegiWidgetEntry: TimelineEntry {
   let theme: String
 }
 
-private struct PrayerScheduleItem: Codable, Identifiable {
+struct PrayerScheduleItem: Codable, Identifiable {
   let title: String
   let time: String
 
