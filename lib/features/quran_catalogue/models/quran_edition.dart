@@ -81,6 +81,21 @@ class QuranEdition {
     await prefs.remove('reciter_downloaded_$editionId');
   }
 
+  /// Removes this edition's downloaded pages and its local download marker.
+  static Future<void> deleteDownload(String editionId) async {
+    final dir = await getApplicationDocumentsDirectory();
+    final editionDir = Directory('${dir.path}/$editionId');
+    final zipFile = File('${dir.path}/$editionId.zip');
+
+    if (await editionDir.exists()) {
+      await editionDir.delete(recursive: true);
+    }
+    if (await zipFile.exists()) {
+      await zipFile.delete();
+    }
+    await _clearDownloadStatus(editionId);
+  }
+
   static Future<QuranEdition> fromMap(Map<String, dynamic> map) async {
     var downloaded = await isAssetDownloaded(map['id']);
 

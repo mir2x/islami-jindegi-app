@@ -378,6 +378,17 @@ class _QuranEditionListItem extends ConsumerWidget {
               ),
             ),
             SizedBox(width: 10.w),
+            if (edition.isDownloaded) ...[
+              IconButton(
+                tooltip: locales.deleteFile,
+                icon: Icon(
+                  Icons.delete_outline_rounded,
+                  color: colors.secondaryText,
+                ),
+                onPressed: () => _deleteEdition(context, ref),
+              ),
+              SizedBox(width: 2.w),
+            ],
             Container(
               width: 44.r,
               height: 44.r,
@@ -458,6 +469,40 @@ class _QuranEditionListItem extends ConsumerWidget {
           content: Text(locales.mushafFilesMissingError),
         ),
       );
+    }
+  }
+
+  Future<void> _deleteEdition(BuildContext context, WidgetRef ref) async {
+    final locales = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(locales.deleteFile),
+        content: Text(locales.doYouWantToDeleteFile),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(locales.no),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(locales.yes),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      await QuranEdition.deleteDownload(edition.id);
+      await ref.read(quranEditionProvider.notifier).refreshDownloadStatus();
+    } on FileSystemException {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(locales.mushafFilesMissingError)),
+        );
+      }
     }
   }
 }

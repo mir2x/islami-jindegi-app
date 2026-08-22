@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:native_app/l10n/app_localizations.dart';
+import 'package:native_app/helpers/delete_file.dart';
+import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import '../providers/book_download_providers.dart';
 
@@ -32,6 +34,26 @@ class DownloadsScreen extends ConsumerWidget {
                     subtitle:
                         Text(item.authors ?? '', style: textTheme.labelSmall),
                     onTap: () => context.push('/books/downloads/${item.bookId}'),
+                    trailing: IconButton(
+                      tooltip: locales.deleteFile,
+                      icon: const Icon(Icons.delete_outline),
+                      onPressed: () async {
+                        final bookId = item.bookId;
+                        if (bookId == null || bookId.isEmpty) return;
+
+                        await deleteFile(
+                          context: context,
+                          ref: ref,
+                          filePath: fileTitlePath(
+                            item.title ?? '',
+                            'books/$bookId',
+                          ),
+                          callback: () => ref
+                              .read(downloadedBooksProvider.notifier)
+                              .deleteBook(bookId),
+                        );
+                      },
+                    ),
                   ),
                 );
               },
