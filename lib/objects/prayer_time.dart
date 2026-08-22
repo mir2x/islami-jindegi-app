@@ -80,6 +80,7 @@ class PrayerTime {
           'title': _localizedPrayerTitle(currentWindow.key, locales),
           'time':
               '${_formatTime(currentWindow.startDateTime, currentLang)} - ${_formatTime(currentWindow.endDateTime, currentLang)}',
+          'endsAt': currentWindow.endDateTime.millisecondsSinceEpoch,
         },
       },
       'next': {
@@ -89,6 +90,9 @@ class PrayerTime {
         'time': nextWindow != null
             ? _formatTime(nextWindow.startDateTime, currentLang)
             : _formatTime(todaySchedule['fajr']!.startDateTime, currentLang),
+        'startsAt': (nextWindow?.startDateTime ??
+                todaySchedule['fajr']!.startDateTime)
+            .millisecondsSinceEpoch,
       },
     };
   }

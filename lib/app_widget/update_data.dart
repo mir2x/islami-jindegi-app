@@ -78,18 +78,22 @@ Future<bool> updateData() async {
         if (todayData != null) {
           hijriDataToday = {
             ...Map<String, dynamic>.from(todayData),
-            'date': todayStr
+            'date': todayStr,
           };
           await preferences.setString(
-              'hijriDataToday', jsonEncode(hijriDataToday));
+            'hijriDataToday',
+            jsonEncode(hijriDataToday),
+          );
         }
         if (tomorrowData != null) {
           hijriDataTomorrow = {
             ...Map<String, dynamic>.from(tomorrowData),
-            'date': tomorrowStr
+            'date': tomorrowStr,
           };
           await preferences.setString(
-              'hijriDataTomorrow', jsonEncode(hijriDataTomorrow));
+            'hijriDataTomorrow',
+            jsonEncode(hijriDataTomorrow),
+          );
         }
       } catch (_) {
         // Network unavailable — will fall back to Umm al-Qura below.
@@ -126,6 +130,15 @@ Future<bool> updateData() async {
     locales,
     currentLang,
   );
+  final allPrayerTimes = prayerTime.getTimes(locales, currentLang);
+  final prayerSchedule = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha']
+      .map(
+        (key) => {
+          'title': allPrayerTimes[key]!['title'],
+          'time': allPrayerTimes[key]!['startTime'],
+        },
+      )
+      .toList();
 
   String sunrise =
       "${sunriseSunset['sunrise']['title']} ${sunriseSunset['sunrise']['time']}";
@@ -136,10 +149,14 @@ Future<bool> updateData() async {
       prayerTimes.containsKey('current') && (prayerTimes['current'] != null);
 
   String? currentPrayer;
+  int countdownTarget;
 
   if (hasCurrentPrayer) {
     currentPrayer =
         "${prayerTimes['current']['title']} ${prayerTimes['current']['time']}";
+    countdownTarget = prayerTimes['current']['endsAt'] as int;
+  } else {
+    countdownTarget = prayerTimes['next']['startsAt'] as int;
   }
 
   String nextPrayer =
@@ -157,6 +174,8 @@ Future<bool> updateData() async {
       'currentPrayer': currentPrayer,
     },
     'nextPrayer': nextPrayer,
+    'countdownTarget': countdownTarget,
+    'prayerSchedule': jsonEncode(prayerSchedule),
   });
 
   await preferences.setString('hijriDate', hijriDate);
@@ -169,6 +188,8 @@ Future<bool> updateData() async {
   }
 
   await preferences.setString('nextPrayer', nextPrayer);
+  await preferences.setInt('countdownTarget', countdownTarget);
+  await preferences.setString('prayerSchedule', jsonEncode(prayerSchedule));
 
   // Reschedule prayer alarms for today
   try {
