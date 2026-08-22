@@ -21,6 +21,8 @@ class ArticleApiService {
     String? search,
     String? articleAuthorId,
     String? articleCategoryId,
+    String? dateFrom,
+    String? dateTo,
   }) async {
     final params = <String, dynamic>{
       'page': page,
@@ -30,6 +32,8 @@ class ArticleApiService {
       if (search != null && search.isNotEmpty) 'search': search,
       if (articleAuthorId != null) 'authorId': articleAuthorId,
       if (articleCategoryId != null) 'categoryId': articleCategoryId,
+      if (dateFrom != null) 'dateFrom': dateFrom,
+      if (dateTo != null) 'dateTo': dateTo,
     };
 
     final response = await _dio.get('/articles', queryParameters: params);

@@ -22,6 +22,8 @@ class BayanApiService {
     String? search,
     String? speakerId,
     String? categoryId,
+    String? dateFrom,
+    String? dateTo,
   }) async {
     final params = <String, dynamic>{
       'page': page,
@@ -31,6 +33,8 @@ class BayanApiService {
       if (search != null && search.isNotEmpty) 'search': search,
       if (speakerId != null) 'authorId': speakerId,
       if (categoryId != null) 'categoryId': categoryId,
+      if (dateFrom != null) 'dateFrom': dateFrom,
+      if (dateTo != null) 'dateTo': dateTo,
     };
 
     final response = await _dio.get('/bayan', queryParameters: params);

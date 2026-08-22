@@ -6,6 +6,8 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/providers/downloaded_bayans.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/helpers/format_date.dart';
+import 'package:native_app/helpers/delete_file.dart';
+import 'package:native_app/helpers/file_title_path.dart';
 
 class BayanDownloadsScreen extends ConsumerWidget {
   const BayanDownloadsScreen({super.key});
@@ -34,37 +36,49 @@ class BayanDownloadsScreen extends ConsumerWidget {
                   return InkWell(
                     onTap: () => context.push('/bayans/downloads/${item.id}'),
                     child: ListItem(
-                      item: Column(
+                      item: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            item.title,
-                            style: textTheme.titleMedium,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.title,
+                                  style: textTheme.titleMedium,
+                                ),
+                                if (item.speaker != null) ...[
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 3),
+                                    child: Text(
+                                      item.speaker,
+                                      style: textTheme.labelMedium,
+                                    ),
+                                  ),
+                                ],
+                                if (item.location != null) ...[
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 2),
+                                    child: Text(
+                                      item.location,
+                                      style: textTheme.labelSmall,
+                                    ),
+                                  ),
+                                ],
+                                Container(
+                                  margin: const EdgeInsets.only(top: 2),
+                                  child: Text(
+                                    formatDate(item.publishedAt, currentLang),
+                                    style: textTheme.labelSmall,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          if (item.speaker != null) ...[
-                            Container(
-                              margin: const EdgeInsets.only(top: 3),
-                              child: Text(
-                                item.speaker,
-                                style: textTheme.labelMedium,
-                              ),
-                            ),
-                          ],
-                          if (item.location != null) ...[
-                            Container(
-                              margin: const EdgeInsets.only(top: 2),
-                              child: Text(
-                                item.location,
-                                style: textTheme.labelSmall,
-                              ),
-                            ),
-                          ],
-                          Container(
-                            margin: const EdgeInsets.only(top: 2),
-                            child: Text(
-                              formatDate(item.publishedAt, currentLang),
-                              style: textTheme.labelSmall,
-                            ),
+                          IconButton(
+                            tooltip: locales.deleteFile,
+                            icon: const Icon(Icons.delete_outline),
+                            onPressed: () => _confirmDelete(context, ref, item),
                           ),
                         ],
                       ),
@@ -86,6 +100,26 @@ class BayanDownloadsScreen extends ConsumerWidget {
           }
         },
       ),
+    );
+  }
+
+  /// Removes the downloaded audio file and the entry that points at it, the
+  /// same way the downloaded books list does. [deleteFile] shows the
+  /// confirmation dialog and only invokes the callback once the file is gone.
+  Future<void> _confirmDelete(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic item,
+  ) async {
+    final bayanId = item.bayanId;
+    if (bayanId == null || bayanId.isEmpty) return;
+
+    await deleteFile(
+      context: context,
+      ref: ref,
+      filePath: fileTitlePath(item.title ?? '', 'bayans/$bayanId'),
+      callback: () =>
+          ref.read(downloadedBayansProvider.notifier).deleteItem(bayanId),
     );
   }
 }

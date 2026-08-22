@@ -33,15 +33,25 @@ Future deleteFile({
 
       var path = await fileFallbackPath(filePath);
 
+      // The file may already be gone — cleared by the OS, removed by hand, or
+      // left behind by a download that never finished. Removing it is the only
+      // step that depends on it still being there; the bookkeeping below has to
+      // run either way, or the entry stays in the downloads list with nothing
+      // behind it and no way to get rid of it.
       if (path != null) {
-        await deleteFileDirectory(path);
-        await ref
-            .read(checkDownloadedFileProvider(filePath).notifier)
-            .check(filePath);
-
-        if (callback != null) {
-          await callback();
+        try {
+          await deleteFileDirectory(path);
+        } catch (error, stackTrace) {
+          debugPrint('deleteFile: removing $path failed: $error\n$stackTrace');
         }
+      }
+
+      await ref
+          .read(checkDownloadedFileProvider(filePath).notifier)
+          .check(filePath);
+
+      if (callback != null) {
+        await callback();
       }
     },
   );

@@ -26,6 +26,8 @@ class MalfuzatApiService {
     String? authorId,
     String? categoryId,
     bool? hasAudio,
+    String? dateFrom,
+    String? dateTo,
   }) async {
     final params = <String, dynamic>{
       'page': page,
@@ -36,6 +38,8 @@ class MalfuzatApiService {
       if (authorId != null) 'authorId': authorId,
       if (categoryId != null) 'categoryId': categoryId,
       if (hasAudio != null) 'hasAudio': hasAudio,
+      if (dateFrom != null) 'dateFrom': dateFrom,
+      if (dateTo != null) 'dateTo': dateTo,
     };
 
     final response = await _dio.get('/malfuzat', queryParameters: params);

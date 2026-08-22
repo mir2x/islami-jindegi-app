@@ -29,6 +29,7 @@ import 'routes/index.dart';
 import 'firebase_options.dart';
 import 'app_widget/task.dart';
 import 'app_widget/background.dart';
+import 'app_widget/refresh.dart';
 import 'package:quran_flutter/quran_flutter.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 
@@ -141,6 +142,16 @@ Future<void> _initializeNonBlockingServices(SharedPreferences prefs) async {
     debugPrint('Prayer alarm initialization failed: $error\n$stackTrace');
   }
 
+  // Home screen widgets only ever get prayer times, sunrise/sunset and the
+  // countdown target from a full refresh. Do one now so a freshly added widget
+  // is complete immediately instead of waiting for the periodic background
+  // task, and repeat it whenever the app comes back to the foreground.
+  await refreshAppWidgets(force: true);
+  _appWidgetLifecycleListener ??= AppLifecycleListener(
+    onResume: () => unawaited(refreshAppWidgets()),
+    onHide: () => unawaited(refreshAppWidgets()),
+  );
+
   try {
     await Quran.initialize();
   } catch (error, stackTrace) {
@@ -191,6 +202,10 @@ Future<void> _primeHijriDateCache(SharedPreferences prefs) async {
     // Leave any existing cache in place; later code will fall back as needed.
   }
 }
+
+/// Held for the process lifetime; the app has a single root and never needs to
+/// tear this down.
+AppLifecycleListener? _appWidgetLifecycleListener;
 
 String _dateStr(DateTime d) =>
     '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';

@@ -27,6 +27,8 @@ class MasailApiService {
     String? authorId,
     String? categoryId,
     String? hasAudio,
+    String? dateFrom,
+    String? dateTo,
   }) async {
     final params = <String, dynamic>{
       'page': page,
@@ -37,6 +39,8 @@ class MasailApiService {
       if (authorId != null) 'authorId': authorId,
       if (categoryId != null) 'categoryId': categoryId,
       if (hasAudio != null && hasAudio.isNotEmpty) 'hasAudio': hasAudio,
+      if (dateFrom != null) 'dateFrom': dateFrom,
+      if (dateTo != null) 'dateTo': dateTo,
     };
 
     final response = await _dio.get('/masail', queryParameters: params);

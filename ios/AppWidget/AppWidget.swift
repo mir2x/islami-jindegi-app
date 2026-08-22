@@ -63,9 +63,20 @@ struct IslamiJindegiWidgetEntry: TimelineEntry {
   let nextPrayerTime: String
   let sunrise: String
   let sunset: String
-  let countdownTarget: Date
+  // Absent until the app has written a full refresh, and cleared once it has
+  // elapsed. `Text(date, style: .timer)` counts *upwards* past a date in the
+  // past, so a missing target must never be substituted with `Date()`.
+  let countdownTarget: Date?
+  let countdownName: String
+  let countdownEnding: Bool
   let prayerSchedule: [PrayerScheduleItem]
   let theme: String
+  let locale: String
+
+  // For example "ইশা শেষ হতে" while Isha is running, or "ফজর শুরু হতে" between prayers.
+  var countdownHeadline: String {
+    "\(countdownName) \(countdownEnding ? "শেষ" : "শুরু") হতে"
+  }
 }
 
 struct PrayerScheduleItem: Codable, Identifiable {
@@ -84,21 +95,45 @@ struct IslamiJindegiWidgetProvider: TimelineProvider {
   }
 
   private func savedPrayerSchedule(_ defaults: UserDefaults?) -> [PrayerScheduleItem] {
-    guard let rawValue = defaults?.string(forKey: "prayerSchedule"),
-          let data = rawValue.data(using: .utf8),
-          let schedule = try? JSONDecoder().decode([PrayerScheduleItem].self, from: data) else {
-      return []
+    if let rawValue = defaults?.string(forKey: "prayerSchedule"),
+       let data = rawValue.data(using: .utf8),
+       let schedule = try? JSONDecoder().decode([PrayerScheduleItem].self, from: data),
+       !schedule.isEmpty {
+      return schedule
     }
-    return schedule
+
+    // The app also stores every prayer under its own key. A snapshot written
+    // before the JSON list landed still has those, so the schedule stays
+    // readable instead of falling back to five "--:--" columns.
+    let perPrayer = (0..<5).compactMap { index -> PrayerScheduleItem? in
+      guard let time = defaults?.string(forKey: "schedule\(index)Time"), !time.isEmpty else {
+        return nil
+      }
+      return PrayerScheduleItem(
+        title: defaults?.string(forKey: "schedule\(index)Title") ?? "",
+        time: time
+      )
+    }
+    return perPrayer.count == 5 ? perPrayer : []
   }
 
-  private func savedDate(_ defaults: UserDefaults?, key: String) -> Date {
-    let milliseconds = (defaults?.object(forKey: key) as? NSNumber)?.doubleValue ??
-      Double(defaults?.string(forKey: key) ?? "")
-    guard let milliseconds else {
-      return Date()
-    }
-    return Date(timeIntervalSince1970: milliseconds / 1000)
+  private func savedCountdownTarget(_ defaults: UserDefaults?) -> Date? {
+    let milliseconds = (defaults?.object(forKey: "countdownTarget") as? NSNumber)?.doubleValue ??
+      Double(defaults?.string(forKey: "countdownTarget") ?? "")
+    guard let milliseconds, milliseconds > 0 else { return nil }
+    let target = Date(timeIntervalSince1970: milliseconds / 1000)
+    return target > Date() ? target : nil
+  }
+
+  private func savedCountdownName(_ defaults: UserDefaults?) -> String {
+    let stored = defaults?.string(forKey: "countdownName")?
+      .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    if !stored.isEmpty { return stored }
+
+    // Data written before the app stored the countdown's prayer separately.
+    let current = defaults?.string(forKey: "currentPrayer") ?? ""
+    let name = current.split(separator: " ").first.map(String.init) ?? ""
+    return name.isEmpty ? "নামাজ" : name
   }
 
   private func entry() -> IslamiJindegiWidgetEntry {
@@ -115,16 +150,35 @@ struct IslamiJindegiWidgetProvider: TimelineProvider {
       nextPrayerTime: savedText(defaults, key: "nextPrayerTime", fallback: "--:--"),
       sunrise: savedText(defaults, key: "sunrise", fallback: "সূর্যোদয় --:--"),
       sunset: savedText(defaults, key: "sunset", fallback: "সূর্যাস্ত --:--"),
-      countdownTarget: savedDate(defaults, key: "countdownTarget"),
+      countdownTarget: savedCountdownTarget(defaults),
+      countdownName: savedCountdownName(defaults),
+      countdownEnding: (defaults?.string(forKey: "countdownEnding") ?? "1") != "0",
       prayerSchedule: savedPrayerSchedule(defaults),
-      theme: savedText(defaults, key: "theme", fallback: "classic")
+      theme: savedText(defaults, key: "theme", fallback: "classic"),
+      locale: savedText(defaults, key: "locale", fallback: "bn")
     )
   }
 
   func placeholder(in context: Context) -> IslamiJindegiWidgetEntry { entry() }
   func getSnapshot(in context: Context, completion: @escaping (IslamiJindegiWidgetEntry) -> Void) { completion(entry()) }
+
   func getTimeline(in context: Context, completion: @escaping (Timeline<IslamiJindegiWidgetEntry>) -> Void) {
-    completion(Timeline(entries: [entry()], policy: .never))
+    let current = entry()
+
+    // A `.never` policy leaves the widget frozen on whatever it last drew: an
+    // expired countdown, or yesterday's times if the app is never reopened.
+    // Ask WidgetKit to come back when the countdown runs out, bounded so a
+    // widget with no data yet still retries and a nearby prayer boundary does
+    // not burn the refresh budget.
+    let now = Date()
+    let wanted = current.countdownTarget?.addingTimeInterval(1)
+      ?? now.addingTimeInterval(15 * 60)
+    let refreshAt = min(
+      max(wanted, now.addingTimeInterval(2 * 60)),
+      now.addingTimeInterval(60 * 60)
+    )
+
+    completion(Timeline(entries: [current], policy: .after(refreshAt)))
   }
 }
 
@@ -286,48 +340,80 @@ private struct HijriPrayerWidgetView: View {
   private var hijriMonthAndYear: String {
     entry.hijriDate.split(separator: " ").dropFirst().joined(separator: " ")
   }
-  private var currentPrayerName: String {
-    entry.currentPrayer.split(separator: " ").first.map(String.init) ?? "নামাজ"
+
+  private func font(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+    .custom("SolaimanLipi", size: size).weight(weight)
   }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 0) {
-      HStack(alignment: .top, spacing: 10) {
-        islamiJindegiAppIcon()
-          .frame(width: 52, height: 52)
-        VStack(alignment: .leading, spacing: 0) {
-          Text(hijriDay)
-            .font(.custom("SolaimanLipi", size: 34).weight(.bold))
-          Text(hijriMonthAndYear)
-            .font(.custom("SolaimanLipi", size: 16))
-            .lineLimit(1)
-            .minimumScaleFactor(0.65)
-        }
-      }
-      .foregroundStyle(palette.text)
+    // A systemSmall widget is 141pt wide on an iPhone SE and 170pt on a Pro
+    // Max. The Bangla strings here ("রবিউল আউয়াল, ১৪৪৮", "মাগরিব, ইফতার শুরু হতে")
+    // are far wider than their English equivalents, so every size is derived
+    // from the real width instead of being hard-coded for one device.
+    GeometryReader { geometry in
+      let scale = min(1.15, max(0.85, geometry.size.width / 155))
 
-      Spacer(minLength: 0)
-      VStack(spacing: 2) {
-        Text("\(currentPrayerName) শেষ হতে")
-          .font(.custom("SolaimanLipi", size: 19))
-        Text(entry.countdownTarget, style: .timer)
-          .font(.system(size: 28, weight: .bold, design: .rounded))
-        HStack(spacing: 12) {
-          Text(entry.nextPrayerName)
-          Divider().frame(height: 22)
-          Text(entry.nextPrayerTime)
+      VStack(alignment: .leading, spacing: 0) {
+        HStack(alignment: .center, spacing: 6 * scale) {
+          islamiJindegiAppIcon()
+            .frame(width: 32 * scale, height: 32 * scale)
+          VStack(alignment: .leading, spacing: 0) {
+            Text(hijriDay)
+              .font(font(23 * scale, weight: .bold))
+            Text(hijriMonthAndYear)
+              .font(font(10 * scale))
+          }
+          .lineLimit(1)
+          .minimumScaleFactor(0.5)
         }
-        .font(.custom("SolaimanLipi", size: 16))
         .foregroundStyle(palette.text)
+
+        Spacer(minLength: 2)
+
+        VStack(spacing: 1) {
+          Text(entry.countdownHeadline)
+            .font(font(15 * scale))
+          countdownTimer(entry.countdownTarget, locale: entry.locale)
+            .font(.system(size: 24 * scale, weight: .bold, design: .rounded))
+            .monospacedDigit()
+            .foregroundStyle(palette.accent)
+          HStack(spacing: 7 * scale) {
+            Text(entry.nextPrayerName)
+            Divider().frame(height: 15 * scale)
+            Text(entry.nextPrayerTime)
+          }
+          .font(font(13 * scale))
+        }
+        .lineLimit(1)
+        .minimumScaleFactor(0.5)
+        .multilineTextAlignment(.center)
+        .frame(maxWidth: .infinity)
+        .foregroundStyle(palette.text)
+
+        Spacer(minLength: 2)
       }
-      .frame(maxWidth: .infinity)
-      .foregroundStyle(palette.text)
-      Spacer(minLength: 0)
+      .padding(11 * scale)
+      .frame(width: geometry.size.width, height: geometry.size.height, alignment: .top)
     }
-    .padding(14)
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
     .containerWidgetBackground(palette.background)
     .widgetURL(widgetDestination(for: "/qurans"))
+  }
+}
+
+// A live countdown, or a static zero when there is nothing to count down to.
+// `Text(date, style: .timer)` has no "stopped" state, so the absent case has to
+// be a separate view rather than a target in the past.
+//
+// Every other number on the widget is formatted by the app in the user's
+// language; `.timer` follows the *device* locale, so it is pinned here to keep
+// Bangla and Western digits from appearing side by side.
+@ViewBuilder
+private func countdownTimer(_ target: Date?, locale: String) -> some View {
+  if let target {
+    Text(target, style: .timer)
+      .environment(\.locale, Locale(identifier: locale))
+  } else {
+    Text(verbatim: locale.hasPrefix("bn") ? "০০:০০" : "00:00")
   }
 }
 
@@ -368,74 +454,91 @@ private struct PrayerScheduleWidgetView: View {
       let item = entry.prayerSchedule.indices.contains(index)
         ? entry.prayerSchedule[index]
         : nil
-      return (
-        title: shortTitle,
-        sourceTitle: item?.title ?? shortTitle,
-        time: item?.time ?? "--:--"
-      )
+      // An empty source title would make `currentPrayer.contains(_:)` below
+      // true for every column, highlighting the whole row.
+      let sourceTitle = item?.title.isEmpty == false ? item!.title : shortTitle
+      let time = item?.time.isEmpty == false ? item!.time : "--:--"
+      return (title: shortTitle, sourceTitle: sourceTitle, time: time)
     }
   }
 
-  private var currentPrayerName: String {
-    entry.currentPrayer.split(separator: " ").first.map(String.init) ?? "নামাজ"
+  private func font(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+    .custom("SolaimanLipi", size: size).weight(weight)
   }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 5) {
-      HStack(spacing: 8) {
-        islamiJindegiAppIcon()
-          .frame(width: 34, height: 34)
-        VStack(alignment: .leading, spacing: 1) {
-          Text(entry.hijriDate)
-            .font(.custom("SolaimanLipi", size: 15).weight(.semibold))
-            .lineLimit(1)
-            .minimumScaleFactor(0.65)
-          Text(entry.bangaliDate)
-            .font(.custom("SolaimanLipi", size: 11))
-            .lineLimit(1)
-        }
-        Spacer(minLength: 0)
-        Text(entry.sunrise)
-        .font(.custom("SolaimanLipi", size: 11))
-        .foregroundStyle(palette.accent)
-        .lineLimit(1)
-      }
-      .foregroundStyle(palette.text)
+    // systemMedium runs from 292pt wide (iPhone SE) to 364pt (Pro Max), and
+    // five prayer columns plus a countdown row have to fit in every one of them.
+    GeometryReader { geometry in
+      let scale = min(1.1, max(0.85, geometry.size.width / 329))
 
-      Divider().overlay(palette.divider)
-
-      HStack(spacing: 0) {
-        ForEach(Array(schedule.enumerated()), id: \.offset) { _, prayer in
-          let isCurrent = !entry.currentPrayer.isEmpty && entry.currentPrayer.contains(prayer.sourceTitle)
-          VStack(spacing: 3) {
-            Text(prayer.title)
-              .font(.custom("SolaimanLipi", size: 13).weight(.semibold))
-              .lineLimit(1)
-              .minimumScaleFactor(0.65)
-            Text(prayer.time)
-              .font(.custom("SolaimanLipi", size: 16).weight(.bold))
-              .lineLimit(1)
-              .minimumScaleFactor(0.65)
+      VStack(alignment: .leading, spacing: 4 * scale) {
+        HStack(spacing: 8 * scale) {
+          islamiJindegiAppIcon()
+            .frame(width: 32 * scale, height: 32 * scale)
+          VStack(alignment: .leading, spacing: 1) {
+            Text(entry.hijriDate)
+              .font(font(15 * scale, weight: .semibold))
+            Text(entry.bangaliDate)
+              .font(font(11 * scale))
           }
-          .foregroundStyle(isCurrent ? palette.accent : palette.text)
-          .padding(.vertical, 4)
-          .background(isCurrent ? palette.accent.opacity(0.12) : .clear)
-          .overlay(
-            RoundedRectangle(cornerRadius: 5)
-              .stroke(isCurrent ? palette.accent : .clear, lineWidth: 1)
-          )
-          .frame(maxWidth: .infinity)
-        }
-      }
+          .lineLimit(1)
+          .minimumScaleFactor(0.6)
 
-      Text("\(currentPrayerName) শেষ হতে বাকি: \(entry.countdownTarget, style: .timer)")
-        .font(.custom("SolaimanLipi", size: 13))
+          Spacer(minLength: 4 * scale)
+
+          Text(entry.sunrise)
+            .font(font(11 * scale))
+            .foregroundStyle(palette.accent)
+            .lineLimit(1)
+            .minimumScaleFactor(0.6)
+            .layoutPriority(-1)
+        }
+        .foregroundStyle(palette.text)
+
+        Divider().overlay(palette.divider)
+
+        HStack(spacing: 2 * scale) {
+          ForEach(Array(schedule.enumerated()), id: \.offset) { _, prayer in
+            let isCurrent = !entry.currentPrayer.isEmpty && entry.currentPrayer.contains(prayer.sourceTitle)
+            VStack(spacing: 2) {
+              Text(prayer.title)
+                .font(font(13 * scale, weight: .semibold))
+              Text(prayer.time)
+                .font(font(16 * scale, weight: .bold))
+            }
+            .lineLimit(1)
+            .minimumScaleFactor(0.55)
+            .foregroundStyle(isCurrent ? palette.accent : palette.text)
+            .padding(.vertical, 4 * scale)
+            .padding(.horizontal, 2 * scale)
+            .frame(maxWidth: .infinity)
+            .background(isCurrent ? palette.accent.opacity(0.12) : .clear)
+            .overlay(
+              RoundedRectangle(cornerRadius: 5)
+                .stroke(isCurrent ? palette.accent : .clear, lineWidth: 1)
+            )
+          }
+        }
+
+        Spacer(minLength: 0)
+
+        HStack(spacing: 4 * scale) {
+          Text("\(entry.countdownHeadline) বাকি:")
+          countdownTimer(entry.countdownTarget, locale: entry.locale)
+            .monospacedDigit()
+            .fixedSize()
+        }
+        .font(font(13 * scale))
+        .lineLimit(1)
+        .minimumScaleFactor(0.6)
         .frame(maxWidth: .infinity, alignment: .center)
-      .foregroundStyle(palette.accent)
+        .foregroundStyle(palette.accent)
+      }
+      .padding(.horizontal, 13 * scale)
+      .padding(.vertical, 9 * scale)
+      .frame(width: geometry.size.width, height: geometry.size.height, alignment: .top)
     }
-    .padding(.horizontal, 14)
-    .padding(.vertical, 10)
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
     .containerWidgetBackground(palette.background)
     .widgetURL(widgetDestination(for: "/namaz-times"))
   }

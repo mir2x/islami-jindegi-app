@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:native_app/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:native_app/helpers/date_range_filter.dart';
 import 'package:native_app/providers/query_params.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
@@ -12,7 +13,8 @@ class DateFilter extends ConsumerWidget {
   final dynamic queryProvider;
 
   String formatDate(String date, String locale) {
-    final inputDate = DateFormat('yyyy-MM-dd').parse(date);
+    final inputDate = DateRangeFilter.parseDay(date);
+    if (inputDate == null) return date;
     return DateFormat('dd MMMM yyyy', locale).format(inputDate);
   }
 
@@ -144,12 +146,8 @@ class _DateFilterSheetState extends ConsumerState<_DateFilterSheet> {
 
     final from = qParams['dateFrom'] as String?;
     final to = qParams['dateTo'] as String?;
-    if (from != null && from.isNotEmpty) {
-      _fromDate = DateFormat('yyyy-MM-dd').parse(from);
-    }
-    if (to != null && to.isNotEmpty) {
-      _toDate = DateFormat('yyyy-MM-dd').parse(to);
-    }
+    _fromDate = DateRangeFilter.parseDay(from);
+    _toDate = DateRangeFilter.parseDay(to);
   }
 
   Future<void> _pickDate({
@@ -196,11 +194,11 @@ class _DateFilterSheetState extends ConsumerState<_DateFilterSheet> {
       qParamsNotifier.updateParams('dateRange', '');
       qParamsNotifier.updateParams(
         'dateFrom',
-        _fromDate == null ? '' : DateFormat('yyyy-MM-dd').format(_fromDate!),
+        _fromDate == null ? '' : DateRangeFilter.formatDay(_fromDate!),
       );
       qParamsNotifier.updateParams(
         'dateTo',
-        _toDate == null ? '' : DateFormat('yyyy-MM-dd').format(_toDate!),
+        _toDate == null ? '' : DateRangeFilter.formatDay(_toDate!),
       );
     }
 

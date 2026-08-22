@@ -12,6 +12,7 @@ import org.json.JSONArray
 class PrayerScheduleWidget : AppWidgetProvider() {
   override fun onUpdate(context: Context, manager: AppWidgetManager, ids: IntArray) {
     ids.forEach { id -> updateSchedule(context, manager, id) }
+    requestDataRefreshIfStale(context)
   }
 }
 
@@ -29,7 +30,6 @@ private fun updateSchedule(context: Context, manager: AppWidgetManager, id: Int)
   val hijri = data.getString("hijriDate", "") ?: ""
   val sunrise = data.getString("sunrise", "") ?: ""
   val current = data.getString("currentPrayer", "") ?: ""
-  val target = data.getString("countdownTarget", "") ?: ""
   val schedule = runCatching { JSONArray(data.getString("prayerSchedule", "[]")) }.getOrDefault(JSONArray())
   val ids = intArrayOf(R.id.schedule0, R.id.schedule1, R.id.schedule2, R.id.schedule3, R.id.schedule4)
   val views = RemoteViews(context.packageName, R.layout.prayer_schedule_widget).apply {
@@ -48,11 +48,13 @@ private fun updateSchedule(context: Context, manager: AppWidgetManager, id: Int)
       val color = if (current.contains(title) && title.isNotEmpty()) accentColor else textColor
       setImageViewBitmap(viewId, getTwoLineFontBitmap(context, title, time, color, ratio, 13f))
     }
-    val name = current.split(Regex("\\s+")).firstOrNull() ?: "নামাজ"
-    setImageViewBitmap(R.id.scheduleRemainingLabel, getFontBitmap(context, "$name শেষ হতে বাকি:", accentColor, ratio, 13f))
-    val remainingMillis = ((target.toLongOrNull() ?: System.currentTimeMillis()) - System.currentTimeMillis()).coerceAtLeast(0L)
-    setChronometer(R.id.scheduleRemaining, SystemClock.elapsedRealtime() + remainingMillis, null, true)
-    setChronometerCountDown(R.id.scheduleRemaining, true)
+    setImageViewBitmap(
+      R.id.scheduleRemainingLabel,
+      getFontBitmap(context, countdownLabel(data, " বাকি:"), accentColor, ratio, 13f),
+    )
+    val remainingMillis = remainingCountdownMillis(data)
+    setChronometer(R.id.scheduleRemaining, SystemClock.elapsedRealtime() + remainingMillis, null, remainingMillis > 0)
+    setChronometerCountDown(R.id.scheduleRemaining, remainingMillis > 0)
     setTextColor(R.id.scheduleRemaining, accentColor)
     setOnClickPendingIntent(R.id.prayer_schedule_container, openLink(context, "/namaz-times"))
   }

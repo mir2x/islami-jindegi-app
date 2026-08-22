@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:hijri/hijri_calendar.dart';
 import 'package:adhan/adhan.dart';
 import 'package:native_app/l10n/app_localizations.dart';
@@ -16,7 +17,24 @@ import 'package:native_app/helpers/get_location_name.dart';
 import 'package:native_app/core/services/prayer_alarm_service.dart';
 import 'package:native_app/core/services/hijri_api.dart';
 
+/// Localized prayer titles carry a second name after a comma
+/// ("মাগরিব, ইফতার"). The countdown headline on a small home screen widget has
+/// room for one name, so it uses the first.
+String _shortPrayerTitle(String title) => title.split(',').first.trim();
+
+bool _timezoneDatabaseReady = false;
+
+/// The Workmanager and home_widget background isolates never run `main()`, so
+/// the timezone database is empty there. Without it `PrayerTime` silently falls
+/// back to the device clock and the widget shows times for the wrong zone.
+void _ensureTimezoneDatabase() {
+  if (_timezoneDatabaseReady) return;
+  tz_data.initializeTimeZones();
+  _timezoneDatabaseReady = true;
+}
+
 Future<bool> updateData() async {
+  _ensureTimezoneDatabase();
   final preferences = await SharedPreferences.getInstance();
   var currentLang = preferences.getString('locale') ?? 'bn';
   var locales = await AppLocalizations.delegate.load(Locale(currentLang));
@@ -151,12 +169,20 @@ Future<bool> updateData() async {
 
   String? currentPrayer;
   int countdownSeconds;
+  // Which prayer the widget countdown belongs to, and whether it counts down
+  // to that prayer's end (we are inside its window) or to its start.
+  String countdownName;
+  bool countdownEnding;
   if (hasCurrentPrayer) {
     currentPrayer =
         "${prayerTimes['current']['title']} ${prayerTimes['current']['time']}";
     countdownSeconds = prayerTimes['current']['remainingSeconds'] as int;
+    countdownName = _shortPrayerTitle(prayerTimes['current']['title'] as String);
+    countdownEnding = true;
   } else {
     countdownSeconds = prayerTimes['next']['remainingSeconds'] as int;
+    countdownName = _shortPrayerTitle(prayerTimes['next']['title'] as String);
+    countdownEnding = false;
   }
   final countdownTarget =
       DateTime.now().millisecondsSinceEpoch + (countdownSeconds * 1000);
@@ -168,6 +194,9 @@ Future<bool> updateData() async {
 
   await updateAppWidget({
     'theme': theme,
+    // The iOS widget formats its live countdown itself and would otherwise
+    // follow the device language, mixing Western and Bangla digits.
+    'locale': currentLang,
     'hijriDate': hijriDate,
     'bangaliDate': bangaliDate,
     'gregorianDate': gregorianDate,
@@ -177,6 +206,8 @@ Future<bool> updateData() async {
     if (hasCurrentPrayer) ...{
       'currentPrayer': currentPrayer,
     },
+    'countdownName': countdownName,
+    'countdownEnding': countdownEnding ? '1' : '0',
     'nextPrayer': nextPrayer,
     'nextPrayerName': nextPrayerName,
     'nextPrayerTime': nextPrayerTime,

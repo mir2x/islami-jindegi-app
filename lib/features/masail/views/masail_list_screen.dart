@@ -6,7 +6,9 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/offline_db_prompt.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
+import 'package:native_app/helpers/date_range_filter.dart';
 import 'package:native_app/widgets/filter/button.dart';
+import 'package:native_app/widgets/filter/date.dart';
 import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/triple_switch_button.dart';
@@ -71,6 +73,9 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(masailQueryParamsProvider);
+    // Presets ('past month') are resolved to concrete days here so the
+    // API and the offline database receive identical bounds.
+    final dateRange = DateRangeFilter.of(qParams);
     var settingsQuery = ref.watch(masailSettingsProvider);
     final lastVisited = ref.watch(lastVisitedProvider);
     final lastMasailId = lastVisited.value?.getString('lastMasail');
@@ -217,13 +222,25 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
                       Container(
                         padding:
                             const EdgeInsets.only(top: 10, left: 15, right: 15),
-                        child: SearchButtonField(
-                          value: qParams['search'],
-                          onUpdate: (value) {
-                            ref
-                                .read(masailQueryParamsProvider.notifier)
-                                .updateParams('search', value);
-                          },
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: DateFilter(
+                                queryProvider: masailQueryParamsProvider,
+                              ),
+                            ),
+                            const SizedBox(width: 15),
+                            Expanded(
+                              child: SearchButtonField(
+                                value: qParams['search'],
+                                onUpdate: (value) {
+                                  ref
+                                      .read(masailQueryParamsProvider.notifier)
+                                      .updateParams('search', value);
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ),
               ],
@@ -274,6 +291,8 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
                         authorId: qParams['authorId'],
                         categoryId: qParams['categoryId'],
                         hasAudio: qParams['hasAudio'],
+                        dateFrom: dateRange.from,
+                        dateTo: dateRange.to,
                       );
                     } catch (_) {
                       return await offline.queryMasails(
@@ -285,6 +304,8 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
                         hasAudio: qParams['hasAudio'] == 'true'
                             ? true
                             : (qParams['hasAudio'] == 'false' ? false : null),
+                        dateFrom: dateRange.from,
+                        dateTo: dateRange.to,
                       );
                     }
                   },

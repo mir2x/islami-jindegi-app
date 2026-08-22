@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
@@ -14,6 +15,7 @@ import android.graphics.Typeface
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.util.TypedValue
 import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
@@ -34,6 +36,7 @@ class AppWidget : AppWidgetProvider() {
     for (appWidgetId in appWidgetIds) {
       updateAppWidget(context, appWidgetManager, appWidgetId)
     }
+    requestDataRefreshIfStale(context)
   }
 
   override fun onReceive(context: Context?, intent: Intent?) {
@@ -50,6 +53,62 @@ class AppWidget : AppWidgetProvider() {
 
 // fun startReloadAnimation(context: Context) { ... }
 // fun getRotatedReloadBitmap(context: Context, angle: Float, sizePx: Int): Bitmap? { ... }
+
+// Prayer times, sunrise/sunset and the countdown target only ever come from a
+// full Dart-side refresh. A widget added to the home screen before that has
+// happened - or one whose countdown has already run out - would otherwise sit
+// on "--:--" and "00:00" until the next periodic background task.
+//
+// Ask Dart for fresh data in that case. Spinning up a background Flutter
+// engine is not free, so it is throttled and skipped whenever the stored
+// countdown target is still in the future.
+private const val REFRESH_THROTTLE_MS = 60_000L
+private var lastRefreshRequestAt = 0L
+
+internal fun requestDataRefreshIfStale(context: Context) {
+  val target = HomeWidgetPlugin.getData(context)
+    .getString("countdownTarget", "")
+    ?.toLongOrNull()
+  if (target != null && target > System.currentTimeMillis()) return
+
+  val now = SystemClock.elapsedRealtime()
+  if (lastRefreshRequestAt != 0L && now - lastRefreshRequestAt < REFRESH_THROTTLE_MS) return
+  lastRefreshRequestAt = now
+
+  runCatching {
+    HomeWidgetBackgroundIntent
+      .getBroadcast(context, Uri.parse("appWidget://refresh"))
+      .send()
+  }
+}
+
+// The countdown label, for example "ইশা শেষ হতে বাকি:". Dart stores the prayer name
+// already localized along with whether the countdown runs to the prayer's end
+// or to its start; older stored data has neither, so fall back to the current
+// prayer string.
+internal fun countdownLabel(
+  data: SharedPreferences,
+  suffix: String,
+): String {
+  val stored = data.getString("countdownName", "") ?: ""
+  val name = stored.ifBlank {
+    (data.getString("currentPrayer", "") ?: "")
+      .trim()
+      .split(Regex("\\s+"))
+      .firstOrNull()
+      .orEmpty()
+  }.ifBlank { "নামাজ" }
+
+  val ending = (data.getString("countdownEnding", "1") ?: "1") != "0"
+  val verb = if (ending) "শেষ" else "শুরু"
+  return "$name $verb হতে$suffix"
+}
+
+// Milliseconds left on the stored countdown, clamped at zero.
+internal fun remainingCountdownMillis(data: SharedPreferences): Long {
+  val target = (data.getString("countdownTarget", "") ?: "").toLongOrNull() ?: return 0L
+  return (target - System.currentTimeMillis()).coerceAtLeast(0L)
+}
 
 internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
   val widgetData = HomeWidgetPlugin.getData(context)

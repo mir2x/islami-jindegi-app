@@ -6,7 +6,9 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/offline_db_prompt.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
+import 'package:native_app/helpers/date_range_filter.dart';
 import 'package:native_app/widgets/filter/button.dart';
+import 'package:native_app/widgets/filter/date.dart';
 import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/presentation/content_list_card.dart';
@@ -67,6 +69,9 @@ class _ArticleListScreenState extends ConsumerState<ArticleListScreen> {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(articleQueryParamsProvider);
+    // Presets ('past month') are resolved to concrete days here so the
+    // API and the offline database receive identical bounds.
+    final dateRange = DateRangeFilter.of(qParams);
     final lastVisited = ref.watch(lastVisitedProvider);
     final lastArticleId = lastVisited.value?.getString('lastArticle');
 
@@ -216,13 +221,25 @@ class _ArticleListScreenState extends ConsumerState<ArticleListScreen> {
                       Container(
                         padding:
                             const EdgeInsets.only(top: 10, left: 15, right: 15),
-                        child: SearchButtonField(
-                          value: qParams['search'],
-                          onUpdate: (value) {
-                            ref
-                                .read(articleQueryParamsProvider.notifier)
-                                .updateParams('search', value);
-                          },
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: DateFilter(
+                                queryProvider: articleQueryParamsProvider,
+                              ),
+                            ),
+                            const SizedBox(width: 15),
+                            Expanded(
+                              child: SearchButtonField(
+                                value: qParams['search'],
+                                onUpdate: (value) {
+                                  ref
+                                      .read(articleQueryParamsProvider.notifier)
+                                      .updateParams('search', value);
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ),
               ],
@@ -244,6 +261,8 @@ class _ArticleListScreenState extends ConsumerState<ArticleListScreen> {
                         search: qParams['search'],
                         articleAuthorId: qParams['articleAuthorId'],
                         articleCategoryId: qParams['categoryId'],
+                        dateFrom: dateRange.from,
+                        dateTo: dateRange.to,
                       );
                     } catch (_) {
                       return await offline.queryArticles(
@@ -252,6 +271,8 @@ class _ArticleListScreenState extends ConsumerState<ArticleListScreen> {
                         search: qParams['search'],
                         articleAuthorId: qParams['articleAuthorId'],
                         articleCategoryId: qParams['categoryId'],
+                        dateFrom: dateRange.from,
+                        dateTo: dateRange.to,
                       );
                     }
                   },

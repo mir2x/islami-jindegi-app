@@ -20,6 +20,8 @@ class BayanOfflineService {
     String? search,
     String? speakerId,
     String? categoryId,
+    String? dateFrom,
+    String? dateTo,
   }) async {
     final db = await _db;
     final where = <String>['published = 1'];
@@ -37,6 +39,17 @@ class BayanOfflineService {
     if (search != null && search.isNotEmpty) {
       where.add('(title LIKE ? OR excerpt LIKE ?)');
       args.addAll(['%$search%', '%$search%']);
+    }
+
+    // `published_at` is stored as the API's ISO-8601 string. Comparing the day
+    // prefix keeps the bounds inclusive whatever time component came with it.
+    if (dateFrom != null && dateFrom.isNotEmpty) {
+      where.add('substr(published_at, 1, 10) >= ?');
+      args.add(dateFrom);
+    }
+    if (dateTo != null && dateTo.isNotEmpty) {
+      where.add('substr(published_at, 1, 10) <= ?');
+      args.add(dateTo);
     }
 
     final rows = await db.query(
