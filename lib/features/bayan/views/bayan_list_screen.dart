@@ -13,11 +13,12 @@ import 'package:native_app/widgets/filter/list.dart';
 import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/presentation/content_list_card.dart';
 import 'package:native_app/providers/downloaded_bayans.dart';
-import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/widgets/buttons/floating_downloaded.dart';
 import 'package:native_app/helpers/format_date.dart';
-import 'package:native_app/widgets/utils/last_visited.dart';
 import '../providers/bayan_providers.dart';
+import '../providers/bayan_list_state_provider.dart';
+import '../providers/bayan_progress_provider.dart';
+import 'widgets/continue_reading_card.dart';
 
 class BayanListScreen extends ConsumerStatefulWidget {
   const BayanListScreen({super.key});
@@ -27,46 +28,6 @@ class BayanListScreen extends ConsumerStatefulWidget {
 }
 
 class _BayanListScreenState extends ConsumerState<BayanListScreen> {
-  final ScrollController _scrollController = ScrollController();
-  final Map<String, GlobalKey> _itemKeys = {};
-  String? _lastScrolledToId;
-
-  GlobalKey _keyFor(String id) => _itemKeys.putIfAbsent(id, () => GlobalKey());
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _scrollToLastVisited(String? lastId) {
-    if (lastId == null || lastId == _lastScrolledToId) return;
-    final ctx = _keyFor(lastId).currentContext;
-    if (ctx != null) {
-      _lastScrolledToId = lastId;
-      Scrollable.ensureVisible(
-        ctx,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-        alignment: 0.3,
-      );
-    } else {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (!mounted) return;
-        final retryCtx = _keyFor(lastId).currentContext;
-        if (retryCtx != null) {
-          _lastScrolledToId = lastId;
-          Scrollable.ensureVisible(
-            retryCtx,
-            duration: const Duration(milliseconds: 400),
-            curve: Curves.easeInOut,
-            alignment: 0.3,
-          );
-        }
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
@@ -76,11 +37,21 @@ class _BayanListScreenState extends ConsumerState<BayanListScreen> {
     // Presets ('past month') are resolved to concrete days here so the
     // API and the offline database receive identical bounds.
     final dateRange = DateRangeFilter.of(qParams);
-    final lastVisited = ref.watch(lastVisitedProvider);
-    final lastBayanId = lastVisited.value?.getString('lastBayan');
+    final listState = ref.watch(
+      bayanListStateProvider(BayanListKey.fromParams(qParams)),
+    );
+    final progress = ref.watch(bayanProgressProvider);
+    final lastBayanId = progress?.id;
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => listState.restoreOffset());
 
     return AppScaffold(
-      onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
+      onBackPressed: () async {
+        if (context.canPop())
+          context.pop();
+        else
+          context.go('/');
+      },
       title: Text(locales.bayans),
       floatingActionButton: FloatingDownloadedButton(
         label: locales.downloadedBayans,
@@ -94,169 +65,163 @@ class _BayanListScreenState extends ConsumerState<BayanListScreen> {
               children: [
                 Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.only(top: 20, left: 15, right: 15),
+                  padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
                   child: Row(
+                    children: [
+                      Expanded(
+                        child: FilterButton(
+                          label: locales.speakers,
+                          active: qParams.containsKey('speakerId'),
+                          onClear: () {
+                            ref
+                                .read(bayanQueryParamsProvider.notifier)
+                                .updateParams('speakerId', '');
+                          },
+                          selectedItemProvider: qParams.containsKey('speakerId')
+                              ? singleSpeakerProvider(
+                                  qParams['speakerId'],
+                                )
+                              : null,
+                          selectedItemLabel: (dynamic item) {
+                            return item.name;
+                          },
                           children: [
                             Expanded(
-                              child: FilterButton(
-                                label: locales.speakers,
-                                active: qParams.containsKey('speakerId'),
-                                onClear: () {
-                                  ref
-                                      .read(bayanQueryParamsProvider.notifier)
-                                      .updateParams('speakerId', '');
-                                },
-                                selectedItemProvider:
-                                    qParams.containsKey('speakerId')
-                                        ? singleSpeakerProvider(
-                                            qParams['speakerId'],
-                                          )
-                                        : null,
-                                selectedItemLabel: (dynamic item) {
-                                  return item.name;
-                                },
-                                children: [
-                                  Expanded(
-                                    child: FilterList(
-                                      title: locales.speakers,
-                                      paramKeys: const ['speakerId'],
-                                      pageSize: 16,
-                                      searchEnabled: true,
-                                      queryProvider: bayanQueryParamsProvider,
-                                      resourceFetcher:
-                                          (Map<String, dynamic> params) async {
-                                        final api =
-                                            ref.read(bayanApiServiceProvider);
-                                        final offline = ref.read(
-                                            bayanOfflineServiceProvider);
-                                        try {
-                                          return await api.fetchSpeakers(
-                                            page: params['page'] ?? 1,
-                                            perPage: params['per_page'] ?? 16,
-                                            search: params['search'],
-                                          );
-                                        } catch (_) {
-                                          return await offline.querySpeakers(
-                                            page: params['page'] ?? 1,
-                                            perPage: params['per_page'] ?? 16,
-                                            search: params['search'],
-                                          );
-                                        }
-                                      },
-                                      itemBuilder: (_, item, __) {
-                                        return FilterItem(
-                                          itemId: item.id,
-                                          itemTitle: item.name,
-                                          paramKey: 'speakerId',
-                                          queryProvider:
-                                              bayanQueryParamsProvider,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 15),
-                            Expanded(
-                              child: FilterButton(
-                                label: locales.categories,
-                                active: qParams.containsKey('categoryId'),
-                                onClear: () {
-                                  ref
-                                      .read(bayanQueryParamsProvider.notifier)
-                                      .updateParams('categoryId', '');
-                                },
-                                selectedItemProvider:
-                                    qParams.containsKey('categoryId')
-                                        ? singleBayanCategoryProvider(
-                                            qParams['categoryId'],
-                                          )
-                                        : null,
-                                selectedItemLabel: (dynamic item) {
-                                  return item.title;
-                                },
-                                children: [
-                                  Expanded(
-                                    child: FilterList(
-                                      title: locales.categories,
-                                      paramKeys: const ['categoryId'],
-                                      pageSize: 16,
-                                      searchEnabled: true,
-                                      queryProvider: bayanQueryParamsProvider,
-                                      resourceFetcher:
-                                          (Map<String, dynamic> params) async {
-                                        final api =
-                                            ref.read(bayanApiServiceProvider);
-                                        final offline = ref.read(
-                                            bayanOfflineServiceProvider);
-                                        try {
-                                          return await api.fetchBayanCategories(
-                                            page: params['page'] ?? 1,
-                                            perPage: params['per_page'] ?? 16,
-                                            search: params['search'],
-                                          );
-                                        } catch (_) {
-                                          return await offline.queryCategories(
-                                            page: params['page'] ?? 1,
-                                            perPage: params['per_page'] ?? 16,
-                                            search: params['search'],
-                                          );
-                                        }
-                                      },
-                                      itemBuilder: (_, item, __) {
-                                        return FilterItem(
-                                          itemId: item.id,
-                                          itemTitle: item.title,
-                                          paramKey: 'categoryId',
-                                          queryProvider:
-                                              bayanQueryParamsProvider,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: double.infinity,
-                        padding:
-                            const EdgeInsets.only(top: 10, left: 15, right: 15),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: DateFilter(
+                              child: FilterList(
+                                title: locales.speakers,
+                                paramKeys: const ['speakerId'],
+                                pageSize: 16,
+                                searchEnabled: true,
                                 queryProvider: bayanQueryParamsProvider,
-                              ),
-                            ),
-                            const SizedBox(width: 15),
-                            Expanded(
-                              child: SearchButtonField(
-                                value: qParams['search'],
-                                onUpdate: (value) {
-                                  ref
-                                      .read(bayanQueryParamsProvider.notifier)
-                                      .updateParams('search', value);
+                                resourceFetcher:
+                                    (Map<String, dynamic> params) async {
+                                  final api = ref.read(bayanApiServiceProvider);
+                                  final offline =
+                                      ref.read(bayanOfflineServiceProvider);
+                                  try {
+                                    return await api.fetchSpeakers(
+                                      page: params['page'] ?? 1,
+                                      perPage: params['per_page'] ?? 16,
+                                      search: params['search'],
+                                    );
+                                  } catch (_) {
+                                    return await offline.querySpeakers(
+                                      page: params['page'] ?? 1,
+                                      perPage: params['per_page'] ?? 16,
+                                      search: params['search'],
+                                    );
+                                  }
+                                },
+                                itemBuilder: (_, item, __) {
+                                  return FilterItem(
+                                    itemId: item.id,
+                                    itemTitle: item.name,
+                                    paramKey: 'speakerId',
+                                    queryProvider: bayanQueryParamsProvider,
+                                  );
                                 },
                               ),
                             ),
                           ],
                         ),
                       ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: FilterButton(
+                          label: locales.categories,
+                          active: qParams.containsKey('categoryId'),
+                          onClear: () {
+                            ref
+                                .read(bayanQueryParamsProvider.notifier)
+                                .updateParams('categoryId', '');
+                          },
+                          selectedItemProvider:
+                              qParams.containsKey('categoryId')
+                                  ? singleBayanCategoryProvider(
+                                      qParams['categoryId'],
+                                    )
+                                  : null,
+                          selectedItemLabel: (dynamic item) {
+                            return item.title;
+                          },
+                          children: [
+                            Expanded(
+                              child: FilterList(
+                                title: locales.categories,
+                                paramKeys: const ['categoryId'],
+                                pageSize: 16,
+                                searchEnabled: true,
+                                queryProvider: bayanQueryParamsProvider,
+                                resourceFetcher:
+                                    (Map<String, dynamic> params) async {
+                                  final api = ref.read(bayanApiServiceProvider);
+                                  final offline =
+                                      ref.read(bayanOfflineServiceProvider);
+                                  try {
+                                    return await api.fetchBayanCategories(
+                                      page: params['page'] ?? 1,
+                                      perPage: params['per_page'] ?? 16,
+                                      search: params['search'],
+                                    );
+                                  } catch (_) {
+                                    return await offline.queryCategories(
+                                      page: params['page'] ?? 1,
+                                      perPage: params['per_page'] ?? 16,
+                                      search: params['search'],
+                                    );
+                                  }
+                                },
+                                itemBuilder: (_, item, __) {
+                                  return FilterItem(
+                                    itemId: item.id,
+                                    itemTitle: item.title,
+                                    paramKey: 'categoryId',
+                                    queryProvider: bayanQueryParamsProvider,
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.only(top: 10, left: 15, right: 15),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: DateFilter(
+                          queryProvider: bayanQueryParamsProvider,
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: SearchButtonField(
+                          value: qParams['search'],
+                          onUpdate: (value) {
+                            ref
+                                .read(bayanQueryParamsProvider.notifier)
+                                .updateParams('search', value);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
+            if (progress != null) BayanContinueReadingCard(progress: progress),
             Expanded(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: InfiniteList(
                   pageSize: 9,
                   qParams: qParams,
-                  scrollController: _scrollController,
-                  onFirstPageLoaded: () => _scrollToLastVisited(lastBayanId),
+                  controller: listState.pagingController,
+                  scrollController: listState.scrollController,
                   resourceFetcher: (Map<String, dynamic> params) async {
                     final api = ref.read(bayanApiServiceProvider);
                     final offline = ref.read(bayanOfflineServiceProvider);
@@ -284,13 +249,7 @@ class _BayanListScreenState extends ConsumerState<BayanListScreen> {
                   },
                   itemBuilder: (_, item, __) {
                     final isRecent = item.id == lastBayanId;
-                    if (isRecent && _lastScrolledToId != item.id) {
-                      WidgetsBinding.instance.addPostFrameCallback(
-                        (_) => _scrollToLastVisited(item.id),
-                      );
-                    }
                     return InkWell(
-                      key: _keyFor(item.id),
                       onTap: () => context.push('/bayans/${item.id}'),
                       child: ContentListCard(
                         recentlyVisited: isRecent,
@@ -344,11 +303,6 @@ class _BayanListScreenState extends ConsumerState<BayanListScreen> {
                                   ),
                                 ],
                               ),
-                            ),
-                            LastVisited(
-                              resourceKey: 'lastBayan',
-                              resourceId: item.id,
-                              isAudio: true,
                             ),
                           ],
                         ),

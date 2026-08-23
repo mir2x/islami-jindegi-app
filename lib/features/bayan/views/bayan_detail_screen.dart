@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
-import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/providers/downloaded_bayans.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
@@ -20,6 +19,7 @@ import 'package:native_app/core/navigation/offline_sibling_query.dart';
 import 'package:native_app/core/navigation/sibling_ref.dart';
 import '../providers/bayan_providers.dart';
 import '../models/bayan.dart';
+import '../providers/bayan_progress_provider.dart';
 import 'bayan_display.dart';
 
 class BayanDetailScreen extends ConsumerWidget {
@@ -58,8 +58,7 @@ class BayanDetailScreen extends ConsumerWidget {
         Future? previousPage() async {
           final previous = await _sibling(ref, resource, forward: false);
           if (!context.mounted) return;
-          context.go(
-              previous == null ? '/bayans' : '/bayans/${previous.id}');
+          context.go(previous == null ? '/bayans' : '/bayans/${previous.id}');
         }
 
         Future? nextPage() async {
@@ -68,8 +67,11 @@ class BayanDetailScreen extends ConsumerWidget {
           context.go('/bayans/${next.id}');
         }
 
-        Future(() {
-          ref.read(lastVisitedProvider.notifier).updateLastBayan(resource.id);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref.read(bayanProgressProvider.notifier).opened(
+                resource.id,
+                resource.title,
+              );
         });
 
         return AppScaffold(

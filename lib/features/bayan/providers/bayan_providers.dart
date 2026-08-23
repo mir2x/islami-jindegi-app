@@ -1,10 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dio/dio.dart';
 import 'package:native_app/core/navigation/offline_fallback.dart';
 import 'bayan_api_service.dart';
 import 'bayan_offline_service.dart';
 import '../models/bayan.dart';
 import '../models/speaker.dart';
 import '../models/bayan_category.dart';
+import 'bayan_progress_provider.dart';
 
 // ───────────────────── Services ─────────────────────
 
@@ -46,6 +48,9 @@ final singleBayanProvider =
   try {
     return await api.fetchBayan(id);
   } catch (error) {
+    if (error is DioException && error.response?.statusCode == 404) {
+      ref.read(bayanProgressProvider.notifier).clear(id);
+    }
     if (!shouldFallbackToOffline(error)) rethrow;
     final item = await offline.findBayanById(id);
     if (item != null) return item;
