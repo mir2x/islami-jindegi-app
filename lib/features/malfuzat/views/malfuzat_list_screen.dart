@@ -14,9 +14,10 @@ import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/triple_switch_button.dart';
 import 'package:native_app/widgets/presentation/content_list_card.dart';
 import 'package:native_app/providers/downloaded_malfuzat.dart';
-import 'package:native_app/providers/last_visited.dart';
-import 'package:native_app/widgets/utils/last_visited.dart';
+import 'package:native_app/core/navigation/retained_list_state.dart';
+import 'package:native_app/widgets/presentation/continue_reading_card.dart';
 import '../providers/malfuzat_providers.dart';
+import '../providers/malfuzat_progress_provider.dart';
 
 class MalfuzatListScreen extends ConsumerStatefulWidget {
   const MalfuzatListScreen({super.key});
@@ -26,46 +27,6 @@ class MalfuzatListScreen extends ConsumerStatefulWidget {
 }
 
 class _MalfuzatListScreenState extends ConsumerState<MalfuzatListScreen> {
-  final ScrollController _scrollController = ScrollController();
-  final Map<String, GlobalKey> _itemKeys = {};
-  String? _lastScrolledToId;
-
-  GlobalKey _keyFor(String id) => _itemKeys.putIfAbsent(id, () => GlobalKey());
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _scrollToLastVisited(String? lastId) {
-    if (lastId == null || lastId == _lastScrolledToId) return;
-    final ctx = _keyFor(lastId).currentContext;
-    if (ctx != null) {
-      _lastScrolledToId = lastId;
-      Scrollable.ensureVisible(
-        ctx,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-        alignment: 0.3,
-      );
-    } else {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (!mounted) return;
-        final retryCtx = _keyFor(lastId).currentContext;
-        if (retryCtx != null) {
-          _lastScrolledToId = lastId;
-          Scrollable.ensureVisible(
-            retryCtx,
-            duration: const Duration(milliseconds: 400),
-            curve: Curves.easeInOut,
-            alignment: 0.3,
-          );
-        }
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
@@ -74,11 +35,26 @@ class _MalfuzatListScreenState extends ConsumerState<MalfuzatListScreen> {
     // Presets ('past month') are resolved to concrete days here so the
     // API and the offline database receive identical bounds.
     final dateRange = DateRangeFilter.of(qParams);
-    final lastVisited = ref.watch(lastVisitedProvider);
-    final lastMalfuzatId = lastVisited.value?.getString('lastMalfuzat');
+    final listState = ref.watch(malfuzatListStateProvider(
+      RetainedListKey(Map.unmodifiable(Map<String, dynamic>.from(qParams))),
+    ));
+    final progress = ref.watch(malfuzatProgressProvider);
+    final tab = qParams['hasAudio'] == 'true'
+        ? MalfuzatTab.audio
+        : qParams['hasAudio'] == 'false'
+            ? MalfuzatTab.text
+            : MalfuzatTab.all;
+    final tabProgress = progress[tab];
+    final lastMalfuzatId = tabProgress?.id;
+    WidgetsBinding.instance.addPostFrameCallback((_) => listState.restore());
 
     return AppScaffold(
-      onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
+      onBackPressed: () async {
+        if (context.canPop())
+          context.pop();
+        else
+          context.go('/');
+      },
       title: Text(locales.malfuzat),
       body: OfflineDbPrompt(
         feature: 'malfuzats',
@@ -88,165 +64,158 @@ class _MalfuzatListScreenState extends ConsumerState<MalfuzatListScreen> {
               children: [
                 Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.only(top: 20, left: 15, right: 15),
+                  padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
                   child: Row(
+                    children: [
+                      Expanded(
+                        child: FilterButton(
+                          label: locales.authorsOrSpeakers,
+                          active: qParams.containsKey('authorId'),
+                          onClear: () {
+                            ref
+                                .read(
+                                  malfuzatQueryParamsProvider.notifier,
+                                )
+                                .updateParams('authorId', '');
+                          },
+                          selectedItemProvider: qParams.containsKey('authorId')
+                              ? singleMalfuzatAuthorProvider(
+                                  qParams['authorId'],
+                                )
+                              : null,
+                          selectedItemLabel: (dynamic item) {
+                            return item.name;
+                          },
                           children: [
                             Expanded(
-                              child: FilterButton(
-                                label: locales.authorsOrSpeakers,
-                                active: qParams.containsKey('authorId'),
-                                onClear: () {
-                                  ref
-                                      .read(
-                                        malfuzatQueryParamsProvider.notifier,
-                                      )
-                                      .updateParams('authorId', '');
-                                },
-                                selectedItemProvider:
-                                    qParams.containsKey('authorId')
-                                        ? singleMalfuzatAuthorProvider(
-                                            qParams['authorId'],
-                                          )
-                                        : null,
-                                selectedItemLabel: (dynamic item) {
-                                  return item.name;
-                                },
-                                children: [
-                                  Expanded(
-                                    child: FilterList(
-                                      title: locales.authorsOrSpeakers,
-                                      paramKeys: const ['authorId'],
-                                      searchEnabled: true,
-                                      queryProvider:
-                                          malfuzatQueryParamsProvider,
-                                      resourceFetcher:
-                                          (Map<String, dynamic> params) async {
-                                        final api = ref
-                                            .read(malfuzatApiServiceProvider);
-                                        final offline = ref.read(
-                                            malfuzatOfflineServiceProvider);
-                                        try {
-                                          return await api.fetchAuthors(
-                                            page: params['page'] ?? 1,
-                                            perPage: params['per_page'] ?? 16,
-                                            search: params['search'],
-                                          );
-                                        } catch (_) {
-                                          return await offline.queryAuthors(
-                                            page: params['page'] ?? 1,
-                                            perPage: params['per_page'] ?? 16,
-                                            search: params['search'],
-                                          );
-                                        }
-                                      },
-                                      itemBuilder: (_, item, __) {
-                                        return FilterItem(
-                                          itemId: item.id,
-                                          itemTitle: item.name,
-                                          paramKey: 'authorId',
-                                          queryProvider:
-                                              malfuzatQueryParamsProvider,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 15),
-                            Expanded(
-                              child: FilterButton(
-                                label: locales.categories,
-                                active: qParams.containsKey('categoryId'),
-                                onClear: () {
-                                  ref
-                                      .read(
-                                        malfuzatQueryParamsProvider.notifier,
-                                      )
-                                      .updateParams('categoryId', '');
-                                },
-                                selectedItemProvider:
-                                    qParams.containsKey('categoryId')
-                                        ? singleMalfuzatCategoryProvider(
-                                            qParams['categoryId'],
-                                          )
-                                        : null,
-                                selectedItemLabel: (dynamic item) {
-                                  return item.title;
-                                },
-                                children: [
-                                  Expanded(
-                                    child: FilterList(
-                                      title: locales.categories,
-                                      paramKeys: const ['categoryId'],
-                                      searchEnabled: true,
-                                      queryProvider:
-                                          malfuzatQueryParamsProvider,
-                                      resourceFetcher: (
-                                        Map<String, dynamic> params,
-                                      ) async {
-                                        final api = ref.read(
-                                          malfuzatApiServiceProvider,
-                                        );
-                                        final offline = ref.read(
-                                          malfuzatOfflineServiceProvider,
-                                        );
-                                        try {
-                                          return await api.fetchCategories(
-                                            page: params['page'] ?? 1,
-                                            perPage: params['per_page'] ?? 16,
-                                            search: params['search'],
-                                          );
-                                        } catch (_) {
-                                          return await offline.queryCategories(
-                                            page: params['page'] ?? 1,
-                                            perPage: params['per_page'] ?? 16,
-                                            search: params['search'],
-                                          );
-                                        }
-                                      },
-                                      itemBuilder: (_, item, __) {
-                                        return FilterItem(
-                                          itemId: item.id,
-                                          itemTitle: item.title,
-                                          paramKey: 'categoryId',
-                                          queryProvider:
-                                              malfuzatQueryParamsProvider,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding:
-                            const EdgeInsets.only(top: 10, left: 15, right: 15),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: DateFilter(
+                              child: FilterList(
+                                title: locales.authorsOrSpeakers,
+                                paramKeys: const ['authorId'],
+                                searchEnabled: true,
                                 queryProvider: malfuzatQueryParamsProvider,
-                              ),
-                            ),
-                            const SizedBox(width: 15),
-                            Expanded(
-                              child: SearchButtonField(
-                                value: qParams['search'],
-                                onUpdate: (value) {
-                                  ref
-                                      .read(malfuzatQueryParamsProvider.notifier)
-                                      .updateParams('search', value);
+                                resourceFetcher:
+                                    (Map<String, dynamic> params) async {
+                                  final api =
+                                      ref.read(malfuzatApiServiceProvider);
+                                  final offline =
+                                      ref.read(malfuzatOfflineServiceProvider);
+                                  try {
+                                    return await api.fetchAuthors(
+                                      page: params['page'] ?? 1,
+                                      perPage: params['per_page'] ?? 16,
+                                      search: params['search'],
+                                    );
+                                  } catch (_) {
+                                    return await offline.queryAuthors(
+                                      page: params['page'] ?? 1,
+                                      perPage: params['per_page'] ?? 16,
+                                      search: params['search'],
+                                    );
+                                  }
+                                },
+                                itemBuilder: (_, item, __) {
+                                  return FilterItem(
+                                    itemId: item.id,
+                                    itemTitle: item.name,
+                                    paramKey: 'authorId',
+                                    queryProvider: malfuzatQueryParamsProvider,
+                                  );
                                 },
                               ),
                             ),
                           ],
                         ),
                       ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: FilterButton(
+                          label: locales.categories,
+                          active: qParams.containsKey('categoryId'),
+                          onClear: () {
+                            ref
+                                .read(
+                                  malfuzatQueryParamsProvider.notifier,
+                                )
+                                .updateParams('categoryId', '');
+                          },
+                          selectedItemProvider:
+                              qParams.containsKey('categoryId')
+                                  ? singleMalfuzatCategoryProvider(
+                                      qParams['categoryId'],
+                                    )
+                                  : null,
+                          selectedItemLabel: (dynamic item) {
+                            return item.title;
+                          },
+                          children: [
+                            Expanded(
+                              child: FilterList(
+                                title: locales.categories,
+                                paramKeys: const ['categoryId'],
+                                searchEnabled: true,
+                                queryProvider: malfuzatQueryParamsProvider,
+                                resourceFetcher: (
+                                  Map<String, dynamic> params,
+                                ) async {
+                                  final api = ref.read(
+                                    malfuzatApiServiceProvider,
+                                  );
+                                  final offline = ref.read(
+                                    malfuzatOfflineServiceProvider,
+                                  );
+                                  try {
+                                    return await api.fetchCategories(
+                                      page: params['page'] ?? 1,
+                                      perPage: params['per_page'] ?? 16,
+                                      search: params['search'],
+                                    );
+                                  } catch (_) {
+                                    return await offline.queryCategories(
+                                      page: params['page'] ?? 1,
+                                      perPage: params['per_page'] ?? 16,
+                                      search: params['search'],
+                                    );
+                                  }
+                                },
+                                itemBuilder: (_, item, __) {
+                                  return FilterItem(
+                                    itemId: item.id,
+                                    itemTitle: item.title,
+                                    paramKey: 'categoryId',
+                                    queryProvider: malfuzatQueryParamsProvider,
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.only(top: 10, left: 15, right: 15),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: DateFilter(
+                          queryProvider: malfuzatQueryParamsProvider,
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: SearchButtonField(
+                          value: qParams['search'],
+                          onUpdate: (value) {
+                            ref
+                                .read(malfuzatQueryParamsProvider.notifier)
+                                .updateParams('search', value);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
             Container(
@@ -277,13 +246,18 @@ class _MalfuzatListScreenState extends ConsumerState<MalfuzatListScreen> {
                     qParams['hasAudio'] == 'true',
               ),
             ),
+            if (tabProgress != null)
+              ContinueReadingCard(
+                  title: tabProgress.title,
+                  destination: '/malfuzat/${tabProgress.id}',
+                  icon: Icons.menu_book_outlined),
             Expanded(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: InfiniteList(
                   qParams: qParams,
-                  scrollController: _scrollController,
-                  onFirstPageLoaded: () => _scrollToLastVisited(lastMalfuzatId),
+                  controller: listState.controller,
+                  scrollController: listState.scrollController,
                   resourceFetcher: (Map<String, dynamic> params) async {
                     final api = ref.read(malfuzatApiServiceProvider);
                     final offline = ref.read(malfuzatOfflineServiceProvider);
@@ -316,13 +290,7 @@ class _MalfuzatListScreenState extends ConsumerState<MalfuzatListScreen> {
                   },
                   itemBuilder: (_, item, __) {
                     final isRecent = item.id == lastMalfuzatId;
-                    if (isRecent && _lastScrolledToId != item.id) {
-                      WidgetsBinding.instance.addPostFrameCallback(
-                        (_) => _scrollToLastVisited(item.id),
-                      );
-                    }
                     return InkWell(
-                      key: _keyFor(item.id),
                       onTap: () => context.push('/malfuzat/${item.id}'),
                       child: ContentListCard(
                         recentlyVisited: isRecent,
@@ -356,11 +324,6 @@ class _MalfuzatListScreenState extends ConsumerState<MalfuzatListScreen> {
                                   ],
                                 ],
                               ),
-                            ),
-                            LastVisited(
-                              resourceKey: 'lastMalfuzat',
-                              resourceId: item.id,
-                              isAudio: item.audioUrl != null,
                             ),
                           ],
                         ),

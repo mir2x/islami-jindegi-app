@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
-import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/providers/downloaded_masail.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
@@ -22,6 +21,7 @@ import 'package:native_app/core/navigation/offline_sibling_query.dart';
 import 'package:native_app/core/navigation/sibling_ref.dart';
 import '../providers/masail_providers.dart';
 import '../models/masail.dart';
+import '../providers/masail_progress_provider.dart';
 import 'masail_display.dart';
 
 class MasailDetailScreen extends ConsumerWidget {
@@ -68,8 +68,11 @@ class MasailDetailScreen extends ConsumerWidget {
           context.go('/masail/${next.id}');
         }
 
-        Future(() {
-          ref.read(lastVisitedProvider.notifier).updateLastMasail(resource.id);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref.read(masailProgressProvider.notifier).opened(
+                resource.id,
+                resource.title,
+              );
         });
 
         return ResizableFont(

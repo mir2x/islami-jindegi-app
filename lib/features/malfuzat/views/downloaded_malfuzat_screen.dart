@@ -22,7 +22,8 @@ class DownloadedMalfuzatScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    int id = int.parse(GoRouterState.of(context).pathParameters['id'].toString());
+    int id =
+        int.parse(GoRouterState.of(context).pathParameters['id'].toString());
     var modelQuery = ref.watch(getDownloadedMalfuzatProvider(id));
 
     return modelQuery.when(

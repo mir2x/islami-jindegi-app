@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
-import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/providers/downloaded_malfuzat.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
@@ -22,6 +21,7 @@ import 'package:native_app/core/navigation/offline_sibling_query.dart';
 import 'package:native_app/core/navigation/sibling_ref.dart';
 import '../providers/malfuzat_providers.dart';
 import '../models/malfuzat.dart';
+import '../providers/malfuzat_progress_provider.dart';
 import 'malfuzat_display.dart';
 
 class MalfuzatDetailScreen extends ConsumerWidget {
@@ -92,8 +92,18 @@ class _MalfuzatContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    Future(() {
-      ref.read(lastVisitedProvider.notifier).updateLastMalfuzat(malfuzat.id);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final query = ref.read(malfuzatQueryParamsProvider);
+      final tab = query['hasAudio'] == 'true'
+          ? MalfuzatTab.audio
+          : query['hasAudio'] == 'false'
+              ? MalfuzatTab.text
+              : MalfuzatTab.all;
+      ref.read(malfuzatProgressProvider.notifier).opened(
+            malfuzat.id,
+            malfuzat.title,
+            tab: tab,
+          );
     });
 
     return ResizableFont(
