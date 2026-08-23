@@ -69,9 +69,16 @@ class MasailDetailScreen extends ConsumerWidget {
         }
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
+          final query = ref.read(masailQueryParamsProvider);
+          final tab = query['hasAudio'] == 'true'
+              ? MasailTab.audio
+              : query['hasAudio'] == 'false'
+                  ? MasailTab.text
+                  : MasailTab.all;
           ref.read(masailProgressProvider.notifier).opened(
                 resource.id,
                 resource.title,
+                tab: tab,
               );
         });
 

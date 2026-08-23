@@ -14,11 +14,12 @@ import 'package:native_app/widgets/filter/item.dart';
 import 'package:native_app/widgets/filter/triple_switch_button.dart';
 import 'package:native_app/widgets/presentation/content_list_card.dart';
 import 'package:native_app/providers/downloaded_masail.dart';
-import 'package:native_app/providers/last_visited.dart';
-import 'package:native_app/widgets/utils/last_visited.dart';
+import 'package:native_app/core/navigation/retained_list_state.dart';
+import 'package:native_app/widgets/presentation/continue_reading_card.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import '../providers/masail_providers.dart';
+import '../providers/masail_progress_provider.dart';
 
 class MasailListScreen extends ConsumerStatefulWidget {
   const MasailListScreen({super.key});
@@ -28,46 +29,6 @@ class MasailListScreen extends ConsumerStatefulWidget {
 }
 
 class _MasailListScreenState extends ConsumerState<MasailListScreen> {
-  final ScrollController _scrollController = ScrollController();
-  final Map<String, GlobalKey> _itemKeys = {};
-  String? _lastScrolledToId;
-
-  GlobalKey _keyFor(String id) => _itemKeys.putIfAbsent(id, () => GlobalKey());
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _scrollToLastVisited(String? lastId) {
-    if (lastId == null || lastId == _lastScrolledToId) return;
-    final ctx = _keyFor(lastId).currentContext;
-    if (ctx != null) {
-      _lastScrolledToId = lastId;
-      Scrollable.ensureVisible(
-        ctx,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-        alignment: 0.3,
-      );
-    } else {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (!mounted) return;
-        final retryCtx = _keyFor(lastId).currentContext;
-        if (retryCtx != null) {
-          _lastScrolledToId = lastId;
-          Scrollable.ensureVisible(
-            retryCtx,
-            duration: const Duration(milliseconds: 400),
-            curve: Curves.easeInOut,
-            alignment: 0.3,
-          );
-        }
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
@@ -77,8 +38,18 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
     // API and the offline database receive identical bounds.
     final dateRange = DateRangeFilter.of(qParams);
     var settingsQuery = ref.watch(masailSettingsProvider);
-    final lastVisited = ref.watch(lastVisitedProvider);
-    final lastMasailId = lastVisited.value?.getString('lastMasail');
+    final listState = ref.watch(masailListStateProvider(
+      RetainedListKey(Map.unmodifiable(Map<String, dynamic>.from(qParams))),
+    ));
+    final progress = ref.watch(masailProgressProvider);
+    final tab = qParams['hasAudio'] == 'true'
+        ? MasailTab.audio
+        : qParams['hasAudio'] == 'false'
+            ? MasailTab.text
+            : MasailTab.all;
+    final tabProgress = progress[tab];
+    final lastMasailId = tabProgress?.id;
+    WidgetsBinding.instance.addPostFrameCallback((_) => listState.restore());
 
     return AppScaffold(
       onBackPressed: () async {
@@ -273,13 +244,18 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
                     qParams['hasAudio'] == 'true',
               ),
             ),
+            if (tabProgress != null)
+              ContinueReadingCard(
+                  title: tabProgress.title,
+                  destination: '/masail/${tabProgress.id}',
+                  icon: Icons.menu_book_outlined),
             Expanded(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: InfiniteList(
                   qParams: qParams,
-                  scrollController: _scrollController,
-                  onFirstPageLoaded: () => _scrollToLastVisited(lastMasailId),
+                  controller: listState.controller,
+                  scrollController: listState.scrollController,
                   resourceFetcher: (Map<String, dynamic> params) async {
                     final api = ref.read(masailApiServiceProvider);
                     final offline = ref.read(masailOfflineServiceProvider);
@@ -311,13 +287,7 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
                   },
                   itemBuilder: (_, item, __) {
                     final isRecent = item.id == lastMasailId;
-                    if (isRecent && _lastScrolledToId != item.id) {
-                      WidgetsBinding.instance.addPostFrameCallback(
-                        (_) => _scrollToLastVisited(item.id),
-                      );
-                    }
                     return InkWell(
-                      key: _keyFor(item.id),
                       onTap: () => context.push('/masail/${item.id}'),
                       child: ContentListCard(
                         recentlyVisited: isRecent,
@@ -351,11 +321,6 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
                                   ],
                                 ],
                               ),
-                            ),
-                            LastVisited(
-                              resourceKey: 'lastMasail',
-                              resourceId: item.id,
-                              isAudio: item.hasAudio == true,
                             ),
                           ],
                         ),
