@@ -51,14 +51,17 @@ class MasailOfflineService {
       args.addAll(['%$search%', '%$search%']);
     }
 
-    // `published_at` is stored as the API's ISO-8601 string. Comparing the day
-    // prefix keeps the bounds inclusive whatever time component came with it.
+    // Dates are stored as the API's ISO-8601 strings, so comparing the day
+    // prefix keeps the bounds inclusive whatever time component came with them.
+    // `published_at` is null for most content carried over from the legacy
+    // backend, which kept only a creation date — the same fallback the API
+    // applies, so online and offline results match.
     if (dateFrom != null && dateFrom.isNotEmpty) {
-      where.add('substr(published_at, 1, 10) >= ?');
+      where.add('substr(COALESCE(published_at, created_at), 1, 10) >= ?');
       args.add(dateFrom);
     }
     if (dateTo != null && dateTo.isNotEmpty) {
-      where.add('substr(published_at, 1, 10) <= ?');
+      where.add('substr(COALESCE(published_at, created_at), 1, 10) <= ?');
       args.add(dateTo);
     }
 
