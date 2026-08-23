@@ -12,6 +12,7 @@ class ArticleOfflineService {
   // endpoint.
   Future<Database> get _db =>
       OfflineDatabaseHelper(feature: 'articles', version: 3).database;
+  Future<Database> get database => _db;
 
   // ───────────────────── Articles ─────────────────────
 
@@ -76,8 +77,8 @@ class ArticleOfflineService {
     final authorNames = <String, String>{};
     if (authorIds.isNotEmpty) {
       final ph = List.filled(authorIds.length, '?').join(',');
-      final authorRows = await db
-          .rawQuery('SELECT id, name FROM article_authors WHERE id IN ($ph)', authorIds);
+      final authorRows = await db.rawQuery(
+          'SELECT id, name FROM article_authors WHERE id IN ($ph)', authorIds);
       for (final r in authorRows) {
         authorNames[r['id'].toString()] = r['name'].toString();
       }
@@ -92,8 +93,8 @@ class ArticleOfflineService {
 
   Future<ArticleItem?> findArticleById(String id) async {
     final db = await _db;
-    final rows =
-        await db.query('articles', where: 'id = ?', whereArgs: [id]);
+    final rows = await db
+        .query('articles', where: 'id = ? AND published = 1', whereArgs: [id]);
     if (rows.isEmpty) return null;
 
     final row = rows.first;
@@ -171,8 +172,8 @@ class ArticleOfflineService {
 
   Future<ArticleCategory?> findCategoryById(String id) async {
     final db = await _db;
-    final rows = await db
-        .query('article_categories', where: 'id = ?', whereArgs: [id]);
+    final rows =
+        await db.query('article_categories', where: 'id = ?', whereArgs: [id]);
     if (rows.isEmpty) return null;
     return ArticleCategory.fromDb(rows.first);
   }

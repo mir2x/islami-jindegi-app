@@ -18,6 +18,8 @@ import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
+import 'package:native_app/core/navigation/offline_sibling_query.dart';
+import 'package:native_app/core/navigation/sibling_ref.dart';
 import '../providers/malfuzat_providers.dart';
 import '../models/malfuzat.dart';
 import 'malfuzat_display.dart';
@@ -43,73 +45,53 @@ class _MalfuzatContent extends ConsumerWidget {
 
   const _MalfuzatContent({required this.malfuzat});
 
-  /// Fetch the previous/next malfuzat by walking the cached, position-ordered
-  /// id list. The .NET API has no server-side "item at position N" lookup
-  /// (unlike the old JSON:API backend's `fetchMalfuzatByPosition`), so —
-  /// matching the book module's `_findAdjacentBook` pattern — we resolve
-  /// adjacency from `malfuzatNavigationIdsProvider`'s in-memory ordered list.
-  Future<MalfuzatItem?> _findAdjacentMalfuzat(
+  Future<SiblingRef?> _sibling(
     WidgetRef ref, {
-    required bool next,
+    required bool forward,
   }) async {
-    try {
-      final orderedIds = await ref.read(malfuzatNavigationIdsProvider.future);
-      final currentIndex = orderedIds.indexOf(malfuzat.id);
-      if (currentIndex != -1) {
-        final targetIndex = next ? currentIndex + 1 : currentIndex - 1;
-        if (targetIndex >= 0 && targetIndex < orderedIds.length) {
-          final targetId = orderedIds[targetIndex];
-          final api = ref.read(malfuzatApiServiceProvider);
-          try {
-            return await api.fetchSingleMalfuzat(targetId);
-          } catch (_) {
-            final offline = ref.read(malfuzatOfflineServiceProvider);
-            return await offline.findMalfuzatById(targetId);
-          }
-        }
-        return null;
-      }
-    } catch (_) {
-      // Fall back to offline position-based lookup below if API traversal fails.
-    }
-
-    final offline = ref.read(malfuzatOfflineServiceProvider);
-    final offlineMalfuzat = await offline.findMalfuzatById(malfuzat.id);
-    final position = offlineMalfuzat?.position ?? malfuzat.position;
-    if (position == null) return null;
-
-    return next
-        ? offline.findNextMalfuzatByPosition(position)
-        : offline.findPreviousMalfuzatByPosition(position);
+    final embedded = forward ? malfuzat.next : malfuzat.previous;
+    if (embedded != null) return embedded;
+    if (!malfuzat.isOffline) return null;
+    if (malfuzat.position == null) return null;
+    final db = await ref.read(malfuzatOfflineServiceProvider).database;
+    return findOfflineSibling(
+        db: db,
+        table: 'malfuzats',
+        position: malfuzat.position!,
+        id: malfuzat.id,
+        forward: forward,
+        descending: true);
   }
 
   Future<void> _previousPage(BuildContext context, WidgetRef ref) async {
+    SiblingRef? previous;
     try {
-      final previous = await _findAdjacentMalfuzat(ref, next: false);
-      if (previous == null) {
-        context.canPop() ? context.pop() : context.go('/malfuzat');
-        return;
-      }
-      context.go('/malfuzat/${previous.id}');
+      previous = await _sibling(ref, forward: false);
     } catch (_) {
+      previous = null;
+    }
+    if (!context.mounted) return;
+    if (previous != null) {
+      context.go('/malfuzat/${previous.id}');
+    } else {
       context.canPop() ? context.pop() : context.go('/malfuzat');
     }
   }
 
   Future<void> _nextPage(BuildContext context, WidgetRef ref) async {
+    SiblingRef? next;
     try {
-      final next = await _findAdjacentMalfuzat(ref, next: true);
-      if (next != null) {
-        context.go('/malfuzat/${next.id}');
-      }
-    } catch (_) {}
+      next = await _sibling(ref, forward: true);
+    } catch (_) {
+      return;
+    }
+    if (!context.mounted || next == null) return;
+    context.go('/malfuzat/${next.id}');
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    ref.watch(malfuzatNavigationIdsProvider);
-
     Future(() {
       ref.read(lastVisitedProvider.notifier).updateLastMalfuzat(malfuzat.id);
     });
@@ -170,7 +152,12 @@ class _MalfuzatContent extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Previous(onPrevious: () => _previousPage(context, ref)),
+              Previous(
+                onPrevious: () => _previousPage(context, ref),
+                resolveDisabledKey: malfuzat.id,
+                resolveDisabled: () async =>
+                    await _sibling(ref, forward: false) == null,
+              ),
               Row(
                 children: [
                   SocialShare(
@@ -190,7 +177,12 @@ class _MalfuzatContent extends ConsumerWidget {
                 fontSizeRatio: fontSizeRatio,
                 storeKey: 'malfuzatFontRatio',
               ),
-              Next(onNext: () => _nextPage(context, ref)),
+              Next(
+                onNext: () => _nextPage(context, ref),
+                resolveDisabledKey: malfuzat.id,
+                resolveDisabled: () async =>
+                    await _sibling(ref, forward: true) == null,
+              ),
             ],
           ),
         );

@@ -1,3 +1,5 @@
+import '../../../core/navigation/sibling_ref.dart';
+
 /// Pure Dart model for Bayan — no Flutter Data dependency.
 class Bayan {
   final String id;
@@ -11,6 +13,9 @@ class Bayan {
   final int? position;
   final String? createdAt;
   final String? updatedAt;
+  final SiblingRef? previous;
+  final SiblingRef? next;
+  final bool isOffline;
 
   /// Resolved from the .NET API's embedded `author` object (Bayan has a
   /// single author via a foreign key — the old Rails "speaker" concept,
@@ -31,6 +36,9 @@ class Bayan {
     this.position,
     this.createdAt,
     this.updatedAt,
+    this.previous,
+    this.next,
+    this.isOffline = false,
     this.speakerName,
   });
 
@@ -49,6 +57,8 @@ class Bayan {
       position: json['position'] is int ? json['position'] : null,
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
+      previous: SiblingRef.fromJson(json['previous'] as Map<String, dynamic>?),
+      next: SiblingRef.fromJson(json['next'] as Map<String, dynamic>?),
       speakerName: author?['name'],
     );
   }
@@ -67,6 +77,7 @@ class Bayan {
       createdAt: row['created_at'],
       updatedAt: row['updated_at'],
       speakerName: speakerName,
+      isOffline: true,
     );
   }
 }

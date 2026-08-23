@@ -1,4 +1,5 @@
 import 'book_subchapter.dart';
+import 'book_node_ref.dart';
 
 class BookChapter {
   final String id;
@@ -6,6 +7,10 @@ class BookChapter {
   final String? body;
   final int? position;
   final String? bookId;
+  final int? readingOrder;
+  final BookNodeRef? previous;
+  final BookNodeRef? next;
+  final bool isOffline;
   final List<BookSubchapter> subchapters;
 
   BookChapter({
@@ -14,6 +19,10 @@ class BookChapter {
     this.body,
     this.position,
     this.bookId,
+    this.readingOrder,
+    this.previous,
+    this.next,
+    this.isOffline = false,
     this.subchapters = const [],
   });
 
@@ -25,6 +34,9 @@ class BookChapter {
       body: json['body'],
       position: json['position'] is int ? json['position'] : null,
       bookId: json['bookId']?.toString(),
+      readingOrder: json['readingOrder'] as int?,
+      previous: BookNodeRef.fromJson(json['previous'] as Map<String, dynamic>?),
+      next: BookNodeRef.fromJson(json['next'] as Map<String, dynamic>?),
       subchapters: (json['subChapters'] as List? ?? [])
           .map((s) => BookSubchapter.fromJson(s))
           .toList(),
@@ -42,7 +54,9 @@ class BookChapter {
       body: row['body'],
       position: row['position'] is int ? row['position'] : null,
       bookId: row['book_id']?.toString() ?? row['bookId']?.toString(),
+      readingOrder: row['reading_order'] as int?,
       subchapters: subchapters,
+      isOffline: true,
     );
   }
 }

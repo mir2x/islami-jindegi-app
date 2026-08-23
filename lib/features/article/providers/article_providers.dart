@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/core/navigation/offline_fallback.dart';
 import 'article_api_service.dart';
 import 'article_offline_service.dart';
 import '../models/article.dart';
@@ -42,7 +43,8 @@ final singleArticleProvider =
   final offline = ref.read(articleOfflineServiceProvider);
   try {
     return await api.fetchSingleArticle(id);
-  } catch (_) {
+  } catch (error) {
+    if (!shouldFallbackToOffline(error)) rethrow;
     final item = await offline.findArticleById(id);
     if (item != null) return item;
     rethrow;

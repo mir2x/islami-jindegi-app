@@ -46,19 +46,6 @@ class ArticleApiService {
     return ArticleItem.fromJson(response.data as Map<String, dynamic>);
   }
 
-  Future<List<ArticleItem>> fetchArticlesByPosition({
-    int quantity = 1,
-    required int position,
-  }) async {
-    final params = <String, dynamic>{
-      'quantity': quantity,
-      'position': position,
-    };
-    final response = await _dio.get('/articles', queryParameters: params);
-    final data = response.data['data'] as List? ?? [];
-    return data.map((r) => ArticleItem.fromJson(r)).toList();
-  }
-
   // ───────────────────── Authors ─────────────────────
 
   Future<List<ArticleAuthor>> fetchAuthors({

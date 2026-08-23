@@ -1,3 +1,5 @@
+import '../../../core/navigation/sibling_ref.dart';
+
 /// Pure Dart model for News — no Flutter Data dependency.
 class NewsItem {
   final String id;
@@ -10,6 +12,8 @@ class NewsItem {
   final int? position;
   final String? createdAt;
   final String? updatedAt;
+  final SiblingRef? previous;
+  final SiblingRef? next;
 
   NewsItem({
     required this.id,
@@ -22,6 +26,8 @@ class NewsItem {
     this.position,
     this.createdAt,
     this.updatedAt,
+    this.previous,
+    this.next,
   });
 
   /// Parse from the .NET API's flat NewsListItem/NewsDetail JSON.
@@ -40,6 +46,8 @@ class NewsItem {
       position: json['position'] is int ? json['position'] : null,
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
+      previous: SiblingRef.fromJson(json['previous'] as Map<String, dynamic>?),
+      next: SiblingRef.fromJson(json['next'] as Map<String, dynamic>?),
     );
   }
 }

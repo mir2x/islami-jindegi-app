@@ -25,7 +25,7 @@ class BookSyncService {
     final currentIds = await _engine.fetchOfflineIds('/books/offline-ids');
 
     final db =
-        await OfflineDatabaseHelper(feature: 'books', version: 3).database;
+        await OfflineDatabaseHelper(feature: 'books', version: 4).database;
 
     final existingRows = await db
         .query('books', columns: ['id', 'updated_at', 'cover_image_path']);
@@ -100,6 +100,7 @@ class BookSyncService {
           'title': chapter['title'] ?? '',
           'body': chapter['body'],
           'position': chapter['position'],
+          'reading_order': chapter['readingOrder'],
         });
 
         for (final sub in (chapter['subChapters'] as List? ?? [])) {
@@ -109,6 +110,8 @@ class BookSyncService {
             'title': sub['title'] ?? '',
             'body': sub['body'],
             'position': sub['position'],
+            'parent_subchapter_id': sub['parentSubChapterId'],
+            'reading_order': sub['readingOrder'],
           });
         }
       }

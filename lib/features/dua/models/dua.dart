@@ -1,4 +1,5 @@
 import 'dua_category.dart';
+import '../../../core/navigation/sibling_ref.dart';
 
 /// Pure Dart model for Dua — no Flutter Data dependency.
 ///
@@ -19,6 +20,9 @@ class DuaItem {
   final String? createdAt;
   final String? updatedAt;
   final List<DuaCategory> categories;
+  final SiblingRef? previous;
+  final SiblingRef? next;
+  final bool isOffline;
 
   DuaItem({
     required this.id,
@@ -33,6 +37,9 @@ class DuaItem {
     this.createdAt,
     this.updatedAt,
     this.categories = const [],
+    this.previous,
+    this.next,
+    this.isOffline = false,
   });
 
   /// Parse from the .NET API's flat DuaListItem/DuaDetail JSON.
@@ -51,6 +58,8 @@ class DuaItem {
       published: json['published'],
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
+      previous: SiblingRef.fromJson(json['previous'] as Map<String, dynamic>?),
+      next: SiblingRef.fromJson(json['next'] as Map<String, dynamic>?),
       categories: (json['categories'] as List? ?? [])
           .map((c) => DuaCategory.fromJson(c))
           .toList(),
@@ -69,6 +78,7 @@ class DuaItem {
       position: row['position'] is int ? row['position'] : null,
       published: row['published'] == 1 || row['published'] == true,
       createdAt: row['created_at'],
+      isOffline: true,
       updatedAt: row['updated_at'],
     );
   }

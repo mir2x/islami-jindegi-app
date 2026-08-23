@@ -16,7 +16,7 @@ import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
-import '../models/book_subchapter.dart';
+import '../models/book_node_ref.dart';
 import '../providers/book_providers.dart';
 
 class ChapterScreen extends ConsumerWidget {
@@ -38,61 +38,45 @@ class ChapterScreen extends ConsumerWidget {
         if (resource == null) {
           return const ModelExeptionHandler(error: 'Chapter not found');
         }
-
-        Future<List<dynamic>> orderedEntries() async {
-          final chapters = await ref.read(
-            chapterListProvider(
-              ChapterListParams(
-                bookId: bookId,
-                includeSubchapters: true,
-              ),
-            ).future,
-          );
-
-          final entries = <dynamic>[];
-          for (final chapter in chapters) {
-            if (chapter.subchapters.isEmpty) {
-              entries.add(chapter);
-            } else {
-              entries.addAll(chapter.subchapters);
-            }
-          }
-          return entries;
+        // A header chapter carries no reading order — it is a table-of-contents
+        // node, not a navigable page. Send the reader to its first descendant.
+        final readingOrder = resource.readingOrder;
+        if (readingOrder == null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!context.mounted) return;
+            context.go(resource.subchapters.isNotEmpty
+                ? '/books/$bookId/subchapters/${resource.subchapters.first.id}'
+                : '/books/$bookId');
+          });
+          return const FullScreenLoader();
         }
 
+        Future<BookNodeRef?> sibling(bool forward) async =>
+            (forward ? resource.next : resource.previous) ??
+            (!resource.isOffline
+                ? null
+                : await ref
+                    .read(bookOfflineServiceProvider)
+                    .findBookNodeSibling(
+                        bookId: bookId,
+                        readingOrder: readingOrder,
+                        forward: forward));
+
+        String routeFor(BookNodeRef node) => node.kind == 'subchapter'
+            ? '/books/$bookId/subchapters/${node.id}'
+            : '/books/$bookId/chapters/${node.id}';
+
         Future? previousPage() async {
-          final entries = await orderedEntries();
-          final currentIndex = entries.indexWhere(
-            (entry) => entry.id == resource.id,
-          );
-
-          if (currentIndex <= 0) {
-            context.go('/books/$bookId');
-            return;
-          }
-
-          final previousEntry = entries[currentIndex - 1];
-          if (previousEntry is BookSubchapter) {
-            context.go('/books/$bookId/subchapters/${previousEntry.id}');
-          } else {
-            context.go('/books/$bookId/chapters/${previousEntry.id}');
-          }
+          final previous = await sibling(false);
+          if (!context.mounted) return;
+          context.go(
+              previous == null ? '/books/$bookId' : routeFor(previous));
         }
 
         Future? nextPage() async {
-          final entries = await orderedEntries();
-          final currentIndex = entries.indexWhere(
-            (entry) => entry.id == resource.id,
-          );
-
-          if (currentIndex == -1 || currentIndex + 1 >= entries.length) return;
-
-          final nextEntry = entries[currentIndex + 1];
-          if (nextEntry is BookSubchapter) {
-            context.go('/books/$bookId/subchapters/${nextEntry.id}');
-          } else {
-            context.go('/books/$bookId/chapters/${nextEntry.id}');
-          }
+          final next = await sibling(true);
+          if (!context.mounted || next == null) return;
+          context.go(routeFor(next));
         }
 
         // Track last visited chapter (deferred to avoid modifying state during build)
@@ -109,7 +93,8 @@ class ChapterScreen extends ConsumerWidget {
             return AppScaffold(
               onBackPressed: () async => context.go('/books/$bookId'),
               showPattern: false,
-              title: Text(ref.watch(bookDetailProvider(bookId)).value?.title ?? locales.book),
+              title: Text(ref.watch(bookDetailProvider(bookId)).value?.title ??
+                  locales.book),
               body: NextPageSwipe(
                 onPrevious: previousPage,
                 onNext: nextPage,
@@ -138,7 +123,11 @@ class ChapterScreen extends ConsumerWidget {
               bottomBar: BottomBar(
                 alignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Previous(onPrevious: previousPage),
+                  Previous(
+                    onPrevious: previousPage,
+                    resolveDisabledKey: resource.id,
+                    resolveDisabled: () async => await sibling(false) == null,
+                  ),
                   Row(
                     children: [
                       SocialShare(
@@ -157,7 +146,11 @@ class ChapterScreen extends ConsumerWidget {
                     fontSizeRatio: fontSizeRatio,
                     storeKey: 'bookFontRatio',
                   ),
-                  Next(onNext: nextPage),
+                  Next(
+                    onNext: nextPage,
+                    resolveDisabledKey: resource.id,
+                    resolveDisabled: () async => await sibling(true) == null,
+                  ),
                 ],
               ),
             );

@@ -10,6 +10,7 @@ class DuaOfflineService {
   // rebuild their local schema and re-sync from the offline-sync endpoint.
   Future<Database> get _db =>
       OfflineDatabaseHelper(feature: 'duas', version: 3).database;
+  Future<Database> get database => _db;
 
   // ───────────────────── Duas ─────────────────────
 
@@ -46,7 +47,8 @@ class DuaOfflineService {
 
   Future<DuaItem?> findDuaById(String id) async {
     final db = await _db;
-    final rows = await db.query('duas', where: 'id = ?', whereArgs: [id]);
+    final rows = await db
+        .query('duas', where: 'id = ? AND published = 1', whereArgs: [id]);
     if (rows.isEmpty) return null;
     return DuaItem.fromDb(rows.first);
   }

@@ -16,8 +16,7 @@ import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
-import '../models/book_chapter.dart';
-import '../models/book_subchapter.dart';
+import '../models/book_node_ref.dart';
 import '../providers/book_providers.dart';
 
 class SubchapterScreen extends ConsumerWidget {
@@ -40,62 +39,33 @@ class SubchapterScreen extends ConsumerWidget {
           return const ModelExeptionHandler(error: 'Subchapter not found');
         }
 
-        Future<List<dynamic>> orderedEntries() async {
-          final chapters = await ref.read(
-            chapterListProvider(
-              ChapterListParams(
-                bookId: bookId,
-                includeSubchapters: true,
-              ),
-            ).future,
-          );
+        final readingOrder = resource.readingOrder;
 
-          final entries = <dynamic>[];
-          for (final chapter in chapters) {
-            if (chapter.subchapters.isEmpty) {
-              entries.add(chapter);
-            } else {
-              entries.addAll(chapter.subchapters);
-            }
-          }
-          return entries;
-        }
+        Future<BookNodeRef?> sibling(bool forward) async =>
+            (forward ? resource.next : resource.previous) ??
+            (!resource.isOffline || readingOrder == null
+                ? null
+                : await ref
+                    .read(bookOfflineServiceProvider)
+                    .findBookNodeSibling(
+                        bookId: bookId,
+                        readingOrder: readingOrder,
+                        forward: forward));
+
+        String routeFor(BookNodeRef node) => node.kind == 'subchapter'
+            ? '/books/$bookId/subchapters/${node.id}'
+            : '/books/$bookId/chapters/${node.id}';
 
         Future? previousPage() async {
-          final entries = await orderedEntries();
-          final currentIndex = entries.indexWhere(
-            (entry) => entry is BookSubchapter && entry.id == resource.id,
-          );
-
-          if (currentIndex <= 0) {
-            context.go('/books/$bookId');
-            return;
-          }
-
-          final previousEntry = entries[currentIndex - 1];
-          if (previousEntry is BookSubchapter) {
-            context.go('/books/$bookId/subchapters/${previousEntry.id}');
-          } else if (previousEntry is BookChapter) {
-            context.go('/books/$bookId/chapters/${previousEntry.id}');
-          } else {
-            context.go('/books/$bookId');
-          }
+          final previous = await sibling(false);
+          if (!context.mounted) return;
+          context.go(previous == null ? '/books/$bookId' : routeFor(previous));
         }
 
         Future? nextPage() async {
-          final entries = await orderedEntries();
-          final currentIndex = entries.indexWhere(
-            (entry) => entry is BookSubchapter && entry.id == resource.id,
-          );
-
-          if (currentIndex == -1 || currentIndex + 1 >= entries.length) return;
-
-          final nextEntry = entries[currentIndex + 1];
-          if (nextEntry is BookSubchapter) {
-            context.go('/books/$bookId/subchapters/${nextEntry.id}');
-          } else if (nextEntry is BookChapter) {
-            context.go('/books/$bookId/chapters/${nextEntry.id}');
-          }
+          final next = await sibling(true);
+          if (!context.mounted || next == null) return;
+          context.go(routeFor(next));
         }
 
         // Track last visited (deferred to avoid modifying state during build)
@@ -112,7 +82,8 @@ class SubchapterScreen extends ConsumerWidget {
             return AppScaffold(
               onBackPressed: () async => context.go('/books/$bookId'),
               showPattern: false,
-              title: Text(ref.watch(bookDetailProvider(bookId)).value?.title ?? locales.book),
+              title: Text(ref.watch(bookDetailProvider(bookId)).value?.title ??
+                  locales.book),
               body: NextPageSwipe(
                 onPrevious: previousPage,
                 onNext: nextPage,
@@ -141,7 +112,11 @@ class SubchapterScreen extends ConsumerWidget {
               bottomBar: BottomBar(
                 alignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Previous(onPrevious: previousPage),
+                  Previous(
+                    onPrevious: previousPage,
+                    resolveDisabledKey: resource.id,
+                    resolveDisabled: () async => await sibling(false) == null,
+                  ),
                   Row(
                     children: [
                       SocialShare(
@@ -160,7 +135,11 @@ class SubchapterScreen extends ConsumerWidget {
                     fontSizeRatio: fontSizeRatio,
                     storeKey: 'bookFontRatio',
                   ),
-                  Next(onNext: nextPage),
+                  Next(
+                    onNext: nextPage,
+                    resolveDisabledKey: resource.id,
+                    resolveDisabled: () async => await sibling(true) == null,
+                  ),
                 ],
               ),
             );

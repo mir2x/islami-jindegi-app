@@ -12,6 +12,7 @@ class MalfuzatOfflineService {
   // endpoint.
   Future<Database> get _db =>
       OfflineDatabaseHelper(feature: 'malfuzats', version: 3).database;
+  Future<Database> get database => _db;
 
   // ───────────────────── Malfuzats ─────────────────────
 
@@ -98,16 +99,16 @@ class MalfuzatOfflineService {
 
   Future<MalfuzatItem?> findMalfuzatById(String id) async {
     final db = await _db;
-    final rows =
-        await db.query('malfuzats', where: 'id = ?', whereArgs: [id]);
+    final rows = await db
+        .query('malfuzats', where: 'id = ? AND published = 1', whereArgs: [id]);
     if (rows.isEmpty) return null;
 
     final row = rows.first;
     String? authorName;
     final aid = row['malfuzat_author_id']?.toString();
     if (aid != null) {
-      final aRows = await db
-          .query('malfuzat_authors', where: 'id = ?', whereArgs: [aid]);
+      final aRows =
+          await db.query('malfuzat_authors', where: 'id = ?', whereArgs: [aid]);
       if (aRows.isNotEmpty) authorName = aRows.first['name']?.toString();
     }
     return MalfuzatItem.fromDb(row, authorName: authorName);
@@ -205,8 +206,8 @@ class MalfuzatOfflineService {
 
   Future<MalfuzatCategory?> findCategoryById(String id) async {
     final db = await _db;
-    final rows = await db
-        .query('malfuzat_categories', where: 'id = ?', whereArgs: [id]);
+    final rows =
+        await db.query('malfuzat_categories', where: 'id = ?', whereArgs: [id]);
     if (rows.isEmpty) return null;
     return MalfuzatCategory.fromDb(rows.first);
   }

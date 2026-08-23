@@ -1,3 +1,5 @@
+import '../../../core/navigation/sibling_ref.dart';
+
 class ArticleItem {
   final String id;
   final String title;
@@ -11,6 +13,9 @@ class ArticleItem {
   final String? createdAt;
   final String? updatedAt;
   final String? authorName;
+  final SiblingRef? previous;
+  final SiblingRef? next;
+  final bool isOffline;
 
   ArticleItem({
     required this.id,
@@ -25,6 +30,9 @@ class ArticleItem {
     this.createdAt,
     this.updatedAt,
     this.authorName,
+    this.previous,
+    this.next,
+    this.isOffline = false,
   });
 
   /// Parse from the .NET API's flat ArticleListItem/ArticleDetail JSON
@@ -43,6 +51,8 @@ class ArticleItem {
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
       authorName: author?['name'],
+      previous: SiblingRef.fromJson(json['previous'] as Map<String, dynamic>?),
+      next: SiblingRef.fromJson(json['next'] as Map<String, dynamic>?),
     );
   }
 
@@ -62,6 +72,7 @@ class ArticleItem {
       publishedAt: row['published_at'],
       createdAt: row['created_at'],
       updatedAt: row['updated_at'],
+      isOffline: true,
       authorName: authorName,
     );
   }

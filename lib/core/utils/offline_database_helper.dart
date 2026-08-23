@@ -31,14 +31,17 @@ const Map<String, List<String>> _schemas = {
       book_id TEXT,
       title TEXT NOT NULL,
       body TEXT,
-      position INTEGER
+      position INTEGER,
+      reading_order INTEGER
     )''',
     '''CREATE TABLE subchapters (
       id TEXT PRIMARY KEY,
       chapter_id TEXT,
       title TEXT NOT NULL,
       body TEXT,
-      position INTEGER
+      position INTEGER,
+      parent_subchapter_id TEXT,
+      reading_order INTEGER
     )''',
     '''CREATE TABLE authors (
       id TEXT PRIMARY KEY,
@@ -52,7 +55,10 @@ const Map<String, List<String>> _schemas = {
       PRIMARY KEY (book_id, author_id)
     )''',
     'CREATE INDEX idx_chapters_book_id ON chapters(book_id)',
+    'CREATE INDEX idx_chapters_book_reading_order ON chapters(book_id, reading_order)',
     'CREATE INDEX idx_subchapters_chapter_id ON subchapters(chapter_id)',
+    'CREATE INDEX idx_subchapters_reading_order ON subchapters(reading_order)',
+    'CREATE INDEX idx_books_navigation ON books(published, position, id)',
   ],
   'duas': [
     '''CREATE TABLE duas (
@@ -78,6 +84,7 @@ const Map<String, List<String>> _schemas = {
       dua_category_id TEXT NOT NULL,
       PRIMARY KEY (dua_id, dua_category_id)
     )''',
+    'CREATE INDEX idx_duas_navigation ON duas(published, position, id)',
   ],
   'malfuzats': [
     '''CREATE TABLE malfuzats (
@@ -113,6 +120,7 @@ const Map<String, List<String>> _schemas = {
       PRIMARY KEY (malfuzat_id, malfuzat_category_id)
     )''',
     'CREATE INDEX idx_malfuzats_author_id ON malfuzats(malfuzat_author_id)',
+    'CREATE INDEX idx_malfuzats_navigation ON malfuzats(published, position, id)',
   ],
   'masails': [
     '''CREATE TABLE masails (
@@ -148,6 +156,7 @@ const Map<String, List<String>> _schemas = {
       PRIMARY KEY (masail_id, masail_category_id)
     )''',
     'CREATE INDEX idx_masails_author_id ON masails(masail_author_id)',
+    'CREATE INDEX idx_masails_navigation ON masails(published, position, id)',
   ],
   'bayans': [
     '''CREATE TABLE bayans (
@@ -181,6 +190,7 @@ const Map<String, List<String>> _schemas = {
       PRIMARY KEY (bayan_id, bayan_category_id)
     )''',
     'CREATE INDEX idx_bayans_speaker_id ON bayans(speaker_id)',
+    'CREATE INDEX idx_bayans_navigation ON bayans(published, position, id)',
   ],
   'articles': [
     '''CREATE TABLE articles (
@@ -214,6 +224,7 @@ const Map<String, List<String>> _schemas = {
       PRIMARY KEY (article_id, article_category_id)
     )''',
     'CREATE INDEX idx_articles_author_id ON articles(article_author_id)',
+    'CREATE INDEX idx_articles_navigation ON articles(published, position, id)',
   ],
   'madrasahs': [
     '''CREATE TABLE madrasahs (
@@ -241,6 +252,7 @@ const Map<String, List<String>> _schemas = {
     )''',
     'CREATE INDEX idx_madrasah_infos_madrasah_id ON madrasah_infos(madrasah_id)',
     'CREATE INDEX idx_madrasah_photos_madrasah_id ON madrasah_photos(madrasah_id)',
+    'CREATE INDEX idx_madrasahs_navigation ON madrasahs(position, id)',
   ],
   'misc': [
     '''CREATE TABLE pages (
@@ -351,6 +363,15 @@ class OfflineDatabaseHelper {
         // no longer describes what's on disk. Without this the next sync
         // returns an empty delta and the feature stays empty forever.
         await clearOfflineWatermarks(feature);
+      },
+      // Navigation indexes are additive. Create them on every open so current
+      // installs gain them without forcing a full feature re-sync.
+      onOpen: (db) async {
+        for (final statement
+            in statements.where((s) => s.startsWith('CREATE INDEX'))) {
+          await db.execute(statement.replaceFirst(
+              'CREATE INDEX', 'CREATE INDEX IF NOT EXISTS'));
+        }
       },
     );
   }

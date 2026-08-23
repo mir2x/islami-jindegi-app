@@ -20,31 +20,9 @@ import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
 import '../providers/news_providers.dart';
-import '../models/news.dart';
 
 class NewsDetailScreen extends ConsumerWidget {
   const NewsDetailScreen({super.key});
-
-  Future<NewsItem?> _findAdjacentNews(
-    WidgetRef ref,
-    NewsItem current, {
-    required bool next,
-  }) async {
-    try {
-      final orderedIds = await ref.read(newsNavigationIdsProvider.future);
-      final currentIndex = orderedIds.indexOf(current.id);
-      if (currentIndex == -1) return null;
-
-      final targetIndex = next ? currentIndex + 1 : currentIndex - 1;
-      if (targetIndex < 0 || targetIndex >= orderedIds.length) return null;
-
-      final targetId = orderedIds[targetIndex];
-      final api = ref.read(newsApiServiceProvider);
-      return await api.fetchSingleNews(targetId);
-    } catch (_) {
-      return null;
-    }
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -64,18 +42,18 @@ class NewsDetailScreen extends ConsumerWidget {
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
         Future? previousPage() async {
-          final previous = await _findAdjacentNews(ref, resource, next: false);
+          final previous = resource.previous;
           if (previous == null) {
             if (context.canPop()) context.pop();
           } else {
-            await context.push('/news/${previous.id}');
+            context.go('/news/${previous.id}');
           }
         }
 
         Future? nextPage() async {
-          final next = await _findAdjacentNews(ref, resource, next: true);
+          final next = resource.next;
           if (next != null) {
-            await context.push('/news/${next.id}');
+            context.go('/news/${next.id}');
           }
         }
 
@@ -87,7 +65,12 @@ class NewsDetailScreen extends ConsumerWidget {
           storeKey: 'newsFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/news'); },
+              onBackPressed: () async {
+                if (context.canPop())
+                  context.pop();
+                else
+                  context.go('/news');
+              },
               showPattern: false,
               title: Text(locales.news),
               body: NextPageSwipe(
@@ -122,7 +105,10 @@ class NewsDetailScreen extends ConsumerWidget {
               bottomBar: BottomBar(
                 alignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Previous(onPrevious: previousPage),
+                  Previous(
+                    onPrevious: previousPage,
+                    previousDisabled: resource.previous == null,
+                  ),
                   Row(
                     children: [
                       SocialShare(
@@ -141,7 +127,10 @@ class NewsDetailScreen extends ConsumerWidget {
                     fontSizeRatio: fontSizeRatio,
                     storeKey: 'newsFontRatio',
                   ),
-                  Next(onNext: nextPage),
+                  Next(
+                    onNext: nextPage,
+                    nextDisabled: resource.next == null,
+                  ),
                 ],
               ),
             );

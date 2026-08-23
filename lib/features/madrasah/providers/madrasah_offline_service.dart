@@ -12,6 +12,7 @@ class MadrasahOfflineService {
   // endpoint.
   Future<Database> get _db =>
       OfflineDatabaseHelper(feature: 'madrasahs', version: 3).database;
+  Future<Database> get database => _db;
 
   // ───────────────────── Madrasahs ─────────────────────
 

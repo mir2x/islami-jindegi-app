@@ -16,6 +16,8 @@ import 'package:native_app/widgets/buttons/social_share.dart';
 import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
+import 'package:native_app/core/navigation/offline_sibling_query.dart';
+import 'package:native_app/core/navigation/sibling_ref.dart';
 import '../providers/bayan_providers.dart';
 import '../models/bayan.dart';
 import 'bayan_display.dart';
@@ -23,35 +25,24 @@ import 'bayan_display.dart';
 class BayanDetailScreen extends ConsumerWidget {
   const BayanDetailScreen({super.key});
 
-  /// Fetch the previous/next bayan by walking the cached, position-ordered
-  /// id list. The .NET API has no server-side "item at position N" lookup
-  /// (unlike the old JSON:API backend's `fetchBayansByPosition`), so —
-  /// matching the malfuzat/masail module's pattern — we resolve adjacency
-  /// from `bayanNavigationIdsProvider`'s in-memory ordered list.
-  Future<Bayan?> _findAdjacentBayan(
+  Future<SiblingRef?> _sibling(
     WidgetRef ref,
     Bayan current, {
-    required bool next,
+    required bool forward,
   }) async {
-    try {
-      final orderedIds = await ref.read(bayanNavigationIdsProvider.future);
-      final currentIndex = orderedIds.indexOf(current.id);
-      if (currentIndex == -1) return null;
-
-      final targetIndex = next ? currentIndex + 1 : currentIndex - 1;
-      if (targetIndex < 0 || targetIndex >= orderedIds.length) return null;
-
-      final targetId = orderedIds[targetIndex];
-      final api = ref.read(bayanApiServiceProvider);
-      try {
-        return await api.fetchBayan(targetId);
-      } catch (_) {
-        final offline = ref.read(bayanOfflineServiceProvider);
-        return await offline.findBayanById(targetId);
-      }
-    } catch (_) {
-      return null;
-    }
+    final embedded = forward ? current.next : current.previous;
+    if (embedded != null) return embedded;
+    if (!current.isOffline) return null;
+    if (current.position == null) return null;
+    final db = await ref.read(bayanOfflineServiceProvider).database;
+    return findOfflineSibling(
+      db: db,
+      table: 'bayans',
+      position: current.position!,
+      id: current.id,
+      forward: forward,
+      descending: true,
+    );
   }
 
   @override
@@ -65,19 +56,16 @@ class BayanDetailScreen extends ConsumerWidget {
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
         Future? previousPage() async {
-          final previous = await _findAdjacentBayan(ref, resource, next: false);
-          if (previous == null) {
-            context.go('/bayans');
-          } else {
-            context.go('/bayans/${previous.id}');
-          }
+          final previous = await _sibling(ref, resource, forward: false);
+          if (!context.mounted) return;
+          context.go(
+              previous == null ? '/bayans' : '/bayans/${previous.id}');
         }
 
         Future? nextPage() async {
-          final next = await _findAdjacentBayan(ref, resource, next: true);
-          if (next != null) {
-            context.go('/bayans/${next.id}');
-          }
+          final next = await _sibling(ref, resource, forward: true);
+          if (!context.mounted || next == null) return;
+          context.go('/bayans/${next.id}');
         }
 
         Future(() {
@@ -85,7 +73,8 @@ class BayanDetailScreen extends ConsumerWidget {
         });
 
         return AppScaffold(
-          onBackPressed: () async => context.canPop() ? context.pop() : context.go('/bayans'),
+          onBackPressed: () async =>
+              context.canPop() ? context.pop() : context.go('/bayans'),
           showPattern: false,
           title: Text(locales.bayan),
           body: NextPageSwipe(
@@ -135,7 +124,12 @@ class BayanDetailScreen extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Previous(onPrevious: previousPage),
+              Previous(
+                onPrevious: previousPage,
+                resolveDisabledKey: resource.id,
+                resolveDisabled: () async =>
+                    await _sibling(ref, resource, forward: false) == null,
+              ),
               Row(
                 children: [
                   SocialShare(
@@ -151,7 +145,12 @@ class BayanDetailScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              Next(onNext: nextPage),
+              Next(
+                onNext: nextPage,
+                resolveDisabledKey: resource.id,
+                resolveDisabled: () async =>
+                    await _sibling(ref, resource, forward: true) == null,
+              ),
             ],
           ),
         );

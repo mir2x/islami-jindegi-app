@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/core/providers/connectivity.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 
 class BottomBar extends ConsumerWidget {
@@ -20,6 +21,7 @@ class BottomBar extends ConsumerWidget {
     final borderColor = isClassic
         ? appTheme.secondary.withValues(alpha: 0.26)
         : appTheme.divider.withValues(alpha: 0.78);
+    final offline = ref.watch(connectivityProvider).asData?.value == false;
 
     return SafeArea(
       top: false,
@@ -43,9 +45,26 @@ class BottomBar extends ConsumerWidget {
               ],
             ),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            child: Row(
-              mainAxisAlignment: alignment,
-              children: children,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (offline)
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 6),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.cloud_off_outlined, size: 14),
+                        SizedBox(width: 4),
+                        Text('Offline', style: TextStyle(fontSize: 12)),
+                      ],
+                    ),
+                  ),
+                Row(
+                  mainAxisAlignment: alignment,
+                  children: children,
+                ),
+              ],
             ),
           ),
         ),

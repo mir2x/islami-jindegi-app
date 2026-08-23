@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:native_app/core/providers/connectivity.dart';
+import 'package:native_app/core/navigation/offline_fallback.dart';
 import '../models/book.dart';
 import '../models/book_author.dart';
 import '../models/book_chapter.dart';
@@ -17,24 +18,12 @@ final bookApiServiceProvider = Provider((ref) => BookApiService());
 final bookOfflineServiceProvider = Provider((ref) => BookOfflineService());
 
 // ═══════════════════════════════════════════════════
-//  Connectivity
-// ═══════════════════════════════════════════════════
-
-final _connectivityProvider = FutureProvider<bool>((ref) async {
-  final result = await Connectivity().checkConnectivity();
-  final isConnected = !result.contains(ConnectivityResult.none);
-  debugPrint(
-    '[BookProviders] Connectivity check: $isConnected (results: $result)',
-  );
-  return isConnected;
-});
-
-// ═══════════════════════════════════════════════════
 //  Query params (filter/search state)
 // ═══════════════════════════════════════════════════
 
-final bookQueryParamsProvider = NotifierProvider.autoDispose<
-    BookQueryParamsNotifier, Map<String, dynamic>>(BookQueryParamsNotifier.new);
+final bookQueryParamsProvider =
+    NotifierProvider.autoDispose<BookQueryParamsNotifier, Map<String, dynamic>>(
+        BookQueryParamsNotifier.new);
 
 class BookQueryParamsNotifier extends Notifier<Map<String, dynamic>> {
   @override
@@ -64,7 +53,7 @@ class BookQueryParamsNotifier extends Notifier<Map<String, dynamic>> {
 /// Fetches a page of books. In online mode uses API, offline falls back to DB.
 final bookListProvider = FutureProvider.autoDispose
     .family<List<Book>, Map<String, dynamic>>((ref, params) async {
-  final isConnected = await ref.watch(_connectivityProvider.future);
+  final isConnected = await ref.watch(connectivityProvider.future);
   final api = ref.read(bookApiServiceProvider);
   final offline = ref.read(bookOfflineServiceProvider);
 
@@ -78,6 +67,7 @@ final bookListProvider = FutureProvider.autoDispose
         categoryId: params['categoryId'],
       );
     } catch (e) {
+      if (!shouldFallbackToOffline(e)) rethrow;
       // Fallback to offline on network error
       return await offline.queryBooks(
         page: params['page'],
@@ -92,51 +82,6 @@ final bookListProvider = FutureProvider.autoDispose
   }
 });
 
-/// Cached ordered book IDs for previous/next navigation.
-/// Invalidate with `ref.invalidate(bookNavigationIdsProvider)` if the
-/// catalogue is refreshed during the current app session.
-final bookNavigationIdsProvider = FutureProvider<List<String>>((ref) async {
-  final isConnected = await ref.watch(_connectivityProvider.future);
-  final api = ref.read(bookApiServiceProvider);
-  final offline = ref.read(bookOfflineServiceProvider);
-  const perPage = 12;
-  final ids = <String>[];
-
-  if (isConnected) {
-    try {
-      int page = 1;
-      while (true) {
-        final books = await api.fetchBooks(
-          page: page,
-          perPage: perPage,
-        );
-        if (books.isEmpty) break;
-        ids.addAll(books.map((book) => book.id));
-        if (books.length < perPage) break;
-        page++;
-      }
-
-      return ids;
-    } catch (e) {
-      debugPrint('[bookNavigationIdsProvider] API error: $e');
-    }
-  }
-
-  int page = 1;
-  while (true) {
-    final books = await offline.queryBooks(
-      page: page,
-      perPage: perPage,
-    );
-    if (books.isEmpty) break;
-    ids.addAll(books.map((book) => book.id));
-    if (books.length < perPage) break;
-    page++;
-  }
-
-  return ids;
-});
-
 // ═══════════════════════════════════════════════════
 //  Single book detail
 // ═══════════════════════════════════════════════════
@@ -144,7 +89,7 @@ final bookNavigationIdsProvider = FutureProvider<List<String>>((ref) async {
 final bookDetailProvider =
     FutureProvider.autoDispose.family<Book?, String>((ref, id) async {
   debugPrint('[bookDetailProvider] Fetching book: $id');
-  final isConnected = await ref.watch(_connectivityProvider.future);
+  final isConnected = await ref.watch(connectivityProvider.future);
   final api = ref.read(bookApiServiceProvider);
   final offline = ref.read(bookOfflineServiceProvider);
 
@@ -156,6 +101,7 @@ final bookDetailProvider =
       return book;
     } catch (e) {
       debugPrint('[bookDetailProvider] API error: $e');
+      if (!shouldFallbackToOffline(e)) rethrow;
       debugPrint(
         '[bookDetailProvider] Falling back to offline for book: $id',
       );
@@ -218,7 +164,7 @@ final chapterListProvider = FutureProvider.autoDispose
   debugPrint(
     '[chapterListProvider] Fetching chapters for bookId=${params.bookId} qty=${params.quantity} sort=${params.sort}',
   );
-  final isConnected = await ref.watch(_connectivityProvider.future);
+  final isConnected = await ref.watch(connectivityProvider.future);
   final api = ref.read(bookApiServiceProvider);
   final offline = ref.read(bookOfflineServiceProvider);
 
@@ -257,7 +203,7 @@ final chapterListProvider = FutureProvider.autoDispose
 /// Fetch a single chapter by ID.
 final chapterDetailProvider =
     FutureProvider.autoDispose.family<BookChapter?, String>((ref, id) async {
-  final isConnected = await ref.watch(_connectivityProvider.future);
+  final isConnected = await ref.watch(connectivityProvider.future);
   final api = ref.read(bookApiServiceProvider);
   final offline = ref.read(bookOfflineServiceProvider);
 
@@ -279,7 +225,7 @@ final chapterDetailProvider =
 /// Fetch a single subchapter by ID.
 final subchapterDetailProvider =
     FutureProvider.autoDispose.family<BookSubchapter?, String>((ref, id) async {
-  final isConnected = await ref.watch(_connectivityProvider.future);
+  final isConnected = await ref.watch(connectivityProvider.future);
   final api = ref.read(bookApiServiceProvider);
   final offline = ref.read(bookOfflineServiceProvider);
 
@@ -300,7 +246,7 @@ final subchapterDetailProvider =
 
 final singleAuthorProvider =
     FutureProvider.autoDispose.family<BookAuthor?, String>((ref, id) async {
-  final isConnected = await ref.watch(_connectivityProvider.future);
+  final isConnected = await ref.watch(connectivityProvider.future);
   final api = ref.read(bookApiServiceProvider);
   final offline = ref.read(bookOfflineServiceProvider);
 
@@ -326,7 +272,8 @@ final singleCategoryProvider =
 // ═══════════════════════════════════════════════════
 
 final bookLastChapterProvider =
-    NotifierProvider<BookLastChapterNotifier, Map<String, String>>(BookLastChapterNotifier.new);
+    NotifierProvider<BookLastChapterNotifier, Map<String, String>>(
+        BookLastChapterNotifier.new);
 
 class BookLastChapterNotifier extends Notifier<Map<String, String>> {
   @override

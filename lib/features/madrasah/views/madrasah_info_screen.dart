@@ -47,7 +47,7 @@ class MadrasahInfoScreen extends ConsumerWidget {
         Future? previousPage() async {
           if (index > 0) {
             await context.push(
-              'madrasahs/$madrasahId/infos/${madrasah.infos[index - 1].id}',
+              '/madrasahs/$madrasahId/infos/${madrasah.infos[index - 1].id}',
             );
           } else {
             await context.push('/madrasahs/$madrasahId/introduction');
@@ -57,7 +57,7 @@ class MadrasahInfoScreen extends ConsumerWidget {
         Future? nextPage() async {
           if (index < madrasah.infos.length - 1) {
             await context.push(
-              'madrasahs/$madrasahId/infos/${madrasah.infos[index + 1].id}',
+              '/madrasahs/$madrasahId/infos/${madrasah.infos[index + 1].id}',
             );
           } else {
             await context.push('/madrasahs/$madrasahId/gallery');

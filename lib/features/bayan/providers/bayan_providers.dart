@@ -1,6 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:native_app/core/navigation/offline_fallback.dart';
 import 'bayan_api_service.dart';
 import 'bayan_offline_service.dart';
 import '../models/bayan.dart';
@@ -15,13 +14,6 @@ final bayanApiServiceProvider = Provider<BayanApiService>((ref) {
 
 final bayanOfflineServiceProvider = Provider<BayanOfflineService>((ref) {
   return BayanOfflineService();
-});
-
-// ───────────────────── Connectivity ─────────────────────
-
-final _connectivityProvider = FutureProvider<bool>((ref) async {
-  final result = await Connectivity().checkConnectivity();
-  return !result.contains(ConnectivityResult.none);
 });
 
 // ───────────────────── Query Params (module-specific) ─────────────────────
@@ -41,51 +33,9 @@ class BayanQueryParamsNotifier extends Notifier<Map<String, dynamic>> {
   }
 }
 
-final bayanQueryParamsProvider =
-    NotifierProvider.autoDispose<BayanQueryParamsNotifier,
-        Map<String, dynamic>>(BayanQueryParamsNotifier.new);
-
-// ───────────────────── Navigation (prev/next) ─────────────────────
-
-/// Cached ordered bayan IDs for previous/next navigation. The .NET API has
-/// no server-side "item at position N" lookup (unlike the old JSON:API
-/// backend's `fetchBayansByPosition`), so — matching the malfuzat/masail
-/// module's `*NavigationIdsProvider` pattern — we fetch all published bayan
-/// ids ordered by position once and navigate by index within that
-/// in-memory list.
-final bayanNavigationIdsProvider = FutureProvider<List<String>>((ref) async {
-  final isConnected = await ref.watch(_connectivityProvider.future);
-  final api = ref.read(bayanApiServiceProvider);
-  final offline = ref.read(bayanOfflineServiceProvider);
-  const perPage = 20;
-  final ids = <String>[];
-
-  if (isConnected) {
-    try {
-      int page = 1;
-      while (true) {
-        final items = await api.fetchBayans(page: page, perPage: perPage);
-        if (items.isEmpty) break;
-        ids.addAll(items.map((item) => item.id));
-        if (items.length < perPage) break;
-        page++;
-      }
-      return ids;
-    } catch (e) {
-      debugPrint('[bayanNavigationIdsProvider] API error: $e');
-    }
-  }
-
-  int page = 1;
-  while (true) {
-    final items = await offline.queryBayans(page: page, perPage: perPage);
-    if (items.isEmpty) break;
-    ids.addAll(items.map((item) => item.id));
-    if (items.length < perPage) break;
-    page++;
-  }
-  return ids;
-});
+final bayanQueryParamsProvider = NotifierProvider.autoDispose<
+    BayanQueryParamsNotifier,
+    Map<String, dynamic>>(BayanQueryParamsNotifier.new);
 
 // ───────────────────── Single Bayan ─────────────────────
 
@@ -95,7 +45,8 @@ final singleBayanProvider =
   final offline = ref.read(bayanOfflineServiceProvider);
   try {
     return await api.fetchBayan(id);
-  } catch (_) {
+  } catch (error) {
+    if (!shouldFallbackToOffline(error)) rethrow;
     final item = await offline.findBayanById(id);
     if (item != null) return item;
     rethrow;

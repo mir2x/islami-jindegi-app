@@ -15,41 +15,33 @@ import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
 import 'package:native_app/theme/app_theme_color.dart';
+import 'package:native_app/core/navigation/offline_sibling_query.dart';
+import 'package:native_app/core/navigation/sibling_ref.dart';
 import '../providers/madrasah_providers.dart';
 import '../models/madrasah.dart';
 
 class MadrasahDetailScreen extends ConsumerWidget {
   const MadrasahDetailScreen({super.key});
 
-  /// Fetch the previous/next madrasah by walking the cached, order-preserved
-  /// id list. The .NET API has no server-side "item at position N" lookup
-  /// (unlike the old JSON:API backend's `fetchMadrasahsByPosition`), so —
-  /// matching the dua/book modules' pattern — adjacency is resolved from
-  /// `madrasahNavigationIdsProvider`'s in-memory ordered list.
-  Future<MadrasahItem?> _findAdjacentMadrasah(
+  Future<SiblingRef?> _sibling(
     WidgetRef ref,
     MadrasahItem current, {
-    required bool next,
+    required bool forward,
   }) async {
-    try {
-      final orderedIds = await ref.read(madrasahNavigationIdsProvider.future);
-      final currentIndex = orderedIds.indexOf(current.id);
-      if (currentIndex == -1) return null;
-
-      final targetIndex = next ? currentIndex + 1 : currentIndex - 1;
-      if (targetIndex < 0 || targetIndex >= orderedIds.length) return null;
-
-      final targetId = orderedIds[targetIndex];
-      final api = ref.read(madrasahApiServiceProvider);
-      try {
-        return await api.fetchSingleMadrasah(targetId);
-      } catch (_) {
-        final offline = ref.read(madrasahOfflineServiceProvider);
-        return await offline.findMadrasahById(targetId);
-      }
-    } catch (_) {
-      return null;
-    }
+    final embedded = forward ? current.next : current.previous;
+    if (embedded != null) return embedded;
+    if (!current.isOffline) return null;
+    if (current.position == null) return null;
+    final db = await ref.read(madrasahOfflineServiceProvider).database;
+    return findOfflineSibling(
+      db: db,
+      table: 'madrasahs',
+      position: current.position!,
+      id: current.id,
+      forward: forward,
+      descending: false,
+      filterPublished: false,
+    );
   }
 
   @override
@@ -65,24 +57,21 @@ class MadrasahDetailScreen extends ConsumerWidget {
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
         Future? previousPage() async {
-          final previous =
-              await _findAdjacentMadrasah(ref, resource, next: false);
-          if (previous == null) {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go('/madrasahs');
-            }
+          final previous = await _sibling(ref, resource, forward: false);
+          if (!context.mounted) return;
+          if (previous != null) {
+            context.go('/madrasahs/${previous.id}');
+          } else if (context.canPop()) {
+            context.pop();
           } else {
-            await context.push('/madrasahs/${previous.id}');
+            context.go('/madrasahs');
           }
         }
 
         Future? nextPage() async {
-          final next = await _findAdjacentMadrasah(ref, resource, next: true);
-          if (next != null) {
-            await context.push('/madrasahs/${next.id}');
-          }
+          final next = await _sibling(ref, resource, forward: true);
+          if (!context.mounted || next == null) return;
+          context.go('/madrasahs/${next.id}');
         }
 
         Future(() {
@@ -92,7 +81,12 @@ class MadrasahDetailScreen extends ConsumerWidget {
         });
 
         return AppScaffold(
-          onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/madrasahs'); },
+          onBackPressed: () async {
+            if (context.canPop())
+              context.pop();
+            else
+              context.go('/madrasahs');
+          },
           title: Text(locales.madrasah),
           body: NextPageSwipe(
             onPrevious: previousPage,
@@ -180,7 +174,12 @@ class MadrasahDetailScreen extends ConsumerWidget {
           bottomBar: BottomBar(
             alignment: MainAxisAlignment.spaceBetween,
             children: [
-              Previous(onPrevious: previousPage),
+              Previous(
+                onPrevious: previousPage,
+                resolveDisabledKey: resource.id,
+                resolveDisabled: () async =>
+                    await _sibling(ref, resource, forward: false) == null,
+              ),
               Row(
                 children: [
                   SocialShare(
@@ -195,7 +194,12 @@ class MadrasahDetailScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              Next(onNext: nextPage),
+              Next(
+                onNext: nextPage,
+                resolveDisabledKey: resource.id,
+                resolveDisabled: () async =>
+                    await _sibling(ref, resource, forward: true) == null,
+              ),
             ],
           ),
         );

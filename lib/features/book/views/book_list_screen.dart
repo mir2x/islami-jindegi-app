@@ -42,7 +42,8 @@ class _BookListScreenState extends ConsumerState<BookListScreen> {
   void _scrollToLastVisited(String? lastId) {
     if (lastId == null || lastId == _lastScrolledToId) return;
     final ctx = _keyForBook(lastId).currentContext;
-    debugPrint('[BookScroll] attempt — lastId=$lastId ctx=${ctx != null ? 'FOUND' : 'null'} keys=${_itemKeys.keys.length}');
+    debugPrint(
+        '[BookScroll] attempt — lastId=$lastId ctx=${ctx != null ? 'FOUND' : 'null'} keys=${_itemKeys.keys.length}');
     if (ctx != null) {
       _lastScrolledToId = lastId;
       debugPrint('[BookScroll] scrolling to item');
@@ -58,8 +59,6 @@ class _BookListScreenState extends ConsumerState<BookListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(bookNavigationIdsProvider);
-
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var appTheme = Theme.of(context).extension<AppThemeColors>()!;
@@ -70,13 +69,19 @@ class _BookListScreenState extends ConsumerState<BookListScreen> {
     // pageSize is 12; compute which page the last-opened book was on so we can
     // preload up to that page when the screen loads fresh from home.
     final preloadToPage = (lastBookIndex ~/ 12) + 1;
-    debugPrint('[BookScroll] build — lastBookId=$lastBookId index=$lastBookIndex preloadToPage=$preloadToPage _lastScrolledToId=$_lastScrolledToId');
+    debugPrint(
+        '[BookScroll] build — lastBookId=$lastBookId index=$lastBookIndex preloadToPage=$preloadToPage _lastScrolledToId=$_lastScrolledToId');
     double screenWidth =
         View.of(context).physicalSize.width / View.of(context).devicePixelRatio;
     bool isMobile = screenWidth < 768;
 
     return AppScaffold(
-      onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
+      onBackPressed: () async {
+        if (context.canPop())
+          context.pop();
+        else
+          context.go('/');
+      },
       title: Text(locales.books),
       floatingActionButton: FloatingDownloadedButton(
         label: locales.downloadedBooks,
@@ -170,7 +175,8 @@ class _BookListScreenState extends ConsumerState<BookListScreen> {
                   qParams: qParams,
                   scrollController: _scrollController,
                   onFirstPageLoaded: () {
-                    if (lastBookId == null || _lastScrolledToId == lastBookId) return;
+                    if (lastBookId == null || _lastScrolledToId == lastBookId)
+                      return;
                     if (preloadToPage > 1) {
                       // Item is on page 2+: jump to its approximate position so
                       // the viewport moves there and itemBuilder renders it,
@@ -180,12 +186,15 @@ class _BookListScreenState extends ConsumerState<BookListScreen> {
                       final spacing = isMobile ? 16.0 : 22.0;
                       const topPadding = 25.0;
                       final row = lastBookIndex ~/ crossAxisCount;
-                      final targetOffset = topPadding + row * (extent + spacing);
-                      debugPrint('[BookScroll] jumping to offset=$targetOffset for index=$lastBookIndex row=$row');
+                      final targetOffset =
+                          topPadding + row * (extent + spacing);
+                      debugPrint(
+                          '[BookScroll] jumping to offset=$targetOffset for index=$lastBookIndex row=$row');
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         if (!mounted || !_scrollController.hasClients) return;
                         _scrollController.jumpTo(
-                          targetOffset.clamp(0.0, _scrollController.position.maxScrollExtent),
+                          targetOffset.clamp(
+                              0.0, _scrollController.position.maxScrollExtent),
                         );
                       });
                     } else {
@@ -213,9 +222,12 @@ class _BookListScreenState extends ConsumerState<BookListScreen> {
                     } catch (e) {
                       debugPrint('[BookListScreen] API error: $e');
                       if (e is DioException) {
-                        debugPrint('[BookListScreen]   type=${e.type.name} status=${e.response?.statusCode}');
-                        debugPrint('[BookListScreen]   url=${e.requestOptions.uri}');
-                        debugPrint('[BookListScreen]   responseBody=${e.response?.data}');
+                        debugPrint(
+                            '[BookListScreen]   type=${e.type.name} status=${e.response?.statusCode}');
+                        debugPrint(
+                            '[BookListScreen]   url=${e.requestOptions.uri}');
+                        debugPrint(
+                            '[BookListScreen]   responseBody=${e.response?.data}');
                       }
                       debugPrint('[BookListScreen] Falling back to offline...');
                       try {
@@ -243,35 +255,44 @@ class _BookListScreenState extends ConsumerState<BookListScreen> {
                   itemBuilder: (_, item, index) {
                     final isRecent = item.id == lastBookId;
                     if (isRecent) {
-                      debugPrint('[BookScroll] itemBuilder hit target — id=${item.id} idx=$index alreadyScrolled=${_lastScrolledToId == item.id}');
+                      debugPrint(
+                          '[BookScroll] itemBuilder hit target — id=${item.id} idx=$index alreadyScrolled=${_lastScrolledToId == item.id}');
                       if (_lastScrolledToId != item.id) {
                         WidgetsBinding.instance.addPostFrameCallback(
                           (_) => _scrollToLastVisited(item.id),
                         );
                       }
                     }
-                    final isDark = Theme.of(context).brightness == Brightness.dark;
-                    final isClassic = appTheme.primary == AppThemeColors.classic.primary &&
+                    final isDark =
+                        Theme.of(context).brightness == Brightness.dark;
+                    final isClassic = appTheme.primary ==
+                            AppThemeColors.classic.primary &&
                         appTheme.appBarBg == AppThemeColors.classic.appBarBg;
                     Color recentCardBg;
                     Color recentCardBorder;
                     if (isRecent && (isDark || isClassic)) {
-                      final accentColor = isClassic ? appTheme.appBarBg : appTheme.active;
+                      final accentColor =
+                          isClassic ? appTheme.appBarBg : appTheme.active;
                       recentCardBg = Color.alphaBlend(
                         accentColor.withValues(alpha: 0.22),
                         appTheme.cardBg,
                       );
                       recentCardBorder = accentColor.withValues(alpha: 0.48);
                     } else {
-                      recentCardBg = isRecent ? appTheme.highlight : appTheme.cardBg;
-                      recentCardBorder = isRecent ? appTheme.highlightBorder : appTheme.divider;
+                      recentCardBg =
+                          isRecent ? appTheme.highlight : appTheme.cardBg;
+                      recentCardBorder = isRecent
+                          ? appTheme.highlightBorder
+                          : appTheme.divider;
                     }
                     return InkWell(
                       key: _keyForBook(item.id),
                       onTap: () {
-                        debugPrint('[BookListScreen] Tapped book: ${item.id} idx=$index — ${item.title}');
+                        debugPrint(
+                            '[BookListScreen] Tapped book: ${item.id} idx=$index — ${item.title}');
                         WidgetsBinding.instance.addPostFrameCallback((_) {
-                          ref.read(lastVisitedProvider.notifier)
+                          ref
+                              .read(lastVisitedProvider.notifier)
                               .updateLastBook(item.id, index: index);
                         });
                         context.push('/books/${item.id}');
@@ -631,48 +652,48 @@ class _CategoryFilterDialogState extends ConsumerState<_CategoryFilterDialog> {
               border: Border.all(color: appTheme.divider),
             ),
             child: InfiniteList(
-            key: ValueKey('category_search_$_searchText'),
-            pageSize: 8,
-            padding: 0,
-            resourceFetcher: (Map<String, dynamic> params) async {
-              final api = widget.parentRef.read(bookApiServiceProvider);
-              if (_searchText != null && _searchText!.isNotEmpty) {
-                params = {...params, 'search': _searchText};
-              }
-              return await api.fetchBookCategories(
-                page: params['page'] ?? 1,
-                perPage: params['per_page'] ?? 8,
-                search: params['search'],
-              );
-            },
-            itemBuilder: (context, item, index) {
-              final isSelected = qParams.containsKey('categoryId') &&
-                  qParams['categoryId'] == item.id;
-              return InkWell(
-                onTap: () {
-                  widget.parentRef
-                      .read(bookQueryParamsProvider.notifier)
-                      .updateParam('categoryId', item.id);
-                  Navigator.of(context).pop();
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: isSelected ? appTheme.highlight : null,
-                    border:
-                        Border(bottom: BorderSide(color: appTheme.divider)),
+              key: ValueKey('category_search_$_searchText'),
+              pageSize: 8,
+              padding: 0,
+              resourceFetcher: (Map<String, dynamic> params) async {
+                final api = widget.parentRef.read(bookApiServiceProvider);
+                if (_searchText != null && _searchText!.isNotEmpty) {
+                  params = {...params, 'search': _searchText};
+                }
+                return await api.fetchBookCategories(
+                  page: params['page'] ?? 1,
+                  perPage: params['per_page'] ?? 8,
+                  search: params['search'],
+                );
+              },
+              itemBuilder: (context, item, index) {
+                final isSelected = qParams.containsKey('categoryId') &&
+                    qParams['categoryId'] == item.id;
+                return InkWell(
+                  onTap: () {
+                    widget.parentRef
+                        .read(bookQueryParamsProvider.notifier)
+                        .updateParam('categoryId', item.id);
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isSelected ? appTheme.highlight : null,
+                      border:
+                          Border(bottom: BorderSide(color: appTheme.divider)),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 12),
+                    child: Text(
+                      item.title,
+                      style: isSelected
+                          ? textTheme.labelMedium
+                          : textTheme.titleMedium,
+                    ),
                   ),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 14, vertical: 12),
-                  child: Text(
-                    item.title,
-                    style: isSelected
-                        ? textTheme.labelMedium
-                        : textTheme.titleMedium,
-                  ),
-                ),
-              );
-            },
-          ),
+                );
+              },
+            ),
           ),
         ),
       ],

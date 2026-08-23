@@ -19,6 +19,8 @@ import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
+import 'package:native_app/core/navigation/offline_sibling_query.dart';
+import 'package:native_app/core/navigation/sibling_ref.dart';
 import '../providers/dua_providers.dart';
 import '../models/dua.dart';
 import 'audio_player.dart';
@@ -26,35 +28,26 @@ import 'audio_player.dart';
 class DuaDetailScreen extends ConsumerWidget {
   const DuaDetailScreen({super.key});
 
-  /// Fetch the previous/next dua by walking the cached, order-preserved id
-  /// list. The .NET API has no server-side "item at position N" lookup
-  /// (unlike the old JSON:API backend's `fetchDuasByPosition`), so — matching
-  /// the masail module's `_findAdjacentMasail` pattern — adjacency is
-  /// resolved from `duaNavigationIdsProvider`'s in-memory ordered list.
-  Future<DuaItem?> _findAdjacentDua(
+  /// Resolves the adjacent dua. Online, the API embeds `previous`/`next` in
+  /// the detail payload; offline, the neighbour is sought in local SQLite over
+  /// the downloaded subset.
+  Future<SiblingRef?> _sibling(
     WidgetRef ref,
     DuaItem current, {
-    required bool next,
+    required bool forward,
   }) async {
-    try {
-      final orderedIds = await ref.read(duaNavigationIdsProvider.future);
-      final currentIndex = orderedIds.indexOf(current.id);
-      if (currentIndex == -1) return null;
-
-      final targetIndex = next ? currentIndex + 1 : currentIndex - 1;
-      if (targetIndex < 0 || targetIndex >= orderedIds.length) return null;
-
-      final targetId = orderedIds[targetIndex];
-      final api = ref.read(duaApiServiceProvider);
-      try {
-        return await api.fetchSingleDua(targetId);
-      } catch (_) {
-        final offline = ref.read(duaOfflineServiceProvider);
-        return await offline.findDuaById(targetId);
-      }
-    } catch (_) {
-      return null;
-    }
+    final embedded = forward ? current.next : current.previous;
+    if (embedded != null) return embedded;
+    if (!current.isOffline) return null;
+    if (current.position == null) return null;
+    final db = await ref.read(duaOfflineServiceProvider).database;
+    return findOfflineSibling(
+        db: db,
+        table: 'duas',
+        position: current.position!,
+        id: current.id,
+        forward: forward,
+        descending: false);
   }
 
   @override
@@ -68,19 +61,21 @@ class DuaDetailScreen extends ConsumerWidget {
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
         Future? previousPage() async {
-          final previous = await _findAdjacentDua(ref, resource, next: false);
-          if (previous == null) {
-            if (context.canPop()) context.pop(); else context.go('/duas');
-          } else {
+          final previous = await _sibling(ref, resource, forward: false);
+          if (!context.mounted) return;
+          if (previous != null) {
             context.go('/duas/${previous.id}');
+          } else if (context.canPop()) {
+            context.pop();
+          } else {
+            context.go('/duas');
           }
         }
 
         Future? nextPage() async {
-          final next = await _findAdjacentDua(ref, resource, next: true);
-          if (next != null) {
-            context.go('/duas/${next.id}');
-          }
+          final next = await _sibling(ref, resource, forward: true);
+          if (!context.mounted || next == null) return;
+          context.go('/duas/${next.id}');
         }
 
         Future(() {
@@ -97,7 +92,12 @@ class DuaDetailScreen extends ConsumerWidget {
           storeKey: 'duaFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/duas'); },
+              onBackPressed: () async {
+                if (context.canPop())
+                  context.pop();
+                else
+                  context.go('/duas');
+              },
               showPattern: false,
               title: Text(locales.duaDurud),
               body: NextPageSwipe(
@@ -141,7 +141,12 @@ class DuaDetailScreen extends ConsumerWidget {
               bottomBar: BottomBar(
                 alignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Previous(onPrevious: previousPage),
+                  Previous(
+                    onPrevious: previousPage,
+                    resolveDisabledKey: resource.id,
+                    resolveDisabled: () async =>
+                        await _sibling(ref, resource, forward: false) == null,
+                  ),
                   Row(
                     children: [
                       SocialShare(
@@ -160,7 +165,12 @@ class DuaDetailScreen extends ConsumerWidget {
                     fontSizeRatio: fontSizeRatio,
                     storeKey: 'duaFontRatio',
                   ),
-                  Next(onNext: nextPage),
+                  Next(
+                    onNext: nextPage,
+                    resolveDisabledKey: resource.id,
+                    resolveDisabled: () async =>
+                        await _sibling(ref, resource, forward: true) == null,
+                  ),
                 ],
               ),
             );

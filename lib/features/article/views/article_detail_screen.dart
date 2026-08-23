@@ -20,10 +20,33 @@ import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
+import 'package:native_app/core/navigation/offline_sibling_query.dart';
+import 'package:native_app/core/navigation/sibling_ref.dart';
 import '../providers/article_providers.dart';
+import '../models/article.dart';
 
 class ArticleDetailScreen extends ConsumerWidget {
   const ArticleDetailScreen({super.key});
+
+  Future<SiblingRef?> _sibling(
+    WidgetRef ref,
+    ArticleItem current, {
+    required bool forward,
+  }) async {
+    final embedded = forward ? current.next : current.previous;
+    if (embedded != null) return embedded;
+    if (!current.isOffline) return null;
+    if (current.position == null) return null;
+    final db = await ref.read(articleOfflineServiceProvider).database;
+    return findOfflineSibling(
+      db: db,
+      table: 'articles',
+      position: current.position!,
+      id: current.id,
+      forward: forward,
+      descending: true,
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,35 +58,22 @@ class ArticleDetailScreen extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
-        final api = ref.read(articleApiServiceProvider);
-
         Future? previousPage() async {
-          if (resource.position == null) {
-            if (context.canPop()) context.pop();
-            return;
-          }
-          var previousResources = await api.fetchArticlesByPosition(
-            quantity: 1,
-            position: resource.position! - 1,
-          );
-
-          if (previousResources.isEmpty) {
-            if (context.canPop()) context.pop();
+          final previous = await _sibling(ref, resource, forward: false);
+          if (!context.mounted) return;
+          if (previous != null) {
+            context.go('/articles/${previous.id}');
+          } else if (context.canPop()) {
+            context.pop();
           } else {
-            await context.push('/articles/${previousResources.first.id}');
+            context.go('/articles');
           }
         }
 
         Future? nextPage() async {
-          if (resource.position == null) return;
-          var nextResources = await api.fetchArticlesByPosition(
-            quantity: 1,
-            position: resource.position! + 1,
-          );
-
-          if (nextResources.isNotEmpty) {
-            await context.push('/articles/${nextResources.first.id}');
-          }
+          final next = await _sibling(ref, resource, forward: true);
+          if (!context.mounted || next == null) return;
+          context.go('/articles/${next.id}');
         }
 
         Future(() {
@@ -74,7 +84,12 @@ class ArticleDetailScreen extends ConsumerWidget {
           storeKey: 'articleFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/articles'); },
+              onBackPressed: () async {
+                if (context.canPop())
+                  context.pop();
+                else
+                  context.go('/articles');
+              },
               showPattern: false,
               title: Text(locales.article),
               body: NextPageSwipe(
@@ -120,7 +135,12 @@ class ArticleDetailScreen extends ConsumerWidget {
               bottomBar: BottomBar(
                 alignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Previous(onPrevious: previousPage),
+                  Previous(
+                    onPrevious: previousPage,
+                    resolveDisabledKey: resource.id,
+                    resolveDisabled: () async =>
+                        await _sibling(ref, resource, forward: false) == null,
+                  ),
                   Row(
                     children: [
                       SocialShare(
@@ -140,7 +160,12 @@ class ArticleDetailScreen extends ConsumerWidget {
                     fontSizeRatio: fontSizeRatio,
                     storeKey: 'articleFontRatio',
                   ),
-                  Next(onNext: nextPage),
+                  Next(
+                    onNext: nextPage,
+                    resolveDisabledKey: resource.id,
+                    resolveDisabled: () async =>
+                        await _sibling(ref, resource, forward: true) == null,
+                  ),
                 ],
               ),
             );

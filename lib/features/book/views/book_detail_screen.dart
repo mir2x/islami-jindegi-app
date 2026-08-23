@@ -27,6 +27,8 @@ import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/features/book/views/pdf_reader.dart';
 import 'package:native_app/features/book/views/image.dart';
 import 'package:native_app/theme/app_theme_color.dart';
+import 'package:native_app/core/navigation/offline_sibling_query.dart';
+import 'package:native_app/core/navigation/sibling_ref.dart';
 import 'package:native_app/providers/last_visited.dart';
 import '../providers/book_providers.dart';
 import '../providers/book_download_providers.dart';
@@ -73,65 +75,49 @@ class _BookContent extends ConsumerWidget {
 
   const _BookContent({required this.book});
 
-  Future<Book?> _findAdjacentBook(WidgetRef ref, {required bool next}) async {
-    try {
-      final orderedIds = await ref.read(bookNavigationIdsProvider.future);
-      final currentIndex = orderedIds.indexOf(book.id);
-      if (currentIndex != -1) {
-        final targetIndex = next ? currentIndex + 1 : currentIndex - 1;
-        if (targetIndex >= 0 && targetIndex < orderedIds.length) {
-          final targetId = orderedIds[targetIndex];
-          final api = ref.read(bookApiServiceProvider);
-          try {
-            return await api.fetchBook(targetId);
-          } catch (_) {
-            final offline = ref.read(bookOfflineServiceProvider);
-            return await offline.findBookById(targetId, includeAuthors: false);
-          }
-        }
-        return null;
-      }
-    } catch (_) {
-      // Fall back to offline position-based lookup below if API traversal fails.
-    }
-
-    final offline = ref.read(bookOfflineServiceProvider);
-    final offlineBook = await offline.findBookById(book.id);
-    final position = offlineBook?.position ?? book.position;
-    if (position == null) return null;
-
-    return next
-        ? offline.findNextBookByPosition(position)
-        : offline.findPreviousBookByPosition(position);
+  Future<SiblingRef?> _sibling(WidgetRef ref, {required bool forward}) async {
+    final embedded = forward ? book.next : book.previous;
+    if (embedded != null) return embedded;
+    if (!book.isOffline) return null;
+    if (book.position == null) return null;
+    final db = await ref.read(bookOfflineServiceProvider).database;
+    return findOfflineSibling(
+        db: db,
+        table: 'books',
+        position: book.position!,
+        id: book.id,
+        forward: forward,
+        descending: false);
   }
 
   Future<void> _previousPage(BuildContext context, WidgetRef ref) async {
+    SiblingRef? previous;
     try {
-      final previousBook = await _findAdjacentBook(ref, next: false);
-      if (previousBook == null) {
-        context.canPop() ? context.pop() : context.go('/books');
-        return;
-      }
-
-      context.go('/books/${previousBook.id}');
+      previous = await _sibling(ref, forward: false);
     } catch (_) {
+      previous = null;
+    }
+    if (!context.mounted) return;
+    if (previous != null) {
+      context.go('/books/${previous.id}');
+    } else {
       context.canPop() ? context.pop() : context.go('/books');
     }
   }
 
   Future<void> _nextPage(BuildContext context, WidgetRef ref) async {
+    SiblingRef? next;
     try {
-      final nextBook = await _findAdjacentBook(ref, next: true);
-      if (nextBook != null) {
-        context.go('/books/${nextBook.id}');
-      }
-    } catch (_) {}
+      next = await _sibling(ref, forward: true);
+    } catch (_) {
+      return;
+    }
+    if (!context.mounted || next == null) return;
+    context.go('/books/${next.id}');
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(bookNavigationIdsProvider);
-
     final locales = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     final appTheme = Theme.of(context).extension<AppThemeColors>()!;
@@ -359,7 +345,12 @@ class _BookContent extends ConsumerWidget {
             bottomBar: BottomBar(
               alignment: MainAxisAlignment.spaceBetween,
               children: [
-                Previous(onPrevious: () => _previousPage(context, ref)),
+                Previous(
+                  onPrevious: () => _previousPage(context, ref),
+                  resolveDisabledKey: book.id,
+                  resolveDisabled: () async =>
+                      await _sibling(ref, forward: false) == null,
+                ),
                 Row(
                   children: [
                     SocialShare(
@@ -376,7 +367,12 @@ class _BookContent extends ConsumerWidget {
                     ),
                   ],
                 ),
-                Next(onNext: () => _nextPage(context, ref)),
+                Next(
+                  onNext: () => _nextPage(context, ref),
+                  resolveDisabledKey: book.id,
+                  resolveDisabled: () async =>
+                      await _sibling(ref, forward: true) == null,
+                ),
               ],
             ),
           );
@@ -549,7 +545,12 @@ class _BookContent extends ConsumerWidget {
             bottomBar: BottomBar(
               alignment: MainAxisAlignment.spaceBetween,
               children: [
-                Previous(onPrevious: () => _previousPage(context, ref)),
+                Previous(
+                  onPrevious: () => _previousPage(context, ref),
+                  resolveDisabledKey: book.id,
+                  resolveDisabled: () async =>
+                      await _sibling(ref, forward: false) == null,
+                ),
                 Row(
                   children: [
                     SocialShare(
@@ -566,7 +567,12 @@ class _BookContent extends ConsumerWidget {
                     ),
                   ],
                 ),
-                Next(onNext: () => _nextPage(context, ref)),
+                Next(
+                  onNext: () => _nextPage(context, ref),
+                  resolveDisabledKey: book.id,
+                  resolveDisabled: () async =>
+                      await _sibling(ref, forward: true) == null,
+                ),
               ],
             ),
           );
@@ -659,10 +665,49 @@ class _SubchaptersState extends ConsumerState<_Subchapters> {
     });
   }
 
+  /// The API intentionally returns a flat collection. Rebuild it here so
+  /// nested subchapters remain visibly nested in the book's table of contents.
+  /// Keep the response order within each parent: it is the admin-defined
+  /// position order and is also what the offline cache preserves.
+  List<({dynamic subchapter, int depth})> _tocEntries() {
+    final subchapters = widget.chapter.subchapters;
+    final ids = {for (final subchapter in subchapters) subchapter.id};
+    final children = <String?, List<dynamic>>{};
+
+    for (final subchapter in subchapters) {
+      final parentId = subchapter.parentSubChapterId;
+      // An orphaned parent should not hide a readable subchapter from the TOC.
+      final key = parentId != null && ids.contains(parentId) ? parentId : null;
+      children.putIfAbsent(key, () => []).add(subchapter);
+    }
+
+    final entries = <({dynamic subchapter, int depth})>[];
+    final visited = <String>{};
+    void appendChildren(String? parentId, int depth) {
+      for (final subchapter in children[parentId] ?? const <dynamic>[]) {
+        // Defensive only: malformed cyclic parent data must not loop forever.
+        if (!visited.add(subchapter.id)) continue;
+        entries.add((subchapter: subchapter, depth: depth));
+        appendChildren(subchapter.id, depth + 1);
+      }
+    }
+
+    appendChildren(null, 0);
+    // A cycle has no natural root. Keep it visible (at root depth) rather than
+    // dropping its entries from the TOC; `visited` still prevents recursion.
+    for (final subchapter in subchapters) {
+      if (!visited.contains(subchapter.id)) {
+        appendChildren(subchapter.id, 0);
+      }
+    }
+    return entries;
+  }
+
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
     double screenHeight = MediaQuery.of(context).size.height;
+    final tocEntries = _tocEntries();
 
     return Container(
       decoration: widget.isLast
@@ -732,11 +777,11 @@ class _SubchaptersState extends ConsumerState<_Subchapters> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: List.generate(
-                      widget.chapter.subchapters.length,
+                      tocEntries.length,
                       (subIdx) {
-                        final subchapter = widget.chapter.subchapters[subIdx];
-                        final isLastSub =
-                            subIdx == widget.chapter.subchapters.length - 1;
+                        final entry = tocEntries[subIdx];
+                        final subchapter = entry.subchapter;
+                        final isLastSub = subIdx == tocEntries.length - 1;
                         final dividerColor = Theme.of(context)
                             .extension<AppThemeColors>()!
                             .divider;
@@ -756,6 +801,7 @@ class _SubchaptersState extends ConsumerState<_Subchapters> {
                               top: 10,
                               bottom: isLastSub ? 4 : 10,
                               right: 15,
+                              left: entry.depth * 16.0,
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,

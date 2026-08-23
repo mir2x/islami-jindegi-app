@@ -1,4 +1,5 @@
 import 'masail_category.dart';
+import '../../../core/navigation/sibling_ref.dart';
 
 /// Pure Dart model for Masail — no Flutter Data dependency.
 class MasailItem {
@@ -16,6 +17,9 @@ class MasailItem {
   final String? createdAt;
   final String? updatedAt;
   final List<MasailCategory> categories;
+  final SiblingRef? previous;
+  final SiblingRef? next;
+  final bool isOffline;
 
   /// Resolved from the .NET API's flat `author` relationship
   final String? authorName;
@@ -35,6 +39,9 @@ class MasailItem {
     this.createdAt,
     this.updatedAt,
     this.categories = const [],
+    this.previous,
+    this.next,
+    this.isOffline = false,
     this.authorName,
   });
 
@@ -57,6 +64,8 @@ class MasailItem {
       publishedAt: json['publishedAt'],
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
+      previous: SiblingRef.fromJson(json['previous'] as Map<String, dynamic>?),
+      next: SiblingRef.fromJson(json['next'] as Map<String, dynamic>?),
       categories: (json['categories'] as List? ?? [])
           .map((c) => MasailCategory.fromJson(c))
           .toList(),
@@ -79,6 +88,7 @@ class MasailItem {
       publishedAt: row['published_at'],
       createdAt: row['created_at'],
       updatedAt: row['updated_at'],
+      isOffline: true,
       authorName: authorName,
     );
   }

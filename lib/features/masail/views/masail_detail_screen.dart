@@ -18,6 +18,8 @@ import 'package:native_app/widgets/buttons/bookmark.dart';
 import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
+import 'package:native_app/core/navigation/offline_sibling_query.dart';
+import 'package:native_app/core/navigation/sibling_ref.dart';
 import '../providers/masail_providers.dart';
 import '../models/masail.dart';
 import 'masail_display.dart';
@@ -25,30 +27,23 @@ import 'masail_display.dart';
 class MasailDetailScreen extends ConsumerWidget {
   const MasailDetailScreen({super.key});
 
-  Future<MasailItem?> _findAdjacentMasail(
+  Future<SiblingRef?> _sibling(
     WidgetRef ref,
     MasailItem current, {
-    required bool next,
+    required bool forward,
   }) async {
-    try {
-      final orderedIds = await ref.read(masailNavigationIdsProvider.future);
-      final currentIndex = orderedIds.indexOf(current.id);
-      if (currentIndex == -1) return null;
-
-      final targetIndex = next ? currentIndex + 1 : currentIndex - 1;
-      if (targetIndex < 0 || targetIndex >= orderedIds.length) return null;
-
-      final targetId = orderedIds[targetIndex];
-      final api = ref.read(masailApiServiceProvider);
-      try {
-        return await api.fetchSingleMasail(targetId);
-      } catch (_) {
-        final offline = ref.read(masailOfflineServiceProvider);
-        return await offline.findMasailById(targetId);
-      }
-    } catch (_) {
-      return null;
-    }
+    final embedded = forward ? current.next : current.previous;
+    if (embedded != null) return embedded;
+    if (!current.isOffline) return null;
+    if (current.position == null) return null;
+    final db = await ref.read(masailOfflineServiceProvider).database;
+    return findOfflineSibling(
+        db: db,
+        table: 'masails',
+        position: current.position!,
+        id: current.id,
+        forward: forward,
+        descending: true);
   }
 
   @override
@@ -62,20 +57,15 @@ class MasailDetailScreen extends ConsumerWidget {
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
         Future? previousPage() async {
-          final previous =
-              await _findAdjacentMasail(ref, resource, next: false);
-          if (previous == null) {
-            context.go('/masail');
-          } else {
-            context.go('/masail/${previous.id}');
-          }
+          final previous = await _sibling(ref, resource, forward: false);
+          if (!context.mounted) return;
+          context.go(previous == null ? '/masail' : '/masail/${previous.id}');
         }
 
         Future? nextPage() async {
-          final next = await _findAdjacentMasail(ref, resource, next: true);
-          if (next != null) {
-            context.go('/masail/${next.id}');
-          }
+          final next = await _sibling(ref, resource, forward: true);
+          if (!context.mounted || next == null) return;
+          context.go('/masail/${next.id}');
         }
 
         Future(() {
@@ -90,7 +80,8 @@ class MasailDetailScreen extends ConsumerWidget {
                 : null;
 
             return AppScaffold(
-              onBackPressed: () async => context.canPop() ? context.pop() : context.go('/masail'),
+              onBackPressed: () async =>
+                  context.canPop() ? context.pop() : context.go('/masail'),
               showPattern: false,
               title: Text(locales.masail),
               body: NextPageSwipe(
@@ -139,7 +130,12 @@ class MasailDetailScreen extends ConsumerWidget {
               bottomBar: BottomBar(
                 alignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Previous(onPrevious: previousPage),
+                  Previous(
+                    onPrevious: previousPage,
+                    resolveDisabledKey: resource.id,
+                    resolveDisabled: () async =>
+                        await _sibling(ref, resource, forward: false) == null,
+                  ),
                   Row(
                     children: [
                       SocialShare(
@@ -158,7 +154,12 @@ class MasailDetailScreen extends ConsumerWidget {
                     fontSizeRatio: fontSizeRatio,
                     storeKey: 'masailFontRatio',
                   ),
-                  Next(onNext: nextPage),
+                  Next(
+                    onNext: nextPage,
+                    resolveDisabledKey: resource.id,
+                    resolveDisabled: () async =>
+                        await _sibling(ref, resource, forward: true) == null,
+                  ),
                 ],
               ),
             );

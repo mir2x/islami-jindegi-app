@@ -4,12 +4,9 @@ import '../models/news.dart';
 
 /// Dio-based service for fetching news from the .NET API (plain JSON).
 ///
-/// The .NET `GetList` endpoint has no `gtPublishedAt`/`ltPublishedAt`
-/// adjacency filter the legacy Ruby API had, so date-based prev/next lookup
-/// is gone. Previous/next navigation is instead resolved via
-/// `newsNavigationIdsProvider`, which pages through the (published) list
-/// once and looks up the current item's index — mirroring the pattern used
-/// by book/masail/dua.
+/// Previous/next navigation comes from the `previous`/`next` refs the .NET
+/// detail endpoint embeds in its response. News has no offline database, so
+/// there is no local fallback for it.
 class NewsApiService {
   late final Dio _dio;
 

@@ -1,6 +1,7 @@
 import 'book_author.dart';
 import 'book_category.dart';
 import '../../../core/utils/offline_storage.dart';
+import '../../../core/navigation/sibling_ref.dart';
 
 class Book {
   final String id;
@@ -23,6 +24,9 @@ class Book {
   /// `BookSyncService`). Only ever set when reading from the local SQLite
   /// DB — online reads always render `coverUrl` directly.
   final String? coverImagePath;
+  final SiblingRef? previous;
+  final SiblingRef? next;
+  final bool isOffline;
 
   Book({
     required this.id,
@@ -41,6 +45,9 @@ class Book {
     this.authors = const [],
     this.categories = const [],
     this.coverImagePath,
+    this.previous,
+    this.next,
+    this.isOffline = false,
   });
 
   /// Parse from the .NET API's flat BookListItem/BookDetail JSON
@@ -59,6 +66,8 @@ class Book {
       publishedAt: json['publishedAt'],
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
+      previous: SiblingRef.fromJson(json['previous'] as Map<String, dynamic>?),
+      next: SiblingRef.fromJson(json['next'] as Map<String, dynamic>?),
       authors: (json['authors'] as List? ?? [])
           .map((a) => BookAuthor.fromJson(a))
           .toList(),
@@ -96,6 +105,7 @@ class Book {
         row['cover_image_path'] as String?,
         imagesDirPath,
       ),
+      isOffline: true,
     );
   }
 }

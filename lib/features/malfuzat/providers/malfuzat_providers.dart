@@ -1,6 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:native_app/core/navigation/offline_fallback.dart';
 import 'malfuzat_api_service.dart';
 import 'malfuzat_offline_service.dart';
 import '../models/malfuzat.dart';
@@ -13,21 +12,11 @@ final malfuzatApiServiceProvider = Provider<MalfuzatApiService>((ref) {
   return MalfuzatApiService();
 });
 
-final malfuzatOfflineServiceProvider =
-    Provider<MalfuzatOfflineService>((ref) {
+final malfuzatOfflineServiceProvider = Provider<MalfuzatOfflineService>((ref) {
   return MalfuzatOfflineService();
 });
 
 // ───────────────────── Connectivity ─────────────────────
-
-final _connectivityProvider = FutureProvider<bool>((ref) async {
-  final result = await Connectivity().checkConnectivity();
-  final isConnected = !result.contains(ConnectivityResult.none);
-  debugPrint(
-    '[MalfuzatProviders] Connectivity check: $isConnected (results: $result)',
-  );
-  return isConnected;
-});
 
 // ───────────────────── Query Params ─────────────────────
 
@@ -44,50 +33,9 @@ class MalfuzatQueryParamsNotifier extends Notifier<Map<String, dynamic>> {
   }
 }
 
-final malfuzatQueryParamsProvider =
-    NotifierProvider.autoDispose<MalfuzatQueryParamsNotifier,
-        Map<String, dynamic>>(MalfuzatQueryParamsNotifier.new);
-
-// ───────────────────── Navigation (prev/next) ─────────────────────
-
-/// Cached ordered malfuzat IDs for previous/next navigation. The .NET API
-/// has no server-side "item at position N" lookup (unlike the old JSON:API
-/// backend), so — matching the book module's `bookNavigationIdsProvider`
-/// pattern — we fetch all published malfuzat ids ordered by position once
-/// and navigate by index within that in-memory list.
-final malfuzatNavigationIdsProvider = FutureProvider<List<String>>((ref) async {
-  final isConnected = await ref.watch(_connectivityProvider.future);
-  final api = ref.read(malfuzatApiServiceProvider);
-  final offline = ref.read(malfuzatOfflineServiceProvider);
-  const perPage = 20;
-  final ids = <String>[];
-
-  if (isConnected) {
-    try {
-      int page = 1;
-      while (true) {
-        final items = await api.fetchMalfuzat(page: page, perPage: perPage);
-        if (items.isEmpty) break;
-        ids.addAll(items.map((item) => item.id));
-        if (items.length < perPage) break;
-        page++;
-      }
-      return ids;
-    } catch (e) {
-      debugPrint('[malfuzatNavigationIdsProvider] API error: $e');
-    }
-  }
-
-  int page = 1;
-  while (true) {
-    final items = await offline.queryMalfuzats(page: page, perPage: perPage);
-    if (items.isEmpty) break;
-    ids.addAll(items.map((item) => item.id));
-    if (items.length < perPage) break;
-    page++;
-  }
-  return ids;
-});
+final malfuzatQueryParamsProvider = NotifierProvider.autoDispose<
+    MalfuzatQueryParamsNotifier,
+    Map<String, dynamic>>(MalfuzatQueryParamsNotifier.new);
 
 // ───────────────────── Single Item Providers ─────────────────────
 
@@ -97,7 +45,8 @@ final singleMalfuzatProvider =
   final offline = ref.read(malfuzatOfflineServiceProvider);
   try {
     return await api.fetchSingleMalfuzat(id);
-  } catch (_) {
+  } catch (error) {
+    if (!shouldFallbackToOffline(error)) rethrow;
     final item = await offline.findMalfuzatById(id);
     if (item != null) return item;
     rethrow;

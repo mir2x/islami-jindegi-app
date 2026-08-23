@@ -1,5 +1,6 @@
 import 'madrasah_info.dart';
 import 'madrasah_photo.dart';
+import '../../../core/navigation/sibling_ref.dart';
 
 /// Pure Dart model for Madrasah — no Flutter Data dependency.
 ///
@@ -18,6 +19,9 @@ class MadrasahItem {
   final String? updatedAt;
   final List<MadrasahInfoItem> infos;
   final List<MadrasahPhotoItem> photos;
+  final SiblingRef? previous;
+  final SiblingRef? next;
+  final bool isOffline;
 
   MadrasahItem({
     required this.id,
@@ -29,6 +33,9 @@ class MadrasahItem {
     this.updatedAt,
     this.infos = const [],
     this.photos = const [],
+    this.previous,
+    this.next,
+    this.isOffline = false,
   });
 
   /// Parse from the .NET API's flat MadrasahListItem/MadrasahDetail JSON.
@@ -50,6 +57,8 @@ class MadrasahItem {
       photos: (json['photos'] as List? ?? [])
           .map((p) => MadrasahPhotoItem.fromJson(p))
           .toList(),
+      previous: SiblingRef.fromJson(json['previous'] as Map<String, dynamic>?),
+      next: SiblingRef.fromJson(json['next'] as Map<String, dynamic>?),
     );
   }
 
@@ -67,6 +76,7 @@ class MadrasahItem {
       createdAt: row['created_at']?.toString(),
       updatedAt: row['updated_at']?.toString(),
       infos: infos,
+      isOffline: true,
       photos: photos,
     );
   }

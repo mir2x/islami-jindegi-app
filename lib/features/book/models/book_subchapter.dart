@@ -1,3 +1,5 @@
+import 'book_node_ref.dart';
+
 class BookSubchapter {
   final String id;
   final String title;
@@ -6,6 +8,10 @@ class BookSubchapter {
   final String? chapterId;
   final String? chapterTitle;
   final String? parentSubChapterId;
+  final int? readingOrder;
+  final BookNodeRef? previous;
+  final BookNodeRef? next;
+  final bool isOffline;
 
   BookSubchapter({
     required this.id,
@@ -15,6 +21,10 @@ class BookSubchapter {
     this.chapterId,
     this.chapterTitle,
     this.parentSubChapterId,
+    this.readingOrder,
+    this.previous,
+    this.next,
+    this.isOffline = false,
   });
 
   /// From the .NET API's flat SubChapterResponse/SubChapterDetail JSON
@@ -27,6 +37,9 @@ class BookSubchapter {
       chapterId: json['chapterId']?.toString(),
       chapterTitle: json['chapterTitle'],
       parentSubChapterId: json['parentSubChapterId']?.toString(),
+      readingOrder: json['readingOrder'] as int?,
+      previous: BookNodeRef.fromJson(json['previous'] as Map<String, dynamic>?),
+      next: BookNodeRef.fromJson(json['next'] as Map<String, dynamic>?),
     );
   }
 
@@ -38,6 +51,9 @@ class BookSubchapter {
       body: row['body'],
       position: row['position'] is int ? row['position'] : null,
       chapterId: row['chapter_id']?.toString() ?? row['chapterId']?.toString(),
+      parentSubChapterId: row['parent_subchapter_id']?.toString(),
+      readingOrder: row['reading_order'] as int?,
+      isOffline: true,
     );
   }
 }

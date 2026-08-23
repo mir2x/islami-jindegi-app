@@ -12,6 +12,8 @@ class BayanOfflineService {
   Future<Database> get _db =>
       OfflineDatabaseHelper(feature: 'bayans', version: 3).database;
 
+  Future<Database> get database => _db;
+
   // ───────────────────── Bayans ─────────────────────
 
   Future<List<Bayan>> queryBayans({
@@ -72,8 +74,8 @@ class BayanOfflineService {
     final speakerNames = <String, String>{};
     if (speakerIds.isNotEmpty) {
       final ph = List.filled(speakerIds.length, '?').join(',');
-      final speakerRows = await db
-          .rawQuery('SELECT id, name FROM speakers WHERE id IN ($ph)', speakerIds);
+      final speakerRows = await db.rawQuery(
+          'SELECT id, name FROM speakers WHERE id IN ($ph)', speakerIds);
       for (final r in speakerRows) {
         speakerNames[r['id'].toString()] = r['name'].toString();
       }
@@ -81,13 +83,18 @@ class BayanOfflineService {
 
     return rows.map((row) {
       final sid = row['speaker_id']?.toString();
-      return Bayan.fromDb(row, speakerName: sid != null ? speakerNames[sid] : null);
+      return Bayan.fromDb(row,
+          speakerName: sid != null ? speakerNames[sid] : null);
     }).toList();
   }
 
   Future<Bayan?> findBayanById(String id) async {
     final db = await _db;
-    final rows = await db.query('bayans', where: 'id = ?', whereArgs: [id]);
+    final rows = await db.query(
+      'bayans',
+      where: 'id = ? AND published = 1',
+      whereArgs: [id],
+    );
     if (rows.isEmpty) return null;
 
     final row = rows.first;

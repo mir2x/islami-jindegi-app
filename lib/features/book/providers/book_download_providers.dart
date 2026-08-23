@@ -17,8 +17,7 @@ final _prefsProvider = FutureProvider<SharedPreferences>((ref) async {
 //  Downloaded books list (notifier for CRUD)
 // ═══════════════════════════════════════════════════
 
-class DownloadedBooksNotifier
-    extends AsyncNotifier<List<DownloadedBook>> {
+class DownloadedBooksNotifier extends AsyncNotifier<List<DownloadedBook>> {
   @override
   Future<List<DownloadedBook>> build() async {
     final prefs = await ref.watch(_prefsProvider.future);

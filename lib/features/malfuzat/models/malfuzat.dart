@@ -1,3 +1,5 @@
+import '../../../core/navigation/sibling_ref.dart';
+
 /// Pure Dart model for Malfuzat — no Flutter Data dependency.
 class MalfuzatItem {
   final String id;
@@ -13,6 +15,9 @@ class MalfuzatItem {
   final String? publishedAt;
   final String? createdAt;
   final String? updatedAt;
+  final SiblingRef? previous;
+  final SiblingRef? next;
+  final bool isOffline;
 
   /// Resolved from the .NET API's embedded `author` object (Malfuzat has a
   /// single author via a foreign key, unlike Book's many-to-many authors).
@@ -32,6 +37,9 @@ class MalfuzatItem {
     this.publishedAt,
     this.createdAt,
     this.updatedAt,
+    this.previous,
+    this.next,
+    this.isOffline = false,
     this.authorName,
   });
 
@@ -51,12 +59,15 @@ class MalfuzatItem {
       publishedAt: json['publishedAt'],
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
+      previous: SiblingRef.fromJson(json['previous'] as Map<String, dynamic>?),
+      next: SiblingRef.fromJson(json['next'] as Map<String, dynamic>?),
       authorName: json['author'] is Map ? json['author']['name'] : null,
     );
   }
 
   factory MalfuzatItem.fromDb(Map<String, dynamic> row, {String? authorName}) {
     return MalfuzatItem(
+      isOffline: true,
       id: row['id'].toString(),
       title: row['title'] ?? '',
       body: row['body'],

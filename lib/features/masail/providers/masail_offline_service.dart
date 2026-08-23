@@ -13,6 +13,7 @@ class MasailOfflineService {
   // endpoint. Same story for `misc`, bumped 1 -> 2.
   Future<Database> get _db =>
       OfflineDatabaseHelper(feature: 'masails', version: 3).database;
+  Future<Database> get database => _db;
   Future<Database> get _miscDb =>
       OfflineDatabaseHelper(feature: 'misc', version: 2).database;
 
@@ -101,8 +102,8 @@ class MasailOfflineService {
 
   Future<MasailItem?> findMasailById(String id) async {
     final db = await _db;
-    final rows =
-        await db.query('masails', where: 'id = ?', whereArgs: [id]);
+    final rows = await db
+        .query('masails', where: 'id = ? AND published = 1', whereArgs: [id]);
     if (rows.isEmpty) return null;
 
     final row = rows.first;
@@ -183,8 +184,8 @@ class MasailOfflineService {
 
   Future<MasailCategory?> findCategoryById(String id) async {
     final db = await _db;
-    final rows = await db
-        .query('masail_categories', where: 'id = ?', whereArgs: [id]);
+    final rows =
+        await db.query('masail_categories', where: 'id = ?', whereArgs: [id]);
     if (rows.isEmpty) return null;
     return MasailCategory.fromDb(rows.first);
   }
