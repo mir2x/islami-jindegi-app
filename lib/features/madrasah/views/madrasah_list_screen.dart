@@ -8,10 +8,11 @@ import 'package:native_app/widgets/utils/offline_db_prompt.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
-import 'package:native_app/providers/last_visited.dart';
-import 'package:native_app/widgets/utils/last_visited.dart';
+import 'package:native_app/widgets/presentation/continue_reading_card.dart';
 import 'package:native_app/theme/app_theme_color.dart';
+import 'package:native_app/core/navigation/retained_list_state.dart';
 import '../providers/madrasah_providers.dart';
+import '../providers/madrasah_progress_provider.dart';
 
 class MadrasahListScreen extends ConsumerStatefulWidget {
   const MadrasahListScreen({super.key});
@@ -21,57 +22,28 @@ class MadrasahListScreen extends ConsumerStatefulWidget {
 }
 
 class _MadrasahListScreenState extends ConsumerState<MadrasahListScreen> {
-  final ScrollController _scrollController = ScrollController();
-  final Map<String, GlobalKey> _itemKeys = {};
-  String? _lastScrolledToId;
-
-  GlobalKey _keyFor(String id) => _itemKeys.putIfAbsent(id, () => GlobalKey());
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _scrollToLastVisited(String? lastId) {
-    if (lastId == null || lastId == _lastScrolledToId) return;
-    final ctx = _keyFor(lastId).currentContext;
-    if (ctx != null) {
-      _lastScrolledToId = lastId;
-      Scrollable.ensureVisible(
-        ctx,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-        alignment: 0.3,
-      );
-    } else {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (!mounted) return;
-        final retryCtx = _keyFor(lastId).currentContext;
-        if (retryCtx != null) {
-          _lastScrolledToId = lastId;
-          Scrollable.ensureVisible(
-            retryCtx,
-            duration: const Duration(milliseconds: 400),
-            curve: Curves.easeInOut,
-            alignment: 0.3,
-          );
-        }
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     var qParams = ref.watch(madrasahQueryParamsProvider);
-    final lastVisited = ref.watch(lastVisitedProvider);
-    final lastMadrasahId = lastVisited.value?.getString('lastMadrasah');
+    final listState = ref.watch(
+      madrasahListStateProvider(
+        RetainedListKey(Map.unmodifiable(Map<String, dynamic>.from(qParams))),
+      ),
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) => listState.restore());
+    final progress = ref.watch(madrasahProgressProvider);
+    final lastMadrasahId = progress?.id;
 
     return AppScaffold(
-      onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
+      onBackPressed: () async {
+        if (context.canPop())
+          context.pop();
+        else
+          context.go('/');
+      },
       title: Text(locales.madrasah),
       body: OfflineDbPrompt(
         feature: 'madrasahs',
@@ -102,13 +74,19 @@ class _MadrasahListScreenState extends ConsumerState<MadrasahListScreen> {
                 }
               },
             ),
+            if (progress != null)
+              ContinueReadingCard(
+                title: progress.title,
+                destination: '/madrasahs/${progress.id}',
+                icon: Icons.school_outlined,
+              ),
             Expanded(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: InfiniteList(
                   qParams: qParams,
-                  scrollController: _scrollController,
-                  onFirstPageLoaded: () => _scrollToLastVisited(lastMadrasahId),
+                  controller: listState.controller,
+                  scrollController: listState.scrollController,
                   resourceFetcher: (Map<String, dynamic> params) async {
                     final api = ref.read(madrasahApiServiceProvider);
                     final offline = ref.read(madrasahOfflineServiceProvider);
@@ -128,13 +106,7 @@ class _MadrasahListScreenState extends ConsumerState<MadrasahListScreen> {
                   },
                   itemBuilder: (_, item, __) {
                     final isRecent = item.id == lastMadrasahId;
-                    if (isRecent && _lastScrolledToId != item.id) {
-                      WidgetsBinding.instance.addPostFrameCallback(
-                        (_) => _scrollToLastVisited(item.id),
-                      );
-                    }
                     return InkWell(
-                      key: _keyFor(item.id),
                       onTap: () => context.push('/madrasahs/${item.id}'),
                       child: ListItem(
                         recentlyVisited: isRecent,
@@ -146,10 +118,6 @@ class _MadrasahListScreenState extends ConsumerState<MadrasahListScreen> {
                                 item.title,
                                 style: textTheme.titleMedium,
                               ),
-                            ),
-                            LastVisited(
-                              resourceKey: 'lastMadrasah',
-                              resourceId: item.id,
                             ),
                           ],
                         ),

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:dio/dio.dart';
+import 'package:native_app/core/navigation/content_scope.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/malfuzat.dart';
@@ -91,8 +92,14 @@ class MalfuzatApiService {
         : MalfuzatItem.fromJson(initialData.first);
   }
 
-  Future<MalfuzatItem> fetchSingleMalfuzat(String id) async {
-    final response = await _dio.get('/malfuzat/$id');
+  Future<MalfuzatItem> fetchSingleMalfuzat(String id,
+      {ContentScope scope = ContentScope.all}) async {
+    final response = await _dio.get(
+      '/malfuzat/$id',
+      queryParameters: {
+        if (scope.queryValue != null) 'scope': scope.queryValue,
+      },
+    );
     debugPrint(
       '[MalfuzatApiService] fetchSingleMalfuzat($id) response status: ${response.statusCode}',
     );

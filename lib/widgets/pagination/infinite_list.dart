@@ -13,7 +13,6 @@ class InfiniteList<ItemType> extends StatefulWidget {
     this.padding = 25,
     this.scrollController,
     this.controller,
-    this.onFirstPageLoaded,
   });
 
   final Function resourceFetcher;
@@ -30,10 +29,6 @@ class InfiniteList<ItemType> extends StatefulWidget {
   /// removed, allowing a list to restore its loaded pages without refetching.
   final PagingController<int, ItemType>? controller;
 
-  /// Called once, after the very first page has been appended successfully.
-  /// Use this to trigger scroll-to-item logic after initial items are rendered.
-  final VoidCallback? onFirstPageLoaded;
-
   @override
   State<InfiniteList<ItemType>> createState() => InfiniteListState<ItemType>();
 }
@@ -43,8 +38,6 @@ class InfiniteListState<ItemType> extends State<InfiniteList<ItemType>> {
 
   PagingController<int, ItemType> get pController =>
       widget.controller ?? _ownedController!;
-
-  bool _onLoadedFired = false;
 
   @override
   void initState() {
@@ -66,7 +59,6 @@ class InfiniteListState<ItemType> extends State<InfiniteList<ItemType>> {
   void didUpdateWidget(covariant InfiniteList<ItemType> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.controller == null && oldWidget.qParams != widget.qParams) {
-      _onLoadedFired = false;
       pController.refresh();
     }
   }
@@ -85,17 +77,7 @@ class InfiniteListState<ItemType> extends State<InfiniteList<ItemType>> {
     };
 
     final items = await widget.resourceFetcher(params);
-    final newItems = (items as List).cast<ItemType>();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-
-      if (!_onLoadedFired && pageKey == 1) {
-        _onLoadedFired = true;
-        widget.onFirstPageLoaded?.call();
-      }
-    });
-
-    return newItems;
+    return (items as List).cast<ItemType>();
   }
 
   @override
@@ -114,6 +96,12 @@ class InfiniteListState<ItemType> extends State<InfiniteList<ItemType>> {
 
         if (widget.gridDelegate != null) {
           return PagedGridView<int, ItemType>(
+            // Keyed on the scroll controller so switching filter/tab builds a
+            // FRESH Scrollable. Without this Flutter updates the existing one
+            // in place and ScrollPosition.absorb() carries the old pixel offset
+            // onto the new controller — which made every tab share one scroll
+            // position even though each has its own retained state.
+            key: ObjectKey(widget.scrollController),
             state: state,
             fetchNextPage: fetchNextPage,
             scrollController: widget.scrollController,
@@ -124,6 +112,7 @@ class InfiniteListState<ItemType> extends State<InfiniteList<ItemType>> {
         }
 
         return PagedListView<int, ItemType>(
+          key: ObjectKey(widget.scrollController),
           state: state,
           fetchNextPage: fetchNextPage,
           scrollController: widget.scrollController,

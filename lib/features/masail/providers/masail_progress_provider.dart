@@ -43,11 +43,14 @@ class MasailProgressNotifier extends Notifier<Map<MasailTab, MasailProgress>> {
 
   MasailProgress? forTab(MasailTab tab) => state[tab];
   void opened(String id, String title, {required MasailTab tab}) {
+    final current = state[tab];
+    if (current?.id == id && current?.title == title) return;
     state = {...state, tab: MasailProgress(id, title)};
     _save();
   }
 
   void clear(String id) {
+    _timer?.cancel();
     state = {
       for (final e in state.entries)
         if (e.value.id != id) e.key: e.value

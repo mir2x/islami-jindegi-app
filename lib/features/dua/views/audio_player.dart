@@ -118,7 +118,8 @@ class _StatefulDuaAudioPlayerState
     _playbackEventSubscription = widget.player.playbackEventStream.listen(
       (event) {
         if (isPlaying && (event.processingState == ProcessingState.idle)) {
-          EasyDebounce.debounce('dua-player-idle', const Duration(seconds: 10), () {
+          EasyDebounce.debounce('dua-player-idle', const Duration(seconds: 10),
+              () {
             if (isPlaying && isIdle) {
               widget.player.stop();
             }

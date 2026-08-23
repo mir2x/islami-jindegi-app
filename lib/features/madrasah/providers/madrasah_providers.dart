@@ -1,8 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dio/dio.dart';
 import 'package:native_app/core/navigation/offline_fallback.dart';
 import 'madrasah_api_service.dart';
 import 'madrasah_offline_service.dart';
 import '../models/madrasah.dart';
+import 'package:native_app/core/navigation/retained_list_state.dart';
+import 'madrasah_progress_provider.dart';
 
 // ───────────────────── Services ─────────────────────
 
@@ -31,7 +34,7 @@ class MadrasahQueryParamsNotifier extends Notifier<Map<String, dynamic>> {
 
 final madrasahQueryParamsProvider =
     NotifierProvider<MadrasahQueryParamsNotifier, Map<String, dynamic>>(
-        MadrasahQueryParamsNotifier.new);
+        MadrasahQueryParamsNotifier.new,);
 
 // ───────────────────── Single Item Provider ─────────────────────
 
@@ -48,9 +51,46 @@ final singleMadrasahProvider =
   try {
     return await api.fetchSingleMadrasah(id);
   } catch (error) {
+    if (error is DioException && error.response?.statusCode == 404) {
+      ref.read(madrasahProgressProvider.notifier).clear(id);
+    }
     if (!shouldFallbackToOffline(error)) rethrow;
     final item = await offline.findMadrasahById(id);
     if (item != null) return item;
     rethrow;
   }
+});
+
+// ───────────────────── Retained list state ─────────────────────
+
+final _madrasahListRegistryProvider = Provider((_) => RetainedListRegistry());
+final madrasahListStateProvider = Provider.autoDispose
+    .family<RetainedListState<MadrasahItem>, RetainedListKey>((ref, key) {
+  final api = ref.read(madrasahApiServiceProvider);
+  final offline = ref.read(madrasahOfflineServiceProvider);
+  final state = RetainedListState<MadrasahItem>(
+    pageSize: 9,
+    fetch: (page) async {
+      try {
+        return await api.fetchMadrasahs(
+          page: page,
+          perPage: 9,
+          search: key.params['search'],
+        );
+      } catch (_) {
+        return offline.queryMadrasahs(
+          page: page,
+          perPage: 9,
+          search: key.params['search'],
+        );
+      }
+    },
+  );
+  final link = ref.keepAlive();
+  ref.read(_madrasahListRegistryProvider).retain(key, link);
+  ref.onDispose(() {
+    ref.read(_madrasahListRegistryProvider).remove(key);
+    state.dispose();
+  });
+  return state;
 });

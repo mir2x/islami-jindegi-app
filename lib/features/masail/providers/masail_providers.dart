@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/core/navigation/content_scope.dart';
 import 'package:dio/dio.dart';
 import 'package:native_app/core/navigation/offline_fallback.dart';
 import 'package:native_app/core/navigation/retained_list_state.dart';
@@ -90,12 +91,15 @@ final masailListStateProvider = Provider.autoDispose
 
 // ───────────────────── Single Item Providers ─────────────────────
 
-final singleMasailProvider =
-    FutureProvider.autoDispose.family<MasailItem, String>((ref, id) async {
+/// Keyed on `(id, scope)` because the detail payload's `previous`/`next`
+/// differ per Text/Audio tab — one cache entry per scope, not per item.
+final singleMasailProvider = FutureProvider.autoDispose
+    .family<MasailItem, ({String id, ContentScope scope})>((ref, arg) async {
+  final id = arg.id;
   final api = ref.read(masailApiServiceProvider);
   final offline = ref.read(masailOfflineServiceProvider);
   try {
-    return await api.fetchSingleMasail(id);
+    return await api.fetchSingleMasail(id, scope: arg.scope);
   } catch (error) {
     if (error is DioException && error.response?.statusCode == 404) {
       ref.read(masailProgressProvider.notifier).clear(id);

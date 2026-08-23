@@ -63,6 +63,7 @@ class BayanProgressNotifier extends Notifier<BayanProgress?> {
   }
 
   void opened(String id, String title) {
+    if (state?.id == id && state?.title == title) return;
     state = BayanProgress(id: id, title: title, updatedAt: DateTime.now());
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 350), () => _write(state));
@@ -70,8 +71,8 @@ class BayanProgressNotifier extends Notifier<BayanProgress?> {
 
   void clear(String id) {
     if (state?.id != id) return;
-    state = null;
     _debounce?.cancel();
+    state = null;
     unawaited(ref.read(sharedPreferencesProvider).remove(_key));
   }
 

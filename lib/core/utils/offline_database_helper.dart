@@ -121,6 +121,7 @@ const Map<String, List<String>> _schemas = {
     )''',
     'CREATE INDEX idx_malfuzats_author_id ON malfuzats(malfuzat_author_id)',
     'CREATE INDEX idx_malfuzats_navigation ON malfuzats(published, position, id)',
+    'CREATE INDEX idx_malfuzats_audio_navigation ON malfuzats(published, has_audio, position, id)',
   ],
   'masails': [
     '''CREATE TABLE masails (
@@ -157,6 +158,7 @@ const Map<String, List<String>> _schemas = {
     )''',
     'CREATE INDEX idx_masails_author_id ON masails(masail_author_id)',
     'CREATE INDEX idx_masails_navigation ON masails(published, position, id)',
+    'CREATE INDEX idx_masails_audio_navigation ON masails(published, has_audio, position, id)',
   ],
   'bayans': [
     '''CREATE TABLE bayans (

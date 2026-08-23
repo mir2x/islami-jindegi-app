@@ -8,10 +8,11 @@ import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/widgets/presentation/list_item.dart';
 import 'package:native_app/helpers/format_date.dart';
-import 'package:native_app/providers/last_visited.dart';
-import 'package:native_app/widgets/utils/last_visited.dart';
+import 'package:native_app/widgets/presentation/continue_reading_card.dart';
 import 'package:native_app/theme/app_theme_color.dart';
+import 'package:native_app/core/navigation/retained_list_state.dart';
 import '../providers/news_providers.dart';
+import '../providers/news_progress_provider.dart';
 
 class NewsListScreen extends ConsumerStatefulWidget {
   const NewsListScreen({super.key});
@@ -21,46 +22,6 @@ class NewsListScreen extends ConsumerStatefulWidget {
 }
 
 class _NewsListScreenState extends ConsumerState<NewsListScreen> {
-  final ScrollController _scrollController = ScrollController();
-  final Map<String, GlobalKey> _itemKeys = {};
-  String? _lastScrolledToId;
-
-  GlobalKey _keyFor(String id) => _itemKeys.putIfAbsent(id, () => GlobalKey());
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _scrollToLastVisited(String? lastId) {
-    if (lastId == null || lastId == _lastScrolledToId) return;
-    final ctx = _keyFor(lastId).currentContext;
-    if (ctx != null) {
-      _lastScrolledToId = lastId;
-      Scrollable.ensureVisible(
-        ctx,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-        alignment: 0.3,
-      );
-    } else {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (!mounted) return;
-        final retryCtx = _keyFor(lastId).currentContext;
-        if (retryCtx != null) {
-          _lastScrolledToId = lastId;
-          Scrollable.ensureVisible(
-            retryCtx,
-            duration: const Duration(milliseconds: 400),
-            curve: Curves.easeInOut,
-            alignment: 0.3,
-          );
-        }
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
@@ -68,11 +29,21 @@ class _NewsListScreenState extends ConsumerState<NewsListScreen> {
     var textTheme = Theme.of(context).textTheme;
     var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     var qParams = ref.watch(newsQueryParamsProvider);
-    final lastVisited = ref.watch(lastVisitedProvider);
-    final lastNewsId = lastVisited.value?.getString('lastNews');
+    final listState = ref.watch(newsListStateProvider(
+      RetainedListKey(Map.unmodifiable(Map<String, dynamic>.from(qParams))),
+    ),);
+    WidgetsBinding.instance.addPostFrameCallback((_) => listState.restore());
+    final progress = ref.watch(newsProgressProvider);
+    final lastNewsId = progress?.id;
 
     return AppScaffold(
-      onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/'); },
+      onBackPressed: () async {
+        if (context.canPop()) {
+          context.pop();
+        } else {
+          context.go('/');
+        }
+      },
       title: Text(locales.news),
       body: WithConnectivity(
         builder: (context, isConnected) {
@@ -96,13 +67,18 @@ class _NewsListScreenState extends ConsumerState<NewsListScreen> {
                     },
                   ),
                 ),
+                if (progress != null)
+                  ContinueReadingCard(
+                      title: progress.title,
+                      destination: '/news/${progress.id}',
+                      icon: Icons.newspaper_outlined,),
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: InfiniteList(
                       qParams: qParams,
-                      scrollController: _scrollController,
-                      onFirstPageLoaded: () => _scrollToLastVisited(lastNewsId),
+                      controller: listState.controller,
+                      scrollController: listState.scrollController,
                       resourceFetcher: (Map<String, dynamic> params) async {
                         final api = ref.read(newsApiServiceProvider);
                         return await api.fetchNews(
@@ -113,13 +89,7 @@ class _NewsListScreenState extends ConsumerState<NewsListScreen> {
                       },
                       itemBuilder: (_, item, __) {
                         final isRecent = item.id == lastNewsId;
-                        if (isRecent && _lastScrolledToId != item.id) {
-                          WidgetsBinding.instance.addPostFrameCallback(
-                            (_) => _scrollToLastVisited(item.id),
-                          );
-                        }
                         return InkWell(
-                          key: _keyFor(item.id),
                           onTap: () => context.push('/news/${item.id}'),
                           child: ListItem(
                             recentlyVisited: isRecent,
@@ -147,10 +117,6 @@ class _NewsListScreenState extends ConsumerState<NewsListScreen> {
                                       ),
                                     ],
                                   ),
-                                ),
-                                LastVisited(
-                                  resourceKey: 'lastNews',
-                                  resourceId: item.id,
                                 ),
                               ],
                             ),

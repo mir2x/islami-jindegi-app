@@ -15,6 +15,10 @@ Future<SiblingRef?> findOfflineSibling({
   required bool forward,
   required bool descending,
   bool filterPublished = true,
+
+  /// Restricts the seek to one side of the Text/Audio partition.
+  /// Null keeps the corpus-wide sequence.
+  bool? hasAudio,
 }) async {
   final up = descending ? !forward : forward;
   final comparison = up ? '>' : '<';
@@ -24,6 +28,7 @@ Future<SiblingRef?> findOfflineSibling({
     columns: const ['id', 'title', 'position'],
     where: [
       if (filterPublished) 'published = 1',
+      if (hasAudio != null) 'has_audio = ${hasAudio ? 1 : 0}',
       '(position $comparison ? OR (position = ? AND id $comparison ?))',
     ].join(' AND '),
     whereArgs: [position, position, id],

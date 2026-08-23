@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
-import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
@@ -20,6 +19,7 @@ import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
 import '../providers/news_providers.dart';
+import '../providers/news_progress_provider.dart';
 
 class NewsDetailScreen extends ConsumerWidget {
   const NewsDetailScreen({super.key});
@@ -57,8 +57,10 @@ class NewsDetailScreen extends ConsumerWidget {
           }
         }
 
-        Future(() {
-          ref.read(lastVisitedProvider.notifier).updateLastNews(resource.id);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref
+              .read(newsProgressProvider.notifier)
+              .opened(resource.id, resource.title);
         });
 
         return ResizableFont(

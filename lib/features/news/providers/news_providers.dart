@@ -1,6 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dio/dio.dart';
 import 'news_api_service.dart';
 import '../models/news.dart';
+import 'package:native_app/core/navigation/retained_list_state.dart';
+import 'news_progress_provider.dart';
 
 // ───────────────────── API Service ─────────────────────
 
@@ -25,7 +28,7 @@ class NewsQueryParamsNotifier extends Notifier<Map<String, dynamic>> {
 
 final newsQueryParamsProvider =
     NotifierProvider<NewsQueryParamsNotifier, Map<String, dynamic>>(
-        NewsQueryParamsNotifier.new);
+        NewsQueryParamsNotifier.new,);
 
 // ───────────────────── Latest News (home page) ─────────────────────
 
@@ -40,5 +43,36 @@ final latestNewsProvider =
 final singleNewsProvider =
     FutureProvider.autoDispose.family<NewsItem, String>((ref, id) async {
   final api = ref.read(newsApiServiceProvider);
-  return api.fetchSingleNews(id);
+  try {
+    return await api.fetchSingleNews(id);
+  } on DioException catch (error) {
+    if (error.response?.statusCode == 404) {
+      ref.read(newsProgressProvider.notifier).clear(id);
+    }
+    rethrow;
+  }
+});
+
+// ───────────────────── Retained list state ─────────────────────
+
+final _newsListRegistryProvider = Provider((_) => RetainedListRegistry());
+final newsListStateProvider = Provider.autoDispose
+    .family<RetainedListState<NewsItem>, RetainedListKey>((ref, key) {
+  final api = ref.read(newsApiServiceProvider);
+  // News has no offline database, so there is no local fallback here.
+  final state = RetainedListState<NewsItem>(
+    pageSize: 9,
+    fetch: (page) => api.fetchNews(
+      page: page,
+      perPage: 9,
+      search: key.params['search'],
+    ),
+  );
+  final link = ref.keepAlive();
+  ref.read(_newsListRegistryProvider).retain(key, link);
+  ref.onDispose(() {
+    ref.read(_newsListRegistryProvider).remove(key);
+    state.dispose();
+  });
+  return state;
 });

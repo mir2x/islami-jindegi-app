@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/core/navigation/content_scope.dart';
 import 'package:dio/dio.dart';
 import 'package:native_app/core/navigation/offline_fallback.dart';
 import 'package:native_app/core/navigation/retained_list_state.dart';
@@ -89,12 +90,15 @@ final malfuzatListStateProvider = Provider.autoDispose
 
 // ───────────────────── Single Item Providers ─────────────────────
 
-final singleMalfuzatProvider =
-    FutureProvider.autoDispose.family<MalfuzatItem, String>((ref, id) async {
+/// Keyed on `(id, scope)` because the detail payload's `previous`/`next`
+/// differ per Text/Audio tab — one cache entry per scope, not per item.
+final singleMalfuzatProvider = FutureProvider.autoDispose
+    .family<MalfuzatItem, ({String id, ContentScope scope})>((ref, arg) async {
+  final id = arg.id;
   final api = ref.read(malfuzatApiServiceProvider);
   final offline = ref.read(malfuzatOfflineServiceProvider);
   try {
-    return await api.fetchSingleMalfuzat(id);
+    return await api.fetchSingleMalfuzat(id, scope: arg.scope);
   } catch (error) {
     if (error is DioException && error.response?.statusCode == 404) {
       ref.read(malfuzatProgressProvider.notifier).clear(id);

@@ -19,6 +19,7 @@ import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
 import 'package:native_app/core/navigation/offline_sibling_query.dart';
 import 'package:native_app/core/navigation/sibling_ref.dart';
+import 'package:native_app/core/navigation/content_scope.dart';
 import '../providers/malfuzat_providers.dart';
 import '../models/malfuzat.dart';
 import '../providers/malfuzat_progress_provider.dart';
@@ -29,21 +30,25 @@ class MalfuzatDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var malfuzatId = GoRouterState.of(context).pathParameters['id'].toString();
-    var malfuzatQuery = ref.watch(singleMalfuzatProvider(malfuzatId));
+    final state = GoRouterState.of(context);
+    final malfuzatId = state.pathParameters['id'].toString();
+    final scope = ContentScope.fromQuery(state.uri.queryParameters['scope']);
+    final malfuzatQuery =
+        ref.watch(singleMalfuzatProvider((id: malfuzatId, scope: scope)));
 
     return malfuzatQuery.when(
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
-      data: (resource) => _MalfuzatContent(malfuzat: resource),
+      data: (resource) => _MalfuzatContent(malfuzat: resource, scope: scope),
     );
   }
 }
 
 class _MalfuzatContent extends ConsumerWidget {
   final MalfuzatItem malfuzat;
+  final ContentScope scope;
 
-  const _MalfuzatContent({required this.malfuzat});
+  const _MalfuzatContent({required this.malfuzat, required this.scope});
 
   Future<SiblingRef?> _sibling(
     WidgetRef ref, {
@@ -60,7 +65,8 @@ class _MalfuzatContent extends ConsumerWidget {
         position: malfuzat.position!,
         id: malfuzat.id,
         forward: forward,
-        descending: true);
+        descending: true,
+        hasAudio: scope.hasAudio);
   }
 
   Future<void> _previousPage(BuildContext context, WidgetRef ref) async {
@@ -72,9 +78,9 @@ class _MalfuzatContent extends ConsumerWidget {
     }
     if (!context.mounted) return;
     if (previous != null) {
-      context.go('/malfuzat/${previous.id}');
+      context.go(scope.applyTo('/malfuzat/${previous.id}'));
     } else {
-      context.canPop() ? context.pop() : context.go('/malfuzat');
+      context.canPop() ? context.pop() : context.go(scope.applyTo('/malfuzat'));
     }
   }
 
@@ -86,23 +92,21 @@ class _MalfuzatContent extends ConsumerWidget {
       return;
     }
     if (!context.mounted || next == null) return;
-    context.go('/malfuzat/${next.id}');
+    context.go(scope.applyTo('/malfuzat/${next.id}'));
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final query = ref.read(malfuzatQueryParamsProvider);
-      final tab = query['hasAudio'] == 'true'
-          ? MalfuzatTab.audio
-          : query['hasAudio'] == 'false'
-              ? MalfuzatTab.text
-              : MalfuzatTab.all;
       ref.read(malfuzatProgressProvider.notifier).opened(
             malfuzat.id,
             malfuzat.title,
-            tab: tab,
+            tab: switch (scope) {
+              ContentScope.audio => MalfuzatTab.audio,
+              ContentScope.text => MalfuzatTab.text,
+              ContentScope.all => MalfuzatTab.all,
+            },
           );
     });
 
@@ -110,8 +114,9 @@ class _MalfuzatContent extends ConsumerWidget {
       storeKey: 'malfuzatFontRatio',
       builder: (context, fontSizeRatio) {
         return AppScaffold(
-          onBackPressed: () async =>
-              context.canPop() ? context.pop() : context.go('/malfuzat'),
+          onBackPressed: () async => context.canPop()
+              ? context.pop()
+              : context.go(scope.applyTo('/malfuzat')),
           showPattern: false,
           title: Text(locales.malfuzat),
           body: NextPageSwipe(

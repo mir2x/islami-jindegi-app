@@ -85,8 +85,10 @@ class BookProgressNotifier extends Notifier<BookProgressState> {
   BookReadingProgress? forBook(String bookId) => state.books[bookId];
 
   void openedBook(String bookId, String bookTitle) {
+    final existing = state.books[bookId];
+    if (state.lastBookId == bookId && existing?.bookTitle == bookTitle) return;
     final now = DateTime.now();
-    final current = state.books[bookId];
+    final current = existing;
     _set(
       BookReadingProgress(
         bookId: bookId,
@@ -107,12 +109,17 @@ class BookProgressNotifier extends Notifier<BookProgressState> {
     String? bookTitle,
   }) {
     final current = state.books[bookId];
+    final resolvedBookTitle =
+        bookTitle?.isNotEmpty == true ? bookTitle! : current?.bookTitle ?? '';
+    if (state.lastBookId == bookId &&
+        current?.nodeId == nodeId &&
+        current?.nodeTitle == nodeTitle &&
+        current?.nodeKind == nodeKind &&
+        current?.bookTitle == resolvedBookTitle) return;
     _set(
       BookReadingProgress(
         bookId: bookId,
-        bookTitle: bookTitle?.isNotEmpty == true
-            ? bookTitle!
-            : current?.bookTitle ?? '',
+        bookTitle: resolvedBookTitle,
         nodeId: nodeId,
         nodeTitle: nodeTitle,
         nodeKind: nodeKind,
@@ -124,6 +131,7 @@ class BookProgressNotifier extends Notifier<BookProgressState> {
   /// Removes a record after an authoritative online 404.
   void clearBook(String bookId) {
     if (!state.books.containsKey(bookId)) return;
+    _writeDebounce?.cancel();
     final books = Map<String, BookReadingProgress>.from(state.books)
       ..remove(bookId);
     state = state.copyWith(

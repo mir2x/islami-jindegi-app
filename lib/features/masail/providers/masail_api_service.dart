@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:native_app/core/navigation/content_scope.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/masail.dart';
 import '../models/masail_author.dart';
@@ -48,8 +49,14 @@ class MasailApiService {
     return data.map((r) => MasailItem.fromJson(r)).toList();
   }
 
-  Future<MasailItem> fetchSingleMasail(String id) async {
-    final response = await _dio.get('/masail/$id');
+  Future<MasailItem> fetchSingleMasail(String id,
+      {ContentScope scope = ContentScope.all}) async {
+    final response = await _dio.get(
+      '/masail/$id',
+      queryParameters: {
+        if (scope.queryValue != null) 'scope': scope.queryValue,
+      },
+    );
     return MasailItem.fromJson(response.data as Map<String, dynamic>);
   }
 

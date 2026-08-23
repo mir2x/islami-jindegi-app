@@ -42,11 +42,17 @@ class RetainedListState<T> {
     });
   }
 
+  /// Re-applies the saved offset to a freshly attached scroll view.
+  ///
+  /// Called from a post-frame callback on every build, so it must not fight a
+  /// user who is already scrolling: it only acts when the view is sitting at
+  /// the top, which is true exactly once — right after it attaches.
   void restore() {
-    if (scrollController.hasClients && _offset != 0)
-      scrollController.jumpTo(_offset
-          .clamp(0, scrollController.position.maxScrollExtent)
-          .toDouble());
+    if (!scrollController.hasClients) return;
+    if (_offset == 0 || scrollController.offset != 0) return;
+    scrollController.jumpTo(
+      _offset.clamp(0, scrollController.position.maxScrollExtent).toDouble(),
+    );
   }
 
   void dispose() {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
-import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
@@ -23,6 +22,7 @@ import 'package:native_app/core/navigation/offline_sibling_query.dart';
 import 'package:native_app/core/navigation/sibling_ref.dart';
 import '../providers/article_providers.dart';
 import '../models/article.dart';
+import '../providers/article_progress_provider.dart';
 
 class ArticleDetailScreen extends ConsumerWidget {
   const ArticleDetailScreen({super.key});
@@ -75,8 +75,10 @@ class ArticleDetailScreen extends ConsumerWidget {
           context.go('/articles/${next.id}');
         }
 
-        Future(() {
-          ref.read(lastVisitedProvider.notifier).updateLastArticle(resource.id);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref
+              .read(articleProgressProvider.notifier)
+              .opened(resource.id, resource.title);
         });
 
         return ResizableFont(

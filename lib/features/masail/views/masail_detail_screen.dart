@@ -19,6 +19,7 @@ import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
 import 'package:native_app/core/navigation/offline_sibling_query.dart';
 import 'package:native_app/core/navigation/sibling_ref.dart';
+import 'package:native_app/core/navigation/content_scope.dart';
 import '../providers/masail_providers.dart';
 import '../models/masail.dart';
 import '../providers/masail_progress_provider.dart';
@@ -31,6 +32,7 @@ class MasailDetailScreen extends ConsumerWidget {
     WidgetRef ref,
     MasailItem current, {
     required bool forward,
+    required ContentScope scope,
   }) async {
     final embedded = forward ? current.next : current.previous;
     if (embedded != null) return embedded;
@@ -43,42 +45,49 @@ class MasailDetailScreen extends ConsumerWidget {
         position: current.position!,
         id: current.id,
         forward: forward,
-        descending: true);
+        descending: true,
+        hasAudio: scope.hasAudio);
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var locales = AppLocalizations.of(context)!;
-    var masailId = GoRouterState.of(context).pathParameters['id'].toString();
-    var masailQuery = ref.watch(singleMasailProvider(masailId));
+    final routerState = GoRouterState.of(context);
+    final masailId = routerState.pathParameters['id'].toString();
+    final scope =
+        ContentScope.fromQuery(routerState.uri.queryParameters['scope']);
+    final masailQuery =
+        ref.watch(singleMasailProvider((id: masailId, scope: scope)));
 
     return masailQuery.when(
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
         Future? previousPage() async {
-          final previous = await _sibling(ref, resource, forward: false);
+          final previous =
+              await _sibling(ref, resource, forward: false, scope: scope);
           if (!context.mounted) return;
-          context.go(previous == null ? '/masail' : '/masail/${previous.id}');
+          context.go(previous == null
+              ? scope.applyTo('/masail')
+              : scope.applyTo('/masail/${previous.id}'));
         }
 
         Future? nextPage() async {
-          final next = await _sibling(ref, resource, forward: true);
+          final next =
+              await _sibling(ref, resource, forward: true, scope: scope);
           if (!context.mounted || next == null) return;
-          context.go('/masail/${next.id}');
+          context.go(scope.applyTo('/masail/${next.id}'));
         }
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          final query = ref.read(masailQueryParamsProvider);
-          final tab = query['hasAudio'] == 'true'
-              ? MasailTab.audio
-              : query['hasAudio'] == 'false'
-                  ? MasailTab.text
-                  : MasailTab.all;
           ref.read(masailProgressProvider.notifier).opened(
                 resource.id,
                 resource.title,
-                tab: tab,
+                tab: switch (scope) {
+                  ContentScope.audio => MasailTab.audio,
+                  ContentScope.text => MasailTab.text,
+                  ContentScope.all => MasailTab.all,
+                },
               );
         });
 
@@ -90,8 +99,9 @@ class MasailDetailScreen extends ConsumerWidget {
                 : null;
 
             return AppScaffold(
-              onBackPressed: () async =>
-                  context.canPop() ? context.pop() : context.go('/masail'),
+              onBackPressed: () async => context.canPop()
+                  ? context.pop()
+                  : context.go(scope.applyTo('/masail')),
               showPattern: false,
               title: Text(locales.masail),
               body: NextPageSwipe(
@@ -144,7 +154,9 @@ class MasailDetailScreen extends ConsumerWidget {
                     onPrevious: previousPage,
                     resolveDisabledKey: resource.id,
                     resolveDisabled: () async =>
-                        await _sibling(ref, resource, forward: false) == null,
+                        await _sibling(ref, resource,
+                            forward: false, scope: scope) ==
+                        null,
                   ),
                   Row(
                     children: [
@@ -168,7 +180,9 @@ class MasailDetailScreen extends ConsumerWidget {
                     onNext: nextPage,
                     resolveDisabledKey: resource.id,
                     resolveDisabled: () async =>
-                        await _sibling(ref, resource, forward: true) == null,
+                        await _sibling(ref, resource,
+                            forward: true, scope: scope) ==
+                        null,
                   ),
                 ],
               ),

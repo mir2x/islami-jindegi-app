@@ -46,8 +46,7 @@ class MadrasahOfflineService {
   /// the old `includeInfos`/`includePhotos` flags to thread through here.
   Future<MadrasahItem?> findMadrasahById(String id) async {
     final db = await _db;
-    final rows =
-        await db.query('madrasahs', where: 'id = ?', whereArgs: [id]);
+    final rows = await db.query('madrasahs', where: 'id = ?', whereArgs: [id]);
     if (rows.isEmpty) return null;
 
     final infoRows = await db.query('madrasah_infos',

@@ -15,6 +15,7 @@ import 'package:native_app/widgets/filter/triple_switch_button.dart';
 import 'package:native_app/widgets/presentation/content_list_card.dart';
 import 'package:native_app/providers/downloaded_masail.dart';
 import 'package:native_app/core/navigation/retained_list_state.dart';
+import 'package:native_app/core/navigation/content_scope.dart';
 import 'package:native_app/widgets/presentation/continue_reading_card.dart';
 import 'package:native_app/widgets/utils/with_preferences.dart';
 import 'package:native_app/theme/app_theme_color.dart';
@@ -29,8 +30,30 @@ class MasailListScreen extends ConsumerStatefulWidget {
 }
 
 class _MasailListScreenState extends ConsumerState<MasailListScreen> {
+  /// The active tab lives in the query params notifier, which is `autoDispose`
+  /// and dies with this route. Returning from a detail screen after Next/Prev
+  /// (which uses `context.go`) rebuilds this screen from scratch, so the tab
+  /// has to come back from the URL the detail screen navigated to.
+  bool _seededScope = false;
+
+  void _seedScopeFromUrl(BuildContext context) {
+    if (_seededScope) return;
+    _seededScope = true;
+    final scope = ContentScope.fromQuery(
+        GoRouterState.of(context).uri.queryParameters['scope']);
+    if (scope == ContentScope.all) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref.read(masailQueryParamsProvider.notifier).updateParams(
+            'hasAudio',
+            scope == ContentScope.audio ? 'true' : 'false',
+          );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    _seedScopeFromUrl(context);
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(masailQueryParamsProvider);
@@ -42,11 +65,14 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
       RetainedListKey(Map.unmodifiable(Map<String, dynamic>.from(qParams))),
     ));
     final progress = ref.watch(masailProgressProvider);
-    final tab = qParams['hasAudio'] == 'true'
-        ? MasailTab.audio
-        : qParams['hasAudio'] == 'false'
-            ? MasailTab.text
-            : MasailTab.all;
+    // One derivation feeds both the progress bucket and the URL the detail
+    // screen will read its scope back from.
+    final scope = ContentScope.fromQueryParams(qParams);
+    final tab = switch (scope) {
+      ContentScope.audio => MasailTab.audio,
+      ContentScope.text => MasailTab.text,
+      ContentScope.all => MasailTab.all,
+    };
     final tabProgress = progress[tab];
     final lastMasailId = tabProgress?.id;
     WidgetsBinding.instance.addPostFrameCallback((_) => listState.restore());
@@ -247,7 +273,7 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
             if (tabProgress != null)
               ContinueReadingCard(
                   title: tabProgress.title,
-                  destination: '/masail/${tabProgress.id}',
+                  destination: scope.applyTo('/masail/${tabProgress.id}'),
                   icon: Icons.menu_book_outlined),
             Expanded(
               child: Container(
@@ -288,7 +314,8 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
                   itemBuilder: (_, item, __) {
                     final isRecent = item.id == lastMasailId;
                     return InkWell(
-                      onTap: () => context.push('/masail/${item.id}'),
+                      onTap: () =>
+                          context.push(scope.applyTo('/masail/${item.id}')),
                       child: ContentListCard(
                         recentlyVisited: isRecent,
                         highlightProvider: getDownloadedMasailByIdProvider(

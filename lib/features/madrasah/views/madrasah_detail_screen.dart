@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
-import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
@@ -18,6 +17,7 @@ import 'package:native_app/theme/app_theme_color.dart';
 import 'package:native_app/core/navigation/offline_sibling_query.dart';
 import 'package:native_app/core/navigation/sibling_ref.dart';
 import '../providers/madrasah_providers.dart';
+import '../providers/madrasah_progress_provider.dart';
 import '../models/madrasah.dart';
 
 class MadrasahDetailScreen extends ConsumerWidget {
@@ -74,10 +74,11 @@ class MadrasahDetailScreen extends ConsumerWidget {
           context.go('/madrasahs/${next.id}');
         }
 
-        Future(() {
-          ref
-              .read(lastVisitedProvider.notifier)
-              .updateLastMadrasah(resource.id);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref.read(madrasahProgressProvider.notifier).opened(
+                resource.id,
+                resource.title,
+              );
         });
 
         return AppScaffold(

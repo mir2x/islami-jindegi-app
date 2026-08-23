@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
-import 'package:native_app/providers/last_visited.dart';
 import 'package:native_app/widgets/error_pages/model_exception_handler.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
@@ -23,6 +22,7 @@ import 'package:native_app/core/navigation/offline_sibling_query.dart';
 import 'package:native_app/core/navigation/sibling_ref.dart';
 import '../providers/dua_providers.dart';
 import '../models/dua.dart';
+import '../providers/dua_progress_provider.dart';
 import 'audio_player.dart';
 
 class DuaDetailScreen extends ConsumerWidget {
@@ -78,10 +78,10 @@ class DuaDetailScreen extends ConsumerWidget {
           context.go('/duas/${next.id}');
         }
 
-        Future(() {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           ref
-              .read(lastVisitedProvider.notifier)
-              .updateLastDuaDurud(resource.id);
+              .read(duaProgressProvider.notifier)
+              .opened(resource.id, resource.title);
         });
 
         final filePath = resource.audioUrl != null

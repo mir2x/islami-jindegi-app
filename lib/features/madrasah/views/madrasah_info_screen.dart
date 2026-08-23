@@ -30,8 +30,7 @@ class MadrasahInfoScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var madrasahId = GoRouterState.of(context).pathParameters['id'].toString();
-    var infoId =
-        GoRouterState.of(context).pathParameters['info_id'].toString();
+    var infoId = GoRouterState.of(context).pathParameters['info_id'].toString();
     var madrasahQuery = ref.watch(singleMadrasahProvider(madrasahId));
 
     return madrasahQuery.when(
@@ -68,7 +67,12 @@ class MadrasahInfoScreen extends ConsumerWidget {
           storeKey: 'madrasahFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async { if (context.canPop()) context.pop(); else context.go('/madrasahs/$madrasahId'); },
+              onBackPressed: () async {
+                if (context.canPop())
+                  context.pop();
+                else
+                  context.go('/madrasahs/$madrasahId');
+              },
               showPattern: false,
               title: Text(madrasah.title),
               body: NextPageSwipe(

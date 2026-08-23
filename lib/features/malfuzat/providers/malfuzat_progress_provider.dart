@@ -43,12 +43,15 @@ class MalfuzatProgressNotifier
 
   MalfuzatProgress? forTab(MalfuzatTab tab) => state[tab];
   void opened(String id, String title, {required MalfuzatTab tab}) {
+    final current = state[tab];
+    if (current?.id == id && current?.title == title) return;
     final p = MalfuzatProgress(id, title);
     state = {...state, tab: p};
     _save();
   }
 
   void clear(String id) {
+    _timer?.cancel();
     state = {
       for (final e in state.entries)
         if (e.value.id != id) e.key: e.value
