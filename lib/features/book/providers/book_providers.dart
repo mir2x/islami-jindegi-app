@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dio/dio.dart';
 import 'package:native_app/core/providers/connectivity.dart';
 import 'package:native_app/core/navigation/offline_fallback.dart';
 import '../models/book.dart';
@@ -9,6 +10,7 @@ import '../models/book_subchapter.dart';
 import '../models/book_category.dart';
 import 'book_api_service.dart';
 import 'book_offline_service.dart';
+import 'book_progress_provider.dart';
 
 // ═══════════════════════════════════════════════════
 //  Service singletons
@@ -101,6 +103,9 @@ final bookDetailProvider =
       return book;
     } catch (e) {
       debugPrint('[bookDetailProvider] API error: $e');
+      if (e is DioException && e.response?.statusCode == 404) {
+        ref.read(bookProgressProvider.notifier).clearBook(id);
+      }
       if (!shouldFallbackToOffline(e)) rethrow;
       debugPrint(
         '[bookDetailProvider] Falling back to offline for book: $id',
@@ -210,7 +215,11 @@ final chapterDetailProvider =
   if (isConnected) {
     try {
       return await api.fetchChapter(id);
-    } catch (_) {
+    } catch (e) {
+      if (e is DioException && e.response?.statusCode == 404) {
+        ref.read(bookProgressProvider.notifier).clearNode(id);
+      }
+      if (!shouldFallbackToOffline(e)) rethrow;
       return await offline.findChapterById(id);
     }
   } else {
@@ -232,7 +241,11 @@ final subchapterDetailProvider =
   if (isConnected) {
     try {
       return await api.fetchSubchapter(id);
-    } catch (_) {
+    } catch (e) {
+      if (e is DioException && e.response?.statusCode == 404) {
+        ref.read(bookProgressProvider.notifier).clearNode(id);
+      }
+      if (!shouldFallbackToOffline(e)) rethrow;
       return await offline.findSubchapterById(id, includeChapter: true);
     }
   } else {
@@ -266,24 +279,3 @@ final singleCategoryProvider =
   final api = ref.read(bookApiServiceProvider);
   return await api.fetchBookCategory(id);
 });
-
-// ═══════════════════════════════════════════════════
-//  Last visited chapter tracking
-// ═══════════════════════════════════════════════════
-
-final bookLastChapterProvider =
-    NotifierProvider<BookLastChapterNotifier, Map<String, String>>(
-        BookLastChapterNotifier.new);
-
-class BookLastChapterNotifier extends Notifier<Map<String, String>> {
-  @override
-  Map<String, String> build() => {};
-
-  void updateLastChapter(String bookId, String chapterId) {
-    state = {...state, bookId: chapterId};
-  }
-
-  String? getLastChapterId(String bookId) {
-    return state[bookId];
-  }
-}

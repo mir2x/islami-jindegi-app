@@ -1,5 +1,3 @@
-import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/l10n/app_localizations.dart';
@@ -12,11 +10,12 @@ import 'package:native_app/widgets/inputs/search_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/features/book/views/image.dart';
 import 'package:native_app/theme/app_theme_color.dart';
-import 'package:native_app/providers/last_visited.dart';
-import 'package:native_app/widgets/utils/last_visited.dart';
 import 'package:native_app/widgets/buttons/floating_downloaded.dart';
 import '../providers/book_providers.dart';
 import '../providers/book_download_providers.dart';
+import '../providers/book_list_state_provider.dart';
+import '../providers/book_progress_provider.dart';
+import 'widgets/continue_reading_card.dart';
 
 class BookListScreen extends ConsumerStatefulWidget {
   const BookListScreen({super.key});
@@ -26,61 +25,30 @@ class BookListScreen extends ConsumerStatefulWidget {
 }
 
 class _BookListScreenState extends ConsumerState<BookListScreen> {
-  final ScrollController _scrollController = ScrollController();
-  final Map<String, GlobalKey> _itemKeys = {};
-  String? _lastScrolledToId;
-
-  GlobalKey _keyForBook(String id) =>
-      _itemKeys.putIfAbsent(id, () => GlobalKey());
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _scrollToLastVisited(String? lastId) {
-    if (lastId == null || lastId == _lastScrolledToId) return;
-    final ctx = _keyForBook(lastId).currentContext;
-    debugPrint(
-        '[BookScroll] attempt — lastId=$lastId ctx=${ctx != null ? 'FOUND' : 'null'} keys=${_itemKeys.keys.length}');
-    if (ctx != null) {
-      _lastScrolledToId = lastId;
-      debugPrint('[BookScroll] scrolling to item');
-      Scrollable.ensureVisible(
-        ctx,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-        alignment: 0.3,
-      );
-    }
-    // No retry here — itemBuilder fires again when item is rendered on any page
-  }
-
   @override
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var appTheme = Theme.of(context).extension<AppThemeColors>()!;
     var qParams = ref.watch(bookQueryParamsProvider);
-    final lastVisited = ref.watch(lastVisitedProvider);
-    final lastBookId = lastVisited.value?.getString('lastBook');
-    final lastBookIndex = lastVisited.value?.getInt('lastBookIndex') ?? 0;
-    // pageSize is 12; compute which page the last-opened book was on so we can
-    // preload up to that page when the screen loads fresh from home.
-    final preloadToPage = (lastBookIndex ~/ 12) + 1;
-    debugPrint(
-        '[BookScroll] build — lastBookId=$lastBookId index=$lastBookIndex preloadToPage=$preloadToPage _lastScrolledToId=$_lastScrolledToId');
+    final listState = ref.watch(
+      bookListStateProvider(BookListKey.fromParams(qParams)),
+    );
+    final progress = ref.watch(bookProgressProvider);
+    final lastBookId = progress.lastBookId;
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => listState.restoreOffset());
     double screenWidth =
         View.of(context).physicalSize.width / View.of(context).devicePixelRatio;
     bool isMobile = screenWidth < 768;
 
     return AppScaffold(
       onBackPressed: () async {
-        if (context.canPop())
+        if (context.canPop()) {
           context.pop();
-        else
+        } else {
           context.go('/');
+        }
       },
       title: Text(locales.books),
       floatingActionButton: FloatingDownloadedButton(
@@ -168,84 +136,16 @@ class _BookListScreenState extends ConsumerState<BookListScreen> {
                 }
               },
             ),
+            if (progress.last != null)
+              ContinueReadingCard(progress: progress.last!),
             Expanded(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: InfiniteList(
                   qParams: qParams,
-                  scrollController: _scrollController,
-                  onFirstPageLoaded: () {
-                    if (lastBookId == null || _lastScrolledToId == lastBookId)
-                      return;
-                    if (preloadToPage > 1) {
-                      // Item is on page 2+: jump to its approximate position so
-                      // the viewport moves there and itemBuilder renders it,
-                      // then the itemBuilder trigger calls ensureVisible precisely.
-                      final crossAxisCount = isMobile ? 2 : 3;
-                      final extent = isMobile ? 280.0 : 360.0;
-                      final spacing = isMobile ? 16.0 : 22.0;
-                      const topPadding = 25.0;
-                      final row = lastBookIndex ~/ crossAxisCount;
-                      final targetOffset =
-                          topPadding + row * (extent + spacing);
-                      debugPrint(
-                          '[BookScroll] jumping to offset=$targetOffset for index=$lastBookIndex row=$row');
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        if (!mounted || !_scrollController.hasClients) return;
-                        _scrollController.jumpTo(
-                          targetOffset.clamp(
-                              0.0, _scrollController.position.maxScrollExtent),
-                        );
-                      });
-                    } else {
-                      _scrollToLastVisited(lastBookId);
-                    }
-                  },
-                  resourceFetcher: (Map<String, dynamic> params) async {
-                    final api = ref.read(bookApiServiceProvider);
-                    final offline = ref.read(bookOfflineServiceProvider);
-
-                    debugPrint(
-                        '[BookListScreen] fetching books with params: $params');
-
-                    try {
-                      final books = await api.fetchBooks(
-                        page: params['page'] ?? 1,
-                        perPage: params['per_page'] ?? 12,
-                        search: params['search'],
-                        authorId: params['authorId'],
-                        categoryId: params['categoryId'],
-                      );
-                      debugPrint(
-                          '[BookListScreen] API returned ${books.length} books');
-                      return books;
-                    } catch (e) {
-                      debugPrint('[BookListScreen] API error: $e');
-                      if (e is DioException) {
-                        debugPrint(
-                            '[BookListScreen]   type=${e.type.name} status=${e.response?.statusCode}');
-                        debugPrint(
-                            '[BookListScreen]   url=${e.requestOptions.uri}');
-                        debugPrint(
-                            '[BookListScreen]   responseBody=${e.response?.data}');
-                      }
-                      debugPrint('[BookListScreen] Falling back to offline...');
-                      try {
-                        final offlineBooks = await offline.queryBooks(
-                          page: params['page'],
-                          perPage: params['per_page'],
-                        );
-                        debugPrint(
-                            '[BookListScreen] Offline returned ${offlineBooks.length} books');
-                        return offlineBooks;
-                      } catch (offlineError) {
-                        debugPrint(
-                            '[BookListScreen] Offline error: $offlineError');
-                        rethrow;
-                      }
-                    }
-                  },
-                  preloadToPage: preloadToPage,
+                  controller: listState.pagingController,
+                  scrollController: listState.scrollController,
+                  resourceFetcher: (_) => Future<List<dynamic>>.value(const []),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: isMobile ? 2 : 3,
                     crossAxisSpacing: isMobile ? 16 : 22,
@@ -254,15 +154,6 @@ class _BookListScreenState extends ConsumerState<BookListScreen> {
                   ),
                   itemBuilder: (_, item, index) {
                     final isRecent = item.id == lastBookId;
-                    if (isRecent) {
-                      debugPrint(
-                          '[BookScroll] itemBuilder hit target — id=${item.id} idx=$index alreadyScrolled=${_lastScrolledToId == item.id}');
-                      if (_lastScrolledToId != item.id) {
-                        WidgetsBinding.instance.addPostFrameCallback(
-                          (_) => _scrollToLastVisited(item.id),
-                        );
-                      }
-                    }
                     final isDark =
                         Theme.of(context).brightness == Brightness.dark;
                     final isClassic = appTheme.primary ==
@@ -286,15 +177,9 @@ class _BookListScreenState extends ConsumerState<BookListScreen> {
                           : appTheme.divider;
                     }
                     return InkWell(
-                      key: _keyForBook(item.id),
                       onTap: () {
                         debugPrint(
                             '[BookListScreen] Tapped book: ${item.id} idx=$index — ${item.title}');
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          ref
-                              .read(lastVisitedProvider.notifier)
-                              .updateLastBook(item.id, index: index);
-                        });
                         context.push('/books/${item.id}');
                       },
                       child: Container(
@@ -359,12 +244,6 @@ class _BookListScreenState extends ConsumerState<BookListScreen> {
                                 ],
                               ),
                             ),
-                            if (isRecent) ...[
-                              LastVisited(
-                                resourceKey: 'lastBook',
-                                resourceId: item.id,
-                              ),
-                            ],
                             SizedBox(
                               width: 36,
                               child: Divider(

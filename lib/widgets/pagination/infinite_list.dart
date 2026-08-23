@@ -12,8 +12,8 @@ class InfiniteList<ItemType> extends StatefulWidget {
     this.qParams = const {},
     this.padding = 25,
     this.scrollController,
+    this.controller,
     this.onFirstPageLoaded,
-    this.preloadToPage = 1,
   });
 
   final Function resourceFetcher;
@@ -26,39 +26,46 @@ class InfiniteList<ItemType> extends StatefulWidget {
   /// Optional external [ScrollController] for the list/grid.
   final ScrollController? scrollController;
 
+  /// A caller-owned controller. It remains alive when this widget's route is
+  /// removed, allowing a list to restore its loaded pages without refetching.
+  final PagingController<int, ItemType>? controller;
+
   /// Called once, after the very first page has been appended successfully.
   /// Use this to trigger scroll-to-item logic after initial items are rendered.
   final VoidCallback? onFirstPageLoaded;
 
-  /// Eagerly load pages 1..preloadToPage on fresh load (silently, without
-  /// user scrolling). Useful when you need to scroll to an item that may be
-  /// on page 2 or 3 and the pager wouldn't otherwise load those pages until
-  /// the user scrolls down.
-  final int preloadToPage;
-
   @override
-  State createState() => InfiniteListState();
+  State<InfiniteList<ItemType>> createState() => InfiniteListState<ItemType>();
 }
 
-class InfiniteListState<ItemType> extends State<InfiniteList> {
-  late final PagingController<int, ItemType> pController =
-      PagingController<int, ItemType>(
-    getNextPageKey: (state) {
-      final pages = state.pages;
-      if (pages == null || pages.isEmpty) return 1;
-      // A short page means we've reached the end.
-      if (pages.last.length < widget.pageSize) return null;
-      return (state.keys?.last ?? 0) + 1;
-    },
-    fetchPage: _fetchPage,
-  );
+class InfiniteListState<ItemType> extends State<InfiniteList<ItemType>> {
+  PagingController<int, ItemType>? _ownedController;
+
+  PagingController<int, ItemType> get pController =>
+      widget.controller ?? _ownedController!;
 
   bool _onLoadedFired = false;
 
   @override
-  void didUpdateWidget(covariant InfiniteList oldWidget) {
+  void initState() {
+    super.initState();
+    if (widget.controller == null) {
+      _ownedController = PagingController<int, ItemType>(
+        getNextPageKey: (state) {
+          final pages = state.pages;
+          if (pages == null || pages.isEmpty) return 1;
+          if (pages.last.length < widget.pageSize) return null;
+          return (state.keys?.last ?? 0) + 1;
+        },
+        fetchPage: _fetchPage,
+      );
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant InfiniteList<ItemType> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.qParams != widget.qParams) {
+    if (widget.controller == null && oldWidget.qParams != widget.qParams) {
       _onLoadedFired = false;
       pController.refresh();
     }
@@ -66,7 +73,7 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
 
   @override
   void dispose() {
-    pController.dispose();
+    _ownedController?.dispose();
     super.dispose();
   }
 
@@ -79,20 +86,10 @@ class InfiniteListState<ItemType> extends State<InfiniteList> {
 
     final items = await widget.resourceFetcher(params);
     final newItems = (items as List).cast<ItemType>();
-    final isLastPage = newItems.length < widget.pageSize;
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
 
-      // Eagerly load the next page until we reach preloadToPage.
-      if (!isLastPage && pageKey < widget.preloadToPage) {
-        pController.fetchNextPage();
-      }
-
-      // Fire onFirstPageLoaded once all preload pages are in (or the last
-      // available page has been reached).
-      if (!_onLoadedFired &&
-          (pageKey >= widget.preloadToPage || isLastPage)) {
+      if (!_onLoadedFired && pageKey == 1) {
         _onLoadedFired = true;
         widget.onFirstPageLoaded?.call();
       }

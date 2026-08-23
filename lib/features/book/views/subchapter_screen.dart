@@ -17,7 +17,9 @@ import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
 import '../models/book_node_ref.dart';
+import '../models/book_reading_progress.dart';
 import '../providers/book_providers.dart';
+import '../providers/book_progress_provider.dart';
 
 class SubchapterScreen extends ConsumerWidget {
   const SubchapterScreen({super.key});
@@ -68,11 +70,14 @@ class SubchapterScreen extends ConsumerWidget {
           context.go(routeFor(next));
         }
 
-        // Track last visited (deferred to avoid modifying state during build)
-        Future(() {
-          ref.read(bookLastChapterProvider.notifier).updateLastChapter(
+        // Persist progress after the page is committed, never during build.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref.read(bookProgressProvider.notifier).openedNode(
                 bookId,
                 resource.id,
+                resource.title,
+                BookNodeKind.subchapter,
+                bookTitle: ref.read(bookDetailProvider(bookId)).value?.title,
               );
         });
 

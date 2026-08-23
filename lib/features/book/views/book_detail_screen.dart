@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:native_app/l10n/app_localizations.dart';
@@ -9,7 +8,6 @@ import 'package:native_app/widgets/layouts/placeholder_scaffold.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/gestures/next_page_swipe.dart';
-import 'package:native_app/widgets/utils/with_last_visited.dart';
 import 'package:native_app/widgets/utils/comma_separated_list.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/presentation/item_content.dart';
@@ -29,9 +27,9 @@ import 'package:native_app/features/book/views/image.dart';
 import 'package:native_app/theme/app_theme_color.dart';
 import 'package:native_app/core/navigation/offline_sibling_query.dart';
 import 'package:native_app/core/navigation/sibling_ref.dart';
-import 'package:native_app/providers/last_visited.dart';
 import '../providers/book_providers.dart';
 import '../providers/book_download_providers.dart';
+import '../providers/book_progress_provider.dart';
 import '../models/book.dart';
 
 class BookDetailScreen extends ConsumerStatefulWidget {
@@ -142,7 +140,9 @@ class _BookContent extends ConsumerWidget {
       error: (error, _) => Text(error.toString()),
       data: (chapters) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          ref.read(lastVisitedProvider.notifier).updateLastBook(book.id);
+          ref
+              .read(bookProgressProvider.notifier)
+              .openedBook(book.id, book.title);
         });
         if (chapters.isNotEmpty) {
           return AppScaffold(
@@ -213,15 +213,12 @@ class _BookContent extends ConsumerWidget {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: WithLastVisited(
-                        builder: (context, settings) {
-                          String? lastChapterId;
-                          Map books = json.decode(
-                            settings.getString('lastChapters') ?? '{}',
-                          );
-                          if (books.containsKey(book.id.toString())) {
-                            lastChapterId = books[book.id.toString()];
-                          }
+                      child: Builder(
+                        builder: (context) {
+                          final lastChapterId = ref
+                              .watch(bookProgressProvider)
+                              .forBook(book.id)
+                              ?.nodeId;
 
                           var allChaptersQuery = ref.watch(
                             chapterListProvider(

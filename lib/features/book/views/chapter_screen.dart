@@ -17,7 +17,9 @@ import 'package:native_app/widgets/buttons/font_resizer.dart';
 import 'package:native_app/widgets/buttons/previous.dart';
 import 'package:native_app/widgets/buttons/next.dart';
 import '../models/book_node_ref.dart';
+import '../models/book_reading_progress.dart';
 import '../providers/book_providers.dart';
+import '../providers/book_progress_provider.dart';
 
 class ChapterScreen extends ConsumerWidget {
   const ChapterScreen({super.key});
@@ -69,8 +71,7 @@ class ChapterScreen extends ConsumerWidget {
         Future? previousPage() async {
           final previous = await sibling(false);
           if (!context.mounted) return;
-          context.go(
-              previous == null ? '/books/$bookId' : routeFor(previous));
+          context.go(previous == null ? '/books/$bookId' : routeFor(previous));
         }
 
         Future? nextPage() async {
@@ -79,11 +80,14 @@ class ChapterScreen extends ConsumerWidget {
           context.go(routeFor(next));
         }
 
-        // Track last visited chapter (deferred to avoid modifying state during build)
-        Future(() {
-          ref.read(bookLastChapterProvider.notifier).updateLastChapter(
+        // Persist progress after the page is committed, never during build.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref.read(bookProgressProvider.notifier).openedNode(
                 bookId,
                 resource.id,
+                resource.title,
+                BookNodeKind.chapter,
+                bookTitle: ref.read(bookDetailProvider(bookId)).value?.title,
               );
         });
 

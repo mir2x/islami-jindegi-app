@@ -23,6 +23,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/core/services/offline_db_prefetch_service.dart';
 import 'package:native_app/core/services/prayer_alarm_service.dart';
 import 'package:native_app/core/services/hijri_api.dart';
+import 'package:native_app/core/providers/shared_preferences.dart';
 import 'package:native_app/widgets/utils/offline_db_prefetch_banner.dart';
 
 import 'routes/index.dart';
@@ -69,7 +70,11 @@ Future<void> main() async {
     await initialPrefs.setString('hijriBackendUrl', hijriBackendUrl);
   }
 
-  final container = ProviderContainer();
+  final container = ProviderContainer(
+    overrides: [
+      sharedPreferencesProvider.overrideWithValue(initialPrefs),
+    ],
+  );
 
   // The widget can cold-launch the app. This must happen before Flutter reads
   // the launch URL, otherwise HomeWidget cannot return the tapped shortcut.
