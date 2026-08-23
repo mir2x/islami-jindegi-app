@@ -11,11 +11,19 @@ class HtmlText extends StatelessWidget {
     required this.text,
     this.fontSizeRatio = 1.0,
     this.arabicFontScale = 1.0,
+    this.selectable = true,
   });
 
   final String text;
   final double fontSizeRatio;
   final double arabicFontScale;
+
+  /// Whether this body owns its own [SelectionArea].
+  ///
+  /// Set false when an ancestor already provides one — nesting selection
+  /// areas breaks drag selection. [LazyItemContent] renders one block per
+  /// sliver under a single shared [SelectionArea], so its blocks pass false.
+  final bool selectable;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +38,7 @@ class HtmlText extends StatelessWidget {
       fontSize: FontSize(24 * fontSizeRatio),
     );
 
-    return SelectionArea(
+    final html = RepaintBoundary(
       child: Html(
         data: text,
         extensions: [
@@ -139,5 +147,7 @@ class HtmlText extends StatelessWidget {
         },
       ),
     );
+
+    return selectable ? SelectionArea(child: html) : html;
   }
 }

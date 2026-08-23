@@ -8,11 +8,10 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/full_screen_loader.dart';
 import 'package:native_app/widgets/presentation/resizable_font.dart';
 import 'package:native_app/widgets/gestures/next_page_swipe.dart';
-import 'package:native_app/widgets/presentation/item_content.dart';
+import 'package:native_app/widgets/presentation/lazy_item_content.dart';
 import 'package:native_app/widgets/presentation/download_item.dart';
 import 'package:native_app/widgets/page/title.dart';
 import 'package:native_app/widgets/page/subtitle.dart';
-import 'package:native_app/widgets/page/html_body.dart';
 import 'package:native_app/helpers/file_title_path.dart';
 import 'package:native_app/widgets/presentation/bottom_bar.dart';
 import 'package:native_app/widgets/buttons/social_share.dart';
@@ -95,8 +94,13 @@ class ArticleDetailScreen extends ConsumerWidget {
               body: NextPageSwipe(
                 onPrevious: previousPage,
                 onNext: nextPage,
-                child: ItemContent(
-                  children: [
+                // Articles are by far the longest bodies in the app (median
+                // ~13k characters, up to ~23k), so the body renders lazily
+                // block-by-block instead of all at once — see LazyItemContent.
+                child: LazyItemContent(
+                  fontSizeRatio: fontSizeRatio,
+                  htmlBody: resource.body,
+                  header: [
                     Container(
                       margin: const EdgeInsets.only(bottom: 15),
                       child: PageTitle(
@@ -104,7 +108,7 @@ class ArticleDetailScreen extends ConsumerWidget {
                         fontSizeRatio: fontSizeRatio,
                       ),
                     ),
-                    if (resource.authorName != null) ...[
+                    if (resource.authorName != null)
                       Container(
                         margin: const EdgeInsets.only(bottom: 15),
                         child: PageSubtitle(
@@ -112,8 +116,7 @@ class ArticleDetailScreen extends ConsumerWidget {
                           fontSizeRatio: fontSizeRatio,
                         ),
                       ),
-                    ],
-                    if (resource.documentUrl != null) ...[
+                    if (resource.documentUrl != null)
                       DownloadItem(
                         filePath: fileTitlePath(
                           resource.title,
@@ -121,15 +124,9 @@ class ArticleDetailScreen extends ConsumerWidget {
                         ),
                         fileUrl: resource.documentUrl!,
                       ),
-                    ],
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 30),
-                      child: PageHtmlBody(
-                        text: resource.body,
-                        fontSizeRatio: fontSizeRatio,
-                      ),
-                    ),
+                    const SizedBox(height: 15),
                   ],
+                  footer: const [SizedBox(height: 30)],
                 ),
               ),
               bottomBar: BottomBar(
