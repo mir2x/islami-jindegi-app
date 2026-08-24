@@ -138,14 +138,20 @@ class CurrentPrayersState extends ConsumerState<CurrentPrayers> {
           currentLang,
         );
 
+        final nextPrayer = prayerTimes['next'];
+        final nextPrayerText = nextPrayer is Map
+            ? '${locales.next} ${nextPrayer['title'] ?? ''} ${nextPrayer['time'] ?? ''}'
+                .trim()
+            : nextPrayer is String
+                ? nextPrayer
+                : '';
+
         return Prayers(
           heroCard: widget.heroCard,
           compactHero: widget.compactHero,
           prayerTimes: {
             'current': prayerTimes['current'],
-            'next': widget.heroCard
-                ? prayerTimes['next']
-                : '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}',
+            'next': widget.heroCard ? nextPrayer : nextPrayerText,
           },
         );
       },
@@ -206,9 +212,13 @@ class Prayers extends StatelessWidget {
 
         final nextValue = prayerTimes['next'];
         final nextString = nextValue is Map
-            ? '${locales.next} ${nextValue['title']} ${nextValue['time']}'
-            : nextValue as String;
-        if (preferences.getString('nextPrayer') != nextString) {
+            ? '${locales.next} ${nextValue['title'] ?? ''} ${nextValue['time'] ?? ''}'
+                .trim()
+            : nextValue is String
+                ? nextValue
+                : '';
+        if (nextString.isNotEmpty &&
+            preferences.getString('nextPrayer') != nextString) {
           preferences.setString('nextPrayer', nextString);
           updatableParams['nextPrayer'] = nextString;
         }
@@ -423,7 +433,7 @@ class Prayers extends StatelessWidget {
                 ),
               ],
               Text(
-                prayerTimes['next'],
+                nextString,
                 style: textTheme.labelSmall?.copyWith(
                   color: labelColor,
                 ),

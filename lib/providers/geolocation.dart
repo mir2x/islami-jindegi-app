@@ -199,26 +199,54 @@ Future setLocation(Map location) async {
   final String currentLocale = preferences.getString('locale') ?? 'bn';
   preferences.setString('locationLocale', currentLocale);
 
-  if (preferences.getString('country') != location['country']) {
-    preferences.setString('country', location['country']);
+  // Every field below arrives from the reverse geocoder as `String?`, and
+  // `getLocation` sets `countryCode` to null outright when no ISO code can be
+  // resolved. They reach this function through an untyped `Map`, so a null is
+  // typed `dynamic` and slips past the compiler into `setString`, whose value
+  // parameter is non-nullable — throwing `type 'Null' is not a subtype of type
+  // 'String'` at runtime.
+  //
+  // That throw escapes `GeolocationNotifier.build()` and leaves the whole
+  // provider in an error state, so every screen rendering
+  // `Text(error.toString())` paints the raw message where the Hijri date and
+  // prayer times belong. It reproduces reliably wherever the geocoder returns a
+  // partial placemark — common on iOS, and on Android devices whose geocoder
+  // backend is unavailable.
+  //
+  // A missing field means the geocoder had nothing to say, not that the user
+  // has no city, so the last known value is kept rather than overwritten.
+  String? resolved(dynamic value) {
+    final text = value is String ? value.trim() : null;
+    return (text != null && text.isNotEmpty) ? text : null;
   }
 
-  if (preferences.getString('countryCode') != location['countryCode']) {
+  final String? country = resolved(location['country']);
+  final String? countryCode = resolved(location['countryCode']);
+  final String? city = resolved(location['city']);
+  final String? timezone = resolved(location['timezone']);
+
+  if (country != null && preferences.getString('country') != country) {
+    preferences.setString('country', country);
+  }
+
+  if (countryCode != null &&
+      preferences.getString('countryCode') != countryCode) {
     debugPrint('[Hijri][setLocation] countryCode changed: '
-        '${preferences.getString('countryCode')} → ${location['countryCode']}. '
+        '${preferences.getString('countryCode')} → $countryCode. '
         'Clearing Hijri cache.');
-    preferences.setString('countryCode', location['countryCode']);
+    preferences.setString('countryCode', countryCode);
     // Hijri date is country-specific — stale cache from another country must not
     // survive a location switch.
     preferences.remove('hijriDataToday');
     preferences.remove('hijriDataTomorrow');
   } else {
     debugPrint(
-        '[Hijri][setLocation] countryCode unchanged: ${location['countryCode']}. Cache kept.');
+      '[Hijri][setLocation] countryCode unchanged: ${countryCode ?? preferences.getString('countryCode')}. Cache kept.',
+    );
   }
 
-  if (preferences.getString('city') != location['city']) {
-    preferences.setString('city', location['city']);
+  if (city != null && preferences.getString('city') != city) {
+    preferences.setString('city', city);
   }
 
   if (preferences.getString('latitude') !=
@@ -237,12 +265,17 @@ Future setLocation(Map location) async {
     );
   }
 
-  if ((location['timezone'] != null) &&
-      (preferences.getString('timezone') != location['timezone'])) {
-    preferences.setString('timezone', location['timezone']);
+  if (timezone != null && preferences.getString('timezone') != timezone) {
+    preferences.setString('timezone', timezone);
   }
 
-  String locationName = getLocationName(location);
+  // Built from the values actually in effect, not from the incoming map: when
+  // the geocoder omitted a field the stored one was deliberately kept above, so
+  // reading `location` here would blank out a location name that is still valid.
+  final String locationName = getLocationName({
+    'city': city ?? preferences.getString('city'),
+    'country': country ?? preferences.getString('country'),
+  });
 
   if (preferences.getString('location') != locationName) {
     preferences.setString('location', locationName);
