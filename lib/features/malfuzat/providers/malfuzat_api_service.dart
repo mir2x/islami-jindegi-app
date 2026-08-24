@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:dio/dio.dart';
 import 'package:native_app/core/navigation/content_scope.dart';
 import 'package:flutter/foundation.dart';
@@ -51,45 +49,27 @@ class MalfuzatApiService {
     return data.map((r) => MalfuzatItem.fromJson(r)).toList();
   }
 
-  /// Picks a random published malfuzat matching the given filters. Uses the
-  /// `total` count from a 1-item page to pick a random page, then fetches
-  /// that single item — same "quantity of 1 pages" trick the old JSON:API
-  /// `total_pages`-based random picker used.
-  Future<MalfuzatItem?> fetchRandomMalfuzat({
-    String? search,
-    String? authorId,
-    String? categoryId,
-    bool? hasAudio,
-  }) async {
-    final baseParams = <String, dynamic>{
-      'published': true,
-      if (search != null && search.isNotEmpty) 'search': search,
-      if (authorId != null) 'authorId': authorId,
-      if (categoryId != null) 'categoryId': categoryId,
-      if (hasAudio != null) 'hasAudio': hasAudio,
-    };
-
-    final initialResponse = await _dio.get(
-      '/malfuzat',
-      queryParameters: {...baseParams, 'page': 1, 'pageSize': 1},
+  /// One random published, text-only malfuzat by the popup author, for the
+  /// home-screen dialog.
+  ///
+  /// The server owns which author this is. The previous implementation picked
+  /// it here — read `total` from a 1-item page, pick a random page, fetch it —
+  /// which meant the app carried the author's primary key. That key is not
+  /// stable across backend migrations, and when it was reissued every install
+  /// silently got zero results and the popup simply stopped appearing until a
+  /// new store build shipped. Two round trips became one, and the app no
+  /// longer knows or cares who the author is.
+  ///
+  /// Returns null when the server has no item to offer (204), which the caller
+  /// must treat as "try offline", not as "show nothing".
+  Future<MalfuzatItem?> fetchDailyMalfuzat() async {
+    final response = await _dio.get('/malfuzat/daily');
+    debugPrint(
+      '[MalfuzatApiService] fetchDailyMalfuzat status: ${response.statusCode}',
     );
-    final initialData = initialResponse.data['data'] as List? ?? [];
-    if (initialData.isEmpty) return null;
-
-    final total = (initialResponse.data['total'] as num?)?.toInt() ?? 1;
-    if (total <= 1) return MalfuzatItem.fromJson(initialData.first);
-
-    final randomPage = Random().nextInt(total) + 1;
-    if (randomPage == 1) return MalfuzatItem.fromJson(initialData.first);
-
-    final randomResponse = await _dio.get(
-      '/malfuzat',
-      queryParameters: {...baseParams, 'page': randomPage, 'pageSize': 1},
-    );
-    final randomData = randomResponse.data['data'] as List? ?? [];
-    return randomData.isNotEmpty
-        ? MalfuzatItem.fromJson(randomData.first)
-        : MalfuzatItem.fromJson(initialData.first);
+    final data = response.data;
+    if (data is! Map<String, dynamic>) return null;
+    return MalfuzatItem.fromJson(data);
   }
 
   Future<MalfuzatItem> fetchSingleMalfuzat(String id,

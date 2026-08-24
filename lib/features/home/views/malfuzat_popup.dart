@@ -61,23 +61,39 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
         return;
       }
 
-      debugPrint('[MalfuzatPopup] fetching malfuzat from API...');
+      // Which author this is, and the text-only/published filtering, are the
+      // server's business now. The app used to send the author's primary key
+      // here; that key was reissued by a backend migration and every install
+      // quietly received zero results, so the popup vanished for months at a
+      // time with nothing in any log to say why.
+      debugPrint('[MalfuzatPopup] fetching daily malfuzat...');
+      final api = ref.read(malfuzatApiServiceProvider);
+      final offline = ref.read(malfuzatOfflineServiceProvider);
+
       MalfuzatItem? randomMalfuzat;
       try {
-        final api = ref.read(malfuzatApiServiceProvider);
-        randomMalfuzat = await api.fetchRandomMalfuzat(
-          authorId: '6842ab90-27d0-4ef9-b783-3b03388a2304',
-          hasAudio: false,
-        );
-        debugPrint('[MalfuzatPopup] API returned random item: $randomMalfuzat');
+        randomMalfuzat = await api.fetchDailyMalfuzat();
+        debugPrint('[MalfuzatPopup] API returned: $randomMalfuzat');
       } catch (e, stack) {
         debugPrint('[MalfuzatPopup] API error: $e');
         debugPrint('[MalfuzatPopup] Stack: $stack');
-        return;
+      }
+
+      // Offline, or the server had nothing to give. The malfuzat corpus is
+      // already on the device once the user has downloaded it, so there is no
+      // reason for the popup to be an online-only feature.
+      if (randomMalfuzat == null) {
+        try {
+          randomMalfuzat = await offline.findRandomPopupMalfuzat();
+          debugPrint(
+              '[MalfuzatPopup] offline fallback returned: $randomMalfuzat');
+        } catch (e) {
+          debugPrint('[MalfuzatPopup] offline fallback failed: $e');
+        }
       }
 
       if (randomMalfuzat == null) {
-        debugPrint('[MalfuzatPopup] empty result — not showing popup');
+        debugPrint('[MalfuzatPopup] nothing to show — skipping this launch');
         return;
       }
 
@@ -144,6 +160,7 @@ class MalfuzatPopupState extends ConsumerState<MalfuzatPopup> {
                           body: item.body,
                           link: 'malfuzat/${item.id}',
                           iconColor: appColors.appBarText,
+                          asButton: true,
                         ),
                       ],
                     ),

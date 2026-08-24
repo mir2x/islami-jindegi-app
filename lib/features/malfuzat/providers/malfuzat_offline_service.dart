@@ -4,6 +4,10 @@ import '../models/malfuzat.dart';
 import '../models/malfuzat_author.dart';
 import '../models/malfuzat_category.dart';
 
+/// The distinctive part of the popup author's name (মুফতী মনসূরুল হক সাহেব).
+/// Kept as a fragment so added or reworded honorifics cannot lose him.
+const popupAuthorNameFragment = 'মনসূরুল হক';
+
 class MalfuzatOfflineService {
   // Bumped 1 -> 2 for Guid ids, then 2 -> 3 for the move from a prebuilt
   // downloaded file to an admin-curated, client-created-and-synced schema
@@ -95,6 +99,40 @@ class MalfuzatOfflineService {
       return MalfuzatItem.fromDb(row,
           authorName: aid != null ? authorNames[aid] : null);
     }).toList();
+  }
+
+  /// One random downloaded, text-only malfuzat by the popup author.
+  ///
+  /// Matched on the author's NAME, not their id, for the same reason the API
+  /// does: ids are reissued by backend migrations, and a local database synced
+  /// before such a migration holds the old ones. A name fragment survives both
+  /// the reissue and any honorific being added or dropped.
+  ///
+  /// Returns null when nothing has been downloaded yet, in which case the
+  /// popup simply does not appear this launch.
+  Future<MalfuzatItem?> findRandomPopupMalfuzat({
+    String authorNameFragment = popupAuthorNameFragment,
+  }) async {
+    final db = await _db;
+    final rows = await db.rawQuery(
+      '''
+      SELECT m.*, a.name AS author_name
+      FROM malfuzats m
+      JOIN malfuzat_authors a ON a.id = m.malfuzat_author_id
+      WHERE m.published = 1
+        AND m.has_audio = 0
+        AND m.body IS NOT NULL AND m.body <> ''
+        AND a.name LIKE ?
+      ORDER BY RANDOM()
+      LIMIT 1
+      ''',
+      ['%$authorNameFragment%'],
+    );
+    if (rows.isEmpty) return null;
+    return MalfuzatItem.fromDb(
+      rows.first,
+      authorName: rows.first['author_name']?.toString(),
+    );
   }
 
   Future<MalfuzatItem?> findMalfuzatById(String id) async {

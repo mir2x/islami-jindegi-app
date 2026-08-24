@@ -225,13 +225,18 @@ struct IslamiJindegiWidgetView: View {
   }
 
   private func datesAndSun(scale: CGFloat, availableWidth: CGFloat) -> some View {
+    // Sizes below are larger than the rest of the widget on purpose — every
+    // one of them is still `base * scale`, and `scale` already floors at 0.72
+    // for the smallest supported widget frame (see `content`), so a small
+    // screen shrinks these exactly as before; only the full-size ceiling on a
+    // normal or large widget moved up.
     HStack(alignment: .top, spacing: 8 * scale) {
       VStack(alignment: .leading, spacing: 3) {
         Text(entry.hijriDate)
-          .font(font(18 * scale, weight: .semibold))
+          .font(font(21 * scale, weight: .semibold))
           .layoutPriority(1)
-        Text(entry.bangaliDate).font(font(15 * scale))
-        if !entry.gregorianDate.isEmpty { Text(entry.gregorianDate).font(font(13 * scale)) }
+        Text(entry.bangaliDate).font(font(17 * scale))
+        if !entry.gregorianDate.isEmpty { Text(entry.gregorianDate).font(font(15 * scale)) }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -239,12 +244,12 @@ struct IslamiJindegiWidgetView: View {
         Text(entry.sunrise)
         Text(entry.sunset)
         Text(entry.location)
-          .font(font(12 * scale, weight: .medium))
+          .font(font(14 * scale, weight: .medium))
           .foregroundStyle(palette.accent)
           .lineLimit(1)
       }
-      .font(font(12 * scale))
-      .frame(width: min(118 * scale, availableWidth * 0.4), alignment: .leading)
+      .font(font(14 * scale))
+      .frame(width: min(130 * scale, availableWidth * 0.4), alignment: .leading)
     }
     .foregroundStyle(palette.text)
     .lineLimit(1)
@@ -447,18 +452,15 @@ private struct PrayerScheduleWidgetView: View {
   private var palette: WidgetPalette { .forTheme(entry.theme) }
   // Keep the five columns visually consistent. Full names such as
   // "যুহর, যাওয়াল" and "মাগরিব, ইফতার" are intentionally not used here.
-  private let shortPrayerTitles = ["ফজর", "যোহর", "আসর", "মাগরিব", "ইশা"]
+  private let shortPrayerTitles = ["ফজর", "যুহর", "আসর", "মাগরিব", "ইশা"]
 
-  private var schedule: [(title: String, sourceTitle: String, time: String)] {
+  private var schedule: [(title: String, time: String)] {
     shortPrayerTitles.enumerated().map { index, shortTitle in
       let item = entry.prayerSchedule.indices.contains(index)
         ? entry.prayerSchedule[index]
         : nil
-      // An empty source title would make `currentPrayer.contains(_:)` below
-      // true for every column, highlighting the whole row.
-      let sourceTitle = item?.title.isEmpty == false ? item!.title : shortTitle
       let time = item?.time.isEmpty == false ? item!.time : "--:--"
-      return (title: shortTitle, sourceTitle: sourceTitle, time: time)
+      return (title: shortTitle, time: time)
     }
   }
 
@@ -500,7 +502,6 @@ private struct PrayerScheduleWidgetView: View {
 
         HStack(spacing: 2 * scale) {
           ForEach(Array(schedule.enumerated()), id: \.offset) { _, prayer in
-            let isCurrent = !entry.currentPrayer.isEmpty && entry.currentPrayer.contains(prayer.sourceTitle)
             VStack(spacing: 2) {
               Text(prayer.title)
                 .font(font(13 * scale, weight: .semibold))
@@ -509,29 +510,41 @@ private struct PrayerScheduleWidgetView: View {
             }
             .lineLimit(1)
             .minimumScaleFactor(0.55)
-            .foregroundStyle(isCurrent ? palette.accent : palette.text)
+            .foregroundStyle(palette.text)
             .padding(.vertical, 4 * scale)
             .padding(.horizontal, 2 * scale)
             .frame(maxWidth: .infinity)
-            .background(isCurrent ? palette.accent.opacity(0.12) : .clear)
-            .overlay(
-              RoundedRectangle(cornerRadius: 5)
-                .stroke(isCurrent ? palette.accent : .clear, lineWidth: 1)
-            )
           }
         }
 
         Spacer(minLength: 0)
 
+        // Mirrors the systemSmall widget's countdown, which is the one known to
+        // render correctly. Two details there are load-bearing and were missing
+        // here:
+        //
+        // 1. The timer gets an explicit `.system` font. Inheriting the custom
+        //    "SolaimanLipi" face from the enclosing `.font(_:)` puts a
+        //    self-updating `Text(_, style: .timer)` — whose width the system
+        //    reserves ahead of time — on a Bangla font with no monospaced-digit
+        //    support, so `.monospacedDigit()` cannot stabilise its width.
+        // 2. The timer must win the width contest against the label. Here it
+        //    shares one line with a long Bangla headline under `lineLimit(1)`,
+        //    unlike the small widget where it owns a full-width line of its own.
+        //    `layoutPriority` gives the timer its space first and lets
+        //    `minimumScaleFactor` shrink the *label* instead — which is what
+        //    `.fixedSize()` was previously (and unreliably) approximating.
         HStack(spacing: 4 * scale) {
           Text("\(entry.countdownHeadline) বাকি:")
+            .font(font(13 * scale))
+            .lineLimit(1)
+            .minimumScaleFactor(0.6)
           countdownTimer(entry.countdownTarget, locale: entry.locale)
+            .font(.system(size: 14 * scale, weight: .semibold, design: .rounded))
             .monospacedDigit()
-            .fixedSize()
+            .lineLimit(1)
+            .layoutPriority(1)
         }
-        .font(font(13 * scale))
-        .lineLimit(1)
-        .minimumScaleFactor(0.6)
         .frame(maxWidth: .infinity, alignment: .center)
         .foregroundStyle(palette.accent)
       }
