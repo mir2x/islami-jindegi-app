@@ -22,7 +22,14 @@ String _dayLabel(int weekday, String lang) {
   return labels[weekday - 1];
 }
 
-Future<bool> _ensureAlarmPermissions(WidgetRef ref) async {
+/// The one gate every path that enables an alarm has to pass.
+///
+/// It lives here but is public because the bell on the prayer list enables
+/// alarms too, and used to do so without asking for anything — on Android 13+
+/// without notification permission, or 14+ without exact-alarm permission, that
+/// produced an alarm the system would never deliver while the UI reported it as
+/// on.
+Future<bool> ensureAlarmPermissions(WidgetRef ref) async {
   var notificationStatus = await Permission.notification.status;
   if (!notificationStatus.isGranted && !notificationStatus.isProvisional) {
     notificationStatus = await Permission.notification.request();
@@ -46,6 +53,15 @@ Future<bool> _ensureAlarmPermissions(WidgetRef ref) async {
     if (!exactAlarmStatus.isGranted) {
       await openAppSettings();
       return false;
+    }
+
+    // Not fatal, so the result is ignored: an alarm still fires without it on
+    // stock Android. On the OEM skins that aggressively suspend background
+    // work it is what keeps the horizon being topped up, so it is worth asking
+    // once at the point the user opts into alarms.
+    final batteryStatus = await Permission.ignoreBatteryOptimizations.status;
+    if (!batteryStatus.isGranted && !batteryStatus.isPermanentlyDenied) {
+      await Permission.ignoreBatteryOptimizations.request();
     }
   }
 
@@ -103,7 +119,7 @@ class PrayerAlarmScreen extends ConsumerWidget {
                     Switch(
                       value: allEnabled,
                       onChanged: (value) async {
-                        if (value && !await _ensureAlarmPermissions(ref)) {
+                        if (value && !await ensureAlarmPermissions(ref)) {
                           return;
                         }
                         ref
@@ -486,7 +502,7 @@ class _PrayerAlarmCard extends ConsumerWidget {
                 Switch(
                   value: isEnabled,
                   onChanged: (value) async {
-                    if (value && !await _ensureAlarmPermissions(ref)) {
+                    if (value && !await ensureAlarmPermissions(ref)) {
                       return;
                     }
                     ref
@@ -996,7 +1012,7 @@ class _PrayerActionRow extends ConsumerWidget {
         Expanded(
           child: FilledButton.icon(
             onPressed: () async {
-              if (!await _ensureAlarmPermissions(ref)) {
+              if (!await ensureAlarmPermissions(ref)) {
                 return;
               }
               await PrayerAlarmService.scheduleTestAlarm(

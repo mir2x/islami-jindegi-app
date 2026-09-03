@@ -155,7 +155,13 @@ Future<void> _initializeNonBlockingServices(SharedPreferences prefs) async {
   // task, and repeat it whenever the app comes back to the foreground.
   await refreshAppWidgets(force: true);
   _appWidgetLifecycleListener ??= AppLifecycleListener(
-    onResume: () => unawaited(refreshAppWidgets()),
+    onResume: () {
+      unawaited(refreshAppWidgets());
+      // Topped up separately from the widget refresh, not through it. Alarm
+      // liveness must not depend on HomeWidget's platform calls succeeding,
+      // and the scheduler is a no-op when nothing has changed.
+      unawaited(_topUpPrayerAlarms());
+    },
     onHide: () => unawaited(refreshAppWidgets()),
   );
 
@@ -163,6 +169,14 @@ Future<void> _initializeNonBlockingServices(SharedPreferences prefs) async {
     await Quran.initialize();
   } catch (error, stackTrace) {
     debugPrint('Quran initialization failed: $error\n$stackTrace');
+  }
+}
+
+Future<void> _topUpPrayerAlarms() async {
+  try {
+    await PrayerAlarmService.scheduleAllAlarms();
+  } catch (error, stackTrace) {
+    debugPrint('Prayer alarm top-up failed: $error\n$stackTrace');
   }
 }
 

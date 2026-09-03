@@ -10,6 +10,8 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:native_app/core/services/prayer_alarm_service.dart';
 import 'package:native_app/features/namaz_time/providers/prayer_alarm_providers.dart';
+import 'package:native_app/features/namaz_time/views/prayer_alarm_screen.dart'
+    show ensureAlarmPermissions;
 import 'package:native_app/helpers/adjusted_hijri_date.dart';
 import 'package:native_app/helpers/get_location_name.dart';
 import 'package:native_app/helpers/split_hijri_date.dart';
@@ -531,14 +533,25 @@ class NamazTimeItemsState extends ConsumerState<NamazTimeItems> {
                   isAlarmEnabled: isAlarmEnabled,
                   timeLeft: timeLeft,
                   onTap: p.route != null ? () => context.push(p.route!) : null,
-                  onAlarmTap: () {
-                    ref
+                  onAlarmTap: () async {
+                    final enabling = !isAlarmEnabled;
+                    final messenger = ScaffoldMessenger.of(context);
+
+                    // Same gate the alarm settings screen uses. Without it this
+                    // bell armed an alarm the system would never deliver and
+                    // told the user it was on.
+                    if (enabling && !await ensureAlarmPermissions(ref)) {
+                      return;
+                    }
+
+                    await ref
                         .read(prayerAlarmProvider.notifier)
-                        .toggleAlarm(p.keyName, !isAlarmEnabled);
-                    ScaffoldMessenger.of(context).showSnackBar(
+                        .toggleAlarm(p.keyName, enabling);
+
+                    messenger.showSnackBar(
                       SnackBar(
                         content: Text(
-                          !isAlarmEnabled
+                          enabling
                               ? '${locales.alarmEnabled} — ${p.title}'
                               : '${locales.alarmDisabled} — ${p.title}',
                         ),
@@ -600,7 +613,7 @@ class _PrayerCard extends StatelessWidget {
   final bool isAlarmEnabled;
   final String timeLeft;
   final VoidCallback? onTap;
-  final VoidCallback onAlarmTap;
+  final Future<void> Function() onAlarmTap;
 
   @override
   Widget build(BuildContext context) {
@@ -769,7 +782,7 @@ class _PrayerCard extends StatelessWidget {
                         ? IconButton(
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
-                            onPressed: onAlarmTap,
+                            onPressed: () => unawaited(onAlarmTap()),
                             icon: Icon(
                               isAlarmEnabled
                                   ? Icons.notifications_active
