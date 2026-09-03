@@ -23,6 +23,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:native_app/core/services/offline_db_prefetch_service.dart';
 import 'package:native_app/core/services/prayer_alarm_service.dart';
 import 'package:native_app/core/services/hijri_api.dart';
+import 'package:native_app/core/services/timezone_database.dart';
 import 'package:native_app/core/providers/shared_preferences.dart';
 import 'package:native_app/widgets/utils/offline_db_prefetch_banner.dart';
 
@@ -32,7 +33,6 @@ import 'app_widget/task.dart';
 import 'app_widget/background.dart';
 import 'app_widget/refresh.dart';
 import 'package:quran_flutter/quran_flutter.dart';
-import 'package:timezone/data/latest.dart' as tz_data;
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -133,8 +133,10 @@ Future<void> main() async {
 }
 
 Future<void> _initializeNonBlockingServices(SharedPreferences prefs) async {
-  // Timezone data is large — load it off the critical path.
-  tz_data.initializeTimeZones();
+  // Timezone data is large — load it off the critical path. Anything that
+  // resolves a zone before this lands calls `ensureTimezoneDatabase` itself, so
+  // the delay cannot leave a caller on the device clock.
+  ensureTimezoneDatabase();
 
   // Prime hijri date cache with a network call — must not block startup.
   unawaited(_primeHijriDateCache(prefs));

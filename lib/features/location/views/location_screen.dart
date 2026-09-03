@@ -274,7 +274,6 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
     final country = _selectedCountry!;
     final lat = double.tryParse(city.latitude ?? '') ?? 0.0;
     final lng = double.tryParse(city.longitude ?? '') ?? 0.0;
-    final timezone = await timezoneFromCountryCode(country.isoCode);
 
     // Rename Israel → Palestine
     String countryName = country.name;
@@ -283,15 +282,20 @@ class ManualLocationState extends ConsumerState<ManualLocation> {
     if (!context.mounted) return;
     Navigator.of(context).pop();
 
+    // Recorded before the save so a cold start between the two still honours
+    // the choice rather than reverting to GPS.
+    await setLocationMode(locationModeManual);
+
+    // No timezone passed: `setLocation` derives it from these coordinates.
+    // Picking one from the country would put every US city on America/Adak.
     await setLocation({
       'country': countryName,
       'countryCode': country.isoCode,
       'city': city.name,
       'coordinates': {'latitude': lat, 'longitude': lng},
-      'timezone': timezone,
     });
 
-    ref.read(geolocationProvider.notifier).updateGeolocation();
+    await ref.read(geolocationProvider.notifier).updateGeolocation();
   }
 
   List<csc.Country> get _filteredCountries {

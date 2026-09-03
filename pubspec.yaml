@@ -78,6 +78,10 @@ dependencies:
 
   # DST-aware timezone support
   timezone: ^0.11.1
+  # Offline lat/lng -> IANA zone polygon lookup. Fallback for the backend
+  # /api/timezone resolver, and the only path available inside the Workmanager
+  # and home_widget background isolates, which have no reliable network.
+  lat_lng_to_timezone: ^0.2.0
 
 
   # utility

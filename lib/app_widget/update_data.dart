@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:hijri/hijri_calendar.dart';
 import 'package:adhan/adhan.dart';
 import 'package:native_app/l10n/app_localizations.dart';
@@ -16,25 +15,19 @@ import 'package:native_app/helpers/get_gregorian_date.dart';
 import 'package:native_app/helpers/get_location_name.dart';
 import 'package:native_app/core/services/prayer_alarm_service.dart';
 import 'package:native_app/core/services/hijri_api.dart';
+import 'package:native_app/core/services/timezone_database.dart';
 
 /// Localized prayer titles carry a second name after a comma
 /// ("মাগরিব, ইফতার"). The countdown headline on a small home screen widget has
 /// room for one name, so it uses the first.
 String _shortPrayerTitle(String title) => title.split(',').first.trim();
 
-bool _timezoneDatabaseReady = false;
-
-/// The Workmanager and home_widget background isolates never run `main()`, so
-/// the timezone database is empty there. Without it `PrayerTime` silently falls
-/// back to the device clock and the widget shows times for the wrong zone.
-void _ensureTimezoneDatabase() {
-  if (_timezoneDatabaseReady) return;
-  tz_data.initializeTimeZones();
-  _timezoneDatabaseReady = true;
-}
-
 Future<bool> updateData() async {
-  _ensureTimezoneDatabase();
+  // The Workmanager and home_widget background isolates never run `main()`, so
+  // the timezone database is empty there. Without it `PrayerTime` silently
+  // falls back to the device clock and the widget shows times for the wrong
+  // zone.
+  ensureTimezoneDatabase();
   final preferences = await SharedPreferences.getInstance();
   var currentLang = preferences.getString('locale') ?? 'bn';
   var locales = await AppLocalizations.delegate.load(Locale(currentLang));

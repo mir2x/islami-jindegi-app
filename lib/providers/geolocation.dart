@@ -8,14 +8,37 @@ import 'package:geocoding/geocoding.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
+import 'package:native_app/core/services/timezone_resolver.dart';
 import 'package:native_app/helpers/get_location_name.dart';
 import 'package:native_app/helpers/update_app_widget.dart';
 import 'preferences.dart';
 
+/// Set once the user picks a city by hand. Without it `GeolocationNotifier`
+/// runs a GPS fix on every cold start and overwrites that choice, so a manually
+/// selected location silently reverted to wherever the device actually is.
+const String prefsLocationMode = 'locationMode';
+const String locationModeManual = 'manual';
+const String locationModeAuto = 'auto';
+
+Future<bool> isManualLocation() async {
+  final preferences = await SharedPreferences.getInstance();
+  return preferences.getString(prefsLocationMode) == locationModeManual;
+}
+
+Future<void> setLocationMode(String mode) async {
+  final preferences = await SharedPreferences.getInstance();
+  await preferences.setString(prefsLocationMode, mode);
+}
+
 Future<Map> getFailSafeGeolocation() async {
   Map coordinates = await getFailSafeCoordinates();
   Map location = await getFailSafeLocation();
-  String timezone = await getFailSafeTimezone();
+  // Derived from the coordinates above, never from `location`: a country code
+  // cannot name a zone for the 24 countries that span several UTC offsets.
+  String timezone = await resolveTimezone(
+    latitude: coordinates['latitude'],
+    longitude: coordinates['longitude'],
+  );
 
   return {
     'coordinates': coordinates,
@@ -84,56 +107,47 @@ Future<void> syncAppWidgetLocation() async {
   await updateAppWidget({'location': getLocationName(location)});
 }
 
+/// The zone for the stored coordinates.
+///
+/// Deliberately resolves rather than reading the stored string straight back:
+/// an install upgrading from the country-code strategy is carrying a wrong
+/// zone, and returning it unchanged is what made that bug permanent on a
+/// device once it had been written.
 Future<String> getFailSafeTimezone() async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
+  final cached = await storedTimezone();
+  if (cached.isNotEmpty) return cached;
 
-  final stored = preferences.getString('timezone');
-  if (stored != null && stored.isNotEmpty) return stored;
-
-  // No timezone stored yet — derive from countryCode and persist it
-  final countryCode = preferences.getString('countryCode');
-  if (countryCode != null && countryCode.isNotEmpty) {
-    final tz = await timezoneFromCountryCode(countryCode);
-    if (tz.isNotEmpty) {
-      preferences.setString('timezone', tz);
-      return tz;
-    }
-  }
-
-  return '';
+  final coordinates = await getFailSafeCoordinates();
+  return resolveTimezone(
+    latitude: coordinates['latitude'],
+    longitude: coordinates['longitude'],
+  );
 }
 
-Map<String, String>? _countryTimezoneCache;
 Map<String, String>? _countryNameToCodeCache;
 
-/// Loads country.json once and populates both caches.
+/// Loads country.json once for the country-name -> ISO-code lookup.
+///
+/// The `timezones` array in this file is deliberately ignored. It lists every
+/// zone a country contains, and the old code took the first one — which is
+/// America/Adak for the US and Asia/Anadyr for Russia. Zones come from
+/// `resolveTimezone`, which works from the coordinate.
 Future<void> _ensureCountryCache() async {
-  if (_countryTimezoneCache != null && _countryNameToCodeCache != null) return;
+  if (_countryNameToCodeCache != null) return;
   try {
     final raw = await rootBundle.loadString(
       'packages/country_state_city/lib/assets/country.json',
     );
     final list = jsonDecode(raw) as List;
-    _countryTimezoneCache = {};
     _countryNameToCodeCache = {};
     for (final item in list) {
       final code = item['isoCode'] as String?;
       final name = item['name'] as String?;
-      final zones = item['timezones'] as List?;
-      if (code != null) {
-        if (name != null) _countryNameToCodeCache![name.toLowerCase()] = code;
-        if (zones != null && zones.isNotEmpty) {
-          _countryTimezoneCache![code] =
-              zones.first['zoneName'] as String? ?? '';
-        }
+      if (code != null && name != null) {
+        _countryNameToCodeCache![name.toLowerCase()] = code;
       }
     }
   } catch (_) {}
-}
-
-Future<String> timezoneFromCountryCode(String isoCode) async {
-  await _ensureCountryCache();
-  return _countryTimezoneCache?[isoCode] ?? '';
 }
 
 /// Resolves an ISO country code from a country name (e.g. "Bangladesh" → "BD").
@@ -223,7 +237,6 @@ Future setLocation(Map location) async {
   final String? country = resolved(location['country']);
   final String? countryCode = resolved(location['countryCode']);
   final String? city = resolved(location['city']);
-  final String? timezone = resolved(location['timezone']);
 
   if (country != null && preferences.getString('country') != country) {
     preferences.setString('country', country);
@@ -265,9 +278,14 @@ Future setLocation(Map location) async {
     );
   }
 
-  if (timezone != null && preferences.getString('timezone') != timezone) {
-    preferences.setString('timezone', timezone);
-  }
+  // Resolved here rather than accepted from the caller: this is the one
+  // function every location change goes through, so deriving the zone from the
+  // coordinates it just wrote is what makes it impossible to store a location
+  // and a zone that disagree.
+  await resolveTimezone(
+    latitude: (location['coordinates']['latitude'] as num).toDouble(),
+    longitude: (location['coordinates']['longitude'] as num).toDouble(),
+  );
 
   // Built from the values actually in effect, not from the incoming map: when
   // the geocoder omitted a field the stored one was deliberately kept above, so
@@ -283,11 +301,7 @@ Future setLocation(Map location) async {
   }
 }
 
-Future updatePreferences(
-  Map location,
-  Position position,
-  String timezone,
-) async {
+Future updatePreferences(Map location, Position position) async {
   await setLocation({
     'country': location['country'],
     'countryCode': location['countryCode'],
@@ -296,7 +310,6 @@ Future updatePreferences(
       'latitude': position.latitude,
       'longitude': position.longitude,
     },
-    'timezone': timezone,
   });
 }
 
@@ -305,6 +318,15 @@ class GeolocationNotifier extends AsyncNotifier<Map> {
   Future<Map> build() async {
     bool serviceEnabled;
     LocationPermission permission;
+
+    // A hand-picked city outranks the device's own position. This runs on every
+    // cold start, so without the check the GPS fix below silently replaced the
+    // user's choice — the reason a manually set location never survived a
+    // restart. Tapping the geolocation card calls `updateCoordinates`, which
+    // switches the mode back.
+    if (await isManualLocation()) {
+      return await getFailSafeGeolocation();
+    }
 
     try {
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -332,12 +354,11 @@ class GeolocationNotifier extends AsyncNotifier<Map> {
     }
 
     var location = await getLocation(position);
-    final isoCode = (location['countryCode'] as String?) ?? '';
-    String timezone =
-        isoCode.isNotEmpty ? await timezoneFromCountryCode(isoCode) : '';
-    if (timezone.isEmpty) timezone = await getFailSafeTimezone();
-
-    await updatePreferences(location, position, timezone);
+    await updatePreferences(location, position);
+    final timezone = await resolveTimezone(
+      latitude: position.latitude,
+      longitude: position.longitude,
+    );
 
     return {
       'coordinates': {
@@ -353,6 +374,11 @@ class GeolocationNotifier extends AsyncNotifier<Map> {
   Future<dynamic> updateCoordinates() async {
     bool serviceEnabled;
     LocationPermission permission;
+
+    // Reaching this is always a deliberate act — the geolocation card, or the
+    // 30-minute refresh that only runs while already geolocated — so it is the
+    // right place to leave manual mode.
+    await setLocationMode(locationModeAuto);
 
     try {
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -396,12 +422,11 @@ class GeolocationNotifier extends AsyncNotifier<Map> {
     debugPrint('[Hijri][updateCoordinates] GPS location resolved: '
         'city=${location['city']}, country=${location['country']}, '
         'countryCode=${location['countryCode']}');
-    final isoCode = (location['countryCode'] as String?) ?? '';
-    String timezone =
-        isoCode.isNotEmpty ? await timezoneFromCountryCode(isoCode) : '';
-    if (timezone.isEmpty) timezone = await getFailSafeTimezone();
-
-    await updatePreferences(location, position, timezone);
+    await updatePreferences(location, position);
+    final timezone = await resolveTimezone(
+      latitude: position.latitude,
+      longitude: position.longitude,
+    );
     debugPrint(
         '[Hijri][updateCoordinates] updatePreferences done. Setting state with countryCode=${location['countryCode']}');
 

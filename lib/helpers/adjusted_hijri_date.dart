@@ -142,14 +142,16 @@ HijriCalendar _shiftHijriByDays(HijriCalendar date, int days) {
   return HijriCalendar.fromDate(shiftedGregorian);
 }
 
-/// Returns the Maghrib time for [date] as a UTC [DateTime], or null if it
+/// Returns the Maghrib time for [date] as an absolute instant, or null if it
 /// cannot be calculated.
 ///
-/// The adhan package, when given utcOffset, stores the offset-adjusted hours
-/// inside a UTC DateTime — e.g. Dhaka Maghrib 12:36 UTC becomes
-/// DateTime.utc(…,18,36), shifting the epoch 6 h forward. Omitting utcOffset
-/// keeps the returned DateTime in true UTC so that isAfter(DateTime.now())
-/// works correctly regardless of the device timezone.
+/// `utcOffset` is deliberately not passed. Given one, adhan folds the offset
+/// into a UTC value — Dhaka Maghrib 12:36 UTC comes back as
+/// DateTime.utc(…,18,36) — which reads as the right wall clock but points six
+/// hours past the real moment. Omitting it leaves the epoch correct, which is
+/// all this needs for `isAfter(DateTime.now())`. (The DateTime itself comes
+/// back in the device zone; only the instant matters here. `PrayerTime` takes
+/// the same approach and then converts each instant to the prayer location.)
 DateTime? getMaghribTime(Map settings, DateTime date) {
   final coordinates = settings['coordinates'];
   final preferences = settings['preferences'];
@@ -166,8 +168,8 @@ DateTime? getMaghribTime(Map settings, DateTime date) {
     final params = _calculationMethod(method);
     params.adjustments.maghrib = prefs.getInt('maghrib') ?? 3;
 
-    // No utcOffset — adhan returns a true UTC DateTime whose epoch is correct
-    // for direct comparison with DateTime.now().
+    // No utcOffset — the epoch is then correct for direct comparison with
+    // DateTime.now().
     final prayerTimes = PrayerTimes(
       coords,
       DateComponents(date.year, date.month, date.day),

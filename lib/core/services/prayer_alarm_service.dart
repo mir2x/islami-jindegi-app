@@ -3,6 +3,7 @@ import 'package:alarm/alarm.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:adhan/adhan.dart';
+import 'package:native_app/core/services/timezone_resolver.dart';
 import 'package:native_app/objects/prayer_time.dart';
 
 /// Core service for managing prayer alarms using the `alarm` package.
@@ -419,18 +420,12 @@ class PrayerAlarmService {
     required Set<int> repeatDays,
     required int offsetMinutes,
   }) async {
+    final calculator = await _prayerCalculator();
     final now = DateTime.now();
 
-    for (int dayOffset = 0; dayOffset <= 7; dayOffset++) {
-      final candidateDate = now.add(Duration(days: dayOffset));
-      if (!repeatDays.contains(candidateDate.weekday)) {
-        continue;
-      }
-
-      final prayerTime = await _getPrayerTime(
-        prayerKey,
-        date: candidateDate,
-      );
+    for (final candidateDate in _upcomingDates(calculator, repeatDays)) {
+      final prayerTime =
+          calculator.getPrayerStartDateTime(prayerKey, date: candidateDate);
       if (prayerTime == null) {
         continue;
       }
@@ -508,15 +503,12 @@ class PrayerAlarmService {
     required String prayerKey,
     required Set<int> repeatDays,
   }) async {
+    final calculator = await _prayerCalculator();
     final now = DateTime.now();
 
-    for (int dayOffset = 0; dayOffset <= 7; dayOffset++) {
-      final candidateDate = now.add(Duration(days: dayOffset));
-      if (!repeatDays.contains(candidateDate.weekday)) {
-        continue;
-      }
-
-      final prayerTime = await _getPrayerTime(prayerKey, date: candidateDate);
+    for (final candidateDate in _upcomingDates(calculator, repeatDays)) {
+      final prayerTime =
+          calculator.getPrayerStartDateTime(prayerKey, date: candidateDate);
       if (prayerTime != null && prayerTime.isAfter(now)) {
         return prayerTime;
       }
@@ -563,11 +555,11 @@ class PrayerAlarmService {
 
   // ───────────────────── Prayer Time Calculation ─────────────────────
 
-  /// Get the prayer time for a given key using the adhan package
-  static Future<DateTime?> _getPrayerTime(
-    String prayerKey, {
-    DateTime? date,
-  }) async {
+  /// A calculator anchored to the stored location, with its zone resolved from
+  /// the stored coordinates rather than read back blindly — an install carrying
+  /// a zone from the old country-code strategy would otherwise keep scheduling
+  /// alarms against it.
+  static Future<PrayerTime> _prayerCalculator() async {
     final prefs = await SharedPreferences.getInstance();
 
     double? lat = double.tryParse(prefs.getString('latitude') ?? '');
@@ -579,17 +571,37 @@ class PrayerAlarmService {
       lng = 90.4125;
     }
 
-    final coordinates = Coordinates(lat, lng);
-    final prayerTime = PrayerTime(
-      coordinates: coordinates,
-      timezone: prefs.getString('timezone') ?? '',
+    final timezone = await resolveTimezone(latitude: lat, longitude: lng);
+
+    // No `currentDate`: the calculator anchors itself to "now" at the prayer
+    // location. Passing the device's own clock made the reference day wrong by
+    // one whenever the two calendars disagreed, which is most of the day for a
+    // user half the world away.
+    return PrayerTime(
+      coordinates: Coordinates(lat, lng),
+      timezone: timezone,
       preferences: prefs,
-      currentDate: date ?? DateTime.now(),
     );
-    return prayerTime.getPrayerStartDateTime(
-      prayerKey,
-      date: date ?? DateTime.now(),
-    );
+  }
+
+  /// The next week of dates, in the prayer location's calendar, that the user
+  /// asked to be reminded on.
+  ///
+  /// The weekday has to come from that calendar too — an alarm set for Friday
+  /// means Friday where the prayer is, not where the phone happens to be.
+  static Iterable<DateTime> _upcomingDates(
+    PrayerTime calculator,
+    Set<int> repeatDays,
+  ) sync* {
+    final today = calculator.nowInPrayerTimezone;
+    final anchor = DateTime.utc(today.year, today.month, today.day);
+
+    for (int dayOffset = 0; dayOffset <= 7; dayOffset++) {
+      final candidateDate = anchor.add(Duration(days: dayOffset));
+      if (repeatDays.contains(candidateDate.weekday)) {
+        yield candidateDate;
+      }
+    }
   }
 
   // ───────────────────── Prayer Labels ─────────────────────

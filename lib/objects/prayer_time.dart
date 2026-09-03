@@ -1,6 +1,8 @@
 import 'dart:core';
 
 import 'package:adhan/adhan.dart';
+import 'package:flutter/foundation.dart';
+import 'package:native_app/core/services/timezone_database.dart';
 import 'package:native_app/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,11 +15,10 @@ class PrayerTime {
     required this.preferences,
     this.currentDate,
   }) {
+    ensureTimezoneDatabase();
+    location = _resolveLocation(timezone);
     referenceDate = currentDate ?? _nowInPrayerTimezone();
-    prayerTimes = _createPrayerTimes(referenceDate);
-    nextDayPrayerTimes = _createPrayerTimes(
-      referenceDate.add(const Duration(days: 1)),
-    );
+    _prayerTimes = _createPrayerTimes(referenceDate);
   }
 
   final Coordinates coordinates;
@@ -25,9 +26,14 @@ class PrayerTime {
   final SharedPreferences preferences;
   final DateTime? currentDate;
 
+  /// Null only when [timezone] is empty or names a zone the database cannot
+  /// resolve. Every time this class produces then falls back to the device
+  /// clock, which is right at home and silently wrong everywhere else — so the
+  /// constructor logs it rather than letting it pass unnoticed.
+  late final tz.Location? location;
+
   late final DateTime referenceDate;
-  late final PrayerTimes prayerTimes;
-  late final PrayerTimes nextDayPrayerTimes;
+  late final _DayPrayerTimes _prayerTimes;
 
   final Duration oneMin = const Duration(minutes: 1);
   final Duration threeMins = const Duration(minutes: 3);
@@ -120,7 +126,7 @@ class PrayerTime {
   }
 
   DateTime getDateStartTime() {
-    return prayerTimes.maghrib;
+    return _prayerTimes.maghrib;
   }
 
   DateTime? getPrayerStartDateTime(
@@ -131,41 +137,76 @@ class PrayerTime {
     return windows[prayerKey]?.startDateTime;
   }
 
-  /// Returns the DST-aware UTC offset for [forDate] in the stored timezone.
-  Duration? _utcOffsetFor(DateTime forDate) {
-    if (timezone.isEmpty) return null;
+  static tz.Location? _resolveLocation(String timezone) {
+    if (timezone.isEmpty) {
+      debugPrint('[PrayerTime] No timezone supplied — falling back to the '
+          'device clock. Prayer times will be wrong for any location outside '
+          'the device zone.');
+      return null;
+    }
     try {
-      final location = tz.getLocation(timezone);
-      final tzDate = tz.TZDateTime(
-        location,
-        forDate.year,
-        forDate.month,
-        forDate.day,
-      );
-      return tzDate.timeZoneOffset;
-    } catch (_) {
+      return tz.getLocation(timezone);
+    } catch (error) {
+      debugPrint('[PrayerTime] Unresolvable timezone "$timezone" ($error) — '
+          'falling back to the device clock.');
       return null;
     }
   }
 
-  /// Current moment expressed in the prayer location's timezone,
-  /// as a "shifted UTC" DateTime matching the format adhan returns.
-  /// Use this when computing time-remaining against adhan DateTimes.
+  /// Current moment at the prayer location.
+  ///
+  /// A `TZDateTime`, so its calendar fields read as that location's wall clock
+  /// while its epoch stays a true instant — the two properties every caller
+  /// here needs at once, and the reason nothing shifts a UTC value by hand any
+  /// more.
   DateTime get nowInPrayerTimezone => _nowInPrayerTimezone();
 
   DateTime _nowInPrayerTimezone() {
-    final now = DateTime.now();
-    final utcOffset = _utcOffsetFor(now);
-    if (utcOffset == null) return now;
-    return now.toUtc().add(utcOffset);
+    final location = this.location;
+    if (location == null) return DateTime.now();
+    return tz.TZDateTime.now(location);
   }
 
-  PrayerTimes _createPrayerTimes(DateTime date) {
-    return PrayerTimes(
+  /// Moves [date] by whole calendar days.
+  ///
+  /// Done on the date components rather than by adding 24 hours: on the day the
+  /// clocks go back, 24 hours after 00:30 is 23:30 the same date, which would
+  /// have this compute "tomorrow's" prayers for today.
+  DateTime _shiftDays(DateTime date, int days) {
+    return DateTime.utc(date.year, date.month, date.day)
+        .add(Duration(days: days));
+  }
+
+  /// Expresses an instant at the prayer location.
+  DateTime _inZone(DateTime instant) {
+    final location = this.location;
+    if (location == null) return instant.toLocal();
+    return tz.TZDateTime.from(instant, location);
+  }
+
+  /// The day's six computed times, each already at the prayer location.
+  ///
+  /// `adhan`'s own `utcOffset` argument is deliberately not used. It applies a
+  /// single offset to the whole day, which is off by an hour for every prayer
+  /// after a DST changeover, and it returns UTC values with the offset added
+  /// in — so the resulting `DateTime`s carry the right wall clock on the wrong
+  /// epoch, and any comparison against a real instant (an alarm, a countdown)
+  /// is out by the offset. Converting each instant separately is exact on both
+  /// counts.
+  _DayPrayerTimes _createPrayerTimes(DateTime date) {
+    final times = PrayerTimes(
       coordinates,
       DateComponents(date.year, date.month, date.day),
       _adjustedParams(),
-      utcOffset: _utcOffsetFor(date),
+    );
+
+    return _DayPrayerTimes(
+      fajr: _inZone(times.fajr),
+      sunrise: _inZone(times.sunrise),
+      dhuhr: _inZone(times.dhuhr),
+      asr: _inZone(times.asr),
+      maghrib: _inZone(times.maghrib),
+      isha: _inZone(times.isha),
     );
   }
 
@@ -179,8 +220,7 @@ class PrayerTime {
     DateTime date,
   ) {
     final basePrayerTimes = _createPrayerTimes(date);
-    final nextPrayerTimes =
-        _createPrayerTimes(date.add(const Duration(days: 1)));
+    final nextPrayerTimes = _createPrayerTimes(_shiftDays(date, 1));
 
     return {
       'tahajjud': _PrayerScheduleEntry(
@@ -248,8 +288,7 @@ class PrayerTime {
 
   Map<String, _PrayerScheduleEntry> _buildPrayerWindowsForDate(DateTime date) {
     final basePrayerTimes = _createPrayerTimes(date);
-    final nextPrayerTimes =
-        _createPrayerTimes(date.add(const Duration(days: 1)));
+    final nextPrayerTimes = _createPrayerTimes(_shiftDays(date, 1));
 
     return {
       'fajr': _PrayerScheduleEntry(
@@ -310,9 +349,7 @@ class PrayerTime {
   }
 
   _PrayerScheduleEntry? _currentPrayerWindow(DateTime now) {
-    final previousDayWindows = _buildPrayerWindowsForDate(
-      DateTime(now.year, now.month, now.day).subtract(const Duration(days: 1)),
-    );
+    final previousDayWindows = _buildPrayerWindowsForDate(_shiftDays(now, -1));
     final currentDayWindows = _buildPrayerWindowsForDate(now);
 
     final windows = [
@@ -342,9 +379,7 @@ class PrayerTime {
 
   _PrayerScheduleEntry? _nextPrayerWindow(DateTime now) {
     final currentDayWindows = _buildPrayerWindowsForDate(now);
-    final nextDayWindows = _buildPrayerWindowsForDate(
-      DateTime(now.year, now.month, now.day).add(const Duration(days: 1)),
-    );
+    final nextDayWindows = _buildPrayerWindowsForDate(_shiftDays(now, 1));
 
     final windows = [
       currentDayWindows['fajr']!,
@@ -448,6 +483,26 @@ class PrayerTime {
         return Madhab.hanafi;
     }
   }
+}
+
+/// The six times `adhan` computes for one day, each expressed at the prayer
+/// location.
+class _DayPrayerTimes {
+  const _DayPrayerTimes({
+    required this.fajr,
+    required this.sunrise,
+    required this.dhuhr,
+    required this.asr,
+    required this.maghrib,
+    required this.isha,
+  });
+
+  final DateTime fajr;
+  final DateTime sunrise;
+  final DateTime dhuhr;
+  final DateTime asr;
+  final DateTime maghrib;
+  final DateTime isha;
 }
 
 class _PrayerScheduleEntry {
