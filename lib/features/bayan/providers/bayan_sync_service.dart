@@ -14,6 +14,10 @@ class BayanSyncService {
     final (items, serverTime) =
         await _engine.fetchChangedSet('/bayan/offline-sync', 'bayans');
     final currentIds = await _engine.fetchOfflineIds('/bayan/offline-ids');
+    // Refreshed every pass, not just for authors whose content changed — see
+    // OfflineSyncEngine.fetchAuthorPositions.
+    final authorPositions =
+        await _engine.fetchAuthorPositions('/bayan/authors');
 
     final db =
         await OfflineDatabaseHelper(feature: 'bayans', version: 3).database;
@@ -80,6 +84,7 @@ class BayanSyncService {
 
         await _engine.upsertRows(txn, 'bayans', rows);
         await _engine.upsertRows(txn, 'speakers', speakerRows.values.toList());
+        await _engine.updatePositions(txn, 'speakers', authorPositions);
         await _engine.upsertRows(
             txn, 'bayan_categories', categoryRows.values.toList());
         await _engine.upsertRows(

@@ -11,6 +11,10 @@ class MalfuzatSyncService {
     final (items, serverTime) =
         await _engine.fetchChangedSet('/malfuzat/offline-sync', 'malfuzats');
     final currentIds = await _engine.fetchOfflineIds('/malfuzat/offline-ids');
+    // Refreshed every pass, not just for authors whose content changed — see
+    // OfflineSyncEngine.fetchAuthorPositions.
+    final authorPositions =
+        await _engine.fetchAuthorPositions('/malfuzat/authors');
 
     final db =
         await OfflineDatabaseHelper(feature: 'malfuzats', version: 3).database;
@@ -81,6 +85,7 @@ class MalfuzatSyncService {
         await _engine.upsertRows(txn, 'malfuzats', rows);
         await _engine.upsertRows(
             txn, 'malfuzat_authors', authorRows.values.toList());
+        await _engine.updatePositions(txn, 'malfuzat_authors', authorPositions);
         await _engine.upsertRows(
             txn, 'malfuzat_categories', categoryRows.values.toList());
         await _engine.upsertRows(

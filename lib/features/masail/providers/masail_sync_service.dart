@@ -22,6 +22,10 @@ class MasailSyncService {
     final (items, serverTime) =
         await _engine.fetchChangedSet('/masail/offline-sync', 'masails');
     final currentIds = await _engine.fetchOfflineIds('/masail/offline-ids');
+    // Refreshed every pass, not just for authors whose content changed — see
+    // OfflineSyncEngine.fetchAuthorPositions.
+    final authorPositions =
+        await _engine.fetchAuthorPositions('/masail/authors');
 
     final db =
         await OfflineDatabaseHelper(feature: 'masails', version: 3).database;
@@ -91,6 +95,7 @@ class MasailSyncService {
         await _engine.upsertRows(txn, 'masails', rows);
         await _engine.upsertRows(
             txn, 'masail_authors', authorRows.values.toList());
+        await _engine.updatePositions(txn, 'masail_authors', authorPositions);
         await _engine.upsertRows(
             txn, 'masail_categories', categoryRows.values.toList());
         await _engine.upsertRows(

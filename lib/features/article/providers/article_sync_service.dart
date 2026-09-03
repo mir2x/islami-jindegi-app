@@ -11,6 +11,10 @@ class ArticleSyncService {
     final (items, serverTime) =
         await _engine.fetchChangedSet('/articles/offline-sync', 'articles');
     final currentIds = await _engine.fetchOfflineIds('/articles/offline-ids');
+    // Refreshed every pass, not just for authors whose content changed — see
+    // OfflineSyncEngine.fetchAuthorPositions.
+    final authorPositions =
+        await _engine.fetchAuthorPositions('/articles/authors');
 
     final db =
         await OfflineDatabaseHelper(feature: 'articles', version: 3).database;
@@ -79,6 +83,7 @@ class ArticleSyncService {
         await _engine.upsertRows(txn, 'articles', rows);
         await _engine.upsertRows(
             txn, 'article_authors', authorRows.values.toList());
+        await _engine.updatePositions(txn, 'article_authors', authorPositions);
         await _engine.upsertRows(
             txn, 'article_categories', categoryRows.values.toList());
         await _engine.upsertRows(

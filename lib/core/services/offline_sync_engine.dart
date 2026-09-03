@@ -61,6 +61,30 @@ class OfflineSyncEngine {
     return ids.map((id) => id.toString()).toSet();
   }
 
+  /// The `{id: position}` map for a module's authors, from its options endpoint
+  /// (e.g. `/malfuzat/authors`). The offline-sync feed only carries an author
+  /// when one of their items changed, so a delta pass leaves everyone else on
+  /// whatever position they were first stored with — which for anything synced
+  /// before per-module ordering existed is the global one. Refreshing the whole
+  /// map each pass converges the offline filter without re-downloading content.
+  ///
+  /// Failure is not fatal: the ordering is cosmetic and must never be the reason
+  /// a content sync is lost.
+  Future<Map<String, int>> fetchAuthorPositions(String authorsPath) async {
+    try {
+      final response = await _dio.get(authorsPath,
+          queryParameters: {'published': true, 'pageSize': 100});
+      final rows = (response.data as List?) ?? [];
+      return {
+        for (final r in rows)
+          if (r['id'] != null && r['position'] is int)
+            r['id'].toString(): r['position'] as int,
+      };
+    } catch (_) {
+      return const {};
+    }
+  }
+
   Future<void> commitSince(String feature, String? serverTime) async {
     if (serverTime == null) return;
     final prefs = await SharedPreferences.getInstance();
@@ -96,6 +120,21 @@ class OfflineSyncEngine {
     for (final row in rows) {
       await txn.insert(table, row,
           conflictAlgorithm: ConflictAlgorithm.replace);
+    }
+  }
+
+  /// Writes [positions] onto existing rows of [table], leaving every other
+  /// column alone. Deliberately not an upsert: these rows carry `name` and
+  /// `info` that the options endpoint does not return, and replacing the row
+  /// would wipe them.
+  Future<void> updatePositions(
+    Transaction txn,
+    String table,
+    Map<String, int> positions,
+  ) async {
+    for (final entry in positions.entries) {
+      await txn.update(table, {'position': entry.value},
+          where: 'id = ?', whereArgs: [entry.key]);
     }
   }
 
