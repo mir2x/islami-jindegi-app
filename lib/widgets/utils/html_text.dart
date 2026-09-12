@@ -40,6 +40,13 @@ class HtmlText extends StatelessWidget {
 
     final html = RepaintBoundary(
       child: Html(
+        // flutter_html's HtmlParser only recomputes its Style tree in
+        // initState/didChangeDependencies — it has no didUpdateWidget, so a
+        // rebuild with a new `style` map (e.g. a different fontSizeRatio)
+        // is silently ignored otherwise. Keying on the values that feed the
+        // style map forces Flutter to tear down and reinitialize it instead
+        // of reusing the stale one.
+        key: ValueKey('$fontSizeRatio-$arabicFontScale'),
         data: text,
         extensions: [
           ImageExtension(

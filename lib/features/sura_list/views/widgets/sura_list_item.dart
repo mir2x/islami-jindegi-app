@@ -178,8 +178,8 @@ class _SuraListItemState extends ConsumerState<SuraListItem>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RichText(
-          text: TextSpan(
+        Text.rich(
+          TextSpan(
             children: [
               TextSpan(
                 text: widget.sura.nameBangla,
