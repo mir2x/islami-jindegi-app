@@ -15,6 +15,7 @@ import 'package:native_app/helpers/get_gregorian_date.dart';
 import 'package:native_app/helpers/get_location_name.dart';
 import 'package:native_app/core/services/hijri_api.dart';
 import 'package:native_app/core/services/timezone_database.dart';
+import 'package:native_app/app_widget/widget_days.dart';
 
 /// Localized prayer titles carry a second name after a comma
 /// ("মাগরিব, ইফতার"). The countdown headline on a small home screen widget has
@@ -179,6 +180,18 @@ Future<bool> updateData() async {
   final countdownTarget =
       DateTime.now().millisecondsSinceEpoch + (countdownSeconds * 1000);
 
+  // Everything above describes this moment only. The iOS widget also gets a
+  // table of the coming days so it stays correct when the app is not opened
+  // for weeks (see widget_days.dart). Android reads the flat keys only.
+  final widgetDays = buildWidgetDaysJson(
+    prayerTime: prayerTime,
+    locales: locales,
+    currentLang: currentLang,
+    hijriAdjustment: hijriAdjustment,
+    hijriDataToday: hijriDataToday,
+    hijriDataTomorrow: hijriDataTomorrow,
+  );
+
   String nextPrayer =
       '${locales.next} ${prayerTimes['next']['title']} ${prayerTimes['next']['time']}';
   final nextPrayerName = prayerTimes['next']['title'] as String;
@@ -205,6 +218,7 @@ Future<bool> updateData() async {
     'nextPrayerTime': nextPrayerTime,
     'countdownTarget': countdownTarget.toString(),
     'prayerSchedule': prayerScheduleJson,
+    'widgetDays': widgetDays,
     // Keep individual values as well as the JSON list. Android launchers can
     // deliver an older or partially-written SharedPreferences snapshot to a
     // newly-added widget; the individual values make its display reliable.

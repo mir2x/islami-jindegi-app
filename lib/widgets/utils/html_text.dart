@@ -25,6 +25,27 @@ class HtmlText extends StatelessWidget {
   /// sliver under a single shared [SelectionArea], so its blocks pass false.
   final bool selectable;
 
+  // An absolute `font-size` inside a `style` attribute or an embedded
+  // <style> block. flutter_html reads every length unit as px (14pt renders
+  // as 14px), so the unit is matched only to be kept.
+  static final _inlineFontSize = RegExp(
+    r'font-size\s*:\s*([\d.]+)\s*(px|pt)',
+    caseSensitive: false,
+  );
+
+  /// Editor content often arrives with sizes baked in as inline CSS. The
+  /// `style` map below is applied after inline CSS, but only to tags it has
+  /// an entry for — a `<span style="font-size: 26px">` or a sized `<div>`
+  /// keeps its own size and never followed the reader's font control (a
+  /// malfuzat's title grew while its body did not). Rewriting the values
+  /// keeps the author's relative sizes and scales them with the rest.
+  String _scaleInlineFontSizes(String html) {
+    return html.replaceAllMapped(_inlineFontSize, (match) {
+      final size = double.parse(match[1]!) * fontSizeRatio;
+      return 'font-size: ${size.toStringAsFixed(2)}${match[2]}';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
@@ -40,14 +61,11 @@ class HtmlText extends StatelessWidget {
 
     final html = RepaintBoundary(
       child: Html(
-        // flutter_html's HtmlParser only recomputes its Style tree in
-        // initState/didChangeDependencies — it has no didUpdateWidget, so a
-        // rebuild with a new `style` map (e.g. a different fontSizeRatio)
-        // is silently ignored otherwise. Keying on the values that feed the
-        // style map forces Flutter to tear down and reinitialize it instead
-        // of reusing the stale one.
-        key: ValueKey('$fontSizeRatio-$arabicFontScale'),
-        data: text,
+        // No key is needed to pick up a new fontSizeRatio: `Html` mints a
+        // fresh GlobalKey for its HtmlParser every time it is constructed, so
+        // each rebuild here already remounts the parser and recomputes the
+        // style tree (flutter_html 3.0.0, _HtmlState.build).
+        data: _scaleInlineFontSizes(text),
         extensions: [
           ImageExtension(
             builder: (extensionContext) {
@@ -94,7 +112,14 @@ class HtmlText extends StatelessWidget {
           }
         },
         style: {
-          'body': Style(margin: Margins.zero),
+          // The root inherits DefaultTextStyle, which the ratio never
+          // touches. Sizing `body` makes text outside the tags styled below
+          // — a bare <div>, <span> or <li> — scale too, by inheritance.
+          'body': Style(
+            margin: Margins.zero,
+            fontSize: FontSize(17 * fontSizeRatio),
+            lineHeight: const LineHeight(1.45),
+          ),
           'h6': Style.fromTextStyle(
             textTheme.bodyMedium!,
           ).copyWith(

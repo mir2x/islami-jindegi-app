@@ -23,32 +23,36 @@ private func widgetDestination(for route: String) -> URL {
   return components.url!
 }
 
-@ViewBuilder
+// iOS 18's "Tinted" and iOS 26's "Clear" home-screen icon styles render widgets
+// in `.accented` mode. There the system throws away every colour we set and
+// draws any `Image` as a flat monochrome silhouette unless it is opted out, so
+// the six shortcut icons and the app icon turned into unreadable blobs. Keep
+// artwork in full colour; text still picks up the tint via `.tintedModeAccent()`.
+private func fullColorArtwork(_ image: Image) -> some View {
+  Group {
+    if #available(iOSApplicationExtension 18.0, *) {
+      image.resizable().widgetAccentedRenderingMode(.fullColor)
+    } else {
+      image.resizable()
+    }
+  }
+  .scaledToFit()
+}
+
 private func widgetIcon(named name: String) -> some View {
   if let path = Bundle.main.path(forResource: name, ofType: "png", inDirectory: "WidgetIcons"),
      let image = UIImage(contentsOfFile: path) {
-    Image(uiImage: image)
-      .resizable()
-      .scaledToFit()
-  } else {
-    Image(systemName: "square.dashed")
-      .resizable()
-      .scaledToFit()
+    return fullColorArtwork(Image(uiImage: image))
   }
+  return fullColorArtwork(Image(systemName: "square.dashed"))
 }
 
-@ViewBuilder
 private func islamiJindegiAppIcon() -> some View {
   if let path = Bundle.main.path(forResource: "Icon-App-1024x1024@1x", ofType: "png"),
      let image = UIImage(contentsOfFile: path) {
-    Image(uiImage: image)
-      .resizable()
-      .scaledToFit()
-  } else {
-    Image(systemName: "app.fill")
-      .resizable()
-      .scaledToFit()
+    return fullColorArtwork(Image(uiImage: image))
   }
+  return fullColorArtwork(Image(systemName: "app.fill"))
 }
 
 struct IslamiJindegiWidgetEntry: TimelineEntry {
@@ -84,6 +88,49 @@ struct PrayerScheduleItem: Codable, Identifiable {
   let time: String
 
   var id: String { title }
+}
+
+// The app writes a table of the coming days (`widgetDays`, built by
+// lib/app_widget/widget_days.dart) because iOS gives an unopened app no
+// background time: the flat keys above describe only the moment the app last
+// ran, and a widget that showed them would still say "Asr" a month later.
+// With the table the extension resolves the current day and prayer window on
+// its own for every timeline entry.
+private struct WidgetDayWindow: Codable {
+  let key: String
+  let title: String
+  let shortTitle: String
+  let startTime: String
+  let endTime: String
+  let start: Double // ms since 1970
+  let end: Double
+
+  var startDate: Date { Date(timeIntervalSince1970: start / 1000) }
+  var endDate: Date { Date(timeIntervalSince1970: end / 1000) }
+}
+
+private struct WidgetDay: Codable {
+  let date: String
+  let dayStart: Double // local midnight at the prayer location, ms since 1970
+  let dayEnd: Double
+  let hijriDate: String
+  let hijriDateAfterMaghrib: String
+  let bangaliDate: String
+  let gregorianDate: String
+  let sunrise: String
+  let sunset: String
+  let schedule: [PrayerScheduleItem]
+  let windows: [WidgetDayWindow]
+
+  func contains(_ date: Date) -> Bool {
+    let ms = date.timeIntervalSince1970 * 1000
+    return dayStart <= ms && ms < dayEnd
+  }
+}
+
+private struct WidgetDayTable: Codable {
+  let nextLabel: String
+  let days: [WidgetDay]
 }
 
 struct IslamiJindegiWidgetProvider: TimelineProvider {
@@ -136,19 +183,20 @@ struct IslamiJindegiWidgetProvider: TimelineProvider {
     return name.isEmpty ? "নামাজ" : name
   }
 
-  private func entry() -> IslamiJindegiWidgetEntry {
-    let defaults = UserDefaults(suiteName: appGroupId)
-    return IslamiJindegiWidgetEntry(
-      date: Date(),
+  // What the app wrote the last time it ran. Used when there is no day
+  // table yet (first launch on an older app build) or the table has run out.
+  private func snapshotEntry(_ defaults: UserDefaults?, at date: Date) -> IslamiJindegiWidgetEntry {
+    IslamiJindegiWidgetEntry(
+      date: date,
       hijriDate: savedText(defaults, key: "hijriDate", fallback: "হিজরি তারিখ"),
       bangaliDate: savedText(defaults, key: "bangaliDate", fallback: "বাংলা তারিখ"),
       gregorianDate: savedText(defaults, key: "gregorianDate", fallback: ""),
       location: savedText(defaults, key: "location", fallback: "ঢাকা, বাংলাদেশ"),
       currentPrayer: savedText(defaults, key: "currentPrayer", fallback: ""),
-      nextPrayer: savedText(defaults, key: "nextPrayer", fallback: "নামাজের সময়"),
+      nextPrayer: savedText(defaults, key: "nextPrayer", fallback: "নামাজের সময়"),
       nextPrayerName: savedText(defaults, key: "nextPrayerName", fallback: "ফজর"),
       nextPrayerTime: savedText(defaults, key: "nextPrayerTime", fallback: "--:--"),
-      sunrise: savedText(defaults, key: "sunrise", fallback: "সূর্যোদয় --:--"),
+      sunrise: savedText(defaults, key: "sunrise", fallback: "সূর্যোদয় --:--"),
       sunset: savedText(defaults, key: "sunset", fallback: "সূর্যাস্ত --:--"),
       countdownTarget: savedCountdownTarget(defaults),
       countdownName: savedCountdownName(defaults),
@@ -159,25 +207,113 @@ struct IslamiJindegiWidgetProvider: TimelineProvider {
     )
   }
 
+  private func savedDayTable(_ defaults: UserDefaults?) -> WidgetDayTable? {
+    guard let raw = defaults?.string(forKey: "widgetDays"),
+          let data = raw.data(using: .utf8),
+          let table = try? JSONDecoder().decode(WidgetDayTable.self, from: data),
+          !table.days.isEmpty else {
+      return nil
+    }
+    return table
+  }
+
+  // Mirrors `PrayerTime.getCurrentAndNextPrayers` in the app: the current
+  // window is the one containing `date` (the previous day's Isha included,
+  // since it runs past midnight), the next is the first one starting after
+  // it (the following day's Fajr included).
+  private func tableEntry(at date: Date, table: WidgetDayTable, defaults: UserDefaults?) -> IslamiJindegiWidgetEntry? {
+    guard let index = table.days.firstIndex(where: { $0.contains(date) }) else { return nil }
+    let day = table.days[index]
+    let previousIsha = index > 0 ? table.days[index - 1].windows.last(where: { $0.key == "isha" }) : nil
+    let nextFajr = index + 1 < table.days.count ? table.days[index + 1].windows.first(where: { $0.key == "fajr" }) : nil
+
+    let current = ([previousIsha].compactMap { $0 } + day.windows)
+      .first(where: { $0.startDate <= date && date < $0.endDate })
+    let next = (day.windows + [nextFajr].compactMap { $0 })
+      .first(where: { $0.startDate > date })
+
+    let pastMaghrib = day.windows.first(where: { $0.key == "maghrib" }).map { date >= $0.startDate } ?? false
+
+    let countdownTarget: Date?
+    let countdownName: String
+    let countdownEnding: Bool
+    if let current {
+      countdownTarget = current.endDate
+      countdownName = current.shortTitle
+      countdownEnding = true
+    } else {
+      countdownTarget = next?.startDate
+      countdownName = next?.shortTitle ?? "নামাজ"
+      countdownEnding = false
+    }
+
+    return IslamiJindegiWidgetEntry(
+      date: date,
+      hijriDate: pastMaghrib ? day.hijriDateAfterMaghrib : day.hijriDate,
+      bangaliDate: day.bangaliDate,
+      gregorianDate: day.gregorianDate,
+      location: savedText(defaults, key: "location", fallback: "ঢাকা, বাংলাদেশ"),
+      currentPrayer: current.map { "\($0.title) \($0.startTime) - \($0.endTime)" } ?? "",
+      nextPrayer: next.map { "\(table.nextLabel) \($0.title) \($0.startTime)" } ?? "নামাজের সময়",
+      nextPrayerName: next?.title ?? "ফজর",
+      nextPrayerTime: next?.startTime ?? "--:--",
+      sunrise: day.sunrise,
+      sunset: day.sunset,
+      countdownTarget: countdownTarget.flatMap { $0 > date ? $0 : nil },
+      countdownName: countdownName,
+      countdownEnding: countdownEnding,
+      prayerSchedule: day.schedule,
+      theme: savedText(defaults, key: "theme", fallback: "classic"),
+      locale: savedText(defaults, key: "locale", fallback: "bn")
+    )
+  }
+
+  private func entry(at date: Date = Date()) -> IslamiJindegiWidgetEntry {
+    let defaults = UserDefaults(suiteName: appGroupId)
+    if let table = savedDayTable(defaults),
+       let entry = tableEntry(at: date, table: table, defaults: defaults) {
+      return entry
+    }
+    return snapshotEntry(defaults, at: date)
+  }
+
   func placeholder(in context: Context) -> IslamiJindegiWidgetEntry { entry() }
   func getSnapshot(in context: Context, completion: @escaping (IslamiJindegiWidgetEntry) -> Void) { completion(entry()) }
 
   func getTimeline(in context: Context, completion: @escaping (Timeline<IslamiJindegiWidgetEntry>) -> Void) {
-    let current = entry()
-
-    // A `.never` policy leaves the widget frozen on whatever it last drew: an
-    // expired countdown, or yesterday's times if the app is never reopened.
-    // Ask WidgetKit to come back when the countdown runs out, bounded so a
-    // widget with no data yet still retries and a nearby prayer boundary does
-    // not burn the refresh budget.
+    let defaults = UserDefaults(suiteName: appGroupId)
     let now = Date()
+
+    if let table = savedDayTable(defaults),
+       let first = tableEntry(at: now, table: table, defaults: defaults) {
+      // One entry per prayer boundary (and per midnight, for the dates) over
+      // the next day, then `.atEnd` so WidgetKit asks again and the walk
+      // continues through the table with no help from the app.
+      let horizon = now.addingTimeInterval(24 * 60 * 60)
+      let boundaries = table.days
+        .filter { $0.dayEnd / 1000 >= now.timeIntervalSince1970 && $0.dayStart / 1000 <= horizon.timeIntervalSince1970 }
+        .flatMap { day in
+          day.windows.flatMap { [$0.startDate, $0.endDate] } + [Date(timeIntervalSince1970: day.dayEnd / 1000)]
+        }
+        .filter { $0 > now && $0 <= horizon }
+      let entries = [first] + Set(boundaries).sorted().compactMap {
+        tableEntry(at: $0, table: table, defaults: defaults)
+      }
+      completion(Timeline(entries: entries, policy: .atEnd))
+      return
+    }
+
+    // No day table: the widget can only show the app's last snapshot. Ask
+    // WidgetKit to come back when the countdown runs out, bounded so a widget
+    // with no data yet still retries and a nearby prayer boundary does not
+    // burn the refresh budget.
+    let current = snapshotEntry(defaults, at: now)
     let wanted = current.countdownTarget?.addingTimeInterval(1)
       ?? now.addingTimeInterval(15 * 60)
     let refreshAt = min(
       max(wanted, now.addingTimeInterval(2 * 60)),
       now.addingTimeInterval(60 * 60)
     )
-
     completion(Timeline(entries: [current], policy: .after(refreshAt)))
   }
 }
@@ -246,6 +382,7 @@ struct IslamiJindegiWidgetView: View {
         Text(entry.location)
           .font(font(14 * scale, weight: .medium))
           .foregroundStyle(palette.accent)
+          .tintedModeAccent()
           .lineLimit(1)
       }
       .font(font(14 * scale))
@@ -262,6 +399,7 @@ struct IslamiJindegiWidgetView: View {
         Text(entry.currentPrayer)
           .font(font(19 * scale, weight: .bold))
           .foregroundStyle(palette.accent)
+          .tintedModeAccent()
       }
       Text(nextPrayerText)
         .font(font(15 * scale, weight: .medium))
@@ -375,23 +513,33 @@ private struct HijriPrayerWidgetView: View {
 
         Spacer(minLength: 2)
 
+        // The scale factor is applied to the two labels individually rather
+        // than to the whole stack. This widget stopped rendering on iOS 26
+        // while the medium PrayerScheduleWidget kept working, and the only
+        // difference in how the two treat their self-updating `.timer` text
+        // was that this one inherited `minimumScaleFactor`. The timer now
+        // keeps a fixed font and wins the layout, exactly as it does there.
         VStack(spacing: 1) {
           Text(entry.countdownHeadline)
             .font(font(15 * scale))
+            .lineLimit(1)
+            .minimumScaleFactor(0.5)
           countdownTimer(entry.countdownTarget, locale: entry.locale)
             .font(.system(size: 24 * scale, weight: .bold, design: .rounded))
             .monospacedDigit()
+            .lineLimit(1)
+            .layoutPriority(1)
             .foregroundStyle(palette.accent)
+            .tintedModeAccent()
           HStack(spacing: 7 * scale) {
             Text(entry.nextPrayerName)
             Divider().frame(height: 15 * scale)
             Text(entry.nextPrayerTime)
           }
           .font(font(13 * scale))
+          .lineLimit(1)
+          .minimumScaleFactor(0.5)
         }
-        .lineLimit(1)
-        .minimumScaleFactor(0.5)
-        .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity)
         .foregroundStyle(palette.text)
 
@@ -429,6 +577,18 @@ private extension View {
       self.containerBackground(for: .widget) { color }
     } else {
       self.background(color)
+    }
+  }
+
+  // Marks the text that carries `palette.accent` so it takes the home-screen
+  // tint in `.accented` rendering mode, where explicit colours are ignored.
+  // No-op in normal full-colour rendering and on iOS 15.
+  @ViewBuilder
+  func tintedModeAccent() -> some View {
+    if #available(iOSApplicationExtension 16.0, *) {
+      self.widgetAccentable()
+    } else {
+      self
     }
   }
 }
@@ -492,6 +652,7 @@ private struct PrayerScheduleWidgetView: View {
           Text(entry.sunrise)
             .font(font(11 * scale))
             .foregroundStyle(palette.accent)
+            .tintedModeAccent()
             .lineLimit(1)
             .minimumScaleFactor(0.6)
             .layoutPriority(-1)
@@ -547,6 +708,7 @@ private struct PrayerScheduleWidgetView: View {
         }
         .frame(maxWidth: .infinity, alignment: .center)
         .foregroundStyle(palette.accent)
+        .tintedModeAccent()
       }
       .padding(.horizontal, 13 * scale)
       .padding(.vertical, 9 * scale)
