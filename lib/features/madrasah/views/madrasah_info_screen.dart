@@ -43,23 +43,28 @@ class MadrasahInfoScreen extends ConsumerWidget {
         }
         final resource = madrasah.infos[index];
 
+        // Sibling pages replace the current route rather than stacking on
+        // top of it, so "back" from any chapter returns to the detail screen
+        // instead of walking through every chapter visited.
         Future? previousPage() async {
           if (index > 0) {
-            await context.push(
+            await context.pushReplacement(
               '/madrasahs/$madrasahId/infos/${madrasah.infos[index - 1].id}',
             );
           } else {
-            await context.push('/madrasahs/$madrasahId/introduction');
+            await context.pushReplacement(
+              '/madrasahs/$madrasahId/introduction',
+            );
           }
         }
 
         Future? nextPage() async {
           if (index < madrasah.infos.length - 1) {
-            await context.push(
+            await context.pushReplacement(
               '/madrasahs/$madrasahId/infos/${madrasah.infos[index + 1].id}',
             );
           } else {
-            await context.push('/madrasahs/$madrasahId/gallery');
+            await context.pushReplacement('/madrasahs/$madrasahId/gallery');
           }
         }
 

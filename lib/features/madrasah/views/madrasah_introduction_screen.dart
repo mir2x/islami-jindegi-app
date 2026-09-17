@@ -36,17 +36,24 @@ class MadrasahIntroductionScreen extends ConsumerWidget {
       loading: () => const FullScreenLoader(),
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
+        // The introduction, chapters and gallery are siblings under the
+        // madrasah detail screen. Moving between them replaces the current
+        // route so the stack stays list -> detail -> current page, and "back"
+        // (or "previous" from here) always returns to the detail screen.
         Future? previousPage() async {
-          await context.push('/madrasahs/${resource.id}');
+          if (context.canPop())
+            context.pop();
+          else
+            context.go('/madrasahs/${resource.id}');
         }
 
         Future? nextPage() async {
           if (resource.infos.isNotEmpty) {
-            await context.push(
-              'madrasahs/${resource.id}/infos/${resource.infos.first.id}',
+            await context.pushReplacement(
+              '/madrasahs/${resource.id}/infos/${resource.infos.first.id}',
             );
           } else {
-            await context.push('/madrasahs/${resource.id}/gallery');
+            await context.pushReplacement('/madrasahs/${resource.id}/gallery');
           }
         }
 
@@ -54,8 +61,7 @@ class MadrasahIntroductionScreen extends ConsumerWidget {
           storeKey: 'madrasahFontRatio',
           builder: (context, fontSizeRatio) {
             return AppScaffold(
-              onBackPressed: () async =>
-                  await context.push('/madrasahs/${resource.id}'),
+              onBackPressed: previousPage,
               showPattern: false,
               title: Text(resource.title),
               body: NextPageSwipe(

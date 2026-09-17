@@ -36,13 +36,16 @@ class MadrasahGalleryScreen extends ConsumerWidget {
       },
       error: (error, _) => ModelExeptionHandler(error: error),
       data: (resource) {
+        // Replace rather than push so "back" returns to the detail screen.
         Future? previousPage() async {
           if (resource.infos.isNotEmpty) {
-            await context.push(
-              'madrasahs/${resource.id}/infos/${resource.infos.last.id}',
+            await context.pushReplacement(
+              '/madrasahs/${resource.id}/infos/${resource.infos.last.id}',
             );
           } else {
-            await context.push('/madrasahs/${resource.id}/introduction');
+            await context.pushReplacement(
+              '/madrasahs/${resource.id}/introduction',
+            );
           }
         }
 
