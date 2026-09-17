@@ -5,7 +5,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 class InfiniteList<ItemType> extends StatefulWidget {
   const InfiniteList({
     super.key,
-    required this.resourceFetcher,
+    this.resourceFetcher,
     required this.itemBuilder,
     this.gridDelegate,
     this.pageSize = 12,
@@ -13,9 +13,16 @@ class InfiniteList<ItemType> extends StatefulWidget {
     this.padding = 25,
     this.scrollController,
     this.controller,
-  });
+  }) : assert(
+          (controller == null) != (resourceFetcher == null),
+          'Pass either a caller-owned controller (which fetches its own pages) '
+          'or a resourceFetcher, not both.',
+        );
 
-  final Function resourceFetcher;
+  /// Loads one page when this widget owns its paging controller. Ignored — and
+  /// therefore not allowed — when [controller] is supplied, since that
+  /// controller already carries its own `fetchPage`.
+  final Function? resourceFetcher;
   final ItemWidgetBuilder itemBuilder;
   final SliverGridDelegate? gridDelegate;
   final int pageSize;
@@ -76,7 +83,7 @@ class InfiniteListState<ItemType> extends State<InfiniteList<ItemType>> {
       ...widget.qParams,
     };
 
-    final items = await widget.resourceFetcher(params);
+    final items = await widget.resourceFetcher!(params);
     return (items as List).cast<ItemType>();
   }
 

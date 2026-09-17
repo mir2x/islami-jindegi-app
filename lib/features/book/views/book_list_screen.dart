@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/core/navigation/offline_fallback.dart';
 import 'package:native_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:native_app/widgets/layouts/app_scaffold.dart';
-import 'package:native_app/widgets/utils/with_connectivity.dart';
 import 'package:native_app/widgets/utils/offline_db_prompt.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/inputs/search_field.dart';
@@ -59,82 +59,74 @@ class _BookListScreenState extends ConsumerState<BookListScreen> {
         feature: 'books',
         child: Column(
           children: [
-            WithConnectivity(
-              builder: (context, isConnected) {
-                if (isConnected) {
-                  return Column(
+            Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.only(top: 20, left: 15, right: 15),
+                  child: Row(
                     children: [
-                      Container(
-                        width: double.infinity,
-                        padding:
-                            const EdgeInsets.only(top: 20, left: 15, right: 15),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: _V2FilterButton(
-                                label: locales.authors,
-                                active: qParams.containsKey('authorId'),
-                                activeLabel: qParams.containsKey('authorId')
-                                    ? null // will be resolved async
-                                    : null,
-                                activeItemProvider:
-                                    qParams.containsKey('authorId')
-                                        ? singleAuthorProvider(
-                                            qParams['authorId'],
-                                          )
-                                        : null,
-                                activeItemLabel: (item) => item?.name ?? '',
-                                onClear: () {
-                                  ref
-                                      .read(bookQueryParamsProvider.notifier)
-                                      .removeParam('authorId');
-                                },
-                                dialogContent:
-                                    _AuthorFilterDialog(parentRef: ref),
-                              ),
-                            ),
-                            const SizedBox(width: 15),
-                            Expanded(
-                              child: _V2FilterButton(
-                                label: locales.categories,
-                                active: qParams.containsKey('categoryId'),
-                                activeItemProvider:
-                                    qParams.containsKey('categoryId')
-                                        ? singleCategoryProvider(
-                                            qParams['categoryId'],
-                                          )
-                                        : null,
-                                activeItemLabel: (item) => item?.title ?? '',
-                                onClear: () {
-                                  ref
-                                      .read(bookQueryParamsProvider.notifier)
-                                      .removeParam('categoryId');
-                                },
-                                dialogContent:
-                                    _CategoryFilterDialog(parentRef: ref),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding:
-                            const EdgeInsets.only(top: 10, left: 15, right: 15),
-                        child: SearchButtonField(
-                          value: qParams['search'],
-                          onUpdate: (value) {
+                      Expanded(
+                        child: _V2FilterButton(
+                          label: locales.authors,
+                          active: qParams.containsKey('authorId'),
+                          activeLabel: qParams.containsKey('authorId')
+                              ? null // will be resolved async
+                              : null,
+                          activeItemProvider:
+                              qParams.containsKey('authorId')
+                                  ? singleAuthorProvider(
+                                      qParams['authorId'],
+                                    )
+                                  : null,
+                          activeItemLabel: (item) => item?.name ?? '',
+                          onClear: () {
                             ref
                                 .read(bookQueryParamsProvider.notifier)
-                                .updateParam('search', value);
+                                .removeParam('authorId');
                           },
+                          dialogContent:
+                              _AuthorFilterDialog(parentRef: ref),
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: _V2FilterButton(
+                          label: locales.categories,
+                          active: qParams.containsKey('categoryId'),
+                          activeItemProvider:
+                              qParams.containsKey('categoryId')
+                                  ? singleCategoryProvider(
+                                      qParams['categoryId'],
+                                    )
+                                  : null,
+                          activeItemLabel: (item) => item?.title ?? '',
+                          onClear: () {
+                            ref
+                                .read(bookQueryParamsProvider.notifier)
+                                .removeParam('categoryId');
+                          },
+                          dialogContent:
+                              _CategoryFilterDialog(parentRef: ref),
                         ),
                       ),
                     ],
-                  );
-                } else {
-                  return const SizedBox.shrink();
-                }
-              },
+                  ),
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.only(top: 10, left: 15, right: 15),
+                  child: SearchButtonField(
+                    value: qParams['search'],
+                    onUpdate: (value) {
+                      ref
+                          .read(bookQueryParamsProvider.notifier)
+                          .updateParam('search', value);
+                    },
+                  ),
+                ),
+              ],
             ),
             if (progress.last != null)
               ContinueReadingCard(progress: progress.last!),
@@ -145,7 +137,6 @@ class _BookListScreenState extends ConsumerState<BookListScreen> {
                   qParams: qParams,
                   controller: listState.pagingController,
                   scrollController: listState.scrollController,
-                  resourceFetcher: (_) => Future<List<dynamic>>.value(const []),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: isMobile ? 2 : 3,
                     crossAxisSpacing: isMobile ? 16 : 22,
@@ -440,14 +431,25 @@ class _AuthorFilterDialogState extends ConsumerState<_AuthorFilterDialog> {
               padding: 0,
               resourceFetcher: (Map<String, dynamic> params) async {
                 final api = widget.parentRef.read(bookApiServiceProvider);
+                final offline =
+                    widget.parentRef.read(bookOfflineServiceProvider);
                 if (_searchText != null && _searchText!.isNotEmpty) {
                   params = {...params, 'search': _searchText};
                 }
-                return await api.fetchAuthors(
-                  page: params['page'] ?? 1,
-                  perPage: params['per_page'] ?? 8,
-                  search: params['search'],
-                );
+                try {
+                  return await api.fetchAuthors(
+                    page: params['page'] ?? 1,
+                    perPage: params['per_page'] ?? 8,
+                    search: params['search'],
+                  );
+                } catch (error) {
+                  if (!shouldFallbackToOffline(error)) rethrow;
+                  return await offline.queryAuthors(
+                    page: params['page'] ?? 1,
+                    perPage: params['per_page'] ?? 8,
+                    search: params['search'],
+                  );
+                }
               },
               itemBuilder: (context, item, index) {
                 final isSelected = qParams.containsKey('authorId') &&
@@ -536,14 +538,25 @@ class _CategoryFilterDialogState extends ConsumerState<_CategoryFilterDialog> {
               padding: 0,
               resourceFetcher: (Map<String, dynamic> params) async {
                 final api = widget.parentRef.read(bookApiServiceProvider);
+                final offline =
+                    widget.parentRef.read(bookOfflineServiceProvider);
                 if (_searchText != null && _searchText!.isNotEmpty) {
                   params = {...params, 'search': _searchText};
                 }
-                return await api.fetchBookCategories(
-                  page: params['page'] ?? 1,
-                  perPage: params['per_page'] ?? 8,
-                  search: params['search'],
-                );
+                try {
+                  return await api.fetchBookCategories(
+                    page: params['page'] ?? 1,
+                    perPage: params['per_page'] ?? 8,
+                    search: params['search'],
+                  );
+                } catch (error) {
+                  if (!shouldFallbackToOffline(error)) rethrow;
+                  return await offline.queryCategories(
+                    page: params['page'] ?? 1,
+                    perPage: params['per_page'] ?? 8,
+                    search: params['search'],
+                  );
+                }
               },
               itemBuilder: (context, item, index) {
                 final isSelected = qParams.containsKey('categoryId') &&

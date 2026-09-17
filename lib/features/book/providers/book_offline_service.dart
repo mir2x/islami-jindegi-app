@@ -3,6 +3,7 @@ import '../../../core/utils/offline_database_helper.dart';
 import '../../../core/utils/offline_storage.dart';
 import '../models/book.dart';
 import '../models/book_author.dart';
+import '../models/book_category.dart';
 import '../models/book_chapter.dart';
 import '../models/book_subchapter.dart';
 import '../models/book_node_ref.dart';
@@ -10,10 +11,12 @@ import '../models/book_node_ref.dart';
 class BookOfflineService {
   // Bumped 1 -> 2 for Guid ids, then 2 -> 3 for the move from a prebuilt
   // downloaded file to an admin-curated, client-created-and-synced schema
-  // (see OfflineDatabaseHelper / BookSyncService) — existing installs must
-  // rebuild their local schema and re-sync from the offline-sync endpoint.
+  // (see OfflineDatabaseHelper / BookSyncService), then 4 -> 5 for the
+  // category tables that let the offline list honour the category filter —
+  // existing installs must rebuild their local schema and re-sync from the
+  // offline-sync endpoint.
   Future<Database> get _db =>
-      OfflineDatabaseHelper(feature: 'books', version: 4).database;
+      OfflineDatabaseHelper(feature: 'books', version: 5).database;
   Future<Database> get database => _db;
 
   Future<BookNodeRef?> findBookNodeSibling({
@@ -49,20 +52,40 @@ class BookOfflineService {
 
   // ───────────────────── Books ─────────────────────
 
+  /// Mirrors the API's `/books` filters so the list reads the same offline
+  /// as online: only published rows, optionally narrowed by author, category
+  /// and a title/excerpt search. Ordered by position ascending — books are a
+  /// curated catalogue, unlike the newest-first content modules.
   Future<List<Book>> queryBooks({
     int? page,
     int? perPage,
     int? position,
     int? quantity,
     String? search,
+    String? authorId,
+    String? categoryId,
   }) async {
     final db = await _db;
-    final where = <String>[];
+    final where = <String>['published = 1'];
     final args = <dynamic>[];
 
     if (position != null) {
       where.add('position = ?');
       args.add(position);
+    }
+    if (authorId != null && authorId.isNotEmpty) {
+      where.add(
+          'id IN (SELECT book_id FROM books_authors WHERE author_id = ?)');
+      args.add(authorId);
+    }
+    if (categoryId != null && categoryId.isNotEmpty) {
+      where.add(
+          'id IN (SELECT book_id FROM books_categories WHERE book_category_id = ?)');
+      args.add(categoryId);
+    }
+    if (search != null && search.isNotEmpty) {
+      where.add('(title LIKE ? OR excerpt LIKE ?)');
+      args.addAll(['%$search%', '%$search%']);
     }
 
     int limit = quantity ?? perPage ?? 20;
@@ -73,9 +96,9 @@ class BookOfflineService {
 
     final bookRows = await db.query(
       'books',
-      where: where.isNotEmpty ? where.join(' AND ') : null,
+      where: where.join(' AND '),
       whereArgs: args.isNotEmpty ? args : null,
-      orderBy: 'position ASC',
+      orderBy: 'position ASC, id ASC',
       limit: limit,
       offset: offset,
     );
@@ -253,10 +276,70 @@ class BookOfflineService {
 
   // ───────────────────── Authors (for filter) ─────────────────────
 
+  Future<List<BookAuthor>> queryAuthors({
+    int page = 1,
+    int perPage = 16,
+    String? search,
+  }) async {
+    final db = await _db;
+    final where = <String>[];
+    final args = <dynamic>[];
+
+    if (search != null && search.isNotEmpty) {
+      where.add('name LIKE ?');
+      args.add('%$search%');
+    }
+
+    final rows = await db.query(
+      'authors',
+      where: where.isNotEmpty ? where.join(' AND ') : null,
+      whereArgs: args.isNotEmpty ? args : null,
+      orderBy: 'position ASC',
+      limit: perPage,
+      offset: (page - 1) * perPage,
+    );
+    return rows.map((r) => BookAuthor.fromDb(r)).toList();
+  }
+
   Future<BookAuthor?> findAuthorById(String id) async {
     final db = await _db;
     final rows = await db.query('authors', where: 'id = ?', whereArgs: [id]);
     if (rows.isEmpty) return null;
     return BookAuthor.fromDb(rows.first);
+  }
+
+  // ───────────────────── Categories (for filter) ─────────────────────
+
+  Future<List<BookCategory>> queryCategories({
+    int page = 1,
+    int perPage = 16,
+    String? search,
+  }) async {
+    final db = await _db;
+    final where = <String>[];
+    final args = <dynamic>[];
+
+    if (search != null && search.isNotEmpty) {
+      where.add('title LIKE ?');
+      args.add('%$search%');
+    }
+
+    final rows = await db.query(
+      'book_categories',
+      where: where.isNotEmpty ? where.join(' AND ') : null,
+      whereArgs: args.isNotEmpty ? args : null,
+      orderBy: 'position ASC',
+      limit: perPage,
+      offset: (page - 1) * perPage,
+    );
+    return rows.map((r) => BookCategory.fromDb(r)).toList();
+  }
+
+  Future<BookCategory?> findCategoryById(String id) async {
+    final db = await _db;
+    final rows =
+        await db.query('book_categories', where: 'id = ?', whereArgs: [id]);
+    if (rows.isEmpty) return null;
+    return BookCategory.fromDb(rows.first);
   }
 }

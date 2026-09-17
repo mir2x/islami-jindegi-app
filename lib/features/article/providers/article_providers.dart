@@ -5,6 +5,7 @@ import 'article_api_service.dart';
 import 'article_offline_service.dart';
 import '../models/article.dart';
 import 'package:native_app/core/navigation/retained_list_state.dart';
+import 'package:native_app/helpers/date_range_filter.dart';
 import '../models/article_author.dart';
 import '../models/article_category.dart';
 import 'article_progress_provider.dart';
@@ -90,6 +91,7 @@ final articleListStateProvider = Provider.autoDispose
     .family<RetainedListState<ArticleItem>, RetainedListKey>((ref, key) {
   final api = ref.read(articleApiServiceProvider);
   final offline = ref.read(articleOfflineServiceProvider);
+  final dates = DateRangeFilter.of(key.params);
   final state = RetainedListState<ArticleItem>(
     pageSize: 9,
     fetch: (page) async {
@@ -100,18 +102,20 @@ final articleListStateProvider = Provider.autoDispose
           search: key.params['search'],
           articleAuthorId: key.params['articleAuthorId'],
           articleCategoryId: key.params['categoryId'],
-          dateFrom: key.params['dateFrom'],
-          dateTo: key.params['dateTo'],
+          dateFrom: dates.from,
+          dateTo: dates.to,
         );
-      } catch (_) {
+      } catch (error) {
+        // A server error must surface, not silently serve a stale local list.
+        if (!shouldFallbackToOffline(error)) rethrow;
         return offline.queryArticles(
           page: page,
           perPage: 9,
           search: key.params['search'],
           articleAuthorId: key.params['articleAuthorId'],
           articleCategoryId: key.params['categoryId'],
-          dateFrom: key.params['dateFrom'],
-          dateTo: key.params['dateTo'],
+          dateFrom: dates.from,
+          dateTo: dates.to,
         );
       }
     },

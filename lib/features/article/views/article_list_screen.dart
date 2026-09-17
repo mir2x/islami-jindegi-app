@@ -6,7 +6,6 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/offline_db_prompt.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
-import 'package:native_app/helpers/date_range_filter.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/date.dart';
 import 'package:native_app/widgets/filter/list.dart';
@@ -30,9 +29,6 @@ class _ArticleListScreenState extends ConsumerState<ArticleListScreen> {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(articleQueryParamsProvider);
-    // Presets ('past month') are resolved to concrete days here so the
-    // API and the offline database receive identical bounds.
-    final dateRange = DateRangeFilter.of(qParams);
     final listState = ref.watch(articleListStateProvider(
       RetainedListKey(Map.unmodifiable(Map<String, dynamic>.from(qParams))),
     ),);
@@ -222,31 +218,6 @@ class _ArticleListScreenState extends ConsumerState<ArticleListScreen> {
                   qParams: qParams,
                   controller: listState.controller,
                   scrollController: listState.scrollController,
-                  resourceFetcher: (Map<String, dynamic> params) async {
-                    final api = ref.read(articleApiServiceProvider);
-                    final offline = ref.read(articleOfflineServiceProvider);
-                    try {
-                      return await api.fetchArticles(
-                        page: params['page'] ?? 1,
-                        perPage: params['per_page'] ?? 9,
-                        search: qParams['search'],
-                        articleAuthorId: qParams['articleAuthorId'],
-                        articleCategoryId: qParams['categoryId'],
-                        dateFrom: dateRange.from,
-                        dateTo: dateRange.to,
-                      );
-                    } catch (_) {
-                      return await offline.queryArticles(
-                        page: params['page'] ?? 1,
-                        perPage: params['per_page'] ?? 9,
-                        search: qParams['search'],
-                        articleAuthorId: qParams['articleAuthorId'],
-                        articleCategoryId: qParams['categoryId'],
-                        dateFrom: dateRange.from,
-                        dateTo: dateRange.to,
-                      );
-                    }
-                  },
                   itemBuilder: (_, item, __) {
                     final isRecent = item.id == lastArticleId;
                     return InkWell(

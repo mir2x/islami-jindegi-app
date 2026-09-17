@@ -87,23 +87,6 @@ class _MadrasahListScreenState extends ConsumerState<MadrasahListScreen> {
                   qParams: qParams,
                   controller: listState.controller,
                   scrollController: listState.scrollController,
-                  resourceFetcher: (Map<String, dynamic> params) async {
-                    final api = ref.read(madrasahApiServiceProvider);
-                    final offline = ref.read(madrasahOfflineServiceProvider);
-                    try {
-                      return await api.fetchMadrasahs(
-                        page: params['page'] ?? 1,
-                        perPage: params['per_page'] ?? 9,
-                        search: qParams['search'],
-                      );
-                    } catch (_) {
-                      return await offline.queryMadrasahs(
-                        page: params['page'] ?? 1,
-                        perPage: params['per_page'] ?? 9,
-                        search: qParams['search'],
-                      );
-                    }
-                  },
                   itemBuilder: (_, item, __) {
                     final isRecent = item.id == lastMadrasahId;
                     return InkWell(

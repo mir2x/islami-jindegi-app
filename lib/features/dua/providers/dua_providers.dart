@@ -54,7 +54,9 @@ final duaListStateProvider = Provider.autoDispose
           search: key.params['search'],
           categoryId: key.params['categoryId'],
         );
-      } catch (_) {
+      } catch (error) {
+        // A server error must surface, not silently serve a stale local list.
+        if (!shouldFallbackToOffline(error)) rethrow;
         return offline.queryDuas(
           page: page,
           perPage: 20,

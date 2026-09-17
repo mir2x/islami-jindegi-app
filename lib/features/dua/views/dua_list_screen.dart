@@ -129,25 +129,6 @@ class _DuaListScreenState extends ConsumerState<DuaListScreen> {
                   qParams: qParams,
                   controller: listState.controller,
                   scrollController: listState.scrollController,
-                  resourceFetcher: (Map<String, dynamic> params) async {
-                    final api = ref.read(duaApiServiceProvider);
-                    final offline = ref.read(duaOfflineServiceProvider);
-                    try {
-                      return await api.fetchDuas(
-                        page: params['page'] ?? 1,
-                        perPage: params['per_page'] ?? 20,
-                        search: params['search'],
-                        categoryId: params['categoryId'],
-                      );
-                    } catch (_) {
-                      return await offline.queryDuas(
-                        page: params['page'] ?? 1,
-                        perPage: params['per_page'] ?? 20,
-                        search: params['search'],
-                        categoryId: params['categoryId'],
-                      );
-                    }
-                  },
                   itemBuilder: (_, item, __) {
                     final isRecent = item.id == lastDuaId;
                     return InkWell(

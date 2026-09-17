@@ -23,9 +23,12 @@ class BookSyncService {
     final (items, serverTime) =
         await _engine.fetchChangedSet('/books/offline-sync', 'books');
     final currentIds = await _engine.fetchOfflineIds('/books/offline-ids');
+    // Refreshed every pass, not just for authors whose books changed — see
+    // OfflineSyncEngine.fetchAuthorPositions.
+    final authorPositions = await _engine.fetchAuthorPositions('/books/authors');
 
     final db =
-        await OfflineDatabaseHelper(feature: 'books', version: 4).database;
+        await OfflineDatabaseHelper(feature: 'books', version: 5).database;
 
     final existingRows = await db
         .query('books', columns: ['id', 'updated_at', 'cover_image_path']);
@@ -49,6 +52,8 @@ class BookSyncService {
     final subchapterRows = <Map<String, dynamic>>[];
     final authorRows = <String, Map<String, dynamic>>{};
     final booksAuthorsRows = <Map<String, dynamic>>[];
+    final categoryRows = <String, Map<String, dynamic>>{};
+    final booksCategoriesRows = <Map<String, dynamic>>[];
 
     for (final json in items) {
       final id = json['id'].toString();
@@ -90,6 +95,16 @@ class BookSyncService {
           'position': author['position'],
         };
         booksAuthorsRows.add({'book_id': id, 'author_id': authorId});
+      }
+
+      for (final cat in (json['categories'] as List? ?? [])) {
+        final catId = cat['id'].toString();
+        categoryRows[catId] = {
+          'id': catId,
+          'title': cat['title'] ?? '',
+          'position': cat['position'],
+        };
+        booksCategoriesRows.add({'book_id': id, 'book_category_id': catId});
       }
 
       for (final chapter in (json['chapters'] as List? ?? [])) {
@@ -140,13 +155,19 @@ class BookSyncService {
           txn, 'chapters', 'book_id', idsToClearChildren);
       await _engine.deleteByParentIds(
           txn, 'books_authors', 'book_id', idsToClearChildren);
+      await _engine.deleteByParentIds(
+          txn, 'books_categories', 'book_id', idsToClearChildren);
       await _engine.deleteByIds(txn, 'books', removedIds);
 
       await _engine.upsertRows(txn, 'books', bookRows);
       await _engine.upsertRows(txn, 'authors', authorRows.values.toList());
+      await _engine.updatePositions(txn, 'authors', authorPositions);
       await _engine.upsertRows(txn, 'chapters', chapterRows);
       await _engine.upsertRows(txn, 'subchapters', subchapterRows);
       await _engine.upsertRows(txn, 'books_authors', booksAuthorsRows);
+      await _engine.upsertRows(
+          txn, 'book_categories', categoryRows.values.toList());
+      await _engine.upsertRows(txn, 'books_categories', booksCategoriesRows);
     });
 
     // Must run before the watermark moves: once it advances, books whose

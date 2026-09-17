@@ -66,7 +66,9 @@ final malfuzatListStateProvider = Provider.autoDispose
             hasAudio: hasAudio,
             dateFrom: dates.from,
             dateTo: dates.to);
-      } catch (_) {
+      } catch (error) {
+        // A server error must surface, not silently serve a stale local list.
+        if (!shouldFallbackToOffline(error)) rethrow;
         return offline.queryMalfuzats(
             page: page,
             perPage: 9,

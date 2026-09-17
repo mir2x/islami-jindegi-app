@@ -79,14 +79,6 @@ class _NewsListScreenState extends ConsumerState<NewsListScreen> {
                       qParams: qParams,
                       controller: listState.controller,
                       scrollController: listState.scrollController,
-                      resourceFetcher: (Map<String, dynamic> params) async {
-                        final api = ref.read(newsApiServiceProvider);
-                        return await api.fetchNews(
-                          page: params['page'] ?? 1,
-                          perPage: params['per_page'] ?? 9,
-                          search: qParams['search'],
-                        );
-                      },
                       itemBuilder: (_, item, __) {
                         final isRecent = item.id == lastNewsId;
                         return InkWell(

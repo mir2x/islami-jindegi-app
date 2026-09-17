@@ -17,4 +17,13 @@ class BookCategory {
       position: json['position'] is int ? json['position'] : null,
     );
   }
+
+  /// From local SQLite row
+  factory BookCategory.fromDb(Map<String, dynamic> row) {
+    return BookCategory(
+      id: row['id'].toString(),
+      title: row['title'] ?? '',
+      position: row['position'] is int ? row['position'] : null,
+    );
+  }
 }

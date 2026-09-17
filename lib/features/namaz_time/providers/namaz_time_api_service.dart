@@ -41,4 +41,16 @@ class NamazTimeApiService {
     final response = await _dio.get('/namaz-times/$id');
     return NamazTimeItem.fromJson(response.data);
   }
+
+  /// Fetch by the stable route slug (e.g. `fajr`). Returns null when the API
+  /// has no such slug — including an older API build without the endpoint.
+  Future<NamazTimeItem?> fetchBySlug(String slug) async {
+    try {
+      final response = await _dio.get('/namaz-times/by-slug/$slug');
+      return NamazTimeItem.fromJson(response.data);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) return null;
+      rethrow;
+    }
+  }
 }

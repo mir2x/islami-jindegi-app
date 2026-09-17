@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:native_app/core/navigation/offline_fallback.dart';
 
 import '../models/book.dart';
 import 'book_providers.dart';
@@ -118,8 +119,16 @@ final bookListStateProvider =
           authorId: key.authorId,
           categoryId: key.categoryId,
         );
-      } catch (_) {
-        return offline.queryBooks(page: page, perPage: BookListState._pageSize);
+      } catch (error) {
+        // A server error must surface, not silently serve a stale local list.
+        if (!shouldFallbackToOffline(error)) rethrow;
+        return offline.queryBooks(
+          page: page,
+          perPage: BookListState._pageSize,
+          search: key.search,
+          authorId: key.authorId,
+          categoryId: key.categoryId,
+        );
       }
     },
   );

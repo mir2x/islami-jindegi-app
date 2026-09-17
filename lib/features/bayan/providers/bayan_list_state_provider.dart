@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:native_app/core/navigation/offline_fallback.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:native_app/helpers/date_range_filter.dart';
 
@@ -91,7 +92,9 @@ final bayanListStateProvider =
         dateFrom: dates.from,
         dateTo: dates.to,
       );
-    } catch (_) {
+    } catch (error) {
+      // A server error must surface, not silently serve a stale local list.
+      if (!shouldFallbackToOffline(error)) rethrow;
       return offline.queryBayans(
         page: page,
         perPage: 9,

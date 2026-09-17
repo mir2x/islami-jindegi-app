@@ -77,7 +77,9 @@ final madrasahListStateProvider = Provider.autoDispose
           perPage: 9,
           search: key.params['search'],
         );
-      } catch (_) {
+      } catch (error) {
+        // A server error must surface, not silently serve a stale local list.
+        if (!shouldFallbackToOffline(error)) rethrow;
         return offline.queryMadrasahs(
           page: page,
           perPage: 9,

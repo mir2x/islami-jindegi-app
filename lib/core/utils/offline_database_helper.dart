@@ -54,6 +54,18 @@ const Map<String, List<String>> _schemas = {
       author_id TEXT NOT NULL,
       PRIMARY KEY (book_id, author_id)
     )''',
+    '''CREATE TABLE book_categories (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      position INTEGER
+    )''',
+    '''CREATE TABLE books_categories (
+      book_id TEXT NOT NULL,
+      book_category_id TEXT NOT NULL,
+      PRIMARY KEY (book_id, book_category_id)
+    )''',
+    'CREATE INDEX idx_books_authors_author_id ON books_authors(author_id)',
+    'CREATE INDEX idx_books_categories_category_id ON books_categories(book_category_id)',
     'CREATE INDEX idx_chapters_book_id ON chapters(book_id)',
     'CREATE INDEX idx_chapters_book_reading_order ON chapters(book_id, reading_order)',
     'CREATE INDEX idx_subchapters_chapter_id ON subchapters(chapter_id)',

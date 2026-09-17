@@ -6,7 +6,6 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
 import 'package:native_app/widgets/utils/offline_db_prompt.dart';
-import 'package:native_app/helpers/date_range_filter.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/date.dart';
 import 'package:native_app/widgets/filter/list.dart';
@@ -34,9 +33,6 @@ class _BayanListScreenState extends ConsumerState<BayanListScreen> {
     String currentLang = Localizations.localeOf(context).languageCode;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(bayanQueryParamsProvider);
-    // Presets ('past month') are resolved to concrete days here so the
-    // API and the offline database receive identical bounds.
-    final dateRange = DateRangeFilter.of(qParams);
     final listState = ref.watch(
       bayanListStateProvider(BayanListKey.fromParams(qParams)),
     );
@@ -222,31 +218,6 @@ class _BayanListScreenState extends ConsumerState<BayanListScreen> {
                   qParams: qParams,
                   controller: listState.pagingController,
                   scrollController: listState.scrollController,
-                  resourceFetcher: (Map<String, dynamic> params) async {
-                    final api = ref.read(bayanApiServiceProvider);
-                    final offline = ref.read(bayanOfflineServiceProvider);
-                    try {
-                      return await api.fetchBayans(
-                        page: params['page'] ?? 1,
-                        perPage: params['per_page'] ?? 9,
-                        search: qParams['search'],
-                        speakerId: qParams['speakerId'],
-                        categoryId: qParams['categoryId'],
-                        dateFrom: dateRange.from,
-                        dateTo: dateRange.to,
-                      );
-                    } catch (_) {
-                      return await offline.queryBayans(
-                        page: params['page'] ?? 1,
-                        perPage: params['per_page'] ?? 9,
-                        search: qParams['search'],
-                        speakerId: qParams['speakerId'],
-                        categoryId: qParams['categoryId'],
-                        dateFrom: dateRange.from,
-                        dateTo: dateRange.to,
-                      );
-                    }
-                  },
                   itemBuilder: (_, item, __) {
                     final isRecent = item.id == lastBayanId;
                     return InkWell(

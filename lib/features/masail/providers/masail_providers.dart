@@ -67,7 +67,9 @@ final masailListStateProvider = Provider.autoDispose
             hasAudio: key.params['hasAudio'],
             dateFrom: dates.from,
             dateTo: dates.to);
-      } catch (_) {
+      } catch (error) {
+        // A server error must surface, not silently serve a stale local list.
+        if (!shouldFallbackToOffline(error)) rethrow;
         return offline.queryMasails(
             page: page,
             perPage: 9,

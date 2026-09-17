@@ -6,7 +6,6 @@ import 'package:native_app/widgets/layouts/app_scaffold.dart';
 import 'package:native_app/widgets/utils/offline_db_prompt.dart';
 import 'package:native_app/widgets/inputs/search_button_field.dart';
 import 'package:native_app/widgets/pagination/infinite_list.dart';
-import 'package:native_app/helpers/date_range_filter.dart';
 import 'package:native_app/widgets/filter/button.dart';
 import 'package:native_app/widgets/filter/date.dart';
 import 'package:native_app/widgets/filter/list.dart';
@@ -57,9 +56,6 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
     var locales = AppLocalizations.of(context)!;
     var textTheme = Theme.of(context).textTheme;
     var qParams = ref.watch(masailQueryParamsProvider);
-    // Presets ('past month') are resolved to concrete days here so the
-    // API and the offline database receive identical bounds.
-    final dateRange = DateRangeFilter.of(qParams);
     var settingsQuery = ref.watch(masailSettingsProvider);
     final listState = ref.watch(masailListStateProvider(
       RetainedListKey(Map.unmodifiable(Map<String, dynamic>.from(qParams))),
@@ -282,35 +278,6 @@ class _MasailListScreenState extends ConsumerState<MasailListScreen> {
                   qParams: qParams,
                   controller: listState.controller,
                   scrollController: listState.scrollController,
-                  resourceFetcher: (Map<String, dynamic> params) async {
-                    final api = ref.read(masailApiServiceProvider);
-                    final offline = ref.read(masailOfflineServiceProvider);
-                    try {
-                      return await api.fetchMasail(
-                        page: params['page'] ?? 1,
-                        perPage: params['per_page'] ?? 9,
-                        search: qParams['search'],
-                        authorId: qParams['authorId'],
-                        categoryId: qParams['categoryId'],
-                        hasAudio: qParams['hasAudio'],
-                        dateFrom: dateRange.from,
-                        dateTo: dateRange.to,
-                      );
-                    } catch (_) {
-                      return await offline.queryMasails(
-                        page: params['page'] ?? 1,
-                        perPage: params['per_page'] ?? 9,
-                        search: qParams['search'],
-                        authorId: qParams['authorId'],
-                        categoryId: qParams['categoryId'],
-                        hasAudio: qParams['hasAudio'] == 'true'
-                            ? true
-                            : (qParams['hasAudio'] == 'false' ? false : null),
-                        dateFrom: dateRange.from,
-                        dateTo: dateRange.to,
-                      );
-                    }
-                  },
                   itemBuilder: (_, item, __) {
                     final isRecent = item.id == lastMasailId;
                     return InkWell(

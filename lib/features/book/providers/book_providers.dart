@@ -74,12 +74,18 @@ final bookListProvider = FutureProvider.autoDispose
       return await offline.queryBooks(
         page: params['page'],
         perPage: params['perPage'],
+        search: params['search'],
+        authorId: params['authorId'],
+        categoryId: params['categoryId'],
       );
     }
   } else {
     return await offline.queryBooks(
       page: params['page'],
       perPage: params['perPage'],
+      search: params['search'],
+      authorId: params['authorId'],
+      categoryId: params['categoryId'],
     );
   }
 });
@@ -254,7 +260,7 @@ final subchapterDetailProvider =
 });
 
 // ═══════════════════════════════════════════════════
-//  Filters (Authors & Categories) — online only
+//  Filters (Authors & Categories) — resolve the active chip's label
 // ═══════════════════════════════════════════════════
 
 final singleAuthorProvider =
@@ -276,6 +282,17 @@ final singleAuthorProvider =
 
 final singleCategoryProvider =
     FutureProvider.autoDispose.family<BookCategory?, String>((ref, id) async {
+  final isConnected = await ref.watch(connectivityProvider.future);
   final api = ref.read(bookApiServiceProvider);
-  return await api.fetchBookCategory(id);
+  final offline = ref.read(bookOfflineServiceProvider);
+
+  if (isConnected) {
+    try {
+      return await api.fetchBookCategory(id);
+    } catch (_) {
+      return await offline.findCategoryById(id);
+    }
+  } else {
+    return await offline.findCategoryById(id);
+  }
 });
