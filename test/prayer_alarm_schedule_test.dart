@@ -204,6 +204,78 @@ void main() {
     });
   });
 
+  group('playback length', () {
+    test('every bundled azan has a measured length', () {
+      // An azan missing from the table would silently get the longest
+      // length, so check the table itself rather than the lookup.
+      for (final sound in PrayerAlarmService.azanSounds) {
+        expect(
+          PrayerAlarmService.soundDurations,
+          contains(sound['key']),
+          reason: '${sound['key']} has no measured length',
+        );
+        expect(
+          PrayerAlarmService.soundDurationForPath(sound['path']),
+          PrayerAlarmService.soundDurations[sound['key']],
+        );
+      }
+      // The short azan is the only one under a minute; the rest run for
+      // minutes. Guards against a copy-paste that gives them all one length.
+      expect(
+        PrayerAlarmService.soundDurationForPath('assets/sounds/azan_short.mp3'),
+        lessThan(const Duration(minutes: 1)),
+      );
+      expect(
+        PrayerAlarmService.soundDurationForPath('assets/sounds/azan_full.mp3'),
+        greaterThan(const Duration(minutes: 3)),
+      );
+    });
+
+    test('an unknown sound is assumed to be the longest one', () {
+      final longest = PrayerAlarmService.azanSounds
+          .map((s) => PrayerAlarmService.soundDurationForPath(s['path']))
+          .reduce((a, b) => a > b ? a : b);
+
+      expect(PrayerAlarmService.soundDurationForPath(null), longest);
+      expect(PrayerAlarmService.soundDurationForPath('nope.mp3'), longest);
+    });
+
+    test('an alarm is still playing until its audio and grace have elapsed',
+        () {
+      const path = 'assets/sounds/azan_short.mp3';
+      final firedAt = DateTime(2026, 9, 17, 5, 0);
+      final length = PrayerAlarmService.soundDurationForPath(path);
+      final endsAt = firedAt.add(length).add(PrayerAlarmService.playbackGrace);
+
+      expect(PrayerAlarmService.playbackEndsAt(firedAt, path), endsAt);
+
+      // Mid-azan: must not be stopped.
+      expect(
+        PrayerAlarmService.playbackIsOver(firedAt, path, firedAt.add(length)),
+        isFalse,
+      );
+      // One second short of the grace running out: still off limits.
+      expect(
+        PrayerAlarmService.playbackIsOver(
+          firedAt,
+          path,
+          endsAt.subtract(const Duration(seconds: 1)),
+        ),
+        isFalse,
+      );
+      // From the end of the grace on: finished, safe to clean up.
+      expect(PrayerAlarmService.playbackIsOver(firedAt, path, endsAt), isTrue);
+      expect(
+        PrayerAlarmService.playbackIsOver(
+          firedAt,
+          path,
+          firedAt.add(const Duration(days: 1)),
+        ),
+        isTrue,
+      );
+    });
+  });
+
   group('plan contents', () {
     test('each alarm carries a title and body for the notification', () async {
       SharedPreferences.setMockInitialValues(_enabled('maghrib'));

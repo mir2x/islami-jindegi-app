@@ -78,6 +78,51 @@ class PrayerAlarmService {
   ];
 
   static const String defaultSoundKey = 'default';
+
+  /// Length of each bundled azan, read from the mp3 frames.
+  ///
+  /// Each alarm plays its azan once ([_setAlarm] sets `loopAudio: false`).
+  /// On iOS the `alarm` package tears the alarm down itself when the audio
+  /// ends. On Android it does not: the foreground service, its notification
+  /// and the "ringing" flag all outlive the sound until something calls
+  /// `Alarm.stop`. These lengths let the app do that itself, and let the
+  /// scheduler tell a still-playing azan from a finished one.
+  static const Map<String, Duration> soundDurations = {
+    'default': Duration(seconds: 141),
+    'fajr': Duration(seconds: 182),
+    'full': Duration(seconds: 203),
+    'short': Duration(seconds: 14),
+  };
+
+  /// Slack on top of the audio length before an alarm counts as finished, so
+  /// a slow player start or the fade-in can never cut the last words.
+  static const Duration playbackGrace = Duration(seconds: 20);
+
+  static final Duration _longestSoundDuration =
+      soundDurations.values.reduce((a, b) => a > b ? a : b);
+
+  /// How long the azan at [soundPath] plays. Unknown paths get the longest
+  /// bundled length, so an unrecognised alarm is only ever stopped late.
+  static Duration soundDurationForPath(String? soundPath) {
+    for (final sound in azanSounds) {
+      if (sound['path'] == soundPath) {
+        return soundDurations[sound['key']] ?? _longestSoundDuration;
+      }
+    }
+    return _longestSoundDuration;
+  }
+
+  /// The moment an alarm armed for [dateTime] has certainly gone quiet.
+  static DateTime playbackEndsAt(DateTime dateTime, String? soundPath) =>
+      dateTime.add(soundDurationForPath(soundPath)).add(playbackGrace);
+
+  static bool playbackIsOver(
+    DateTime dateTime,
+    String? soundPath,
+    DateTime now,
+  ) =>
+      !now.isBefore(playbackEndsAt(dateTime, soundPath));
+
   static const String reminderModeAt = 'at';
   static const String reminderModeBefore = 'before';
   static const String reminderModeAfter = 'after';
@@ -91,8 +136,29 @@ class PrayerAlarmService {
   /// Initialize the alarm service. Must be called during app startup.
   static Future<void> initialize() async {
     await Alarm.init();
+    await _localizeWarningNotification();
     await PrayerAlarmBackstop.initialize();
     _listenForRings();
+  }
+
+  /// The `alarm` package posts a notification when iOS terminates the app
+  /// while alarms are pending (see [PrayerAlarmBackstop] for why that matters).
+  /// Its default copy is English; this puts it in the app's language.
+  static Future<void> _localizeWarningNotification() async {
+    final prefs = await SharedPreferences.getInstance();
+    final locale = prefs.getString('locale') ?? 'bn';
+    try {
+      await Alarm.setWarningNotificationOnKill(
+        locale == 'bn'
+            ? 'আযানের অ্যালার্ম নাও বাজতে পারে'
+            : 'Your azan alarms may not ring',
+        locale == 'bn'
+            ? 'অ্যাপটি বন্ধ করে দেওয়া হয়েছে। অ্যালার্ম যেন বাজে, সেজন্য অ্যাপটি আবার খুলুন।'
+            : 'The app was closed. Reopen it so the alarms can ring.',
+      );
+    } catch (error) {
+      debugPrint('[PrayerAlarm] Could not localize kill warning: $error');
+    }
   }
 
   // ───────────────────── Preference Keys ─────────────────────
@@ -189,17 +255,26 @@ class PrayerAlarmService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_enabledKey(prayerKey), enabled);
 
-    if (enabled) {
-      await scheduleAllAlarms();
-    } else {
+    if (!enabled) {
       await cancelAlarm(prayerKey);
     }
+    // Re-planned on the way off as well as on. Cancelling one prayer clears
+    // every iOS backstop notification (they cannot be told apart by prayer),
+    // and only a full plan puts the other prayers' back.
+    await scheduleAllAlarms();
   }
 
   static Future<void> toggleAllAlarms(bool enabled) async {
-    for (var key in prayerKeys) {
-      await toggleAlarm(key, enabled);
+    final prefs = await SharedPreferences.getInstance();
+    for (final key in prayerKeys) {
+      await prefs.setBool(_enabledKey(key), enabled);
     }
+
+    if (!enabled) {
+      await cancelAllAlarms();
+    }
+    // One plan for all five, not one per prayer.
+    await scheduleAllAlarms();
   }
 
   static Future<void> setBeforeOffset(String prayerKey, int minutes) async {
@@ -359,6 +434,10 @@ class PrayerAlarmService {
   static bool _isManagedAlarmId(int id) =>
       id >= _alarmIdBase && id < _alarmIdBase + _managedIdCount;
 
+  /// Tail of the last [scheduleAllAlarms] call, so the next one queues behind
+  /// it instead of running alongside.
+  static Future<void> _scheduleChain = Future<void>.value();
+
   /// Brings the armed set in line with what the settings currently ask for.
   ///
   /// Idempotent by construction: it plans the full horizon, compares that
@@ -367,10 +446,24 @@ class PrayerAlarmService {
   /// which is what makes it safe to call on every app resume and every
   /// background tick.
   ///
-  /// A ringing alarm is never stopped. `Alarm.stop` on one sends STOP_ALARM to
-  /// the foreground service and silences the azan mid-play — the reason opening
-  /// the app during the adhan used to cut it off.
-  static Future<void> scheduleAllAlarms() async {
+  /// An alarm whose azan is still playing is never stopped. `Alarm.stop` on
+  /// one sends STOP_ALARM to the foreground service and silences the azan
+  /// mid-play — the reason opening the app during the adhan used to cut it
+  /// off. An alarm whose azan has finished is fair game, and on Android it has
+  /// to be: the package leaves it "ringing" until someone stops it.
+  ///
+  /// Runs are serialised. This is called from app start, every resume, every
+  /// ring and every settings change, and two interleaved runs would each act
+  /// on a snapshot the other had already changed.
+  static Future<void> scheduleAllAlarms() {
+    final run = _scheduleChain.then((_) => _scheduleAllAlarmsNow());
+    // The chain must never carry a failure forward, or one failed run would
+    // reject every later call before it started.
+    _scheduleChain = run.catchError((Object _) {});
+    return run;
+  }
+
+  static Future<void> _scheduleAllAlarmsNow() async {
     await _cancelLegacyAlarmsOnce();
 
     final planned = await planAlarms();
@@ -389,7 +482,7 @@ class PrayerAlarmService {
           wanted.dateTime.isAtSameMomentAs(alarm.dateTime)) {
         continue;
       }
-      if (await Alarm.isRinging(alarm.id)) continue;
+      if (await _isStillPlaying(alarm.id, known: alarm)) continue;
       await Alarm.stop(alarm.id);
     }
 
@@ -398,7 +491,7 @@ class PrayerAlarmService {
       if (current != null && current.dateTime.isAtSameMomentAs(alarm.dateTime)) {
         continue;
       }
-      if (await Alarm.isRinging(alarm.id)) continue;
+      if (await _isStillPlaying(alarm.id, known: current)) continue;
       await _setAlarm(
         id: alarm.id,
         dateTime: alarm.dateTime,
@@ -489,6 +582,47 @@ class PrayerAlarmService {
     return locale == 'bn' ? '$prayerLabel এর সময় হয়েছে' : 'Time for $prayerLabel';
   }
 
+  /// Whether stopping alarm [id] now would cut an azan off mid-play.
+  ///
+  /// `Alarm.isRinging` alone is not the answer. On Android a non-looping alarm
+  /// keeps reporting itself as ringing after its audio has ended, so the
+  /// scheduled time and the sound length decide. [known] saves a storage read
+  /// when the caller already holds the settings; an alarm the platform reports
+  /// as ringing but nothing knows about is left alone.
+  static Future<bool> _isStillPlaying(int id, {AlarmSettings? known}) async {
+    if (!await Alarm.isRinging(id)) return false;
+    _noteRinging(id);
+    final alarm = known ?? await Alarm.getAlarm(id);
+    if (alarm == null) return true;
+    return !playbackIsOver(
+      _playbackStart(alarm),
+      alarm.assetAudioPath,
+      DateTime.now(),
+    );
+  }
+
+  /// When this isolate first saw each alarm ringing.
+  ///
+  /// Android may deliver an alarm well after its scheduled time (Doze, OEM
+  /// battery managers), so the scheduled time alone would have a late azan
+  /// counted as finished the moment it started. The clock for "has it played
+  /// through" runs from whichever is later: the scheduled time, or the first
+  /// moment the ring was actually observed. When nothing observed the ring
+  /// (the app was dead), the first check that finds it ringing starts the
+  /// clock, so clean-up of a long-finished alarm is late rather than an azan
+  /// being cut early.
+  static final Map<int, DateTime> _ringObservedAt = {};
+
+  static void _noteRinging(int id) {
+    _ringObservedAt.putIfAbsent(id, DateTime.now);
+  }
+
+  static DateTime _playbackStart(AlarmSettings alarm) {
+    final observed = _ringObservedAt[alarm.id];
+    if (observed != null && observed.isAfter(alarm.dateTime)) return observed;
+    return alarm.dateTime;
+  }
+
   /// Cancels anything the previous one-alarm-per-prayer scheme left pending.
   ///
   /// Runs once per install. The old ids fall outside the managed range, so the
@@ -502,7 +636,7 @@ class PrayerAlarmService {
       ..._legacyBeforeAlarmIds.values,
       ..._legacyAfterAlarmIds.values,
     ]) {
-      if (await Alarm.isRinging(id)) continue;
+      if (await _isStillPlaying(id)) continue;
       await Alarm.stop(id);
     }
 
@@ -514,12 +648,16 @@ class PrayerAlarmService {
     final prayerIndex = prayerKeys.indexOf(prayerKey);
     if (prayerIndex < 0) return;
 
+    final existingById = {
+      for (final alarm in await Alarm.getAlarms()) alarm.id: alarm,
+    };
+
     for (var slot = 0; slot < _slotsPerPrayer; slot++) {
       for (var dayIndex = 0; dayIndex < _maxHorizonDays; dayIndex++) {
         final id = _alarmIdBase +
             ((prayerIndex * _slotsPerPrayer) + slot) * _maxHorizonDays +
             dayIndex;
-        if (await Alarm.isRinging(id)) continue;
+        if (await _isStillPlaying(id, known: existingById[id])) continue;
         await Alarm.stop(id);
       }
     }
@@ -543,15 +681,29 @@ class PrayerAlarmService {
   /// is a supplement to the horizon and not a replacement for it.
   static StreamSubscription<AlarmSet>? _ringSubscription;
   static Set<int> _lastRingingIds = const {};
+  static final Map<int, Timer> _playbackTimers = {};
 
   static void _listenForRings() {
     _ringSubscription ??= Alarm.ringing.listen((ringing) async {
-      final currentIds = ringing.alarms.map((alarm) => alarm.id).toSet();
+      final ringingById = {
+        for (final alarm in ringing.alarms) alarm.id: alarm,
+      };
+      final currentIds = ringingById.keys.toSet();
       // The stream reports the whole ringing set on every change, including
       // when an alarm stops, so only ids that were not ringing a moment ago
       // count as having just fired.
       final started = currentIds.difference(_lastRingingIds);
+      final stopped = _lastRingingIds.difference(currentIds);
       _lastRingingIds = currentIds;
+
+      for (final id in stopped) {
+        _playbackTimers.remove(id)?.cancel();
+        _ringObservedAt.remove(id);
+      }
+      for (final id in started) {
+        _noteRinging(id);
+        _stopWhenPlayed(ringingById[id]!);
+      }
 
       final managed = started.where(_isManagedAlarmId);
       if (managed.isEmpty) return;
@@ -569,6 +721,41 @@ class PrayerAlarmService {
     });
   }
 
+  /// Stops [alarm] once its azan has played through. Android only.
+  ///
+  /// On iOS the package does this itself. On Android nothing does: after the
+  /// audio ends the foreground service keeps running, the notification stays
+  /// up, the app stays flagged as showing over the lock screen, and the alarm
+  /// is still "ringing" as far as the platform is concerned. Left like that,
+  /// the next prayer's alarm is refused as a duplicate ring.
+  ///
+  /// Only reaches Dart while the app process is alive. When it is not, the
+  /// scheduler's finished-playback check does the same clean-up at the next
+  /// launch, resume or background tick.
+  static void _stopWhenPlayed(AlarmSettings alarm) {
+    if (!Platform.isAndroid) return;
+    if (!_isManagedAlarmId(alarm.id) && !_isTestAlarmId(alarm.id)) return;
+
+    _playbackTimers.remove(alarm.id)?.cancel();
+
+    var wait = playbackEndsAt(_playbackStart(alarm), alarm.assetAudioPath)
+        .difference(DateTime.now());
+    if (wait.isNegative) wait = Duration.zero;
+
+    _playbackTimers[alarm.id] = Timer(wait, () async {
+      _playbackTimers.remove(alarm.id);
+      try {
+        if (await Alarm.isRinging(alarm.id)) {
+          await Alarm.stop(alarm.id);
+        }
+      } catch (error, stackTrace) {
+        debugPrint(
+          '[PrayerAlarm] Stop after playback failed: $error\n$stackTrace',
+        );
+      }
+    });
+  }
+
   /// Set a single alarm using the alarm package
   static Future<void> _setAlarm({
     required int id,
@@ -581,7 +768,16 @@ class PrayerAlarmService {
       id: id,
       dateTime: dateTime,
       assetAudioPath: soundPath,
-      loopAudio: true,
+      // Play the azan once. With looping on, the package repeats the audio
+      // until the user taps Stop, which users reported as the adhan
+      // "repeating on and on".
+      loopAudio: false,
+      // With overlap refused (the default), a new alarm is dropped outright —
+      // removed from storage, never rung — whenever the platform still counts
+      // an earlier one as ringing. On Android a finished azan counts until it
+      // is stopped, so a missed Stop tap would silently swallow the next
+      // prayer. Prayers are hours apart, so real overlap never happens.
+      allowAlarmOverlap: true,
       vibrate: true,
       warningNotificationOnKill: Platform.isIOS,
       androidFullScreenIntent: true,
@@ -702,11 +898,16 @@ class PrayerAlarmService {
     return null;
   }
 
+  static const int _testAlarmIdBase = 900;
+
+  static bool _isTestAlarmId(int id) =>
+      id >= _testAlarmIdBase && id < _testAlarmIdBase + prayerKeys.length;
+
   static Future<void> scheduleTestAlarm(
     String prayerKey, {
     String locale = 'bn',
   }) async {
-    final alarmId = 900 + prayerKeys.indexOf(prayerKey);
+    final alarmId = _testAlarmIdBase + prayerKeys.indexOf(prayerKey);
     await Alarm.stop(alarmId);
 
     final prayerLabel = _getPrayerLabel(prayerKey, locale);

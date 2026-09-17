@@ -26,7 +26,7 @@ class PlannedPrayerAlarm {
   final String title;
   final String body;
 
-  /// Flutter asset path, for the `alarm` package's looping playback.
+  /// Flutter asset path, played once by the `alarm` package.
   final String soundPath;
 
   /// Which azan was chosen, for platforms that reference sounds by name
