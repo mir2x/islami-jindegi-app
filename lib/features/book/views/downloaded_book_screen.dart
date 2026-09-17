@@ -24,8 +24,9 @@ class DownloadedBookScreen extends ConsumerWidget {
           return const ModelExeptionHandler(error: 'Downloaded book not found');
         }
 
-        String filePath =
-            fileTitlePath(book.title ?? '', 'books/${book.bookId}');
+        String filePath = fileTitlePath(
+            book.title ?? '', 'books/${book.bookId}',
+            url: book.document);
 
         return WithPreferences(
           builder: (context, preferences) {

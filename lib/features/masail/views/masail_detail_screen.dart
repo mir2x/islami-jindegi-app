@@ -95,7 +95,8 @@ class MasailDetailScreen extends ConsumerWidget {
           storeKey: 'masailFontRatio',
           builder: (context, fontSizeRatio) {
             final filePath = resource.audioUrl != null
-                ? fileTitlePath(resource.title, 'masails/${resource.id}')
+                ? fileTitlePath(resource.title, 'masails/${resource.id}',
+                    url: resource.audioUrl)
                 : null;
 
             return AppScaffold(

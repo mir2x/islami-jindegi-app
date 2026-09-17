@@ -53,8 +53,9 @@ final malfuzatAudioPlayerProvider =
       }
     });
 
-    final filePath =
-        fileTitlePath(source.title, 'malfuzats/${source.malfuzatId}');
+    final filePath = fileTitlePath(
+        source.title, 'malfuzats/${source.malfuzatId}',
+        url: source.audioUrl);
     final localFile = await ref.read(localFileProvider(filePath).future);
 
     ref.read(_currentMalfuzatAudioIdProvider.notifier).set(source.malfuzatId);

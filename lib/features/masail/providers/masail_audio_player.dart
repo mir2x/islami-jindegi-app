@@ -34,7 +34,9 @@ final masailAudioPlayerProvider = FutureProvider.autoDispose
       }
     });
 
-    final filePath = fileTitlePath(params.title, 'masails/${params.masailId}');
+    final filePath = fileTitlePath(
+        params.title, 'masails/${params.masailId}',
+        url: params.audioUrl);
     final localFile = await ref.read(localFileProvider(filePath).future);
 
     ref.read(_currentMasailAudioIdProvider.notifier).set(params.masailId);

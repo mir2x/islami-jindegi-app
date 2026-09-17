@@ -85,7 +85,8 @@ class DuaDetailScreen extends ConsumerWidget {
         });
 
         final filePath = resource.audioUrl != null
-            ? fileTitlePath(resource.title, 'duas/${resource.id}')
+            ? fileTitlePath(resource.title, 'duas/${resource.id}',
+                url: resource.audioUrl)
             : null;
 
         return ResizableFont(

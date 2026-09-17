@@ -137,6 +137,7 @@ class _MalfuzatContent extends ConsumerWidget {
                           filePath: fileTitlePath(
                             malfuzat.title,
                             'malfuzats/${malfuzat.id}',
+                            url: malfuzat.audioUrl,
                           ),
                           fileUrl: malfuzat.audioUrl!,
                           downloadCallback: () async {

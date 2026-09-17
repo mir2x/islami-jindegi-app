@@ -33,7 +33,8 @@ class DownloadedMasailScreen extends ConsumerWidget {
         final masailId = resource.masailId ?? '';
         final audioUrl = resource.audio;
         final filePath = audioUrl != null
-            ? fileTitlePath(resource.title ?? '', 'masails/$masailId')
+            ? fileTitlePath(resource.title ?? '', 'masails/$masailId',
+                url: audioUrl)
             : null;
 
         return ResizableFont(

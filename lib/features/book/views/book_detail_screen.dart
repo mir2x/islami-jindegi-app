@@ -385,7 +385,8 @@ class _BookContent extends ConsumerWidget {
       AppLocalizations locales, TextTheme textTheme, String? fileLink) {
     String? filePath;
     if (book.documentUrl != null) {
-      filePath = fileTitlePath(book.title, 'books/${book.id}');
+      filePath = fileTitlePath(book.title, 'books/${book.id}',
+          url: book.documentUrl);
     }
 
     final checkDownloadedFile = filePath != null

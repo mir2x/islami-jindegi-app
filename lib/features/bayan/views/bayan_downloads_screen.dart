@@ -117,7 +117,8 @@ class BayanDownloadsScreen extends ConsumerWidget {
     await deleteFile(
       context: context,
       ref: ref,
-      filePath: fileTitlePath(item.title ?? '', 'bayans/$bayanId'),
+      filePath: fileTitlePath(item.title ?? '', 'bayans/$bayanId',
+          url: item.audio),
       callback: () =>
           ref.read(downloadedBayansProvider.notifier).deleteItem(bayanId),
     );

@@ -34,7 +34,9 @@ final bayanAudioPlayerProvider = FutureProvider.autoDispose
       }
     });
 
-    final filePath = fileTitlePath(params.title, 'bayans/${params.bayanId}');
+    final filePath = fileTitlePath(
+        params.title, 'bayans/${params.bayanId}',
+        url: params.audioUrl);
     final localFile = await ref.read(localFileProvider(filePath).future);
 
     ref.read(_currentBayanAudioIdProvider.notifier).set(params.bayanId);

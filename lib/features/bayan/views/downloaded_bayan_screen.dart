@@ -48,6 +48,7 @@ class DownloadedBayanScreen extends ConsumerWidget {
                         filePath: fileTitlePath(
                           resource.title ?? '',
                           'bayans/$bayanId',
+                          url: audioUrl,
                         ),
                         fileUrl: audioUrl,
                         deleteCallback: () async {

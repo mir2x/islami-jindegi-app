@@ -35,7 +35,8 @@ final duaAudioPlayerProvider = FutureProvider.autoDispose
       }
     });
 
-    final filePath = fileTitlePath(params.title, 'duas/${params.duaId}');
+    final filePath = fileTitlePath(params.title, 'duas/${params.duaId}',
+        url: params.audioUrl);
     final localFile = await ref.read(localFileProvider(filePath).future);
 
     ref.read(_currentDuaAudioIdProvider.notifier).set(params.duaId);

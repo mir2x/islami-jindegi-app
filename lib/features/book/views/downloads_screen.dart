@@ -47,6 +47,7 @@ class DownloadsScreen extends ConsumerWidget {
                           filePath: fileTitlePath(
                             item.title ?? '',
                             'books/$bookId',
+                            url: item.document,
                           ),
                           callback: () => ref
                               .read(downloadedBooksProvider.notifier)

@@ -97,6 +97,7 @@ class BayanDetailScreen extends ConsumerWidget {
                           filePath: fileTitlePath(
                             resource.title,
                             'bayans/${resource.id}',
+                            url: resource.audioUrl,
                           ),
                           fileUrl: resource.audioUrl!,
                           downloadCallback: () async {

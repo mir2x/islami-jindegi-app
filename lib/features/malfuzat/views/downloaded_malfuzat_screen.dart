@@ -53,6 +53,7 @@ class DownloadedMalfuzatScreen extends ConsumerWidget {
                             filePath: fileTitlePath(
                               resource.title ?? '',
                               'malfuzats/${resource.malfuzatId}',
+                              url: audioUrl,
                             ),
                             fileUrl: audioUrl,
                             deleteCallback: () async {

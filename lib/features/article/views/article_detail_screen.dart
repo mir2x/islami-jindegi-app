@@ -123,6 +123,7 @@ class ArticleDetailScreen extends ConsumerWidget {
                         filePath: fileTitlePath(
                           resource.title,
                           'articles/${resource.id}',
+                          url: resource.documentUrl,
                         ),
                         fileUrl: resource.documentUrl!,
                       ),
